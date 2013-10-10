@@ -16,7 +16,6 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
-import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
@@ -829,86 +828,22 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Validating MGF File(s). Please Wait...");
-
-            final NewDialog finalRef = this;
-            final JFileChooser finalJFileChooser = fileChooser;
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ValidateMgfThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        ArrayList<File> tempMgfFiles = new ArrayList<File>();
-
-                        // get the files
-                        for (File newFile : finalJFileChooser.getSelectedFiles()) {
-                            if (newFile.isDirectory()) {
-                                File[] tempFiles = newFile.listFiles();
-                                for (File file : tempFiles) {
-                                    if (file.getName().toLowerCase().endsWith(".mgf")) {
-                                        tempMgfFiles.add(file);
-                                    }
-                                }
-                            } else {
-                                tempMgfFiles.add(newFile);
-                            }
+            // get the files
+            for (File newFile : fileChooser.getSelectedFiles()) {
+                if (newFile.isDirectory()) {
+                    File[] tempFiles = newFile.listFiles();
+                    for (File file : tempFiles) {
+                        if (file.getName().toLowerCase().endsWith(".mgf")) {
+                            spectrumFiles.add(file);
                         }
-
-                        int fileCounter = 0;
-
-                        // iterate the files and validate them
-                        for (File mgfFile : tempMgfFiles) {
-
-                            progressDialog.setTitle("Validating Spectrum Files. Please Wait... (" + ++fileCounter + "/" + tempMgfFiles.size() + ")");
-                            String duplicateTitle = MgfReader.validateSpectrumTitles(mgfFile, progressDialog);
-
-                            if (duplicateTitle != null) {
-                                JOptionPane.showMessageDialog(finalRef,
-                                        "The file \'" + mgfFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
-                                        + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
-                                        + "We strongly recommend correcting the spectrum titles and researching the data.",
-                                        "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
-                            }
-
-                            spectrumFiles.add(mgfFile);
-                            peptideShakerGUI.setLastSelectedFolder(mgfFile.getAbsolutePath());
-
-                            if (progressDialog.isRunCanceled()) {
-                                spectrumFiles.clear();
-                                progressDialog.setRunFinished();
-                                return;
-                            }
-                        }
-
-                    } catch (IOException e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(finalRef, "An error occurred while validating the mgf file.", "Mgf Validation Error", JOptionPane.WARNING_MESSAGE);
-                        return;
                     }
-
-                    progressDialog.setRunFinished();
-                    spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-
-                    validateInput();
+                } else {
+                    spectrumFiles.add(newFile);
                 }
-            }.start();
+            }
+
+            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+            validateInput();
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
 
@@ -1047,7 +982,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Checking Spectrum Files. Please Wait...");
+            progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
 
             new Thread(new Runnable() {
                 public void run() {
@@ -1068,7 +1003,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         File folder = finalFolders.get(i);
                         File inputFile = new File(folder, SEARCHGUI_INPUT);
                         if (inputFile.exists()) {
-                            importSuccessfull = importMgfFiles(inputFile, progressDialog);
+                            importSuccessfull = importMgfFiles(inputFile);
                         }
                     }
                     idFilesTxt.setText(idFiles.size() + " file(s) selected");
@@ -1593,11 +1528,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param searchGUIFile a SearchGUI file
      * @returns true of the mgf files were imported successfully
      */
-    private boolean importMgfFiles(File searchGUIFile, ProgressDialogX progressDialog) {
+    private boolean importMgfFiles(File searchGUIFile) {
 
         boolean success = true;
-
-        int mgfFileCounter = 0;
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
@@ -1607,7 +1540,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             for (File file : spectrumFiles) {
                 names.add(file.getName());
             }
-            while ((line = br.readLine()) != null && !progressDialog.isRunCanceled()) {
+            while ((line = br.readLine()) != null) {
                 // Skip empty lines.
                 line = line.trim();
                 if (!line.equals("")) {
@@ -1616,38 +1549,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         if (!names.contains(newFile.getName())) {
                             if (newFile.exists()) {
                                 names.add(newFile.getName());
-
-                                progressDialog.setTitle("Checking Spectrum Files. Please Wait... " + ++mgfFileCounter);
-
-                                String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, progressDialog);
-
-                                if (duplicateTitle != null) {
-                                    JOptionPane.showMessageDialog(this,
-                                            "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
-                                            + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
-                                            + "We strongly recommend correcting the spectrum titles and researching the data.",
-                                            "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
-                                }
-
                                 spectrumFiles.add(newFile);
                             } else {
                                 // try to find it in the same folder as the SearchGUI.properties file
                                 if (new File(searchGUIFile.getParentFile(), newFile.getName()).exists()) {
                                     newFile = new File(searchGUIFile.getParentFile(), newFile.getName());
                                     names.add(newFile.getName());
-
-                                    progressDialog.setTitle("Checking Spectrum Files. Please Wait... " + ++mgfFileCounter);
-
-                                    String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, progressDialog);
-
-                                    if (duplicateTitle != null) {
-                                        JOptionPane.showMessageDialog(this,
-                                                "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
-                                                + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
-                                                + "We strongly recommend correcting the spectrum titles and researching the data.",
-                                                "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
-                                    }
-
                                     spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
                                 } else {
                                     missing += newFile.getName() + "\n";

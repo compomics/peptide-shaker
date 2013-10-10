@@ -365,17 +365,17 @@ public class FileImporter {
          */
         public int importFiles() {
 
-            waitingHandler.appendReport("Establishing database connection.", true, true);
-
-            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-            identification.setIsDB(true);
-
-            connectToIdDb(identification);
-
-            waitingHandler.increasePrimaryProgressCounter();
-
             try {
                 importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+
+                waitingHandler.appendReport("Establishing database connection.", true, true);
+
+                Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+                identification.setIsDB(true);
+
+                connectToIdDb(identification);
+
+                waitingHandler.increasePrimaryProgressCounter();
 
                 if (!waitingHandler.isRunCanceled()) {
 
@@ -946,6 +946,9 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
+                
+                // @TODO: check for duplicate spectrum title and show the warning in the lower right corner of the main frame
+                
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
