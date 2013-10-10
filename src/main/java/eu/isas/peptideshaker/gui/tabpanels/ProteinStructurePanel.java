@@ -1715,11 +1715,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     if (chains[j].getStart_protein() != chains[j].getEnd_protein()) {
                         ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
-                                    (j + 1),
-                                    chains[j].getBlock(),
-                                    temp,
-                                    (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
-                                });
+                            (j + 1),
+                            chains[j].getBlock(),
+                            temp,
+                            (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
+                        });
                     }
                 }
 
@@ -2719,14 +2719,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         // @TODO: should be replaced by a table model!!!
 
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
-                                    index + 1,
-                                    probabilities.isStarred(),
-                                    proteinInferenceType,
-                                    peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true),
-                                    peptideStart,
-                                    false,
-                                    probabilities.isValidated()
-                                });
+                            index + 1,
+                            probabilities.isStarred(),
+                            proteinInferenceType,
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true),
+                            peptideStart,
+                            false,
+                            probabilities.isValidated()
+                        });
 
                         peptideTableMap.put(index + 1, currentMatch.getKey());
                         index++;
@@ -2942,11 +2942,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         PdbParameter lParam = uniProtPdb.getPdbs().get(i);
 
                         ((DefaultTableModel) pdbMatchesJTable.getModel()).addRow(new Object[]{
-                                    i + 1,
-                                    addPdbDatabaseLink(lParam.getPdbaccession()),
-                                    lParam.getTitle(),
-                                    lParam.getExperiment_type(),
-                                    lParam.getBlocks().length});
+                            i + 1,
+                            addPdbDatabaseLink(lParam.getPdbaccession()),
+                            lParam.getTitle(),
+                            lParam.getExperiment_type(),
+                            lParam.getBlocks().length});
 
                         if (lParam.getBlocks().length > maxNumberOfChains) {
                             maxNumberOfChains = lParam.getBlocks().length;
@@ -3362,8 +3362,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             true, true, true, true, true, false, true, false, false, false, true, true);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-            int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
+                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                    int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
                     String proteinKey = proteinKeys.get(proteinIndex);
                     outputGenerator.getPeptidesOutput(
                             null, selectedPeptides, peptidePdbArray, true, false, true, true, true, true, true,
@@ -3644,6 +3644,18 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
 
             showSparkLines(peptideShakerGUI.showSparklines());
+        }
+    }
+
+    /**
+     * Deactivates the self updating tables.
+     */
+    public void deactivateSelfUpdatingTableModels() {
+        if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {
+            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(false);
+        }
+        if (peptideTable.getModel() instanceof SelfUpdatingTableModel) {
+            ((SelfUpdatingTableModel) peptideTable.getModel()).setSelfUpdating(false);
         }
     }
 }
