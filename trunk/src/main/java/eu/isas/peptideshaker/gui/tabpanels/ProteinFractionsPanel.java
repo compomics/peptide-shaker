@@ -13,6 +13,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -116,7 +117,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     public ProteinFractionsPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
-        setupGui();
+        setUpGui();
         setTableProperties();
         formComponentResized(null);
     }
@@ -124,7 +125,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Set up the GUI.
      */
-    private void setupGui() {
+    private void setUpGui() {
 
         // make the tabs in the tabbed pane go from right to left
         plotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -132,7 +133,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         // set main table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
 
-        proteinTable.setAutoCreateRowSorter(true);
+        // set the row sorter
+        SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true));
 
         // make sure that the scroll panes are see-through
         proteinTableScrollPane.getViewport().setOpaque(false);
@@ -414,10 +419,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             for (int row = 0; row < selectedRows.length; row++) {
 
                 int currentRow = selectedRows[row];
-
-                int proteinIndex = proteinTable.convertRowIndexToModel(currentRow);
+                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                int proteinIndex = tableModel.getViewIndex(currentRow);
                 String proteinKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+
                 try {
                     peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
                 } catch (Exception e) {
@@ -870,7 +876,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private int getProteinRow(String proteinKey) {
         int modelIndex = proteinKeys.indexOf(proteinKey);
         if (modelIndex >= 0) {
-            return proteinTable.convertRowIndexToView(modelIndex);
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            return tableModel.getRowNumber(modelIndex);
         } else {
             return -1;
         }
@@ -1406,40 +1413,44 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
 
         int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
         int column = proteinTable.getSelectedColumn();
 
-        if (proteinIndex != -1) {
-            // remember the selection
-            newItemSelection();
-            updatePlots();
-        }
+        if (row != -1) {
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            int proteinIndex = tableModel.getViewIndex(row);
 
-        if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && proteinIndex != -1) {
-
-            String proteinKey = proteinKeys.get(proteinIndex);
-
-            // open the gene details dialog
-            if (column == proteinTable.getColumn("Chr").getModelIndex()
-                    && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
-                try {
-                    new GeneDetailsDialog(peptideShakerGUI, proteinKey);
-                } catch (Exception ex) {
-                    peptideShakerGUI.catchException(ex);
-                }
+            if (proteinIndex != -1) {
+                // remember the selection
+                newItemSelection();
+                updatePlots();
             }
 
-            // open protein link in web browser
-            if (column == proteinTable.getColumn("Accession").getModelIndex()
-                    && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+            if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && proteinIndex != -1) {
 
-                String link = (String) proteinTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
+                String proteinKey = proteinKeys.get(proteinIndex);
 
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                // open the gene details dialog
+                if (column == proteinTable.getColumn("Chr").getModelIndex()
+                        && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
+                    try {
+                        new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                    } catch (Exception ex) {
+                        peptideShakerGUI.catchException(ex);
+                    }
+                }
+
+                // open protein link in web browser
+                if (column == proteinTable.getColumn("Accession").getModelIndex()
+                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) proteinTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased
@@ -1452,12 +1463,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
 
         int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
 
-        if (proteinIndex != -1) {
-            // remember the selection
-            newItemSelection();
-            updatePlots();
+        if (row != -1) {
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            int proteinIndex = tableModel.getViewIndex(row);
+
+            if (proteinIndex != -1) {
+                // remember the selection
+                newItemSelection();
+                updatePlots();
+            }
         }
     }//GEN-LAST:event_proteinTableKeyReleased
 
@@ -1843,7 +1858,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         String psmKey = PeptideShakerGUI.NO_SELECTION;
 
         if (proteinTable.getSelectedRow() != -1) {
-            proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
             // try to select the "best" peptide for the selected peptide
             peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinKey);
@@ -1951,5 +1967,14 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         updateProteinTableCellRenderers();
+    }
+
+    /**
+     * Deactivates the self updating tables.
+     */
+    public void deactivateSelfUpdatingTableModels() {
+        if (proteinTable.getModel() instanceof SelfUpdatingTableModel) {
+            ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(false);
+        }
     }
 }
