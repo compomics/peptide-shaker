@@ -1113,10 +1113,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 || processingPreferences.getPeptideFDR() != 1
                 || processingPreferences.getPsmFDR() != 1
                 || ptmScoringPreferences.getFlrThreshold() != 1
-                || ptmScoringPreferences.isaScoreNeutralLosses()) {
+                || ptmScoringPreferences.isProbabilisticScoreNeutralLosses()
+                || !ptmScoringPreferences.isEstimateFlr()) {
             preferencesTxt.setText("User Defined");
-        } else if (!ptmScoringPreferences.aScoreCalculation()) {
-            preferencesTxt.setText("Reduced PTM specificity");
+        } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+            preferencesTxt.setText("Reduced PTM scoring");
         } else {
             preferencesTxt.setText("Default");
         }
