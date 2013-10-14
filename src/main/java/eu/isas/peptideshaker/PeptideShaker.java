@@ -308,10 +308,12 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Estimating PTM FLR.", true, true);
-        psmPTMMap.cure();
-        psmPTMMap.estimateProbabilities(waitingHandler);
-        computeFLR(waitingHandler, ptmScoringPreferences.getFlrThreshold());
+        if (ptmScoringPreferences.isEstimateFlr()) {
+            waitingHandler.appendReport("Thresholding PTM localizations.", true, true);
+            psmPTMMap.cure();
+            psmPTMMap.estimateProbabilities(waitingHandler);
+            computeFLR(waitingHandler, ptmScoringPreferences.getFlrThreshold());
+        }
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -1548,7 +1550,12 @@ public class PeptideShaker {
                                 Double ptmMass = ptm.getMass();
                                 int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
                                 TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
-                                double aScoreThreshold = -currentMap.getTargetDecoyResults().getScoreLimit();
+                                double threshold;
+                                if (ptmScoringPreferences.isEstimateFlr()) {
+                                    threshold = -currentMap.getTargetDecoyResults().getScoreLimit();
+                                } else {
+                                    threshold = ptmScoringPreferences.getProbabilisticScoreThreshold();
+                                }
                                 ArrayList<Integer> aLocations = PtmScoring.getLocations(bestAKey);
                                 if (aLocations.size() > 1) {
                                     String bestDKey = ptmScoring.getBestDeltaScoreLocations();
@@ -1557,7 +1564,7 @@ public class PeptideShaker {
                                     for (ModificationMatch modMatch : modMatches.get(modName)) {
                                         modMatch.setConfident(false);
                                     }
-                                } else if (ptmScoring.getAScore(bestAKey) >= aScoreThreshold) {
+                                } else if (ptmScoring.getAScore(bestAKey) >= threshold) {
                                     for (ModificationMatch modMatch : modMatches.get(modName)) {
                                         modMatch.setConfident(true);
                                         modMatch.setModificationSite(aLocations.get(0));
@@ -1933,8 +1940,8 @@ public class PeptideShaker {
 
         attachDeltaScore(spectrumMatch);
 
-        if (scoringPreferences.aScoreCalculation()) {
-            attachAScore(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences);
+        if (scoringPreferences.isProbabilitsticScoreCalculation()) {
+            attachProbabilisticScore(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences);
         }
 
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
@@ -2038,16 +2045,16 @@ public class PeptideShaker {
     }
 
     /**
-     * Attaches the a-score.
+     * Attaches the selected probabilistic PTM score.
      *
      * @param spectrumMatch the spectrum match studied, the A-score will be
      * calculated for the best assumption
      * @param searchParameters the identification parameters
      * @param annotationPreferences the annotation preferences
      * @throws Exception exception thrown whenever an error occurred while
-     * computing the A-score
+     * computing the score
      */
-    private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
+    private void attachProbabilisticScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
@@ -2086,16 +2093,18 @@ public class PeptideShaker {
             annotationPreferences.setCurrentSettings(peptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
 
             for (Double ptmMass : modifications.keySet()) {
-                if (nMod.get(ptmMass) == 1) {
-                    HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(peptide,
+                HashMap<ArrayList<Integer>, Double> scores = null;
+                if (scoringPreferences.getSelectedProbabilisticScore() == PTMScoringPreferences.ProbabilisticScore.AScore && nMod.get(ptmMass) == 1) {
+                    scores = AScore.getAScore(peptide,
                             modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isaScoreNeutralLosses());
-
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
+                }
+                if (scores != null) {
                     PTM bestModification = null;
                     for (PTM ptm : modifications.get(ptmMass)) {
-                        for (ArrayList<Integer> modificationProfile : aScores.keySet()) { //@TODO: use only the best scoring profile here
+                        for (ArrayList<Integer> modificationProfile : scores.keySet()) { //@TODO: use only the best scoring profile here
                             if (modificationProfile.isEmpty()) {
                                 throw new IllegalArgumentException("No PTM localization returned by the A-score for PTM of mass " + ptmMass + " in spectrum " + spectrumMatch.getKey() + ".");
                             }
@@ -2120,23 +2129,21 @@ public class PeptideShaker {
                         ptmScoring = new PtmScoring(ptmName);
                     }
 
-                    for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
-                        ptmScoring.addAScore(modificationProfile, aScores.get(modificationProfile));
+                    for (ArrayList<Integer> modificationProfile : scores.keySet()) {
+                        ptmScoring.addAScore(modificationProfile, scores.get(modificationProfile));
                     }
 
                     ptmScores.addPtmScoring(ptmName, ptmScoring);
 
-                    if (aScores.size() == 1) {
+                    if (scores.size() == 1) {
                         // here nMod = 1, no method available to date for nMod > 1
-                        int location = (new ArrayList<ArrayList<Integer>>(aScores.keySet())).get(0).get(0);
+                        int location = (new ArrayList<ArrayList<Integer>>(scores.keySet())).get(0).get(0);
                         if (location != modificationMatches.get(ptmMass).getModificationSite()) {
                             ptmScores.getPtmScoring(ptmName).setConflict(true);
                         }
                     } else {
                         ptmScores.getPtmScoring(ptmName).setConflict(true);
                     }
-                } else {
-                    // No method available for now.
                 }
             }
 
