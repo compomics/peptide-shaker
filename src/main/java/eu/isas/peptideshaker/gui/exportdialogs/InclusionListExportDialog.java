@@ -349,7 +349,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                                 PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
                                 InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), 
                                         peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), 
-                                        exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog);
+                                        exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog, peptideShakerGUI.getFilterPreferences());
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();

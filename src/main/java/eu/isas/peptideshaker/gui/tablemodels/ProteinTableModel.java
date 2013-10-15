@@ -76,7 +76,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         if (identification != null) {
             try {
                 if (peptideShakerGUI.getDisplayPreferences().showValidatedProteinsOnly()) {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(peptideShakerGUI.getFilterPreferences()); // show validated proteins only
                 } else {
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences()); // show all proteins
                 }

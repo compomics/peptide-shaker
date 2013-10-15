@@ -186,20 +186,20 @@ public class OutputGenerator {
 
             try {
                 writer = new BufferedWriter(new FileWriter(selectedFile));
-            } catch (IOException e) {
+
+                if (aProteinKeys == null) {
+                    if (onlyValidated) {
+                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
+                    } else {
+                        proteinKeys = identification.getProteinIdentification();
+                    }
+                } else {
+                    proteinKeys = aProteinKeys;
+                }
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
-            }
-
-            if (aProteinKeys == null) {
-                if (onlyValidated) {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins();
-                } else {
-                    proteinKeys = identification.getProteinIdentification();
-                }
-            } else {
-                proteinKeys = aProteinKeys;
             }
 
             if (parentDialog != null) {
@@ -2468,20 +2468,20 @@ public class OutputGenerator {
 
             try {
                 writer = new BufferedWriter(new FileWriter(selectedFile));
-            } catch (IOException e) {
+
+                if (aProteinKeys == null) {
+                    if (onlyValidated) {
+                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(progressDialog, peptideShakerGUI.getFilterPreferences());
+                    } else {
+                        proteinKeys = identification.getProteinIdentification();
+                    }
+                } else {
+                    proteinKeys = aProteinKeys;
+                }
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
-            }
-
-            if (aProteinKeys == null) {
-                if (onlyValidated) {
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins();
-                } else {
-                    proteinKeys = identification.getProteinIdentification();
-                }
-            } else {
-                proteinKeys = aProteinKeys;
             }
 
             if (parentDialog != null) {
