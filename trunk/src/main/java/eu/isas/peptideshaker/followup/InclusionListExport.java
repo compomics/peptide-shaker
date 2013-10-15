@@ -10,6 +10,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,33 +31,32 @@ public class InclusionListExport {
      * Writes an inclusion list based on the validated PSMs of the validated
      * peptides of the validated proteins.
      *
-     * @param destinationFile
-     * @param identification
-     * @param identificationFeaturesGenerator
-     * @param proteinFilters
-     * @param peptideFilters
-     * @param exportFormat
-     * @param searchParameters
-     * @param rtWindow
-     * @param waitingHandler
+     * @param destinationFile the file where to write the inclusion list
+     * @param identification the identification object containing all matches and match parameters
+     * @param identificationFeaturesGenerator the identification features generator calculating identification metrics on the fly
+     * @param proteinFilters the inclusion list protein filters
+     * @param peptideFilters the inclusion list peptide filters
+     * @param exportFormat the export format
+     * @param searchParameters the identification parameters
+     * @param rtWindow the window to use for retention time
+     * @param waitingHandler waiting handler displaying progress to the user (can be null)
+     * @param filterPreferences the general filtering preferences of this project
+     * 
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         FileWriter f = new FileWriter(destinationFile);
 
         try {
-
             BufferedWriter b = new BufferedWriter(f);
-
             try {
-
                 SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-                ArrayList<String> validatedProteins = identificationFeaturesGenerator.getValidatedProteins();
+                ArrayList<String> validatedProteins = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
                 PSParameter psParameter = new PSParameter();
 
                 if (waitingHandler != null) {

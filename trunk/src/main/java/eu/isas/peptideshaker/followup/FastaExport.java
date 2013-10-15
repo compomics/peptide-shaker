@@ -5,6 +5,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -42,9 +43,9 @@ public class FastaExport {
      * @throws InterruptedException
      */
     public static void exportFasta(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler)
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, false);
+        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, false);
     }
 
     /**
@@ -60,6 +61,7 @@ public class FastaExport {
      * @param exportType the export type (see enum below)
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process
+     * @param filterPreferences the filter preferences
      *
      * @throws IOException
      * @throws SQLException
@@ -67,9 +69,9 @@ public class FastaExport {
      * @throws InterruptedException
      */
     public static void exportAccessions(File destinationFile, Identification identification,
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler)
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, true);
+        export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, filterPreferences, true);
     }
 
     /**
@@ -85,6 +87,7 @@ public class FastaExport {
      * @param exportType the export type (see enum below)
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process
+     * @param filterPreferences the filter preferences
      * @param accessionOnly if true only the accession of the protein will be
      * exported, if false the entire information in FASTA format
      *
@@ -94,7 +97,7 @@ public class FastaExport {
      * @throws InterruptedException
      */
     public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+            ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         FileWriter f = new FileWriter(destinationFile);
@@ -139,12 +142,12 @@ public class FastaExport {
                 } else {
 
                     if (exportType == ExportType.validated_main_accession) {
-                        identification.loadProteinMatches(identificationFeaturesGenerator.getValidatedProteins(), waitingHandler);
+                        identification.loadProteinMatches(identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences), waitingHandler);
                     }
 
                     ArrayList<String> exported = new ArrayList<String>();
 
-                    for (String matchKey : identificationFeaturesGenerator.getValidatedProteins()) {
+                    for (String matchKey : identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences)) {
                         ArrayList<String> accessions = new ArrayList<String>();
                         if (exportType == ExportType.validated_main_accession) {
                             ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);

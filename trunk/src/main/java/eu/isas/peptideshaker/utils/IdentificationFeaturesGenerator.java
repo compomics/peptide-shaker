@@ -1271,9 +1271,30 @@ public class IdentificationFeaturesGenerator {
      * Returns the list of validated protein keys. Returns null if the proteins
      * have yet to be validated.
      *
+     * @param filterPreferences the filtering preferences used. can be null
+     *
      * @return the list of validated protein keys
      */
-    public ArrayList<String> getValidatedProteins() {
+    public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return getValidatedProteins(null, filterPreferences);
+    }
+
+    /**
+     * Returns the list of validated protein keys. Returns null if the proteins
+     * have yet to be validated.
+     *
+     * @param filterPreferences the filtering preferences used. can be null
+     * @param waitingHandler the waiting handler, can be null
+     *
+     * @return the list of validated protein keys
+     */
+    public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        ArrayList<String> result = identificationFeaturesCache.getValidatedProteinList();
+        if (result == null) {
+            getProcessedProteinKeys(waitingHandler, filterPreferences);
+        }
         return identificationFeaturesCache.getValidatedProteinList();
     }
 
