@@ -371,7 +371,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/relims_logo.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Reshake"/>
+            <Property name="text" type="java.lang.String" value="Reshake!"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze a PRIDE experiment&lt;br&gt;&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
