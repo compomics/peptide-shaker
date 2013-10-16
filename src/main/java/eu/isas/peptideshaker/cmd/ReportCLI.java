@@ -69,13 +69,13 @@ public class ReportCLI extends CpsParent {
         try {
             loadCpsFile(waitingHandler);
         } catch (SQLException e) {
-            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile.getAbsolutePath() + ".\n\n"
-                    + "It looks like another instance of PeptideShaker is still connected to the file.\n"
+            waitingHandler.appendReport("An error occured while reading: " + cpsFile.getAbsolutePath() + ". "
+                    + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
             waitingHandler.appendReport(cpsFile.getAbsolutePath() + " successfuly loaded.", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReport("An error occured while reading: " + cpsFile.getAbsolutePath() + ".", true, true);
             e.printStackTrace();
             return 1;
         }

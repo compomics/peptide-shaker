@@ -45,7 +45,11 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             report += parent.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";
-            report += "<pre>" + projectDetails.getReport() + "</pre>";
+            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
+                report += "<pre>" + projectDetails.getReport() + "</pre>";
+            } else {
+                report += projectDetails.getReport();
+            }
 
             report += "</html>";
 
