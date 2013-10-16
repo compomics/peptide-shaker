@@ -799,7 +799,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="slidersSplitPane" pref="389" max="32767" attributes="0"/>
+                              <Component id="slidersSplitPane" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -843,8 +843,8 @@
                               </Properties>
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                  <JTabbedPaneConstraints tabName="A-Scores">
-                                    <Property name="tabTitle" type="java.lang.String" value="A-Scores"/>
+                                  <JTabbedPaneConstraints tabName="Probabilistic Scores">
+                                    <Property name="tabTitle" type="java.lang.String" value="Probabilistic Scores"/>
                                   </JTabbedPaneConstraints>
                                 </Constraint>
                               </Constraints>
@@ -938,8 +938,8 @@
                               </Properties>
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                  <JTabbedPaneConstraints tabName="Delta Scores">
-                                    <Property name="tabTitle" type="java.lang.String" value="Delta Scores"/>
+                                  <JTabbedPaneConstraints tabName="D-Scores">
+                                    <Property name="tabTitle" type="java.lang.String" value="D-Scores"/>
                                   </JTabbedPaneConstraints>
                                 </Constraint>
                               </Constraints>

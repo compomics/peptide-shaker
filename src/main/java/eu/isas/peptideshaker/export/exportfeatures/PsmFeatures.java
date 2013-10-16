@@ -16,7 +16,7 @@ public enum PsmFeatures implements ExportFeature {
     variable_ptms("Variable Modifications", "The variable modifications."),
     fixed_ptms("Fixed Modifications", "The fixed modifications."),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization."),
-    a_score("A-score", "A-score for PTM localization."),
+    probabilistic_score("probabilistic score", "The probabilistic score (e.g. A-score or PhosphoRS) used for PTM localization ."),
     d_score("D-score", "D-score for PTM localization."),
     spectrum_file("Spectrum File", "The spectrum file."),
     spectrum_title("Spectrum Title", "The title of the spectrum."),
@@ -69,7 +69,7 @@ public enum PsmFeatures implements ExportFeature {
         result.add(variable_ptms);
         result.add(fixed_ptms);
         result.add(localization_confidence);
-        result.add(a_score);
+        result.add(probabilistic_score);
         result.add(d_score);
         result.add(spectrum_file);
         result.add(spectrum_title);

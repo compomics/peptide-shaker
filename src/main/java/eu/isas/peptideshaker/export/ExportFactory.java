@@ -490,7 +490,7 @@ public class ExportFactory implements Serializable {
         sectionContent.add(PsmFeatures.modified_sequence);
         sectionContent.add(PsmFeatures.variable_ptms);
         sectionContent.add(PsmFeatures.d_score);
-        sectionContent.add(PsmFeatures.a_score);
+        sectionContent.add(PsmFeatures.probabilistic_score);
         sectionContent.add(PsmFeatures.localization_confidence);
         sectionContent.add(PsmFeatures.fixed_ptms);
 
@@ -616,7 +616,7 @@ public class ExportFactory implements Serializable {
         // ptms
         sectionContent.add(PsmFeatures.variable_ptms);
         sectionContent.add(PsmFeatures.d_score);
-        sectionContent.add(PsmFeatures.a_score);
+        sectionContent.add(PsmFeatures.probabilistic_score);
         sectionContent.add(PsmFeatures.localization_confidence);
         sectionContent.add(PsmFeatures.fixed_ptms);
 

@@ -42,8 +42,13 @@ public class PtmScoring implements Serializable {
     private HashMap<String, Double> deltaScores = new HashMap<String, Double>();
     /**
      * The A scores indexed by the modification location possibility.
+     * @deprecated use probabilistic scores instead
      */
     private HashMap<String, Double> aScores = new HashMap<String, Double>();
+    /**
+     * The A scores indexed by the modification location possibility.
+     */
+    private HashMap<String, Double> probabilisticScores = new HashMap<String, Double>();
     /**
      * The name of the modification of interest.
      */
@@ -103,12 +108,25 @@ public class PtmScoring implements Serializable {
     /**
      * Adds an A-score for the given locations combination.
      *
+     * @deprecated use addProbabilisticScore
+     * 
      * @param locations the combination of locations
      * @param aScore The corresponding A-score
      */
     public void addAScore(ArrayList<Integer> locations, double aScore) {
         String locationsKey = getKey(locations);
         addAScore(locationsKey, aScore);
+    }
+
+    /**
+     * Adds a probabilistic score for the given locations combination.
+     *
+     * @param locations the combination of locations
+     * @param aScore The corresponding A-score
+     */
+    public void addProbabilisticScore(ArrayList<Integer> locations, double aScore) {
+        String locationsKey = getKey(locations);
+        addProbabilisticScore(locationsKey, aScore);
     }
 
     /**
@@ -127,6 +145,8 @@ public class PtmScoring implements Serializable {
     /**
      * Adds an A score for the given locations combination given as a key.
      *
+     * @deprecated use addProbabilisticScore instead
+     * 
      * @param locationsKey the combination of locations
      * @param aScore The corresponding A-score
      */
@@ -134,6 +154,19 @@ public class PtmScoring implements Serializable {
         if (!aScores.containsKey(locationsKey)
                 || aScores.get(locationsKey) > aScore) {
             aScores.put(locationsKey, aScore);
+        }
+    }
+
+    /**
+     * Adds a probabilistic score for the given locations combination given as a key.
+     * 
+     * @param locationsKey the combination of locations
+     * @param score The corresponding A-score
+     */
+    public void addProbabilisticScore(String locationsKey, double score) {
+        if (!probabilisticScores.containsKey(locationsKey)
+                || probabilisticScores.get(locationsKey) > score) {
+            probabilisticScores.put(locationsKey, score);
         }
     }
 
@@ -162,8 +195,29 @@ public class PtmScoring implements Serializable {
     }
 
     /**
+     * Returns the best scoring modification profile based on the probabiltistic score.
+     *
+     * @return the best scoring modification profile based on the probabiltistic score
+     */
+    public String getBestProbabilisticScoreLocations() {
+        if (probabilisticScores == null) {
+            // needed for backward compatibility
+            return getBestAScoreLocations();
+        }
+        String bestKey = null;
+        for (String key : probabilisticScores.keySet()) {
+            if (bestKey == null || probabilisticScores.get(bestKey) < probabilisticScores.get(key)) {
+                bestKey = key;
+            }
+        }
+        return bestKey;
+    }
+
+    /**
      * Returns the best scoring modification profile based on the a-score score.
      *
+     * @deprecated use getBestProbabilisticScoreLocations instead
+     * 
      * @return the best scoring modification profile based on the a-score score
      */
     public String getBestAScoreLocations() {
@@ -177,8 +231,23 @@ public class PtmScoring implements Serializable {
     }
 
     /**
+     * Returns the implemented locations for the probabilistic core.
+     *
+     * @return the implemented locations for the probabilistic score
+     */
+    public ArrayList<String> getProbabilisticScoreLocations() {
+        if (probabilisticScores == null) {
+            return getAScoreLocations();
+        }
+        return new ArrayList<String>(probabilisticScores.keySet());
+    }
+
+
+    /**
      * Returns the implemented locations for the A-score.
      *
+     * @deprecated use getProbabilisticScoreLocations
+     * 
      * @return the implemented locations for the A-score
      */
     public ArrayList<String> getAScoreLocations() {
@@ -203,6 +272,22 @@ public class PtmScoring implements Serializable {
      * @param locationsKey the locations possibility given as a key
      * @return the A-score
      */
+    public Double getProbabilisticScore(String locationsKey) {
+        if (probabilisticScores == null) {
+            return getAScore(locationsKey);
+        }
+        return probabilisticScores.get(locationsKey);
+    }
+
+    /**
+     * Returns the A-score for the specified locations possibility given as a
+     * key.
+     *
+     * @deprecated use getProbabilisticScore
+     * 
+     * @param locationsKey the locations possibility given as a key
+     * @return the A-score
+     */
     public Double getAScore(String locationsKey) {
         return aScores.get(locationsKey);
     }
@@ -216,8 +301,8 @@ public class PtmScoring implements Serializable {
         for (String positions : anotherScore.getDeltaScorelocations()) {
             addDeltaScore(positions, anotherScore.getDeltaScore(positions));
         }
-        for (String positions : anotherScore.getAScoreLocations()) {
-            addAScore(positions, anotherScore.getAScore(positions));
+        for (String positions : anotherScore.getProbabilisticScoreLocations()) {
+            addProbabilisticScore(positions, anotherScore.getProbabilisticScore(positions));
         }
         siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
         if (anotherScore.getPtmSiteConfidence() < CONFIDENT) {

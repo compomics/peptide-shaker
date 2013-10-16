@@ -727,16 +727,16 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(ptmLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         ptmLayeredPanelLayout.setVerticalGroup(
             ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 373, Short.MAX_VALUE)
+            .addGap(0, 375, Short.MAX_VALUE)
             .addGroup(ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(ptmLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -848,14 +848,14 @@ public class PtmPanel extends javax.swing.JPanel {
             selectedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, selectedPeptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
                 .addContainerGap())
         );
         selectedPeptidesJPanelLayout.setVerticalGroup(
             selectedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(selectedPeptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -926,9 +926,9 @@ public class PtmPanel extends javax.swing.JPanel {
         modifiedPeptidesPanel.setLayout(modifiedPeptidesPanelLayout);
         modifiedPeptidesPanelLayout.setHorizontalGroup(
             modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 812, Short.MAX_VALUE)
+            .addGap(0, 813, Short.MAX_VALUE)
             .addGroup(modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE))
+                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE))
         );
         modifiedPeptidesPanelLayout.setVerticalGroup(
             modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -989,16 +989,16 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         relatedPeptidesPanelLayout.setVerticalGroup(
             relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
+            .addGap(0, 205, Short.MAX_VALUE)
             .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1069,7 +1069,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesJPanel.setLayout(relatedPeptidesJPanelLayout);
         relatedPeptidesJPanelLayout.setHorizontalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE)
+            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
         );
         relatedPeptidesJPanelLayout.setVerticalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1160,7 +1160,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addGap(20, 20, 20))
             .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1170,7 +1170,7 @@ public class PtmPanel extends javax.swing.JPanel {
             psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aScoreMinValueJLabel)
@@ -1179,7 +1179,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        spectrumTabbedPane.addTab("A-Scores", psmAScoresJPanel);
+        spectrumTabbedPane.addTab("Probabilistic Scores", psmAScoresJPanel);
 
         psmDeltaScoresJPanel.setOpaque(false);
 
@@ -1219,7 +1219,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addGap(20, 20, 20))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmDeltaScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1229,7 +1229,7 @@ public class PtmPanel extends javax.swing.JPanel {
             psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(deltaScoreMinValueJLabel)
@@ -1238,7 +1238,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        spectrumTabbedPane.addTab("Delta Scores", psmDeltaScoresJPanel);
+        spectrumTabbedPane.addTab("D-Scores", psmDeltaScoresJPanel);
 
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1267,7 +1267,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1329,9 +1329,9 @@ public class PtmPanel extends javax.swing.JPanel {
             sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sliderPanelLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                 .addGap(27, 27, 27)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                 .addGap(47, 47, 47))
         );
 
@@ -1343,7 +1343,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                 .addContainerGap())
         );
         spectrumAndFragmentIonPanelLayout.setVerticalGroup(
@@ -1388,14 +1388,14 @@ public class PtmPanel extends javax.swing.JPanel {
         exportSpectrumJButton.setEnabled(false);
         exportSpectrumJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSpectrumJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportSpectrumJButtonMouseReleased(evt);
             }
         });
         exportSpectrumJButton.setBounds(530, 0, 10, 19);
@@ -1472,16 +1472,16 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(modsPsmsLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         modsPsmsLayeredPanelLayout.setVerticalGroup(
             modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 163, Short.MAX_VALUE)
+            .addGap(0, 165, Short.MAX_VALUE)
             .addGroup(modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(modsPsmsLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1598,16 +1598,16 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         relatedPsmsPanelLayout.setVerticalGroup(
             relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 223, Short.MAX_VALUE)
+            .addGap(0, 225, Short.MAX_VALUE)
             .addGroup(relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -3960,9 +3960,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
 
                 // A-score
-                bestLocation = locationScoring.getBestAScoreLocations();
+                bestLocation = locationScoring.getBestProbabilisticScoreLocations();
                 if (bestLocation != null) {
-                    bestScore = locationScoring.getAScore(bestLocation);
+                    bestScore = locationScoring.getProbabilisticScore(bestLocation);
                     ArrayList<Integer> modificationSites = PtmScoring.getLocations(bestLocation);
                     for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
                         if (modificationSites.contains(aa)) {
@@ -4874,7 +4874,7 @@ public class PtmPanel extends javax.swing.JPanel {
                                 }
                             }
 
-                            ArrayList<String> aScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getAScoreLocations();
+                            ArrayList<String> aScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getProbabilisticScoreLocations();
 
                             for (int j = 0; j < aScoreLocations.size(); j++) {
 
@@ -4882,7 +4882,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                                 for (int k = 0; k < locations.length; k++) {
                                     int location = new Integer(locations[k]);
-                                    psmAScoresTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getAScore(aScoreLocations.get(j)), i, location);
+                                    psmAScoresTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getProbabilisticScore(aScoreLocations.get(j)), i, location);
                                 }
                             }
                         } else {

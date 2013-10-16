@@ -622,7 +622,7 @@ public class TxtExporter {
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
 
-                    String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                    String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
                     if (location != null) {
                         ArrayList<Integer> locations = PtmScoring.getLocations(location);
                         Collections.sort(locations);
@@ -638,7 +638,7 @@ public class TxtExporter {
                             commaSeparated += aa;
                         }
                         line.append(commaSeparated).append(": ");
-                        Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
+                        Double aScore = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
                         line.append(aScore).append("");
                     } else {
                         line.append("Not Scored");

@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
+import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -302,7 +303,12 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Scoring PTMs in PSMs.", true, true); // @TODO: this is very slow if memory is full!!
+        String report = "Scoring PTMs in PSMs (D-score";
+        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+            report += " and " + ptmScoringPreferences.getSelectedProbabilisticScore().getName();
+        }
+        report += ")";
+        waitingHandler.appendReport(report, true, true); // @TODO: this is very slow if memory is full!!
         scorePsmPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
@@ -400,7 +406,7 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        String report = "Identification processing completed.\n\n";
+        report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
         ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
@@ -1545,8 +1551,8 @@ public class PeptideShaker {
                             int confidence = PtmScoring.VERY_CONFIDENT;
                             ptmScoring.setPtmSite(bestDKey, confidence);
                         } else {
-                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestAScoreLocations() != null) {
-                                String bestAKey = ptmScoring.getBestAScoreLocations();
+                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestProbabilisticScoreLocations()!= null) {
+                                String bestAKey = ptmScoring.getBestProbabilisticScoreLocations();
                                 Double ptmMass = ptm.getMass();
                                 int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
                                 TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
@@ -1564,7 +1570,7 @@ public class PeptideShaker {
                                     for (ModificationMatch modMatch : modMatches.get(modName)) {
                                         modMatch.setConfident(false);
                                     }
-                                } else if (ptmScoring.getAScore(bestAKey) >= threshold) {
+                                } else if (ptmScoring.getProbabilisticScore(bestAKey) >= threshold) {
                                     for (ModificationMatch modMatch : modMatches.get(modName)) {
                                         modMatch.setConfident(true);
                                         modMatch.setModificationSite(aLocations.get(0));
@@ -1950,10 +1956,10 @@ public class PeptideShaker {
             for (String modification : ptmScores.getScoredPTMs()) {
 
                 PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
-                String bestAKey = ptmScoring.getBestAScoreLocations();
+                String bestAKey = ptmScoring.getBestProbabilisticScoreLocations();
 
                 if (bestAKey != null) {
-                    psmPTMMap.addPoint(modification, -ptmScoring.getAScore(bestAKey), spectrumMatch);
+                    psmPTMMap.addPoint(modification, -ptmScoring.getProbabilisticScore(bestAKey), spectrumMatch);
                 }
             }
         }
@@ -2100,6 +2106,11 @@ public class PeptideShaker {
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
+                } else if (scoringPreferences.getSelectedProbabilisticScore() == PTMScoringPreferences.ProbabilisticScore.PhosphoRS) {
+                    scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
+                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                            spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
                 }
                 if (scores != null) {
                     PTM bestModification = null;
@@ -2130,7 +2141,7 @@ public class PeptideShaker {
                     }
 
                     for (ArrayList<Integer> modificationProfile : scores.keySet()) {
-                        ptmScoring.addAScore(modificationProfile, scores.get(modificationProfile));
+                        ptmScoring.addProbabilisticScore(modificationProfile, scores.get(modificationProfile));
                     }
 
                     ptmScores.addPtmScoring(ptmName, ptmScoring);
