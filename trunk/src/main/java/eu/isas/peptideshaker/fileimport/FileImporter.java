@@ -204,20 +204,20 @@ public class FileImporter {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.", true, true);
+            waitingHandler.appendReport(e.getLocalizedMessage() + " Please refer to the <a href=\"https://code.google.com/p/peptide-shaker/#Troubleshooting\">troubleshooting section</a>.", true, true);
         } catch (ClassNotFoundException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
-                    + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", true, true);
+            waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry. "
+                    + "If the error occurs again please report bug using our <a href=\"https://code.google.com/p/peptide-shaker/issues/list\">issue tracker</a>.", true, true);
         } catch (NullPointerException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("An error occurred when importing the sequences. "
                     + "Please check the Search Parameters. See the log file for details. "
-                    + "If the error persists please let us know at http://peptide-shaker.googlecode.com.", true, true);
+                    + "If the error persists please let us know using our <a href=\"https://code.google.com/p/peptide-shaker/issues/list\">issue tracker</a>.", true, true);
         }
     }
 
@@ -476,7 +476,7 @@ public class FileImporter {
                 } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
                     waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                    waitingHandler.appendReport("Please see the Database help page: http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
+                    waitingHandler.appendReport("Please see the <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database help page</a>.", true, true);
                 } else {
                     waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
@@ -502,7 +502,8 @@ public class FileImporter {
                 identification.establishConnection(dbFolder, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();
-                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.", true, true);
+                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. "
+                        + "Please let us know using our <a href=\"https://code.google.com/p/peptide-shaker/issues/list\">issue tracker</a>.", true, true);
                 identification.setIsDB(false);
             }
         }
@@ -946,9 +947,9 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.resetSecondaryProgressCounter();
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
-                
-                // @TODO: check for duplicate spectrum title and show the warning in the lower right corner of the main frame
-                
+
+                // @TODO: check for duplicate spectrum titles and show the warning in the lower right corner of the main frame
+
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }

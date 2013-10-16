@@ -1117,7 +1117,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 || !ptmScoringPreferences.isEstimateFlr()) {
             preferencesTxt.setText("User Defined");
         } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-            preferencesTxt.setText("Reduced PTM scoring");
+            preferencesTxt.setText("Reduced PTM Scoring");
         } else {
             preferencesTxt.setText("Default");
         }
@@ -1380,7 +1380,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),

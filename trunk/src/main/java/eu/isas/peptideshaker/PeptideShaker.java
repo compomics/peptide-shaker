@@ -219,7 +219,7 @@ public class PeptideShaker {
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
             ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
-        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n", true, true);
+        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")<br>", true, true);
 
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
@@ -406,7 +406,7 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        report = "Identification processing completed.\n\n";
+        String report = "Identification processing completed.";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
         ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
@@ -469,12 +469,17 @@ public class PeptideShaker {
                 if (detailedReport.length() > 0) {
                     detailedReport = "The following identification classes resulted in non robust statistical estimations."
                             + "We advice to control the quality of the corresponding matches: \n\n" + detailedReport;
+                    
+                    // @TODO: show in the lower right corner of the main frame instead
+                    
                     report += "Warning: Non robust statistical identifications detected. See File > Project Properties.";
                 }
             }
         }
 
         waitingHandler.appendReport(report, true, true);
+        waitingHandler.appendReportEndLine();
+        waitingHandler.appendReportEndLine();
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
         waitingHandler.setRunFinished();
     }
