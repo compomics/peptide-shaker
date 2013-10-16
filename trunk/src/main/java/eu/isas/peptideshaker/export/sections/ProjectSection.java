@@ -107,15 +107,7 @@ public class ProjectSection {
                     writer.write(sample);
                     break;
                 case search_engines:
-                    ArrayList<String> searchEngines = new ArrayList<String>();
-                    IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-                    ArrayList<File> idFiles = projectDetails.getIdentificationFiles();
-                    for (File idFile : idFiles) {
-                        String searchEngine = SearchEngine.getName(idFileReaderFactory.getSearchEngine(idFile));
-                        if (!searchEngines.contains(searchEngine)) {
-                            searchEngines.add(searchEngine);
-                        }
-                    }
+                    ArrayList<String> searchEngines = projectDetails.getSearchEnginesNames();
                     Collections.sort(searchEngines);
                     for (int i = 0 ; i < searchEngines.size() ; i++) {
                         if (i>0) {

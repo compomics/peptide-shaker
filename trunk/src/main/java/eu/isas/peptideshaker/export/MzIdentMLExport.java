@@ -1024,7 +1024,7 @@ public class MzIdentMLExport {
 
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
 
-                                        String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                                        String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
                                         if (location != null) {
                                             ArrayList<Integer> locations = PtmScoring.getLocations(location);
                                             Collections.sort(locations);
@@ -1040,7 +1040,7 @@ public class MzIdentMLExport {
                                                 commaSeparated += aa;
                                             }
                                             aScore += commaSeparated + ": ";
-                                            aScore += ptmScores.getPtmScoring(mod).getAScore(location);
+                                            aScore += ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
                                         } else {
                                             aScore += "Not Scored";
                                         }

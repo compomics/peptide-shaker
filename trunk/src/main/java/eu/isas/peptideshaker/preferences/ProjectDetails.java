@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -370,5 +372,41 @@ public class ProjectDetails implements Serializable {
      */
     public void setPrideOutputFolder(String prideOutputFolder) {
         this.prideOutputFolder = prideOutputFolder;
+    }
+
+    /**
+     * Returns a list of search engines used based on the identification files of the project.
+     * 
+     * @return a list of search engines indexed by the static field of the SearchEngine class
+     */
+    public ArrayList<Integer> getSearchEnginesIndexes() {
+        ArrayList<Integer> searchEngines = new ArrayList<Integer>();
+        IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+        ArrayList<File> idFiles = identificationFiles;
+        for (File idFile : idFiles) {
+            Integer searchEngine = idFileReaderFactory.getSearchEngine(idFile);
+            if (!searchEngines.contains(searchEngine)) {
+                searchEngines.add(searchEngine);
+            }
+        }
+        return searchEngines;
+    }
+
+    /**
+     * Returns a list of search engines used based on the identification files of the project.
+     * 
+     * @return a list of search engines indexed by their name
+     */
+    public ArrayList<String> getSearchEnginesNames() {
+        ArrayList<String> searchEngines = new ArrayList<String>();
+        IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+        ArrayList<File> idFiles = identificationFiles;
+        for (File idFile : idFiles) {
+            String searchEngine = SearchEngine.getName(idFileReaderFactory.getSearchEngine(idFile));
+            if (!searchEngines.contains(searchEngine)) {
+                searchEngines.add(searchEngine);
+            }
+        }
+        return searchEngines;
     }
 }

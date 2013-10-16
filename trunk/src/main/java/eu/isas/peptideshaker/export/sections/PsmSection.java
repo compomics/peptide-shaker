@@ -260,7 +260,7 @@ public class PsmSection {
 
                             writer.write(separator);
                             break;
-                        case a_score:
+                        case probabilistic_score:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
@@ -277,7 +277,7 @@ public class PsmSection {
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                     output += mod + " (";
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                                        String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
                                         if (location != null) {
                                             ArrayList<Integer> locations = PtmScoring.getLocations(location);
                                             Collections.sort(locations);
@@ -289,7 +289,7 @@ public class PsmSection {
                                                 commaSeparated += aa;
                                             }
                                             output += commaSeparated + ": ";
-                                            Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
+                                            Double aScore = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
                                             output += aScore + "";
                                         } else {
                                             output += "Not Scored";

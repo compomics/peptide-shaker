@@ -10,21 +10,25 @@ import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.ptmscores.MDScore;
+import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Toolkit;
@@ -1145,6 +1149,7 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+                        PTMScoringPreferences ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         if (psmKeys != null) {
@@ -1171,6 +1176,9 @@ public class OutputGenerator {
                             }
                             if (location) {
                                 writer.write("Location Confidence" + SEPARATOR);
+                                if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                    writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + SEPARATOR);
+                                }
                                 writer.write("A-score" + SEPARATOR);
                                 writer.write("D-score" + SEPARATOR);
                             }
@@ -1374,41 +1382,43 @@ public class OutputGenerator {
                                                         }
                                                     }
                                                     writer.write(SEPARATOR);
-                                                    first = true;
-                                                    for (String mod : modList) {
-                                                        if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                                            if (first) {
-                                                                first = false;
-                                                            } else {
-                                                                writer.write(", ");
-                                                            }
-                                                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                                            writer.write(mod + " (");
-                                                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                                                String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
-                                                                if (location != null) {
-                                                                    ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                                                    Collections.sort(locations);
-                                                                    first = true;
-                                                                    String commaSeparated = "";
-                                                                    for (int aa : locations) {
-                                                                        if (first) {
-                                                                            first = false;
-                                                                        } else {
-                                                                            commaSeparated += ", ";
+                                                    if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                                        first = true;
+                                                        for (String mod : modList) {
+                                                            if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                                                if (first) {
+                                                                    first = false;
+                                                                } else {
+                                                                    writer.write(", ");
+                                                                }
+                                                                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                                writer.write(mod + " (");
+                                                                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                                    String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
+                                                                    if (location != null) {
+                                                                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                                                        Collections.sort(locations);
+                                                                        first = true;
+                                                                        String commaSeparated = "";
+                                                                        for (int aa : locations) {
+                                                                            if (first) {
+                                                                                first = false;
+                                                                            } else {
+                                                                                commaSeparated += ", ";
+                                                                            }
+                                                                            commaSeparated += aa;
                                                                         }
-                                                                        commaSeparated += aa;
+                                                                        writer.write(commaSeparated + ": ");
+                                                                        Double aScore = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
+                                                                        writer.write(aScore + "");
+                                                                    } else {
+                                                                        writer.write("Not Scored");
                                                                     }
-                                                                    writer.write(commaSeparated + ": ");
-                                                                    Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
-                                                                    writer.write(aScore + "");
                                                                 } else {
                                                                     writer.write("Not Scored");
                                                                 }
-                                                            } else {
-                                                                writer.write("Not Scored");
+                                                                writer.write(")");
                                                             }
-                                                            writer.write(")");
                                                         }
                                                     }
                                                     writer.write(SEPARATOR);
@@ -1591,6 +1601,10 @@ public class OutputGenerator {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+                        PTMScoringPreferences ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
+
+                        ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
+                        ArrayList<Integer> searchEngines = projectDetails.getSearchEnginesIndexes();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -1600,15 +1614,18 @@ public class OutputGenerator {
                         writer.write("Protein(s) Descriptions" + SEPARATOR);
                         writer.write("Sequence" + SEPARATOR);
                         writer.write("Modification(s)" + SEPARATOR);
-                        writer.write("A-score localization" + SEPARATOR);
-                        writer.write("A-score" + SEPARATOR);
+                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                            writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " localization" + SEPARATOR);
+                            writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " score" + SEPARATOR);
+                        }
                         writer.write("D-score localization" + SEPARATOR);
                         writer.write("D-score" + SEPARATOR);
-                        writer.write("MD-score localization" + SEPARATOR);
-                        writer.write("MD-score" + SEPARATOR);
+                        if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                            writer.write("MD-score localization" + SEPARATOR);
+                            writer.write("MD-score" + SEPARATOR);
+                        }
                         writer.write("# phosphorylations" + SEPARATOR);
                         writer.write("# phosphorylation sites" + SEPARATOR);
-                        writer.write("Conflict" + SEPARATOR);
                         writer.write("Spectrum File" + SEPARATOR);
                         writer.write("Spectrum Title" + SEPARATOR);
                         writer.write("Precursor m/z" + SEPARATOR);
@@ -1723,12 +1740,11 @@ public class OutputGenerator {
                                 PSPtmScores ptmScores = new PSPtmScores();
                                 first = true;
                                 String dLocalizations = "";
-                                String aLocalizations = "";
+                                String probabilisticLocalizations = "";
                                 String dScore = "";
                                 String mdLocation = "";
                                 String mdScore = "";
-                                String aScore = "";
-                                int conflict = 0;
+                                String probabilisticScore = "";
                                 String[] split = sequence.split("[STY]");
                                 int nSites = split.length - 1;
                                 ArrayList<String> phosphoNames = new ArrayList<String>();
@@ -1740,23 +1756,19 @@ public class OutputGenerator {
                                             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                                if (ptmScoring.isConflict()) {
-                                                    conflict = 1;
-                                                }
-                                                String location = ptmScoring.getBestAScoreLocations();
+                                                String location = ptmScoring.getBestProbabilisticScoreLocations();
                                                 if (location != null) {
                                                     ArrayList<Integer> locations = PtmScoring.getLocations(location);
                                                     Collections.sort(locations);
                                                     for (int aa : locations) {
-                                                        if (!aLocalizations.equals("")) {
-                                                            aLocalizations += ", ";
+                                                        if (!probabilisticLocalizations.equals("")) {
+                                                            probabilisticLocalizations += ", ";
                                                         }
-                                                        aLocalizations += aa;
+                                                        probabilisticLocalizations += aa;
                                                     }
-                                                    Double score = ptmScores.getPtmScoring(mod).getAScore(location);
-                                                    aScore = score + "";
+                                                    Double score = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
+                                                    probabilisticScore = score + "";
                                                 }
-
                                                 location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
                                                 if (location != null) {
                                                     ArrayList<Integer> locations = PtmScoring.getLocations(location);
@@ -1774,50 +1786,54 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
-                                if (!phosphoNames.isEmpty()) {
-                                    PeptideAssumption mascotAssumption = null;
-                                    double bestScore = 0;
-                                    for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
-                                        for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
-                                            MascotScore mascotScore = new MascotScore();
-                                            mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
-                                            if (mascotScore.getScore() > bestScore) {
-                                                mascotAssumption = peptideAssumption;
-                                                bestScore = mascotScore.getScore();
+                                if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                                    if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.MASCOT)) {
+                                        PeptideAssumption mascotAssumption = null;
+                                        double bestScore = 0;
+                                        for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
+                                            for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
+                                                MascotScore mascotScore = new MascotScore();
+                                                mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
+                                                if (mascotScore.getScore() > bestScore) {
+                                                    mascotAssumption = peptideAssumption;
+                                                    bestScore = mascotScore.getScore();
+                                                }
                                             }
                                         }
-                                    }
-                                    if (mascotAssumption != null) {
-                                        Peptide mascotPeptide = mascotAssumption.getPeptide();
-                                        Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames);
-                                        if (score != null) {
-                                            mdScore = score.toString();
-                                        }
-                                        ArrayList<Integer> sites = new ArrayList<Integer>();
-                                        for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
-                                            if (modificationMatch.getTheoreticPtm().contains("phospho")) {
-                                                sites.add(modificationMatch.getModificationSite());
+                                        if (mascotAssumption != null) {
+                                            Peptide mascotPeptide = mascotAssumption.getPeptide();
+                                            Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames);
+                                            if (score != null) {
+                                                mdScore = score.toString();
                                             }
-                                        }
-                                        Collections.sort(sites);
-                                        for (int site : sites) {
-                                            if (!mdLocation.equals("")) {
-                                                mdLocation += ", ";
+                                            ArrayList<Integer> sites = new ArrayList<Integer>();
+                                            for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                                if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                    sites.add(modificationMatch.getModificationSite());
+                                                }
                                             }
-                                            mdLocation += site;
+                                            Collections.sort(sites);
+                                            for (int site : sites) {
+                                                if (!mdLocation.equals("")) {
+                                                    mdLocation += ", ";
+                                                }
+                                                mdLocation += site;
+                                            }
                                         }
                                     }
                                 }
-
-                                writer.write(aLocalizations + SEPARATOR);
-                                writer.write(aScore + SEPARATOR);
+                                if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                                    writer.write(probabilisticLocalizations + SEPARATOR);
+                                    writer.write(probabilisticScore + SEPARATOR);
+                                }
                                 writer.write(dLocalizations + SEPARATOR);
                                 writer.write(dScore + SEPARATOR);
-                                writer.write(mdLocation + SEPARATOR);
-                                writer.write(mdScore + SEPARATOR);
+                                if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                                    writer.write(mdLocation + SEPARATOR);
+                                    writer.write(mdScore + SEPARATOR);
+                                }
                                 writer.write(nPhospho + SEPARATOR);
                                 writer.write(nSites + SEPARATOR);
-                                writer.write(conflict + SEPARATOR);
                                 writer.write(spectrumFile + SEPARATOR);
                                 writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
                                 Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());

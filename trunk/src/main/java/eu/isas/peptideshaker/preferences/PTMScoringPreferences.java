@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * This class contains the PTM scoring preferences.
  *
+ * @deprecated use the com.compomics.util.preferences version instead
  * @author Marc Vaudel
  */
 public class PTMScoringPreferences implements Serializable {
