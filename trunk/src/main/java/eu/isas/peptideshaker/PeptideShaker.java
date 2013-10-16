@@ -406,7 +406,8 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        String report = "Identification processing completed.";
+
+        report = "Identification processing completed.";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
         ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
