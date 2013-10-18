@@ -16,7 +16,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.ptmscores.MDScore;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -738,6 +737,8 @@ public class OutputGenerator {
                         ProteinMatch proteinMatch = null;
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
 
+                        // @TODO: try to batch load the spectra? as this would speed up the export...
+
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
                         identification.loadPeptideMatches(progressDialog);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
@@ -748,7 +749,7 @@ public class OutputGenerator {
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
-                        for (String peptideKey : peptideKeys) { // @TODO: replace by batch selection!!!
+                        for (String peptideKey : peptideKeys) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
@@ -991,6 +992,9 @@ public class OutputGenerator {
                                                 }
                                                 if (nSpectra) {
                                                     int cpt = 0;
+
+                                                    // @TODO: replace with: peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);?
+
                                                     identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);

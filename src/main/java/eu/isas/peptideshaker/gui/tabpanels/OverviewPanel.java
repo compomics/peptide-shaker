@@ -24,7 +24,9 @@ import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
+import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import com.compomics.util.gui.utils.SwingUtils;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -3942,10 +3944,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
@@ -4204,7 +4206,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         if (!modMatch.isVariable()) {
                             String ptmName = modMatch.getTheoreticPtm();
                             if (displayPreferences.isDisplayedPTM(ptmName)) {
-                                ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey), 
+                                ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
                                         ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 for (Integer index : indexes) {
                                     fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
@@ -4801,7 +4803,19 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     new Thread(new Runnable() {
                         public void run() {
-                            updateSelection(true);
+                            peptideShakerGUI.startNewsFeed();
+
+                            
+                            // @TODO: show the help for the tab
+                            
+//                            if (peptideShakerGUI.getUtilitiesUserPreferences().getDisplayedTips().contains("Overview")) {
+//                                NotificationDialog notificationDialog = new NotificationDialog(peptideShakerGUI, peptideShakerGUI, false, numberOfCurrentTweets, type);
+//                                notificationDialog.setLocation(peptideShakerGUI.getWidth() - 200 + peptideShakerGUI.getX(),
+//                                        peptideShakerGUI.getHeight() - 120 + peptideShakerGUI.getY());
+//                                SwingUtils.fadeInAndOut(notificationDialog);
+//                            }
+
+                            updateSelection(true); // @TODO: this is sometimes too fast and results in Row index out of range...
                             proteinTable.requestFocus();
                         }
                     }, "UpdateSelectionThread").start();
@@ -5189,7 +5203,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey), 
+                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
                         peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                 String before = "";
@@ -5628,15 +5642,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
                     if (includePeptide) {
-                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideEnd = peptideStart + peptideSequence.length() - 1;
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
