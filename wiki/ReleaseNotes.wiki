@@ -6,7 +6,9 @@
 *Changes in PeptideShaker 0.23.0 (coming soon...):*
  * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
  * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
+ * NEW FEATURE: Added a new notification system in the lower right hand corner of the main frame.
 
+ * FEATURE IMPROVEMENT: Extended the list of PRIDE project available in the reshaking.
  * FEATURE IMPROVEMENT: Improved the Search Settings dialog, which is now identical to the one in SearchGUI and also displays the fixed PTMs.
  * FEATURE IMPROVEMENT: Reshake now supports a default enzyme mapping, and user selection of enzyme if the mapping fails. Also now supports multiple enzymes.
  * FEATURE IMPROVEMENT: Added MD Score localization to the to the export.
@@ -14,15 +16,24 @@
  * FEATURE IMPROVEMENT: Updated the tips of the day.
  * FEATURE IMPROVEMENT: Updated the getting started slides.
  * FEATURE IMPROVEMENT: Added some options to the fragment ion export.
+ * FEATURE IMPROVEMENT: The intensity, mass error and bubble plots now include all currently selected ions, and not only the default a-c and x-z ions.
+ * FEATURE IMPROVEMENT: Mgf validation is now performed in SearchGUI, and the information is saved so that is does not have to be done more than once.
+ * FEATURE IMPROVEMENT: Added the possibility to score PTMs with phosphoRS.
 
+ * BUG FIX: Corrected bugs in the Follow Up command line for the accession and inclusion list export options.
  * BUG FIX: Fixed various bugs in the command line reports and follow up analysis exports.
  * BUG FIX: Fixed a bug where empty decoy tags were not handled correctly.
  * BUG FIX: Fixed an issue for the peptide export where shared peptides did not list all parent proteins.
+ * BUG FIX: Fixed a bug where TMT reporter ions were not displayed again if hidden as these had no variable modifications with reporter ions, unlike iTRAQ.
+ * BUG FIX: Fixed a bug with changing the reporter and neutral ions in the PtmDialog.
+ * BUG FIX: Fixed various minor GUI issues in the Fractions tab.
+ * BUG FIX: Fixed a bug where the project could not be saved after loading results in the Fractions tab.
 
  * LIBRARY UPDATE: Removed sqlite as a transitive dependency.
+ * LIBRARY UPDATE: Removed twitter4j-core  as a dependency.
  * LIBRARY UPDATE: Updated omssa parser to version 1.6.0.
  * LIBRARY UPDATE: Updated xtandem parser to version 1.7.1.
- * LIBRARY UPDATE: Updated utilities to version 3.14.42.
+ * LIBRARY UPDATE: Updated utilities to version 3.15.29.
 
 ----
 
