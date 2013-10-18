@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
+import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
+import com.compomics.util.gui.utils.SwingUtils;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
@@ -76,13 +79,14 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
@@ -95,7 +99,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
-import twitter4j.*;
 
 /**
  * The main PeptideShaker frame.
@@ -103,7 +106,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, SearchSettingsDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, SearchSettingsDialogParent, NotificationDialogParent {
 
     /**
      * The path to the example dataset.
@@ -324,7 +327,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * Boolean indicating whether the news feed shall be displayed.
      */
-    private boolean showNewsFeed = false;
+    private boolean showNewsFeed = true;
     /**
      * Boolean indicating that PeptideShaker is closing a project.
      */
@@ -337,6 +340,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Default PeptideShaker modifications.
      */
     public static final String PEPTIDESHAKER_CONFIGURATION_FILE = "PeptideShaker_configuration.txt";
+    /**
+     * The list of already published tweets.
+     */
+    public ArrayList<String> publishedTweets = new ArrayList<String>();
+    /**
+     * The list of not yet viewed notes.
+     */
+    public ArrayList<String> noViewedNotes = new ArrayList<String>();
     /**
      * The cps parent used to manage the data.
      */
@@ -453,12 +464,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         // set the font color for the titlted borders, looks better than the default black
         UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
 
-        initComponents();
-
-        // disable the notification menu until we have implemented its us
-        noteButton.setVisible(false);
-        helpButton.setVisible(false);
-        newsButton.setVisible(false);
+        initComponents();   
 
         reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
         quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
@@ -514,8 +520,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         exceptionHandler = new ExceptionHandler(this);
 
-        startNewsFeed();
-
         setLocationRelativeTo(null);
 
         if (cpsFile == null) {
@@ -543,7 +547,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Sets the project
+     * Sets the project.
      *
      * @param experiment the experiment
      * @param sample the sample
@@ -710,8 +714,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
         newsButton = new javax.swing.JButton();
-        helpButton = new javax.swing.JButton();
-        noteButton = new javax.swing.JButton();
+        tipsButton = new javax.swing.JButton();
+        notesButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -1198,6 +1202,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         newsButton.setContentAreaFilled(false);
         newsButton.setOpaque(true);
         newsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                newsButtonMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 newsButtonMouseEntered(evt);
             }
@@ -1205,45 +1212,45 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 newsButtonMouseExited(evt);
             }
         });
-        newsButton.setBounds(1210, 825, 60, 20);
+        newsButton.setBounds(1205, 825, 70, 20);
         backgroundLayeredPane.add(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
-        helpButton.setBackground(new java.awt.Color(204, 204, 204));
-        helpButton.setFont(helpButton.getFont().deriveFont(helpButton.getFont().getStyle() | java.awt.Font.BOLD));
-        helpButton.setForeground(new java.awt.Color(255, 255, 255));
-        helpButton.setText("Help");
-        helpButton.setBorder(null);
-        helpButton.setContentAreaFilled(false);
-        helpButton.setOpaque(true);
-        helpButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        tipsButton.setBackground(new java.awt.Color(204, 204, 204));
+        tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
+        tipsButton.setForeground(new java.awt.Color(255, 255, 255));
+        tipsButton.setText("Tips");
+        tipsButton.setBorder(null);
+        tipsButton.setContentAreaFilled(false);
+        tipsButton.setOpaque(true);
+        tipsButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                helpButtonMouseEntered(evt);
+                tipsButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                helpButtonMouseExited(evt);
+                tipsButtonMouseExited(evt);
             }
         });
-        helpButton.setBounds(1210, 800, 60, 20);
-        backgroundLayeredPane.add(helpButton, javax.swing.JLayeredPane.MODAL_LAYER);
+        tipsButton.setBounds(1205, 800, 70, 20);
+        backgroundLayeredPane.add(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
-        noteButton.setBackground(new java.awt.Color(204, 204, 204));
-        noteButton.setFont(noteButton.getFont().deriveFont(noteButton.getFont().getStyle() | java.awt.Font.BOLD));
-        noteButton.setForeground(new java.awt.Color(255, 255, 255));
-        noteButton.setText("Note");
-        noteButton.setBorder(null);
-        noteButton.setBorderPainted(false);
-        noteButton.setContentAreaFilled(false);
-        noteButton.setOpaque(true);
-        noteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        notesButton.setBackground(new java.awt.Color(204, 204, 204));
+        notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
+        notesButton.setForeground(new java.awt.Color(255, 255, 255));
+        notesButton.setText("Notes");
+        notesButton.setBorder(null);
+        notesButton.setBorderPainted(false);
+        notesButton.setContentAreaFilled(false);
+        notesButton.setOpaque(true);
+        notesButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                noteButtonMouseEntered(evt);
+                notesButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                noteButtonMouseExited(evt);
+                notesButtonMouseExited(evt);
             }
         });
-        noteButton.setBounds(1210, 775, 60, 20);
-        backgroundLayeredPane.add(noteButton, javax.swing.JLayeredPane.MODAL_LAYER);
+        notesButton.setBounds(1205, 775, 70, 20);
+        backgroundLayeredPane.add(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1799,21 +1806,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             backgroundLayeredPane.revalidate();
             backgroundLayeredPane.repaint();
 
-            // move the icons
+            // move the note, help and news buttons
             backgroundLayeredPane.getComponent(0).setBounds(
-                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(0).getWidth() - 20,
+                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(0).getWidth() - 12,
                     backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(0).getHeight() - 15,
                     backgroundLayeredPane.getComponent(0).getWidth(),
                     backgroundLayeredPane.getComponent(0).getHeight());
 
             backgroundLayeredPane.getComponent(1).setBounds(
-                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(1).getWidth() - 20,
+                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(1).getWidth() - 12,
                     backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(1).getHeight() - 37,
                     backgroundLayeredPane.getComponent(1).getWidth(),
                     backgroundLayeredPane.getComponent(1).getHeight());
 
             backgroundLayeredPane.getComponent(2).setBounds(
-                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(2).getWidth() - 20,
+                    backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(2).getWidth() - 12,
                     backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(2).getHeight() - 59,
                     backgroundLayeredPane.getComponent(2).getWidth(),
                     backgroundLayeredPane.getComponent(2).getHeight());
@@ -2732,36 +2739,36 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @param evt
      */
-    private void helpButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseEntered
+    private void tipsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipsButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_helpButtonMouseEntered
+    }//GEN-LAST:event_tipsButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void helpButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseExited
+    private void tipsButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tipsButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_helpButtonMouseExited
+    }//GEN-LAST:event_tipsButtonMouseExited
 
     /**
      * Change the cursor to a hand cursor.
      *
      * @param evt
      */
-    private void noteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseEntered
+    private void notesButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_noteButtonMouseEntered
+    }//GEN-LAST:event_notesButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void noteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseExited
+    private void notesButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_noteButtonMouseExited
+    }//GEN-LAST:event_notesButtonMouseExited
 
     /**
      * Change the cursor to a hand cursor.
@@ -2873,6 +2880,31 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             updateGeneDisplay(); // display the new mappings
         }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
+
+    /**
+     * Open the CompOmics twitter page.
+     *
+     * @param evt
+     */
+    private void newsButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newsButtonMouseReleased
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("https://twitter.com/compomics");
+        newsButton.setText("News");
+
+        int count = 0;
+
+        publishedTweets.clear();
+
+        for (String tweetId : getNewTweets()) {
+            if (count++ < 15) {
+                utilitiesUserPreferences.getReadTweets().add(tweetId);
+            }
+        }
+
+        UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_newsButtonMouseReleased
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -3022,7 +3054,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenuItem fractionDetailsJMenuItem;
     private javax.swing.JMenuItem gettingStartedMenuItem;
     private javax.swing.JPanel goJPanel;
-    private javax.swing.JButton helpButton;
     private javax.swing.JMenu helpJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -3060,7 +3091,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JButton newsButton;
-    private javax.swing.JButton noteButton;
+    private javax.swing.JButton notesButton;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu openRecentJMenu;
     private javax.swing.JMenu otherMenu;
@@ -3103,6 +3134,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenu splitterMenu9;
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JPanel statsJPanel;
+    private javax.swing.JButton tipsButton;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JCheckBoxMenuItem validatedProteinsOnlyJCheckBoxMenuItem;
     private javax.swing.JMenu viewJMenu;
@@ -4479,7 +4511,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             @Override
             public void run() {
                 try {
+                    // turn off the self updating table models
                     overviewPanel.deactivateSelfUpdatingTableModels();
+                    proteinFractionsPanel.deactivateSelfUpdatingTableModels();
+                    proteinStructurePanel.deactivateSelfUpdatingTableModels();
 
                     // close the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
@@ -5822,40 +5857,37 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         new Thread("NewsFeedThread") {
             @Override
             public synchronized void run() {
-
-                // @TODO: add other streams
-                ArrayList<String> tips = getTips();
-
-                String htmlStart = "<html><head></head>"
-                        + " <p style=\"margin-top: 0\" align=\"justify\">";
-
-                String htmlEnd = "</p></body></html>";
-
-                int currentTipIndex = 0;
-
                 while (showNewsFeed) {
-                    String news = "";
-                    news += "<b>Tip of the day:</b>\n";
 
-                    int newTipIndex = (int) (Math.random() * tips.size());
+                    // get the number of new and twitter feeds
+                    int numberOfCurrentTweets = getNewTweets().size() + publishedTweets.size();
 
-                    while (newTipIndex == currentTipIndex) {
-                        newTipIndex = (int) (Math.random() * tips.size());
+                    if (numberOfCurrentTweets > 0) {
+                        newsButton.setText("News (" + numberOfCurrentTweets + ")");
+
+                        // show a pop up
+                        if (getNewTweets().size() > 0) {
+
+                            String type = "tweets";
+
+                            if (getNewTweets().size() == 1) {
+                                type = "tweet";
+                            }
+
+                            NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
+                            notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - 200 + PeptideShakerGUI.this.getX(),
+                                    PeptideShakerGUI.this.getHeight() - 80 + PeptideShakerGUI.this.getY());
+                            SwingUtils.fadeInAndOut(notificationDialog);
+                        }
+
+                        publishedTweets.addAll(getNewTweets());
+
+                    } else {
+                        newsButton.setText("News");
                     }
 
-                    currentTipIndex = newTipIndex;
-                    news += tips.get(currentTipIndex);
-
-                    //newsFeedTxt.setText(htmlStart + news + htmlEnd);
-                    //helpButton.setToolTipText(htmlStart + news + htmlEnd);
-
-                    // get the compomics twitter feed
-                    List<Tweet> tweets = getTwitterFeeds();
-
-                    //newsButton.setToolTipText(tweets.get(0).getFromUser() + ":" + tweets.get(0).getText());
-
                     try {
-                        wait(600000);
+                        wait(60000); // @TODO: increase this value before release!!
                     } catch (Exception e) {
                         showNewsFeed = false;
                         e.printStackTrace();
@@ -5865,24 +5897,38 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         }.start();
     }
 
-    private List<Tweet> getTwitterFeeds() {
+    /**
+     * Returns the list of new tweets, i.e., tweets that have not been read or
+     * displayed/published.
+     *
+     * @return the list of new tweets
+     */
+    private ArrayList<String> getNewTweets() {
 
-        List<Tweet> tweets = new ArrayList<Tweet>();
+        ArrayList<String> tweets = new ArrayList<String>();
 
-        Twitter twitter = new TwitterFactory().getInstance();
-
+        //Set URL
         try {
-            Query query = new Query("from:compomics");
-            QueryResult result = twitter.search(query);
+            URL url = new URL("https://twitter.com/compomics");
+            URLConnection spoof = url.openConnection();
 
-            return result.getTweets();
+            //Spoof the connection so we look like a web browser
+            spoof.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; H010818)");
+            BufferedReader in = new BufferedReader(new InputStreamReader(spoof.getInputStream()));
+            String strLine = "";
 
-//            for (Tweet tweet : result.getTweets()) {
-//                System.out.println(tweet.getFromUser() + ":" + tweet.getText());
-//            }
-        } catch (TwitterException te) {
-            te.printStackTrace();
-            System.out.println("Failed to search tweets: " + te.getMessage());
+            //Loop through every line in the source
+            while ((strLine = in.readLine()) != null) {
+                if (strLine.lastIndexOf("tweet-timestamp js-permalink js-nav") != -1) {
+                    String tweetId = strLine.substring(strLine.indexOf("\"") + 1, strLine.indexOf("\" "));
+
+                    if (!utilitiesUserPreferences.getReadTweets().contains(tweetId) && !publishedTweets.contains(tweetId)) {
+                        tweets.add(tweetId);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return tweets;
@@ -6363,6 +6409,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 JOptionPane.showMessageDialog(this, new String[]{"Unable to write file: '" + ioe.getMessage() + "'!",
                     "Could not save modification use."}, "File Error", JOptionPane.WARNING_MESSAGE);
             }
+        }
+    }
+
+    @Override
+    public void notificationClicked(String notificationType) {
+
+        if (notificationType.equalsIgnoreCase("note") || notificationType.equalsIgnoreCase("notes")) {
+            // @TODO: implement me
+        } else if (notificationType.equalsIgnoreCase("tip") || notificationType.equalsIgnoreCase("tips")) {
+            // @TODO: implement me
+        } else if (notificationType.equalsIgnoreCase("tweet") || notificationType.equalsIgnoreCase("tweets")) {
+            newsButtonMouseReleased(null);
         }
     }
 }
