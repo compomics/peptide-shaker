@@ -189,17 +189,17 @@ public class FileImporter {
             System.err.println("An error occured while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ".", true, true);
+            waitingHandler.appendReport("An error occured while indexing " + fastaFile  + ": " + e.getMessage(), true, true);
         } catch (SQLException e) {
             System.err.println("An error occured while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ".", true, true);
+            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (InterruptedException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
+            waitingHandler.appendReport("An error occured while loading " + fastaFile  + ": " + e.getMessage(), true, true);
         } catch (IllegalArgumentException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();

@@ -37,6 +37,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
+import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -343,11 +344,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The list of already published tweets.
      */
-    public ArrayList<String> publishedTweets = new ArrayList<String>();
+    private ArrayList<String> publishedTweets = new ArrayList<String>();
     /**
-     * The list of not yet viewed notes.
+     * The list of current notes to the user.
      */
-    public ArrayList<String> noViewedNotes = new ArrayList<String>();
+    private ArrayList<String> currentNotes = new ArrayList<String>();
     /**
      * The cps parent used to manage the data.
      */
@@ -464,12 +465,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         // set the font color for the titlted borders, looks better than the default black
         UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
 
-        initComponents();   
+        initComponents();
 
         reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
         quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
         jSeparator2.setVisible(false); // @TODO: re-enable later?
         reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
+
+        tipsButton.setVisible(false); // @TODO: re-enable later?
 
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
@@ -714,8 +717,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
         newsButton = new javax.swing.JButton();
-        tipsButton = new javax.swing.JButton();
         notesButton = new javax.swing.JButton();
+        tipsButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -1215,6 +1218,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         newsButton.setBounds(1205, 825, 70, 20);
         backgroundLayeredPane.add(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
+        notesButton.setBackground(new java.awt.Color(204, 204, 204));
+        notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
+        notesButton.setForeground(new java.awt.Color(255, 255, 255));
+        notesButton.setText("Notes");
+        notesButton.setBorder(null);
+        notesButton.setBorderPainted(false);
+        notesButton.setContentAreaFilled(false);
+        notesButton.setOpaque(true);
+        notesButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                notesButtonMouseReleased(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                notesButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                notesButtonMouseExited(evt);
+            }
+        });
+        notesButton.setBounds(1205, 800, 70, 20);
+        backgroundLayeredPane.add(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
+
         tipsButton.setBackground(new java.awt.Color(204, 204, 204));
         tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
         tipsButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -1230,27 +1255,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 tipsButtonMouseExited(evt);
             }
         });
-        tipsButton.setBounds(1205, 800, 70, 20);
+        tipsButton.setBounds(1205, 775, 70, 20);
         backgroundLayeredPane.add(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
-
-        notesButton.setBackground(new java.awt.Color(204, 204, 204));
-        notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
-        notesButton.setForeground(new java.awt.Color(255, 255, 255));
-        notesButton.setText("Notes");
-        notesButton.setBorder(null);
-        notesButton.setBorderPainted(false);
-        notesButton.setContentAreaFilled(false);
-        notesButton.setOpaque(true);
-        notesButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                notesButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                notesButtonMouseExited(evt);
-            }
-        });
-        notesButton.setBounds(1205, 775, 70, 20);
-        backgroundLayeredPane.add(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -2896,7 +2902,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         publishedTweets.clear();
 
         for (String tweetId : getNewTweets()) {
-            if (count++ < 15) {
+            if (count++ < 15) { // @TODO: remove before release!!
                 utilitiesUserPreferences.getReadTweets().add(tweetId);
             }
         }
@@ -2905,6 +2911,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_newsButtonMouseReleased
+
+    private void notesButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButtonMouseReleased
+        NotesDialog notesDialog = new NotesDialog(this, false, currentNotes);
+        notesDialog.setLocation(PeptideShakerGUI.this.getWidth() - notesDialog.getWidth() - 25 + PeptideShakerGUI.this.getX(),
+                PeptideShakerGUI.this.getHeight() - notesDialog.getHeight() - 25 + PeptideShakerGUI.this.getY());
+        notesDialog.setVisible(true);
+        currentNotes = new ArrayList<String>();
+        updateNotesNotificationCounter();
+    }//GEN-LAST:event_notesButtonMouseReleased
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -5875,8 +5890,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             }
 
                             NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
-                            notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - 200 + PeptideShakerGUI.this.getX(),
-                                    PeptideShakerGUI.this.getHeight() - 80 + PeptideShakerGUI.this.getY());
+                            notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
+                                    PeptideShakerGUI.this.getHeight() - 60 + PeptideShakerGUI.this.getY());
                             SwingUtils.fadeInAndOut(notificationDialog);
                         }
 
@@ -5887,7 +5902,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
 
                     try {
-                        wait(60000); // @TODO: increase this value before release!!
+                        wait(60000); // @TODO: increase this value before release!!!
                     } catch (Exception e) {
                         showNewsFeed = false;
                         e.printStackTrace();
@@ -6416,11 +6431,66 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void notificationClicked(String notificationType) {
 
         if (notificationType.equalsIgnoreCase("note") || notificationType.equalsIgnoreCase("notes")) {
-            // @TODO: implement me
+            notesButtonMouseReleased(null);
         } else if (notificationType.equalsIgnoreCase("tip") || notificationType.equalsIgnoreCase("tips")) {
             // @TODO: implement me
         } else if (notificationType.equalsIgnoreCase("tweet") || notificationType.equalsIgnoreCase("tweets")) {
             newsButtonMouseReleased(null);
+        }
+    }
+
+    /**
+     * Add a note to the current list of notes.
+     *
+     * @param note the note to add, can contain HTML formatting, but not the
+     * HTML start and end tags
+     */
+    public void addNote(String note) {
+        currentNotes.add(note);
+        updateNotesNotificationCounter();
+    }
+
+    /**
+     * Set the list of current notes.
+     *
+     * @param currentNotes the notes to set
+     */
+    public void setCurentNotes(ArrayList<String> currentNotes) {
+        this.currentNotes = currentNotes;
+        updateNotesNotificationCounter();
+    }
+
+    /**
+     * Update the notification counter for the notes.
+     */
+    public void updateNotesNotificationCounter() {
+        if (currentNotes.size() > 0) {
+            notesButton.setText("Notes (" + currentNotes.size() + ")");
+        } else {
+            notesButton.setText("Notes");
+        }
+    }
+
+    /**
+     * Show a note notification pop up.
+     */
+    public void showNotesNotification() {
+        if (currentNotes.size() > 0) {
+
+            // show a pop up
+            if (currentNotes.size() > 0) {
+
+                String type = "notes";
+
+                if (getNewTweets().size() == 1) {
+                    type = "note";
+                }
+
+                NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, currentNotes.size(), type);
+                notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
+                        PeptideShakerGUI.this.getHeight() - 100 + PeptideShakerGUI.this.getY());
+                SwingUtils.fadeInAndOut(notificationDialog);
+            }
         }
     }
 }
