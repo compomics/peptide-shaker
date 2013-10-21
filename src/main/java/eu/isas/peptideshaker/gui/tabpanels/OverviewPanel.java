@@ -4804,17 +4804,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     new Thread(new Runnable() {
                         public void run() {
                             peptideShakerGUI.startNewsFeed();
-
-                            
-                            // @TODO: show the help for the tab
-                            
-//                            if (peptideShakerGUI.getUtilitiesUserPreferences().getDisplayedTips().contains("Overview")) {
-//                                NotificationDialog notificationDialog = new NotificationDialog(peptideShakerGUI, peptideShakerGUI, false, numberOfCurrentTweets, type);
-//                                notificationDialog.setLocation(peptideShakerGUI.getWidth() - 200 + peptideShakerGUI.getX(),
-//                                        peptideShakerGUI.getHeight() - 120 + peptideShakerGUI.getY());
-//                                SwingUtils.fadeInAndOut(notificationDialog);
-//                            }
-
+                            //peptideShakerGUI.addNote("test");
+                            //peptideShakerGUI.addNote("link test: <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a>");
+                            peptideShakerGUI.showNotesNotification();
                             updateSelection(true); // @TODO: this is sometimes too fast and results in Row index out of range...
                             proteinTable.requestFocus();
                         }
