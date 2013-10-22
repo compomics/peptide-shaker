@@ -24,9 +24,7 @@ import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import com.compomics.util.gui.utils.SwingUtils;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -4803,9 +4801,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     new Thread(new Runnable() {
                         public void run() {
-                            peptideShakerGUI.startNewsFeed();
-                            //peptideShakerGUI.addNote("test");
-                            //peptideShakerGUI.addNote("link test: <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a>");
+                            peptideShakerGUI.checkNewsFeed();
                             peptideShakerGUI.showNotesNotification();
                             updateSelection(true); // @TODO: this is sometimes too fast and results in Row index out of range...
                             proteinTable.requestFocus();

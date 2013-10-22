@@ -56,10 +56,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class PeptideShaker {
 
     /**
-     * If set to true, detailed information is sent to the waiting dialog.
-     */
-    private boolean showDetailedReport = false;
-    /**
      * The experiment conducted.
      */
     private MsExperiment experiment;
@@ -230,7 +226,6 @@ public class PeptideShaker {
         identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
-
         fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
     }
 
@@ -408,6 +403,8 @@ public class PeptideShaker {
         }
 
         report = "Identification processing completed.";
+
+        // get the detailed report
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
         ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
@@ -418,63 +415,61 @@ public class PeptideShaker {
                 || suspiciousPeptides.size() > 0
                 || suspiciousProteins) {
 
-            if (showDetailedReport) {
+            String detailedReport = "";
 
-                String detailedReport = "";
+            boolean firstLine = true;
 
-                boolean firstLine = true;
-
-                for (int searchEngine : suspiciousInput) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        detailedReport += ", ";
-                    }
-                    detailedReport += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
+            for (int searchEngine : suspiciousInput) {
+                if (firstLine) {
+                    firstLine = false;
+                } else {
+                    detailedReport += ", ";
                 }
+                detailedReport += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
+            }
 
-                if (suspiciousInput.size() > 0) {
-                    detailedReport += " identifications.\n";
+            if (suspiciousInput.size() > 0) {
+                detailedReport += " identifications.<br>";
+            }
+
+            firstLine = true;
+
+            for (String fraction : suspiciousPsms) {
+                if (firstLine) {
+                    firstLine = false;
+                } else {
+                    detailedReport += ", ";
                 }
+                detailedReport += fraction;
+            }
 
-                firstLine = true;
+            if (suspiciousPsms.size() > 0) {
+                detailedReport += " charged spectra.<br>";
+            }
 
-                for (String fraction : suspiciousPsms) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        detailedReport += ", ";
-                    }
-                    detailedReport += fraction;
+            firstLine = true;
+
+            for (String fraction : suspiciousPeptides) {
+                if (firstLine) {
+                    firstLine = false;
+                } else {
+                    detailedReport += "<br>";
                 }
+                detailedReport += fraction;
+            }
 
-                detailedReport += " charged spectra.\n";
+            if (suspiciousPeptides.size() > 0) {
+                detailedReport += " modified peptides.<br>";
+            }
 
-                firstLine = true;
+            if (suspiciousProteins) {
+                detailedReport += " proteins.<br>";
+            }
 
-                for (String fraction : suspiciousPeptides) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        detailedReport += "\n";
-                    }
-                    detailedReport += fraction;
-                }
-
-                detailedReport += " modified peptides.\n";
-
-                if (suspiciousProteins) {
-                    detailedReport += "proteins. \n";
-                }
-
-                if (detailedReport.length() > 0) {
-                    detailedReport = "The following identification classes resulted in non robust statistical estimations."
-                            + "We advice to control the quality of the corresponding matches: \n\n" + detailedReport;
-                    
-                    // @TODO: show in the lower right corner of the main frame instead
-                    
-                    report += "Warning: Non robust statistical identifications detected. See File > Project Properties.";
-                }
+            if (detailedReport.length() > 0) {
+                detailedReport = "The following identification classes resulted in non robust statistical estimations."
+                        + "We advice to control the quality of the corresponding matches:<br><br>" + detailedReport;
+                addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport));
             }
         }
 
@@ -1557,7 +1552,7 @@ public class PeptideShaker {
                             int confidence = PtmScoring.VERY_CONFIDENT;
                             ptmScoring.setPtmSite(bestDKey, confidence);
                         } else {
-                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestProbabilisticScoreLocations()!= null) {
+                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestProbabilisticScoreLocations() != null) {
                                 String bestAKey = ptmScoring.getBestProbabilisticScoreLocations();
                                 Double ptmMass = ptm.getMass();
                                 int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
