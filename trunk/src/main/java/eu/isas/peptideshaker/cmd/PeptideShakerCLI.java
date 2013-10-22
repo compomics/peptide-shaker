@@ -24,6 +24,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.gui.DummyFrame;
+import com.compomics.util.messages.FeedBack;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -40,6 +41,8 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 /**
@@ -212,7 +215,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
         }
-        
+
         // Report export if needed
         ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
         if (reportCLIInputBean.exportNeeded()) {
@@ -352,33 +355,41 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingPreferences();
 
-        // Set the annotation preferences
+        // set the annotation preferences
         annotationPreferences = new AnnotationPreferences();
         annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
 
-        // Create a shaker which will perform the analysis
+        // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
-        // Import the files
+        // import the files
         peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
                 annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
                 spectrumCountingPreferences, false);
 
+        // show the warnings
+        Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();
+        while (iterator.hasNext()) {
+            FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
+            if (warning.getType() == FeedBack.FeedBackType.WARNING) {
+                System.out.println(warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
+            }
+        }
+
         if (!waitingHandler.isRunCanceled()) {
 
-            // Identification as created by PeptideShaker
+            // identification as created by PeptideShaker
             ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
             identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-            // Metrics saved while processing the data
+            // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
 
-            // The cache used for identification
+            // the cache used for identification
             objectsCache = peptideShaker.getCache();
 
-            // The identification feature generator
-            identificationFeaturesGenerator =
-                    new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
+            // the identification feature generator
+            identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
             if (waitingHandler instanceof WaitingDialog) {
                 projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));

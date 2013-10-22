@@ -346,6 +346,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private ArrayList<String> publishedTweets = new ArrayList<String>();
     /**
+     * The list of new tweets.
+     */
+    private ArrayList<String> newTweets = new ArrayList<String>();
+    /**
      * The list of current notes to the user.
      */
     private ArrayList<String> currentNotes = new ArrayList<String>();
@@ -2047,7 +2051,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
                         resetPanel(GO_ANALYSIS_TAB_INDEX);
                         goPanel.displayResults();
-                        // @TODO: set species from cps file? 
                         // @TODO: reload GO enrichment tab if hidden selection is changed!
                     } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
                         if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
@@ -2897,15 +2900,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         BareBonesBrowserLaunch.openURL("https://twitter.com/compomics");
         newsButton.setText("News");
 
-        int count = 0;
-
-        publishedTweets.clear();
-
-        for (String tweetId : getNewTweets()) {
-            if (count++ < 15) { // @TODO: remove before release!!
-                utilitiesUserPreferences.getReadTweets().add(tweetId);
-            }
+        // set the tweets as read
+        for (String tweetId : newTweets) {
+            utilitiesUserPreferences.getReadTweets().add(tweetId);
         }
+        for (String tweetId : publishedTweets) {
+            utilitiesUserPreferences.getReadTweets().add(tweetId);
+        }
+
+        // clear the list of published tweets
+        publishedTweets.clear();
 
         UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
 
@@ -5092,6 +5096,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
+                    setCurentNotes(new ArrayList<String>());
+                    updateNotesNotificationCounter();
 
                     try {
                         cpsBean.loadCpsFile(progressDialog);
@@ -5867,46 +5873,39 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * Displays a news feed at the bottom of the GUI.
      */
-    public void startNewsFeed() {
+    public void checkNewsFeed() {
 
         new Thread("NewsFeedThread") {
             @Override
             public synchronized void run() {
-                while (showNewsFeed) {
 
-                    // get the number of new and twitter feeds
-                    int numberOfCurrentTweets = getNewTweets().size() + publishedTweets.size();
+                // get the number of new tweets
+                newTweets = getNewTweets();
 
-                    if (numberOfCurrentTweets > 0) {
-                        newsButton.setText("News (" + numberOfCurrentTweets + ")");
+                int numberOfCurrentTweets = newTweets.size() + publishedTweets.size();
 
-                        // show a pop up
-                        if (getNewTweets().size() > 0) {
+                if (numberOfCurrentTweets > 0) {
+                    newsButton.setText("News (" + numberOfCurrentTweets + ")");
 
-                            String type = "tweets";
+                    // show a pop up
+                    if (newTweets.size() > 0) {
 
-                            if (getNewTweets().size() == 1) {
-                                type = "tweet";
-                            }
+                        String type = "tweets";
 
-                            NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
-                            notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
-                                    PeptideShakerGUI.this.getHeight() - 60 + PeptideShakerGUI.this.getY());
-                            SwingUtils.fadeInAndOut(notificationDialog);
+                        if (newTweets.size() == 1) {
+                            type = "tweet";
                         }
 
-                        publishedTweets.addAll(getNewTweets());
-
-                    } else {
-                        newsButton.setText("News");
+                        NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
+                        notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
+                                PeptideShakerGUI.this.getHeight() - 60 + PeptideShakerGUI.this.getY());
+                        SwingUtils.fadeInAndOut(notificationDialog);
                     }
 
-                    try {
-                        wait(60000); // @TODO: increase this value before release!!!
-                    } catch (Exception e) {
-                        showNewsFeed = false;
-                        e.printStackTrace();
-                    }
+                    publishedTweets.addAll(newTweets);
+
+                } else {
+                    newsButton.setText("News");
                 }
             }
         }.start();
@@ -5922,21 +5921,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         ArrayList<String> tweets = new ArrayList<String>();
 
-        //Set URL
+        // set URL
         try {
             URL url = new URL("https://twitter.com/compomics");
             URLConnection spoof = url.openConnection();
 
-            //Spoof the connection so we look like a web browser
+            // spoof the connection so we look like a web browser
             spoof.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; H010818)");
             BufferedReader in = new BufferedReader(new InputStreamReader(spoof.getInputStream()));
             String strLine = "";
 
-            //Loop through every line in the source
+            // loop through every line in the source
             while ((strLine = in.readLine()) != null) {
                 if (strLine.lastIndexOf("tweet-timestamp js-permalink js-nav") != -1) {
                     String tweetId = strLine.substring(strLine.indexOf("\"") + 1, strLine.indexOf("\" "));
-
                     if (!utilitiesUserPreferences.getReadTweets().contains(tweetId) && !publishedTweets.contains(tweetId)) {
                         tweets.add(tweetId);
                     }
@@ -6482,7 +6480,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                 String type = "notes";
 
-                if (getNewTweets().size() == 1) {
+                if (currentNotes.size() == 1) {
                     type = "note";
                 }
 

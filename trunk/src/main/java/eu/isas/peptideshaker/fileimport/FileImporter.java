@@ -439,7 +439,6 @@ public class FileImporter {
                     peptideShaker.setProteinCountMap(proteinCount);
                     peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
                             idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
-
                 }
             } catch (OutOfMemoryError error) {
 

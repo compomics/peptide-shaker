@@ -20,6 +20,7 @@ import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.ModificationProfile;
@@ -40,6 +41,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -655,6 +657,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             peptideShakerGUI.setProjectDetails(getProjectDetails());
+            peptideShakerGUI.setCurentNotes(new ArrayList<String>());
+            peptideShakerGUI.updateNotesNotificationCounter();
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
@@ -707,6 +711,17 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
+
+                // show the warnings
+                Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();
+                int counter = 0;
+                while (iterator.hasNext()) {
+                    FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
+                    if (warning.getType() == FeedBack.FeedBackType.WARNING) {
+                        peptideShakerGUI.addNote("<b>" + ++counter + " " + warning.getTitle() + "</b><br><br>" + warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
+                    }
+                }
+
                 peptideShakerGUI.setProcessingPreferences(processingPreferences);
                 peptideShakerGUI.setPtmScoringPreferences(ptmScoringPreferences);
                 peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
