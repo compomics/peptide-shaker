@@ -14,6 +14,7 @@ public enum PeptideFeatures implements ExportFeature {
     unique("Unique", "Indicates whether the peptide is found uniquely in the protein match of interest."),
     pi("PI", "The protein inference status of this peptide."),
     sequence("Sequence", "Sequence of the peptide."),
+    missed_cleavages("Missed Cleavages", "The number of missed cleavages."),
     modified_sequence("Modified Sequence", "The peptide sequence annotated with variable modifications."),
     position("Position", "Position of the peptide in the protein sequence."),
     aaBefore("AAs Before", "The amino-acids before the sequence."),
@@ -60,6 +61,7 @@ public enum PeptideFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
         result.add(sequence);
+        result.add(missed_cleavages);
         result.add(modified_sequence);
         result.add(position);
         result.add(aaBefore);

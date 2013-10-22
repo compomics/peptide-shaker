@@ -2,7 +2,7 @@ You can contribute to <i>PeptideShaker</i>!<br><br>Use our <a href="http://group
 Post-Translational Modifications (PTMs) are color coded in <b>PeptideShaker</b>.<br><br>You can change the colors via <i>Search Parameters</i> on the <i>Edit</i> menu.<br><br>You can also verify the location of the PTMs in the <i>Modifications</i> tab!
 Not getting the result you wanted?<br><br>When creating a new project, be sure that the <i>Search Parameters</i> and <i>Import Filters</i> are correct!
 How to run user-friendly OMSSA and X!Tandem searches?<br><br>Try <a href="http://searchgui.googlecode.com">SearchGUI</a>!
-How did you generate your mgf file?<br><br>Processing of the raw data can have dramatic impact on the final result.<br><br>We recommend the use of <a href="http://proteowizard.sourceforge.net">ProteoWizard</a>.
+How did you generate your mgf file?<br><br>Processing of the raw data can have dramatic impact on the final result.<br><br>More information in our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Need more help?<br><br>Look for the question marks.<br><br>We will also be happy to answer your questions on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>.
 Which database are you using?<br><br>Large databases increases the amount of false positive identifications.<br><br>Use only the species expected in the sample.<br><br>We recommend the use of <a href="http://uniprot.org">UniProt</a> databases.
 <b>PeptideShaker</b> not finding your protein?<br><br>Verify that you are using the correct database and that its parsing is done correctly! <br><br><a href="https://code.google.com/p/searchgui/wiki/DatabaseHelp">More help on databases</a>.
@@ -20,7 +20,7 @@ Investigate a specific Protein/Peptide/PSM?<br><br>See how to customize star/hid
 Looking for a specific protein or peptide?<br><br>Use the <i>Find</i> box in the upper right corner!
 To get the highest number of reliable hits, <b>PeptideShaker</b> separates PSMs according to search engine charge and peptides according to modification status. See the <i>Validation</i> tab.<br><br>Note that separation will only be conducted when statistical significance is ensured!
 X!Tandem does not support terminal modifications at specific amino acids.<br><br>Use a search allowing modified termini or amino-acids and use <i>Exclude Unknown PTMs</i> in the <i>Import Filters</i> when loading the files.
-<i>Coverage 65% of max 50%</i>?<br><br>Answer: The estimation of the maximum coverage does not account for missed cleavages or semi-tryptic peptides!
+<i>Coverage 65% of estimated 50%</i>?<br><br>Answer: The estimation of the maximum coverage does not account for missed cleavages or semi-tryptic peptides!
 How much memory is allocated to <b>PeptideShaker</b>?<br><br>For fast processing allocate as much memory as possible to <b>PeptideShaker</b>.<br><br>This setting can be optimized in <i>Java Option</i> available in the <i>Edit</i> menu.
 Find our tools useful?<br><br>Then please cite them in your papers!<br><br><b>SearchGUI</b>: <a href="http://www.ncbi.nlm.nih.gov/pubmed/21337703">Vaudel et al: Proteomics 2011;11(5):996-9</a>.<br><br><b>PeptideShaker</b>: <a href="http://peptide-shaker.googlecode.com">http://peptide-shaker.googlecode.com</a>.
 Need high quality graphics for you manuscript?<br><br>All plots in <b>PeptideShaker</b> can be exported in either high resolution or as vector graphics.<br><br>See the contextual menus in the upper right corners of each panel.
