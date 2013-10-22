@@ -280,12 +280,22 @@
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
         </repository>
+
+        <!-- EBI repository -->
         <repository>
             <id>ebi-repo</id> 
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url> 
         </repository>
-        
+
+        <!-- EBI nexus repository -->
+        <repository>
+            <id>nexus-ebi-repo</id> 
+            <name>The EBI nexus repository</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
+            <layout>default</layout>
+        </repository>
+
     </repositories>
 
 
