@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures.missed_cleavages;
 import java.util.ArrayList;
 
 /**
@@ -12,6 +13,7 @@ public enum PsmFeatures implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached."),
     sequence("Sequence", "Sequence of the peptide."),
+    missed_cleavages("Missed Cleavages", "The number of missed cleavages."),
     modified_sequence("Modified Sequence", "The peptide sequence annotated with variable modifications."),
     variable_ptms("Variable Modifications", "The variable modifications."),
     fixed_ptms("Fixed Modifications", "The fixed modifications."),
@@ -65,6 +67,7 @@ public enum PsmFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
         result.add(sequence);
+        result.add(missed_cleavages);
         result.add(modified_sequence);
         result.add(variable_ptms);
         result.add(fixed_ptms);

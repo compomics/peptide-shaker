@@ -261,6 +261,9 @@ public class PeptideSection {
                     case sequence:
                         writer.write(Peptide.getSequence(peptideKey) + separator);
                         break;
+                    case missed_cleavages:
+                        String sequence = Peptide.getSequence(peptideKey);
+                        writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
                     case modified_sequence:
                         writer.write(peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
                         break;
