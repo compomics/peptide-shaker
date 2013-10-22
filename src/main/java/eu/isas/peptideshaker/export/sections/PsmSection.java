@@ -483,13 +483,14 @@ public class PsmSection {
                             }
                             writer.write(spectrumMatch.getBestAssumption().getPeptide().getSequence() + separator);
                             break;
-                    case missed_cleavages:
+                        case missed_cleavages:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                        String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
-                        writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
+                            String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                            writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
+                            break;
                         case modified_sequence:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
