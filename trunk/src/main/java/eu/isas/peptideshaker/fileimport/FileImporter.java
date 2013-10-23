@@ -180,7 +180,9 @@ public class FileImporter {
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             int nSequences = sequenceFactory.getNSequences();
             if (nSequences >= 100000) {
-                waitingHandler.appendReport("Warining: using large a large database (# sequences = " + nSequences + ") decreases search engine efficiency and dramatically slowers the import in PeptideShaker. (See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>)", true, true);
+                waitingHandler.appendReport("Warining: Using large large databases (#sequences = " + nSequences + ") reduced the search engine efficiency "
+                        + "and dramatically slows down the import in PeptideShaker. "
+                        + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
             }
             waitingHandler.increasePrimaryProgressCounter();
 
@@ -240,7 +242,7 @@ public class FileImporter {
          */
         private ArrayList<File> idFiles;
         /**
-         * The fasta file.
+         * The FASTA file.
          */
         private File fastaFile;
         /**
