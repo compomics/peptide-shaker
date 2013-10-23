@@ -326,10 +326,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
     /**
-     * Boolean indicating whether the news feed shall be displayed.
-     */
-    private boolean showNewsFeed = true;
-    /**
      * Boolean indicating that PeptideShaker is closing a project.
      */
     private boolean isClosing = false;
@@ -4419,9 +4415,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         if (value == JOptionPane.YES_OPTION) {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-            for (int i = 0; i < allLinks.length; i++) {
-                String link = allLinks[i];
+            for (String link : allLinks) {
                 link = link.substring(0, link.indexOf("\""));
                 BareBonesBrowserLaunch.openURL(link);
             }
@@ -5158,7 +5152,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                         progressDialog.increasePrimaryProgressCounter();
 
-                        boolean found = true;
+                        boolean found;
                         try {
                             found = cpsBean.loadSpectrumFiles(new File(getLastSelectedFolder()), progressDialog);
                         } catch (Exception e) {
@@ -5929,7 +5923,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             // spoof the connection so we look like a web browser
             spoof.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; H010818)");
             BufferedReader in = new BufferedReader(new InputStreamReader(spoof.getInputStream()));
-            String strLine = "";
+            String strLine;
 
             // loop through every line in the source
             while ((strLine = in.readLine()) != null) {
