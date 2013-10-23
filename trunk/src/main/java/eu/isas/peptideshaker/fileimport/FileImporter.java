@@ -178,6 +178,10 @@ public class FileImporter {
             proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
+            int nSequences = sequenceFactory.getNSequences();
+            if (nSequences >= 100000) {
+                waitingHandler.appendReport("Warining: using large a large database (# sequences = " + nSequences + ") decreases search engine efficiency and dramatically slowers the import in PeptideShaker. (See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>)", true, true);
+            }
             waitingHandler.increasePrimaryProgressCounter();
 
         } catch (FileNotFoundException e) {
@@ -189,7 +193,7 @@ public class FileImporter {
             System.err.println("An error occured while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while indexing " + fastaFile  + ": " + e.getMessage(), true, true);
+            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (SQLException e) {
             System.err.println("An error occured while indexing " + fastaFile + ".");
             e.printStackTrace();
@@ -199,7 +203,7 @@ public class FileImporter {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while loading " + fastaFile  + ": " + e.getMessage(), true, true);
+            waitingHandler.appendReport("An error occured while loading " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (IllegalArgumentException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
@@ -587,7 +591,6 @@ public class FileImporter {
 //                        e.printStackTrace();
 //                    }
 //                }
-
                     if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                         fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
                         match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
@@ -781,7 +784,6 @@ public class FileImporter {
                                         }
                                     }
 
-
                                     if (idFilter.validateModifications(peptide, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                         // Estimate the theoretic mass with the new modifications
                                         peptide.estimateTheoreticMass();
@@ -948,7 +950,6 @@ public class FileImporter {
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
 
                 // @TODO: check for duplicate spectrum titles and show the warning in the lower right corner of the main frame
-
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }

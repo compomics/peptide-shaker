@@ -260,7 +260,6 @@ public class RunMzDeviation {
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         // @TODO: the progress bar usage in the code below could be improved
-
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
         PSParameter psParameter = new PSParameter();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
@@ -742,7 +741,9 @@ public class RunMzDeviation {
             if (!mz1.isEmpty()) {
                 mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtRef).keySet());
                 Collections.sort(mzList);
-                fragmentsRtDeviations.remove(mzList.get(mzList.size() - 1));
+                if (!mzList.isEmpty()) {
+                    fragmentsRtDeviations.remove(mzList.get(mzList.size() - 1));
+                }
                 mz1.addAll(mz2);
                 err1.addAll(err2);
                 double mzRef = BasicMathFunctions.median(mz1);
