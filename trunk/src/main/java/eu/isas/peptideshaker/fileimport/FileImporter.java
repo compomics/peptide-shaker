@@ -13,6 +13,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
@@ -40,6 +41,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
  * This class is responsible for the import of identifications.
@@ -180,7 +183,7 @@ public class FileImporter {
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             int nSequences = sequenceFactory.getNSequences();
             if (nSequences >= 100000) {
-                waitingHandler.appendReport("Warining: Using large large databases (#sequences = " + nSequences + ") reduced the search engine efficiency "
+                waitingHandler.appendReport("Warning: Using large large databases reduces the search engine efficiency "
                         + "and dramatically slows down the import in PeptideShaker. "
                         + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
             }
@@ -457,14 +460,32 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
 
                 if (waitingHandler instanceof WaitingDialog) {
-                    JOptionPane.showMessageDialog((WaitingDialog) waitingHandler,
-                            "PeptideShaker used up all the available memory and had to be stopped.\n"
-                            + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
-                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
-                            + "Java Options).\n\n"
-                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
-                            "Out Of Memory Error",
-                            JOptionPane.ERROR_MESSAGE);
+
+                    // create an empty label to put the message in
+                    JLabel label = new JLabel();
+
+                    // html content 
+                    JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                            + "PeptideShaker used up all the available memory and had to be stopped.<br>"
+                            + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
+                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
+                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."
+                            + "</body></html>");
+
+                    // handle link events 
+                    ep.addHyperlinkListener(new HyperlinkListener() {
+                        @Override
+                        public void hyperlinkUpdate(HyperlinkEvent e) {
+                            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                                BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                            }
+                        }
+                    });
+
+                    ep.setBorder(null);
+                    ep.setEditable(false);
+
+                    JOptionPane.showMessageDialog((WaitingDialog) waitingHandler, ep, "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                 }
 
                 error.printStackTrace();
@@ -525,26 +546,35 @@ public class FileImporter {
          * while parsing an XML file
          * @throws MzMLUnmarshallerException exception thrown whenever an error
          * occurred while reading an mzML file
+         * @throws OutOfMemoryError thrown if the parser if the id files runs
+         * out of memory
          */
-        public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
+        public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception, OutOfMemoryError {
 
             boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
-            IdfileReader fileReader;
             ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
 
             int searchEngine = readerFactory.getSearchEngine(idFile);
+            IdfileReader fileReader = null;
 
-            if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
-                fileReader = new MascotIdfileReader(idFile, true);
-            } else {
-                fileReader = readerFactory.getFileReader(idFile, null);
+            try {
+                if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
+                    fileReader = new MascotIdfileReader(idFile, true);
+                } else {
+                    fileReader = readerFactory.getFileReader(idFile, null);
+                }
+            } catch (OutOfMemoryError error) {
+                waitingHandler.appendReport("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.", true, true);
+                throw new OutOfMemoryError("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.");
             }
 
             if (fileReader == null) {
+                waitingHandler.appendReport("Unknown search result file \'" + Util.getFileName(idFile) + "\'.", true, true);
                 waitingHandler.setRunCanceled();
+                return;
             }
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
