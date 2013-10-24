@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.9" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="proteinButtonGroup">
     </Component>
@@ -208,15 +208,17 @@
                     <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="psmPlotLayeredPaneComponentResized"/>
                   </Events>
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
                   <SubComponents>
                     <Container class="javax.swing.JPanel" name="psmQCPlotPanel">
                       <Properties>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="0" y="0" width="650" height="420" layer="0" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="0" y="0" width="650" height="420"/>
                         </Constraint>
                       </Constraints>
 
@@ -242,9 +244,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmPlotHelpJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmPlotHelpJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="640" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="640" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -272,9 +277,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportPsmPlotJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPsmPlotJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="630" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="630" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -417,15 +425,17 @@
                     <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="peptidesPlotLayeredPaneComponentResized"/>
                   </Events>
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
                   <SubComponents>
                     <Container class="javax.swing.JPanel" name="peptideQCPlotPanel">
                       <Properties>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="0" y="0" width="660" height="420" layer="0" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="0" y="0" width="660" height="420"/>
                         </Constraint>
                       </Constraints>
 
@@ -451,9 +461,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptidesPlotHelpJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidesPlotHelpJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="640" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="640" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -481,9 +494,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportPeptidesPlotJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPeptidesPlotJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="630" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="630" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -536,15 +552,17 @@
                     <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="proteinsPlotLayeredPaneComponentResized"/>
                   </Events>
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="true"/>
+                  </Layout>
                   <SubComponents>
                     <Container class="javax.swing.JPanel" name="proteinQCPlotPanel">
                       <Properties>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="0" y="0" width="-1" height="-1" layer="0" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="0" y="0" width="-1" height="-1"/>
                         </Constraint>
                       </Constraints>
 
@@ -570,9 +588,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinsPlotHelpJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinsPlotHelpJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="640" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="640" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -600,9 +621,12 @@
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportProteinsPlotJButtonMouseExited"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProteinsPlotJButtonActionPerformed"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                      </AuxValues>
                       <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="630" y="0" width="10" height="-1" layer="300" position="-1"/>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="630" y="0" width="10" height="-1"/>
                         </Constraint>
                       </Constraints>
                     </Component>
