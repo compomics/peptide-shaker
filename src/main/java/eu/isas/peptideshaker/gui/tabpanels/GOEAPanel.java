@@ -505,7 +505,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         });
                                     }
 
-                                    if (indexes.size() == 0) {
+                                    if (indexes.isEmpty()) {
                                         progressDialog.setRunCanceled();
                                     }
 
@@ -540,6 +540,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             }
 
                                             double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
+
+                                            // have to check if the correction results in a p-value bigger than 1
+                                            if (tempPvalue > 1) {
+                                                tempPvalue = 1;
+                                            }
 
                                             ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                                     indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
@@ -1965,7 +1970,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (speciesDatabase != null) {
 
-            String databaseName = speciesDatabase + peptideShakerGUI.getGenePreferences().GO_MAPPING_FILE_SUFFIX;
+            String databaseName = speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX;
             File mappingFilesFolder = peptideShakerGUI.getGenePreferences().getGeneMappingFolder();
             String[] mappingsFiles = mappingFilesFolder.list();
 
