@@ -469,7 +469,7 @@ public class PeptideShaker {
             if (detailedReport.length() > 0) {
                 detailedReport = "The following identification classes resulted in non robust statistical estimations."
                         + "We advice to control the quality of the corresponding matches:<br><br>" + detailedReport;
-                addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport));
+                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
             }
         }
 
