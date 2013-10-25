@@ -180,14 +180,16 @@ public class FileImporter {
             }
             proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
-            waitingHandler.appendReport("FASTA file import completed.", true, true);
-            int nSequences = sequenceFactory.getNSequences();
-            if (nSequences >= 100000) {
-                waitingHandler.appendReport("Warning: Using large large databases reduces the search engine efficiency "
-                        + "and dramatically slows down the import in PeptideShaker. "
-                        + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
+            if (!waitingHandler.isRunCanceled()) {
+                waitingHandler.appendReport("FASTA file import completed.", true, true);
+                int nSequences = sequenceFactory.getNSequences();
+                if (nSequences >= 100000) {
+                    waitingHandler.appendReport("Warning: Using large large databases reduces the search engine efficiency "
+                            + "and dramatically slows down the import in PeptideShaker. "
+                            + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
+                }
+                waitingHandler.increasePrimaryProgressCounter();
             }
-            waitingHandler.increasePrimaryProgressCounter();
 
         } catch (FileNotFoundException e) {
             System.err.println("File " + fastaFile + " was not found. Please select a different FASTA file.");
@@ -376,6 +378,10 @@ public class FileImporter {
 
             try {
                 importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+
+                if (waitingHandler.isRunCanceled()) {
+                    return 1;
+                }
 
                 waitingHandler.appendReport("Establishing database connection.", true, true);
 
