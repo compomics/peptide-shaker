@@ -398,6 +398,10 @@ public class FileImporter {
 
                     for (File idFile : idFiles) {
                         importPsms(idFile);
+
+                        if (waitingHandler.isRunCanceled()) {
+                            return 1;
+                        }
                     }
 
                     while (!missingMgfFiles.isEmpty()) {
