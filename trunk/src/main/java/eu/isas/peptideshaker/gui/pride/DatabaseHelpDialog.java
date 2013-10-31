@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
@@ -512,7 +513,6 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     public void renameFastaFileName(File file) {
 
         // @TODO: this method should be merged with the identical method in SearchGUI...
-
         String tempName = file.getName();
         tempName = tempName.replaceAll(" ", "_");
 
@@ -564,7 +564,6 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     public void generateTargetDecoyDatabase() {
 
         // @TODO: this method should be merged with the identical method in SearchGUI...
-
         progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -595,15 +594,15 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 } catch (IOException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef,
-                            new String[]{"FASTA Import Error.", "File " + fastaInput + " not found."},
+                            "File " + fastaInput + " not found.",
                             "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
                     return;
                 } catch (ClassNotFoundException e) {
                     progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            new String[]{"FASTA Import Error.", "File index of " + fastaInput + " could not be imported. Please contact the developers."},
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("File index of " + fastaInput + " could not be imported.<br>"
+                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."), 
+                            "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     return;
                 } catch (StringIndexOutOfBoundsException e) {

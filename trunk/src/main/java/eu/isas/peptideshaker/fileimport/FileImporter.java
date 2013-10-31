@@ -13,13 +13,13 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -41,8 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 /**
  * This class is responsible for the import of identifications.
@@ -383,6 +381,7 @@ public class FileImporter {
                     return 1;
                 }
 
+                waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport("Establishing database connection.", true, true);
 
                 Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -470,32 +469,12 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
 
                 if (waitingHandler instanceof WaitingDialog) {
-
-                    // create an empty label to put the message in
-                    JLabel label = new JLabel();
-
-                    // html content 
-                    JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                            + "PeptideShaker used up all the available memory and had to be stopped.<br>"
+                    JOptionPane.showMessageDialog((WaitingDialog) waitingHandler, JOptionEditorPane.getJOptionEditorPane(
+                            "PeptideShaker used up all the available memory and had to be stopped.<br>"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
-                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."
-                            + "</body></html>");
-
-                    // handle link events 
-                    ep.addHyperlinkListener(new HyperlinkListener() {
-                        @Override
-                        public void hyperlinkUpdate(HyperlinkEvent e) {
-                            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                                BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                            }
-                        }
-                    });
-
-                    ep.setBorder(null);
-                    ep.setEditable(false);
-
-                    JOptionPane.showMessageDialog((WaitingDialog) waitingHandler, ep, "Out Of Memory", JOptionPane.ERROR_MESSAGE);
+                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."),
+                            "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                 }
 
                 error.printStackTrace();

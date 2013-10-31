@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.8" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -21,8 +21,8 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
@@ -30,34 +30,32 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="nextProtLinkJPanel" max="32767" attributes="2"/>
+                          <Component id="uniprotLinkJPanel" max="32767" attributes="2"/>
                           <Component id="basicAnnotationJPanel" alignment="0" max="32767" attributes="2"/>
                           <Component id="quickGOLinkJPanel" alignment="0" max="32767" attributes="2"/>
                           <Component id="stringLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                          <Component id="uniprotLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                          <Component id="nextProtLinkJPanel" alignment="0" max="32767" attributes="2"/>
                           <Component id="dastyLinkJPanel" alignment="0" max="32767" attributes="2"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="davidLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="intActLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="interProLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="reactomeLinkJPanel" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="helpPanel" max="32767" attributes="2"/>
-                              </Group>
+                              <Component id="helpPanel" max="32767" attributes="2"/>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="pdbLinkJPanel" max="32767" attributes="2"/>
                               <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="reactomeLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="davidLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="intActLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="interProLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                              </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -71,27 +69,32 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="basicAnnotationJPanel" max="32767" attributes="1"/>
-                  <Component id="helpPanel" alignment="0" max="32767" attributes="1"/>
+                  <Component id="helpPanel" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="reactomeLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="davidLinkJPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="intActLinkJPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="interProLinkJPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="uniprotLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="nextProtLinkJPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="stringLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="quickGOLinkJPanel" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="intActLinkJPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="interProLinkJPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -101,7 +104,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="142" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -156,14 +159,12 @@
                       <Component id="accessionNumberLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           <Component id="descriptionLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="proteinDescriptionScrollPane" min="-2" pref="53" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="proteinDescriptionScrollPane" alignment="1" min="-2" pref="53" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -172,17 +173,17 @@
                       <Component id="chromosomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="chromosomeJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="taxonomyJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="texonomyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="databaseJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="databaseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -283,7 +284,7 @@
                   <Component id="loadUniProtJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="uniprotLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="144" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webUniProtLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -543,7 +544,7 @@
                   <Component id="loadDavidJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="davidLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="95" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webDavidLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -832,9 +833,9 @@
           <SubComponents>
             <Component class="javax.swing.JEditorPane" name="helpEditorPane">
               <Properties>
-                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;b&gt;Single Protein&lt;/b&gt;&lt;br&gt;&#xa;To access the annotations for the currently selected protein, simply click the button corresponding to the &#xa;wanted resource.&#xa;&lt;br&gt;&lt;br&gt;&lt;br&gt;&#xa;&lt;b&gt;Multiple Proteins&lt;/b&gt;&lt;br&gt;&#xa;To get the list of all validated proteins in your project click &lt;a href=&quot;validated_proteins&quot;&gt;here&lt;/a&gt;.&lt;br&gt;&#xa;Advanced export options: &lt;i&gt;Export&lt;/i&gt; &gt; &lt;i&gt;Identification Features&lt;/i&gt;. &#xa;&lt;br&gt;&lt;br&gt;&#xa;To querry using multiple proteins, click the &lt;a href=&quot;dummy_link&quot;&gt;web&lt;/a&gt; link next to the resource and &#xa;follow the instructions provided at the resource web page.&#xa;&lt;/html&gt;"/>
+                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;b&gt;Single Protein&lt;/b&gt;&lt;br&gt;&#xa;To access the annotations for the currently selected protein, simply click the button corresponding to the &#xa;wanted resource.&#xa;&lt;br&gt;&lt;br&gt;&#xa;&lt;b&gt;Multiple Proteins&lt;/b&gt;&lt;br&gt;&#xa;To get the list of all validated proteins in your project click &lt;a href=&quot;validated_proteins&quot;&gt;here&lt;/a&gt;.&lt;br&gt;&#xa;Advanced export options: &lt;i&gt;Export&lt;/i&gt; &gt; &lt;i&gt;Identification Features&lt;/i&gt;. &#xa;&lt;br&gt;&lt;br&gt;&#xa;To querry using multiple proteins, click the &lt;a href=&quot;dummy_link&quot;&gt;web&lt;/a&gt; link next to the resource and &#xa;follow the instructions provided at the resource web page.&#xa;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="hyperlinkUpdate" listener="javax.swing.event.HyperlinkListener" parameters="javax.swing.event.HyperlinkEvent" handler="helpEditorPaneHyperlinkUpdate"/>
