@@ -16,6 +16,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
@@ -33,8 +34,6 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
@@ -819,7 +818,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
 
         // @TODO: implement mzML support
-
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Spectrum File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -1493,18 +1491,20 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         }
 
         File fastaFile = searchParameters.getFastaFile();
-        if (fastaFile != null && fastaFile.exists()) {
-            fastaFileTxt.setText(fastaFile.getName());
-            loadFastaFile(fastaFile, progressDialog);
-        } else {
-            // try to find it in the same folder as the SearchGUI.properties file
-            if (new File(file.getParentFile(), fastaFile.getName()).exists()) {
-                fastaFile = new File(file.getParentFile(), fastaFile.getName());
-                searchParameters.setFastaFile(fastaFile);
+        if (fastaFile != null) {
+            if (fastaFile.exists()) {
                 fastaFileTxt.setText(fastaFile.getName());
                 loadFastaFile(fastaFile, progressDialog);
             } else {
-                JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                // try to find it in the same folder as the SearchGUI.properties file
+                if (new File(file.getParentFile(), fastaFile.getName()).exists()) {
+                    fastaFile = new File(file.getParentFile(), fastaFile.getName());
+                    searchParameters.setFastaFile(fastaFile);
+                    fastaFileTxt.setText(fastaFile.getName());
+                    loadFastaFile(fastaFile, progressDialog);
+                } else {
+                    JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                }
             }
         }
 
@@ -1532,7 +1532,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            JOptionPane.showMessageDialog(this, new String[]{"Unable to read file: " + aFile.getName(), ioe.getMessage()}, "Error Reading File", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Unable to read file: " + aFile.getName() + ".\n" + ioe.getMessage(), "Error Reading File", JOptionPane.WARNING_MESSAGE);
         }
         return screenProps;
     }
@@ -1644,9 +1644,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             if (progressDialog != null) {
                 progressDialog.setRunFinished();
             }
-            JOptionPane.showMessageDialog(peptideShakerGUI,
-                    new String[]{"FASTA Import Error.", "File index of " + file.getName() + " could not be imported. Please contact the developers."},
-                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                    "File index of " + file.getName() + " could not be imported.<br>"
+                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                    "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (StringIndexOutOfBoundsException e) {
             if (progressDialog != null) {
@@ -1684,31 +1685,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * display a link to the Database Help web page.
      */
     private void showDataBaseHelpDialog() {
-
-        // create an empty label to put the message in
-        JLabel label = new JLabel();
-
-        // html content 
-        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                + "We strongly recommend the use of UniProt databases. Some<br>"
+        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                "We strongly recommend the use of UniProt databases. Some<br>"
                 + "features will be limited if using other databases.<br><br>"
-                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."
-                + "</body></html>");
-
-        // handle link events 
-        ep.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                }
-            }
-        });
-
-        ep.setBorder(null);
-        ep.setEditable(false);
-
-        JOptionPane.showMessageDialog(progressDialog, ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
+                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."),
+                "Database Information", JOptionPane.ERROR_MESSAGE);
     }
 
     @Override

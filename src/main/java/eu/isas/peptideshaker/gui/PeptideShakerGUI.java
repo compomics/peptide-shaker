@@ -36,6 +36,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -442,13 +443,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
 
             // @TODO: add support for desktop icons in mac and linux??
-
             // delete the firstRun file such that the user is not asked the next time around
             boolean fileDeleted = new File(getJarFilePath() + "/resources/conf/firstRun").delete();
 
             if (!fileDeleted) {
                 JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
-                        + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
+                        + "Please delete it manually.", "File Error", JOptionPane.OK_OPTION);
             }
 
             int value = JOptionPane.showConfirmDialog(this,
@@ -476,7 +476,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
-
         overviewPanel = new OverviewPanel(this);
         overviewJPanel.add(overviewPanel);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
@@ -1899,7 +1898,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // the below code is a bit more complicated than the other resize panel
         // options due to the resizing didn't work otherwise...
-
         final boolean showProteins = proteinsJCheckBoxMenuItem.isSelected();
         final boolean showPeptidesAndPsms = peptidesAndPsmsJCheckBoxMenuItem.isSelected();
         final boolean showCoverage = sequenceCoverageJCheckBoxMenuItem.isSelected();
@@ -2801,7 +2799,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
         // @TODO: replace by user select ptm visability
-
         if (fixedModsJCheckBoxMenuItem.isSelected()) {
             for (String ptm : getSearchParameters().getModificationProfile().getFixedModifications()) {
                 getDisplayPreferences().setDisplayedPTM(ptm, true);
@@ -3187,8 +3184,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         bw.close();
                         w.close();
                     } else {
-                        JOptionPane.showMessageDialog(this, "Failed to create the file log file." + System.getProperty("line.separator")
-                                + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
+                        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                                "Failed to create the file log file.<br>"
+                                + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                                "File Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 System.err.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
@@ -4720,11 +4719,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         }
                     }
                 } else {
-                    if (finalSelectedLosses.contains(names.get(i))) {
-                        selected = true;
-                    } else {
-                        selected = false;
-                    }
+                    selected = finalSelectedLosses.contains(names.get(i));
                 }
 
                 JCheckBoxMenuItem lossMenuItem = new JCheckBoxMenuItem(names.get(i));
@@ -4893,7 +4888,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             boolean showIonTableOptions, boolean showPtmPlotOptions) {
 
         // @TODO: replace boolean variables with an Enum
-
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumMenu.setVisible(showSpectrumOptions);
@@ -5108,7 +5102,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     loadGeneMappings(); // have to load the new gene mappings
 
                     // @TODO: check if the used gene mapping files are available and download if not?
-
                     if (progressDialog.isRunCanceled()) {
                         clearData(true, true);
                         clearPreferences();
@@ -5118,7 +5111,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     progressDialog.setTitle("Loading FASTA File. Please Wait...");
 
-                    boolean fileFound = true;
+                    boolean fileFound;
                     try {
                         fileFound = cpsBean.loadFastaFile(new File(getLastSelectedFolder()), progressDialog);
                     } catch (Exception e) {
@@ -5237,14 +5230,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 } catch (OutOfMemoryError error) {
                     System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                     Runtime.getRuntime().gc();
-                    JOptionPane.showMessageDialog(null,
-                            "PeptideShaker used up all the available memory and had to be stopped.\n"
-                            + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
-                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
-                            + "Java Options).\n\n"
-                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
-                            "Out Of Memory Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(PeptideShakerGUI.this, JOptionEditorPane.getJOptionEditorPane(
+                            "PeptideShaker used up all the available memory and had to be stopped.<br>"
+                            + "Memory boundaries are changed in the the Welcome Dialog (Settings<br>"
+                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit<br>"
+                            + "Java Options). See also <a href=\"http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting\">JavaTroubleShooting</a>."),
+                            "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                     progressDialog.setRunFinished();
                     error.printStackTrace();
                 } catch (EOFException e) {
@@ -5432,7 +5423,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         knownMassDeltas.put(AminoAcid.U.monoisotopicMass, "U");
         knownMassDeltas.put(AminoAcid.O.monoisotopicMass, "O");
 
-
         // add default neutral losses
 //        knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
 //        knownMassDeltas.put(NeutralLoss.NH3.mass, "NH3");
@@ -5441,13 +5431,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 //        knownMassDeltas.put(NeutralLoss.HPO3.mass, "HPO3");
 //        knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
 //        knownMassDeltas.put(44d, "PEG"); // @TODO: should this be added to neutral losses??
-
-
         // add the modifications
         ModificationProfile modificationProfile = getSearchParameters().getModificationProfile();
         ArrayList<String> modificationList = modificationProfile.getAllModifications();
         Collections.sort(modificationList);
-
 
         // iterate the modifications list and add the non-terminal modifications
         for (String modification : modificationList) {
@@ -6016,7 +6003,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     final File zipFile = selectedFile;
 
-
                     final PeptideShakerGUI tempRef = this; // needed due to threading issues
                     progressDialog = new ProgressDialogX(this,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -6082,7 +6068,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             progressDialog.setTitle("Zipping Project. Please Wait...");
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-
                             // zip the project
                             try {
                                 FileOutputStream fos = new FileOutputStream(zipFile);
@@ -6103,7 +6088,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     out.write(data, 0, count);
                                 }
                                 origin.close();
-
 
                                 // add the cps folder if present (obsolete structure)
                                 String cpsFolderName = cpsBean.getCpsFile().getName().substring(0, cpsBean.getCpsFile().getName().length() - 4) + "_cps";
@@ -6132,8 +6116,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     }
                                 }
 
-
-
                                 // add the data files
                                 progressDialog.setTitle("Zipping FASTA and Spectrum Files. Please Wait...");
                                 progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -6153,7 +6135,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     }
                                     origin.close();
                                 }
-
 
                                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                 progressDialog.setTitle("Cleaning Up. Please Wait...");
@@ -6413,8 +6394,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 bw.close();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-                JOptionPane.showMessageDialog(this, new String[]{"Unable to write file: '" + ioe.getMessage() + "'!",
-                    "Could not save modification use."}, "File Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Unable to write file: '" + ioe.getMessage() + "'!\n"
+                    + "Could not save modification use.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

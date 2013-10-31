@@ -30,6 +30,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -280,9 +281,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 if (values.length > columnCounter) {
                     references = values[columnCounter++];
                 }
-                String pumMedId = null;
                 if (values.length > columnCounter) {
-                    pumMedId = values[columnCounter++];
+                    String pumMedId = values[columnCounter++];
                     pumMedIdsForProject.put(accession, pumMedId);
                 }
 
@@ -348,10 +348,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).setMinimumChartValue(2.0);
 
         } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "The PRIDE overview file was not found. Please contact the developers.", "File Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane("The PRIDE overview file was not found.<br>"
+                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                    "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "The PRIDE overview file error. Please contact the developers.", "File Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane("The PRIDE overview file error. "
+                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                    "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
 
@@ -934,7 +938,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             int column = projectsTable.getSelectedColumn();
 
             // open pride project link in web browser
-            if (column == projectsTable.getColumn("Title").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+            if (column == projectsTable.getColumn("Title").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) projectsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
                 String link = (String) projectsTable.getValueAt(row, column);
@@ -1223,7 +1227,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-
         new Thread("DownloadThread") {
             @Override
             public void run() {
@@ -1262,18 +1265,16 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
 
                         } catch (MalformedURLException ex) {
-                            JOptionPane.showMessageDialog(finalRef,
-                                    "The PRIDE XML file could not be downloaded:\n"
-                                    + ex.getMessage() + ".\n"
-                                    + "Please contact the developers.",
+                            JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("The PRIDE XML file could not be downloaded:<br>"
+                                    + ex.getMessage() + ".<br>"
+                                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideProjectUrl = null;
                         } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(finalRef,
-                                    "The PRIDE XML file could not be downloaded:\n"
-                                    + ex.getMessage() + ".\n"
-                                    + "Please contact the developers.",
+                            JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("The PRIDE XML file could not be downloaded:<br>"
+                                    + ex.getMessage() + ".<br>"
+                                    + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideProjectUrl = null;
@@ -1330,7 +1331,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                     }
                                 }
                             }.start();
-
 
                             if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
                                     "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml").exists()) {
@@ -1476,7 +1476,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }
 
-
         HashMap<String, Integer> ionTypes = new HashMap<String, Integer>();
         HashMap<String, Integer> peptideLastResidues = new HashMap<String, Integer>();
 
@@ -1551,10 +1550,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }
 
-
         prideParametersReport = "";
         prideParametersReport += "<html><br><b><u>Extracted Search Parameters</u></b><br>";
-
 
         // set the fragment ion accuracy
         prideParametersReport += "<br><b>Fragment Ion Mass Tolerance:</b> ";
@@ -1628,13 +1625,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             prideParametersReport += "<br>(none detected)";
         }
 
-
         // handle the unknown ptms
         if (!unknownPtms.isEmpty()) {
 
 //            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 //            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
             for (String unknownPtm : unknownPtms) {
                 prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *"; // @TODO: have the user select them!!
             }
@@ -1642,7 +1637,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         }
-
 
         // set the modification profile
         prideSearchParameters.setModificationProfile(modProfile);
@@ -1718,7 +1712,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         // set the ion types
         // @TODO: implement me!
-
         // set the min/max precursor charge
         prideParametersReport += "<br><br><b>Min Precusor Charge:</b> ";
         if (minPrecursorCharge != null) {
@@ -1742,7 +1735,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         }
 
         prideParametersReport += "<br></html>";
-
 
         boolean debugOutput = false;
 
@@ -1795,7 +1787,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         boolean fixedPtm = false;
 
         // @TODO: improve/extend guess!
-
         // guess fixed/variable
         if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")) {
             fixedPtm = true;
@@ -1978,11 +1969,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         if (selected) {
             RowFilter<Object, Object> selectedFilter = new RowFilter<Object, Object>() {
                 public boolean include(Entry<? extends Object, ? extends Object> entry) {
-                    if (entry.getValue(projectsTable.getColumn(" ").getModelIndex()).equals(true)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return entry.getValue(projectsTable.getColumn(" ").getModelIndex()).equals(true);
                 }
             };
 
@@ -2084,14 +2071,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 String[] values = pubMedIds.split(",");
 
                 String pumMedIdsWithLinks = "<html>";
-
-                for (int i = 0; i < values.length; i++) {
-                    pumMedIdsWithLinks += "<a href=\"http://www.ncbi.nlm.nih.gov/pubmed/" + values[i] + "\">" + values[i] + "</a><br> ";
+                for (String value : values) {
+                    pumMedIdsWithLinks += "<a href=\"http://www.ncbi.nlm.nih.gov/pubmed/" + value + "\">" + value + "</a><br> ";
                 }
 
                 // remove the last ", "
                 //pumMedIdsWithLinks = pumMedIdsWithLinks.substring(0, pumMedIdsWithLinks.length() - 2);
-
                 pumMedIdsWithLinks += "</html>";
 
                 pubMedEditorPane.setText(pumMedIdsWithLinks);

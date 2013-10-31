@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -26,8 +27,6 @@ import java.io.Writer;
 import java.sql.SQLException;
 import java.util.HashSet;
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 /**
  * This class will allow the user to generate spectrum information for follow up
@@ -656,32 +655,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void exportToProgenesisLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseClicked
-        // create an empty label to put the message in
-        JLabel label = new JLabel();
-
-        // html content 
-        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                + "<a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a> does not yet have a specific PeptideShaker import. In order to get the<br>"
+        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                "<a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a> does not yet have a specific PeptideShaker import. In order to get the<br>"
                 + "identifications back into Progenesis one therefore has to rely on the Phenyx import<br>"
                 + "format, i.e., select 'Phenyx' when importing the results back into Progenesis.<br><br>"
                 + "Note that converting to the 'Phenyx' format simplifies the identification results.<br><br>"
-                + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."
-                + "</body></html>");
-
-        // handle link events 
-        ep.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                }
-            }
-        });
-
-        ep.setBorder(null);
-        ep.setEditable(false);
-
-        JOptionPane.showMessageDialog(this, ep, "Progenesis Help", JOptionPane.WARNING_MESSAGE);
+                + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."),
+                "Progenesis Help", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
 
     /**
@@ -833,14 +813,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     // @TODO: move code below to a gui independent export option!
-
                     boolean exported = false;
 
                     // database graph formats info:
                     // cytoscape: http://cytoscape.org/manual/Cytoscape2_6Manual.html#Import Free-Format Table Files
                     // gephi: https://gephi.org/users/supported-graph-formats/spreadsheet/
                     // neo4j: http://blog.neo4j.org/2013/03/importing-data-into-neo4j-spreadsheet.html
-
                     // make a list of the proteins added as nodes, as to not add them more than once
                     HashSet<String> proteinsAdded = new HashSet<String>();
 
@@ -848,7 +826,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // write the nodes
                         Writer nodeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "nodes.txt")));
                         Writer edgeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "edges.txt")));
-
 
                         // write the header
                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Cytoscape")) {
@@ -944,13 +921,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             edgeWriter.write("COMMIT");
                         }
 
-
                         // write the spectrum nodes
                         // @TODO: implement me
-
-
                         // @TODO: implement other node types
-
                         nodeWriter.close();
                         edgeWriter.close();
 
@@ -973,7 +946,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setRunCanceled();
                         peptideShakerGUI.catchException(e);
                     }
-
 
                     boolean processCancelled = progressDialog.isRunCanceled();
                     progressDialog.setRunFinished();

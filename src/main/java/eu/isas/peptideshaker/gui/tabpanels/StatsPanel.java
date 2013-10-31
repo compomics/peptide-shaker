@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -1859,7 +1860,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 confidencePlotLayeredPane.revalidate();
                 confidencePlotLayeredPane.repaint();
 
-
                 // move the icons
                 fdrPlotLayeredPane.getComponent(0).setBounds(
                         fdrPlotLayeredPane.getWidth() - fdrPlotLayeredPane.getComponent(0).getWidth() - 10,
@@ -1877,7 +1877,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrPlotLayeredPane.getComponent(2).setBounds(0, 0, fdrPlotLayeredPane.getWidth(), fdrPlotLayeredPane.getHeight());
                 fdrPlotLayeredPane.revalidate();
                 fdrPlotLayeredPane.repaint();
-
 
                 // move the icons
                 costBenefitPlotLayeredPane.getComponent(0).setBounds(
@@ -1897,7 +1896,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 costBenefitPlotLayeredPane.revalidate();
                 costBenefitPlotLayeredPane.repaint();
 
-
                 // move the icons
                 pepPlotLayeredPane.getComponent(0).setBounds(
                         pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(0).getWidth() - 10,
@@ -1915,7 +1913,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 pepPlotLayeredPane.getComponent(2).setBounds(0, 0, pepPlotLayeredPane.getWidth(), pepPlotLayeredPane.getHeight());
                 pepPlotLayeredPane.revalidate();
                 pepPlotLayeredPane.repaint();
-
 
                 // move the icons
                 fdrsPlotLayeredPane.getComponent(0).setBounds(
@@ -3226,7 +3223,6 @@ public class StatsPanel extends javax.swing.JPanel {
         probaFnrRendrer.setSeriesShape(0, DefaultDrawingSupplier.createStandardSeriesShapes()[2]);
         fdrFnrPlot.setRenderer(4, probaFnrRendrer);
 
-
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {fdr, benefit};
         benefitData.addSeries("Retained Cost/Benefit", benefitSeries);
@@ -3593,8 +3589,10 @@ public class StatsPanel extends javax.swing.JPanel {
                 try {
                     miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
-                            "Identification Conflict", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
+                            "An identification conflict occured. If you can reproduce the error <br>"
+                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                            "Identification Conflict", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
 
@@ -3641,8 +3639,10 @@ public class StatsPanel extends javax.swing.JPanel {
                 try {
                     miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
-                            "Identification Conflict", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
+                            "An identification conflict occured. If you can reproduce the error <br>"
+                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
+                            "Identification Conflict", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
 
