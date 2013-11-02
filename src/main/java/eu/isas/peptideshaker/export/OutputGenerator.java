@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -433,7 +434,9 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.isValidated()) {
 
+                                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                aminoAcidPattern, aminoAcidPattern.length(),
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
@@ -738,7 +741,6 @@ public class OutputGenerator {
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
 
                         // @TODO: try to batch load the spectra? as this would speed up the export...
-
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
                         identification.loadPeptideMatches(progressDialog);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
@@ -767,6 +769,8 @@ public class OutputGenerator {
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
                                             ArrayList<String> possibleProteins = new ArrayList<String>();
                                             ArrayList<String> orderedProteinsKeys = new ArrayList<String>(); // @TODO: could be merged with one of the other maps perhaps?
+                                            AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
+                                            int patternLength = aminoAcidPattern.length();
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
@@ -875,9 +879,10 @@ public class OutputGenerator {
                                                     for (String proteinAccession : orderedProteinsKeys) {
                                                         surroundingAAs.put(proteinAccession,
                                                                 sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
-                                                                peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
+                                                                        aminoAcidPattern, patternLength,
+                                                                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                                                        ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                                                                        peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
                                                     }
                                                 }
 
@@ -938,6 +943,7 @@ public class OutputGenerator {
 
                                                 if (enzymatic) {
                                                     boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
+                                                            aminoAcidPattern, patternLength,
                                                             peptideShakerGUI.getSearchParameters().getEnzyme(), ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                             peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
@@ -994,7 +1000,6 @@ public class OutputGenerator {
                                                     int cpt = 0;
 
                                                     // @TODO: replace with: peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);?
-
                                                     identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
@@ -2003,7 +2008,6 @@ public class OutputGenerator {
                             progressDialog.increasePrimaryProgressCounter();
                         }
 
-
                         writer.close();
 //
 //                        try {
@@ -2076,8 +2080,6 @@ public class OutputGenerator {
 //                        }
 //
 //                        writer.close();
-
-
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -2454,7 +2456,6 @@ public class OutputGenerator {
             boolean aShowStar, boolean aIncludeHidden, boolean aShowNonEnzymaticPeptidesColumn) {
 
         // @TODO: add the non enzymatic peptides detected information!!
-
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
         final boolean indexes = aIndexes;
@@ -2730,8 +2731,8 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
 
-                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges =
-                                                                peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges
+                                                                = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
@@ -2762,8 +2763,8 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) != null
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
 
-                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges =
-                                                                peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges
+                                                                = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
@@ -2803,7 +2804,9 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.isValidated()) {
 
+                                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                aminoAcidPattern, aminoAcidPattern.length(),
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());

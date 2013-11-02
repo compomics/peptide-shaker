@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -463,6 +464,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                     validatedPeptideCounter++;
 
                                     String peptideSequence = Peptide.getSequence(peptideKey);
+                                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                                    int patternLength = aminoAcidPattern.length();
                                     String tempSequence = currentProteinSequence;
 
                                     boolean includePeptide = false;
@@ -471,11 +474,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());

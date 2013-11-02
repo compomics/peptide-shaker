@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -82,7 +83,7 @@ public class IdentificationFeaturesGenerator {
      * @param metrics the metrics picked-up wile loading the data
      * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public IdentificationFeaturesGenerator(Identification identification, SearchParameters searchParameters, 
+    public IdentificationFeaturesGenerator(Identification identification, SearchParameters searchParameters,
             IdFilter idFilter, Metrics metrics, SpectrumCountingPreferences spectrumCountingPreferences) {
         this.metrics = metrics;
         this.idFilter = idFilter;
@@ -175,10 +176,7 @@ public class IdentificationFeaturesGenerator {
             int lastCleavage = 0;
             while (++cleavageAA < sequence.length() - 2) {
 
-
                 // @TODO: how to handle this for semi-specific enzymes??
-
-
                 if ((enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA)))
                         || (enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1)))) {
                     if (cleavageAA - lastCleavage <= pepMax) {
@@ -246,7 +244,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme) 
+    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         ArrayList<String> result = (ArrayList<String>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey);
 
@@ -269,7 +267,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, Enzyme enzyme) 
+    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
@@ -288,10 +286,12 @@ public class IdentificationFeaturesGenerator {
             if (peptidePSParameter.isValidated()) {
 
                 String peptideSequence = Peptide.getSequence(peptideKey);
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                int patternLength = aminoAcidPattern.length();
                 boolean enzymatic = false;
                 for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
                     Protein currentProtein = sequenceFactory.getProtein(accession);
-                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme, 
+                    if (currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, enzyme,
                             ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy())) {
                         enzymatic = true;
                         break;
@@ -393,7 +393,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) 
+    public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         if (method == spectrumCountingPreferences.getSelectedMethod()) {
@@ -454,7 +454,7 @@ public class IdentificationFeaturesGenerator {
      * @throws InterruptedException
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, double ms2Accuracy) 
+            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, double ms2Accuracy)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter pSParameter = new PSParameter();
@@ -463,7 +463,6 @@ public class IdentificationFeaturesGenerator {
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
             // NSAF
-
             double result = 0;
             int peptideOccurrence = 0;
 
@@ -471,6 +470,9 @@ public class IdentificationFeaturesGenerator {
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                String peptideSequence = Peptide.getSequence(peptideKey);
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                int patternLength = aminoAcidPattern.length();
                 ArrayList<String> possibleProteinMatches = new ArrayList<String>();
 
                 for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
@@ -481,7 +483,8 @@ public class IdentificationFeaturesGenerator {
                                     testMatch = identification.getProteinMatch(proteinKey);
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
                                         Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
-                                        peptideOccurrence += currentProtein.getPeptideStart(Peptide.getSequence(peptideKey), ProteinMatch.MatchingType.string, ms2Accuracy).size();
+                                        peptideOccurrence += currentProtein.getPeptideStart(peptideSequence, aminoAcidPattern, patternLength, 
+                                                ProteinMatch.MatchingType.string, ms2Accuracy).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }
                                 } catch (Exception e) {
@@ -976,7 +979,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey, String separator) 
+    public String getPrimaryPTMSummary(String proteinKey, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         return getPrimaryPTMSummary(proteinKey, null, separator);
     }
@@ -997,7 +1000,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator) 
+    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1110,7 +1113,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey, String separator) 
+    public String getSecondaryPTMSummary(String proteinKey, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         return getSecondaryPTMSummary(proteinKey, null, separator);
     }
@@ -1131,7 +1134,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator) 
+    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1275,7 +1278,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the list of validated protein keys
      */
-    public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences) 
+    public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         return getValidatedProteins(null, filterPreferences);
     }
@@ -1289,7 +1292,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the list of validated protein keys
      */
-    public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences) 
+    public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         ArrayList<String> result = identificationFeaturesCache.getValidatedProteinList();
         if (result == null) {
@@ -1310,7 +1313,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) 
+    public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         if (identificationFeaturesCache.getProteinList() == null) {
@@ -1329,8 +1332,8 @@ public class IdentificationFeaturesGenerator {
                     || metrics.getMaxMW() <= 0;
 
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
-            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
-                    new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
+                    = new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
             ArrayList<Double> scores = new ArrayList<Double>();
             PSParameter probabilities = new PSParameter();
             int maxPeptides = 0, maxSpectra = 0;
@@ -1502,7 +1505,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) 
+    public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
             getProcessedProteinKeys(waitingHandler, filterPreferences);

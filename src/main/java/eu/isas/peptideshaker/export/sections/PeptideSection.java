@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -103,7 +104,7 @@ public class PeptideSection {
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -225,7 +226,10 @@ public class PeptideSection {
                         String start = "";
                         for (String proteinAccession : accessions) {
                             Protein protein = sequenceFactory.getProtein(proteinAccession);
-                            ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(), 
+                            AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
+                            int patternLength = aminoAcidPattern.length();
+                            ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
+                                    aminoAcidPattern, patternLength,
                                     ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                             Collections.sort(starts);
                             boolean first = true;
@@ -283,14 +287,16 @@ public class PeptideSection {
                         accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
+                        AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
+                        int patternLength = aminoAcidPattern.length();
                         String subSequence = "";
                         for (String proteinAccession : accessions) {
                             if (!subSequence.equals("")) {
                                 subSequence += ";";
                             }
-                            HashMap<Integer, String[]> surroundingAAs =
-                                    sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                    nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                            HashMap<Integer, String[]> surroundingAAs = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                                    aminoAcidPattern, patternLength, nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                                    searchParameters.getFragmentIonAccuracy());
                             ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                             Collections.sort(starts);
                             boolean first = true;
@@ -309,14 +315,16 @@ public class PeptideSection {
                         accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
+                        aminoAcidPattern = peptide.getSequenceAsPattern();
+                        patternLength = aminoAcidPattern.length();
                         subSequence = "";
                         for (String proteinAccession : accessions) {
                             if (!subSequence.equals("")) {
                                 subSequence += ";";
                             }
-                            HashMap<Integer, String[]> surroundingAAs =
-                                    sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                    nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                            HashMap<Integer, String[]> surroundingAAs
+                                    = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(), aminoAcidPattern, patternLength, 
+                                            nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                             ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                             Collections.sort(starts);
                             boolean first = true;
