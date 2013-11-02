@@ -13,6 +13,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
@@ -174,7 +175,7 @@ public class FileImporter {
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
             if (memoryPreference < 2000) {
-                sequenceFactory.setnCache(5000);
+                sequenceFactory.setnCache(5000); //  @ODO: this results in very slow loading in low memory settings!!
             }
             proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
@@ -442,7 +443,7 @@ public class FileImporter {
 
                     // clear the objects not needed anymore
                     singleProteinList.clear();
-                    sequenceFactory.emptyCache();
+                    sequenceFactory.emptyCache(); // @TODO: should only be used in extreme cases!!
 
                     if (nRetained == 0) {
                         waitingHandler.appendReport("No identifications retained.", true, true);
@@ -578,6 +579,7 @@ public class FileImporter {
                 e.printStackTrace();
             }
             fileReader.close();
+
             if (tempSet != null) {
                 Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
@@ -672,12 +674,14 @@ public class FileImporter {
 
                                     Peptide peptide = assumption.getPeptide();
                                     String peptideSequence = peptide.getSequence();
+                                    AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
+                                    int patternLength = aminoAcidPattern.length();
 
                                     // change the search engine modifications into expected modifications
                                     // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                                     ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, aminoAcidPattern, patternLength, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                     HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                                     HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
@@ -901,7 +905,7 @@ public class FileImporter {
                 // Free at least 1GB for the next parser if not anymore available
                 // (not elegant so most likely not optimal)
                 if (memoryIssue()) {
-                    sequenceFactory.emptyCache();
+                    sequenceFactory.emptyCache(); // @TODO: should only be used in extreme cases!!
                     System.gc();
                     if (memoryIssue()) {
                         waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
@@ -941,6 +945,7 @@ public class FileImporter {
                     waitingHandler.appendReport(report, true, true);
                 }
             }
+
             waitingHandler.increasePrimaryProgressCounter();
         }
 
@@ -951,7 +956,7 @@ public class FileImporter {
          * issues
          */
         public boolean memoryIssue() {
-            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824;
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824; // @TODO: should rather be a percentage of memory left??
         }
 
         /**

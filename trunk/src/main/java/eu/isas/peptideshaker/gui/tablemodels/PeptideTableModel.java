@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -184,7 +185,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     try {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
-                        indexes = currentProtein.getPeptideStart(Peptide.getSequence(peptideKey), 
+                        String peptideSequence = Peptide.getSequence(peptideKey);
+                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                        indexes = currentProtein.getPeptideStart(peptideSequence, 
+                                aminoAcidPattern, aminoAcidPattern.length(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (IOException e) {

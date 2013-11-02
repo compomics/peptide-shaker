@@ -657,7 +657,6 @@ public class PeptideShaker {
                     + identification.getSpectrumIdentificationSize());
         }
 
-
         // validate the spectra
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
@@ -694,7 +693,6 @@ public class PeptideShaker {
             } else {
                 psParameter.setValidated(false);
             }
-
 
             // set the fraction details
             // @TODO: could be a better more elegant way of doing this?
@@ -759,7 +757,6 @@ public class PeptideShaker {
             }
         }
 
-
         // validate the proteins
         double proteinThreshold = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
@@ -778,7 +775,6 @@ public class PeptideShaker {
             } else {
                 psParameter.setValidated(false);
             }
-
 
             // set the fraction details
             // @TODO: could be a better more elegant way of doing this?
@@ -841,7 +837,6 @@ public class PeptideShaker {
                 }
             }
 
-
             // set the number of validated spectra per fraction for each peptide
             psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
             psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
@@ -890,8 +885,6 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
-
-
 
         // map of the first hits for this spectrum: score -> max protein count -> max search engine votes -> sequence coverage annotated -> min mass deviation (unless you have a better idea?)
         HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>> peptideAssumptions;
@@ -1363,10 +1356,15 @@ public class PeptideShaker {
         }
         // try to infer the modification site based on any related peptide
         for (String spectrumFile : notConfidentPeptideInference.keySet()) {
+
             ArrayList<String> progress = new ArrayList<String>();
+
             for (String modification : notConfidentPeptideInference.get(spectrumFile).keySet()) {
+
                 identification.loadSpectrumMatches(notConfidentPeptideInference.get(spectrumFile).get(modification), null);
+
                 for (String spectrumKey : notConfidentPeptideInference.get(spectrumFile).get(modification)) {
+
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
                     String sequence = peptide.getSequence();
@@ -1374,9 +1372,12 @@ public class PeptideShaker {
                     int nMod = Peptide.getModificationCount(notConfidentKey, modification);
                     ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, modification);
                     ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>();
+
                     if (confidentPeptideInference.containsKey(modification)) {
+
                         // See if we can explain this peptide by another already identified peptides with the same number of modifications (the two peptides will be merged)
                         ArrayList<String> keys = confidentPeptideInference.get(modification).get(sequence);
+
                         if (keys != null) {
                             for (String tempKey : keys) {
                                 SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
@@ -2102,8 +2103,7 @@ public class PeptideShaker {
             for (Double ptmMass : modifications.keySet()) {
                 HashMap<ArrayList<Integer>, Double> scores = null;
                 if (scoringPreferences.getSelectedProbabilisticScore() == PTMScoringPreferences.ProbabilisticScore.AScore && nMod.get(ptmMass) == 1) {
-                    scores = AScore.getAScore(peptide,
-                            modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
+                    scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
@@ -2506,7 +2506,6 @@ public class PeptideShaker {
 
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
         ArrayList<String> candidateUnique = new ArrayList<String>();
-        Enzyme enzyme = searchParameters.getEnzyme();
 
         for (String accession : sharedAccessions) {
             for (String uniqueGroupCandidate : identification.getProteinMap().get(accession)) {
@@ -2723,8 +2722,8 @@ public class PeptideShaker {
 
         // As we go through all protein ids, keep the sorted list of proteins and maxima in the instance of the Metrics class to pass them to the GUI afterwards
         // proteins are sorted according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
-        HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
-                new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
+        HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap
+                = new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
         ArrayList<Double> scores = new ArrayList<Double>();
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
@@ -3116,11 +3115,7 @@ public class PeptideShaker {
                         nMatch++;
                     }
                 }
-                if (nMatch >= secondaryDescription.size() / 2) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return nMatch >= secondaryDescription.size() / 2;
             } else {
                 int nMatch = 0;
                 for (int i = 0; i < primaryDescription.size(); i++) {
@@ -3128,11 +3123,7 @@ public class PeptideShaker {
                         nMatch++;
                     }
                 }
-                if (nMatch >= primaryDescription.size() / 2) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return nMatch >= primaryDescription.size() / 2;
             }
         }
     }

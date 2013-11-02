@@ -4,6 +4,7 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -381,7 +382,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
-
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
@@ -2326,7 +2326,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // @TODO: figure out why the strange special cases are needed... 
         //          if not included the slider gets stuck at given values depending on the current max value
-
         if (evt.isControlDown()) {
             if (evt.getWheelRotation() > 0) { // Down
                 accuracySlider.setValue(accuracySlider.getValue() - 1);
@@ -2520,7 +2519,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 proteinsLayeredPane.revalidate();
                 proteinsLayeredPane.repaint();
 
-
                 // move the icons
                 peptidesLayeredPane.getComponent(0).setBounds(
                         peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(0).getWidth() - 10,
@@ -2551,7 +2549,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptidesLayeredPane.revalidate();
                 peptidesLayeredPane.repaint();
 
-
                 // move the icons
                 psmsLayeredPane.getComponent(0).setBounds(
                         psmsLayeredPane.getWidth() - psmsLayeredPane.getComponent(0).getWidth() - 10,
@@ -2581,7 +2578,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 psmsLayeredPane.getComponent(4).setBounds(0, 0, psmsLayeredPane.getWidth(), psmsLayeredPane.getHeight());
                 psmsLayeredPane.revalidate();
                 psmsLayeredPane.repaint();
-
 
                 // move the icons
                 spectrumLayeredPane.getComponent(0).setBounds(
@@ -3935,6 +3931,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (psParameter.isValidated()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
+                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                     String tempSequence = currentProteinSequence;
 
                     boolean includePeptide = false;
@@ -3942,10 +3939,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, aminoAcidPattern.length(), peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, aminoAcidPattern.length(), peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
@@ -3998,7 +3995,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void updateSequenceCoverage(String proteinAccession, boolean updateProtein) {
 
         // @TODO: the sequence coverage plotting code should be moved into a separate class!
-
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
         HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
@@ -4013,7 +4009,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 //sequenceCoverageInnerPanel.add(new JLabel("Loading..."));
                 //sequenceCoverageInnerPanel.revalidate();
                 //sequenceCoverageInnerPanel.repaint();
-
                 updateProteinSequenceCoveragePlot(proteinAccession);
                 updatePtmCoveragePlot(proteinAccession);
             }
@@ -4038,7 +4033,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         tempSequence = currentProteinSequence.substring(0, startIndex);
                     }
                 }
-
 
                 // create the coverage plot
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
@@ -4111,7 +4105,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                                        (int) (peptideShakerGUI.getSparklineColor().getGreen() * 0.75),
 //                                        (int) (peptideShakerGUI.getSparklineColor().getBlue() * 0.75));
 //                            }
-
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideColor, null);
                         }
                     } else if (possibleToCoverCounter > 0) {
@@ -4200,11 +4193,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 for (String peptideKey : peptideKeys) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(Peptide.getSequence(peptideKey));
+                    int patternLength = aminoAcidPattern.length();
                     for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
                         if (!modMatch.isVariable()) {
                             String ptmName = modMatch.getTheoreticPtm();
                             if (displayPreferences.isDisplayedPTM(ptmName)) {
                                 ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
+                                        aminoAcidPattern, patternLength,
                                         ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 for (Integer index : indexes) {
                                     fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
@@ -4213,7 +4209,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         }
                     }
                 }
-
 
                 for (int aa = 0; aa < sequence.length(); aa++) {
 
@@ -4241,9 +4236,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                                psPtmScores.getMainModificationsAt(aa).get(i);
 //                            }
 //                        }
-
                         // @TODO: are peptide terminal mods excluded??  
-
                         Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
                         if (ptmColor == null) {
                             ptmColor = Color.lightGray;
@@ -5191,7 +5184,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(Peptide.getSequence(peptideKey));
+                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey), aminoAcidPattern, aminoAcidPattern.length(),
                         peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                 String before = "";
@@ -5423,7 +5417,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             return;
         }
 
-
         if (proteinRow == -1) {
             peptideShakerGUI.resetSelectedItems();
             proteinTableMouseReleased(null);
@@ -5474,8 +5467,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         // show the tooltip now
         ToolTipManager.sharedInstance().mouseMoved(
                 new MouseEvent(spectrumJTabbedPane, 0, 0, 0,
-                spectrumJTabbedPane.getX() + spectrumJTabbedPane.getWidth() - 10, spectrumJTabbedPane.getY() + 90, // X-Y of the mouse for the tool tip
-                0, false));
+                        spectrumJTabbedPane.getX() + spectrumJTabbedPane.getWidth() - 10, spectrumJTabbedPane.getY() + 90, // X-Y of the mouse for the tool tip
+                        0, false));
     }
 
     /**
@@ -5624,21 +5617,23 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 for (String peptideKey : peptideKeys) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
+                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                    int patternLength = aminoAcidPattern.length();
 
                     boolean includePeptide = false;
 
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
                     if (includePeptide) {
-                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, aminoAcidPattern, patternLength, ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideEnd = peptideStart + peptideSequence.length() - 1;
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
