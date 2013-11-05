@@ -434,42 +434,48 @@ public class PeptideShaker {
 
             firstLine = true;
 
-            for (String fraction : suspiciousPsms) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    detailedReport += ", ";
+            if (psmMap.getKeys().size() == 1) {
+                detailedReport += "PSMs.<br>";
+            } else {
+                for (String fraction : suspiciousPsms) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        detailedReport += ", ";
+                    }
+                    detailedReport += fraction;
                 }
-                detailedReport += fraction;
-            }
-
-            if (suspiciousPsms.size() > 0) {
-                detailedReport += " charged spectra.<br>";
-            }
-
-            firstLine = true;
-
-            for (String fraction : suspiciousPeptides) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    detailedReport += "<br>";
+                if (suspiciousPsms.size() > 0) {
+                    detailedReport += " charged PSMs.<br>";
                 }
-                detailedReport += fraction;
             }
 
-            if (suspiciousPeptides.size() > 0) {
-                detailedReport += " modified peptides.<br>";
+            if (peptideMap.getKeys().size() == 1) {
+                detailedReport += "Peptides.<br>";
+            } else {
+                firstLine = true;
+                for (String fraction : suspiciousPeptides) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        detailedReport += "<br>";
+                    }
+                    detailedReport += PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), fraction);
+                    if (suspiciousPeptides.size() > 0) {
+                        detailedReport += " peptides.<br>";
+                    }
+                }
             }
 
             if (suspiciousProteins) {
-                detailedReport += " proteins.<br>";
+                detailedReport += "Proteins.<br>";
             }
 
             if (detailedReport.length() > 0) {
-                detailedReport = "The following identification classes resulted in non robust statistical estimations."
-                        + "We advice to control the quality of the corresponding matches:<br><br>" + detailedReport;
-                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
+                detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
+                        + detailedReport
+                        + "<br><br>You can inspect this in the <i>Validation</i> tab.";
+                addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport));
             }
         }
 

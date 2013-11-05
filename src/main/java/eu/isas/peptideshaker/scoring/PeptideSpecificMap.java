@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,10 @@ public class PeptideSpecificMap implements Serializable {
      * The index of the dustbin.
      */
     public final static String DUSTBIN = "OTHER";
+    /**
+     * separator for the key construction
+     */
+    public final static String separator = "_cus_";
 
     /**
      * Constructor.
@@ -103,7 +108,7 @@ public class PeptideSpecificMap implements Serializable {
     public ArrayList<String> suspiciousInput() {
         ArrayList<String> result = new ArrayList<String>();
         for (String key : peptideMaps.keySet()) {
-            if (peptideMaps.get(key).suspiciousInput()) {
+            if (!groupedMaps.contains(key) && peptideMaps.get(key).suspiciousInput()) {
                 result.add(key);
             }
         }
@@ -163,7 +168,10 @@ public class PeptideSpecificMap implements Serializable {
         Collections.sort(modificationMasses);
         String key = "";
         for (Double mass : modificationMasses) {
-            key += mass + "_";
+            if (!key.equals("")) {
+                key += separator;
+            }
+            key += mass;
         }
         return key;
     }
@@ -204,5 +212,54 @@ public class PeptideSpecificMap implements Serializable {
             result += targetDecoyMap.getMapSize();
         }
         return result;
+    }
+
+    /**
+     * Returns an intelligible string for the key of the map.
+     *
+     * @param modificationProfile the modification profile of the identification
+     * procedure
+     * @param key the key of interest
+     *
+     * @return an intelligible string for the key of the map
+     */
+    public static String getKeyName(ModificationProfile modificationProfile, String key) {
+        if (key.equals("")) {
+            return "Unmodified";
+        } else if (key.equals(PeptideSpecificMap.DUSTBIN)) {
+            return "Other";
+        } else {
+            PTMFactory ptmFactory = PTMFactory.getInstance();
+            String result = "";
+            String[] split = key.split(separator);
+            boolean shortNames = split.length > 1;
+            for (String massString : split) {
+                if (!result.equals("")) {
+                    result += ", ";
+                }
+                boolean found = false;
+                try {
+                    Double mass = new Double(massString);
+                    for (String ptmName : modificationProfile.getAllNotFixedModifications()) {
+                        PTM ptm = ptmFactory.getPTM(ptmName);
+                        if (mass == ptm.getMass()) {
+                            if (shortNames) {
+                                result += ptm.getShortName();
+                            } else {
+                                result += ptm.getName();
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+                if (!found) {
+                    result += massString + " PTM";
+                }
+            }
+            return result;
+        }
     }
 }
