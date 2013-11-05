@@ -38,9 +38,9 @@ public class PeptideSpecificMap implements Serializable {
      */
     public final static String DUSTBIN = "OTHER";
     /**
-     * separator for the key construction
+     * Separator for the key construction.
      */
-    public final static String separator = "_cus_";
+    public final static String SEPARATOR = "_cus_";
 
     /**
      * Constructor.
@@ -169,7 +169,7 @@ public class PeptideSpecificMap implements Serializable {
         String key = "";
         for (Double mass : modificationMasses) {
             if (!key.equals("")) {
-                key += separator;
+                key += SEPARATOR;
             }
             key += mass;
         }
@@ -220,24 +220,29 @@ public class PeptideSpecificMap implements Serializable {
      * @param modificationProfile the modification profile of the identification
      * procedure
      * @param key the key of interest
-     *
      * @return an intelligible string for the key of the map
      */
     public static String getKeyName(ModificationProfile modificationProfile, String key) {
+
         if (key.equals("")) {
             return "Unmodified";
         } else if (key.equals(PeptideSpecificMap.DUSTBIN)) {
             return "Other";
         } else {
+
             PTMFactory ptmFactory = PTMFactory.getInstance();
             String result = "";
-            String[] split = key.split(separator);
+            String[] split = key.split(SEPARATOR);
             boolean shortNames = split.length > 1;
+
             for (String massString : split) {
+
                 if (!result.equals("")) {
                     result += ", ";
                 }
+
                 boolean found = false;
+
                 try {
                     Double mass = new Double(massString);
                     for (String ptmName : modificationProfile.getAllNotFixedModifications()) {
@@ -255,10 +260,12 @@ public class PeptideSpecificMap implements Serializable {
                 } catch (Exception e) {
                     // ignore
                 }
+
                 if (!found) {
                     result += massString + " PTM";
                 }
             }
+
             return result;
         }
     }
