@@ -111,7 +111,7 @@ public class PsmSpecificMap implements Serializable {
     public ArrayList<String> suspiciousInput() {
         ArrayList<String> result = new ArrayList<String>();
         for (Integer key : psmsMaps.keySet()) {
-            if (psmsMaps.get(key).suspiciousInput() && !grouping.containsKey(key)) {
+            if (!grouping.containsKey(key) && psmsMaps.get(key).suspiciousInput() && !grouping.containsKey(key)) {
                 result.add(getGroupKey(key));
             }
         }

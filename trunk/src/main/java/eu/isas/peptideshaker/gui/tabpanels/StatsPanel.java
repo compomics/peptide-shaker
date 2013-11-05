@@ -2932,13 +2932,8 @@ public class StatsPanel extends javax.swing.JPanel {
                         peptideMap.put(cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
-                        if (peptideKey.equals("")) {
-                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Unmodified Peptides"});
-                        } else if (peptideKey.equals(PeptideSpecificMap.DUSTBIN)) {
-                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
-                        } else {
-                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, peptideKey + " Peptides"});
-                        }
+                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getSearchParameters().getModificationProfile(), peptideKey);
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, title + " Peptides"});
                     }
                 }
 
