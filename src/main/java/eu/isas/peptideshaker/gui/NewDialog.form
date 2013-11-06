@@ -137,14 +137,14 @@
                           <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
                           <Component id="speciesTextField" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="replicateNumberIdtxt" min="-2" pref="66" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="editSpeciesButton" min="-2" pref="136" max="-2" attributes="0"/>
+                          <Component id="editSpeciesButton" min="-2" pref="145" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -280,9 +280,9 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="editPreferencesButton" max="32767" attributes="1"/>
-                          <Component id="editSearchButton" alignment="1" max="32767" attributes="1"/>
-                          <Component id="editImportFilterButton" alignment="1" pref="141" max="32767" attributes="1"/>
+                          <Component id="editPreferencesButton" pref="145" max="32767" attributes="1"/>
+                          <Component id="editSearchButton" alignment="1" pref="145" max="32767" attributes="1"/>
+                          <Component id="editImportFilterButton" alignment="1" pref="145" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>

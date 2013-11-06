@@ -289,16 +289,16 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addComponent(speciesLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                    .addComponent(projectNameIdTxt)
                     .addComponent(sampleNameIdtxt)
                     .addComponent(speciesTextField))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(projectDetailsPanelLayout.createSequentialGroup()
                         .addComponent(replicateLabel)
                         .addGap(18, 18, 18)
                         .addComponent(replicateNumberIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(editSpeciesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(editSpeciesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         projectDetailsPanelLayout.setVerticalGroup(
@@ -377,14 +377,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addComponent(importFiltersLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                    .addComponent(preferencesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                    .addComponent(importFilterTxt)
+                    .addComponent(preferencesTxt)
                     .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(editPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
+                    .addComponent(editPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
                 .addContainerGap())
         );
         processingParametersPanelLayout.setVerticalGroup(
@@ -497,7 +497,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addGroup(inputFilesPanelLayout.createSequentialGroup()
                         .addComponent(databaseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                        .addComponent(fastaFileTxt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(browseDbButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1339,7 +1339,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 JOptionPane.showMessageDialog(null, "The project name should not contain " + forbiddenChar + ".\n"
                         + "Forbidden character in project name",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
-                projectNameIdTxt.setForeground(Color.red);
+                projectReferenceLabel.setForeground(Color.red);
                 return false;
             }
         }
@@ -1348,7 +1348,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 JOptionPane.showMessageDialog(null, "The sample name should not contain " + forbiddenChar + ".\n"
                         + "Forbidden character in sample name",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
-                sampleNameIdtxt.setForeground(Color.red);
+                sampleNameLabel.setForeground(Color.red);
                 return false;
             }
         }
@@ -1372,6 +1372,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         if (searchParameters.getFastaFile() == null) {
             JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
+            databaseLabel.setForeground(Color.RED);
             return false;
         }
 
