@@ -19,6 +19,7 @@ import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.Util;
+import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
@@ -386,6 +387,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
         }
 
+        // turn off the derby log file
+        DerbyUtil.disableDerbyLog();
+
         File cpsFile = null;
         boolean cps = false;
         for (String arg : args) {
@@ -431,11 +435,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         }
 
-        // check for 64 bit Java
-        if (!getJarFilePath().equalsIgnoreCase(".")
-                && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
-            CompomicsWrapper.checkJavaVersion("PeptideShaker");
-        }
+        // check for 64 bit java and for at least 4 gb memory 
+        boolean java64bit = CompomicsWrapper.is64BitJava();
+        boolean memoryOk = (utilitiesUserPreferences.getMemoryPreference() >= 4000);
 
         // add desktop shortcut?
         if (!getJarFilePath().equalsIgnoreCase(".")
@@ -527,7 +529,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         if (cpsFile == null) {
             if (showWelcomeDialog) {
                 // open the welcome dialog
-                new WelcomeDialog(this, true);
+                new WelcomeDialog(this, !java64bit || !memoryOk, true);
             }
         } else {
             setVisible(true);
@@ -6395,7 +6397,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             } catch (IOException ioe) {
                 ioe.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Unable to write file: '" + ioe.getMessage() + "'!\n"
-                    + "Could not save modification use.", "File Error", JOptionPane.WARNING_MESSAGE);
+                        + "Could not save modification use.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
