@@ -5,6 +5,7 @@ import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.JavaOptionsDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.software.dialogs.LowMemoryDialog;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -36,12 +37,18 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * Create a new WelcomeDialog.
      *
      * @param peptideShakerGUI the dialog parent
+     * @param showLowMemoryWarning show or hide the low memory warning
      * @param modal modal or not modal
      */
-    public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+    public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean showLowMemoryWarning, boolean modal) {
         super(dummyParentFrame.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
+
+        if (!showLowMemoryWarning) {
+            lowMemoryWarningLabel.setVisible(false);
+        }
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -79,6 +86,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         gettingStartedJButton1 = new javax.swing.JButton();
         openExampleDatasetJButton = new javax.swing.JButton();
         settingsLabel = new javax.swing.JLabel();
+        lowMemoryWarningLabel = new javax.swing.JLabel();
 
         quantifyJButton.setFont(quantifyJButton.getFont().deriveFont(quantifyJButton.getFont().getStyle() | java.awt.Font.BOLD, quantifyJButton.getFont().getSize()+3));
         quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
@@ -326,6 +334,24 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
+        lowMemoryWarningLabel.setFont(lowMemoryWarningLabel.getFont().deriveFont(lowMemoryWarningLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        lowMemoryWarningLabel.setForeground(new java.awt.Color(255, 0, 0));
+        lowMemoryWarningLabel.setText("<html><u>Low Memory Warning!</u>");
+        lowMemoryWarningLabel.setToolTipText("Click to see details");
+        lowMemoryWarningLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        lowMemoryWarningLabel.setIconTextGap(-4);
+        lowMemoryWarningLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                lowMemoryWarningLabelMouseReleased(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lowMemoryWarningLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lowMemoryWarningLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -363,6 +389,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
                                 .addGap(10, 10, 10)
                                 .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lowMemoryWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(90, 90, 90)
                                 .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(26, 26, 26)))))
                 .addContainerGap())
@@ -385,7 +413,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lowMemoryWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -429,7 +458,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
         // @TODO: the default folder should be the example dataset folder !!!!
-
         File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
         if (newFile != null) {
@@ -542,7 +570,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
 
         // @TODO: the default searchgui folder has to be set!!!
-
         this.setVisible(false);
         peptideShakerGUI.setVisible(false);
 
@@ -702,7 +729,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void javaSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaSettingsMenuItemActionPerformed
-        
+
         // reload the user preferences as these may have been changed by other tools
         try {
             peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
@@ -710,7 +737,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        
+
         new JavaOptionsDialog(peptideShakerGUI, peptideShakerGUI, this, "PeptideShaker");
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
@@ -744,6 +771,34 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "About PeptideShaker");
     }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void lowMemoryWarningLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_lowMemoryWarningLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void lowMemoryWarningLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_lowMemoryWarningLabelMouseExited
+
+    /**
+     * Open the memory warning help dialog.
+     *
+     * @param evt
+     */
+    private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
+        new LowMemoryDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+    }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel backgroundPanel;
@@ -756,6 +811,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuItem javaSettingsMenuItem;
+    private javax.swing.JLabel lowMemoryWarningLabel;
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openExampleDatasetJButton;
     private javax.swing.JButton openJButton;

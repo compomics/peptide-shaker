@@ -475,7 +475,7 @@ public class PeptideShaker {
                 detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
                         + detailedReport
                         + "<br>You can inspect this in the <i>Validation</i> tab.";
-                addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport));
+                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
             }
         }
 
