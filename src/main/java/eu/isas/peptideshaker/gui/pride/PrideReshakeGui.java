@@ -1470,7 +1470,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                 for (CvParam stepCvParam : stepCvParams) {
                     if (stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000160") || stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000024")) { // enzyme
-                        enzymes.add(stepCvParam.getValue());
+                        if (stepCvParam.getValue() != null) {
+                            enzymes.add(stepCvParam.getValue());
+                        }
                     }
                 }
             }
