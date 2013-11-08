@@ -518,6 +518,7 @@ public class PRIDEExport {
                             }
                         }
 
+                        // @TODO: the line below uses the protein tree, which has to be rebuilt if not available...
                         ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         String peptideProteins = "";
                         for (String accession : peptideParentProteins) {
@@ -532,7 +533,7 @@ public class PRIDEExport {
                         tabCounter++;
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey)) + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Protein inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
@@ -550,7 +551,7 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"No\" />" + System.getProperty("line.separator"));
                         }
 
-                        writeCvTerm(new CvTerm("MS", "MS:1000041", "charge state", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
+                        writeCvTerm(new CvTerm("MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
                         //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
 
                         // search engine specific parameters
@@ -562,7 +563,7 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + scores.get(se) + "\" />" + System.getProperty("line.separator"));
                         }
                         if (mascotScore != null) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Mascot score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"Mascot Score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
                         }
 
                         // PTM scoring
