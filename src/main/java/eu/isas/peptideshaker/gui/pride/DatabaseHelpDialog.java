@@ -5,6 +5,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -328,6 +329,10 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     private void browseDatabaseSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsActionPerformed
 
         File startLocation = new File(peptideShakerGUI.getLastSelectedFolder());
+        UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
+            startLocation = utilitiesUserPreferences.getDbFolder();
+        }
 
         // First check whether a file has already been selected.
         // If so, start from that file's parent.
@@ -601,7 +606,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 } catch (ClassNotFoundException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("File index of " + fastaInput + " could not be imported.<br>"
-                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."), 
+                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
                             "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     return;
