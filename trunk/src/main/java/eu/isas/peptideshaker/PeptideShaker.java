@@ -1559,7 +1559,7 @@ public class PeptideShaker {
                             int confidence = PtmScoring.VERY_CONFIDENT;
                             ptmScoring.setPtmSite(bestDKey, confidence);
                         } else {
-                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestProbabilisticScoreLocations() != null) {
+                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.isProbabilitsticScoreCalculation() && ptmScoring.getBestProbabilisticScoreLocations() != null) {
                                 String bestAKey = ptmScoring.getBestProbabilisticScoreLocations();
                                 Double ptmMass = ptm.getMass();
                                 int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestAssumption().getIdentificationCharge().value);

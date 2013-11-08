@@ -1359,15 +1359,13 @@
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="exportAll" max="32767" attributes="0"/>
                                   <Component id="exportPhospoJButton" max="32767" attributes="0"/>
-                                  <Component id="exportMethodsSummaryJButton" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="exportMethodsSummaryLabel" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportPhosphLabel" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportAllLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="166" max="32767" attributes="0"/>
+                              <EmptySpace pref="12" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1384,12 +1382,7 @@
                                   <Component id="exportPhospoJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportPhosphLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="exportMethodsSummaryJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="exportMethodsSummaryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace pref="132" max="32767" attributes="0"/>
+                              <EmptySpace pref="166" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1427,26 +1420,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Beta version."/>
-                        <Property name="toolTipText" type="java.lang.String" value="Export all the identification results as four tab separated text files."/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="exportMethodsSummaryJButton">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Methods Summary"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Export phosphorylation summary to a text file"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMethodsSummaryJButtonActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="exportMethodsSummaryLabel">
-                      <Properties>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Tahoma" size="11" style="2"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="Under construction."/>
+                        <Property name="text" type="java.lang.String" value="Exports protein and PSM level summaries for phosphorylation datasets."/>
                         <Property name="toolTipText" type="java.lang.String" value="Export all the identification results as four tab separated text files."/>
                       </Properties>
                     </Component>
@@ -1460,8 +1434,8 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                      <JTabbedPaneConstraints tabName="Custom (beta)">
-                        <Property name="tabTitle" type="java.lang.String" value="Custom (beta)"/>
+                      <JTabbedPaneConstraints tabName="Custom">
+                        <Property name="tabTitle" type="java.lang.String" value="Custom"/>
                       </JTabbedPaneConstraints>
                     </Constraint>
                   </Constraints>
