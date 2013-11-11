@@ -174,7 +174,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                     try {
                         File outputFolder = null;
                         if (!mgfFiles.isEmpty()) {
-                            outputFolder = new File(mgfFiles.get(0).getParentFile(), "ps_results");
+                            outputFolder = new File(mgfFiles.get(0).getParentFile(), "search_results");
                             if (!outputFolder.exists()) {
                                 boolean success = outputFolder.mkdir();
                                 if (!success) {
