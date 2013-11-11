@@ -1151,7 +1151,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         });
 
         exportPhosphLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        exportPhosphLabel.setText("Exports protein and PSM level summaries for phosphorylation datasets.");
+        exportPhosphLabel.setText("Protein and PSM summaries for phosphorylation datasets.");
         exportPhosphLabel.setToolTipText("Export all the identification results as four tab separated text files.");
 
         javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
@@ -1165,9 +1165,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(exportPhospoJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportPhosphLabel)
-                    .addComponent(exportAllLabel))
-                .addContainerGap(12, Short.MAX_VALUE))
+                    .addComponent(exportAllLabel)
+                    .addComponent(exportPhosphLabel))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

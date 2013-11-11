@@ -26,6 +26,14 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * The mgf files.
      */
     private ArrayList<File> mgfFiles;
+    /**
+     * The species for the PRIDE project.
+     */
+    private String species;
+    /**
+     * The species type for the PRIDE project.
+     */
+    private String speciesType;
 
     /**
      * Creates a new PrideSearchParametersDialog
@@ -34,14 +42,20 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param prideSearchParametersFile the pride search parameters file
      * @param prideSearchParametersReport the pride search parameters report
      * @param mgfFiles the converted mgf files
+     * @param species the species for the project, can be null and also a list
+     * of species
+     * @param speciesType the species type
      * @param modal
      */
-    public PrideSearchParametersDialog(PeptideShakerGUI peptideShakerGUI, File prideSearchParametersFile, String prideSearchParametersReport, ArrayList<File> mgfFiles, boolean modal) {
+    public PrideSearchParametersDialog(PeptideShakerGUI peptideShakerGUI, File prideSearchParametersFile, 
+            String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {
         super(peptideShakerGUI, modal);
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
         this.prideSearchParametersFile = prideSearchParametersFile;
         this.mgfFiles = mgfFiles;
+        this.species = species;
+        this.speciesType = speciesType;
         searchParametersReportEditorPane.setText(prideSearchParametersReport);
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -158,7 +172,17 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, null);
+                        File outputFolder = null;
+                        if (!mgfFiles.isEmpty()) {
+                            outputFolder = new File(mgfFiles.get(0).getParentFile(), "ps_results");
+                            if (!outputFolder.exists()) {
+                                boolean success = outputFolder.mkdir();
+                                if (!success) {
+                                    outputFolder = null;
+                                }
+                            }
+                        }
+                        ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, outputFolder, species, speciesType);
                         peptideShakerGUI.close();
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
