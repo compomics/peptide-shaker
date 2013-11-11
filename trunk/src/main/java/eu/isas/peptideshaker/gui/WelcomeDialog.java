@@ -576,7 +576,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ToolFactory.startSearchGUI(peptideShakerGUI, null, null, null);
+                    ToolFactory.startSearchGUI(peptideShakerGUI, null, null, null, null, null);
                     peptideShakerGUI.close();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -646,7 +646,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         dispose();
         new PrideReshakeGui(peptideShakerGUI, dummyParentFrame, true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        peptideShakerGUI.close();
+        peptideShakerGUI.close(); // @TODO: maybe keep this alive until the reshake has started?
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**

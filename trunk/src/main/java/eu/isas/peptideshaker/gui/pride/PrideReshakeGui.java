@@ -61,6 +61,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private HashMap<Integer, String> speciesForProject;
     /**
+     * The list of currently selected species.
+     */
+    private ArrayList<String> currentSpecies;
+    /**
      * The list of PTMs for a given PRIDE project accession number.
      */
     private HashMap<Integer, String> ptmsForProject;
@@ -1033,6 +1037,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
             outputFolder = selectedFolder.getAbsolutePath();
             ArrayList<Integer> selectedProjects = new ArrayList<Integer>();
+            currentSpecies = new ArrayList<String>();
 
             for (int i = 0; i < projectsTable.getRowCount(); i++) {
                 if ((Boolean) projectsTable.getValueAt(i, projectsTable.getColumn(" ").getModelIndex())) {
@@ -1403,8 +1408,19 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     }
 
                     if (mgfConversionOk) {
+
+                        // @TODO: support more species, but then the terms might have to be downloaded as well...
+
+                        String selectedSpecies = null;
+                        String selectedSpeciesType = null;
+                        if (currentSpecies.size() == 1 && currentSpecies.get(0).equalsIgnoreCase("Homo sapiens (Human)")) {
+                            selectedSpecies = "Homo sapiens";
+                            selectedSpeciesType = "Vertebrates";
+                        }
+
                         // display the detected search parameters to the user
-                        new PrideSearchParametersDialog(peptideShakerGUI, new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, true);
+                        new PrideSearchParametersDialog(peptideShakerGUI,
+                                new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
                 } catch (Exception e) {
@@ -1586,8 +1602,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         prideParametersReport += "<br><br><b>Species:</b> ";
         if (speciesForProject.get(prideAccession) == null || speciesForProject.get(prideAccession).length() == 0) {
             prideParametersReport += "unknown";
+            currentSpecies.add(null);
         } else {
             prideParametersReport += speciesForProject.get(prideAccession);
+            currentSpecies.add(speciesForProject.get(prideAccession));
         }
         prideParametersReport += "<br><b>Taxonomy:</b> ";
         if (taxonomyForProject.get(prideAccession) == null || taxonomyForProject.get(prideAccession).length() == 0) {

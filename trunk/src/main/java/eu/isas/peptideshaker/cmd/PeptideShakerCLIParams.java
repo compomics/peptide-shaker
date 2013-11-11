@@ -41,7 +41,7 @@ public enum PeptideShakerCLIParams {
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
     SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
-    SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species are listed in the GUI.", false);
+    SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -106,10 +106,10 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
         aOptions.addOption(SPECIES.id, true, SPECIES.description);
         aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
-        
+
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
-        
+
         // Report options
         ReportCLIParams.createOptionsCLI(aOptions);
 
@@ -162,10 +162,10 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
-        
+
         output += "\n\n\nFollow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
         output += "\nReport export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
-        
+
         return output;
     }
 }
