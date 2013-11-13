@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -1269,7 +1270,7 @@ public class OutputGenerator {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
-                                PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                                PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
                                 if (!bestAssumption.getPeptide().isDecoy() || !onlyValidated) {
                                     if ((onlyValidated && psParameter.isValidated()) || !onlyValidated) {
@@ -1678,7 +1679,7 @@ public class OutputGenerator {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
-                                PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                                PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
                                 writer.write(++psmCounter + SEPARATOR);
 
@@ -1799,8 +1800,9 @@ public class OutputGenerator {
                                     if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.MASCOT)) {
                                         PeptideAssumption mascotAssumption = null;
                                         double bestScore = 0;
-                                        for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
-                                            for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
+                                        for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
+                                            for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
+                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                                 MascotScore mascotScore = new MascotScore();
                                                 mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
                                                 if (mascotScore.getScore() > bestScore) {
@@ -2280,7 +2282,8 @@ public class OutputGenerator {
                                         Collections.sort(eValues);
                                         rank = 1;
                                         for (double eValue : eValues) {
-                                            for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                            for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                                 writer.write(AdvocateFactory.getInstance().getAdvocate(se).getName() + SEPARATOR);
                                                 writer.write(rank + SEPARATOR);
                                                 if (accession || proteinDescription) {
@@ -2366,7 +2369,7 @@ public class OutputGenerator {
                                                     psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
                                                     writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
                                                 }
-                                                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestAssumption().getPeptide())) {
+                                                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide())) {
                                                     writer.write(1 + SEPARATOR);
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
@@ -2885,7 +2888,7 @@ public class OutputGenerator {
         }
         for (int i = 0; i < spectrumKeys.size(); i++) {
             try {
-                int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestAssumption().getIdentificationCharge().value;
+                int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestPeptideAssumption().getIdentificationCharge().value;
 
                 if (!charges.contains(tempCharge)) {
                     charges.add(tempCharge);

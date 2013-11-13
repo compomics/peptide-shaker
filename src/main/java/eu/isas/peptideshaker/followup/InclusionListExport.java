@@ -224,7 +224,7 @@ public class InclusionListExport {
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax;
                 } else { // Dalton
-                    double deltaMZ = searchParameters.getPrecursorAccuracy() / spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                    double deltaMZ = searchParameters.getPrecursorAccuracy() / spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax;

@@ -35,6 +35,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -295,7 +296,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The spectrum annotator.
      */
-    private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+    private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
     /**
      * The actually identified modifications.
      */
@@ -3325,23 +3326,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @return the spectrum annotator
      */
-    public SpectrumAnnotator getSpectrumAnnorator() {
+    public PeptideSpectrumAnnotator getSpectrumAnnorator() {
         return spectrumAnnotator;
-    }
-
-    /**
-     * Convenience method returning the current annotations without requesting
-     * the specification of the spectrum and peptide.
-     *
-     * @return the current annotations without requesting the specification of
-     * the spectrum and peptide
-     * @throws MzMLUnmarshallerException exception thrown whenever an error
-     * occurred while reading the mzML file
-     */
-    public ArrayList<IonMatch> getIonsCurrentlyMatched() throws MzMLUnmarshallerException {
-        return spectrumAnnotator.getCurrentAnnotation(getAnnotationPreferences().getIonTypes(),
-                getAnnotationPreferences().getNeutralLosses(),
-                getAnnotationPreferences().getValidatedCharges());
     }
 
     /**
@@ -3877,7 +3863,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         selectedPsmKey = NO_SELECTION;
 
         cpsBean.setProjectDetails(null);
-        spectrumAnnotator = new SpectrumAnnotator();
+        spectrumAnnotator = new PeptideSpectrumAnnotator();
 
         try {
             spectrumFactory.closeFiles();

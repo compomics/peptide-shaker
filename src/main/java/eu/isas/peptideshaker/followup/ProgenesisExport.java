@@ -112,7 +112,7 @@ public class ProgenesisExport {
                             if (psParameter.isValidated()) {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
+                                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                                 boolean decoy = false;
                                 for (String protein : peptide.getParentProteins()) {
                                     if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
@@ -210,7 +210,7 @@ public class ProgenesisExport {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-        PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+        PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
         if (accessions == null) {
             accessions = bestAssumption.getPeptide().getParentProteins();

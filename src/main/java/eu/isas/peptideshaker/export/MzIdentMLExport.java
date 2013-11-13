@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -902,7 +903,7 @@ public class MzIdentMLExport {
 
                         psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                        PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                         Peptide tempPeptide = bestAssumption.getPeptide();
 
                         // the peptide
@@ -933,8 +934,9 @@ public class MzIdentMLExport {
                         Double mascotScore = null;
                         for (int se : spectrumMatch.getAdvocates()) {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
-                                for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                                    if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide())) {
+                                for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide())) {
                                         if (!scores.containsKey(se) || scores.get(se) > eValue) {
                                             scores.put(se, eValue);
                                             if (se == Advocate.MASCOT) {
@@ -1186,16 +1188,16 @@ public class MzIdentMLExport {
      */
     private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
 
-        Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
-        SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
+        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-        annotationPreferences.setCurrentSettings(peptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
+        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true);
         MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                 annotationPreferences.getNeutralLosses(),
                 annotationPreferences.getValidatedCharges(),
-                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                 tempSpectrum, peptide,
                 tempSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                 annotationPreferences.getFragmentIonAccuracy(), false);

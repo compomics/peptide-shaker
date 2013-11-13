@@ -1952,14 +1952,14 @@ public class QCPanel extends javax.swing.JPanel {
                         if (!psmParameter.isHidden()) {
 
                             precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                            double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
+                            double value = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
                                     peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                             if (value > maxValue) {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
                                 if (psmParameter.isValidated()) {
                                     validatedValues.add(value);
                                 } else {
@@ -1998,12 +1998,12 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!psmParameter.isHidden()) {
 
-                            double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                            double value = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                             if (value > maxValue) {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
                                 if (psmParameter.isValidated()) {
                                     validatedValues.add(value);
                                 } else {

@@ -229,7 +229,7 @@ public class PepnovoTrainingExport {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                             }
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                            String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                             HashMap<String, String> tags = new HashMap<String, String>();
                             tags.put("SEQ", sequence);
                             spectrum.writeMgf(writerGood, tags);

@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
@@ -101,14 +102,14 @@ public class FragmentSection {
 
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
 
-        SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                 annotationPreferences.getNeutralLosses(),
                 annotationPreferences.getValidatedCharges(),
-                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                 spectrum,
-                spectrumMatch.getBestAssumption().getPeptide(),
+                spectrumMatch.getBestPeptideAssumption().getPeptide(),
                 spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                 annotationPreferences.getFragmentIonAccuracy(), false);
 

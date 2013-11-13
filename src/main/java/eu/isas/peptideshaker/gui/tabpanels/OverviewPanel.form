@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.6" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.9" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JPopupMenu" name="selectJPopupMenu">
 
@@ -123,7 +123,9 @@
   <SubComponents>
     <Container class="javax.swing.JLayeredPane" name="backgroundLayeredPane">
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="overviewJPanel">
           <Properties>
@@ -136,8 +138,8 @@
             </Property>
           </Properties>
           <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="0" y="0" width="980" height="720" layer="0" position="-1"/>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="0" y="0" width="980" height="720"/>
             </Constraint>
           </Constraints>
 
@@ -201,7 +203,9 @@
                   <SubComponents>
                     <Container class="javax.swing.JLayeredPane" name="proteinsLayeredPane">
 
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                        <Property name="useNullLayout" type="boolean" value="true"/>
+                      </Layout>
                       <SubComponents>
                         <Container class="javax.swing.JPanel" name="proteinsLayeredPanel">
                           <Properties>
@@ -213,8 +217,8 @@
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                              <JLayeredPaneConstraints x="0" y="0" width="950" height="300" layer="0" position="-1"/>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                              <AbsoluteConstraints x="0" y="0" width="950" height="300"/>
                             </Constraint>
                           </Constraints>
 
@@ -309,9 +313,12 @@
                             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinsHelpJButtonMouseExited"/>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinsHelpJButtonActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                          </AuxValues>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                              <JLayeredPaneConstraints x="930" y="0" width="10" height="19" layer="300" position="-1"/>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                              <AbsoluteConstraints x="930" y="0" width="10" height="19"/>
                             </Constraint>
                           </Constraints>
                         </Component>
@@ -339,9 +346,12 @@
                             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportProteinsJButtonMouseExited"/>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProteinsJButtonActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                          </AuxValues>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                              <JLayeredPaneConstraints x="920" y="0" width="10" height="19" layer="300" position="-1"/>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                              <AbsoluteConstraints x="920" y="0" width="10" height="19"/>
                             </Constraint>
                           </Constraints>
                         </Component>
@@ -365,9 +375,12 @@
                             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideProteinsJButtonMouseExited"/>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideProteinsJButtonActionPerformed"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                          </AuxValues>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                              <JLayeredPaneConstraints x="910" y="0" width="10" height="19" layer="300" position="-1"/>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                              <AbsoluteConstraints x="910" y="0" width="10" height="19"/>
                             </Constraint>
                           </Constraints>
                         </Component>
@@ -377,9 +390,12 @@
                               <Color blue="ff" green="ff" red="ff" type="rgb"/>
                             </Property>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                          </AuxValues>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                              <JLayeredPaneConstraints x="910" y="0" width="40" height="19" layer="300" position="-1"/>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                              <AbsoluteConstraints x="910" y="0" width="40" height="19"/>
                             </Constraint>
                           </Constraints>
 
@@ -444,7 +460,9 @@
                       <SubComponents>
                         <Container class="javax.swing.JLayeredPane" name="sequenceCoverageLayeredPane">
 
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                            <Property name="useNullLayout" type="boolean" value="true"/>
+                          </Layout>
                           <SubComponents>
                             <Container class="javax.swing.JPanel" name="sequenceCoverageTitledPanel">
                               <Properties>
@@ -459,8 +477,8 @@
                                 <Property name="opaque" type="boolean" value="false"/>
                               </Properties>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="0" y="0" width="950" height="70" layer="0" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="0" y="0" width="950" height="70"/>
                                 </Constraint>
                               </Constraints>
 
@@ -530,9 +548,12 @@
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoveragetHelpJButtonMouseExited"/>
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceCoveragetHelpJButtonActionPerformed"/>
                               </Events>
+                              <AuxValues>
+                                <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                              </AuxValues>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="930" y="0" width="10" height="19" layer="300" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="930" y="0" width="10" height="19"/>
                                 </Constraint>
                               </Constraints>
                             </Component>
@@ -560,9 +581,12 @@
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSequenceCoverageContextJButtonMouseExited"/>
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSequenceCoverageContextJButtonActionPerformed"/>
                               </Events>
+                              <AuxValues>
+                                <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                              </AuxValues>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="920" y="0" width="10" height="19" layer="300" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="920" y="0" width="10" height="19"/>
                                 </Constraint>
                               </Constraints>
                             </Component>
@@ -586,9 +610,12 @@
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideCoverageJButtonMouseExited"/>
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideCoverageJButtonActionPerformed"/>
                               </Events>
+                              <AuxValues>
+                                <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                              </AuxValues>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="910" y="0" width="10" height="19" layer="300" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="910" y="0" width="10" height="19"/>
                                 </Constraint>
                               </Constraints>
                             </Component>
@@ -612,9 +639,12 @@
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseExited"/>
                                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseReleased"/>
                               </Events>
+                              <AuxValues>
+                                <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                              </AuxValues>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="895" y="5" width="10" height="19" layer="300" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="895" y="5" width="10" height="19"/>
                                 </Constraint>
                               </Constraints>
                             </Component>
@@ -624,9 +654,12 @@
                                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                 </Property>
                               </Properties>
+                              <AuxValues>
+                                <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                              </AuxValues>
                               <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                  <JLayeredPaneConstraints x="890" y="0" width="50" height="19" layer="300" position="-1"/>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                  <AbsoluteConstraints x="890" y="0" width="50" height="19"/>
                                 </Constraint>
                               </Constraints>
 
@@ -709,7 +742,9 @@
                               <SubComponents>
                                 <Container class="javax.swing.JLayeredPane" name="peptidesLayeredPane">
 
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                                    <Property name="useNullLayout" type="boolean" value="true"/>
+                                  </Layout>
                                   <SubComponents>
                                     <Container class="javax.swing.JPanel" name="peptidesPanel">
                                       <Properties>
@@ -721,8 +756,8 @@
                                         <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="0" y="0" width="450" height="170" layer="0" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="0" y="0" width="450" height="170"/>
                                         </Constraint>
                                       </Constraints>
 
@@ -869,9 +904,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptidesHelpJButtonMouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidesHelpJButtonActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="430" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="430" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -899,9 +937,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportPeptidesJButtonMouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPeptidesJButtonActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="420" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="420" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -925,9 +966,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hidePeptideAndPsmsJButtonMouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hidePeptideAndPsmsJButtonActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="410" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="410" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -937,9 +981,12 @@
                                           <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                         </Property>
                                       </Properties>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="400" y="0" width="40" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="400" y="0" width="40" height="19"/>
                                         </Constraint>
                                       </Constraints>
 
@@ -985,7 +1032,9 @@
                               <SubComponents>
                                 <Container class="javax.swing.JLayeredPane" name="psmsLayeredPane">
 
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                                    <Property name="useNullLayout" type="boolean" value="true"/>
+                                  </Layout>
                                   <SubComponents>
                                     <Container class="javax.swing.JPanel" name="psmsPanel">
                                       <Properties>
@@ -997,8 +1046,8 @@
                                         <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="0" y="0" width="450" height="170" layer="0" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="0" y="0" width="450" height="170"/>
                                         </Constraint>
                                       </Constraints>
 
@@ -1136,9 +1185,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmsHelpJButtonMouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmsHelpJButtonActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="430" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="430" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -1166,9 +1218,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportPsmsJButtonMouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPsmsJButtonActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="420" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="420" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -1192,9 +1247,12 @@
                                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hidePeptideAndPsmsJButton2MouseExited"/>
                                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hidePeptideAndPsmsJButton2ActionPerformed"/>
                                       </Events>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="410" y="0" width="10" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="410" y="0" width="10" height="19"/>
                                         </Constraint>
                                       </Constraints>
                                     </Component>
@@ -1204,9 +1262,12 @@
                                           <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                         </Property>
                                       </Properties>
+                                      <AuxValues>
+                                        <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                      </AuxValues>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                          <JLayeredPaneConstraints x="400" y="0" width="40" height="19" layer="300" position="-1"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                          <AbsoluteConstraints x="400" y="0" width="40" height="19"/>
                                         </Constraint>
                                       </Constraints>
 
@@ -1254,7 +1315,9 @@
                           <SubComponents>
                             <Container class="javax.swing.JLayeredPane" name="spectrumLayeredPane">
 
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                                <Property name="useNullLayout" type="boolean" value="true"/>
+                              </Layout>
                               <SubComponents>
                                 <Container class="javax.swing.JPanel" name="spectrumMainPanel">
                                   <Properties>
@@ -1266,8 +1329,8 @@
                                     <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="0" y="0" width="490" height="350" layer="0" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="0" y="0" width="490" height="350"/>
                                     </Constraint>
                                   </Constraints>
 
@@ -1705,9 +1768,12 @@
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="spectrumHelpJButtonMouseExited"/>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumHelpJButtonActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                  </AuxValues>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="460" y="0" width="10" height="19" layer="300" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="460" y="0" width="10" height="19"/>
                                     </Constraint>
                                   </Constraints>
                                 </Component>
@@ -1735,9 +1801,12 @@
                                     <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseEntered"/>
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseExited"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                  </AuxValues>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="450" y="0" width="10" height="19" layer="300" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="450" y="0" width="10" height="19"/>
                                     </Constraint>
                                   </Constraints>
                                 </Component>
@@ -1761,9 +1830,12 @@
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideSpectrumPanelJButtonMouseExited"/>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideSpectrumPanelJButtonActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                  </AuxValues>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="440" y="0" width="10" height="19" layer="300" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="440" y="0" width="10" height="19"/>
                                     </Constraint>
                                   </Constraints>
                                 </Component>
@@ -1787,9 +1859,12 @@
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="maximizeSpectrumPanelJButtonMouseExited"/>
                                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maximizeSpectrumPanelJButtonActionPerformed"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                  </AuxValues>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="425" y="5" width="10" height="19" layer="300" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="425" y="5" width="10" height="19"/>
                                     </Constraint>
                                   </Constraints>
                                 </Component>
@@ -1799,9 +1874,12 @@
                                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                     </Property>
                                   </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
+                                  </AuxValues>
                                   <Constraints>
-                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="420" y="0" width="60" height="19" layer="300" position="-1"/>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                                      <AbsoluteConstraints x="420" y="0" width="60" height="19"/>
                                     </Constraint>
                                   </Constraints>
 
@@ -1842,8 +1920,8 @@
             <Property name="rollover" type="boolean" value="true"/>
           </Properties>
           <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="0" y="720" width="980" height="20" layer="0" position="-1"/>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="0" y="720" width="980" height="20"/>
             </Constraint>
           </Constraints>
 

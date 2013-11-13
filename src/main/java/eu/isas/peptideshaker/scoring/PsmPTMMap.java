@@ -259,7 +259,7 @@ public class PsmPTMMap implements Serializable {
      */
     public Integer getKey(SpectrumMatch spectrumMatch) {
         try {
-            return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+            return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
         } catch (Exception e) {
             return 0;
         }

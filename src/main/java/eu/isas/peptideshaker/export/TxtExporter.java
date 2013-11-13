@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -509,7 +510,7 @@ public class TxtExporter {
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-        Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
+        Peptide bestAssumption = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
         StringBuilder line = new StringBuilder();
 
@@ -695,16 +696,17 @@ public class TxtExporter {
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
         Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
         line.append(precursor.getPossibleChargesAsString()).append(SEPARATOR);
-        line.append(spectrumMatch.getBestAssumption().getIdentificationCharge().value).append(SEPARATOR);
+        line.append(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value).append(SEPARATOR);
         line.append(fileName).append(SEPARATOR);
         line.append(spectrumTitle).append(SEPARATOR);
 
         ArrayList<String> fileNames = new ArrayList<String>();
 
-        for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
-            if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
-                if (!fileNames.contains(assumption.getFile())) {
-                    fileNames.add(assumption.getFile());
+        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
+            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
+                if (!fileNames.contains(assumption.getIdentificationFile())) {
+                    fileNames.add(assumption.getIdentificationFile());
                 }
             }
         }
@@ -718,16 +720,17 @@ public class TxtExporter {
         line.append(SEPARATOR);
         line.append(precursor.getRt()).append(SEPARATOR);
         line.append(precursor.getMz()).append(SEPARATOR);
-        line.append(spectrumMatch.getBestAssumption().getPeptide().getMass()).append(SEPARATOR);
-        line.append(Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true, true))).append(SEPARATOR);
-        line.append(Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz()))).append(SEPARATOR);
+        line.append(spectrumMatch.getBestPeptideAssumption().getPeptide().getMass()).append(SEPARATOR);
+        line.append(Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true, true))).append(SEPARATOR);
+        line.append(Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()))).append(SEPARATOR);
         Double mascotEValue = null, omssaEValue = null, xtandemEValue = null;
         double mascotScore = 0;
 
         for (int se : spectrumMatch.getAdvocates()) {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
-                for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                    if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
+                for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
                         if (se == Advocate.MASCOT) {
                             if (mascotEValue == null || mascotEValue > eValue) {
                                 mascotEValue = eValue;
@@ -775,7 +778,7 @@ public class TxtExporter {
 
         line.append(probabilities.getPsmProbabilityScore()).append(SEPARATOR).append(probabilities.getPsmProbability()).append(SEPARATOR);
 
-        if (spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
+        if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
             line.append("1").append(SEPARATOR);
         } else {
             line.append("0").append(SEPARATOR);
@@ -821,7 +824,9 @@ public class TxtExporter {
             int rank = 1;
 
             for (double eValue : eValues) {
-                for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                    
+                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
                     if (se == Advocate.MASCOT) {
                         line += "M" + SEPARATOR;
@@ -833,15 +838,15 @@ public class TxtExporter {
 
                     line += rank + SEPARATOR;
 
-                    ArrayList<String> accessions = assumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                     for (String protein : accessions) {
                         line += protein + " ";
                     }
 
                     line += SEPARATOR;
-                    line += assumption.getPeptide().getSequence() + SEPARATOR;
+                    line += peptideAssumption.getPeptide().getSequence() + SEPARATOR;
 
-                    for (ModificationMatch mod : assumption.getPeptide().getModificationMatches()) {
+                    for (ModificationMatch mod : peptideAssumption.getPeptide().getModificationMatches()) {
                         if (mod.isVariable()) {
                             line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
                         }
@@ -851,10 +856,10 @@ public class TxtExporter {
                     line += assumption.getIdentificationCharge().value + SEPARATOR;
                     line += spectrumTitle + SEPARATOR;
                     line += fileName + SEPARATOR;
-                    line += assumption.getFile() + SEPARATOR;
-                    line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-                    line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
-                    line += Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
+                    line += assumption.getIdentificationFile()+ SEPARATOR;
+                    line += spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + SEPARATOR;
+                    line += Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
+                    line += Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
 
                     if (se == Advocate.MASCOT) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
@@ -886,7 +891,7 @@ public class TxtExporter {
                         line += SEPARATOR + SEPARATOR;
                     }
 
-                    if (assumption.getPeptide().isDecoy()) {
+                    if (peptideAssumption.getPeptide().isDecoy()) {
                         line += "1" + SEPARATOR;
                     } else {
                         line += "0" + SEPARATOR;

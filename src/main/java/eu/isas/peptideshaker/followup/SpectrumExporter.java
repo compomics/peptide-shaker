@@ -192,7 +192,7 @@ public class SpectrumExporter {
                     if (psParameter.isValidated()) {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         boolean decoy = false;
-                        for (String accession : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
+                        for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins()) {
                             if (sequenceFactory.isDecoyAccession(accession)) {
                                 decoy = true;
                                 break;
@@ -206,7 +206,7 @@ public class SpectrumExporter {
             case validated_psms_peptides:
                 if (identification.matchExists(spectrumKey)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     boolean decoy = false;
                     for (String accession : peptide.getParentProteins()) {
                         if (sequenceFactory.isDecoyAccession(accession)) {
@@ -229,7 +229,7 @@ public class SpectrumExporter {
             case validated_psms_peptides_proteins:
                 if (identification.matchExists(spectrumKey)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     boolean decoy = false;
                     for (String accession : peptide.getParentProteins()) {
                         if (sequenceFactory.isDecoyAccession(accession)) {

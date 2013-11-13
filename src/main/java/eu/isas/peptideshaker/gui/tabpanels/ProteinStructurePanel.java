@@ -3447,7 +3447,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                    peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+                    peptideKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getKey();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;

@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
@@ -260,7 +261,7 @@ public class RunMzDeviation {
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         // @TODO: the progress bar usage in the code below could be improved
-        SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         PSParameter psParameter = new PSParameter();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
@@ -301,7 +302,7 @@ public class RunMzDeviation {
                     }
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    double error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
+                    double error = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursorMz, false);
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -309,9 +310,9 @@ public class RunMzDeviation {
                             annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
-                            spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                            spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             currentSpectrum,
-                            spectrumMatch.getBestAssumption().getPeptide(),
+                            spectrumMatch.getBestPeptideAssumption().getPeptide(),
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getFragmentIonAccuracy(), false);
                     spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();

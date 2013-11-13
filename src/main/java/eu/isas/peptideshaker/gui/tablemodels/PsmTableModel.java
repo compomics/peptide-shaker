@@ -152,7 +152,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                    PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
                 case 4:
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
@@ -160,14 +160,14 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                    return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 case 5:
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    bestAssumption = spectrumMatch.getBestAssumption();
+                    bestAssumption = spectrumMatch.getBestPeptideAssumption();
                     Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:
