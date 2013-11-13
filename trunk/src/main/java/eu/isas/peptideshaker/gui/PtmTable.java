@@ -291,7 +291,7 @@ public class PtmTable extends JTable {
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                        spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                         annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
@@ -470,7 +470,7 @@ public class PtmTable extends JTable {
                 spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                 tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                        spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                         annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
                 tempContent.normalize();
                 tableContent.addAll(tempContent);

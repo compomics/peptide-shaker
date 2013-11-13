@@ -200,7 +200,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestAssumption().getPeptide(), true);
+                            HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true);
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
@@ -233,7 +233,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modMap = getModMap(spectrumMatch.getBestAssumption().getPeptide(), false);
+                            modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), false);
                             modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
@@ -265,7 +265,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             PSPtmScores ptmScores = new PSPtmScores();
                             String output = "";
@@ -307,7 +307,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
                             output = "";
@@ -350,7 +350,7 @@ public class PsmSection {
                                 matchKey = spectrumKey;
                             }
                             output = "";
-                            ArrayList<String> accessions = spectrumMatch.getBestAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             for (String accession : accessions) {
                                 if (!output.equals("")) {
                                     output += ", ";
@@ -371,7 +371,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            if (spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
+                            if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
                                 writer.write(1 + separator);
                             } else {
                                 writer.write(0 + separator);
@@ -393,7 +393,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            writer.write(spectrumMatch.getBestAssumption().getIdentificationCharge().toString() + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString() + separator);
                             break;
                         case isotope:
                             if (!matchKey.equals(spectrumKey)) {
@@ -401,14 +401,14 @@ public class PsmSection {
                                 matchKey = spectrumKey;
                             }
                             Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz()) + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + separator);
                             break;
                         case localization_confidence:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
                             output = "";
@@ -463,7 +463,7 @@ public class PsmSection {
                                 matchKey = spectrumKey;
                             }
                             precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true) + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + separator);
                             break;
                         case rt:
                             precursor = spectrumFactory.getPrecursor(spectrumKey);
@@ -481,14 +481,14 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            writer.write(spectrumMatch.getBestAssumption().getPeptide().getSequence() + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence() + separator);
                             break;
                         case missed_cleavages:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                            String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                             writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
                             break;
                         case modified_sequence:
@@ -496,7 +496,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            writer.write(spectrumMatch.getBestAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
                             break;
                         case spectrum_charge:
                             precursor = spectrumFactory.getPrecursor(spectrumKey);
@@ -527,7 +527,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            writer.write(spectrumMatch.getBestAssumption().getPeptide().getMass() + separator);
+                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + separator);
                             break;
                         case validated:
                             if (!parameterKey.equals(spectrumKey)) {

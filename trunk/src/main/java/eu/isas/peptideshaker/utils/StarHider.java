@@ -1254,7 +1254,7 @@ public class StarHider {
 
                 if (psmFilter.getPrecursorMzError() != null) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    double error = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                    double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.AFTER) {
                         if (error <= psmFilter.getPrecursorMzError()) {
                             return false;
@@ -1276,7 +1276,7 @@ public class StarHider {
             }
             if (psmFilter.getCharges().size() != peptideShakerGUI.getMetrics().getFoundCharges().size()) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                int charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 if (!psmFilter.getCharges().contains(charge)) {
                     return false;
                 }

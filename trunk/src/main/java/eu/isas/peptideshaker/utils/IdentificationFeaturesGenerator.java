@@ -1609,7 +1609,7 @@ public class IdentificationFeaturesGenerator {
                     }
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey); // @TODO: could be replaced by batch selection?
-                    int charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                    int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     if (!orderingMap.containsKey(charge)) {
                         orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());
                     }

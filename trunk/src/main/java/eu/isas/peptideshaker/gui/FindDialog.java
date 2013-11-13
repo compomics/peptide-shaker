@@ -1698,11 +1698,11 @@ public class FindDialog extends javax.swing.JDialog {
                         return precursor.getMz();
                     case 7:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                        return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     case 8:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                        return Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     case 9:
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                         return psParameter.getPsmConfidence();
