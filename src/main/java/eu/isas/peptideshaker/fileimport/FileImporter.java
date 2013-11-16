@@ -595,7 +595,18 @@ public class FileImporter {
                 ArrayList<Integer> charges = new ArrayList<Integer>();
                 double maxErrorPpm = 0, maxErrorDa = 0;
 
+                waitingHandler.appendReport("Importing matches", true, true);
+
                 while (matchIt.hasNext()) {
+
+                    // Free at least 1GB for the next parser if not anymore available
+                    // (not elegant so most likely not optimal)
+                    while (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
+                        waitingHandler.appendReport("reducing memory", true, true);
+                        peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                        System.gc();
+                    }
 
                     SpectrumMatch match = matchIt.next();
                     nPSMs++;
@@ -906,18 +917,23 @@ public class FileImporter {
 
                 // Free at least 1GB for the next parser if not anymore available
                 // (not elegant so most likely not optimal)
-                if (memoryIssue()) {
-                    sequenceFactory.emptyCache(); // @TODO: should only be used in extreme cases!!
+                while (!halfGbFree() && !peptideShaker.getCache().isEmpty()) {
+                    waitingHandler.appendReport("reducing memory before files", true, true);
+                    waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                    double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
+                    share = Math.min(share, 1);
+                    peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     System.gc();
-                    if (memoryIssue()) {
-                        waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
-                        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                        double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
-                        share = Math.min(share, 1);
-                        peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
-                        System.gc();
-                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                    }
+                }
+                while (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                    waitingHandler.appendReport("reducing tree cache", true, true);
+                    sequenceFactory.reduceNodeCacheSize(0.5);
+                }
+                if (!halfGbFree()) {
+                    waitingHandler.appendReport("emptying caches", true, true);
+                    sequenceFactory.emptyCache();
                 }
                 projectDetails.addIdentificationFiles(idFile);
 
@@ -952,13 +968,21 @@ public class FileImporter {
         }
 
         /**
-         * Indicates whether we are encountering memory issues.
+         * Indicates whether a GB of memory is free.
          *
-         * @return a boolean indicating whether we are encountering memory
-         * issues
+         * @return a boolean indicating whether a GB of memory is free
          */
-        public boolean memoryIssue() {
-            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824; // @TODO: should rather be a percentage of memory left??
+        public boolean halfGbFree() {
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() > 536870912; // @TODO: should rather be a percentage of memory left??
+        }
+
+        /**
+         * Returns the share of memory being used.
+         *
+         * @return the share of memory being used
+         */
+        public double memoryUsed() {
+            return Runtime.getRuntime().totalMemory() / Runtime.getRuntime().maxMemory();
         }
 
         /**

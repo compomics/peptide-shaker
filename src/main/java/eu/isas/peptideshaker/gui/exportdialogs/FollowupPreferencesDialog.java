@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -25,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.*;
 
@@ -101,12 +103,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
         proteinExportCmb1 = new javax.swing.JComboBox();
         proteinExportCmb2 = new javax.swing.JComboBox();
-        deNovoSearchPanel = new javax.swing.JPanel();
-        exportPepnovoButton = new javax.swing.JButton();
-        exportToPepNovoPart1Label = new javax.swing.JLabel();
-        recalibrateForDenovoCheck = new javax.swing.JCheckBox();
-        deNovoGuiLinkLabel = new javax.swing.JLabel();
-        exportToPepNovoLinkLabel = new javax.swing.JLabel();
         graphDatabasesPanel = new javax.swing.JPanel();
         graphDatabasesLabel = new javax.swing.JLabel();
         graphDatabaseFormat = new javax.swing.JComboBox();
@@ -328,81 +324,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        deNovoSearchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("De Novo Search (beta)"));
-        deNovoSearchPanel.setOpaque(false);
-
-        exportPepnovoButton.setText("Export as MGF");
-        exportPepnovoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportPepnovoButtonActionPerformed(evt);
-            }
-        });
-
-        exportToPepNovoPart1Label.setText("Export Training Files");
-
-        recalibrateForDenovoCheck.setSelected(true);
-        recalibrateForDenovoCheck.setText("Recalibrate Spectra (beta)");
-        recalibrateForDenovoCheck.setIconTextGap(15);
-        recalibrateForDenovoCheck.setOpaque(false);
-
-        deNovoGuiLinkLabel.setText("<html>available via <a href=\\\"http://denovogui.googlecode.com\\\">DenovoGUI</a></html>");
-        deNovoGuiLinkLabel.setToolTipText("Open the DeNovoGUI home page");
-        deNovoGuiLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                deNovoGuiLinkLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                deNovoGuiLinkLabelMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                deNovoGuiLinkLabelMouseReleased(evt);
-            }
-        });
-
-        exportToPepNovoLinkLabel.setText("<html><a href=\\\"http://proteomics.ucsd.edu/Software/PepNovo.html\\\">PepNovo</a></html>");
-        exportToPepNovoLinkLabel.setToolTipText("Open PepNovo home page");
-        exportToPepNovoLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                exportToPepNovoLinkLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportToPepNovoLinkLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportToPepNovoLinkLabelMouseExited(evt);
-            }
-        });
-
-        javax.swing.GroupLayout deNovoSearchPanelLayout = new javax.swing.GroupLayout(deNovoSearchPanel);
-        deNovoSearchPanel.setLayout(deNovoSearchPanelLayout);
-        deNovoSearchPanelLayout.setHorizontalGroup(
-            deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(deNovoSearchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportToPepNovoPart1Label, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(recalibrateForDenovoCheck)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(exportPepnovoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        deNovoSearchPanelLayout.setVerticalGroup(
-            deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(deNovoSearchPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportToPepNovoPart1Label)
-                    .addComponent(exportPepnovoButton)
-                    .addComponent(recalibrateForDenovoCheck)
-                    .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         graphDatabasesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph Databases"));
         graphDatabasesPanel.setOpaque(false);
 
@@ -449,7 +370,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -467,9 +387,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -571,6 +489,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
 
+            final int userChoice = psmSelectionComboBox.getSelectedIndex();
+            ArrayList<String> ptms = new ArrayList<String>();
+            if (userChoice == 3) {
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                if (ptmChooser.isCanceled()) {
+                    return;
+                }
+                ptms = ptmChooser.getSelection();
+            }
+            final ArrayList<String> ptmSelection = ptms;
+
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -585,8 +514,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        final int userChoice = psmSelectionComboBox.getSelectedIndex();
-                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog);
+                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -663,120 +591,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."),
                 "Progenesis Help", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
-
-    /**
-     * Export the data to PepNovo.
-     *
-     * @param evt
-     */
-    private void exportPepnovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPepnovoButtonActionPerformed
-
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
-
-        if (selectedFolder != null) {
-
-            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Exporting Spectra. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("SaveThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(),
-                                peptideShakerGUI.getAnnotationPreferences(), 1.0, 1.0, recalibrateForDenovoCheck.isSelected(), progressDialog); // @TODO: fdr and fnr should not be hard coded here!!
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
-                                    "Spectra saved to " + selectedFolder.getAbsolutePath() + ".",
-                                    "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_exportPepnovoButtonActionPerformed
-
-    /**
-     * Open the PepNovo home page.
-     *
-     * @param evt
-     */
-    private void exportToPepNovoLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseClicked
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://proteomics.ucsd.edu/Software/PepNovo.html");
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseClicked
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void exportToPepNovoLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void exportToPepNovoLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void deNovoGuiLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_deNovoGuiLinkLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void deNovoGuiLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_deNovoGuiLinkLabelMouseExited
-
-    /**
-     * Open the PepNovo home page.
-     *
-     * @param evt
-     */
-    private void deNovoGuiLinkLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseReleased
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://denovogui.googlecode.com");
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_deNovoGuiLinkLabelMouseReleased
 
     /**
      * Export the data as a graph database.
@@ -1125,37 +939,27 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.JLabel deNovoGuiLinkLabel;
-    private javax.swing.JPanel deNovoSearchPanel;
     private javax.swing.JLabel exportAllIdentifiedProteinAccessionsLabel;
     private javax.swing.JLabel exportAllIdentifiedProteinsAsFastaLabel;
     private javax.swing.JButton exportIdentifiedProteinAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportIdentifiedProteinsAsFastaButton;
     private javax.swing.JButton exportMgfButton;
-    private javax.swing.JButton exportPepnovoButton;
     private javax.swing.JButton exportProgenesisButton;
     private javax.swing.JLabel exportSpectraLabel;
-    private javax.swing.JLabel exportToPepNovoLinkLabel;
-    private javax.swing.JLabel exportToPepNovoPart1Label;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
     private javax.swing.JComboBox graphDatabaseFormat;
     private javax.swing.JLabel graphDatabasesLabel;
     private javax.swing.JPanel graphDatabasesPanel;
     private javax.swing.JButton graphDatabasetButton;
     private javax.swing.JLabel includeValidatedPsmsLabel;
-    private javax.swing.JLabel includeValidatedPsmsLabel1;
     private javax.swing.JButton inclusionListButton;
-    private javax.swing.JButton inclusionListButton1;
     private javax.swing.JComboBox inclusionListFormat;
-    private javax.swing.JComboBox inclusionListFormat1;
     private javax.swing.JPanel inclusionListPanel;
-    private javax.swing.JPanel inclusionListPanel1;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JComboBox proteinExportCmb1;
     private javax.swing.JComboBox proteinExportCmb2;
     private javax.swing.JPanel proteinsPanel;
     private javax.swing.JComboBox psmSelectionComboBox;
-    private javax.swing.JCheckBox recalibrateForDenovoCheck;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
     private javax.swing.JPanel spectraPanel;

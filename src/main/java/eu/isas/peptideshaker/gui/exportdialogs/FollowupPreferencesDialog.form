@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.8" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Export - Follow Up Analysis"/>
@@ -49,7 +49,6 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="inclusionListPanel" alignment="1" max="32767" attributes="3"/>
-                      <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
                       <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
@@ -70,9 +69,7 @@
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="graphDatabasesPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="deNovoSearchPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="inclusionListPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -409,96 +406,6 @@
                   <Connection code="new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities())" type="code"/>
                 </Property>
               </Properties>
-            </Component>
-          </SubComponents>
-        </Container>
-        <Container class="javax.swing.JPanel" name="deNovoSearchPanel">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="De Novo Search (beta)"/>
-              </Border>
-            </Property>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="exportToPepNovoPart1Label" min="-2" pref="160" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToPepNovoLinkLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="deNovoGuiLinkLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
-                      <Component id="recalibrateForDenovoCheck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="exportPepnovoButton" min="-2" pref="180" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportToPepNovoPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportPepnovoButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="recalibrateForDenovoCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JButton" name="exportPepnovoButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export as MGF"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPepnovoButtonActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="exportToPepNovoPart1Label">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export Training Files"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="recalibrateForDenovoCheck">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Recalibrate Spectra (beta)"/>
-                <Property name="iconTextGap" type="int" value="15"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="deNovoGuiLinkLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;available via &lt;a href=\u005c&quot;http://denovogui.googlecode.com\u005c&quot;&gt;DenovoGUI&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open the DeNovoGUI home page"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseExited"/>
-                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseReleased"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="exportToPepNovoLinkLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://proteomics.ucsd.edu/Software/PepNovo.html\u005c&quot;&gt;PepNovo&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open PepNovo home page"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseExited"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>
