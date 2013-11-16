@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import org.apache.commons.cli.Options;
 
 /**
@@ -24,13 +25,13 @@ public enum PeptideShakerCLIParams {
     PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
     PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented)", false),
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
-    PSM_FLR("psm_FLR", "FLR at the PSM level (default 1% FLR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
     SEARCH_PARAMETERS("search_params", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
-    ESTIMATE_A_SCORE("a_score", "Calculate the A score (1: true, 0: false, default is '1').", false),
-    A_SCORE_NEUTRAL_LOSSES("a_score_neutral_losses", "Include neutral losses in A score (1: true, 0: false, default is '0').", false),
+    PTM_SCORE("ptm_score", "The PTM probabilistic score to use if any." + PtmScore.getCommandLineOptions() + ".", false),
+    PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM score.", false),
+    SCORE_NEUTRAL_LOSSES("score_neutral_losses", "Include neutral losses in spectrum annotation of the PTM score (1: true, 0: false, default is '0').", false),
     PROTEIN_FRACTION_MW_CONFIDENCE("protein_fraction_mw_confidence", "Minimum confidence required for a protein in the fraction MW plot (default 95%: '95.0').", false),
     MIN_PEPTIDE_LENGTH("min_peptide_length", "Minimim peptide length filter (default is '6').", false),
     MAX_PEPTIDE_LENGTH("max_peptide_length", "Maximum peptide length filter (default is '30').", false),
@@ -88,13 +89,12 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(PEPTIDESHAKER_TXT_2.id, true, PEPTIDESHAKER_TXT_2.description);
         aOptions.addOption(PEPTIDESHAKER_PRIDE.id, true, PEPTIDESHAKER_PRIDE.description);
         aOptions.addOption(PSM_FDR.id, true, PSM_FDR.description);
-        aOptions.addOption(PSM_FLR.id, true, PSM_FLR.description);
         aOptions.addOption(PEPTIDE_FDR.id, true, PEPTIDE_FDR.description);
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
         aOptions.addOption(SEARCH_PARAMETERS.id, true, SEARCH_PARAMETERS.description);
         aOptions.addOption(GUI.id, true, GUI.description);
-        aOptions.addOption(ESTIMATE_A_SCORE.id, true, ESTIMATE_A_SCORE.description);
-        aOptions.addOption(A_SCORE_NEUTRAL_LOSSES.id, true, A_SCORE_NEUTRAL_LOSSES.description);
+        aOptions.addOption(PTM_SCORE.id, true, PTM_SCORE.description);
+        aOptions.addOption(PTM_THRESHOLD.id, true, PTM_THRESHOLD.description);
         aOptions.addOption(PROTEIN_FRACTION_MW_CONFIDENCE.id, true, PROTEIN_FRACTION_MW_CONFIDENCE.description);
         aOptions.addOption(MIN_PEPTIDE_LENGTH.id, true, MIN_PEPTIDE_LENGTH.description);
         aOptions.addOption(MAX_PEPTIDE_LENGTH.id, true, MAX_PEPTIDE_LENGTH.description);
@@ -143,9 +143,9 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
         output += "-" + String.format(formatter, PSM_FDR.id) + PSM_FDR.description + "\n";
-        output += "-" + String.format(formatter, PSM_FLR.id) + PSM_FLR.description + "\n";
-        output += "-" + String.format(formatter, ESTIMATE_A_SCORE.id) + ESTIMATE_A_SCORE.description + "\n";
-        output += "-" + String.format(formatter, A_SCORE_NEUTRAL_LOSSES.id) + A_SCORE_NEUTRAL_LOSSES.description + "\n";
+        output += "-" + String.format(formatter, PTM_SCORE.id) + PTM_SCORE.PTM_SCORE + "\n";
+        output += "-" + String.format(formatter, PTM_THRESHOLD.id) + PTM_THRESHOLD.description + "\n";
+        output += "-" + String.format(formatter, SCORE_NEUTRAL_LOSSES.id) + SCORE_NEUTRAL_LOSSES.description + "\n";
         output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
 
         output += "\n\nOptional filtering parameters:\n\n";

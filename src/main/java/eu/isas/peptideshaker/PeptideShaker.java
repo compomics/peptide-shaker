@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
@@ -2114,12 +2115,12 @@ public class PeptideShaker {
 
             for (Double ptmMass : modifications.keySet()) {
                 HashMap<ArrayList<Integer>, Double> scores = null;
-                if (scoringPreferences.getSelectedProbabilisticScore() == PTMScoringPreferences.ProbabilisticScore.AScore && nMod.get(ptmMass) == 1) {
+                if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
-                } else if (scoringPreferences.getSelectedProbabilisticScore() == PTMScoringPreferences.ProbabilisticScore.PhosphoRS) {
+                } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,

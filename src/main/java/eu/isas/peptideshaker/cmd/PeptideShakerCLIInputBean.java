@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -60,10 +61,6 @@ public class PeptideShakerCLIInputBean {
      */
     private double psmFDR = 1.0;
     /**
-     * PSM FLR used for modification localization.
-     */
-    private double psmFLR = 1.0;
-    /**
      * Peptide FDR used for validation.
      */
     private double peptideFDR = 1.0;
@@ -77,14 +74,18 @@ public class PeptideShakerCLIInputBean {
      */
     private Double proteinConfidenceMwPlots = 95.0;
     /**
-     * Boolean indicating whether the A-score should be calculated.
+     * The ptm localization score to use
      */
-    private boolean aScoreCalculation = true;
+    private PtmScore ptmScore = null;
+    /**
+     * The ptm score threshold
+     */
+    private Double ptmScoreThreshold = null;
     /**
      * Boolean indicating whether neutral losses shall be accounted in the
      * calculation of the A-score.
      */
-    private boolean aScoreNeutralLosses = false;
+    private boolean ptmScoreNeutralLosses = false;
     /**
      * The species to use for the gene mappings.
      */
@@ -199,10 +200,6 @@ public class PeptideShakerCLIInputBean {
             psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PSM_FLR.id)) {
-            psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FLR.id));
-        }
-
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDE_FDR.id)) {
             peptideFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDE_FDR.id));
         }
@@ -211,25 +208,21 @@ public class PeptideShakerCLIInputBean {
             proteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PROTEIN_FDR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.ESTIMATE_A_SCORE.id)) {
-            String aScoreOption = aLine.getOptionValue(PeptideShakerCLIParams.ESTIMATE_A_SCORE.id);
-            if (aScoreOption.trim().equals("0")) {
-                aScoreCalculation = false;
-            } else if (aScoreOption.trim().equals("1")) {
-                aScoreCalculation = true;
-            } else {
-                throw new IllegalArgumentException("Unkown value \'" + aScoreOption + "\' for " + PeptideShakerCLIParams.ESTIMATE_A_SCORE.id + ".");
+        if (aLine.hasOption(PeptideShakerCLIParams.PTM_SCORE.id)) {
+            int scoreId = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.PTM_SCORE.id));
+            ptmScore = PtmScore.getScore(scoreId);
+            if (aLine.hasOption(PeptideShakerCLIParams.PTM_THRESHOLD.id)) {
+                ptmScoreThreshold = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PTM_THRESHOLD.id));
             }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id)) {
-            String aScoreNeutralLossesOption = aLine.getOptionValue(PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id);
-            if (aScoreNeutralLossesOption.trim().equals("0")) {
-                aScoreNeutralLosses = false;
-            } else if (aScoreNeutralLossesOption.trim().equals("1")) {
-                aScoreNeutralLosses = true;
-            } else {
-                throw new IllegalArgumentException("Unkown value \'" + aScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id + ".");
+            if (aLine.hasOption(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id)) {
+                String aScoreNeutralLossesOption = aLine.getOptionValue(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id);
+                if (aScoreNeutralLossesOption.trim().equals("0")) {
+                    ptmScoreNeutralLosses = false;
+                } else if (aScoreNeutralLossesOption.trim().equals("1")) {
+                    ptmScoreNeutralLosses = true;
+                } else {
+                    throw new IllegalArgumentException("Unkown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id + ".");
+                }
             }
         }
 
@@ -279,7 +272,7 @@ public class PeptideShakerCLIInputBean {
             } else if (tempExcludeUnknownPtms.trim().equals("1")) {
                 excludeUnknownPtm = false;
             } else {
-                throw new IllegalArgumentException("Unkown value \'" + aScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id + ".");
+                throw new IllegalArgumentException("Unkown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id + ".");
             }
         }
 
@@ -410,24 +403,6 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the PSM FLR in percent.
-     *
-     * @return the PSM FLR
-     */
-    public double getiPsmFLR() {
-        return psmFLR;
-    }
-
-    /**
-     * Sets the PSM FLR in percent.
-     *
-     * @param psmFLR the PSM FLR
-     */
-    public void setPsmFLR(double psmFLR) {
-        this.psmFLR = psmFLR;
-    }
-
-    /**
      * Returns the peptide FDR in percent.
      *
      * @return the peptide FDR
@@ -487,25 +462,6 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns a boolean indicating whether the A-score should be calculated.
-     *
-     * @return a boolean indicating whether the A-score should be calculated
-     */
-    public boolean aScoreCalculation() {
-        return aScoreCalculation;
-    }
-
-    /**
-     * Sets whether the A-score should be calculated.
-     *
-     * @param aScoreCalculation a boolean indicating whether the A-score should
-     * be calculated
-     */
-    public void setaScoreCalculation(boolean aScoreCalculation) {
-        this.aScoreCalculation = aScoreCalculation;
-    }
-
-    /**
      * Indicates whether the A-score calculation should take neutral losses into
      * account.
      *
@@ -513,7 +469,7 @@ public class PeptideShakerCLIInputBean {
      * neutral losses into account
      */
     public boolean isaScoreNeutralLosses() {
-        return aScoreNeutralLosses;
+        return ptmScoreNeutralLosses;
     }
 
     /**
@@ -524,7 +480,7 @@ public class PeptideShakerCLIInputBean {
      * calculation should take neutral losses into account
      */
     public void setaScoreNeutralLosses(boolean aScoreNeutralLosses) {
-        this.aScoreNeutralLosses = aScoreNeutralLosses;
+        this.ptmScoreNeutralLosses = aScoreNeutralLosses;
     }
 
     /**
@@ -875,5 +831,23 @@ public class PeptideShakerCLIInputBean {
      */
     public ReportCLIInputBean getReportCLIInputBean() {
         return reportCLIInputBean;
+    }
+
+    /**
+     * Returns the ptm score to use.
+     *
+     * @return the ptm score to use
+     */
+    public PtmScore getPtmScore() {
+        return ptmScore;
+    }
+
+    /**
+     * Returns the PTM score threshold.
+     *
+     * @return the PTM score threshold
+     */
+    public Double getPtmScoreThreshold() {
+        return ptmScoreThreshold;
     }
 }
