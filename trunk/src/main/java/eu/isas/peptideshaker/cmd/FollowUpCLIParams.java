@@ -24,6 +24,7 @@ public enum FollowUpCLIParams {
     FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
     PROGENESIS_FILE("progenesis_file", "Output file for identification results in Progenesis LC-MS compatible format. (Existing files will be overwritten.)", false),
     PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false),
+    PROGENESIS_TARGETED_PTMS("progenesis_ptms", "For the progenesis PTM export, the comma separated list of targeted PTMs in a list of PTM names", false),
     PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Output folder for PepNovo training files. (Existing files will be overwritten.)", false),
     PEPNOVO_TRAINING_RECALIBRATION("pepnovo_training_recalibration", "Indicate whether the exported mgf files shall be recalibrated. 0: No, 1: Yes (default).", false),
     PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
@@ -80,6 +81,7 @@ public enum FollowUpCLIParams {
         aOptions.addOption(FASTA_TYPE.id, true, FASTA_TYPE.description);
         aOptions.addOption(PROGENESIS_FILE.id, true, PROGENESIS_FILE.description);
         aOptions.addOption(PROGENESIS_TYPE.id, true, PROGENESIS_TYPE.description);
+        aOptions.addOption(PROGENESIS_TARGETED_PTMS.id, true, PROGENESIS_TARGETED_PTMS.description);
         aOptions.addOption(PEPNOVO_TRAINING_FOLDER.id, true, PEPNOVO_TRAINING_FOLDER.description);
         aOptions.addOption(PEPNOVO_TRAINING_RECALIBRATION.id, true, PEPNOVO_TRAINING_RECALIBRATION.description);
         aOptions.addOption(PEPNOVO_TRAINING_FDR.id, true, PEPNOVO_TRAINING_FDR.description);
@@ -133,6 +135,7 @@ public enum FollowUpCLIParams {
         output += "\nProgenesis export:\n\n";
         output += "-" + String.format(formatter, PROGENESIS_FILE.id) + PROGENESIS_FILE.description + "\n";
         output += "-" + String.format(formatter, PROGENESIS_TYPE.id) + PROGENESIS_TYPE.description + "\n";
+        output += "-" + String.format(formatter, PROGENESIS_TARGETED_PTMS.id) + PROGENESIS_TARGETED_PTMS.description + "\n";
         
         output += "\nAccessions export:\n\n";
         output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + ACCESSIONS_FILE.description + "\n";

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -41,24 +42,33 @@ public class ProgenesisExport {
      * @param exportType the type of export
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
+     * @param targetedPTMs the PTMs of interest in case of a PTM export. Ignored
+     * otherwise.
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler)
+    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
+        if (exportType == ExportType.confident_ptms) {
+            if (targetedPTMs == null || targetedPTMs.isEmpty()) {
+                throw new IllegalArgumentException("No modification provided for the Progenesis PTM export.");
+            }
+        }
+        
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         PSParameter psParameter = new PSParameter();
 
-        if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins) {
+        if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Peptides. Please Wait...");
             }
             identification.loadPeptideMatchParameters(psParameter, waitingHandler);
         }
-        if (exportType == ExportType.validated_psms_peptides_proteins) {
+        if (exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Proteins. Please Wait...");
             }
@@ -113,41 +123,45 @@ public class ProgenesisExport {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                                boolean decoy = false;
-                                for (String protein : peptide.getParentProteins()) {
-                                    if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
-                                        decoy = true;
-                                        break;
+
+                                if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
+
+                                    boolean decoy = false;
+                                    for (String protein : peptide.getParentProteins()) {
+                                        if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
+                                            decoy = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (!decoy) {
-                                    if (exportType == ExportType.validated_psms) {
-                                        writePsm(writer, spectrumKey, identification);
-                                    } else {
-                                        String peptideKey = peptide.getKey();
-                                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                                        if (psParameter.isValidated()) {
-                                            if (exportType == ExportType.validated_psms_peptides) {
-                                                writePsm(writer, spectrumKey, identification);
-                                            } else {
-                                                ArrayList<String> accessions = new ArrayList<String>();
-                                                for (String accession : peptide.getParentProteins()) {
-                                                    ArrayList<String> groups = identification.getProteinMap().get(accession);
-                                                    if (groups != null) {
-                                                        for (String group : groups) {
-                                                            psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
-                                                            if (psParameter.isValidated()) {
-                                                                for (String groupAccession : ProteinMatch.getAccessions(group)) {
-                                                                    if (!accessions.contains(groupAccession)) {
-                                                                        accessions.add(groupAccession);
+                                    if (!decoy) {
+                                        if (exportType == ExportType.validated_psms) {
+                                            writePsm(writer, spectrumKey, identification);
+                                        } else {
+                                            String peptideKey = peptide.getKey();
+                                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                                            if (psParameter.isValidated()) {
+                                                if (exportType == ExportType.validated_psms_peptides) {
+                                                    writePsm(writer, spectrumKey, identification);
+                                                } else {
+                                                    ArrayList<String> accessions = new ArrayList<String>();
+                                                    for (String accession : peptide.getParentProteins()) {
+                                                        ArrayList<String> groups = identification.getProteinMap().get(accession);
+                                                        if (groups != null) {
+                                                            for (String group : groups) {
+                                                                psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
+                                                                if (psParameter.isValidated()) {
+                                                                    for (String groupAccession : ProteinMatch.getAccessions(group)) {
+                                                                        if (!accessions.contains(groupAccession)) {
+                                                                            accessions.add(groupAccession);
+                                                                        }
                                                                     }
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                }
-                                                if (!accessions.isEmpty()) {
-                                                    writePsm(writer, spectrumKey, accessions, identification);
+                                                    if (!accessions.isEmpty()) {
+                                                        writePsm(writer, spectrumKey, accessions, identification);
+                                                    }
                                                 }
                                             }
                                         }
@@ -169,6 +183,30 @@ public class ProgenesisExport {
         } finally {
             f.close();
         }
+    }
+
+    /**
+     * Indicates whether the given peptide contains any of the targeted PTMs and
+     * if yes whether all are confidently localized.
+     *
+     * @param peptide the peptide of interest
+     * @param targetedPTMs the targeted PTMs
+     *
+     * @return true if the peptide contains one or more of the targeted PTMs and
+     * false if one of the targeted PTMs is not confidently localized
+     */
+    private static boolean isTargetedPeptide(Peptide peptide, ArrayList<String> targetedPTMs) {
+        boolean found = false, confident = true;
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            if (targetedPTMs.contains(modificationMatch.getTheoreticPtm())) {
+                found = true;
+                if (!modificationMatch.isConfident()) {
+                    confident = false;
+                    break;
+                }
+            }
+        }
+        return found && confident;
     }
 
     /**
@@ -290,15 +328,20 @@ public class ProgenesisExport {
          * Exports the spectra of validated PSMs of validated peptides of
          * validated proteins.
          */
-        validated_psms_peptides_proteins(0, "Spectra of Validated PSMs of Validated Peptides of Validated Proteins"),
+        validated_psms_peptides_proteins(0, "Validated PSMs of Validated Peptides of Validated Proteins"),
         /**
          * Exports the spectra of validated PSMs of validated peptides.
          */
-        validated_psms_peptides(1, "Spectra of Validated PSMs of Validated Peptides"),
+        validated_psms_peptides(1, "Validated PSMs of Validated Peptides"),
         /**
          * Exports the spectra of validated PSMs.
          */
-        validated_psms(2, "Spectra of validated PSMs");
+        validated_psms(2, "Validated PSMs"),
+        /**
+         * Exports the Confidently localized PTMs of Validated PSMs of Validated
+         * Peptides of Validated Proteins
+         */
+        confident_ptms(3, "Confidently localized PTMs of Validated PSMs of Validated Peptides of Validated Proteins");
         /**
          *
          * Index for the export type.
@@ -332,6 +375,8 @@ public class ProgenesisExport {
                 return validated_psms_peptides;
             } else if (index == validated_psms_peptides_proteins.index) {
                 return validated_psms_peptides_proteins;
+            } else if (index == confident_ptms.index) {
+                return confident_ptms;
             } else {
                 throw new IllegalArgumentException("Export type index " + index + " not implemented.");
             }
@@ -348,7 +393,8 @@ public class ProgenesisExport {
             return new String[]{
                 validated_psms_peptides_proteins.description,
                 validated_psms_peptides.description,
-                validated_psms.description
+                validated_psms.description,
+                confident_ptms.description
             };
         }
 
@@ -360,7 +406,8 @@ public class ProgenesisExport {
         public static String getCommandLineOptions() {
             return validated_psms_peptides_proteins.index + ": " + validated_psms_peptides_proteins.description + ", "
                     + validated_psms_peptides.index + ": " + validated_psms_peptides.description + ", "
-                    + validated_psms.index + ": " + validated_psms.description + ".";
+                    + validated_psms.index + ": " + validated_psms.description + ","
+                    + confident_ptms.index + ":" + confident_ptms.description + ".";
         }
     }
 }

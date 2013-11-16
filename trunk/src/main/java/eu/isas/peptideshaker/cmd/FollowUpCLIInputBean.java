@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
+import eu.isas.peptideshaker.followup.ProgenesisExport;
 import java.io.File;
 import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
@@ -96,6 +97,10 @@ public class FollowUpCLIInputBean {
      * RT window for the inclusion list creation. 20 by default.
      */
     private Double inclusionRtWindow = 20.0;
+    /**
+     * The progenesis targeted PTMs
+     */
+    private ArrayList<String> progenesisTargetedPTMs = new ArrayList<String>();
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -136,6 +141,11 @@ public class FollowUpCLIInputBean {
         }
         if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_TYPE.id)) {
             progenesisExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TYPE.id));
+            if (progenesisExportTypeIndex == ProgenesisExport.ExportType.confident_ptms.index) {
+                if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_TARGETED_PTMS.id)) {
+                    progenesisTargetedPTMs = getModificationNames(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TARGETED_PTMS.id));
+                }
+            }
         }
         if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FOLDER.id)) {
             pepnovoTrainingFolder = new File(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FOLDER.id));
@@ -165,6 +175,21 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
+    }
+    
+    /**
+     * Returns the list of modifications comprised in a command line input
+     * 
+     * @param commandLineInput the command line input
+     * 
+     * @return the given list of modifications
+     */
+    private ArrayList<String> getModificationNames(String commandLineInput) {
+        ArrayList<String> result = new ArrayList<String>();
+        for (String input : commandLineInput.split(",")) {
+            result.add(input.trim().toLowerCase());
+        }
+        return result;
     }
 
     /**
@@ -269,6 +294,15 @@ public class FollowUpCLIInputBean {
      */
     public int getProgenesisExportTypeIndex() {
         return progenesisExportTypeIndex;
+    }
+    
+    /**
+     * Returns the list of PTMs targeted for the progenesis PTM export. An empty list if none selected
+     * 
+     * @return the list of PTMs targeted for the progenesis PTM export
+     */
+    public ArrayList<String> getProgenesisTargetedPTMs() {
+        return progenesisTargetedPTMs;
     }
 
     /**
