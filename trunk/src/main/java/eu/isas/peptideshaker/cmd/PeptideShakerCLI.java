@@ -343,9 +343,19 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the PTM scoring preferences
         ptmScoringPreferences = new PTMScoringPreferences();
-        ptmScoringPreferences.setFlrThreshold(cliInputBean.getiPsmFLR());
-        ptmScoringPreferences.setaScoreCalculation(cliInputBean.aScoreCalculation());
-        ptmScoringPreferences.setaScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
+        if (cliInputBean.getPtmScore() != null) {
+            ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
+            ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
+            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
+            if (cliInputBean.getPtmScoreThreshold() != null) {
+                ptmScoringPreferences.setEstimateFlr(false);
+                ptmScoringPreferences.setProbabilisticScoreThreshold(cliInputBean.getPtmScoreThreshold());
+            } else {
+                ptmScoringPreferences.setEstimateFlr(true);
+            }
+        } else {
+            ptmScoringPreferences.setProbabilitsticScoreCalculation(false);
+        }
 
         // set the gene preferences
         genePreferences = new GenePreferences();
@@ -565,12 +575,32 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PSM_FLR.id)) {
-            String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FLR.id).trim();
+        if (aLine.hasOption(PeptideShakerCLIParams.PTM_SCORE.id)) {
+            String input = aLine.getOptionValue(PeptideShakerCLIParams.PTM_SCORE.id).trim();
+            try {
+                Integer.parseInt(input);
+            } catch (Exception e) {
+                System.out.println("\nCould not parse \'" + input + "\' as integer.\n");
+                return false;
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id)) {
+            String input = aLine.getOptionValue(PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id).trim();
+            try {
+                Integer.parseInt(input);
+            } catch (Exception e) {
+                System.out.println("\nCould not parse \'" + input + "\' as integer.\n");
+                return false;
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.PTM_THRESHOLD.id)) {
+            String input = aLine.getOptionValue(PeptideShakerCLIParams.PTM_THRESHOLD.id).trim();
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("\nCould not parse \'" + input + "\' as PSM FLR threshold.\n");
+                System.out.println("\nCould not parse \'" + input + "\' as peptide PTM score threshold.\n");
                 return false;
             }
         }
