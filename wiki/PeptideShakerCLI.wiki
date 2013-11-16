@@ -12,6 +12,8 @@ There are four main sections to this page:
  * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
  * [#D)_General D) General] - general command line help
 
+Note that ReportCLI and FollowUpCLI options can be appended to PeptideShakerCLI command lines.
+
 All command line options have the same overall structure and only differ in the features and parameters available.
 
 ----
@@ -93,16 +95,10 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 -psm_FDR                   FDR at the PSM level in percent (default 1%
                            FDR: '1').
 
--psm_FLR                   FLR at the PSM level in percent for 
-                           peptides with different potential 
-                           modification sites and one variable
-                           modification (default 1% FLR: '1').
+-ptm_score                 The threshold to use for the PTM score.
 
--a_score                   Calculate the A score (1: true, 0: false, 
-                           default is '1').
-
--a_score_neutral_losses    Include neutral losses in A score (1: true,
-                           0: false, default is '0').
+-score_neutral_losses      Include neutral losses in spectrum annotation of the PTM score 
+                           (1: true, 0: false, default is '0').
 
 -protein_fraction_mw_confidence     
                            Minimum confidence required for a protein in
@@ -249,9 +245,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            (Existing files will be overwritten.)
 
 -progenesis_type           Type of hits to export to Progenesis. 
-                           0: Spectra of Validated PSMs of Validated Peptides of Validated Proteins.
-                           1: Spectra of Validated PSMs of Validated Peptides, 
-                           2: Spectra of validated PSMs.
+                           0: Validated PSMs of Validated Peptides of Validated Proteins.
+                           1: Validated PSMs of Validated Peptides, 
+                           2: Validated PSMs,
+                           3: Validated PSMs containing confidently localized PTMs.
+
+-progenesis_ptms           Comma sparated list of PTMs to include in reports of type 3: Validated PSMs containing 
+                           confidently localized PTMs.
 }}}
 
 *Optional protein accessions export parameters:*
