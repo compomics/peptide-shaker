@@ -12,7 +12,7 @@ There are four main sections to this page:
  * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
  * [#D)_General D) General] - general command line help
 
-Note that ReportCLI and FollowUpCLI options can be appended to PeptideShakerCLI command lines.
+Note that ReportCLI and FollowUpCLI options can also be appended to PeptideShakerCLI command lines.
 
 All command line options have the same overall structure and only differ in the features and parameters available.
 
@@ -95,7 +95,9 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 -psm_FDR                   FDR at the PSM level in percent (default 1%
                            FDR: '1').
 
--ptm_score                 The threshold to use for the PTM score.
+-ptm_score                 The PTM probabilistic score to use if any.
+
+-ptm_threshold             The threshold to use for the PTM scores.
 
 -score_neutral_losses      Include neutral losses in spectrum annotation of the PTM score 
                            (1: true, 0: false, default is '0').
@@ -250,8 +252,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            2: Validated PSMs,
                            3: Validated PSMs containing confidently localized PTMs.
 
--progenesis_ptms           Comma sparated list of PTMs to include in reports of type 3: Validated PSMs containing 
-                           confidently localized PTMs.
+-progenesis_ptms           Comma separated list of PTMs to include in reports of Type 3.
 }}}
 
 *Optional protein accessions export parameters:*
@@ -276,21 +277,6 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            0: Main Accession of Validated Protein Groups (default), 
                            1: All Accessions of Validated Protein Groups, 
                            2: Non-Validated Accessions.
-}}}
-
-*Optional PepNovo+ training file export parameters:*
-
-{{{
--pepnovo_training_folder   Output folder for PepNovo training files. (Existing files will be overwritten.)
-
--pepnovo_training_recalibration
-                           Indicate whether the exported mgf files shall be recalibrated. 
-                           0: No, 1: Yes (default).
-
--pepnovo_training_fdr      FDR used for the 'good spectra' export. If not set, the validation FDR will be used.
-
--pepnovo_training_fnr      FNR used for the 'bad spectra' export. If not set, the same value as for 
-                           the 'good spectra' FDR will be used.
 }}}
 
 *Optional inclusion list generation parameters:*
