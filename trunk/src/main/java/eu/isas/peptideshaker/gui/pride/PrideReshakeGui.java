@@ -20,7 +20,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import org.jfree.chart.plot.PlotOrientation;
 import no.uib.jsparklines.renderers.*;
-import org.apache.commons.io.FileUtils;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
@@ -32,8 +31,10 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
+import eu.isas.peptideshaker.gui.WelcomeDialog;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import org.apache.commons.io.FileUtils;
 import uk.ac.ebi.pride.jaxb.model.*;
 import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 
@@ -120,6 +121,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * A dummy parent frame to be able to show an icon in the task bar.
      */
     private DummyFrame dummyParentFrame;
+    /*
+     * The welcome dialog parent, can be null.
+     */
+    private WelcomeDialog welcomeDialog;
     /**
      * The PTM factory.
      */
@@ -133,14 +138,16 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * Creates a new PrideReshakeGui dialog.
      *
      * @param peptideShakerGUI
+     * @param welcomeDialog a reference to the welcome dialog
      * @param dummyParentFrame dummy parent frame to be able to show an icon in
      * the task bar, can be null
      * @param modal
      */
-    public PrideReshakeGui(PeptideShakerGUI peptideShakerGUI, DummyFrame dummyParentFrame, boolean modal) {
+    public PrideReshakeGui(PeptideShakerGUI peptideShakerGUI, WelcomeDialog welcomeDialog, DummyFrame dummyParentFrame, boolean modal) {
         super(peptideShakerGUI, modal);
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
+        this.welcomeDialog = welcomeDialog;
         this.dummyParentFrame = dummyParentFrame;
         setUpGui();
         insertData();
@@ -1410,7 +1417,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     if (mgfConversionOk) {
 
                         // @TODO: support more species, but then the terms might have to be downloaded as well...
-
                         String selectedSpecies = null;
                         String selectedSpeciesType = null;
                         if (currentSpecies.size() == 1 && currentSpecies.get(0).equalsIgnoreCase("Homo sapiens (Human)")) {
@@ -1418,6 +1424,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             selectedSpeciesType = "Vertebrates";
                         }
 
+                        if (welcomeDialog != null) {
+                            welcomeDialog.setVisible(false);
+                        }
+
+                        PrideReshakeGui.this.setVisible(false);
+                        
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(peptideShakerGUI,
                                 new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);

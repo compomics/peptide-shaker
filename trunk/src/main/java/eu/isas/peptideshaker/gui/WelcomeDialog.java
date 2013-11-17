@@ -641,12 +641,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        //JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        dispose();
-        new PrideReshakeGui(peptideShakerGUI, dummyParentFrame, true);
+        new PrideReshakeGui(peptideShakerGUI, this, dummyParentFrame, true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        peptideShakerGUI.close(); // @TODO: maybe keep this alive until the reshake has started?
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
