@@ -19,11 +19,11 @@ public class FollowUpCLIInputBean {
      */
     private File cpsFile = null;
     /**
-     * folder where to export recalibrated files.
+     * Folder where to export recalibrated files.
      */
     private File recalibrationFolder = null;
     /**
-     * parameter for the recalibation.
+     * Parameter for the recalibation.
      */
     private int recalibrationMode = 0;
     /**
@@ -57,7 +57,7 @@ public class FollowUpCLIInputBean {
      */
     private File progenesisExportFile = null;
     /**
-     * the type of Progenesis export.
+     * The type of Progenesis export.
      */
     private int progenesisExportTypeIndex = 0;
     /**
@@ -98,7 +98,7 @@ public class FollowUpCLIInputBean {
      */
     private Double inclusionRtWindow = 20.0;
     /**
-     * The progenesis targeted PTMs
+     * The Progenesis targeted PTMs.
      */
     private ArrayList<String> progenesisTargetedPTMs = new ArrayList<String>();
 
@@ -176,12 +176,12 @@ public class FollowUpCLIInputBean {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
     }
-    
+
     /**
-     * Returns the list of modifications comprised in a command line input
-     * 
+     * Returns the list of modifications comprised in a command line input.
+     *
      * @param commandLineInput the command line input
-     * 
+     *
      * @return the given list of modifications
      */
     private ArrayList<String> getModificationNames(String commandLineInput) {
@@ -295,27 +295,28 @@ public class FollowUpCLIInputBean {
     public int getProgenesisExportTypeIndex() {
         return progenesisExportTypeIndex;
     }
-    
+
     /**
-     * Returns the list of PTMs targeted for the progenesis PTM export. An empty list if none selected
-     * 
-     * @return the list of PTMs targeted for the progenesis PTM export
+     * Returns the list of PTMs targeted for the Progenesis PTM export. An empty
+     * list if none selected.
+     *
+     * @return the list of PTMs targeted for the Progenesis PTM export
      */
     public ArrayList<String> getProgenesisTargetedPTMs() {
         return progenesisTargetedPTMs;
     }
 
     /**
-     * Returns the folder set for the export of Pepnovo training files.
+     * Returns the folder set for the export of PepNovo training files.
      *
-     * @return the folder set for the export of Pepnovo training files
+     * @return the folder set for the export of PepNovo training files
      */
     public File getPepnovoTrainingFolder() {
         return pepnovoTrainingFolder;
     }
 
     /**
-     * Indicates whether the mgf files exported by the pepnovo export shall be
+     * Indicates whether the mgf files exported by the PepNovo export shall be
      * recalibrated.
      *
      * @return a boolean indicating whether the mgf files exported by the
@@ -326,10 +327,10 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates the FDR set for the "good spectra" set of the pepnovo training
+     * Indicates the FDR set for the "good spectra" set of the PepNovo training
      * files. Null if not set.
      *
-     * @return the FDR set for the "good spectra" set of the pepnovo training
+     * @return the FDR set for the "good spectra" set of the PepNovo training
      * files
      */
     public Double getPepnovoTrainingFDR() {
@@ -337,10 +338,10 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates the FNR set for the "good spectra" set of the pepnovo training
+     * Indicates the FNR set for the "good spectra" set of the PepNovo training
      * files. Null if not set.
      *
-     * @return the FNR set for the "good spectra" set of the pepnovo training
+     * @return the FNR set for the "good spectra" set of the PepNovo training
      * files
      */
     public Double getPepnovoTrainingFNR() {

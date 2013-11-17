@@ -595,14 +595,13 @@ public class FileImporter {
                 ArrayList<Integer> charges = new ArrayList<Integer>();
                 double maxErrorPpm = 0, maxErrorDa = 0;
 
-                waitingHandler.appendReport("Importing matches", true, true);
+                waitingHandler.appendReport("Importing Matches", true, true); // @TODO: remove??
 
                 while (matchIt.hasNext()) {
 
-                    // Free at least 1GB for the next parser if not anymore available
-                    // (not elegant so most likely not optimal)
+                    // free memory if needed
                     while (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
-                        waitingHandler.appendReport("reducing memory", true, true);
+                        waitingHandler.appendReport("Reducing Memory.", true, true);
                         peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                         System.gc();
@@ -973,7 +972,7 @@ public class FileImporter {
          * @return a boolean indicating whether a GB of memory is free
          */
         public boolean halfGbFree() {
-            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() > 536870912; // @TODO: should rather be a percentage of memory left??
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() > 536870912;
         }
 
         /**

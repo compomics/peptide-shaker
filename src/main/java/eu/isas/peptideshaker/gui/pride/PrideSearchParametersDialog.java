@@ -76,8 +76,13 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PRIDE Search Parameters");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         searchParametersReportEditorPane.setEditable(false);
         searchParametersReportEditorPane.setContentType("text/html"); // NOI18N
@@ -142,6 +147,8 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.setVisible(false);
+        peptideShakerGUI.close();
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -191,6 +198,16 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
             }, "StartSearchGUI").start();
         }
     }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Close the dialog.
+     *
+     * @param evt
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        cancelButtonActionPerformed(null);
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel infoLabel;

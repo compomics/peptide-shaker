@@ -74,11 +74,11 @@ public class PeptideShakerCLIInputBean {
      */
     private Double proteinConfidenceMwPlots = 95.0;
     /**
-     * The ptm localization score to use
+     * The PTM localization score to use.
      */
     private PtmScore ptmScore = null;
     /**
-     * The ptm score threshold
+     * The PTM score threshold.
      */
     private Double ptmScoreThreshold = null;
     /**

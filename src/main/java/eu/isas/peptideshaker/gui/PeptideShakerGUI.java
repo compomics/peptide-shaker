@@ -9,7 +9,6 @@ import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
-import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.JavaOptionsDialog;
@@ -2689,7 +2688,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-        new PrideReshakeGui(this, null, true);
+        //new PrideReshakeGui(this, null, true); // not in use
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**

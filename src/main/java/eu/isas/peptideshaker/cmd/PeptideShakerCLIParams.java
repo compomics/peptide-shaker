@@ -29,8 +29,8 @@ public enum PeptideShakerCLIParams {
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
     SEARCH_PARAMETERS("search_params", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
-    PTM_SCORE("ptm_score", "The PTM probabilistic score to use if any." + PtmScore.getCommandLineOptions() + ".", false),
-    PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM score.", false),
+    PTM_SCORE("ptm_score", "The PTM probabilistic score to use if any. " + PtmScore.getCommandLineOptions() + ".", false),
+    PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM scores.", false),
     SCORE_NEUTRAL_LOSSES("score_neutral_losses", "Include neutral losses in spectrum annotation of the PTM score (1: true, 0: false, default is '0').", false),
     PROTEIN_FRACTION_MW_CONFIDENCE("protein_fraction_mw_confidence", "Minimum confidence required for a protein in the fraction MW plot (default 95%: '95.0').", false),
     MIN_PEPTIDE_LENGTH("min_peptide_length", "Minimim peptide length filter (default is '6').", false),
@@ -143,7 +143,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
         output += "-" + String.format(formatter, PSM_FDR.id) + PSM_FDR.description + "\n";
-        output += "-" + String.format(formatter, PTM_SCORE.id) + PTM_SCORE.PTM_SCORE + "\n";
+        output += "-" + String.format(formatter, PTM_SCORE.id) + PTM_SCORE.description + "\n";
         output += "-" + String.format(formatter, PTM_THRESHOLD.id) + PTM_THRESHOLD.description + "\n";
         output += "-" + String.format(formatter, SCORE_NEUTRAL_LOSSES.id) + SCORE_NEUTRAL_LOSSES.description + "\n";
         output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
