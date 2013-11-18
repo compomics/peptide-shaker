@@ -51,4 +51,4 @@ Interested in PTM localization?<br><br>Try our protein level PTM export via <i>I
 Interested in phosphorylation?<br><br>Try our phosphorylation export via <i>Identification Features</i> in the <i>Export</i> menu.
 Using large databases?<br><br>When using large databases the import of your files will be slower and the results will contain more false positives. Be sure to calibrate the database to your need.
 Need exports for algorithm training or spectral libraries?<br><br>Contact us at our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!
-PeptideShaker runs faster on SSD discs. Since a lot of information is gathered from the mgf and fasta files you will also gain time by having these on an SSD disc!
+PeptideShaker runs a lot faster on SSD discs!<br><br>Given that a lot of information is extracted from the mgf and FASTA files it is recommened to store these on an SSD disc!

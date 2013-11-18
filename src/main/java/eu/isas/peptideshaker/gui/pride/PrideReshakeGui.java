@@ -1254,6 +1254,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
+                            if (dummyParentFrame != null) {
+                                dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            }
                             return;
                         }
 
@@ -1294,6 +1297,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
+                            if (dummyParentFrame != null) {
+                                dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            }
                             return;
                         }
 
@@ -1318,6 +1324,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                                         if (progressDialog.isRunCanceled()) {
                                             progressDialog.setRunFinished();
+                                            if (dummyParentFrame != null) {
+                                                dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                            }
                                             return;
                                         }
 
@@ -1368,6 +1377,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                             if (progressDialog.isRunCanceled()) {
                                 progressDialog.setRunFinished();
+                                if (dummyParentFrame != null) {
+                                    dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                }
                                 return;
                             }
 
@@ -1382,6 +1394,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                             if (progressDialog.isRunCanceled()) {
                                 progressDialog.setRunFinished();
+                                if (dummyParentFrame != null) {
+                                    dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                }
                                 return;
                             }
 
@@ -1429,7 +1444,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         }
 
                         PrideReshakeGui.this.setVisible(false);
-                        
+
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(peptideShakerGUI,
                                 new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);
