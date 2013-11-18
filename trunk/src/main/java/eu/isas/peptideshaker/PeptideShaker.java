@@ -2645,7 +2645,7 @@ public class PeptideShaker {
      * @throws ClassNotFoundException
      */
     private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, ArrayList<String> keysToDelete)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch sharedMatch = identification.getProteinMatch(sharedGroup);
         ProteinMatch uniqueMatch = identification.getProteinMatch(uniqueGroup);

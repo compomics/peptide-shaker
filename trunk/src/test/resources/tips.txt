@@ -50,3 +50,4 @@ Non-confident PTM localization?<br><br>Whenever a PTM is not confidently localiz
 Interested in PTM localization?<br><br>Try our protein level PTM export via <i>Identification Features</i> in the <i>Export</i> menu.
 Interested in phosphorylation?<br><br>Try our phosphorylation export via <i>Identification Features</i> in the <i>Export</i> menu.
 Using large databases?<br><br>When using large databases the import of your files will be slower and the results will contain more false positives. Be sure to calibrate the database to your need.
+Need exports for algorithm training or spectral libraries?<br><br>Contact us at our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!

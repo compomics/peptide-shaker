@@ -6215,14 +6215,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 psmKey = psmKeys.get(0);
             }
 
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            catchException(ex);
         }
 
         return psmKey;
@@ -6263,14 +6257,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 peptideKey = peptideKeys.get(0);
             }
 
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            catchException(ex);
         }
 
         return peptideKey;
