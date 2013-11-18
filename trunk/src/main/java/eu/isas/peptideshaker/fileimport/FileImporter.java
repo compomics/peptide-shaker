@@ -581,7 +581,6 @@ public class FileImporter {
             fileReader.close();
 
             if (tempSet != null) {
-                Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
                 int numberOfMatches = tempSet.size(),
                         progress = 0,
@@ -595,19 +594,21 @@ public class FileImporter {
                 ArrayList<Integer> charges = new ArrayList<Integer>();
                 double maxErrorPpm = 0, maxErrorDa = 0;
 
+                ArrayDeque<SpectrumMatch> queue = new ArrayDeque<SpectrumMatch>(tempSet);
+                tempSet.clear();
+
                 waitingHandler.appendReport("Importing Matches", true, true); // @TODO: remove??
 
-                while (matchIt.hasNext()) {
+                while (!queue.isEmpty()) {
 
                     // free memory if needed
                     while (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
-                        waitingHandler.appendReport("Reducing Memory.", true, true);
-                        peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
-                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        System.gc();
+                            peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                            System.gc();
                     }
 
-                    SpectrumMatch match = matchIt.next();
+                    SpectrumMatch match = queue.poll();
                     nPSMs++;
                     nSecondary += match.getAllAssumptions().size() - 1;
 
@@ -671,7 +672,6 @@ public class FileImporter {
                     }
 
                     if (!match.hasAssumption(searchEngine)) {
-                        matchIt.remove();
                         rejected++;
                     } else {
 
@@ -917,7 +917,6 @@ public class FileImporter {
                 // Free at least 1GB for the next parser if not anymore available
                 // (not elegant so most likely not optimal)
                 while (!halfGbFree() && !peptideShaker.getCache().isEmpty()) {
-                    waitingHandler.appendReport("reducing memory before files", true, true);
                     waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                     double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
@@ -927,12 +926,7 @@ public class FileImporter {
                     System.gc();
                 }
                 while (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
-                    waitingHandler.appendReport("reducing tree cache", true, true);
                     sequenceFactory.reduceNodeCacheSize(0.5);
-                }
-                if (!halfGbFree()) {
-                    waitingHandler.appendReport("emptying caches", true, true);
-                    sequenceFactory.emptyCache();
                 }
                 projectDetails.addIdentificationFiles(idFile);
 
