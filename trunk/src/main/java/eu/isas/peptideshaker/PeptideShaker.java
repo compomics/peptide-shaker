@@ -157,7 +157,7 @@ public class PeptideShaker {
     /**
      * The type of matching used for peptide to protein matching.
      */
-    public final static ProteinMatch.MatchingType MATCHING_TYPE = ProteinMatch.MatchingType.indistiguishibleAminoAcids;
+    public final static AminoAcidPattern.MatchingType MATCHING_TYPE = AminoAcidPattern.MatchingType.indistiguishibleAminoAcids;
 
     /**
      * Constructor without mass specification. Calculation will be done on new
@@ -328,7 +328,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler); // @TODO: this is very slow if memory is full!!
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler, searchParameters); // @TODO: this is very slow if memory is full!!
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -598,7 +598,7 @@ public class PeptideShaker {
     public void spectrumMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, SearchParameters searchParameters) throws Exception {
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler, searchParameters);
         fillPeptideMaps(waitingHandler);
         peptideMap.cure();
         peptideMap.estimateProbabilities(waitingHandler);
@@ -937,7 +937,7 @@ public class PeptideShaker {
                                     for (double eValue2 : eValues2) {
                                         for (SpectrumIdentificationAssumption assumption2 : spectrumMatch.getAllAssumptions(searchEngine2).get(eValue2)) {
                                             PeptideAssumption peptideAssumption2 = (PeptideAssumption) assumption2;
-                                            if (id.equals(peptideAssumption2.getPeptide().getKey())) {
+                                            if (peptideAssumption1.getPeptide().isSameSequenceAndModificationStatus(peptideAssumption2.getPeptide(), MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                                 psParameter2 = (PSParameter) peptideAssumption2.getUrParam(psParameter);
                                                 p = p * psParameter2.getSearchEngineProbability();
                                                 nSE++;
@@ -1088,7 +1088,7 @@ public class PeptideShaker {
                                     if (!found2) {
                                         assumptions.put(peptideAssumption, new ArrayList<Double>());
                                         psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                        assumptions.get(assumption).add(psParameter.getSearchEngineProbability());
+                                        assumptions.get(peptideAssumption).add(psParameter.getSearchEngineProbability());
                                     }
                                 }
                             }
@@ -1207,7 +1207,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
 
         waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
 
@@ -1227,7 +1227,7 @@ public class PeptideShaker {
                 psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
 
-                identification.buildPeptidesAndProteins(spectrumKey);
+                identification.buildPeptidesAndProteins(spectrumKey, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
                 waitingHandler.increaseSecondaryProgressCounter();
                 if (waitingHandler.isRunCanceled()) {
@@ -1957,7 +1957,7 @@ public class PeptideShaker {
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             PTMScoringPreferences scoringPreferences, double confidenceThreshold) throws Exception {
 
-        attachDeltaScore(spectrumMatch);
+        attachDeltaScore(spectrumMatch, searchParameters);
 
         if (scoringPreferences.isProbabilitsticScoreCalculation()) {
             attachProbabilisticScore(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences);
@@ -1982,10 +1982,12 @@ public class PeptideShaker {
      * Scores the PTM locations using the delta score.
      *
      * @param spectrumMatch the spectrum match of interest
+     * @param searchParameters the search parameters
+     * 
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    private void attachDeltaScore(SpectrumMatch spectrumMatch) throws Exception {
+    private void attachDeltaScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
@@ -2001,7 +2003,7 @@ public class PeptideShaker {
         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
             Peptide sePeptide = peptideAssumption.getPeptide();
-            if (psPeptide.isSameSequence(sePeptide) && psPeptide.sameModificationsAs(sePeptide)) {
+            if (psPeptide.isSameSequence(sePeptide, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) && psPeptide.sameModificationsAs(sePeptide)) {
                 psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
                 double ptemp = psParameter.getSearchEngineProbability();
                 if (ptemp < p1) {

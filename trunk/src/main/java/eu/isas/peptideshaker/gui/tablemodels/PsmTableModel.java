@@ -145,7 +145,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch);
+                    return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters());
                 case 3:
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {

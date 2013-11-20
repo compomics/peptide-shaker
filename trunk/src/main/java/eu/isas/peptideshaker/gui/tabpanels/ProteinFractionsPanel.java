@@ -15,6 +15,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -476,13 +477,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
                                                 aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                                                PeptideShaker.MATCHING_TYPE,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
                                                 aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                                                PeptideShaker.MATCHING_TYPE,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     }
 

@@ -10,6 +10,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -1405,14 +1406,14 @@ public class FindDialog extends javax.swing.JDialog {
                     case 4:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String accessions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             accessions += accession + " ";
                         }
                         return accessions;
                     case 5:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String descriptions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             descriptions += sequenceFactory.getHeader(accession).getSimpleProteinDescription() + " ";
                         }
                         return descriptions;

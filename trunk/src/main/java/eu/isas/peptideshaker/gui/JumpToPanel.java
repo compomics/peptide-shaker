@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.biology.AminoAcid;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -7,6 +9,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -451,6 +454,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     // pre-caching
                                     PSParameter psParameter = new PSParameter();
                                     peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
+                                    String matchingInput = AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                                         try {
@@ -460,10 +464,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             return;
                                         }
                                         if (!psParameter.isHidden()) {
-                                            if (peptideKey.toLowerCase().startsWith(input)) {
+                                            if (peptideKey.toLowerCase().startsWith(matchingInput)) {
                                                 possibilities.get(jumpType).add(peptideKey);
                                                 types.get(jumpType).add(Type.PEPTIDE);
-                                            } else if (peptideKey.toLowerCase().contains(input)) {
+                                            } else if (peptideKey.toLowerCase().contains(matchingInput)) {
                                                 secondaryCandidates.add(peptideKey);
                                             }
                                         }
@@ -475,12 +479,15 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     for (String secondaryCandidate : secondaryCandidates) {
                                         try {
                                             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
-                                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                                            ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping(); // we don't have time to remap proteins here
+                                            if (proteins != null) {
+                                            for (String protein : proteins) {
                                                 if (!ProteinMatch.isDecoy(protein)) {
                                                     possibilities.get(jumpType).add(secondaryCandidate);
                                                     types.get(jumpType).add(Type.PEPTIDE);
                                                     break;
                                                 }
+                                            }
                                             }
                                         } catch (Exception e) {
                                             peptideShakerGUI.catchException(e);

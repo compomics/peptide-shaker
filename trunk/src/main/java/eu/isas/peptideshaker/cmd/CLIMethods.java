@@ -68,6 +68,7 @@ public class CLIMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
+     * @param searchParameters the search parameters used for the search
      *
      * @throws IOException
      * @throws MzMLUnmarshallerException
@@ -75,13 +76,13 @@ public class CLIMethods {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
         if (!exportFolder.exists()) {
             exportFolder.mkdir();
         }
         SpectrumExporter spectrumExporter = new SpectrumExporter(identification);
-        spectrumExporter.exportSpectra(exportFolder, waitingHandler, SpectrumExporter.ExportType.getTypeFromIndex(followUpCLIInputBean.getSpectrumExportTypeIndex()));
+        spectrumExporter.exportSpectra(exportFolder, waitingHandler, SpectrumExporter.ExportType.getTypeFromIndex(followUpCLIInputBean.getSpectrumExportTypeIndex()), searchParameters);
     }
 
     /**
@@ -135,19 +136,20 @@ public class CLIMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
+     * @param searchParameters the parameters used for the search
      *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
         if (!destinationFileTemp.exists()) {
             destinationFileTemp.createNewFile();
         }
         File destinationFile = destinationFileTemp;
-        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs());
+        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), searchParameters);
     }
 
     /**

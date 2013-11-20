@@ -936,7 +936,7 @@ public class MzIdentMLExport {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide())) {
+                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         if (!scores.containsKey(se) || scores.get(se) > eValue) {
                                             scores.put(se, eValue);
                                             if (se == Advocate.MASCOT) {

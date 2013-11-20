@@ -165,7 +165,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // export spectra
             if (followUpCLIInputBean.spectrumExportNeeded()) {
                 try {
-                    CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler);
+                    CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, searchParameters);
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                     e.printStackTrace();
@@ -195,7 +195,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // progenesis export
             if (followUpCLIInputBean.progenesisExportNeeded()) {
                 try {
-                    CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler);
+                    CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, searchParameters);
                     waitingHandler.appendReport("Progenesis export completed.", true, true);
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -251,7 +251,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // text summary output - format 1
         if (cliInputBean.getTextFormat1Directory() != null) {
             waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator, searchParameters);
             exporter.exportResults(waitingHandler, cliInputBean.getTextFormat1Directory());
             waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
@@ -262,7 +262,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
 
             // @TODO: implement text summary export format 2
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator, searchParameters);
             exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
 
             waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);

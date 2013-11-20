@@ -2535,19 +2535,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.MASCOT);
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         mascot = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.OMSSA);
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         omssa = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.XTANDEM);
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         xTandem = true;
                                     }
                                 }
@@ -3006,11 +3006,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     // Fill peptide shaker table
-                    String proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins());
+                    String proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
 
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                                 1,
-                                isBestPsmEqualForAllSearchEngines(spectrumMatch),
+                                isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters()),
                                 proteins,
                                 displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), true, true, true),
                                 probabilities.getPsmScore(),
@@ -3484,7 +3484,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         writer.write("1\t");
 
-                                        ArrayList<String> parentProteins = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins();
+                                        ArrayList<String> parentProteins = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                         writer.write(parentProteins.get(0));
 
@@ -3645,9 +3645,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * accounting for modification localization, false otherwise.
      *
      * @param spectrumMatch the PSM to check
+     * @param searchParameters the paramters used for the search
+     * 
      * @return true if all the used search engines agree on the top PSM
      */
-    public static int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch) {
+    public static int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch, SearchParameters searchParameters) {
 
         // @TODO: there's probably an easier more elegant way of doing all of this (yes but it would ruin the backward compatibility, we'll wait a bit)
 
@@ -3699,8 +3701,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
         if (omssaMatch != null && xtandemMatch != null && mascotMatch != null) {
-            if ((omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
-                    && omssaMatch.isSameSequenceAndModificationStatus(mascotMatch))
+            if ((omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())
+                    && omssaMatch.isSameSequenceAndModificationStatus(mascotMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()))
                     && (omssaCharge == xtandemCharge && omssaCharge == mascotCharge)) {
                 if (omssaMatch.sameModificationsAs(xtandemMatch)
                         && omssaMatch.sameModificationsAs(mascotMatch)) {
@@ -3713,7 +3715,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         } else if (omssaMatch != null && xtandemMatch != null) {
             if (!mascotUsed) {
-                if (omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
+                if (omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())
                         && omssaCharge == xtandemCharge) {
                     if (omssaMatch.sameModificationsAs(xtandemMatch)
                             && omssaCharge == xtandemCharge) {
@@ -3729,7 +3731,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         } else if (omssaMatch != null && mascotMatch != null) {
             if (!xtandemUsed) {
-                if (omssaMatch.isSameSequenceAndModificationStatus(mascotMatch)
+                if (omssaMatch.isSameSequenceAndModificationStatus(mascotMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())
                         && omssaCharge == mascotCharge) {
                     if (omssaMatch.sameModificationsAs(mascotMatch)
                             && omssaCharge == mascotCharge) {
@@ -3745,9 +3747,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         } else if (xtandemMatch != null && mascotMatch != null) {
             if (!omssaUsed) {
-                if (xtandemMatch.isSameSequenceAndModificationStatus(mascotMatch)
+                if (xtandemMatch.isSameSequenceAndModificationStatus(mascotMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())
                         && xtandemCharge == mascotCharge) {
-                    if (xtandemMatch.isSameAs(mascotMatch)
+                    if (xtandemMatch.isSameSequenceAndModificationStatus(mascotMatch, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())
                             && xtandemCharge == mascotCharge) {
                         return AGREEMENT_WITH_MODS;
                     } else {
@@ -3841,7 +3843,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             searchEngineAgreement = NO_ID;
                         } else {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch);
+                            searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters());
                         }
                         return searchEngineAgreement;
                     case 2:
