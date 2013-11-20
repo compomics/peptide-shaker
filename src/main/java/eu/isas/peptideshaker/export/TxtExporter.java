@@ -100,7 +100,7 @@ public class TxtExporter {
      */
     private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
-     * The search parameters used for the search
+     * The search parameters used for the search.
      */
     private SearchParameters searchParameters;
 
@@ -111,6 +111,7 @@ public class TxtExporter {
      * @param sample the sample
      * @param replicateNumber the replicate number
      * @param identificationFeaturesGenerator
+     * @param searchParameters the search parameters
      */
     public TxtExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) {
         this.experiment = experiment;

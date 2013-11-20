@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
@@ -339,7 +340,7 @@ public class ProteinSection {
                         writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator) + separator);
                         break;
                     case coverage:
-                        Double result = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                        Double result = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         writer.write(Util.roundDouble(result, 2) + separator);
                         break;
                     case possible_coverage:
