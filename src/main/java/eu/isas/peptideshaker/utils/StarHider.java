@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -899,7 +900,7 @@ public class StarHider {
 
                 if (proteinFilter.getProteinCoverage() != null) {
                     try {
-                        double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                        double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
                             if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
                                 return false;

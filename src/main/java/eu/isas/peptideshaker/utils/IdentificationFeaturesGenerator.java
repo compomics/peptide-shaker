@@ -205,6 +205,9 @@ public class IdentificationFeaturesGenerator {
      * Returns the sequence coverage of the protein of interest.
      *
      * @param proteinMatchKey the key of the protein of interest
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     * 
      * @return the sequence coverage
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -212,11 +215,11 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public Double getSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public Double getSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
 
         if (result == null) {
-            result = estimateSequenceCoverage(proteinMatchKey);
+            result = estimateSequenceCoverage(proteinMatchKey, matchingType, massTolerance);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
         }
         return result;
@@ -311,14 +314,17 @@ public class IdentificationFeaturesGenerator {
      * Updates the sequence coverage of the protein of interest.
      *
      * @param proteinMatchKey the key of the protein of interest
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     * 
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws InterruptedException
      * @throws ClassNotFoundException
      */
-    public void updateSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        Double result = estimateSequenceCoverage(proteinMatchKey);
+    public void updateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Double result = estimateSequenceCoverage(proteinMatchKey, matchingType, massTolerance);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
     }
 
@@ -326,15 +332,16 @@ public class IdentificationFeaturesGenerator {
      * Estimates the sequence coverage for the given protein match.
      *
      * @param proteinMatchKey the key of the protein match
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     * 
      * @return the sequence coverage
      */
-    private double estimateSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private double estimateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         // an array containing the coverage index for each residue
         int[] coverage = new int[sequence.length() + 1];
-        int peptideTempStart, peptideTempEnd;
-        String tempSequence, peptideSequence;
         PSParameter pSParameter = new PSParameter();
 
         // iterate the peptide table and store the coverage for each peptide
@@ -343,15 +350,13 @@ public class IdentificationFeaturesGenerator {
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
             if (pSParameter.isValidated()) {
-                tempSequence = sequence;
-                peptideSequence = Peptide.getSequence(peptideKey);
-                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                    peptideTempEnd = peptideTempStart + peptideSequence.length();
+                String peptideSequence = Peptide.getSequence(peptideKey);
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                for (int peptideTempStart : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
+                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                         coverage[j] = 1;
                     }
-                    tempSequence = sequence.substring(0, peptideTempStart);
                 }
             }
         }

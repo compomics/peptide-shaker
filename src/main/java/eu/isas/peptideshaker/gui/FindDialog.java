@@ -1111,7 +1111,7 @@ public class FindDialog extends javax.swing.JDialog {
                     case 7:
                         Double coverage;
                         try {
-                            coverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                            coverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             coverage = Double.NaN;

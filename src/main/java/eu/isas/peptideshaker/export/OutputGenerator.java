@@ -412,7 +412,7 @@ public class OutputGenerator {
 
                                             if (sequenceCoverage) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
@@ -1952,7 +1952,7 @@ public class OutputGenerator {
                             }
 
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
@@ -2687,7 +2687,7 @@ public class OutputGenerator {
                                             }
                                             if (sequenceCoverage) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);

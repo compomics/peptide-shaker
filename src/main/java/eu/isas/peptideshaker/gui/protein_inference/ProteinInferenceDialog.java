@@ -619,7 +619,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     inspectedMatch.setMainMatch(accessions.get(row));
                     identification.updateProteinMatch(inspectedMatch);
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateCoverableAA(inspectedMatch.getKey());
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey());
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     peptideShakerGUI.getIdentificationFeaturesGenerator().updateObservableCoverage(inspectedMatch.getKey());
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

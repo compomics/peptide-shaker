@@ -608,7 +608,7 @@ public class FileImporter {
                             System.gc();
                     }
 
-                    SpectrumMatch match = queue.poll();
+                    SpectrumMatch match = queue.pollLast();
                     nPSMs++;
                     nSecondary += match.getAllAssumptions().size() - 1;
 
