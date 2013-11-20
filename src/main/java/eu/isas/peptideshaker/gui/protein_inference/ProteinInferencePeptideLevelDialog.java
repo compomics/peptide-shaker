@@ -9,6 +9,7 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
@@ -102,7 +103,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         sequenceLabel.setToolTipText(tooltip);
 
         PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
-        ArrayList<String> possibleProteins = tempPeptideMatch.getTheoreticPeptide().getParentProteins();
+        ArrayList<String> possibleProteins = tempPeptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
         List<String> retainedProteins;
 
         if (proteinMatchKey != null) {

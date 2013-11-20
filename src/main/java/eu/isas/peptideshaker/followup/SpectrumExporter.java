@@ -2,12 +2,14 @@ package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -54,6 +56,7 @@ public class SpectrumExporter {
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process. Can be null.
      * @param exportType the type of PSM to export
+     * @param searchParameters the search parameters used for the search
      *
      * @throws IOException
      * @throws MzMLUnmarshallerException
@@ -61,7 +64,7 @@ public class SpectrumExporter {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType)
+    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SearchParameters searchParameters)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
@@ -114,7 +117,7 @@ public class SpectrumExporter {
 
                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
                         String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                        if (shallExport(spectrumKey, exportType)) {
+                        if (shallExport(spectrumKey, exportType, searchParameters)) {
                             b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
                         }
                         if (waitingHandler != null) {
@@ -177,12 +180,15 @@ public class SpectrumExporter {
      *
      * @param spectrumKey the key of the spectrum
      * @param exportType the export type number
+     * @param searchParameters the search parameters used for the search
+     * 
      * @return whether a spectrum shall be exported
+     * 
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private boolean shallExport(String spectrumKey, ExportType exportType) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private boolean shallExport(String spectrumKey, ExportType exportType, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter psParameter = new PSParameter();
         switch (exportType) {
             case non_validated_psms:
@@ -192,7 +198,7 @@ public class SpectrumExporter {
                     if (psParameter.isValidated()) {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         boolean decoy = false;
-                        for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins()) {
+                        for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                             if (sequenceFactory.isDecoyAccession(accession)) {
                                 decoy = true;
                                 break;
@@ -208,7 +214,7 @@ public class SpectrumExporter {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     boolean decoy = false;
-                    for (String accession : peptide.getParentProteins()) {
+                    for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         if (sequenceFactory.isDecoyAccession(accession)) {
                             decoy = true;
                             break;
@@ -231,7 +237,7 @@ public class SpectrumExporter {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     boolean decoy = false;
-                    for (String accession : peptide.getParentProteins()) {
+                    for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         if (sequenceFactory.isDecoyAccession(accession)) {
                             decoy = true;
                             break;
@@ -242,7 +248,7 @@ public class SpectrumExporter {
                         if (exportType == ExportType.non_validated_proteins
                                 || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).isValidated()
                                 && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
-                            ArrayList<String> proteins = peptide.getParentProteins();
+                            ArrayList<String> proteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             for (String accession : proteins) {
                                 ArrayList<String> accessions = identification.getProteinMap().get(accession);
                                 if (accessions != null) {

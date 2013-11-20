@@ -25,6 +25,7 @@ import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -3085,7 +3086,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<String> result = new ArrayList<String>();
         try {
             for (String peptideKey : getDisplayedPeptides()) {
-                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins();
+                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 for (String protein : proteins) {
                     for (String proteinMatchKey : identification.getProteinMap().get(protein)) {
                         if (!result.contains(proteinMatchKey) && identification.matchExists(proteinMatchKey)) {

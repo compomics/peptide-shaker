@@ -9,6 +9,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
@@ -440,7 +441,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                     try {
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()));
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getSearchParameters());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -512,7 +513,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection);
+                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection, peptideShakerGUI.getSearchParameters());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -694,7 +695,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             // write the peptide to protein edge and the protein nodes
-                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
 
                                 // write the protein node
                                 if (!proteinsAdded.contains(protein)) {

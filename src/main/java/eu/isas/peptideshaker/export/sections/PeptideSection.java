@@ -230,7 +230,7 @@ public class PeptideSection {
                             int patternLength = aminoAcidPattern.length();
                             ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
                                     aminoAcidPattern, patternLength,
-                                    ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                                    PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             Collections.sort(starts);
                             boolean first = true;
                             for (int startAa : starts) {
@@ -295,7 +295,7 @@ public class PeptideSection {
                                 subSequence += ";";
                             }
                             HashMap<Integer, String[]> surroundingAAs = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                    aminoAcidPattern, patternLength, nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids,
+                                    aminoAcidPattern, patternLength, nSurroundingAA, PeptideShaker.MATCHING_TYPE,
                                     searchParameters.getFragmentIonAccuracy());
                             ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                             Collections.sort(starts);
@@ -324,7 +324,7 @@ public class PeptideSection {
                             }
                             HashMap<Integer, String[]> surroundingAAs
                                     = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(), aminoAcidPattern, patternLength, 
-                                            nSurroundingAA, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                                            nSurroundingAA, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                             Collections.sort(starts);
                             boolean first = true;

@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.protein_inference;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -10,6 +11,7 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
@@ -948,7 +950,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     try {
                         return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), 
                                 peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                PeptideShaker.MATCHING_TYPE, 
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);

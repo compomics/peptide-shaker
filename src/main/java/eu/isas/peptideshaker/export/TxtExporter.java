@@ -99,6 +99,10 @@ public class TxtExporter {
      * The gene factory.
      */
     private GeneFactory geneFactory = GeneFactory.getInstance();
+    /**
+     * The search parameters used for the search
+     */
+    private SearchParameters searchParameters;
 
     /**
      * Creates a TxtExporter object.
@@ -108,11 +112,12 @@ public class TxtExporter {
      * @param replicateNumber the replicate number
      * @param identificationFeaturesGenerator
      */
-    public TxtExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public TxtExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.searchParameters = searchParameters;
 
         proteinFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
         peptideFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
@@ -384,7 +389,7 @@ public class TxtExporter {
         StringBuilder line = new StringBuilder();
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-        for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+        for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
             line.append(protein).append(" ");
         }
 
@@ -503,6 +508,7 @@ public class TxtExporter {
      * for the best assumption
      *
      * @param spectrumMatch the spectrum match to export
+     * 
      * @return the spectrum match as a line of text
      */
     private String getSpectrumLine(String psmKey) throws Exception {
@@ -514,7 +520,7 @@ public class TxtExporter {
 
         StringBuilder line = new StringBuilder();
 
-        for (String protein : bestAssumption.getParentProteins()) {
+        for (String protein : bestAssumption.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
             line.append(protein).append(" ");
         }
 
@@ -704,7 +710,7 @@ public class TxtExporter {
 
         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
+            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                 if (!fileNames.contains(assumption.getIdentificationFile())) {
                     fileNames.add(assumption.getIdentificationFile());
                 }
@@ -730,7 +736,7 @@ public class TxtExporter {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
+                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         if (se == Advocate.MASCOT) {
                             if (mascotEValue == null || mascotEValue > eValue) {
                                 mascotEValue = eValue;

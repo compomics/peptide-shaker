@@ -1078,7 +1078,7 @@ public class StarHider {
 
                 if (peptideFilter.getProtein() != null) {
                     found = false;
-                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
                         if (accession.split(peptideFilter.getProtein()).length > 1) {
                             found = true;
                             break;
@@ -1115,7 +1115,7 @@ public class StarHider {
             if (peptideFilter.getProtein() != null && peptideFilter.getProtein().trim().length() > 0) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 String accessions = "";
-                for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
                     accessions += accession + " ";
                 }
                 Matcher m;
