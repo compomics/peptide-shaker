@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tablemodels;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                 case 3:
                     double sequenceCoverage;
                     try {
-                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;

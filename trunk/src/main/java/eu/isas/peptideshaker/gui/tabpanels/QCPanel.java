@@ -13,6 +13,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -1674,7 +1675,7 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!proteinParameter.isHidden()) {
 
                         try {
-                            double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                            double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                             if (value > maxValue) {
                                 maxValue = value;

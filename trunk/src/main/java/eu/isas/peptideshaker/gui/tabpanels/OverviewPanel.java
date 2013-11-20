@@ -3894,7 +3894,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
             try {
-                double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 title += Util.roundDouble(sequenceCoverage, 2);
                 try {
                     double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
@@ -3933,7 +3933,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (psParameter.isValidated()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
                     AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                    String tempSequence = currentProteinSequence;
 
                     boolean includePeptide = false;
 
@@ -3948,8 +3947,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
 
                     if (includePeptide) {
-                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                        for (int peptideTempStart : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideTempEnd = peptideTempStart + peptideSequence.length();
                             for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                                 coverage[j]++;
@@ -3958,7 +3956,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     maxCoverageValue = coverage[j];
                                 }
                             }
-                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                         }
                     }
                 }
