@@ -174,19 +174,30 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            if (memoryPreference < 2000) {
-                sequenceFactory.setnCache(5000); //  @ODO: this results in very slow loading in low memory settings!!
+            long fileSize = fastaFile.length();
+            long nSequences = sequenceFactory.getNTargetSequences();
+            if (!sequenceFactory.isDefaultReversed()) {
+                nSequences = sequenceFactory.getNSequences();
             }
+            long sequencesPerMb = 1048576 * nSequences / fileSize;
+            long availableCachSize = 3 * memoryPreference * sequencesPerMb / 4;
+            if (availableCachSize > nSequences) {
+                availableCachSize = nSequences;
+            } else {
+                    waitingHandler.appendReport("Warning: PeptideShaker cannot load your fasta file in memory and will need to read the file very often instead."
+                            + "Using large large databases reduces the search engine efficiency "
+                            + "and dramatically slows down the import in PeptideShaker. "
+                            + "To fasten the process you can: (1) use a smaller database, (2) increase the memory provided to PeptideShaker, or (3) improve the reading speed by using SSD discs for instance."
+                            + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
+                
+            }
+            int cacheSize = (int) availableCachSize;
+            sequenceFactory.setnCache(cacheSize);
+            
             proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
             if (!waitingHandler.isRunCanceled()) {
                 waitingHandler.appendReport("FASTA file import completed.", true, true);
-                int nSequences = sequenceFactory.getNSequences();
-                if (nSequences >= 100000) {
-                    waitingHandler.appendReport("Warning: Using large large databases reduces the search engine efficiency "
-                            + "and dramatically slows down the import in PeptideShaker. "
-                            + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
-                }
                 waitingHandler.increasePrimaryProgressCounter();
             }
 
@@ -596,8 +607,6 @@ public class FileImporter {
 
                 ArrayDeque<SpectrumMatch> queue = new ArrayDeque<SpectrumMatch>(tempSet);
                 tempSet.clear();
-
-                waitingHandler.appendReport("Importing Matches", true, true); // @TODO: remove??
 
                 while (!queue.isEmpty()) {
 
