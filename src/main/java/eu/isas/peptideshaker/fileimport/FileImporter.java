@@ -184,16 +184,15 @@ public class FileImporter {
             if (availableCachSize > nSequences) {
                 availableCachSize = nSequences;
             } else {
-                    waitingHandler.appendReport("Warning: PeptideShaker cannot load your fasta file in memory and will need to read the file very often instead."
-                            + "Using large large databases reduces the search engine efficiency "
-                            + "and dramatically slows down the import in PeptideShaker. "
-                            + "To fasten the process you can: (1) use a smaller database, (2) increase the memory provided to PeptideShaker, or (3) improve the reading speed by using SSD discs for instance."
-                            + "(See <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
-                
+                waitingHandler.appendReport("Warning: PeptideShaker cannot load your FASTA file into memory. This will slow down the processing. "
+                        + "Note that using large large databases also reduces the search engine efficiency. "
+                        + "Try to either (i) use a smaller database, (ii) increase the memory provided to PeptideShaker, or (iii) improve the reading speed by using an SSD disc. "
+                        + "(See also <a href=\"https://code.google.com/p/compomics-utilities/wiki/ProteinInference\">Protein Inference</a>).", true, true);
+
             }
             int cacheSize = (int) availableCachSize;
             sequenceFactory.setnCache(cacheSize);
-            
+
             proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
             if (!waitingHandler.isRunCanceled()) {
@@ -612,9 +611,9 @@ public class FileImporter {
 
                     // free memory if needed
                     while (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
-                            peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
-                            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                            System.gc();
+                        peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                        System.gc();
                     }
 
                     SpectrumMatch match = queue.pollLast();

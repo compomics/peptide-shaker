@@ -1690,7 +1690,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 "We strongly recommend the use of UniProt databases. Some<br>"
                 + "features will be limited if using other databases.<br><br>"
                 + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."),
-                "Database Information", JOptionPane.ERROR_MESSAGE);
+                "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 
     @Override
