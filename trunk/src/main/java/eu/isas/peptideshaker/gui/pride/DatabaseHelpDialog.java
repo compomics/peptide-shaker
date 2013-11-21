@@ -346,14 +346,13 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
-                        || myFile.getName().toLowerCase().endsWith("fast")
                         || myFile.getName().toLowerCase().endsWith("fas")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: FASTA (.fasta)";
+                return "Supported formats: FASTA (.fasta or .fas)";
             }
         };
 

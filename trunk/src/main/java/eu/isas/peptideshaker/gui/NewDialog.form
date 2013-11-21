@@ -200,6 +200,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Replicate*"/>
+                <Property name="toolTipText" type="java.lang.String" value="The replicate number"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="sampleNameLabel">
@@ -208,6 +209,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sample Name*"/>
+                <Property name="toolTipText" type="java.lang.String" value="The name of the sample or experiment"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="projectReferenceLabel">
@@ -216,6 +218,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Project Reference*"/>
+                <Property name="toolTipText" type="java.lang.String" value="A project name for future reference"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="sampleNameIdtxt">

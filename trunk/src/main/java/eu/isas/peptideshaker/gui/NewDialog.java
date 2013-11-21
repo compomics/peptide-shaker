@@ -247,12 +247,15 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         replicateLabel.setForeground(new java.awt.Color(255, 0, 0));
         replicateLabel.setText("Replicate*");
+        replicateLabel.setToolTipText("The replicate number");
 
         sampleNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         sampleNameLabel.setText("Sample Name*");
+        sampleNameLabel.setToolTipText("The name of the sample or experiment");
 
         projectReferenceLabel.setForeground(new java.awt.Color(255, 0, 0));
         projectReferenceLabel.setText("Project Reference*");
+        projectReferenceLabel.setToolTipText("A project name for future reference");
 
         sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1207,6 +1210,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
