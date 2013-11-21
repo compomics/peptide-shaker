@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+    <HEAD>
+        <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+        <a name="#top"/>
+        <H2>New Project</H2>
+
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#ProjectDetails'>Project Details</a></li>
+            <li><a href='#InputFiles'>Input Files</a></li>
+            <li><a href='#ProcessingParameters'>Processing Parameters</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
+        <p align="justify">
+            The New Project dialog is where new PeptideShaker projects are created based on identification files. 
+            After completing each field click "Load Data!" to start the processing. During the importing of the files 
+            the progress of the import will be displayed. 
+            <br><br>
+            To open previously saved projects use the Open Project option instead.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#ProjectDetails"></a>
+        <h3>Project Details</h3>
+        <p align="justify">
+            The project details will be used to reference the project. It is possible to set the project name, the type of sample and 
+            the number of the replicates. The project annotation is mainly there to help you annotate the project with the information 
+            you find important for later re-use of the project.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#InputFiles"></a>
+        <h3>Input Files</h3>
+        <p align="justify">
+            <b>PeptideShaker</b> requires information found in three different types of files:
+        </p>
+        <ul>
+            <li>
+                <b>Identification File(s):</b> the files containing the identification results. Supported formats are OMSSA OMX files, X!Tandem XML files and Mascot DAT files. 
+                <br><br>
+                <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, <b>PeptideShaker</b> will 
+                    load the additional files automatically!</i>
+            </li>
+            <br>
+            <li>
+                <b>Spectrum File(s):</b> the files containing the peak lists used for the search in the 
+                <a href="http://www.matrixscience.com/help/data_file_help.html#GEN"><b>MGF</b></a> format.
+            </li>
+            <br>
+            <i>All spectra should be provided and uniquely entitled! To generate compatible MGF files we recommend the use of <a href="http://proteowizard.sourceforge.net"><b>ProteoWizard</b></a>.</i>
+            <br><br>
+            <li>
+                <b>Database File (FASTA):</b> the FASTA file used to identify the spectra.
+                <br><br>
+                <i>Identification should be conducted using concatenated Target/Decoy databases. The tag for reverse sequences is "REVERSED". 
+                    We recommended using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a> for the identification of spectra. 
+                    Peptides common to the Target and the Decoy database will be automatically ignored. See also <a href="http://code.google.com/p/searchgui/wiki/DatabaseHelp">Database Help</a>.
+                </i>
+                <br><br>
+                Loading big files can require a lot of time and memory. We recommend trying <b>PeptideShaker</b> on smaller datasets first!
+            </li>
+        </ul>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#ProcessingParameters"></a>
+        <h3>Processing Parameters</h3>
+        <p align="justify">
+            Additional settings can be set for the preprocessing of the identification files:
+        </p>
+        <ul>
+            <li>
+                <b>Search Settings:</b> The search parameters should be set carefully in order to process the data reliably.
+            </li>
+            <br>
+            <li>
+                <b>Import Filters:</b> Filters on the search engine e-values, the peptide length or the precusor accuracy can be added.
+            </li>
+            <br>
+            <li>
+                <b>Preferences:</b> Various processing parameters can also be fine tuned.
+            </li>
+            <br>
+        </ul>
+        <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, 
+            <b>PeptideShaker</b> will load the search parameters automatically!
+        </i>
+
+         <br><br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+    </BODY>
+</HTML>

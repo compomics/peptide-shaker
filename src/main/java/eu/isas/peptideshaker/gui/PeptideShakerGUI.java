@@ -5266,14 +5266,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
-                        || myFile.getName().toLowerCase().endsWith("fast")
                         || myFile.getName().toLowerCase().endsWith("fas")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: FASTA format (.fasta)";
+                return "Supported formats: FASTA format (.fasta or .fas)";
             }
         };
 

@@ -562,9 +562,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
-            psmTableToolTips.set(3, "Mass Error (ppm)");
+            psmTableToolTips.set(psmTable.getColumn("Mass Error").getModelIndex(), "Mass Error (ppm)");
         } else {
-            psmTableToolTips.set(3, "Mass Error (Da)");
+            psmTableToolTips.set(psmTable.getColumn("Mass Error").getModelIndex(), "Mass Error (Da)");
         }
 
         psmTable.getModel().addTableModelListener(new TableModelListener() {
@@ -3992,6 +3992,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void updateSequenceCoverage(String proteinAccession, boolean updateProtein) {
 
+        // @TODO: should be in a separate thread that is possible to cancel if the selection changes
+        
         // @TODO: the sequence coverage plotting code should be moved into a separate class!
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
@@ -4853,7 +4855,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
 
                     // get the spectrum annotations
-                    tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                     annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
