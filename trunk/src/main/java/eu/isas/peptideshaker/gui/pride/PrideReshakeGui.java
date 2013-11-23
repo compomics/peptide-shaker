@@ -31,10 +31,10 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
+import com.compomics.util.io.FTPDownloader;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
-import org.apache.commons.io.FileUtils;
 import uk.ac.ebi.pride.jaxb.model.*;
 import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 
@@ -1271,8 +1271,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                         try {
                             currentPrideProjectUrl = new URL("ftp://ftp.ebi.ac.uk/pub/databases/pride/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
-                            currentZippedPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
-                            currentPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
+                            currentZippedPrideXmlFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
+                            currentPrideXmlFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
                             currentMgfFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".mgf");
                             mgfFiles.add(currentMgfFile);
                             URLConnection conn = currentPrideProjectUrl.openConnection();
@@ -1356,19 +1356,36 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
                                     "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml").exists()) {
 
-                                // download the pride xml file
-                                FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
+                                boolean downloadFile = true;
 
-                                isFileBeingDownloaded = false;
+                                if (currentPrideXmlFile.exists()) {
+                                    int option = JOptionPane.showConfirmDialog(PrideReshakeGui.this,
+                                            "The PRIDE file \'" + currentPrideXmlFile.getName() + "\' already exists locally.\nUse local copy?",
+                                            "Use Local File?", JOptionPane.YES_NO_OPTION);
 
-                                // file downloaded, unzip file
-                                if (selectedProjects.size() > 1) {
-                                    progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                                } else {
-                                    progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                                    downloadFile = (option == JOptionPane.NO_OPTION);
                                 }
-                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                                unzipProject();
+
+                                if (downloadFile) {
+
+                                    // download the pride xml file
+                                    FTPDownloader ftpDownloader = new FTPDownloader("ftp.ebi.ac.uk", false);
+                                    ftpDownloader.downloadFile(currentPrideProjectUrl.getPath(), currentZippedPrideXmlFile);
+                                    ftpDownloader.disconnect();
+
+                                    isFileBeingDownloaded = false;
+
+                                    // file downloaded, unzip file
+                                    if (selectedProjects.size() > 1) {
+                                        progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                                    } else {
+                                        progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                                    }
+                                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                                    unzipProject();
+                                } else {
+                                    isFileBeingDownloaded = false;
+                                }
                             } else {
                                 isFileBeingDownloaded = false;
                                 currentPrideXmlFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
@@ -1417,11 +1434,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
                         SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
                     }
-
-                    // clear the temp folder
-                    progressDialog.setTitle("Clearing Temp Files. Please Wait...");
-                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                    Util.deleteDir(currentZippedPrideXmlFile.getParentFile());
 
                     progressDialog.setRunFinished();
 
