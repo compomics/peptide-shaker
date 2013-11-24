@@ -42,7 +42,7 @@ public class InputMap {
     }
 
     /**
-     * Estimates the posterior error probability for each search engine
+     * Estimates the posterior error probability for each search engine.
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
