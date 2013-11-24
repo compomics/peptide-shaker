@@ -39,9 +39,15 @@ public class TargetDecoyMap implements Serializable {
      */
     private Integer nTargetOnly;
     /**
-     * the results computed on this map.
+     * The results computed on this map.
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
+
+    /**
+     * Constructs a target/decoy map.
+     */
+    public TargetDecoyMap() {
+    }
 
     /**
      * Returns the posterior error probability estimated at the given score.
@@ -130,12 +136,6 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Constructs a target/decoy map.
-     */
-    public TargetDecoyMap() {
-    }
-
-    /**
      * Estimates the metrics of the map: Nmax and NtargetOnly.
      */
     private void estimateNs() {
@@ -196,7 +196,7 @@ public class TargetDecoyMap implements Serializable {
         int cptInf = 0;
         int cptSup = 1;
         boolean oneReached = false;
-        
+
         for (int cpt = 0; cpt < scores.size(); cpt++) {
             TargetDecoyPoint point = hitMap.get(scores.get(cpt));
             if (!oneReached) {

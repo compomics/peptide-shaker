@@ -271,7 +271,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!objectsCache.memoryCheck()) {
-            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
+            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a> for help.", true, true);
         }
         if (waitingHandler.isRunCanceled()) {
             return;

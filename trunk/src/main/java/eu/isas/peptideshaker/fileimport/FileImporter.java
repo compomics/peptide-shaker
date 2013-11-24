@@ -610,10 +610,11 @@ public class FileImporter {
                 while (!queue.isEmpty()) {
 
                     // free memory if needed
-                    while (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
+                    if (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
                         peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
-                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        System.gc();
+                    }
+                    if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                        sequenceFactory.reduceNodeCacheSize(0.5);
                     }
 
                     SpectrumMatch match = queue.pollLast();
@@ -624,15 +625,6 @@ public class FileImporter {
                     String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                     String fileName = Spectrum.getSpectrumFile(spectrumKey);
 
-                    // @TODO: verify that this is not needed
-//                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-//                    try {
-//                        spectrumTitle = URLDecoder.decode(spectrumTitle, "utf-8");
-//                    } catch (UnsupportedEncodingException e) {
-//                        System.out.println("An exception was thrown when trying to decode an mgf title: " + spectrumTitle);
-//                        e.printStackTrace();
-//                    }
-//                }
                     if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                         fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
                         match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
@@ -684,12 +676,19 @@ public class FileImporter {
                     } else {
 
                         if (match.hasAssumption(searchEngine)) {
+
                             // Check whether there is a potential first hit which does not belong to the target and the decoy database
                             boolean targetOrDecoy = false;
                             ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
                             Collections.sort(eValues);
+
                             for (Double eValue : eValues) {
-                                for (SpectrumIdentificationAssumption assumption : new ArrayList<SpectrumIdentificationAssumption>(match.getAllAssumptions(searchEngine).get(eValue))) {
+
+                                ArrayList<SpectrumIdentificationAssumption> tempAssumptions
+                                        = new ArrayList<SpectrumIdentificationAssumption>(match.getAllAssumptions(searchEngine).get(eValue));
+
+                                for (SpectrumIdentificationAssumption assumption : tempAssumptions) {
+
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     String peptideSequence = peptide.getSequence();
@@ -701,11 +700,11 @@ public class FileImporter {
                                     ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
                                     ptmFactory.checkFixedModifications(modificationProfile, peptide, aminoAcidPattern, patternLength, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                                    HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
+                                    HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
                                     HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
                                     for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                                        tempNames = new HashMap<Integer, ArrayList<String>>();
+                                        HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                         if (modMatch.isVariable()) {
                                             String sePTM = modMatch.getTheoreticPtm();
                                             if (searchEngine == Advocate.OMSSA) {
@@ -762,6 +761,7 @@ public class FileImporter {
                                     // Map the modifications according to search engine localization
                                     HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
                                     HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
+
                                     for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                         if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                             int modSite = modMatch.getModificationSite();
@@ -780,6 +780,7 @@ public class FileImporter {
 
                                     // Try to correct incompatible localizations
                                     HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
+
                                     for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                         if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                             int modSite = modMatch.getModificationSite();
@@ -922,18 +923,18 @@ public class FileImporter {
                     metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
                 }
 
-                // Free at least 1GB for the next parser if not anymore available
-                // (not elegant so most likely not optimal)
-                while (!halfGbFree() && !peptideShaker.getCache().isEmpty()) {
+                // Free at least 0.5GB for the next parser if not anymore available
+                if (!halfGbFree() && !peptideShaker.getCache().isEmpty()) {
+                    waitingHandler.appendReport("PeptideShaker is encountering memory issues! "
+                            + "See <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a> for help.", true, true);
                     waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                     double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
                     share = Math.min(share, 1);
                     peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                    System.gc();
                 }
-                while (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                     sequenceFactory.reduceNodeCacheSize(0.5);
                 }
                 projectDetails.addIdentificationFiles(idFile);
