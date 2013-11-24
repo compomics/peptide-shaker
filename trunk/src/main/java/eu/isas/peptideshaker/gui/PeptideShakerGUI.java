@@ -83,6 +83,7 @@ import java.awt.datatransfer.Transferable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -276,7 +277,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The exception handler
      */
-    private ExceptionHandler exceptionHandler = new ExceptionHandler(this);
+    private ExceptionHandler exceptionHandler = new ExceptionHandler(this, "http://code.google.com/p/peptide-shaker/issues/list");
     /**
      * The label with for the numbers in the jsparklines columns.
      */
@@ -520,8 +521,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
-
-        exceptionHandler = new ExceptionHandler(this);
 
         setLocationRelativeTo(null);
 
@@ -3919,8 +3918,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         }
 
-        exceptionHandler = new ExceptionHandler(this);
-
         identifiedModifications = null;
 
         if (clearDatabaseFolder) {
@@ -3991,7 +3988,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void clearPreferences() {
 
         cpsBean.clearPreferences();
-        exceptionHandler = new ExceptionHandler(this);
 
         // reset enzymes, ptms and preferences
         loadEnzymes();
@@ -5037,8 +5033,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         cpsBean.setCpsFile(aPsFile);
 
-        exceptionHandler = new ExceptionHandler(this);
-
         final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
 
         progressDialog = new ProgressDialogX(this,
@@ -5908,6 +5902,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
                 }
             }
+        } catch (UnknownHostException e) {
+            System.out.println("Unable to get twitter feed in off line mode.");
         } catch (IOException e) {
             e.printStackTrace();
         }
