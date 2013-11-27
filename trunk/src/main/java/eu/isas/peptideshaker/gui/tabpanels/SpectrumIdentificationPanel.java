@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -2492,11 +2492,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     mascotUsed = false;
 
                     for (int i = 0; i < idFiles.size(); i++) {
-                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.OMSSA) {
+                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.OMSSA) {
                             omssaUsed = true;
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.XTANDEM) {
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.XTANDEM) {
                             xtandemUsed = true;
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.MASCOT) {
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.MASCOT) {
                             mascotUsed = true;
                         }
                     }
