@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -1630,7 +1630,7 @@ public class OutputGenerator {
                         }
                         writer.write("D-score localization" + SEPARATOR);
                         writer.write("D-score" + SEPARATOR);
-                        if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                        if (searchEngines.size() == 1 && searchEngines.get(0) == SpectrumIdentificationAlgorithm.MASCOT) {
                             writer.write("MD-score localization" + SEPARATOR);
                             writer.write("MD-score" + SEPARATOR);
                         }
@@ -1796,7 +1796,7 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
-                                if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                                if (searchEngines.size() == 1 && searchEngines.get(0) == SpectrumIdentificationAlgorithm.MASCOT) {
                                     if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.MASCOT)) {
                                         PeptideAssumption mascotAssumption = null;
                                         double bestScore = 0;
@@ -1839,7 +1839,7 @@ public class OutputGenerator {
                                 }
                                 writer.write(dLocalizations + SEPARATOR);
                                 writer.write(dScore + SEPARATOR);
-                                if (searchEngines.size() == 1 && searchEngines.get(0) == SearchEngine.MASCOT) {
+                                if (searchEngines.size() == 1 && searchEngines.get(0) == SpectrumIdentificationAlgorithm.MASCOT) {
                                     writer.write(mdLocation + SEPARATOR);
                                     writer.write(mdScore + SEPARATOR);
                                 }

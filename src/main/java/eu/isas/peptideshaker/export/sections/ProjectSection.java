@@ -1,13 +1,10 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.identification.advocates.SearchEngine;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProjectFeatures;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;

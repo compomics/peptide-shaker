@@ -564,7 +564,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="searchParametersMenu">
               <Properties>
                 <Property name="mnemonic" type="int" value="83"/>
-                <Property name="text" type="java.lang.String" value="Search Parameters"/>
+                <Property name="text" type="java.lang.String" value="Search Settings"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchParametersMenuActionPerformed"/>

@@ -1193,8 +1193,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("QC Plots", qcJPanel);
 
+        backgroundLayeredPane.add(allTabsJTabbedPane);
         allTabsJTabbedPane.setBounds(0, 0, 1280, 860);
-        backgroundLayeredPane.add(allTabsJTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         newsButton.setBackground(new java.awt.Color(204, 204, 204));
         newsButton.setFont(newsButton.getFont().deriveFont(newsButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1214,8 +1214,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 newsButtonMouseExited(evt);
             }
         });
+        backgroundLayeredPane.add(newsButton);
         newsButton.setBounds(1205, 825, 70, 20);
-        backgroundLayeredPane.add(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
+        backgroundLayeredPane.setLayer(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         notesButton.setBackground(new java.awt.Color(204, 204, 204));
         notesButton.setFont(notesButton.getFont().deriveFont(notesButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1236,8 +1237,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 notesButtonMouseExited(evt);
             }
         });
+        backgroundLayeredPane.add(notesButton);
         notesButton.setBounds(1205, 800, 70, 20);
-        backgroundLayeredPane.add(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
+        backgroundLayeredPane.setLayer(notesButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         tipsButton.setBackground(new java.awt.Color(204, 204, 204));
         tipsButton.setFont(tipsButton.getFont().deriveFont(tipsButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -1254,8 +1256,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 tipsButtonMouseExited(evt);
             }
         });
+        backgroundLayeredPane.add(tipsButton);
         tipsButton.setBounds(1205, 775, 70, 20);
-        backgroundLayeredPane.add(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
+        backgroundLayeredPane.setLayer(tipsButton, javax.swing.JLayeredPane.MODAL_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1376,7 +1379,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         editMenu.setText("Edit");
 
         searchParametersMenu.setMnemonic('S');
-        searchParametersMenu.setText("Search Parameters");
+        searchParametersMenu.setText("Search Settings");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchParametersMenuActionPerformed(evt);

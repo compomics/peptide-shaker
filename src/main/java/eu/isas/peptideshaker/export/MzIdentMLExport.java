@@ -7,7 +7,7 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
-import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
@@ -838,7 +838,7 @@ public class MzIdentMLExport {
             }
 
             Collections.sort(seList);
-            String searchEngineReport = SearchEngine.getName(seList.get(0));
+            String searchEngineReport = SpectrumIdentificationAlgorithm.getName(seList.get(0));
 
             for (int i = 1; i < seList.size(); i++) {
 
@@ -848,7 +848,7 @@ public class MzIdentMLExport {
                     searchEngineReport += ", ";
                 }
 
-                searchEngineReport += SearchEngine.getName(seList.get(i));
+                searchEngineReport += SpectrumIdentificationAlgorithm.getName(seList.get(i));
             }
 
             searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerGUI.getVersion();
