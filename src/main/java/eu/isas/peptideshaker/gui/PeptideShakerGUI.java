@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
-import com.compomics.util.gui.utils.SwingUtils;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
@@ -474,6 +473,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         jSeparator2.setVisible(false); // @TODO: re-enable later?
         reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
 
+        notesButton.setVisible(false); // @TODO: re-enable later?
+        newsButton.setVisible(false); // @TODO: re-enable later?
         tipsButton.setVisible(false); // @TODO: re-enable later?
 
         // add icons to the tab componets
@@ -2912,6 +2913,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_newsButtonMouseReleased
 
+    /**
+     * Open the Notes Dialog.
+     * 
+     * @param evt 
+     */
     private void notesButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButtonMouseReleased
         NotesDialog notesDialog = new NotesDialog(this, false, currentNotes);
         notesDialog.setLocation(PeptideShakerGUI.this.getWidth() - notesDialog.getWidth() - 25 + PeptideShakerGUI.this.getX(),
@@ -5839,41 +5845,43 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Displays a news feed at the bottom of the GUI.
      */
     public void checkNewsFeed() {
+        
+        // @TODO: re-enable later!
 
-        new Thread("NewsFeedThread") {
-            @Override
-            public synchronized void run() {
-
-                // get the number of new tweets
-                newTweets = getNewTweets();
-
-                int numberOfCurrentTweets = newTweets.size() + publishedTweets.size();
-
-                if (numberOfCurrentTweets > 0) {
-                    newsButton.setText("News (" + numberOfCurrentTweets + ")");
-
-                    // show a pop up
-                    if (newTweets.size() > 0) {
-
-                        String type = "tweets";
-
-                        if (newTweets.size() == 1) {
-                            type = "tweet";
-                        }
-
-                        NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
-                        notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
-                                PeptideShakerGUI.this.getHeight() - 60 + PeptideShakerGUI.this.getY());
-                        SwingUtils.fadeInAndOut(notificationDialog);
-                    }
-
-                    publishedTweets.addAll(newTweets);
-
-                } else {
-                    newsButton.setText("News");
-                }
-            }
-        }.start();
+//        new Thread("NewsFeedThread") {
+//            @Override
+//            public synchronized void run() {
+//
+//                // get the number of new tweets
+//                newTweets = getNewTweets();
+//
+//                int numberOfCurrentTweets = newTweets.size() + publishedTweets.size();
+//
+//                if (numberOfCurrentTweets > 0) {
+//                    newsButton.setText("News (" + numberOfCurrentTweets + ")");
+//
+//                    // show a pop up
+//                    if (newTweets.size() > 0) {
+//
+//                        String type = "tweets";
+//
+//                        if (newTweets.size() == 1) {
+//                            type = "tweet";
+//                        }
+//
+//                        NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, numberOfCurrentTweets, type);
+//                        notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
+//                                PeptideShakerGUI.this.getHeight() - 60 + PeptideShakerGUI.this.getY());
+//                        //SwingUtils.fadeInAndOut(notificationDialog);
+//                    }
+//
+//                    publishedTweets.addAll(newTweets);
+//
+//                } else {
+//                    newsButton.setText("News");
+//                }
+//            }
+//        }.start();
     }
 
     /**
@@ -6422,22 +6430,25 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Show a note notification pop up.
      */
     public void showNotesNotification() {
-        if (currentNotes.size() > 0) {
-
-            // show a pop up
-            if (currentNotes.size() > 0) {
-
-                String type = "notes";
-
-                if (currentNotes.size() == 1) {
-                    type = "note";
-                }
-
-                NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, currentNotes.size(), type);
-                notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
-                        PeptideShakerGUI.this.getHeight() - 100 + PeptideShakerGUI.this.getY());
-                SwingUtils.fadeInAndOut(notificationDialog);
-            }
-        }
+        
+        // @TODO: reenable later!
+        
+//        if (currentNotes.size() > 0) {
+//
+//            // show a pop up
+//            if (currentNotes.size() > 0) {
+//
+//                String type = "notes";
+//
+//                if (currentNotes.size() == 1) {
+//                    type = "note";
+//                }
+//
+//                NotificationDialog notificationDialog = new NotificationDialog(PeptideShakerGUI.this, PeptideShakerGUI.this, false, currentNotes.size(), type);
+//                notificationDialog.setLocation(PeptideShakerGUI.this.getWidth() - notificationDialog.getWidth() - 100 + PeptideShakerGUI.this.getX(),
+//                        PeptideShakerGUI.this.getHeight() - 100 + PeptideShakerGUI.this.getY());
+//                //SwingUtils.fadeInAndOut(notificationDialog);
+//            }
+//        }
     }
 }
