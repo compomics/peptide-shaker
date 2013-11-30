@@ -262,18 +262,16 @@ public class DisplayFeaturesGenerator {
      * inference results. Shall be used for peptides, not PSMs, for PSM use the
      * one taking in a Peptide object instead.
      *
-     * @param peptideKey the peptide key
+     * @param peptideMatch the peptide match
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
      * PTM tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
      * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(String peptideKey, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+    public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-            Identification identification = peptideShakerGUI.getIdentification();
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
             HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences);

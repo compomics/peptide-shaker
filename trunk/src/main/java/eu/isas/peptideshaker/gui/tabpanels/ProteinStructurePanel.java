@@ -2722,7 +2722,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             index + 1,
                             probabilities.isStarred(),
                             proteinInferenceType,
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true),
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentMatch, true, true, true),
                             peptideStart,
                             false,
                             probabilities.isValidated()
@@ -3312,7 +3312,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             // update the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 String peptideKey = peptideTableMap.get(getPeptideIndex(i));
-                String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
+                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
                 peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
             }
         } catch (Exception e) {

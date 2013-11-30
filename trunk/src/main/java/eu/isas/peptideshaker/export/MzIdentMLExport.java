@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -17,6 +18,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -220,9 +222,6 @@ public class MzIdentMLExport {
         // write the data collection
         writeDataCollection();
 
-
-
-
         // the experiment title
         writeTitle();
 
@@ -321,7 +320,6 @@ public class MzIdentMLExport {
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + System.getProperty("line.separator"));
 
         // @TODO: add more? perhaps not hardcode?
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</cvList>" + System.getProperty("line.separator"));
     }
@@ -334,7 +332,6 @@ public class MzIdentMLExport {
     private void writeAnalysisSoftwareList() throws IOException {
 
         // @TODO: also add SearchGUI and search engines used
-
         br.write(getCurrentTabSpace() + "<AnalysisSoftware "
                 + "version=\"" + peptideShakerGUI.getVersion() + " "
                 + "name=\"PeptideShaker "
@@ -532,7 +529,6 @@ public class MzIdentMLExport {
 //                + System.getProperty("line.separator"));
 //        tabCounter--;  
 //        br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ModificationParams>" + System.getProperty("line.separator"));
 
@@ -640,7 +636,6 @@ public class MzIdentMLExport {
 
         writeDataAnalysis();
 
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DataCollection>" + System.getProperty("line.separator"));
     }
@@ -679,9 +674,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-
         // @TODO: annotate the protein groups
-
 //        <ProteinAmbiguityGroup id="PAG_hit_4" > # not always ambiguity in these groups...
 //            
 //            <ProteinDetectionHypothesis id="protein 1" passThreshold="true"> 
@@ -709,8 +702,6 @@ public class MzIdentMLExport {
 //            </ProteinDetectionHypothesis>
 //            
 //        </ProteinAmbiguityGroup>
-
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));
     }
@@ -720,9 +711,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult spectraData_ref=\"SID_1\" spectrumID=\"index=12\" id=\"SIR_1\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-
         // @TODO: add the psm data
-
 //        <SpectrumIdentificationItem passThreshold="true" rank="1"
 //                        peptide_ref="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_"
 //                        experimentalMassToCharge="2709.148" chargeState="3" id="SII_1_1">
@@ -742,8 +731,6 @@ public class MzIdentMLExport {
 //                        <cvParam accession="MS:1001331" cvRef="PSI-MS" value="79.6" name="xtandem:hyperscore"/>
 //                    </SpectrumIdentificationItem>
 //                    <cvParam accession="MS:1000796" cvRef="PSI-MS" value="55.1074.1074.3.dta" name="spectrum title"/>
-
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationResult>" + System.getProperty("line.separator"));
     }
@@ -847,7 +834,7 @@ public class MzIdentMLExport {
                 } else {
                     searchEngineReport += ", ";
                 }
-
+                
                 searchEngineReport += SpectrumIdentificationAlgorithm.getName(seList.get(i));
             }
 
@@ -959,8 +946,7 @@ public class MzIdentMLExport {
                             }
                         }
 
-                        boolean first = true;
-                        String dScore = "";
+                        StringBuilder dScore = new StringBuilder();
                         Collections.sort(modifications);
                         PSPtmScores ptmScores = new PSPtmScores();
 
@@ -968,89 +954,67 @@ public class MzIdentMLExport {
 
                             if (spectrumMatch.getUrParam(ptmScores) != null) {
 
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    dScore += ", ";
+                                if (dScore.length() > 0) {
+                                    dScore.append(", ");
                                 }
 
                                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                dScore += mod + " (";
+                                dScore.append(mod).append(" (");
 
                                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                                    if (location != null) {
-                                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                        Collections.sort(locations);
-                                        first = true;
-                                        String commaSeparated = "";
-                                        for (int aa : locations) {
-                                            if (first) {
-                                                first = false;
-                                            } else {
-                                                commaSeparated += ", ";
-                                            }
-                                            commaSeparated += aa;
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    boolean firstSite = true;
+                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                    Collections.sort(sites);
+                                    for (int site : sites) {
+                                        if (firstSite) {
+                                            firstSite = false;
+                                        } else {
+                                            dScore.append(", ");
                                         }
-                                        dScore += commaSeparated + ": ";
-                                        dScore += ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                                    } else {
-                                        dScore += "Not Scored";
+                                        dScore.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                                     }
                                 } else {
-                                    dScore += "Not Scored";
+                                    dScore.append("Not Scored");
                                 }
 
-                                dScore += ")";
+                                dScore.append(")");
                             }
                         }
 
-                        String aScore = "";
+                        StringBuilder probabilisticScore = new StringBuilder();
 
-                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
-
-                            first = true;
+                        if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()) {
 
                             for (String mod : modifications) {
 
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
 
-                                    if (first) {
-                                        first = false;
-                                    } else {
-                                        aScore += ", ";
+                                    if (probabilisticScore.length() > 0) {
+                                        probabilisticScore.append(", ");
                                     }
 
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    aScore += mod + " (";
+                                    probabilisticScore.append(mod).append(" (");
 
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                                        String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
-                                        if (location != null) {
-                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                            Collections.sort(locations);
-                                            first = true;
-                                            String commaSeparated = "";
-                                            for (int aa : locations) {
-
-                                                if (first) {
-                                                    first = false;
-                                                } else {
-                                                    commaSeparated += ", ";
-                                                }
-                                                commaSeparated += aa;
+                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                        boolean firstSite = true;
+                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                        Collections.sort(sites);
+                                        for (int site : sites) {
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                probabilisticScore.append(", ");
                                             }
-                                            aScore += commaSeparated + ": ";
-                                            aScore += ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
-                                        } else {
-                                            aScore += "Not Scored";
+                                            probabilisticScore.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                                         }
                                     } else {
-                                        aScore += "Not Scored";
+                                        probabilisticScore.append("Not Scored");
                                     }
 
-                                    aScore += ")";
+                                    probabilisticScore.append(")");
                                 }
                             }
                         }
@@ -1101,11 +1065,12 @@ public class MzIdentMLExport {
                         }
 
                         // PTM scoring
-                        if (!dScore.equals("")) {
+                        if (dScore.length() > 0) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
-                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM A-score\" value=\"" + aScore + "\" />" + System.getProperty("line.separator"));
+                        PTMScoringPreferences pTMScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
+                        if (pTMScoringPreferences.isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " + pTMScoringPreferences.getSelectedProbabilisticScore().getName() + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
                         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
@@ -1218,7 +1183,6 @@ public class MzIdentMLExport {
 
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
-
         CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: should be renamed!!!
 
         if (fragmentIonTerm != null) {
@@ -1443,9 +1407,7 @@ public class MzIdentMLExport {
                     + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + System.getProperty("line.separator"));
 
             // @TODO: figure out how to annotate retention time windows properly...
-
             //spectrum.getPrecursor().getRtWindow()[0] + "-" + spectrum.getPrecursor().getRtWindow()[1]
-
         } else if (spectrum.getPrecursor().getRt() != -1) {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
                     + spectrum.getPrecursor().getRt() + "\" />" + System.getProperty("line.separator"));
@@ -1566,7 +1528,6 @@ public class MzIdentMLExport {
                 + peptideShakerGUI.getSearchParameters().getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
 
         // @TODO: add more settings??
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</processingMethod>" + System.getProperty("line.separator"));
 
@@ -1609,7 +1570,6 @@ public class MzIdentMLExport {
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</analyzerList>" + System.getProperty("line.separator"));
-
 
         // write the detector
         br.write(getCurrentTabSpace() + "<detector>" + System.getProperty("line.separator"));
@@ -1687,14 +1647,11 @@ public class MzIdentMLExport {
 
         // Global peptide FDR
         //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
-
         // @TODO: add global protein FDR??
-
         // search type
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + System.getProperty("line.separator"));
 
         // @TODO: add more??
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
     }

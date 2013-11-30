@@ -172,7 +172,6 @@ public class TxtExporter {
 
             proteinWriter.close();
 
-
             // write the peptides
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Exporting Peptides. Please Wait...");
@@ -197,7 +196,6 @@ public class TxtExporter {
             }
 
             peptideWriter.close();
-
 
             // write the spectra
             if (waitingHandler != null) {
@@ -232,7 +230,6 @@ public class TxtExporter {
 
             spectrumWriter.close();
 
-
             // write the assumptions
 //            if (progressDialog != null) {
 //                progressDialog.setTitle("Exporting Assumptions. Please Wait...");
@@ -244,7 +241,6 @@ public class TxtExporter {
 //                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
 //                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
 //            assumptionWriter.write(content);
-
 //            for (String spectrumKey : identification.getSpectrumIdentification()) {
 //                assumptionWriter.write(getAssumptionLines(spectrumKey));
 //                if(progressDialog != null){
@@ -253,7 +249,6 @@ public class TxtExporter {
 //            }
 //            
 //            assumptionWriter.close();
-
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -276,7 +271,6 @@ public class TxtExporter {
     private String getProteinLine(String proteinKey) throws Exception {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
-
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -385,8 +379,6 @@ public class TxtExporter {
      */
     private String getPeptideLine(String peptideKey) throws Exception {
 
-        // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
-
         StringBuilder line = new StringBuilder();
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
@@ -407,14 +399,11 @@ public class TxtExporter {
             }
         }
 
-        boolean first = true;
         ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
         Collections.sort(modifications);
 
         for (String mod : modifications) {
-            if (first) {
-                first = false;
-            } else {
+            if (line.length() > 0) {
                 line.append(", ");
             }
 
@@ -434,13 +423,10 @@ public class TxtExporter {
         }
 
         line.append(SEPARATOR);
-        first = true;
 
         for (String mod : modifications) {
 
-            if (first) {
-                first = false;
-            } else {
+            if (line.length() > 0) {
                 line.append(", ");
             }
 
@@ -448,19 +434,26 @@ public class TxtExporter {
             line.append(mod).append(" (");
 
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-
-                if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                    line.append("Not Scored"); // Well this should not happen
-                } else if (ptmConfidence == PtmScoring.RANDOM) {
-                    line.append("Random");
-                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                    line.append("Doubtfull");
-                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                    line.append("Confident");
-                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                    line.append("Very Confident");
+                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                boolean firstSite = true;
+                for (int site : ptmScoring.getOrderedPtmLocations()) {
+                    if (firstSite) {
+                        firstSite = false;
+                    } else {
+                        line.append(", ");
+                    }
+                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                        line.append(site).append(": Not Scored"); // Well this should not happen
+                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                        line.append(site).append(": Random");
+                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                        line.append(site).append(": Doubtfull");
+                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                        line.append(site).append(": Confident");
+                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                        line.append(site).append(": Very Confident");
+                    }
                 }
             } else {
                 line.append("Not Scored");
@@ -509,13 +502,12 @@ public class TxtExporter {
      * for the best assumption
      *
      * @param spectrumMatch the spectrum match to export
-     * 
+     *
      * @return the spectrum match as a line of text
      */
     private String getSpectrumLine(String psmKey) throws Exception {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
-
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         Peptide bestAssumption = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
@@ -584,25 +576,17 @@ public class TxtExporter {
                 line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                    if (location != null) {
-                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                        Collections.sort(locations);
-                        first = true;
-                        String commaSeparated = "";
-                        for (int aa : locations) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                commaSeparated += ", ";
-                            }
-                            commaSeparated += aa;
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                    boolean firstSite = true;
+                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                    Collections.sort(sites);
+                    for (int site : sites) {
+                        if (firstSite) {
+                            firstSite = false;
+                        } else {
+                            line.append(", ");
                         }
-                        line.append(commaSeparated).append(": ");
-                        double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                        line.append(dScore);
-                    } else {
-                        line.append("Not Scored");
+                        line.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                     }
                 } else {
                     line.append("Not Scored");
@@ -617,7 +601,6 @@ public class TxtExporter {
 
         for (String mod : modifications) {
 
-
             if (spectrumMatch.getUrParam(ptmScores) != null) {
 
                 if (first) {
@@ -629,27 +612,17 @@ public class TxtExporter {
                 line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                    String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
-                    if (location != null) {
-                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                        Collections.sort(locations);
-                        first = true;
-                        String commaSeparated = "";
-                        for (int aa : locations) {
-
-                            if (first) {
-                                first = false;
-                            } else {
-                                commaSeparated += ", ";
-                            }
-                            commaSeparated += aa;
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                    boolean firstSite = true;
+                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                    Collections.sort(sites);
+                    for (int site : sites) {
+                        if (firstSite) {
+                            firstSite = false;
+                        } else {
+                            line.append(", ");
                         }
-                        line.append(commaSeparated).append(": ");
-                        Double aScore = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
-                        line.append(aScore).append("");
-                    } else {
-                        line.append("Not Scored");
+                        line.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
                     }
                 } else {
                     line.append("Not Scored");
@@ -676,20 +649,27 @@ public class TxtExporter {
                 line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                    int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-
+                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                boolean firstSite = true;
+                for (int site : ptmScoring.getOrderedPtmLocations()) {
+                    if (firstSite) {
+                        firstSite = false;
+                    } else {
+                        line.append(", ");
+                    }
+                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
                     if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                        line.append("Not Scored"); // Well this should not happen
+                        line.append(site).append(": Not Scored"); // Well this should not happen
                     } else if (ptmConfidence == PtmScoring.RANDOM) {
-                        line.append("Random");
+                        line.append(site).append(": Random");
                     } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                        line.append("Doubtfull");
+                        line.append(site).append(": Doubtfull");
                     } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                        line.append("Confident");
+                        line.append(site).append(": Confident");
                     } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                        line.append("Very Confident");
+                        line.append(site).append(": Very Confident");
                     }
+                }
                 } else {
                     line.append("Not Scored");
                 }
@@ -736,7 +716,7 @@ public class TxtExporter {
         for (int se : spectrumMatch.getAdvocates()) {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         if (se == Advocate.MASCOT) {
                             if (mascotEValue == null || mascotEValue > eValue) {
@@ -815,7 +795,6 @@ public class TxtExporter {
     private String getAssumptionLines(String spectrumKey, SearchParameters searchParameters) throws Exception {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
-
         String line = ""; // @TODO: replace by StringBuilder
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         ArrayList<Integer> searchEngines = spectrumMatch.getAdvocates();
@@ -832,7 +811,7 @@ public class TxtExporter {
 
             for (double eValue : eValues) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                    
+
                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
                     if (se == Advocate.MASCOT) {
@@ -863,7 +842,7 @@ public class TxtExporter {
                     line += assumption.getIdentificationCharge().value + SEPARATOR;
                     line += spectrumTitle + SEPARATOR;
                     line += fileName + SEPARATOR;
-                    line += assumption.getIdentificationFile()+ SEPARATOR;
+                    line += assumption.getIdentificationFile() + SEPARATOR;
                     line += spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + SEPARATOR;
                     line += Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
                     line += Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;

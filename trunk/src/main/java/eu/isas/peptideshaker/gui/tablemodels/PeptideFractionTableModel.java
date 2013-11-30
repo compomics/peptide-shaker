@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
@@ -130,7 +131,8 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 return row + 1;
             } else if (column == 1) {
                 String peptideKey = peptideKeys.get(row);
-                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
+                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
             } else if (column > 1 && column - 2 < fileNames.size()) {
                 String fraction = fileNames.get(column - 2);
                 PSParameter pSParameter = new PSParameter();

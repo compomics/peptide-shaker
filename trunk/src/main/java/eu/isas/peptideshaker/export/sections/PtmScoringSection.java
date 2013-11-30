@@ -85,7 +85,7 @@ public class PtmScoringSection {
             PtmScoringFeatures ptmScoringFeatures = (PtmScoringFeatures) exportFeature;
             switch (ptmScoringFeatures) {
                 case aScore:
-                    if (ptmcoringPreferences.aScoreCalculation()) {
+                    if (ptmcoringPreferences.isProbabilitsticScoreCalculation()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
@@ -95,7 +95,7 @@ public class PtmScoringSection {
                     writer.write(ptmcoringPreferences.getFlrThreshold() + "");
                     break;
                 case neutral_losses:
-                    if (ptmcoringPreferences.isaScoreNeutralLosses()) {
+                    if (ptmcoringPreferences.isProbabilisticScoreNeutralLosses()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");

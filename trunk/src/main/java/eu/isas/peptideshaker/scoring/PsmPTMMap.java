@@ -84,26 +84,25 @@ public class PsmPTMMap implements Serializable {
      * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(Double ptmMass, String specificKey, double score) {
-        Integer keeyAsInteger;
+        Integer keyAsInteger;
         try {
-            keeyAsInteger = new Integer(specificKey);
+            keyAsInteger = new Integer(specificKey);
         } catch (Exception e) {
             throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
         }
-        return getProbability(ptmMass, keeyAsInteger, score);
+        return getProbability(ptmMass, keyAsInteger, score);
     }
 
     /**
      * Adds a point representing the modifications of the corresponding spectrum
      * match at a given score.
      *
-     * @param modification the modification
+     * @param ptmMass the mass of the modification
      * @param probabilityScore the estimated score
      * @param spectrumMatch the spectrum match of interest
+     * @param conflict boolean indicating whether the two scores are conflicting
      */
-    public void addPoint(String modification, double probabilityScore, SpectrumMatch spectrumMatch) {
-        PTM ptm = ptmFactory.getPTM(modification);
-        double ptmMass = ptm.getMass();
+    public void addPoint(double ptmMass, double probabilityScore, SpectrumMatch spectrumMatch, boolean conflict) {
         if (!psmMaps.containsKey(ptmMass)) {
             psmMaps.put(ptmMass, new HashMap<Integer, TargetDecoyMap>());
             grouping.put(ptmMass, new HashMap<Integer, Integer>());
@@ -112,19 +111,6 @@ public class PsmPTMMap implements Serializable {
         if (!psmMaps.get(ptmMass).containsKey(key)) {
             psmMaps.get(ptmMass).put(key, new TargetDecoyMap());
         }
-        PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-        boolean conflict = false;
-        for (String modification2 : ptmScores.getScoredPTMs()) {
-            PTM ptm2 = ptmFactory.getPTM(modification2);
-            if (ptm2.getMass() == ptmMass) {
-                PtmScoring ptmScoring = ptmScores.getPtmScoring(modification2);
-                if (ptmScoring.isConflict()) {
-                    conflict = true;
-                    break;
-                }
-            }
-        }
-        
         psmMaps.get(ptmMass).get(key).put(probabilityScore, false);
         if (conflict) {
             psmMaps.get(ptmMass).get(key).put(probabilityScore, true);
@@ -270,11 +256,12 @@ public class PsmPTMMap implements Serializable {
      * localization conflict.
      *
      * @param ptmMass the modification mass of interest
-     * @param key the key of the desired map
+     * @param specificKey the key of the desired map
      * @return the corresponding target decoy map
      */
-    public TargetDecoyMap getTargetDecoyMap(Double ptmMass, int key) {
-        return psmMaps.get(ptmMass).get(key);
+    public TargetDecoyMap getTargetDecoyMap(Double ptmMass, int specificKey) {
+        int correctedKey = getCorrectedKey(ptmMass, specificKey);
+        return psmMaps.get(ptmMass).get(correctedKey);
     }
 
     /**

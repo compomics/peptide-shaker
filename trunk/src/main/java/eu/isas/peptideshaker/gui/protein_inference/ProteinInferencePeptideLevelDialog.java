@@ -48,7 +48,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     /**
      * The key of the peptide match of interest.
      */
-    private String peptideMatch;
+    private String peptideMatchKey;
     /**
      * The retained proteins table column header tooltips.
      */
@@ -71,14 +71,15 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         super(aPeptideShakerGUI, modal);
 
-        peptideMatch = peptideMatchKey;
+        this.peptideMatchKey = peptideMatchKey;
+        this.peptideShakerGUI = aPeptideShakerGUI;
+        
+        PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
 
         initComponents();
 
-        this.peptideShakerGUI = aPeptideShakerGUI;
-
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
+        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, psParameter);
         protInferenceTypeCmb.setSelectedIndex(psParameter.getProteinInferenceClass());
 
         protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -95,15 +96,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         // insert the values
-        sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatchKey, true, true, true));
+        sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
 
         // set the modification tooltip
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
                 peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
 
-        PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
-        ArrayList<String> possibleProteins = tempPeptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
         List<String> retainedProteins;
 
         if (proteinMatchKey != null) {
@@ -656,10 +656,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PSParameter psParameter = new PSParameter();
         try {
-            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
+            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, psParameter);
             if (psParameter.getProteinInferenceClass() != protInferenceTypeCmb.getSelectedIndex()) {
                 psParameter.setProteinInferenceClass(protInferenceTypeCmb.getSelectedIndex());
-                peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatch, psParameter);
+                peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatchKey, psParameter);
                 peptideShakerGUI.setDataSaved(false);
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);

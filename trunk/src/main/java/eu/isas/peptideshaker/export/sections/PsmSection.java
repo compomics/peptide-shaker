@@ -204,7 +204,8 @@ public class PsmSection {
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
-                            boolean first = true, first2;
+                            boolean first = true,
+                             first2;
 
                             for (String mod : modList) {
                                 if (first) {
@@ -268,36 +269,31 @@ public class PsmSection {
                             modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             PSPtmScores ptmScores = new PSPtmScores();
-                            String output = "";
+                            StringBuilder output = new StringBuilder();
                             for (String mod : modList) {
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                    if (!output.equals("")) {
-                                        output += ", ";
+                                    if (output.length() > 0) {
+                                        output.append(", ");
                                     }
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    output += mod + " (";
+                                    output.append(mod).append(" (");
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
-                                        if (location != null) {
-                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                            Collections.sort(locations);
-                                            String commaSeparated = "";
-                                            for (int aa : locations) {
-                                                if (!commaSeparated.equals("")) {
-                                                    commaSeparated += ", ";
-                                                }
-                                                commaSeparated += aa;
+                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                        boolean firstSite = true;
+                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                        Collections.sort(sites);
+                                        for (int site : sites) {
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                output.append(", ");
                                             }
-                                            output += commaSeparated + ": ";
-                                            Double aScore = ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
-                                            output += aScore + "";
-                                        } else {
-                                            output += "Not Scored";
+                                            output.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
                                         }
                                     } else {
-                                        output += "Not Scored";
+                                        output.append("Not Scored");
                                     }
-                                    output += ")";
+                                    output.append(")");
                                 }
                             }
                             writer.write(output + separator);
@@ -310,36 +306,31 @@ public class PsmSection {
                             modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
-                            output = "";
+                            output = new StringBuilder();
                             for (String mod : modList) {
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                    if (!output.equals("")) {
-                                        output += ", ";
+                                    if (output.length() > 0) {
+                                        output.append(", ");
                                     }
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    output += mod + " (";
+                                    output.append(mod).append(" (");
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                                        if (location != null) {
-                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                            Collections.sort(locations);
-                                            String commaSeparated = "";
-                                            for (int aa : locations) {
-                                                if (!commaSeparated.equals("")) {
-                                                    commaSeparated += ", ";
-                                                }
-                                                commaSeparated += aa;
+                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                        boolean firstSite = true;
+                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                        Collections.sort(sites);
+                                        for (int site : sites) {
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                output.append(", ");
                                             }
-                                            output += commaSeparated + ": ";
-                                            Double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                                            output += dScore + "";
-                                        } else {
-                                            output += "Not Scored";
+                                            output.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                                         }
                                     } else {
-                                        output += "Not Scored";
+                                        output.append("Not Scored");
                                     }
-                                    output += ")";
+                                    output.append(")");
                                 }
                             }
                             writer.write(output + separator);
@@ -349,13 +340,13 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            output = "";
+                            output = new StringBuilder();
                             ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             for (String accession : accessions) {
-                                if (!output.equals("")) {
-                                    output += ", ";
+                                if (output.length() > 0) {
+                                    output.append(", ");
                                 }
-                                output += accession;
+                                output.append(accession);
                             }
                             writer.write(output + separator);
                             break;
@@ -411,36 +402,46 @@ public class PsmSection {
                             modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
-                            output = "";
+                            output = new StringBuilder();
                             for (String mod : modList) {
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                    if (!output.equals("")) {
-                                        output += ", ";
+                                    if (output.length() > 0) {
+                                        output.append(", ");
                                     }
 
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    output += " (";
+                                    output.append(" (");
 
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                        boolean firstSite = true;
 
-                                        int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                                        for (int site : ptmScoring.getOrderedPtmLocations()) {
 
-                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                            output += "Not Scored";
-                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                            output += "Random";
-                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                            output += "Doubtfull";
-                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                            output += "Confident";
-                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                            output += "Very Confident";
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                output.append(", ");
+                                            }
+                                            int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+
+                                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                                output.append(site).append(": Not Scored");
+                                            } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                                output.append(site).append(": Random");
+                                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                                output.append(site).append(": Doubtfull");
+                                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                                output.append(site).append(": Confident");
+                                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                                output.append(site).append(": Very Confident");
+                                            }
                                         }
                                     } else {
-                                        output += "Not Scored";
+                                        output.append("Not Scored");
                                     }
 
-                                    output += ")";
+                                    output.append(")");
                                 }
                             }
                             writer.write(output + separator);

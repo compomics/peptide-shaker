@@ -424,8 +424,7 @@ public class PRIDEExport {
                             }
                         }
 
-                        boolean first = true;
-                        String dScore = "";
+                        StringBuilder dScore = new StringBuilder();
                         Collections.sort(modifications);
                         PSPtmScores ptmScores = new PSPtmScores();
 
@@ -433,89 +432,67 @@ public class PRIDEExport {
 
                             if (spectrumMatch.getUrParam(ptmScores) != null) {
 
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    dScore += ", ";
+                                if (dScore.length() > 0) {
+                                    dScore.append(", ");
                                 }
 
                                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                dScore += mod + " (";
+                                dScore.append(mod).append(" (");
 
                                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                                    if (location != null) {
-                                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                        Collections.sort(locations);
-                                        first = true;
-                                        String commaSeparated = "";
-                                        for (int aa : locations) {
-                                            if (first) {
-                                                first = false;
-                                            } else {
-                                                commaSeparated += ", ";
-                                            }
-                                            commaSeparated += aa;
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    boolean firstSite = true;
+                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                    Collections.sort(sites);
+                                    for (int site : sites) {
+                                        if (firstSite) {
+                                            firstSite = false;
+                                        } else {
+                                            dScore.append(", ");
                                         }
-                                        dScore += commaSeparated + ": ";
-                                        dScore += ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                                    } else {
-                                        dScore += "Not Scored";
+                                        dScore.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                                     }
                                 } else {
-                                    dScore += "Not Scored";
+                                    dScore.append("Not Scored");
                                 }
-
-                                dScore += ")";
+                                dScore.append(")");
                             }
                         }
+                        
+                        
+                        StringBuilder probabilisticScore = new StringBuilder();
 
-                        String aScore = "";
-
-                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
-
-                            first = true;
+                        if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()) {
 
                             for (String mod : modifications) {
 
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
 
-                                    if (first) {
-                                        first = false;
-                                    } else {
-                                        aScore += ", ";
+                                    if (probabilisticScore.length() > 0) {
+                                        probabilisticScore.append(", ");
                                     }
 
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    aScore += mod + " (";
+                                    probabilisticScore.append(mod).append(" (");
 
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                                        String location = ptmScores.getPtmScoring(mod).getBestProbabilisticScoreLocations();
-                                        if (location != null) {
-                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                            Collections.sort(locations);
-                                            first = true;
-                                            String commaSeparated = "";
-                                            for (int aa : locations) {
-
-                                                if (first) {
-                                                    first = false;
-                                                } else {
-                                                    commaSeparated += ", ";
-                                                }
-                                                commaSeparated += aa;
-                                            }
-                                            aScore += commaSeparated + ": ";
-                                            aScore += ptmScores.getPtmScoring(mod).getProbabilisticScore(location);
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    boolean firstSite = true;
+                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                    Collections.sort(sites);
+                                    for (int site : sites) {
+                                        if (firstSite) {
+                                            firstSite = false;
                                         } else {
-                                            aScore += "Not Scored";
+                                            probabilisticScore.append(", ");
                                         }
+                                        probabilisticScore.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
+                                    }
                                     } else {
-                                        aScore += "Not Scored";
+                                        probabilisticScore.append("Not Scored");
                                     }
 
-                                    aScore += ")";
+                                    probabilisticScore.append(")");
                                 }
                             }
                         }
@@ -569,11 +546,11 @@ public class PRIDEExport {
                         }
 
                         // PTM scoring
-                        if (!dScore.equals("")) {
+                        if (dScore.length() > 0) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
-                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && !aScore.equals("")) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM A-score\" value=\"" + aScore + "\" />" + System.getProperty("line.separator"));
+                        if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName() + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
                         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
