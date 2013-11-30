@@ -5224,7 +5224,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Spectrum & Fragment Ions (" + before + modifiedSequence + after
                             + "   " + peptideAssumption.getIdentificationCharge().toString() + "   "
-                            + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)"
+                            + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 2) + " m/z)"
                             + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     spectrumMainPanel.repaint();
                 } catch (Exception e) {

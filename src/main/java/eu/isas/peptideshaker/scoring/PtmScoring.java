@@ -60,7 +60,7 @@ public class PtmScoring implements Serializable {
      */
     private HashMap<Integer, Double> deltaScoresAtAA = new HashMap<Integer, Double>();
     /**
-     * Amino acid specific probabilistic score
+     * Amino acid specific probabilistic score.
      */
     private HashMap<Integer, Double> probabilisticScoresAtAA = new HashMap<Integer, Double>();
     /**
@@ -77,7 +77,7 @@ public class PtmScoring implements Serializable {
      */
     private HashMap<Integer, Integer> ptmLocationAtAA = new HashMap<Integer, Integer>();
     /**
-     * The confidence of the ptm site assignment
+     * The confidence of the PTM site assignment.
      *
      * @deprecated use amino acid specific scoring instead
      */
@@ -85,7 +85,7 @@ public class PtmScoring implements Serializable {
     /**
      * The retained PTM site assignment.
      *
-     * @deprecated use amino acid specific scoring instead
+     * @deprecated use amino acid specific scoring instead.
      */
     private ArrayList<Integer> ptmLocation = new ArrayList<Integer>();
     /**
@@ -95,7 +95,7 @@ public class PtmScoring implements Serializable {
      */
     private ArrayList<Integer> secondaryLocations = new ArrayList<Integer>();
     /**
-     * Boolean indicating whether a conflict was found during PTM site
+     * Boolean indicating whether a conflict was found during PTM site.
      * inference.
      *
      * @deprecated use amino acid specific scoring instead
