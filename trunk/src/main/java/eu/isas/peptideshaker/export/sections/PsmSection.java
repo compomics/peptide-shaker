@@ -204,8 +204,7 @@ public class PsmSection {
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
-                            boolean first = true,
-                             first2;
+                            boolean first = true;
 
                             for (String mod : modList) {
                                 if (first) {
@@ -213,7 +212,7 @@ public class PsmSection {
                                 } else {
                                     writer.write(", ");
                                 }
-                                first2 = true;
+                                boolean first2 = true;
                                 writer.write(mod + "(");
                                 for (int aa : modMap.get(mod)) {
                                     if (first2) {
@@ -246,7 +245,7 @@ public class PsmSection {
                                 } else {
                                     writer.write(", ");
                                 }
-                                first2 = true;
+                                boolean first2 = true;
                                 writer.write(mod + "(");
                                 for (int aa : modMap.get(mod)) {
                                     if (first2) {

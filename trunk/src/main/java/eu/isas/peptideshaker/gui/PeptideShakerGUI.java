@@ -1,7 +1,7 @@
+
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
-import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
