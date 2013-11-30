@@ -439,7 +439,6 @@ public class PeptideSection {
 
         PTMFactory ptmFactory = PTMFactory.getInstance();
 
-        String result = "";
         ArrayList<String> modList = new ArrayList<String>();
 
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -453,37 +452,44 @@ public class PeptideSection {
             }
         }
 
+        StringBuilder result = new StringBuilder();
         Collections.sort(modList);
-        boolean first = true;
 
         for (String mod : modList) {
-            if (first) {
-                first = false;
-            } else {
-                result += ", ";
+            if (result.length() > 0) {
+                result.append(", ");
             }
             PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
-            result += mod + " (";
+            result.append(mod).append(" (");
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                boolean firstSite = true;
+                for (int site : ptmScoring.getOrderedPtmLocations()) {
+                    if (firstSite) {
+                        firstSite = false;
+                    } else {
+                        result.append(", ");
+                    }
+                int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
                 if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                    result += "Not Scored"; // Well this should not happen
+                    result.append(site).append(": Not Scored"); // Well this should not happen
                 } else if (ptmConfidence == PtmScoring.RANDOM) {
-                    result += "Random";
+                    result.append(site).append(": Random");
                 } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                    result += "Doubtfull";
+                    result.append(site).append(": Doubtfull");
                 } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                    result += "Confident";
+                    result.append(site).append(": Confident");
                 } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                    result += "Very Confident";
+                    result.append(site).append(": Very Confident");
+                }
                 }
             } else {
-                result += "Not Scored";
+                result.append("Not Scored");
             }
-            result += ")";
+            result.append(")");
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

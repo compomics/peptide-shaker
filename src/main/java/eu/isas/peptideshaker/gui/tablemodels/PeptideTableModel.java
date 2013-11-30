@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -178,7 +177,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return Peptide.getSequence(peptideKey);
                     }
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
                 case 4:
                     ArrayList<Integer> indexes;
                     if (sequenceFactory == null) {

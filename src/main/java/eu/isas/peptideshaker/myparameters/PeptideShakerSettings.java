@@ -262,11 +262,11 @@ public class PeptideShakerSettings implements UrParameter {
             // backward compatibility check
             ptmScoringPreferences = new PTMScoringPreferences();
             ptmScoringPreferences.setFlrThreshold(1);
-            ptmScoringPreferences.setaScoreNeutralLosses(true);
+            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(true);
             try {
-                ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
+                ptmScoringPreferences.setProbabilitsticScoreCalculation(processingPreferences.isAScoreCalculated());
             } catch (Exception e) {
-                ptmScoringPreferences.setaScoreCalculation(true);
+                ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
             }
         }
         return ptmScoringPreferences;

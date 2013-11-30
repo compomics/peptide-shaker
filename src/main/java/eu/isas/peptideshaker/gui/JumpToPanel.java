@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.AminoAcid;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -236,7 +235,8 @@ public class JumpToPanel extends javax.swing.JPanel {
                 result += " - " + description;
                 return result;
             case PEPTIDE:
-                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(key, true, true, true);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(key);
+                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
             case SPECTRUM:
                 return Spectrum.getSpectrumTitle(key) + " (" + Spectrum.getSpectrumFile(key) + ")";
             default:

@@ -81,12 +81,12 @@ public class PreferencesDialog extends javax.swing.JDialog {
      * Updates the GUI based on the PTM scoring preferences
      */
     private void insertPTMScoringPreferences() {
-        if (ptmScoringPreferences.aScoreCalculation()) {
+        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
             aScoreCalculationCmb.setSelectedIndex(0);
         } else {
             aScoreCalculationCmb.setSelectedIndex(1);
         }
-        if (ptmScoringPreferences.isaScoreNeutralLosses()) {
+        if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
             neutralLossesCmb.setSelectedIndex(0);
         } else {
             neutralLossesCmb.setSelectedIndex(1);
@@ -367,15 +367,15 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 ptmScoreThresholdChanged = true;
             }
 
-            if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 0
-                    || !peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 1) {
-                peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(aScoreCalculationCmb.getSelectedIndex() == 0);
+            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()&& aScoreCalculationCmb.getSelectedIndex() != 0
+                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 1) {
+                peptideShakerGUI.getPtmScoringPreferences().setProbabilitsticScoreCalculation(aScoreCalculationCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
 
-            if (peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 0
-                    || !peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
-                peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(neutralLossesCmb.getSelectedIndex() == 0);
+            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilisticScoreNeutralLosses()&& neutralLossesCmb.getSelectedIndex() != 0
+                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilisticScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
+                peptideShakerGUI.getPtmScoringPreferences().setProbabilisticScoreNeutralLosses(neutralLossesCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
 

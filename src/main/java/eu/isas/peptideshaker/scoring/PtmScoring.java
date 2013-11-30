@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class contains score about the PTM localization scoring.
@@ -38,19 +39,32 @@ public class PtmScoring implements Serializable {
     public static final int VERY_CONFIDENT = 3;
     /**
      * The delta scores indexed by the modification location possibility.
+     *
+     * @deprecated use amino acid specific scoring instead
      */
     private HashMap<String, Double> deltaScores = new HashMap<String, Double>();
     /**
      * The A scores indexed by the modification location possibility.
+     *
      * @deprecated use probabilistic scores instead
      */
     private HashMap<String, Double> aScores = new HashMap<String, Double>();
     /**
      * The A scores indexed by the modification location possibility.
+     *
+     * @deprecated use amino acid specific scoring instead
      */
     private HashMap<String, Double> probabilisticScores = new HashMap<String, Double>();
     /**
-     * The name of the modification of interest.
+     * Amino acid specific delta score. 1 is the first amino acid.
+     */
+    private HashMap<Integer, Double> deltaScoresAtAA = new HashMap<Integer, Double>();
+    /**
+     * Amino acid specific probabilistic score
+     */
+    private HashMap<Integer, Double> probabilisticScoresAtAA = new HashMap<Integer, Double>();
+    /**
+     * The name of the modification of interest. 1 is the first amino acid.
      */
     private String ptmName;
     /**
@@ -61,18 +75,30 @@ public class PtmScoring implements Serializable {
     /**
      * The retained PTM site assignment.
      */
-    private ArrayList<Integer> ptmLocation = new ArrayList<Integer>();
-    /**
-     * For a peptide, other locations where this modification was found.
-     */
-    private ArrayList<Integer> secondaryLocations = new ArrayList<Integer>();
+    private HashMap<Integer, Integer> ptmLocationAtAA = new HashMap<Integer, Integer>();
     /**
      * The confidence of the ptm site assignment
+     *
+     * @deprecated use amino acid specific scoring instead
      */
     private int siteConfidence = NOT_FOUND;
     /**
+     * The retained PTM site assignment.
+     *
+     * @deprecated use amino acid specific scoring instead
+     */
+    private ArrayList<Integer> ptmLocation = new ArrayList<Integer>();
+    /**
+     * For a peptide, other locations where this modification was found.
+     *
+     * @deprecated use amino acid specific scoring instead
+     */
+    private ArrayList<Integer> secondaryLocations = new ArrayList<Integer>();
+    /**
      * Boolean indicating whether a conflict was found during PTM site
      * inference.
+     *
+     * @deprecated use amino acid specific scoring instead
      */
     private boolean conflict = false;
 
@@ -95,236 +121,230 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Adds a delta score for the given locations combination.
+     * Sets the delta score at a given site. first amino acid is 1.
      *
-     * @param locations the combination of locations
-     * @param deltaScore The corresponding delta score
+     * @param site the modification site
+     * @param score the delta score
      */
-    public void addDeltaScore(ArrayList<Integer> locations, double deltaScore) {
-        String locationsKey = getKey(locations);
-        addDeltaScore(locationsKey, deltaScore);
+    public void setDeltaScore(int site, double score) {
+        compatibilityCheck();
+        deltaScoresAtAA.put(site, score);
     }
 
     /**
-     * Adds an A-score for the given locations combination.
+     * Returns the delta score at a given site. first amino acid is 1.
      *
-     * @deprecated use addProbabilisticScore
-     * 
-     * @param locations the combination of locations
-     * @param aScore The corresponding A-score
+     * @param site the site of interest
+     * @return the attached delta score. 0 if not found.
      */
-    public void addAScore(ArrayList<Integer> locations, double aScore) {
-        String locationsKey = getKey(locations);
-        addAScore(locationsKey, aScore);
-    }
-
-    /**
-     * Adds a probabilistic score for the given locations combination.
-     *
-     * @param locations the combination of locations
-     * @param aScore The corresponding A-score
-     */
-    public void addProbabilisticScore(ArrayList<Integer> locations, double aScore) {
-        String locationsKey = getKey(locations);
-        addProbabilisticScore(locationsKey, aScore);
-    }
-
-    /**
-     * Adds a delta score for the given locations combination given as a key.
-     *
-     * @param locationsKey the combination of locations
-     * @param deltaScore The corresponding delta score
-     */
-    public void addDeltaScore(String locationsKey, double deltaScore) {
-        if (!deltaScores.containsKey(locationsKey)
-                || deltaScores.get(locationsKey) < deltaScore) {
-            deltaScores.put(locationsKey, deltaScore);
+    public double getDeltaScore(int site) {
+        compatibilityCheck();
+        Double score = deltaScoresAtAA.get(site);
+        if (score == null) {
+            return 0;
+        } else {
+            return score;
         }
     }
 
     /**
-     * Adds an A score for the given locations combination given as a key.
+     * Sets the probabilistic score at a given site. first amino acid is 1.
      *
-     * @deprecated use addProbabilisticScore instead
-     * 
-     * @param locationsKey the combination of locations
-     * @param aScore The corresponding A-score
+     * @param site the modification site
+     * @param score the delta score
      */
-    public void addAScore(String locationsKey, double aScore) {
-        if (!aScores.containsKey(locationsKey)
-                || aScores.get(locationsKey) > aScore) {
-            aScores.put(locationsKey, aScore);
+    public void setProbabilisticScore(int site, double score) {
+        compatibilityCheck();
+        probabilisticScoresAtAA.put(site, score);
+    }
+
+    /**
+     * Returns the probabilistic score at a given site. first amino acid is 1.
+     *
+     * @param site the site of interest
+     * @return the attached probabilistic score. 0 if not found.
+     */
+    public double getProbabilisticScore(int site) {
+        compatibilityCheck();
+        Double score = probabilisticScoresAtAA.get(site);
+        if (score == null) {
+            return 0;
+        } else {
+            return score;
         }
     }
 
     /**
-     * Adds a probabilistic score for the given locations combination given as a key.
-     * 
-     * @param locationsKey the combination of locations
-     * @param score The corresponding A-score
+     * Returns a list of sites where the probabilistic score was used
+     *
+     * @return a list of sites where the probabilistic score was used
      */
-    public void addProbabilisticScore(String locationsKey, double score) {
-        if (!probabilisticScores.containsKey(locationsKey)
-                || probabilisticScores.get(locationsKey) > score) {
-            probabilisticScores.put(locationsKey, score);
-        }
+    public Set<Integer> getProbabilisticSites() {
+        compatibilityCheck();
+        return probabilisticScoresAtAA.keySet();
     }
 
     /**
-     * Returns the implemented locations possibilities for delta scores.
+     * Returns an ordered list of sites where the probabilistic score was used.
+     * Sites are ordered by decreasing score. In order to reduce systematic
+     * error, if sites score equally their order is random.
      *
-     * @return the implemented locations possibilities for delta scores
+     * @return a list of sites where the probabilistic score was used
      */
-    public ArrayList<String> getDeltaScorelocations() {
-        return new ArrayList<String>(deltaScores.keySet());
-    }
-
-    /**
-     * Returns the best scoring modification profile based on the delta score.
-     *
-     * @return the best scoring modification profile based on the delta score
-     */
-    public String getBestDeltaScoreLocations() {
-        String bestKey = null;
-        for (String key : deltaScores.keySet()) {
-            if (bestKey == null || deltaScores.get(bestKey) < deltaScores.get(key)) {
-                bestKey = key;
+    public ArrayList<Integer> getOrderedProbabilisticSites() {
+        compatibilityCheck();
+        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>();
+        for (int site : probabilisticScoresAtAA.keySet()) {
+            double score = probabilisticScoresAtAA.get(site);
+            ArrayList<Integer> sitesAtAA = siteMap.get(score);
+            if (sitesAtAA == null) {
+                sitesAtAA = new ArrayList<Integer>();
+                siteMap.put(score, sitesAtAA);
             }
+            sitesAtAA.add(site);
         }
-        return bestKey;
-    }
-
-    /**
-     * Returns the best scoring modification profile based on the probabiltistic score.
-     *
-     * @return the best scoring modification profile based on the probabiltistic score
-     */
-    public String getBestProbabilisticScoreLocations() {
-        if (probabilisticScores == null) {
-            // needed for backward compatibility
-            return getBestAScoreLocations();
-        }
-        String bestKey = null;
-        for (String key : probabilisticScores.keySet()) {
-            if (bestKey == null || probabilisticScores.get(bestKey) < probabilisticScores.get(key)) {
-                bestKey = key;
+        ArrayList<Double> scores = new ArrayList<Double>(siteMap.keySet());
+        Collections.sort(scores, Collections.reverseOrder());
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (double score : scores) {
+            ArrayList<Integer> sites = siteMap.get(score);
+            if (sites.size() > 2) {
+                Collections.shuffle(sites);
             }
+            result.addAll(sites);
         }
-        return bestKey;
+        return result;
     }
 
     /**
-     * Returns the best scoring modification profile based on the a-score score.
+     * Returns a list of sites where the D-score was used
      *
-     * @deprecated use getBestProbabilisticScoreLocations instead
-     * 
-     * @return the best scoring modification profile based on the a-score score
+     * @return a list of sites where the D-score was used
      */
-    public String getBestAScoreLocations() {
-        String bestKey = null;
-        for (String key : aScores.keySet()) {
-            if (bestKey == null || aScores.get(bestKey) < aScores.get(key)) {
-                bestKey = key;
+    public Set<Integer> getDSites() {
+        compatibilityCheck();
+        return deltaScoresAtAA.keySet();
+    }
+
+    /**
+     * Returns an ordered list of sites where the D-score was used. Sites are
+     * ordered by decreasing score. In order to reduce systematic error, if
+     * sites score equally their order is random.
+     *
+     * @return a list of sites where the D-score was used
+     */
+    public ArrayList<Integer> getOrderedDSites() {
+        compatibilityCheck();
+        HashMap<Double, ArrayList<Integer>> siteMap = new HashMap<Double, ArrayList<Integer>>();
+        for (int site : deltaScoresAtAA.keySet()) {
+            double score = deltaScoresAtAA.get(site);
+            ArrayList<Integer> sitesAtAA = siteMap.get(score);
+            if (sitesAtAA == null) {
+                sitesAtAA = new ArrayList<Integer>();
+                siteMap.put(score, sitesAtAA);
             }
+            sitesAtAA.add(site);
         }
-        return bestKey;
-    }
-
-    /**
-     * Returns the implemented locations for the probabilistic core.
-     *
-     * @return the implemented locations for the probabilistic score
-     */
-    public ArrayList<String> getProbabilisticScoreLocations() {
-        if (probabilisticScores == null) {
-            return getAScoreLocations();
+        ArrayList<Double> scores = new ArrayList<Double>(siteMap.keySet());
+        Collections.sort(scores, Collections.reverseOrder());
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (double score : scores) {
+            ArrayList<Integer> sites = siteMap.get(score);
+            if (sites.size() > 2) {
+                Collections.shuffle(sites);
+            }
+            result.addAll(sites);
         }
-        return new ArrayList<String>(probabilisticScores.keySet());
-    }
-
-
-    /**
-     * Returns the implemented locations for the A-score.
-     *
-     * @deprecated use getProbabilisticScoreLocations
-     * 
-     * @return the implemented locations for the A-score
-     */
-    public ArrayList<String> getAScoreLocations() {
-        return new ArrayList<String>(aScores.keySet());
+        return result;
     }
 
     /**
-     * Returns the delta score for the specified locations possibility given as
-     * a key.
-     *
-     * @param locationsKey the locations possibility given as a key
-     * @return the delta score
-     */
-    public Double getDeltaScore(String locationsKey) {
-        return deltaScores.get(locationsKey);
-    }
-
-    /**
-     * Returns the A-score for the specified locations possibility given as a
-     * key.
-     *
-     * @param locationsKey the locations possibility given as a key
-     * @return the A-score
-     */
-    public Double getProbabilisticScore(String locationsKey) {
-        if (probabilisticScores == null) {
-            return getAScore(locationsKey);
-        }
-        return probabilisticScores.get(locationsKey);
-    }
-
-    /**
-     * Returns the A-score for the specified locations possibility given as a
-     * key.
-     *
-     * @deprecated use getProbabilisticScore
-     * 
-     * @param locationsKey the locations possibility given as a key
-     * @return the A-score
-     */
-    public Double getAScore(String locationsKey) {
-        return aScores.get(locationsKey);
-    }
-
-    /**
-     * Adds all scorings from another score.
+     * Adds all scorings from another score. all previous scores will be
+     * silently overwritten.
      *
      * @param anotherScore another score
      */
     public void addAll(PtmScoring anotherScore) {
-        for (String positions : anotherScore.getDeltaScorelocations()) {
-            addDeltaScore(positions, anotherScore.getDeltaScore(positions));
+        for (int position : anotherScore.getDSites()) {
+            setDeltaScore(position, anotherScore.getDeltaScore(position));
         }
-        for (String positions : anotherScore.getProbabilisticScoreLocations()) {
-            addProbabilisticScore(positions, anotherScore.getProbabilisticScore(positions));
+        for (int position : anotherScore.getProbabilisticSites()) {
+            setDeltaScore(position, anotherScore.getProbabilisticScore(position));
         }
-        siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
-        if (anotherScore.getPtmSiteConfidence() < CONFIDENT) {
-            for (int newLocation : anotherScore.getPtmLocation()) {
-                if (!secondaryLocations.contains(newLocation) && !ptmLocation.contains(newLocation)) {
-                    secondaryLocations.add(newLocation);
-                }
-            }
-        } else {
-            for (Integer newLocation : anotherScore.getPtmLocation()) {
-                if (!ptmLocation.contains(newLocation)) {
-                    ptmLocation.add(newLocation);
-                }
-                if (secondaryLocations.contains(newLocation)) {
-                    secondaryLocations.remove(newLocation);
-                }
+        HashMap<Integer, Integer> map = anotherScore.getPtmLocationAtAA();
+        for (int otherSite : map.keySet()) {
+            if (!ptmLocationAtAA.containsKey(otherSite)) {
+                ptmLocationAtAA.put(otherSite, map.get(otherSite));
+            } else {
+                ptmLocationAtAA.put(otherSite, Math.max(ptmLocationAtAA.get(otherSite), map.get(otherSite)));
             }
         }
     }
 
     /**
+     * Backward compatibility check
+     */
+    private void compatibilityCheck() {
+        if (deltaScoresAtAA == null) {
+            deltaScoresAtAA = new HashMap<Integer, Double>();
+            for (String oldKey : deltaScores.keySet()) {
+                ArrayList<Integer> positions = getLocations(oldKey);
+                double score = deltaScores.get(oldKey);
+                for (int site : positions) {
+                    if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
+                        deltaScoresAtAA.put(site, score);
+                    }
+                }
+            }
+            probabilisticScoresAtAA = new HashMap<Integer, Double>();
+            if (probabilisticScores != null) {
+                for (String oldKey : probabilisticScores.keySet()) { // there should be only one there
+                    ArrayList<Integer> positions = getLocations(oldKey);
+                    double score = probabilisticScores.get(oldKey);
+                    for (int site : positions) {
+                        if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
+                            deltaScoresAtAA.put(site, score);
+                        }
+                    }
+                }
+            }
+            if (aScores != null) {
+                for (String oldKey : aScores.keySet()) { // there should be only one there
+                    ArrayList<Integer> positions = getLocations(oldKey);
+                    double score = aScores.get(oldKey);
+                    for (int site : positions) {
+                        if (!deltaScoresAtAA.containsKey(site) || deltaScoresAtAA.get(site) > score) {
+                            deltaScoresAtAA.put(site, score);
+                        }
+                    }
+                }
+            }
+            ptmLocationAtAA = new HashMap<Integer, Integer>();
+            for (int site : ptmLocation) {
+                ptmLocationAtAA.put(site, siteConfidence);
+            }
+            for (int site : secondaryLocations) {
+                ptmLocationAtAA.put(site, DOUBTFUL);
+            }
+        }
+    }
+
+    /**
+     * Sets the confidence level of a modificatoin site. 1 is the first amino
+     * acid.
+     *
+     * @param site the modification site
+     * @param confidenceLevel the confidence level
+     */
+    public void setSiteConfidence(int site, int confidenceLevel) {
+        compatibilityCheck();
+        ptmLocationAtAA.put(site, confidenceLevel);
+    }
+
+    /**
      * Returns the modification locations from a key.
+     *
+     * @deprecated use amino acid specific scoring instead
      *
      * @param locationsKey the modification locations key
      * @return the modification locations as an ArrayList containing all
@@ -350,6 +370,8 @@ public class PtmScoring implements Serializable {
     /**
      * Returns the key corresponding to modification possible locations.
      *
+     * @deprecated use amino acid specific scoring instead
+     *
      * @param locations the possible modification locations in the sequence
      * @return the corresponding key
      */
@@ -364,101 +386,110 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Sets the PTM site assignment results.
+     * Returns the map of the localization. site -> confidence level.
      *
-     * @param location the location of the PTM
-     * @param ptmSiteConfidence the location confidence as indexed by the static
+     * @return the map of the localization
+     */
+    public HashMap<Integer, Integer> getPtmLocationAtAA() {
+        compatibilityCheck();
+        return ptmLocationAtAA;
+    }
+
+    /**
+     * Returns the sites of all localized PTMs
+     *
+     * @return the sites of all localized PTMs
+     */
+    public Set<Integer> getAllPtmLocations() {
+        compatibilityCheck();
+        return ptmLocationAtAA.keySet();
+    }
+
+    /**
+     * Returns sites of all localized PTMs ordered increasingly.
+     *
+     * @return sites of all localized PTMs ordered increasingly
+     */
+    public ArrayList<Integer> getOrderedPtmLocations() {
+        ArrayList<Integer> result = new ArrayList<Integer>(getAllPtmLocations());
+        Collections.sort(result);
+        return result;
+    }
+
+    /**
+     * Returns the confidence of the ptm localization
+     *
+     * @param site the modification site
+     *
+     * @return the confidence of the localization as indexed by the static
      * fields
      */
-    public void setPtmSite(String location, int ptmSiteConfidence) {
-        this.siteConfidence = ptmSiteConfidence;
-        this.ptmLocation = getLocations(location);
+    public int getLocalizationConfidence(int site) {
+        compatibilityCheck();
+        return ptmLocationAtAA.get(site);
     }
 
     /**
-     * Returns the PTM locations.
+     * Returns the minimal confidence among the PTM sites of this scoring
      *
-     * @return the PTM location
+     * @return the minimal confidence among the PTM sites of this scoring
      */
-    public ArrayList<Integer> getPtmLocation() {
-        return ptmLocation;
+    public int getMinimalLocalizationConfidence() {
+        compatibilityCheck();
+        if (ptmLocationAtAA.isEmpty()) {
+            return NOT_FOUND;
+        }
+        int minConfidence = VERY_CONFIDENT;
+        for (int confidence : ptmLocationAtAA.values()) {
+            if (confidence < minConfidence) {
+                confidence = minConfidence;
+            }
+        }
+        return minConfidence;
     }
 
     /**
-     * Returns the secondary PTM locations.
+     * Returns the confidently and very confidently localized PTMs
      *
-     * @return the PTM location
+     * @return the confidently and very confidently localized PTMs
+     */
+    public ArrayList<Integer> getConfidentPtmLocations() {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        result.addAll(getPtmLocations(CONFIDENT));
+        result.addAll(getPtmLocations(VERY_CONFIDENT));
+        return result;
+    }
+
+    /**
+     * Returns the not found, randomly or doubtfully localized PTMs
+     *
+     * @return the not found, randomly or doubtfully localized PTMs
      */
     public ArrayList<Integer> getSecondaryPtmLocations() {
-        return secondaryLocations;
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        result.addAll(getPtmLocations(NOT_FOUND));
+        result.addAll(getPtmLocations(RANDOM));
+        result.addAll(getPtmLocations(DOUBTFUL));
+        return result;
     }
 
     /**
-     * Adds a ptm location
+     * Returns the PTM locations at a given confidence level (see static
+     * fields).
      *
-     * @param newLocation the new location
+     * @param confidenceLevel the confidence level
+     *
+     * @return the PTM locations at the given confidence level
      */
-    public void addPtmLocation(int newLocation) {
-        if (!ptmLocation.contains(newLocation)) {
-            ptmLocation.add(newLocation);
+    public ArrayList<Integer> getPtmLocations(int confidenceLevel) {
+        compatibilityCheck();
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (int site : ptmLocationAtAA.keySet()) {
+            if (confidenceLevel == ptmLocationAtAA.get(site)) {
+                result.add(site);
+            }
         }
-    }
-
-    /**
-     * Adds a ptm secondary location
-     *
-     * @param newLocation the ptm secondary location
-     */
-    public void addPtmSecondaryLocation(int newLocation) {
-        if (!secondaryLocations.contains(newLocation)) {
-            secondaryLocations.add(newLocation);
-        }
-    }
-
-    /**
-     * Removes a ptm location
-     *
-     * @param location the location to remove
-     */
-    public void removePtmLocation(Integer location) {
-        ptmLocation.remove(location);
-    }
-
-    /**
-     * Removes a secondary location
-     *
-     * @param location the location to remove
-     */
-    public void removePtmSecondaryLocation(Integer location) {
-        secondaryLocations.remove(location);
-    }
-
-    /**
-     * Returns the PTM location confidence as indexed by the satic fields.
-     *
-     * @return the PTM location confidence
-     */
-    public int getPtmSiteConfidence() {
-        return siteConfidence;
-    }
-
-    /**
-     * Indicates whether the site inference is conflicting.
-     *
-     * @return a boolean indicating whether the site inference was conflicting
-     */
-    public boolean isConflict() {
-        return conflict;
-    }
-
-    /**
-     * Sets whether the site inference is conflicting.
-     *
-     * @param conflict a boolean indicating whether the site inference was
-     * conflicting
-     */
-    public void setConflict(boolean conflict) {
-        this.conflict = conflict;
+        return result;
     }
 
     /**

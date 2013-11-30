@@ -89,7 +89,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 secondarySelection = new boolean[Peptide.getSequence(peptideKey).length()];
                 if (peptideScoring != null) {
                     for (int aa = 0; aa < Peptide.getSequence(peptideKey).length(); aa++) {
-                        if (peptideScoring.getPtmLocation().contains(aa + 1)) {
+                        if (peptideScoring.getConfidentPtmLocations().contains(aa + 1)) {
                             mainSelection[aa] = true;
                         }
                         if (peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
@@ -112,7 +112,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         setTableProperties();
 
         if (peptideScoring != null) {
-            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence() + 1);
+            peptidePtmConfidence.setSelectedIndex(peptideScoring.getMinimalLocalizationConfidence() + 1);
         }
 
         // set sequence
@@ -354,8 +354,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     if (psmScores != null) {
                         PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
                         if (psmScoring != null) {
-                            if (psmScoring.getPtmLocation().contains(column)) {
-                                return psmScoring.getPtmSiteConfidence();
+                            int site = column + 1;
+                            if (psmScoring.getConfidentPtmLocations().contains(site)) {
+                                return psmScoring.getLocalizationConfidence(site);
                             } else {
                                 return PtmScoring.NOT_FOUND;
                             }
@@ -592,24 +593,24 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         for (int i = 0; i < mainSelection.length; i++) {
             aa = i + 1;
             if (mainSelection[i]) {
-                if (!peptideScoring.getPtmLocation().contains(aa)) {
-                    peptideScoring.addPtmLocation(aa);
+                if (!peptideScoring.getConfidentPtmLocations().contains(aa)) {
+                    peptideScoring.setSiteConfidence(aa, PtmScoring.CONFIDENT);
                     changed = true;
                 }
             } else {
-                if (peptideScoring.getPtmLocation().contains(aa)) {
-                    peptideScoring.removePtmLocation(aa);
+                if (peptideScoring.getConfidentPtmLocations().contains(aa)) {
+                    peptideScoring.setSiteConfidence(aa, PtmScoring.DOUBTFUL);
                     changed = true;
                 }
             }
             if (secondarySelection[i]) {
                 if (!peptideScoring.getSecondaryPtmLocations().contains(aa)) {
-                    peptideScoring.addPtmSecondaryLocation(aa);
+                    peptideScoring.setSiteConfidence(aa, PtmScoring.DOUBTFUL);
                     changed = true;
                 }
             } else {
                 if (peptideScoring.getSecondaryPtmLocations().contains(aa)) {
-                    peptideScoring.removePtmSecondaryLocation(aa);
+                    peptideScoring.setSiteConfidence(aa, PtmScoring.CONFIDENT);
                     changed = true;
                 }
             }
@@ -622,7 +623,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
                 scores.addPtmScoring(ptm.getName(), peptideScoring);
 
-                for (int mainLocation : peptideScoring.getPtmLocation()) {
+                for (int mainLocation : peptideScoring.getConfidentPtmLocations()) {
                     scores.addMainModificationSite(ptm.getName(), mainLocation);
                 }
 
