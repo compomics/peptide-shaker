@@ -1552,7 +1552,17 @@ public class PeptideShaker {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     if (ptmScoring != null) {
                         PTM ptm = ptmFactory.getPTM(modName);
-                        ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
+                        for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                            PTM tempPtm = ptmFactory.getPTM(ptmName);
+                            if (tempPtm.getMass() == ptm.getMass()) {
+                                for (int pos : psPeptide.getPotentialModificationSites(tempPtm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                    if (!possiblePositions.contains(pos)) {
+                                        possiblePositions.add(pos);
+                                    }
+                                }
+                            }
+                        }
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
                             throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size()
                                     + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence()
