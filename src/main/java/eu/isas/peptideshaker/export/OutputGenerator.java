@@ -1622,10 +1622,8 @@ public class OutputGenerator {
                         writer.write("Modification(s)" + SEPARATOR);
                         if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                             writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " localization" + SEPARATOR);
-                            writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " score" + SEPARATOR);
                         }
                         writer.write("D-score localization" + SEPARATOR);
-                        writer.write("D-score" + SEPARATOR);
                         if (searchEngines.size() == 1 && searchEngines.get(0) == SpectrumIdentificationAlgorithm.MASCOT) {
                             writer.write("MD-score localization" + SEPARATOR);
                             writer.write("MD-score" + SEPARATOR);
@@ -1745,12 +1743,10 @@ public class OutputGenerator {
                                 Collections.sort(modList);
                                 PSPtmScores ptmScores = new PSPtmScores();
                                 first = true;
-                                String dLocalizations = "";
-                                String probabilisticLocalizations = "";
-                                String dScore = "";
+                                StringBuilder dLocalizations = new StringBuilder();
+                                StringBuilder probabilisticLocalizations = new StringBuilder();
                                 String mdLocation = "";
                                 String mdScore = "";
-                                String probabilisticScore = "";
                                 String[] split = sequence.split("[STY]");
                                 int nSites = split.length - 1;
                                 ArrayList<String> phosphoNames = new ArrayList<String>();
@@ -1762,27 +1758,21 @@ public class OutputGenerator {
                                             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                                boolean firstSite = true;
                                                 ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
                                                 Collections.sort(sites);
-                                                for (int site : sites) {
-                                                    if (firstSite) {
-                                                        firstSite = false;
-                                                    } else {
-                                                        probabilisticLocalizations += ", ";
+                                                for (Integer site : sites) {
+                                                    if (probabilisticLocalizations.length() > 0) {
+                                                        probabilisticLocalizations.append(", ");
                                                     }
-                                                    probabilisticLocalizations += site + ": " + ptmScoring.getProbabilisticScore(site);
+                                                    probabilisticLocalizations.append(site.toString()).append(": ").append(ptmScoring.getProbabilisticScore(site));
                                                 }
-                                                firstSite = true;
                                                 sites = new ArrayList<Integer>(ptmScoring.getDSites());
                                                 Collections.sort(sites);
-                                                for (int site : sites) {
-                                                    if (firstSite) {
-                                                        firstSite = false;
-                                                    } else {
-                                                        dLocalizations += ", ";
+                                                for (Integer site : sites) {
+                                                    if (dLocalizations.length() > 0) {
+                                                        dLocalizations.append(", ");
                                                     }
-                                                    dLocalizations += site + ": " + ptmScoring.getDeltaScore(site);
+                                                    dLocalizations.append(site.toString()).append(": ").append(ptmScoring.getDeltaScore(site));
                                                 }
                                             }
                                         }
@@ -1827,10 +1817,8 @@ public class OutputGenerator {
                                 }
                                 if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                                     writer.write(probabilisticLocalizations + SEPARATOR);
-                                    writer.write(probabilisticScore + SEPARATOR);
                                 }
                                 writer.write(dLocalizations + SEPARATOR);
-                                writer.write(dScore + SEPARATOR);
                                 if (searchEngines.size() == 1 && searchEngines.get(0) == SpectrumIdentificationAlgorithm.MASCOT) {
                                     writer.write(mdLocation + SEPARATOR);
                                     writer.write(mdScore + SEPARATOR);
