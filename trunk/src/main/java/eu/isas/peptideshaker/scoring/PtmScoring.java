@@ -259,17 +259,22 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Adds all scorings from another score. all previous scores will be
-     * silently overwritten.
+     * Adds all scorings from another score if better.
      *
      * @param anotherScore another score
      */
     public void addAll(PtmScoring anotherScore) {
         for (int position : anotherScore.getDSites()) {
-            setDeltaScore(position, anotherScore.getDeltaScore(position));
+            double newScore = anotherScore.getDeltaScore(position);
+            if (getDeltaScore(position) < newScore) {
+                setDeltaScore(position, newScore);
+            }
         }
         for (int position : anotherScore.getProbabilisticSites()) {
-            setDeltaScore(position, anotherScore.getProbabilisticScore(position));
+            double newScore = anotherScore.getProbabilisticScore(position);
+            if (getProbabilisticScore(position) < newScore) {
+                setProbabilisticScore(position, newScore);
+            }
         }
         HashMap<Integer, Integer> map = anotherScore.getPtmLocationAtAA();
         for (int otherSite : map.keySet()) {

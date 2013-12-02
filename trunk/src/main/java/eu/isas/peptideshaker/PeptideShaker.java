@@ -2166,7 +2166,7 @@ public class PeptideShaker {
                     if (secondaryP < refP) {
                         secondaryP = refP;
                     }
-                    double deltaScore = secondaryP - refP;
+                    double deltaScore = (secondaryP - refP)*100;
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
 
