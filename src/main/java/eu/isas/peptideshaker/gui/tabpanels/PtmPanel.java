@@ -3939,8 +3939,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
                 for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
-                    tempProfile.getProfile()[aa - 1][ModificationProfile.DELTA_SCORE_ROW_INDEX] = locationScoring.getDeltaScore(aa);
-                    tempProfile.getProfile()[aa - 1][ModificationProfile.A_SCORE_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
+                    tempProfile.getProfile()[aa - 1][ModificationProfile.SCORE_1_ROW_INDEX] = locationScoring.getDeltaScore(aa);
+                    tempProfile.getProfile()[aa - 1][ModificationProfile.SCORE_2_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
                 }
 
                 profiles.add(tempProfile);
@@ -4498,7 +4498,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     = new SequenceModificationPanel(peptideMatch.getTheoreticPeptide().getNTerminal() + "-"
                             + peptideMatch.getTheoreticPeptide().getSequence()
                             + "-" + peptideMatch.getTheoreticPeptide().getCTerminal(),
-                            profiles, true);
+                            profiles, true, "D-score", 
+                            peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName());
 
             if (selectedPeptideProfile) {
                 modificationProfileSelectedPeptideJPanel.removeAll();
