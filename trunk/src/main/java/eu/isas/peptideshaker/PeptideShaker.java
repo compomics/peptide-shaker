@@ -2148,7 +2148,7 @@ public class PeptideShaker {
                                     }
                                 }
                             }
-                            if (!modificationAtSite) {
+                            if (!modificationAtSite && modificationFound) {
                                 psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
                                 double p = psParameter.getSearchEngineProbability();
                                 if (p < secondaryP) {
