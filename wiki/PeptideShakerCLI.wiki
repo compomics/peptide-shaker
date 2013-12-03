@@ -95,11 +95,11 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 -psm_FDR                   FDR at the PSM level in percent (default 1%
                            FDR: '1').
 
--ptm_score                 The PTM probabilistic score to use if any.
+-ptm_score                 The PTM probabilistic score to use if any (0: A-score, 1: phosphoRS).
 
--ptm_threshold             The threshold to use for the PTM scores.
+-ptm_threshold             The threshold to use for the PTM scores. If none set, an automatic threshold will be used.
 
--score_neutral_losses      Include neutral losses in spectrum annotation of the PTM score 
+-score_neutral_losses      Include neutral losses of mass different from the PTM in spectrum annotation of the PTM score 
                            (1: true, 0: false, default is '0').
 
 -protein_fraction_mw_confidence     
