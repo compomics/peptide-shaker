@@ -376,10 +376,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
-        // identification as created by PeptideShaker
-        ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
         // import the files
         peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
                 annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
@@ -395,6 +391,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         if (!waitingHandler.isRunCanceled()) {
+
+            // identification as created by PeptideShaker
+            ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+            identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
