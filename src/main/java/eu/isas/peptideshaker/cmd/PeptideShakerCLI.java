@@ -41,7 +41,6 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
@@ -123,9 +122,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler = new WaitingHandlerCLIImpl();
         }
 
-        // Create project
+        // create project
         createProject();
+
+        // see if the project was created or canceled
         if (waitingHandler.isRunCanceled()) {
+            try {
+                closePeptideShaker(identification);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e.printStackTrace();
+            }
+            System.exit(0);
             return null;
         } else {
             waitingHandler.appendReport("Project successfully created.", true, true);
@@ -150,7 +158,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // Follow up tasks if needed
         FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
         if (followUpCLIInputBean.followUpNeeded()) {
-            waitingHandler.appendReport("Starting follow-up tasks.", true, true);
+            waitingHandler.appendReport("Starting follow up tasks.", true, true);
 
             // recalibrate spectra
             if (followUpCLIInputBean.recalibrationNeeded()) {
@@ -269,18 +277,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReportEndLine();
         }
 
-
         waitingHandler.setWaitingText("PeptideShaker Import Completed.");
         waitingHandler.appendReportEndLine();
 
-
-        if (!cliInputBean.isGUI()) {
-            try {
-                closePeptideShaker(identification);
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-                e.printStackTrace();
-            }
+        try {
+            closePeptideShaker(identification);
+        } catch (Exception e) {
+            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+            e.printStackTrace();
         }
 
         waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
@@ -372,6 +376,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
+        // identification as created by PeptideShaker
+        ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+        identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+
         // import the files
         peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
                 annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
@@ -387,10 +395,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         if (!waitingHandler.isRunCanceled()) {
-
-            // identification as created by PeptideShaker
-            ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-            identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
@@ -423,16 +427,22 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     public void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
         SpectrumFactory.getInstance().closeFiles();
-        SequenceFactory.getInstance().closeFile();
+        SequenceFactory.getInstance().clearFactory();
         GOFactory.getInstance().closeFiles();
-        identification.close();
+
+        if (identification != null) {
+            identification.close();
+        }
 
         File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {
             for (File currentFile : tempFiles) {
-                Util.deleteDir(currentFile);
+                boolean deleted = Util.deleteDir(currentFile);
+                if (!deleted) {
+                    System.out.println(currentFile.getAbsolutePath() + " could not be deleted!"); // @TODO: better handling of this error?
+                }
             }
         }
     }
