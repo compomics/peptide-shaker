@@ -613,7 +613,6 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
 
         String searchTerm = (String) sampleCvTermsJTable.getValueAt(selectedRow, 3);
         String ontology = (String) sampleCvTermsJTable.getValueAt(selectedRow, 1);
-        ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         if (newtRoot.indexOf(ontology) != -1) {
@@ -636,7 +635,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         Object[] tempRow = new Object[]{
             sampleCvTermsJTable.getValueAt(selectedRow - 1, 0),
             sampleCvTermsJTable.getValueAt(selectedRow - 1, 1),
-            sampleCvTermsJTable.getValueAt(selectedRow - 1, 2)
+            sampleCvTermsJTable.getValueAt(selectedRow - 1, 2),
+            sampleCvTermsJTable.getValueAt(selectedRow - 1, 3),
+            sampleCvTermsJTable.getValueAt(selectedRow - 1, 4)
         };
 
         ((DefaultTableModel) sampleCvTermsJTable.getModel()).removeRow(selectedRow - 1);
@@ -659,7 +660,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         Object[] tempRow = new Object[]{
             sampleCvTermsJTable.getValueAt(selectedRow + 1, 0),
             sampleCvTermsJTable.getValueAt(selectedRow + 1, 1),
-            sampleCvTermsJTable.getValueAt(selectedRow + 1, 2)
+            sampleCvTermsJTable.getValueAt(selectedRow + 1, 2),
+            sampleCvTermsJTable.getValueAt(selectedRow + 1, 3),
+            sampleCvTermsJTable.getValueAt(selectedRow + 1, 4)
         };
 
         ((DefaultTableModel) sampleCvTermsJTable.getModel()).removeRow(selectedRow + 1);

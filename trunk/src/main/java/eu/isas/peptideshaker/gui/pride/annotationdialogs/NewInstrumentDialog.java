@@ -563,7 +563,6 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
         String searchTerm = (String) analyzerCvTermsJTable.getValueAt(selectedRow, 3);
         String ontology = (String) analyzerCvTermsJTable.getValueAt(selectedRow, 1);
-        ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new OLSDialog(prideExportDialog, this, true, "singleAnalyzer", ontology, selectedRow, searchTerm);
@@ -582,7 +581,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         Object[] tempRow = new Object[]{
             analyzerCvTermsJTable.getValueAt(selectedRow - 1, 0),
             analyzerCvTermsJTable.getValueAt(selectedRow - 1, 1),
-            analyzerCvTermsJTable.getValueAt(selectedRow - 1, 2)
+            analyzerCvTermsJTable.getValueAt(selectedRow - 1, 2),
+            analyzerCvTermsJTable.getValueAt(selectedRow - 1, 3),
+            analyzerCvTermsJTable.getValueAt(selectedRow - 1, 4)
         };
 
         ((DefaultTableModel) analyzerCvTermsJTable.getModel()).removeRow(selectedRow - 1);
@@ -605,7 +606,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         Object[] tempRow = new Object[]{
             analyzerCvTermsJTable.getValueAt(selectedRow + 1, 0),
             analyzerCvTermsJTable.getValueAt(selectedRow + 1, 1),
-            analyzerCvTermsJTable.getValueAt(selectedRow + 1, 2)
+            analyzerCvTermsJTable.getValueAt(selectedRow + 1, 2),
+            analyzerCvTermsJTable.getValueAt(selectedRow + 1, 3),
+            analyzerCvTermsJTable.getValueAt(selectedRow + 1, 4)
         };
 
         ((DefaultTableModel) analyzerCvTermsJTable.getModel()).removeRow(selectedRow + 1);

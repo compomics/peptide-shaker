@@ -431,7 +431,6 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
         String searchTerm = (String) protocolCvTermsJTable.getValueAt(selectedRow, 3);
         String ontology = (String) protocolCvTermsJTable.getValueAt(selectedRow, 1);
-        ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new OLSDialog(prideExportDialog, this, true, "singleProtocol", ontology, selectedRow, searchTerm);
@@ -450,7 +449,9 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         Object[] tempRow = new Object[]{
             protocolCvTermsJTable.getValueAt(selectedRow - 1, 0),
             protocolCvTermsJTable.getValueAt(selectedRow - 1, 1),
-            protocolCvTermsJTable.getValueAt(selectedRow - 1, 2)
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 2),
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 3),
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 4)
         };
 
         ((DefaultTableModel) protocolCvTermsJTable.getModel()).removeRow(selectedRow - 1);
@@ -473,7 +474,9 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         Object[] tempRow = new Object[]{
             protocolCvTermsJTable.getValueAt(selectedRow + 1, 0),
             protocolCvTermsJTable.getValueAt(selectedRow + 1, 1),
-            protocolCvTermsJTable.getValueAt(selectedRow + 1, 2)
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 2),
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 3),
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 4)
         };
 
         ((DefaultTableModel) protocolCvTermsJTable.getModel()).removeRow(selectedRow + 1);
