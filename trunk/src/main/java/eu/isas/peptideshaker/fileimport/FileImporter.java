@@ -198,6 +198,8 @@ public class FileImporter {
             if (!waitingHandler.isRunCanceled()) {
                 waitingHandler.appendReport("FASTA file import completed.", true, true);
                 waitingHandler.increasePrimaryProgressCounter();
+            } else {
+                sequenceFactory.clearFactory();
             }
 
         } catch (FileNotFoundException e) {
@@ -333,6 +335,10 @@ public class FileImporter {
          * Boolean indicating whether we can display GUI stuff.
          */
         private boolean hasGUI = false;
+        /**
+         * The database connection.
+         */
+        private Identification identification;
 
         /**
          * Constructor of the worker.
@@ -383,7 +389,7 @@ public class FileImporter {
          *
          * @return 0 if success, 1 if not
          */
-        public int importFiles() {
+        public synchronized int importFiles() {
 
             try {
                 importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
@@ -395,7 +401,7 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport("Establishing database connection.", true, true);
 
-                Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+                identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
                 identification.setIsDB(true);
 
                 connectToIdDb(identification);
@@ -410,6 +416,7 @@ public class FileImporter {
                         importPsms(idFile);
 
                         if (waitingHandler.isRunCanceled()) {
+                            identification.close();
                             return 1;
                         }
                     }
@@ -418,6 +425,8 @@ public class FileImporter {
                         if (hasGUI) {
                             new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
                             if (waitingHandler.isRunCanceled()) {
+                                identification.close();
+                                sequenceFactory.clearFactory();
                                 return 1;
                             }
                         } else {
@@ -432,6 +441,8 @@ public class FileImporter {
                                 missingFiles += mgfFile.getName();
                             }
                             waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
+                            identification.close();
+                            sequenceFactory.clearFactory();
                             return 1;
                         }
                         waitingHandler.appendReport("Processing files with the new input.", true, true);
@@ -447,6 +458,8 @@ public class FileImporter {
                             importPsms(idFile);
                         }
                         if (waitingHandler.isRunCanceled()) {
+                            identification.close();
+                            sequenceFactory.clearFactory();
                             return 1;
                         }
                     }
@@ -458,6 +471,8 @@ public class FileImporter {
                     if (nRetained == 0) {
                         waitingHandler.appendReport("No identifications retained.", true, true);
                         waitingHandler.setRunCanceled();
+                        identification.close();
+                        sequenceFactory.clearFactory();
                         return 1;
                     }
 
@@ -489,6 +504,16 @@ public class FileImporter {
                 }
 
                 error.printStackTrace();
+                if (identification != null) {
+                    try {
+                        identification.close();
+                        sequenceFactory.clearFactory();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return 1;
 
             } catch (Exception e) {
@@ -510,6 +535,17 @@ public class FileImporter {
 
                 e.printStackTrace();
                 System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
+
+                if (identification != null) {
+                    try {
+                        identification.close();
+                        sequenceFactory.clearFactory();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
 
                 return 1;
             }
