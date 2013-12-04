@@ -431,7 +431,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>ols-dialog</artifactId>
-            <version>3.4.0</version>
+            <version>3.4.1</version>
         </dependency>
 
         <!-- use for adding desktop shortcuts -->
