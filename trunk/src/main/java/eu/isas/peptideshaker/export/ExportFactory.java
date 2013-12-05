@@ -640,7 +640,7 @@ public class ExportFactory implements Serializable {
         sectionContent.add(PsmFeatures.decoy);
         sectionContent.add(PsmFeatures.validated);
         
-        exportFeatures.put(PeptideFeatures.type, sectionContent);
+        exportFeatures.put(PsmFeatures.type, sectionContent);
 
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false);
 

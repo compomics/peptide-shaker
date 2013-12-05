@@ -186,9 +186,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     try {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                         String peptideSequence = Peptide.getSequence(peptideKey);
-                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                         indexes = currentProtein.getPeptideStart(peptideSequence, 
-                                aminoAcidPattern, aminoAcidPattern.length(),
                                 PeptideShaker.MATCHING_TYPE, 
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (IOException e) {

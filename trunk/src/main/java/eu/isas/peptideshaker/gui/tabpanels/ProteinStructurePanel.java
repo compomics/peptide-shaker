@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -2709,7 +2710,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         try {
                             String proteinAccession = proteinMatch.getMainMatch();
                             String tempProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
-                            peptideStart = tempProteinSequence.lastIndexOf(peptideSequence) + 1;
+                            peptideStart = tempProteinSequence.lastIndexOf(peptideSequence) + 1; //@TODO: allow multiple start indexes and use amino acid matching
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             e.printStackTrace();
@@ -3133,10 +3134,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
             String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
-            String tempSequence = proteinSequence;
-
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !progressDialog.isRunCanceled()) {
-                int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+            AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+            
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
                 jmolPanel.getViewer().evalString(
@@ -3144,11 +3144,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
 
                 if (chainSequence.indexOf(peptideSequence) != -1) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
+                }
+                if (progressDialog.isRunCanceled()) {
+                    break;
                 }
             }
         }
@@ -3157,11 +3159,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // highlight the selected peptide
         String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
-        String tempSequence = proteinSequence;
-
-        while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !progressDialog.isRunCanceled()) {
-
-            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+            AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+            
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
             int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
             jmolPanel.getViewer().evalString(
@@ -3169,7 +3172,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                     + " and chain = " + currentChain + "; color blue");
 
-            tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
         }
 
 
@@ -3183,7 +3185,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             peptideKey = peptideTableMap.get(getPeptideIndex(i));
             peptideSequence = Peptide.getSequence(peptideKey);
-            tempSequence = proteinSequence;
+            aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
             ArrayList<ModificationMatch> modifications = new ArrayList<ModificationMatch>();
             try {
@@ -3192,9 +3194,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideShakerGUI.catchException(e);
             }
 
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !progressDialog.isRunCanceled()) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
 
-                int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
                 int peptideIndex = 1;
 
@@ -3224,8 +3228,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     peptideIndex++;
                 }
-
-                tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
             }
         }
 

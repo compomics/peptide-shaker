@@ -290,12 +290,10 @@ public class IdentificationFeaturesGenerator {
             if (peptidePSParameter.isValidated()) {
 
                 String peptideSequence = Peptide.getSequence(peptideKey);
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                int patternLength = aminoAcidPattern.length();
                 boolean enzymatic = false;
                 for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
                     Protein currentProtein = sequenceFactory.getProtein(accession);
-                    if (currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, enzyme,
+                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme,
                             PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         enzymatic = true;
                         break;
@@ -477,8 +475,6 @@ public class IdentificationFeaturesGenerator {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 String peptideSequence = Peptide.getSequence(peptideKey);
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                int patternLength = aminoAcidPattern.length();
                 ArrayList<String> possibleProteinMatches = new ArrayList<String>();
 
                 for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, ms2Accuracy)) {
@@ -489,7 +485,7 @@ public class IdentificationFeaturesGenerator {
                                     testMatch = identification.getProteinMatch(proteinKey);
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
                                         Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
-                                        peptideOccurrence += currentProtein.getPeptideStart(peptideSequence, aminoAcidPattern, patternLength, 
+                                        peptideOccurrence += currentProtein.getPeptideStart(peptideSequence,
                                                 AminoAcidPattern.MatchingType.string, ms2Accuracy).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }

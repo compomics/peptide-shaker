@@ -3827,7 +3827,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         annotationPreferences.setCurrentSettings(
                                 spectrumMatch.getBestPeptideAssumption(),
-                                !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                                !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(),
                                 annotationPreferences.getValidatedCharges(),
@@ -3932,21 +3932,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (psParameter.isValidated()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
-                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
                     boolean includePeptide = false;
 
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, aminoAcidPattern.length(), peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, aminoAcidPattern.length(), peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
                     if (includePeptide) {
+                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                         for (int peptideTempStart : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideTempEnd = peptideTempStart + peptideSequence.length();
                             for (int j = peptideTempStart; j < peptideTempEnd; j++) {
@@ -4017,8 +4017,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
 
-                String tempSequence = currentProteinSequence;
-
                 if (peptideTable.getSelectedRow() != -1) {
 
                     SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
@@ -4026,11 +4024,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     String peptideKey = peptideKeys.get(peptideIndex);
                     String peptideSequence = Peptide.getSequence(peptideKey);
 
-                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                        int startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
+                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                    for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                         selectedPeptideStart.add(startIndex);
                         selectedPeptideEnd.add(startIndex + peptideSequence.length());
-                        tempSequence = currentProteinSequence.substring(0, startIndex);
                     }
                 }
 
@@ -4193,14 +4190,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 for (String peptideKey : peptideKeys) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(Peptide.getSequence(peptideKey));
-                    int patternLength = aminoAcidPattern.length();
                     for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
                         if (!modMatch.isVariable()) {
                             String ptmName = modMatch.getTheoreticPtm();
                             if (displayPreferences.isDisplayedPTM(ptmName)) {
                                 ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
-                                        aminoAcidPattern, patternLength,
                                         PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 for (Integer index : indexes) {
                                     fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
@@ -4375,7 +4369,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                            annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                            annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
@@ -4856,7 +4850,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // get the spectrum annotations
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                    annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                    annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
@@ -5177,8 +5171,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(Peptide.getSequence(peptideKey));
-                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey), aminoAcidPattern, aminoAcidPattern.length(),
+                HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
                         peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                 String before = "";
@@ -5610,23 +5603,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 for (String peptideKey : peptideKeys) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
-                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                    int patternLength = aminoAcidPattern.length();
 
                     boolean includePeptide = false;
 
                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                         includePeptide = true;
                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, aminoAcidPattern, patternLength, peptideShakerGUI.getSearchParameters().getEnzyme(),
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme(),
                                 PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
 
                     if (includePeptide) {
-                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, aminoAcidPattern, patternLength, PeptideShaker.MATCHING_TYPE,
+                        for (int peptideStart : currentProtein.getPeptideStart(peptideSequence, PeptideShaker.MATCHING_TYPE,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideEnd = peptideStart + peptideSequence.length() - 1;
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);

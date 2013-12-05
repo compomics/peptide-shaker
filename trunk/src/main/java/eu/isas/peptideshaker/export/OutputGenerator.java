@@ -435,9 +435,7 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.isValidated()) {
 
-                                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                aminoAcidPattern, aminoAcidPattern.length(),
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                                 PeptideShaker.MATCHING_TYPE,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
@@ -770,8 +768,6 @@ public class OutputGenerator {
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
                                             ArrayList<String> possibleProteins = new ArrayList<String>();
                                             ArrayList<String> orderedProteinsKeys = new ArrayList<String>(); // @TODO: could be merged with one of the other maps perhaps?
-                                            AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
-                                            int patternLength = aminoAcidPattern.length();
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
@@ -880,7 +876,6 @@ public class OutputGenerator {
                                                     for (String proteinAccession : orderedProteinsKeys) {
                                                         surroundingAAs.put(proteinAccession,
                                                                 sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                                                        aminoAcidPattern, patternLength,
                                                                         peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                                                         PeptideShaker.MATCHING_TYPE,
                                                                         peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
@@ -944,7 +939,6 @@ public class OutputGenerator {
 
                                                 if (enzymatic) {
                                                     boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
-                                                            aminoAcidPattern, patternLength,
                                                             peptideShakerGUI.getSearchParameters().getEnzyme(), PeptideShaker.MATCHING_TYPE,
                                                             peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
@@ -2787,9 +2781,7 @@ public class OutputGenerator {
 
                                                     if (peptidePSParameter.isValidated()) {
 
-                                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                aminoAcidPattern, aminoAcidPattern.length(),
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                                 PeptideShaker.MATCHING_TYPE,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());

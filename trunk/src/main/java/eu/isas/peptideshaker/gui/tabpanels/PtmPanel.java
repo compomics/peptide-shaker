@@ -3876,11 +3876,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 // get the spectrum annotations
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                 Peptide peptide = peptideAssumption.getPeptide();
-                if (peptide == null) {
-                    int debug = 1;
-                }
                 int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
