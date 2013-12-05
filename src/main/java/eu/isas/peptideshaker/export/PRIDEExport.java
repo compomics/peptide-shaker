@@ -33,6 +33,7 @@ import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -631,12 +632,12 @@ public class PRIDEExport {
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
      */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
         PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true);
+        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
         MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),

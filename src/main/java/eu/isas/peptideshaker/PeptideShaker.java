@@ -1527,7 +1527,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
@@ -1813,10 +1813,10 @@ public class PeptideShaker {
                             proteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
                         }
                         PtmScoring ptmScoring = peptideScores.getPtmScoring(modification);
-                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getConfidentPtmLocations())) {
+                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getConfidentPtmLocations(), searchParameters.getFragmentIonAccuracy())) {
                             proteinScores.addMainModificationSite(modification, pos);
                         }
-                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getSecondaryPtmLocations())) {
+                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getSecondaryPtmLocations(), searchParameters.getFragmentIonAccuracy())) {
                             proteinScores.addSecondaryModificationSite(modification, pos);
                         }
                     }
@@ -1835,18 +1835,17 @@ public class PeptideShaker {
      * @param peptideSequence The peptide sequence
      * @param positionInPeptide The position(s) of the modification in the
      * peptide sequence
+     * @param mzTolerance the ms2 m/z tolerance
+     * 
      * @return the possible modification sites in a protein
      */
-    public static ArrayList<Integer> getProteinModificationIndexes(String proteinSequence, String peptideSequence, ArrayList<Integer> positionInPeptide) {
+    public static ArrayList<Integer> getProteinModificationIndexes(String proteinSequence, String peptideSequence, ArrayList<Integer> positionInPeptide, double mzTolerance) {
         ArrayList<Integer> result = new ArrayList<Integer>();
-        String tempSequence = proteinSequence;
-
-        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, MATCHING_TYPE, mzTolerance)) {
             for (int pos : positionInPeptide) {
                 result.add(peptideTempStart + pos - 2);
             }
-            tempSequence = proteinSequence.substring(0, peptideTempStart);
         }
         return result;
     }
@@ -2165,7 +2164,7 @@ public class PeptideShaker {
                     if (secondaryP < refP) {
                         secondaryP = refP;
                     }
-                    double deltaScore = (secondaryP - refP)*100;
+                    double deltaScore = (secondaryP - refP) * 100;
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
 
@@ -2221,7 +2220,7 @@ public class PeptideShaker {
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-            annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true);
+            annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
             for (Double ptmMass : modifications.keySet()) {
                 HashMap<Integer, Double> scores = null;
@@ -2229,31 +2228,28 @@ public class PeptideShaker {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), MATCHING_TYPE);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses());
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), MATCHING_TYPE);
                 }
                 if (scores != null) {
-                    PTM bestModification = null;
+                    // remap to searched PTMs
+                    PTM mappedModification = null;
+                    for (int site : scores.keySet()) {
                     for (PTM ptm : modifications.get(ptmMass)) {
-                        for (Integer modificationSite : scores.keySet()) {
-                            if (peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(modificationSite)) { //@TODO: implement this more elegantly with a method looking for the pattern in the peptide sequence inside the Peptide class. Will be faster.
-                                bestModification = ptm;
+                            if (peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(site)) {
+                                mappedModification = ptm;
                                 break;
                             }
-                        }
-                        if (bestModification != null) {
-                            break;
-                        }
                     }
-                    if (bestModification == null) {
-                        throw new IllegalArgumentException("Could not map the A-score results to any modification.");
+                    if (mappedModification == null) {
+                        throw new IllegalArgumentException("Could not map the PTM of mass "  + ptmMass + " at site " + site + " in peptide " + peptide.getSequence() + ".");
                     }
-
-                    String ptmName = bestModification.getName();
+                    
+                    String ptmName = mappedModification.getName();
 
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
 
@@ -2261,12 +2257,10 @@ public class PeptideShaker {
                         ptmScoring = new PtmScoring(ptmName);
                     }
 
-                    for (Integer site : scores.keySet()) {
                         ptmScoring.setProbabilisticScore(site, scores.get(site));
-                    }
 
                     ptmScores.addPtmScoring(ptmName, ptmScoring);
-
+                    }
                 }
             }
 

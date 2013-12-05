@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -37,6 +39,10 @@ public class PsmSection {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The PTM factory
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
      * The features to export.
      */
@@ -265,22 +271,22 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
-                            Collections.sort(modList);
-                            PSPtmScores ptmScores = new PSPtmScores();
                             StringBuilder output = new StringBuilder();
-                            for (String mod : modList) {
-                                if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                    if (output.length() > 0) {
-                                        output.append(", ");
-                                    }
-                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    output.append(mod).append(" (");
-                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                        boolean firstSite = true;
-                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                            PSPtmScores ptmScores = new PSPtmScores();
+                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                            if (ptmScores != null) {
+                                modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                                Collections.sort(modList);
+                                for (String mod : modList) {
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                    if (!sites.isEmpty()) {
                                         Collections.sort(sites);
+                                        if (output.length() > 0) {
+                                            output.append(", ");
+                                        }
+                                        output.append(mod).append(" (");
+                                        boolean firstSite = true;
                                         for (int site : sites) {
                                             if (firstSite) {
                                                 firstSite = false;
@@ -289,10 +295,8 @@ public class PsmSection {
                                             }
                                             output.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
                                         }
-                                    } else {
-                                        output.append("Not Scored");
+                                        output.append(")");
                                     }
-                                    output.append(")");
                                 }
                             }
                             writer.write(output + separator);
@@ -302,22 +306,22 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
-                            Collections.sort(modList);
-                            ptmScores = new PSPtmScores();
                             output = new StringBuilder();
-                            for (String mod : modList) {
-                                if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                    if (output.length() > 0) {
-                                        output.append(", ");
-                                    }
-                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    output.append(mod).append(" (");
-                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                        boolean firstSite = true;
-                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                            ptmScores = new PSPtmScores();
+                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                            if (ptmScores != null) {
+                                modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                                Collections.sort(modList);
+                                for (String mod : modList) {
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                                    if (!sites.isEmpty()) {
                                         Collections.sort(sites);
+                                        if (output.length() > 0) {
+                                            output.append(", ");
+                                        }
+                                        output.append(mod).append(" (");
+                                        boolean firstSite = true;
                                         for (int site : sites) {
                                             if (firstSite) {
                                                 firstSite = false;
@@ -326,10 +330,8 @@ public class PsmSection {
                                             }
                                             output.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
                                         }
-                                    } else {
-                                        output.append("Not Scored");
+                                        output.append(")");
                                     }
-                                    output.append(")");
                                 }
                             }
                             writer.write(output + separator);
@@ -403,43 +405,57 @@ public class PsmSection {
                             ptmScores = new PSPtmScores();
                             output = new StringBuilder();
                             for (String mod : modList) {
-                                if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                                PTM ptm = ptmFactory.getPTM(mod);
+
+                                if (ptm.getType() == PTM.MODAA) {
+
                                     if (output.length() > 0) {
                                         output.append(", ");
                                     }
+                                    output.append(mod);
 
-                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                     output.append(" (");
+                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
-                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                        boolean firstSite = true;
+                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                            PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                            boolean firstSite = true;
 
-                                        for (int site : ptmScoring.getOrderedPtmLocations()) {
-
-                                            if (firstSite) {
-                                                firstSite = false;
+                                            ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
+                                            if (sites.isEmpty()) {
+                                                output.append("Not Scored");
                                             } else {
-                                                output.append(", ");
-                                            }
-                                            int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+                                                for (int site : ptmScoring.getOrderedPtmLocations()) {
 
-                                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                                output.append(site).append(": Not Scored");
-                                            } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                                output.append(site).append(": Random");
-                                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                                output.append(site).append(": Doubtfull");
-                                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                                output.append(site).append(": Confident");
-                                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                                output.append(site).append(": Very Confident");
+                                                    if (firstSite) {
+                                                        firstSite = false;
+                                                    } else {
+                                                        output.append(", ");
+                                                    }
+                                                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+
+                                                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                                        output.append(site).append(": Not Scored");
+                                                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                                        output.append(site).append(": Random");
+                                                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                                        output.append(site).append(": Doubtfull");
+                                                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                                        output.append(site).append(": Confident");
+                                                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                                        output.append(site).append(": Very Confident");
+                                                    }
+                                                }
                                             }
+                                        } else {
+                                            output.append("Not Scored");
                                         }
+
                                     } else {
                                         output.append("Not Scored");
                                     }
-
                                     output.append(")");
                                 }
                             }

@@ -3212,7 +3212,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     }
                                 }
 
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
@@ -3261,7 +3261,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     }
                                 }
 
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
@@ -3311,7 +3311,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     }
                                 }
 
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),

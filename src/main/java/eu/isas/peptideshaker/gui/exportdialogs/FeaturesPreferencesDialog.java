@@ -11,6 +11,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -2183,6 +2184,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
+                    } catch (FileNotFoundException e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output. Please make sure that the destimation file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);

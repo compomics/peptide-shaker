@@ -2401,7 +2401,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
             adaptCheckBoxMenuItem.setSelected(true);
             try {
-                getAnnotationPreferences().resetAutomaticAnnotation();
+                getAnnotationPreferences().resetAutomaticAnnotation(PeptideShaker.MATCHING_TYPE, getSearchParameters().getFragmentIonAccuracy());
             } catch (Exception e) {
                 catchException(e);
             }

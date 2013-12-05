@@ -450,8 +450,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 for (int i = 0; i < fileNames.size(); i++) {
 
                     String fraction = fileNames.get(i);
-                    int validatedPeptideCounter = 0;
-                    int notValidatedPeptideCounter = 0;
 
                     for (int j = 0; j < peptideKeys.size(); j++) {
 
@@ -462,12 +460,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                             if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
                                 if (psParameter.isValidated()) {
-                                    validatedPeptideCounter++;
 
                                     String peptideSequence = Peptide.getSequence(peptideKey);
-                                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                                    int patternLength = aminoAcidPattern.length();
-                                    String tempSequence = currentProteinSequence;
 
                                     boolean includePeptide = false;
 
@@ -475,13 +469,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                 PeptideShaker.MATCHING_TYPE,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                aminoAcidPattern, patternLength, 
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
                                                 PeptideShaker.MATCHING_TYPE,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
@@ -489,17 +481,14 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                     if (includePeptide && selectedRows.length == 1) {
 
-                                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                                            for (int k = peptideTempStart; k < peptideTempEnd; k++) {
+                                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                                        for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                            int peptideTempEnd = startIndex + peptideSequence.length();
+                                            for (int k = startIndex; k < peptideTempEnd; k++) {
                                                 coverage[i][k]++;
                                             }
-                                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                                         }
                                     }
-                                } else {
-                                    notValidatedPeptideCounter++;
                                 }
                             }
                         } catch (Exception e) {

@@ -728,14 +728,12 @@ public class FileImporter {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     String peptideSequence = peptide.getSequence();
-                                    AminoAcidPattern aminoAcidPattern = peptide.getSequenceAsPattern();
-                                    int patternLength = aminoAcidPattern.length();
 
                                     // change the search engine modifications into expected modifications
                                     // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                                     ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, aminoAcidPattern, patternLength, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                     HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
                                     HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
@@ -865,7 +863,7 @@ public class FileImporter {
                                         }
                                     }
 
-                                    if (idFilter.validateModifications(peptide, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                    if (idFilter.validateModifications(peptide, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile())) {
                                         // Estimate the theoretic mass with the new modifications
                                         peptide.estimateTheoreticMass();
                                         if (!idFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
