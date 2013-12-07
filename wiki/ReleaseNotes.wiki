@@ -7,6 +7,8 @@
  * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
  * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
  * NEW FEATURE: Added a new notification system in the lower right hand corner of the main frame.
+ * NEW FEATURE: A low memory and Java version check is now performed when starting the tool and a warning is shown in the waiting dialog.
+ * NEW FEATURE: The species can now be provided as input to SearchGUI (for use when reprocessing in PRIDE).
 
  * FEATURE IMPROVEMENT: Extended the list of PRIDE project available in the reshaking.
  * FEATURE IMPROVEMENT: Improved the Search Settings dialog, which is now identical to the one in SearchGUI and also displays the fixed PTMs.
@@ -19,7 +21,23 @@
  * FEATURE IMPROVEMENT: The intensity, mass error and bubble plots now include all currently selected ions, and not only the default a-c and x-z ions.
  * FEATURE IMPROVEMENT: Mgf validation is now performed in SearchGUI, and the information is saved so that is does not have to be done more than once.
  * FEATURE IMPROVEMENT: Added the possibility to score PTMs with phosphoRS.
+ * FEATURE IMPROVEMENT: Added the number of missed cleavages in the peptide and PSM exports.
+ * FEATURE IMPROVEMENT: If the id file parsers run out of memory this is now picked up, the search canceled and a message shown to the user.
+ * FEATURE IMPROVEMENT: Slightly reduced the height needed for the content in the Annotation tab.
+ * FEATURE IMPROVEMENT: Got rid of the derby.log file.
+ * FEATURE IMPROVEMENT: Improved the default name of the search results folder for reshake results.
+ * FEATURE IMPROVEMENT: Implemented memory usage reduction during PSM processing.
+ * FEATURE IMPROVEMENT: Closing the Reshake dialog before starting the reshaking now takes the user back to the Welcome dialog.
+ * FEATURE IMPROVEMENT: Sequence coverage is now estimated/displayed using indistinguishable amino acids.
+ * FEATURE IMPROVEMENT: Replaced the FTP file downloaded with a version that is faster on the EBI wireless.
+ * FEATURE IMPROVEMENT: Added a check if the PRIDE XML file exists locally before downloading the file from the FTP server.
 
+ * BUG FIX: Fixed various minor bugs in the PRIDE export dialogs.
+ * BUG FIX: Fixed a bug in the mass error type tooltip in the PSM table.
+ * BUG FIX: Enzymes without a value (i.e., an enzyme name) in the PRIDE XML file no longer breaks the reshake feature.
+ * BUG FIX: Semicolons are no longer supported in project and sample name (as these result in issues with Derby).
+ * BUG FIX: Fixed a bug where the FDR corrected p-values of the hypergeometric test in the GO tab could become bigger than 1.
+ * BUG FIX: Fixed a bug in the protein QC plots where the numbers didn't add up.
  * BUG FIX: Corrected bugs in the Follow Up command line for the accession and inclusion list export options.
  * BUG FIX: Fixed various bugs in the command line reports and follow up analysis exports.
  * BUG FIX: Fixed a bug where empty decoy tags were not handled correctly.
@@ -28,12 +46,14 @@
  * BUG FIX: Fixed a bug with changing the reporter and neutral ions in the PtmDialog.
  * BUG FIX: Fixed various minor GUI issues in the Fractions tab.
  * BUG FIX: Fixed a bug where the project could not be saved after loading results in the Fractions tab.
+ * BUG FIX: Fixed a bug with the handling of corrupt PRIDE PTM mapping files.
 
  * LIBRARY UPDATE: Removed sqlite as a transitive dependency.
  * LIBRARY UPDATE: Removed twitter4j-core  as a dependency.
- * LIBRARY UPDATE: Updated omssa parser to version 1.6.0.
- * LIBRARY UPDATE: Updated xtandem parser to version 1.7.1.
- * LIBRARY UPDATE: Updated utilities to version 3.15.29.
+ * LIBRARY UPDATE: Updated ols-dialog to version 3.4.1.
+ * LIBRARY UPDATE: Updated omssa parser to version 1.6.1.
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.7.3.
+ * LIBRARY UPDATE: Updated utilities to version 3.19.5.
 
 ----
 
