@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -227,7 +226,7 @@ public class DisplayFeaturesGenerator {
             String modName = modMatch.getTheoreticPtm();
             PTM ptm = ptmFactory.getPTM(modName);
 
-            if ((ptm.getType() == PTM.MODAA && modMatch.isVariable()) || displayPreferences.isDisplayedPTM(modName)) {
+            if ((ptm.getType() == PTM.MODAA && modMatch.isVariable()) && displayPreferences.isDisplayedPTM(modName)) {
 
                 int modSite = modMatch.getModificationSite();
 
