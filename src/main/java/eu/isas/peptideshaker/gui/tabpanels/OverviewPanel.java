@@ -3946,7 +3946,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
 
                     if (includePeptide) {
-                    AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                         for (int peptideTempStart : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             int peptideTempEnd = peptideTempStart + peptideSequence.length();
                             for (int j = peptideTempStart; j < peptideTempEnd; j++) {
@@ -3993,7 +3993,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void updateSequenceCoverage(String proteinAccession, boolean updateProtein) {
 
         // @TODO: should be in a separate thread that is possible to cancel if the selection changes
-        
         // @TODO: the sequence coverage plotting code should be moved into a separate class!
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();

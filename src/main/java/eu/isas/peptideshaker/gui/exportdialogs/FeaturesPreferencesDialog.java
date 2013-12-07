@@ -1402,7 +1402,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void exportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllActionPerformed
 
         final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Text File Folder", "Save", false);
-        
+
         if (selectedFolder != null) {
 
             peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
@@ -2004,8 +2004,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Add a new report type.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void addReportLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addReportLabelMouseClicked
         addReportMenuItemActionPerformed(null);
@@ -2186,7 +2186,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         }
                     } catch (FileNotFoundException e) {
                         progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output. Please make sure that the destimation file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occurred while generating the output. Please make sure "
+                                + "that the detination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
