@@ -13,7 +13,6 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
@@ -399,7 +398,7 @@ public class FileImporter {
                 }
 
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                waitingHandler.appendReport("Establishing database connection.", true, true);
+                waitingHandler.appendReport("Establishing local database connection.", true, true);
 
                 identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
                 identification.setIsDB(true);
