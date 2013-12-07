@@ -512,7 +512,7 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                         tabCounter++;
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey)) + "\" />" + System.getProperty("line.separator"));
+                        writeCvTerm(new CvTerm("MS", "MS:1000796", "Spectrum Title", "" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey))));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
@@ -543,7 +543,7 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + scores.get(se) + "\" />" + System.getProperty("line.separator"));
                         }
                         if (mascotScore != null) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Mascot Score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
+                            writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
                         }
 
                         // PTM scoring
@@ -551,7 +551,9 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
                         if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName() + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " 
+                                    + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName() 
+                                    + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
                         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
@@ -570,8 +572,7 @@ public class PRIDEExport {
                 }
                 try {
                     if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\""
-                                + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                        writeCvTerm(new CvTerm("MS", "MS:1001905", "emPAI value", "" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey)));
                     } else {
                         br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
                                 + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
