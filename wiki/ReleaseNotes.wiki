@@ -6,7 +6,6 @@
 *Changes in PeptideShaker 0.23.0  (December 9. 2013):*
  * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
  * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
- * NEW FEATURE: Added a new notification system in the lower right hand corner of the main frame.
  * NEW FEATURE: A low memory and Java version check is now performed when starting the tool and a warning is shown in the waiting dialog.
  * NEW FEATURE: The species can now be provided as input to SearchGUI (for use when reprocessing in PRIDE).
 
