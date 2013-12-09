@@ -8,6 +8,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -127,7 +128,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Quantification Method:"/>
+                <Property name="text" type="java.lang.String" value="Quantification Method"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="methodCmb">
@@ -188,7 +189,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="surroundingAminoAcidsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Surrounding Amino Acids:"/>
+                <Property name="text" type="java.lang.String" value="Surrounding Amino Acids"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="nAASpinner">
@@ -263,7 +264,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="False Localization Rate:"/>
+                <Property name="text" type="java.lang.String" value="False Localization Rate"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="flrThresholdTxt">
@@ -275,7 +276,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="neutralLossesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Neutral Losses Accounted:"/>
+                <Property name="text" type="java.lang.String" value="Neutral Losses Accounted"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="neutralLossesCmb">
@@ -290,7 +291,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="aScoreCalculationLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A-score Calculation:"/>
+                <Property name="text" type="java.lang.String" value="A-score Calculation"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="aScoreCalculationCmb">

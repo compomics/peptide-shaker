@@ -1279,6 +1279,10 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the list of validated protein keys
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
      */
     public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1293,6 +1297,10 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the list of validated protein keys
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
      */
     public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {

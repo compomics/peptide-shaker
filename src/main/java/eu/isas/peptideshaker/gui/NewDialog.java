@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.filehandling.FileDisplayDialog;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -419,6 +420,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         idFilesTxt.setEditable(false);
         idFilesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        idFilesTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                idFilesTxtMouseClicked(evt);
+            }
+        });
 
         browseId.setText("Browse");
         browseId.addActionListener(new java.awt.event.ActionListener() {
@@ -439,6 +445,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         spectrumFilesTxt.setEditable(false);
         spectrumFilesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        spectrumFilesTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                spectrumFilesTxtMouseClicked(evt);
+            }
+        });
 
         browseSpectra.setText("Browse");
         browseSpectra.addActionListener(new java.awt.event.ActionListener() {
@@ -1025,22 +1036,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
                     idFilesTxt.setText(idFiles.size() + " file(s) selected");
 
-//                    if (idFiles.isEmpty()) {
-//                        idFilesTxt.setText("0 file(s) selected");
-//                    } else if (idFiles.size() == 1) {
-//                        idFilesTxt.setText(idFiles.get(0).getName());
-//                    } else {
-//
-//                        String idFileString = "";
-//                        for (File tempFile : idFiles) {
-//                            if (!idFileString.isEmpty()) {
-//                                idFileString += ", ";
-//                            }
-//                            idFileString += tempFile.getName();
-//                        }
-//
-//                        idFilesTxt.setText(idFileString);
-//                    }
                     if (finalParameterFile != null) {
                         importSearchParameters(finalParameterFile, progressDialog);
                     }
@@ -1228,6 +1223,38 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
 
+    /**
+     * Display the list of selected identification files.
+     * 
+     * @param evt 
+     */
+    private void idFilesTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idFilesTxtMouseClicked
+        if (!idFiles.isEmpty()) {
+            FileDisplayDialog fileDisplayDialog = new FileDisplayDialog(this, idFiles, true);
+            if (!fileDisplayDialog.canceled()) {
+                idFiles = fileDisplayDialog.getSelectedFiles();
+                idFilesTxt.setText(idFiles.size() + " file(s) selected");
+                validateInput();
+            }
+        }
+    }//GEN-LAST:event_idFilesTxtMouseClicked
+
+    /**
+     * Display the list of selected spectrum files.
+     * 
+     * @param evt 
+     */
+    private void spectrumFilesTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumFilesTxtMouseClicked
+        if (!spectrumFiles.isEmpty()) {
+            FileDisplayDialog fileDisplayDialog = new FileDisplayDialog(this, spectrumFiles, true);
+            if (!fileDisplayDialog.canceled()) {
+                spectrumFiles = fileDisplayDialog.getSelectedFiles();
+                spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+                validateInput();
+            }
+        }
+    }//GEN-LAST:event_spectrumFilesTxtMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
@@ -1284,8 +1311,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             projectNameIdTxt.setToolTipText(null);
         } else {
             projectReferenceLabel.setForeground(Color.RED);
-            projectReferenceLabel.setToolTipText("Please provide a project reference.");
-            projectNameIdTxt.setToolTipText("Please provide a project reference.");
+            projectReferenceLabel.setToolTipText("Please provide a project reference");
+            projectNameIdTxt.setToolTipText("Please provide a project reference");
             allValid = false;
         }
 
@@ -1295,8 +1322,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             sampleNameIdtxt.setToolTipText(null);
         } else {
             sampleNameLabel.setForeground(Color.RED);
-            sampleNameLabel.setToolTipText("Please provide a project sample name.");
-            sampleNameIdtxt.setToolTipText("Please provide a project sample name.");
+            sampleNameLabel.setToolTipText("Please provide a project sample name");
+            sampleNameIdtxt.setToolTipText("Please provide a project sample name");
             allValid = false;
         }
 
@@ -1306,30 +1333,34 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             replicateNumberIdtxt.setToolTipText(null);
         } else {
             replicateLabel.setForeground(Color.RED);
-            replicateLabel.setToolTipText("Please provide a replicate number.");
-            replicateNumberIdtxt.setToolTipText("Please provide a replicate number.");
+            replicateLabel.setToolTipText("Please provide a replicate number");
+            replicateNumberIdtxt.setToolTipText("Please provide a replicate number");
             allValid = false;
         }
 
         if (idFiles.size() > 0) {
             idFilesLabel.setForeground(Color.BLACK);
             idFilesLabel.setToolTipText(null);
-            idFilesTxt.setToolTipText(null);
+            idFilesTxt.setToolTipText("Click to see the selected files");
+            idFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
             idFilesLabel.setForeground(Color.RED);
-            idFilesLabel.setToolTipText("Please select at least one identification file.");
-            idFilesTxt.setToolTipText("Please select at least one identification file.");
+            idFilesLabel.setToolTipText("Please select at least one identification file");
+            idFilesTxt.setToolTipText("Please select at least one identification file");
+            idFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             allValid = false;
         }
 
         if (spectrumFiles.size() > 0) {
             spectrumFilesLabel.setForeground(Color.BLACK);
-            idFilesLabel.setToolTipText(null);
-            spectrumFilesTxt.setToolTipText(null);
+            spectrumFilesLabel.setToolTipText(null);
+            spectrumFilesTxt.setToolTipText("Click to see the selected files");
+            spectrumFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
             spectrumFilesLabel.setForeground(Color.RED);
-            idFilesLabel.setToolTipText("Please select at least one identification file.");
-            spectrumFilesTxt.setToolTipText("Please select the spectrum file(s) for the identfication files.");
+            spectrumFilesLabel.setToolTipText("Please select the spectrum file(s) for the identfication files");
+            spectrumFilesTxt.setToolTipText("Please select the spectrum file(s) for the identfication files");
+            spectrumFilesTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             allValid = false;
         }
 
@@ -1339,8 +1370,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             fastaFileTxt.setToolTipText(null);
         } else {
             databaseLabel.setForeground(Color.RED);
-            databaseLabel.setToolTipText("Please select the database file used.");
-            fastaFileTxt.setToolTipText("Please select the database file used.");
+            databaseLabel.setToolTipText("Please select the database file used");
+            fastaFileTxt.setToolTipText("Please select the database file used");
             allValid = false;
         }
 
