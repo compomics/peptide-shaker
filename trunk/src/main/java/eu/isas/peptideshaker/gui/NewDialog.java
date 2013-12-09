@@ -897,15 +897,15 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     return false;
                 }
 
-                return myFile.getName().toLowerCase().endsWith("dat")
-                        || myFile.getName().toLowerCase().endsWith("omx")
+                return myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("t.xml")
+                        || myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: Mascot (.dat), OMSSA (.omx), X!Tandem (.xml)";
+                return "Supported formats: OMSSA (.omx), X!Tandem (.xml) and Mascot (.dat)";
             }
         };
 
@@ -1022,8 +1022,25 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                             importSuccessfull = importMgfFiles(inputFile);
                         }
                     }
+
                     idFilesTxt.setText(idFiles.size() + " file(s) selected");
 
+//                    if (idFiles.isEmpty()) {
+//                        idFilesTxt.setText("0 file(s) selected");
+//                    } else if (idFiles.size() == 1) {
+//                        idFilesTxt.setText(idFiles.get(0).getName());
+//                    } else {
+//
+//                        String idFileString = "";
+//                        for (File tempFile : idFiles) {
+//                            if (!idFileString.isEmpty()) {
+//                                idFileString += ", ";
+//                            }
+//                            idFileString += tempFile.getName();
+//                        }
+//
+//                        idFilesTxt.setText(idFileString);
+//                    }
                     if (finalParameterFile != null) {
                         importSearchParameters(finalParameterFile, progressDialog);
                     }
@@ -1063,7 +1080,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, peptideShakerGUI.getIdFilter(), true);
         IdFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
-            idFilesTxt.setText("User Defined");
+            importFilterTxt.setText("User Defined");
             peptideShakerGUI.setIdFilter(newFilter);
         }
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
