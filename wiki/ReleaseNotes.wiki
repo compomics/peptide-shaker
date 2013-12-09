@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.23.0 (coming soon...):*
+*Changes in PeptideShaker 0.23.0  (December 9. 2013):*
  * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
  * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
  * NEW FEATURE: Added a new notification system in the lower right hand corner of the main frame.
@@ -67,6 +67,8 @@
  * LIBRARY UPDATE: Updated omssa parser to version 1.5.13.
  * LIBRARY UPDATE: Updated mascotdatfile parser to version 3.4.15.
  * LIBRARY UPDATE: Updated utilities to version 3.14.19.
+
+Download Count: 331
 
 ----
 
