@@ -486,7 +486,7 @@ public class IdentificationFeaturesGenerator {
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
                                         Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
                                         peptideOccurrence += currentProtein.getPeptideStart(peptideSequence,
-                                                AminoAcidPattern.MatchingType.string, ms2Accuracy).size();
+                                                PeptideShaker.MATCHING_TYPE, ms2Accuracy).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }
                                 } catch (Exception e) {
