@@ -62,7 +62,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Update the gui based on the spectrum counting preferences.
+     * Update the GUI based on the spectrum counting preferences.
      */
     private void insertSpectrumCountingPreferences() {
         if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.NSAF) {
@@ -147,7 +147,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         optionsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("MS2 Quantification"));
         optionsPanel1.setOpaque(false);
 
-        jLabel1.setText("Quantification Method:");
+        jLabel1.setText("Quantification Method");
 
         methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF+", "emPAI" }));
 
@@ -183,7 +183,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Sequence"));
         optionsPanel.setOpaque(false);
 
-        surroundingAminoAcidsLabel.setText("Surrounding Amino Acids:");
+        surroundingAminoAcidsLabel.setText("Surrounding Amino Acids");
 
         nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, 5, 1));
 
@@ -211,17 +211,17 @@ public class PreferencesDialog extends javax.swing.JDialog {
         preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
         preferencesPanel.setOpaque(false);
 
-        aScoreLabel.setText("False Localization Rate:");
+        aScoreLabel.setText("False Localization Rate");
 
         flrThresholdTxt.setEditable(false);
         flrThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         flrThresholdTxt.setText("50");
 
-        neutralLossesLabel.setText("Neutral Losses Accounted:");
+        neutralLossesLabel.setText("Neutral Losses Accounted");
 
         neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
-        aScoreCalculationLabel.setText("A-score Calculation:");
+        aScoreCalculationLabel.setText("A-score Calculation");
 
         aScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
