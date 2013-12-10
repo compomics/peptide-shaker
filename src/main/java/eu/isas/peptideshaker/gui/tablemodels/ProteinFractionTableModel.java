@@ -185,7 +185,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 String proteinKey = proteinKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
                 pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, pSParameter);
-                return pSParameter.isValidated();
+                return pSParameter.getMatchValidationLevel().getIndex();
             } else {
                 return "";
             }

@@ -1038,19 +1038,11 @@ public class MzIdentMLExport {
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (peptideProbabilities.isValidated()) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                        }
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + peptideProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (psmProbabilities.isValidated()) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                        }
+                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + psmProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().toString() + "\" />" + System.getProperty("line.separator"));
 
                         // search engine specific parameters
@@ -1099,11 +1091,7 @@ public class MzIdentMLExport {
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-                if (proteinProbabilities.isValidated()) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                } else {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                }
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + proteinProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
                 String otherProteins = "";
                 boolean first = true;
                 for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {

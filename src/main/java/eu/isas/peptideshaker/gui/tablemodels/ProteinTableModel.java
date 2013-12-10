@@ -296,7 +296,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
                         if (pSParameter != null) {
-                            return pSParameter.isValidated();
+                            return pSParameter.getMatchValidationLevel().getIndex();
                         } else {
                             return null;
                         }

@@ -459,8 +459,7 @@ public class PRIDEExport {
                                 dScore.append(")");
                             }
                         }
-                        
-                        
+
                         StringBuilder probabilisticScore = new StringBuilder();
 
                         if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()) {
@@ -477,18 +476,18 @@ public class PRIDEExport {
                                     probabilisticScore.append(mod).append(" (");
 
                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                    boolean firstSite = true;
-                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
-                                    Collections.sort(sites);
-                                    for (int site : sites) {
-                                        if (firstSite) {
-                                            firstSite = false;
-                                        } else {
-                                            probabilisticScore.append(", ");
+                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                        boolean firstSite = true;
+                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                                        Collections.sort(sites);
+                                        for (int site : sites) {
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                probabilisticScore.append(", ");
+                                            }
+                                            probabilisticScore.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
                                         }
-                                        probabilisticScore.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
-                                    }
                                     } else {
                                         probabilisticScore.append("Not Scored");
                                     }
@@ -517,19 +516,11 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (peptideProbabilities.isValidated()) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                        }
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + peptideProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (psmProbabilities.isValidated()) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                        }
+                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + psmProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
 
                         writeCvTerm(new CvTerm("MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
                         //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
@@ -551,8 +542,8 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
                         if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " 
-                                    + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName() 
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM "
+                                    + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName()
                                     + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
@@ -580,11 +571,7 @@ public class PRIDEExport {
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-                if (proteinProbabilities.isValidated()) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
-                } else {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"No\" />" + System.getProperty("line.separator"));
-                }
+                br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + proteinProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
                 String otherProteins = "";
                 boolean first = true;
                 for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
@@ -665,7 +652,6 @@ public class PRIDEExport {
 
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
-
         CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
 
         if (fragmentIonTerm != null) {
@@ -900,9 +886,7 @@ public class PRIDEExport {
                     + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + System.getProperty("line.separator"));
 
             // @TODO: figure out how to annotate retention time windows properly...
-
             //spectrum.getPrecursor().getRtWindow()[0] + "-" + spectrum.getPrecursor().getRtWindow()[1]
-
         } else if (spectrum.getPrecursor().getRt() != -1) {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
                     + spectrum.getPrecursor().getRt() + "\" />" + System.getProperty("line.separator"));
@@ -1023,7 +1007,6 @@ public class PRIDEExport {
                 + peptideShakerGUI.getSearchParameters().getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
 
         // @TODO: add more settings??
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</processingMethod>" + System.getProperty("line.separator"));
 
@@ -1066,7 +1049,6 @@ public class PRIDEExport {
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</analyzerList>" + System.getProperty("line.separator"));
-
 
         // write the detector
         br.write(getCurrentTabSpace() + "<detector>" + System.getProperty("line.separator"));
@@ -1144,14 +1126,11 @@ public class PRIDEExport {
 
         // Global peptide FDR
         //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
-
         // @TODO: add global protein FDR??
-
         // search type
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + System.getProperty("line.separator"));
 
         // @TODO: add more??
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
     }

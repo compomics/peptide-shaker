@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -50,8 +51,13 @@ public class PSParameter implements UrParameter {
     /**
      * Boolean indicating whether a match is validated or not at the selected
      * threshold.
+     * @deprecated use matchValidationLevel instead
      */
     private boolean validated = false;
+    /**
+     * The validation level of a given match
+     */
+    private MatchValidationLevel matchValidationLevel;
     /**
      * Boolean indicating whether this is a hidden match.
      */
@@ -375,6 +381,7 @@ public class PSParameter implements UrParameter {
     /**
      * Un/Validates a match.
      *
+     * @deprecated use setMatchValidationLevel instead
      * @param validated boolean indicating whether the match should be validated
      */
     public void setValidated(boolean validated) {
@@ -383,11 +390,37 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns whether a match is validated or not.
-     *
+     * 
+     * @deprecated use getMatchValidationLevel instead
      * @return boolean indicating whether a match is validated or not
      */
     public boolean isValidated() {
         return validated;
+    }
+
+    /**
+     * Returns the validation level of the match.
+     * 
+     * @return the validation level of the match
+     */
+    public MatchValidationLevel getMatchValidationLevel() {
+        if (matchValidationLevel == null) { // Backward compatibility check
+            if (validated) {
+                matchValidationLevel = MatchValidationLevel.confident;
+            } else {
+                matchValidationLevel = MatchValidationLevel.not_validated;
+            }
+        }
+        return matchValidationLevel;
+    }
+
+    /**
+     * Sets the validation level of the match.
+     * 
+     * @param matchValidationLevel the validation level of the match
+     */
+    public void setMatchValidationLevel(MatchValidationLevel matchValidationLevel) {
+        this.matchValidationLevel = matchValidationLevel;
     }
 
     /**

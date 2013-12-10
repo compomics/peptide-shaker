@@ -314,7 +314,7 @@ public class TxtExporter {
             nSpectra += peptideMatch.getSpectrumCount();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
-            if (psParameter.isValidated()) {
+            if (psParameter.getMatchValidationLevel().isValidated()) {
 
                 nValidatedPeptides++;
 
@@ -323,7 +323,7 @@ public class TxtExporter {
 
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                    if (psParameter.isValidated()) {
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedPsms++;
                     }
                 }
@@ -353,11 +353,7 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-        if (probabilities.isValidated()) {
-            line.append("1").append(SEPARATOR);
-        } else {
-            line.append("0").append(SEPARATOR);
-        }
+            line.append(probabilities.getMatchValidationLevel()).append(SEPARATOR);
 
         try {
             line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription());
@@ -470,7 +466,7 @@ public class TxtExporter {
         identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), probabilities, null);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
-            if (probabilities.isValidated()) {
+            if (probabilities.getMatchValidationLevel().isValidated()) {
                 nSpectraValidated++;
             }
         }
@@ -486,11 +482,7 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-        if (probabilities.isValidated()) {
-            line.append("1");
-        } else {
-            line.append("0");
-        }
+            line.append(probabilities.getMatchValidationLevel());
 
         line.append(System.getProperty("line.separator"));
 
@@ -771,11 +763,7 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-        if (probabilities.isValidated()) {
-            line.append("1");
-        } else {
-            line.append("0");
-        }
+            line.append(probabilities.getMatchValidationLevel());
 
         line.append(System.getProperty("line.separator"));
 
@@ -884,11 +872,7 @@ public class TxtExporter {
                     }
 
                     try {
-                        if (probabilities.isValidated()) {
-                            line += "1";
-                        } else {
-                            line += "0";
-                        }
+                            line += probabilities.getMatchValidationLevel();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

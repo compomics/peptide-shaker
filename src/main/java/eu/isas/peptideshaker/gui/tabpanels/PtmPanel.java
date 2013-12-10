@@ -4096,7 +4096,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 6:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(displayedPeptides.get(row), probabilities);
-                        return probabilities.isValidated();
+                        return probabilities.getMatchValidationLevel().getIndex();
                     default:
                         return "";
                 }
@@ -4195,7 +4195,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 6:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(relatedPeptides.get(row), probabilities);
-                        return probabilities.isValidated();
+                        return probabilities.getMatchValidationLevel().getIndex();
                     default:
                         return "";
                 }
@@ -4312,7 +4312,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 6:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
-                        return probabilities.isValidated();
+                        return probabilities.getMatchValidationLevel().getIndex();
                     default:
                         return null;
                 }
@@ -4420,7 +4420,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 6:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
-                        return probabilities.isValidated();
+                        return probabilities.getMatchValidationLevel().getIndex();
                     default:
                         return "";
                 }

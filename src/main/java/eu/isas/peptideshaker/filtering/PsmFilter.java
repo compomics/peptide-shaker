@@ -1,7 +1,18 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.RowFilter;
 import javax.swing.RowFilter.ComparisonType;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * PSM filter.
@@ -296,5 +307,187 @@ public class PsmFilter extends MatchFilter {
      */
     public void setFileNames(ArrayList<String> filesNames) {
         this.fileName = filesNames;
+    }
+    
+
+    /**
+     * Tests whether a spectrum match is validated by this filter.
+     *
+     * @param spectrumKey the key of the spectrum match
+     * @param identification the identification object to get the information from
+     * @param foundCharges the charges found in that project
+     * @param searchParameters the identification parameters
+     * 
+     * @return a boolean indicating whether a spectrum match is validated by a
+     * given filter
+     * 
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     */
+    public boolean isValidated(String spectrumKey, Identification identification, ArrayList<Integer> foundCharges, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        return isValidated(spectrumKey, this, identification, foundCharges, searchParameters);
+    }
+    
+
+    /**
+     * Tests whether a spectrum match is validated by a given filter.
+     *
+     * @param spectrumKey the key of the spectrum match
+     * @param psmFilter the filter
+     * @param identification the identification object to get the information from
+     * @param foundCharges the charges found in that project
+     * @param searchParameters the identification parameters
+     * 
+     * @return a boolean indicating whether a spectrum match is validated by a
+     * given filter
+     * 
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     */
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ArrayList<Integer> foundCharges, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+            if (psmFilter.getExceptions().contains(spectrumKey)) {
+                return false;
+            }
+            if (psmFilter.getManualValidation().size() > 0) {
+                if (psmFilter.getManualValidation().contains(spectrumKey)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            PSParameter psParameter = new PSParameter();
+
+            if (psmFilter.getPsmScore() != null
+                    || psmFilter.getPsmConfidence() != null) {
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                if (psmFilter.getPsmScore() != null) {
+                    if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.AFTER) {
+                        if (psParameter.getPsmScore() <= psmFilter.getPsmScore()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.BEFORE) {
+                        if (psParameter.getPsmScore() >= psmFilter.getPsmScore()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.EQUAL) {
+                        if (psParameter.getPsmScore() != psmFilter.getPsmScore()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                        if (psParameter.getPsmScore() == psmFilter.getPsmScore()) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (psmFilter.getPsmConfidence() != null) {
+                    if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.AFTER) {
+                        if (psParameter.getPsmConfidence() <= psmFilter.getPsmConfidence()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.BEFORE) {
+                        if (psParameter.getPsmConfidence() >= psmFilter.getPsmConfidence()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.EQUAL) {
+                        if (psParameter.getPsmConfidence() != psmFilter.getPsmConfidence()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                        if (psParameter.getPsmConfidence() == psmFilter.getPsmConfidence()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (psmFilter.getPrecursorMz() != null
+                    || psmFilter.getPrecursorRT() != null
+                    || psmFilter.getPrecursorMzError() != null) {
+                SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+                Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+                if (psmFilter.getPrecursorMz() != null) {
+                    if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.AFTER) {
+                        if (precursor.getMz() <= psmFilter.getPrecursorMz()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.BEFORE) {
+                        if (precursor.getMz() >= psmFilter.getPrecursorMz()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.EQUAL) {
+                        if (precursor.getMz() != psmFilter.getPrecursorMz()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                        if (precursor.getMz() == psmFilter.getPrecursorMz()) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (psmFilter.getPrecursorRT() != null) {
+                    if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.AFTER) {
+                        if (precursor.getRt() <= psmFilter.getPrecursorRT()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.BEFORE) {
+                        if (precursor.getRt() >= psmFilter.getPrecursorRT()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.EQUAL) {
+                        if (precursor.getRt() != psmFilter.getPrecursorRT()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                        if (precursor.getRt() == psmFilter.getPrecursorRT()) {
+                            return false;
+                        }
+                    }
+                }
+
+                if (psmFilter.getPrecursorMzError() != null) {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                    if (psmFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
+                        if (error <= psmFilter.getPrecursorMzError()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.BEFORE) {
+                        if (error >= psmFilter.getPrecursorMzError()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.EQUAL) {
+                        if (error != psmFilter.getPrecursorMzError()) {
+                            return false;
+                        }
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                        if (error == psmFilter.getPrecursorMzError()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            if (psmFilter.getCharges().size() != foundCharges.size()) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                if (!psmFilter.getCharges().contains(charge)) {
+                    return false;
+                }
+            }
+
+            if (!psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
+                return false;
+            }
+            return true;
     }
 }

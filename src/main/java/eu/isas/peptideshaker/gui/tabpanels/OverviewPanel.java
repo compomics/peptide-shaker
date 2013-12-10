@@ -2131,13 +2131,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     PSParameter psParameter = new PSParameter();
                     try {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
                     if (!psParameter.isStarred()) {
                         peptideShakerGUI.getStarHider().starProtein(proteinKey);
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
+                    }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
 
@@ -3930,7 +3930,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 
-                if (psParameter.isValidated()) {
+                if (psParameter.getMatchValidationLevel().isValidated()) {
                     String peptideSequence = Peptide.getSequence(peptideKey);
 
                     boolean includePeptide = false;
@@ -5622,7 +5622,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                             if (((startIndex <= peptideStart && peptideStart <= endIndex)
                                     || (endIndex <= peptideEnd && peptideEnd <= endIndex))
-                                    && psParameter.isValidated()
+                                    && psParameter.getMatchValidationLevel().isValidated()
                                     && !psParameter.isHidden()) {
                                 PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                                 String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, false, true);

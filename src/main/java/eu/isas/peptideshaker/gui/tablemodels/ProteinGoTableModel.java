@@ -191,7 +191,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                     }
                 case 8:
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.isValidated();
+                    return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }

@@ -459,7 +459,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 
                             if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
-                                if (psParameter.isValidated()) {
+                                if (psParameter.getMatchValidationLevel().isValidated()) {
 
                                     String peptideSequence = Peptide.getSequence(peptideKey);
 

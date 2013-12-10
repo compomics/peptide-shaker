@@ -550,11 +550,7 @@ public class PsmSection {
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                                 parameterKey = spectrumKey;
                             }
-                            if (psParameter.isValidated()) {
-                                writer.write(1 + separator);
-                            } else {
-                                writer.write(0 + separator);
-                            }
+                                writer.write(psParameter.getMatchValidationLevel() + separator);
                             break;
                         default:
                             writer.write("Not implemented" + separator);

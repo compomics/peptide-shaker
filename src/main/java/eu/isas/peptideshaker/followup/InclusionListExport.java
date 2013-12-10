@@ -93,7 +93,7 @@ public class InclusionListExport {
 
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            if (psParameter.isValidated()) {
+                            if (psParameter.getMatchValidationLevel().isValidated()) {
                                 boolean passesFilter = true;
                                 for (PeptideFilterType filterType : peptideFilters) {
                                     String sequence = Peptide.getSequence(peptideKey);
@@ -135,7 +135,7 @@ public class InclusionListExport {
                                 identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                    if (psParameter.isValidated()) {
+                                    if (psParameter.getMatchValidationLevel().isValidated()) {
                                         validatedPsms.add(spectrumKey);
                                     }
                                 }

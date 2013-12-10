@@ -1,12 +1,18 @@
 package eu.isas.peptideshaker.scoring;
 
+import com.compomics.util.experiment.identification.Identification;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.filtering.PsmFilter;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.RowFilter;
 
 /**
  * This map will store target decoy informations about the psms grouped
@@ -29,11 +35,36 @@ public class PsmSpecificMap implements Serializable {
      * relevance
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
+    /**
+     * The filters to use to flag doubtful matches
+     */
+    private ArrayList<PsmFilter> doubtfulMatchesFilters = getDefaultPsmFilters();
 
     /**
      * Constructor.
      */
     public PsmSpecificMap() {
+    }
+
+    /**
+     * Returns the filters used to flag doubtful matches
+     * 
+     * @return the filters used to flag doubtful matches
+     */
+    public ArrayList<PsmFilter> getDoubtfulMatchesFilters() {
+        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
+            doubtfulMatchesFilters = new ArrayList<PsmFilter>();
+        }
+        return doubtfulMatchesFilters;
+    }
+
+    /**
+     * Sets the filters used to flag doubtful matches
+     * 
+     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
+     */
+    public void setDoubtfulMatchesFilters(ArrayList<PsmFilter> doubtfulMatchesFilters) {
+        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
     }
 
     /**
@@ -254,5 +285,18 @@ public class PsmSpecificMap implements Serializable {
             }
         }
         return maxCharge;
+    }
+    
+    /**
+     * Returns the default filters for setting a match as doubtful.
+     * 
+     * @return the default filters for setting a match as doubtful
+     */
+    public static ArrayList<PsmFilter> getDefaultPsmFilters() {
+        ArrayList<PsmFilter> filters = new ArrayList<PsmFilter>();
+        
+        //@TODO: add something here?
+        
+        return filters;
     }
 }

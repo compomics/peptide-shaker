@@ -345,11 +345,7 @@ public class PeptideSection {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             parameterKey = peptideKey;
                         }
-                        if (psParameter.isValidated()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
+                            writer.write(psParameter.getMatchValidationLevel() + separator);
                         break;
                     case validated_psms:
                         writer.write(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) + separator);

@@ -121,7 +121,7 @@ public class ProgenesisExport {
                         if (identification.matchExists(spectrumKey)) {
                             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                            if (psParameter.isValidated()) {
+                            if (psParameter.getMatchValidationLevel().isValidated()) {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
@@ -141,7 +141,7 @@ public class ProgenesisExport {
                                         } else {
                                             String peptideKey = peptide.getKey();
                                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                                            if (psParameter.isValidated()) {
+                                            if (psParameter.getMatchValidationLevel().isValidated()) {
                                                 if (exportType == ExportType.validated_psms_peptides) {
                                                     writePsm(writer, spectrumKey, identification, searchParameters);
                                                 } else {
@@ -151,7 +151,7 @@ public class ProgenesisExport {
                                                         if (groups != null) {
                                                             for (String group : groups) {
                                                                 psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
-                                                                if (psParameter.isValidated()) {
+                                                                if (psParameter.getMatchValidationLevel().isValidated()) {
                                                                     for (String groupAccession : ProteinMatch.getAccessions(group)) {
                                                                         if (!accessions.contains(groupAccession)) {
                                                                             accessions.add(groupAccession);
