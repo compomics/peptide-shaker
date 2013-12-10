@@ -691,7 +691,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
                                         + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + probabilities.isValidated() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
+                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes
@@ -707,7 +707,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
                                             nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
                                         } else {
-                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.getMatchValidationLevel() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
                                         }
                                     } else {
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {

@@ -1574,7 +1574,7 @@ public class QCPanel extends javax.swing.JPanel {
                     peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         peptideParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideParameter);
-                        if (peptideParameter.isValidated() && !peptideParameter.isHidden()) {
+                        if (peptideParameter.getMatchValidationLevel().isValidated() && !peptideParameter.isHidden()) {
                             value++;
                         }
                     }
@@ -1586,13 +1586,13 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!proteinParameter.isHidden()) {
 
                         if (!proteinMatch.isDecoy()) {
-                            if (proteinParameter.isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                 validatedValues.add(value);
                             } else {
                                 nonValidatedValues.add(value);
                             }
                         } else {
-                            if (proteinParameter.isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                 validatedDecoyValues.add(value);
                             } else {
                                 nonValidatedDecoyValues.add(value);
@@ -1627,7 +1627,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 value = Math.log10(value);
                             }
 
-                            if (proteinParameter.isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                 if (value > 0) {
                                     if (value > maxValue) {
                                         maxValue = value;
@@ -1636,13 +1636,13 @@ public class QCPanel extends javax.swing.JPanel {
                             }
 
                             if (!proteinMatch.isDecoy()) {
-                                if (proteinParameter.isValidated()) {
+                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                     validatedValues.add(value);
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
                             } else {
-                                if (proteinParameter.isValidated()) {
+                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                     validatedDecoyValues.add(value);
                                 } else {
                                     nonValidatedDecoyValues.add(value);
@@ -1681,13 +1681,13 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
                             if (!proteinMatch.isDecoy()) {
-                                if (proteinParameter.isValidated()) {
+                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                     validatedValues.add(value);
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
                             } else {
-                                if (proteinParameter.isValidated()) {
+                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                     validatedDecoyValues.add(value);
                                 } else {
                                     nonValidatedDecoyValues.add(value);
@@ -1731,13 +1731,13 @@ public class QCPanel extends javax.swing.JPanel {
                             maxValue = value;
                         }
                         if (!ProteinMatch.isDecoy(proteinKey)) {
-                            if (proteinParameter.isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                 validatedValues.add(value);
                             } else {
                                 nonValidatedValues.add(value);
                             }
                         } else {
-                            if (proteinParameter.isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
                                 validatedDecoyValues.add(value);
                             } else {
                                 nonValidatedDecoyValues.add(value);
@@ -1792,7 +1792,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         spectrumParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, spectrumParameter);
-                        if (spectrumParameter.isValidated() && !spectrumParameter.isHidden()) {
+                        if (spectrumParameter.getMatchValidationLevel().isValidated() && !spectrumParameter.isHidden()) {
                             value = value + 1;
                         }
                     }
@@ -1804,13 +1804,13 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!peptideParameter.isHidden()) {
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedValues.add(value);
                             } else {
                                 nonValidatedValues.add(value);
                             }
                         } else {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedDecoyValues.add(value);
                             } else {
                                 nonValidatedDecoyValues.add(value);
@@ -1848,13 +1848,13 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedValues.add(value);
                             } else {
                                 nonValidatedValues.add(value);
                             }
                         } else {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedDecoyValues.add(value);
                             } else {
                                 nonValidatedDecoyValues.add(value);
@@ -1891,13 +1891,13 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedValues.add(length);
                             } else {
                                 nonValidatedValues.add(length);
                             }
                         } else {
-                            if (peptideParameter.isValidated()) {
+                            if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 validatedDecoyValues.add(length);
                             } else {
                                 nonValidatedDecoyValues.add(length);
@@ -1961,13 +1961,13 @@ public class QCPanel extends javax.swing.JPanel {
                             }
 
                             if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
-                                if (psmParameter.isValidated()) {
+                                if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     validatedValues.add(value);
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
                             } else {
-                                if (psmParameter.isValidated()) {
+                                if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     validatedDecoyValues.add(value);
                                 } else {
                                     nonValidatedDecoyValues.add(value);
@@ -2005,13 +2005,13 @@ public class QCPanel extends javax.swing.JPanel {
                             }
 
                             if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
-                                if (psmParameter.isValidated()) {
+                                if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     validatedValues.add(value);
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
                             } else {
-                                if (psmParameter.isValidated()) {
+                                if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     validatedDecoyValues.add(value);
                                 } else {
                                     nonValidatedDecoyValues.add(value);

@@ -195,7 +195,7 @@ public class SpectrumExporter {
             case validated_psms:
                 if (identification.matchExists(spectrumKey)) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                    if (psParameter.isValidated()) {
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         boolean decoy = false;
                         for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
@@ -223,8 +223,8 @@ public class SpectrumExporter {
                     if (!decoy) {
                         String peptideKey = peptide.getKey();
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                        if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
-                            if (psParameter.isValidated()) {
+                        if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
+                            if (psParameter.getMatchValidationLevel().isValidated()) {
                                 return exportType == ExportType.validated_psms_peptides;
                             }
                         }
@@ -246,15 +246,15 @@ public class SpectrumExporter {
                     if (!decoy) {
                         String peptideKey = peptide.getKey();
                         if (exportType == ExportType.non_validated_proteins
-                                || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).isValidated()
-                                && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
+                                || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).getMatchValidationLevel().isValidated()
+                                && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
                             ArrayList<String> proteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             for (String accession : proteins) {
                                 ArrayList<String> accessions = identification.getProteinMap().get(accession);
                                 if (accessions != null) {
                                     for (String proteinKey : accessions) {
                                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                                        if (psParameter.isValidated()) {
+                                        if (psParameter.getMatchValidationLevel().isValidated()) {
                                             return exportType == ExportType.validated_psms_peptides_proteins;
                                         }
                                     }

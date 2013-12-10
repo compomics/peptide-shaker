@@ -187,7 +187,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    return pSParameter.isValidated();
+                    return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }

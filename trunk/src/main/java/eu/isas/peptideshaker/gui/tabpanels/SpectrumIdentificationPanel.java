@@ -2528,7 +2528,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             boolean xTandem = false;
                             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
-                            if (probabilities.isValidated()) {
+                            if (probabilities.getMatchValidationLevel().isValidated()) {
 
                                 totalPeptideShakerIds++;
 
@@ -3014,7 +3014,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), true, true, true),
                                 probabilities.getPsmScore(),
                                 probabilities.getPsmConfidence(),
-                                probabilities.isValidated()
+                                probabilities.getMatchValidationLevel().getIndex()
                             });
 
                     peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
@@ -3500,7 +3500,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 identification.getPeptideMatch(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()), modificationProfile) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
-                                        writer.write(probabilities.isValidated() + System.getProperty("line.separator"));
+                                        writer.write(probabilities.getMatchValidationLevel() + System.getProperty("line.separator"));
 
 
                                         // the search engine tables

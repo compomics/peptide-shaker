@@ -7,10 +7,13 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.filtering.PeptideFilter;
+import eu.isas.peptideshaker.filtering.ProteinFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.RowFilter;
 
 /**
  * This class contains the various peptides matches sorted according to their
@@ -41,11 +44,36 @@ public class PeptideSpecificMap implements Serializable {
      * Separator for the key construction.
      */
     public final static String SEPARATOR = "_cus_";
+    /**
+     * The filters to use to flag doubtful matches
+     */
+    private ArrayList<PeptideFilter> doubtfulMatchesFilters = getDefaultPeptideFilters();
 
     /**
      * Constructor.
      */
     public PeptideSpecificMap() {
+    }
+
+    /**
+     * Returns the filters used to flag doubtful matches
+     * 
+     * @return the filters used to flag doubtful matches
+     */
+    public ArrayList<PeptideFilter> getDoubtfulMatchesFilters() {
+        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
+            doubtfulMatchesFilters = new ArrayList<PeptideFilter>();
+        }
+        return doubtfulMatchesFilters;
+    }
+
+    /**
+     * Sets the filters used to flag doubtful matches
+     * 
+     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
+     */
+    public void setDoubtfulMatchesFilters(ArrayList<PeptideFilter> doubtfulMatchesFilters) {
+        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
     }
 
     /**
@@ -268,5 +296,18 @@ public class PeptideSpecificMap implements Serializable {
 
             return result;
         }
+    }
+    
+    /**
+     * Returns the default filters for setting a match as doubtful.
+     * 
+     * @return the default filters for setting a match as doubtful
+     */
+    public static ArrayList<PeptideFilter> getDefaultPeptideFilters() {
+        ArrayList<PeptideFilter> filters = new ArrayList<PeptideFilter>();
+        
+        //@TODO: add something here?
+        
+        return filters;
     }
 }

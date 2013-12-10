@@ -192,7 +192,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         pdbJScrollPane.getViewport().setOpaque(false);
         pdbChainsJScrollPane.getViewport().setOpaque(false);
 
-
         SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -1562,10 +1561,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     String key = proteinKeys.get(proteinIndex);
-                    if ((Boolean) proteinTable.getValueAt(row, column)) {
-                        peptideShakerGUI.getStarHider().starProtein(key);
-                    } else {
-                        peptideShakerGUI.getStarHider().unStarProtein(key);
+                    try {
+                        if ((Boolean) proteinTable.getValueAt(row, column)) {
+                            peptideShakerGUI.getStarHider().starProtein(key);
+                        } else {
+                            peptideShakerGUI.getStarHider().unStarProtein(key);
+                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
             }
@@ -1708,7 +1711,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 chains = lParam.getBlocks();
 
                 // @TODO: the code below does not pick up domain information, but rather shows multiple hits for chain. could perhaps be improved?
-
                 // add the chain information to the table
                 for (int j = 0; j < chains.length; j++) {
 
@@ -2224,7 +2226,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 proteinsLayeredPane.revalidate();
                 proteinsLayeredPane.repaint();
 
-
                 // move the icons
                 peptidesLayeredPane.getComponent(0).setBounds(
                         peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(0).getWidth() - 10,
@@ -2248,7 +2249,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptidesLayeredPane.getComponent(3).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
                 peptidesLayeredPane.revalidate();
                 peptidesLayeredPane.repaint();
-
 
                 // move the icons
                 pdbMatchesLayeredPane.getComponent(0).setBounds(
@@ -2274,7 +2274,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbMatchesLayeredPane.revalidate();
                 pdbMatchesLayeredPane.repaint();
 
-
                 // move the icons
                 pdbChainsLayeredPane.getComponent(0).setBounds(
                         pdbChainsLayeredPane.getWidth() - pdbChainsLayeredPane.getComponent(0).getWidth() - 10,
@@ -2298,7 +2297,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbChainsLayeredPane.getComponent(3).setBounds(0, 0, pdbChainsLayeredPane.getWidth(), pdbChainsLayeredPane.getHeight());
                 pdbChainsLayeredPane.revalidate();
                 pdbChainsLayeredPane.repaint();
-
 
                 // move the icons
                 pdbStructureLayeredPane.getComponent(0).setBounds(
@@ -2718,7 +2716,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         int proteinInferenceType = probabilities.getProteinInferenceClass();
 
                         // @TODO: should be replaced by a table model!!!
-
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                             index + 1,
                             probabilities.isStarred(),
@@ -2726,7 +2723,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentMatch, true, true, true),
                             peptideStart,
                             false,
-                            probabilities.isValidated()
+                            probabilities.getMatchValidationLevel().getIndex()
                         });
 
                         peptideTableMap.put(index + 1, currentMatch.getKey());
@@ -3135,7 +3132,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
             AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-            
+
             for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
@@ -3143,7 +3140,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         "select resno >=" + (peptideTempStart - chains[selectedChainIndex - 1].getDifference())
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
-
 
                 if (chainSequence.indexOf(peptideSequence) != -1) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
@@ -3155,16 +3151,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
         }
 
-
         // highlight the selected peptide
         String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
-            AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-            
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
-                if (progressDialog.isRunCanceled()) {
-                    break;
-                }
+        AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+
+        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+            if (progressDialog.isRunCanceled()) {
+                break;
+            }
             int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
             jmolPanel.getViewer().evalString(
@@ -3173,7 +3168,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     + " and chain = " + currentChain + "; color blue");
 
         }
-
 
         // remove old labels
         jmolPanel.getViewer().evalString("select all; label off");

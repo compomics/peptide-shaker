@@ -288,7 +288,7 @@ public class RunMzDeviation {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                if (psParameter.isValidated()) {
+                if (psParameter.getMatchValidationLevel().isValidated()) {
 
                     Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                     double precursorMz = precursor.getMz();

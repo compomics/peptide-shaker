@@ -19,11 +19,14 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class provides information whether a hit should be hidden or starred.
@@ -167,7 +170,7 @@ public class StarHider {
 
 
                         // update the observed fractional molecular weights per fraction
-                        if (!psParameter.isHidden() && psParameter.isValidated() && !proteinMatch.isDecoy()) {
+                        if (!psParameter.isHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
 
                             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
@@ -206,8 +209,13 @@ public class StarHider {
      * Stars a protein match.
      *
      * @param match the key of the match
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public void starProtein(String match) {
+    public void starProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         try {
             Identification identification = peptideShakerGUI.getIdentification();
             FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -219,7 +227,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                     validated = true;
                 }
             }
@@ -248,8 +256,13 @@ public class StarHider {
      * Unstars a protein match.
      *
      * @param match the key of the match
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public void unStarProtein(String match) {
+    public void unStarProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
         try {
             Identification identification = peptideShakerGUI.getIdentification();
@@ -261,7 +274,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -278,8 +291,13 @@ public class StarHider {
      * Hides a protein match.
      *
      * @param match the key of the match
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public void hideProtein(String match) {
+    public void hideProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
         try {
             Identification identification = peptideShakerGUI.getIdentification();
@@ -292,7 +310,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                     validated = true;
                 }
             }
@@ -321,8 +339,13 @@ public class StarHider {
      * Unhides a protein match.
      *
      * @param match the key of the match
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public void unHideProtein(String match) {
+    public void unHideProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
         try {
             Identification identification = peptideShakerGUI.getIdentification();
@@ -333,7 +356,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -364,7 +387,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                     validated = true;
                 }
             }
@@ -406,7 +429,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                     matchFilter.addException(match);
                 }
             }
@@ -437,7 +460,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                     validated = true;
                 }
             }
@@ -479,7 +502,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                     matchFilter.addException(match);
                 }
             }
@@ -511,7 +534,7 @@ public class StarHider {
                     if (matchFilter.getExceptions().contains(match)) {
                         matchFilter.removeException(match);
                     }
-                    if (isValidated(match, matchFilter)) {
+                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                         validated = true;
                     }
                 }
@@ -551,7 +574,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -583,7 +606,7 @@ public class StarHider {
                     if (matchFilter.getExceptions().contains(match)) {
                         matchFilter.removeException(match);
                     }
-                    if (isValidated(match, matchFilter)) {
+                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                         validated = true;
                     }
                 }
@@ -623,7 +646,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (isValidated(match, matchFilter)) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -641,13 +664,19 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isProteinHidden(String match) {
+    public boolean isProteinHidden(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
@@ -659,14 +688,20 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isPeptideHidden(String match) {
+    public boolean isPeptideHidden(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                 return true;
             }
         }
@@ -679,14 +714,20 @@ public class StarHider {
      * filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isPsmHidden(String match) {
+    public boolean isPsmHidden(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
@@ -699,14 +740,20 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isProteinStarred(String match) {
+    public boolean isProteinStarred(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
@@ -719,14 +766,20 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isPeptideStarred(String match) {
+    public boolean isPeptideStarred(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
                 return true;
             }
         }
@@ -739,558 +792,23 @@ public class StarHider {
      * filters.
      *
      * @param match the key of the match
+     * 
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
+     * 
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws java.lang.InterruptedException
      */
-    public boolean isPsmStarred(String match) {
+    public boolean isPsmStarred(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-            if (matchFilter.isActive() && isValidated(match, matchFilter)) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
-
         return false;
-    }
-
-    /**
-     * Tests whether a protein match is validated by a given filter.
-     *
-     * @param proteinKey the key of the protein match
-     * @param proteinFilter the filter
-     * @return a boolean indicating whether a protein match is validated by a
-     * given filter
-     */
-    public boolean isValidated(String proteinKey, ProteinFilter proteinFilter) {
-
-        try {
-            if (proteinFilter.getExceptions().contains(proteinKey)) {
-                return false;
-            }
-
-            if (proteinFilter.getManualValidation().size() > 0) {
-                if (proteinFilter.getManualValidation().contains(proteinKey)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            if (proteinFilter.getIdentifierRegex() != null) {
-                String test = "test_" + proteinKey + "_test";
-                if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
-                    boolean found = false;
-                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                        test = "test_" + sequenceFactory.getHeader(accession).getSimpleProteinDescription().toLowerCase() + "_test";
-                        if (test.split(proteinFilter.getIdentifierRegex().toLowerCase()).length > 1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        return false;
-                    }
-                }
-            }
-
-            PSParameter psParameter = new PSParameter();
-            Identification identification = peptideShakerGUI.getIdentification();
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-
-            if (proteinFilter.getPi() != 5) {
-                if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
-                        && psParameter.getProteinInferenceClass() == proteinFilter.getPi()) {
-                    return false;
-                } else if (proteinFilter.getPiComparison() == ComparisonType.EQUAL
-                        && psParameter.getProteinInferenceClass() != proteinFilter.getPi()) {
-                    return false;
-                }
-            }
-
-            if (proteinFilter.getProteinScore() != null) {
-                if (proteinFilter.getProteinScoreComparison() == ComparisonType.AFTER) {
-                    if (psParameter.getProteinScore() <= proteinFilter.getProteinScore()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.BEFORE) {
-                    if (psParameter.getProteinScore() >= proteinFilter.getProteinScore()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.EQUAL) {
-                    if (psParameter.getProteinScore() != proteinFilter.getProteinScore()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.NOT_EQUAL) {
-                    if (psParameter.getProteinScore() == proteinFilter.getProteinScore()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (proteinFilter.getProteinConfidence() != null) {
-                if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.AFTER) {
-                    if (psParameter.getProteinConfidence() <= proteinFilter.getProteinConfidence()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.BEFORE) {
-                    if (psParameter.getProteinConfidence() >= proteinFilter.getProteinConfidence()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.EQUAL) {
-                    if (psParameter.getProteinConfidence() != proteinFilter.getProteinConfidence()) {
-                        return false;
-                    }
-                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.NOT_EQUAL) {
-                    if (psParameter.getProteinConfidence() == proteinFilter.getProteinConfidence()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (proteinFilter.getnPeptides() != null
-                    || proteinFilter.getProteinNSpectra() != null
-                    || proteinFilter.getProteinCoverage() != null
-                    || proteinFilter.getSpectrumCounting() != null) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-
-                if (proteinFilter.getnPeptides() != null) {
-                    if (proteinFilter.getnPeptidesComparison() == ComparisonType.AFTER) {
-                        if (proteinMatch.getPeptideMatches().size() <= proteinFilter.getnPeptides()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.BEFORE) {
-                        if (proteinMatch.getPeptideMatches().size() >= proteinFilter.getnPeptides()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.EQUAL) {
-                        if (proteinMatch.getPeptideMatches().size() != proteinFilter.getnPeptides()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.NOT_EQUAL) {
-                        if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnPeptides()) {
-                            return false;
-                        }
-                    }
-                }
-                IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-                if (proteinFilter.getProteinNSpectra() != null) {
-                    try {
-                        if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) >= proteinFilter.getProteinNSpectra()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() != proteinFilter.getProteinNSpectra().intValue()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() == proteinFilter.getProteinNSpectra().intValue()) {
-                                return false;
-                            }
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-
-                if (proteinFilter.getProteinCoverage() != null) {
-                    try {
-                        double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                        if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
-                            if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BEFORE) {
-                            if (sequenceCoverage >= proteinFilter.getProteinCoverage()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
-                            if (sequenceCoverage != proteinFilter.getProteinCoverage()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.NOT_EQUAL) {
-                            if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
-                                return false;
-                            }
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-
-                if (proteinFilter.getSpectrumCounting() != null) {
-                    try {
-                        double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                        if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
-                            if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BEFORE) {
-                            if (spectrumCounting >= proteinFilter.getSpectrumCounting()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
-                            if (spectrumCounting != proteinFilter.getSpectrumCounting()) {
-                                return false;
-                            }
-                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.NOT_EQUAL) {
-                            if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
-                                return false;
-                            }
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            peptideShakerGUI.catchException(e);
-            return false;
-        }
-    }
-
-    /**
-     * Tests whether a peptide match is validated by a given filter.
-     *
-     * @param peptideKey the key of the peptide match
-     * @param peptideFilter the filter
-     * @return a boolean indicating whether a peptide match is validated by a
-     * given filter
-     */
-    public boolean isValidated(String peptideKey, PeptideFilter peptideFilter) {
-
-        try {
-            if (peptideFilter.getExceptions().contains(peptideKey)) {
-                return false;
-            }
-
-            if (peptideFilter.getManualValidation().size() > 0) {
-                if (peptideFilter.getManualValidation().contains(peptideKey)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            PSParameter psParameter = new PSParameter();
-            boolean found = false;
-
-            for (String ptm : peptideFilter.getModificationStatus()) {
-                if (ptm.equals(PtmPanel.NO_MODIFICATION)) {
-                    if (!Peptide.isModified(peptideKey)) {
-                        found = true;
-                        break;
-                    }
-                } else {
-                    if (Peptide.isModified(peptideKey, ptm)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!found) {
-                return false;
-            }
-
-            Identification identification = peptideShakerGUI.getIdentification();
-            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-
-            if (peptideFilter.getPi() != 5) {
-                if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
-                        && psParameter.getProteinInferenceClass() == peptideFilter.getPi()) {
-                    return false;
-                } else if (peptideFilter.getPiComparison() == ComparisonType.EQUAL
-                        && psParameter.getProteinInferenceClass() != peptideFilter.getPi()) {
-                    return false;
-                }
-            }
-
-            if (peptideFilter.getPeptideScore() != null) {
-                if (peptideFilter.getPeptideScoreComparison() == ComparisonType.AFTER) {
-                    if (psParameter.getPeptideScore() <= peptideFilter.getPeptideScore()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BEFORE) {
-                    if (psParameter.getPeptideScore() >= peptideFilter.getPeptideScore()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.EQUAL) {
-                    if (psParameter.getPeptideScore() != peptideFilter.getPeptideScore()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.NOT_EQUAL) {
-                    if (psParameter.getPeptideScore() == peptideFilter.getPeptideScore()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (peptideFilter.getPeptideConfidence() != null) {
-                if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.AFTER) {
-                    if (psParameter.getPeptideConfidence() <= peptideFilter.getPeptideConfidence()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BEFORE) {
-                    if (psParameter.getPeptideConfidence() >= peptideFilter.getPeptideConfidence()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.EQUAL) {
-                    if (psParameter.getPeptideConfidence() != peptideFilter.getPeptideConfidence()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.NOT_EQUAL) {
-                    if (psParameter.getPeptideConfidence() == peptideFilter.getPeptideConfidence()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (peptideFilter.getNSpectra() != null
-                    || peptideFilter.getProtein() != null) {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                if (peptideFilter.getNSpectra() != null) {
-                    if (peptideFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                        if (peptideMatch.getSpectrumCount() <= peptideFilter.getNSpectra()) {
-                            return false;
-                        }
-                    } else if (peptideFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                        if (peptideMatch.getSpectrumCount() >= peptideFilter.getNSpectra()) {
-                            return false;
-                        }
-                    } else if (peptideFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                        if (peptideMatch.getSpectrumCount() != peptideFilter.getNSpectra()) {
-                            return false;
-                        }
-                    } else if (peptideFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                        if (peptideMatch.getSpectrumCount() != peptideFilter.getNSpectra()) {
-                            return false;
-                        }
-                    }
-                }
-
-                if (peptideFilter.getProtein() != null) {
-                    found = false;
-                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
-                        if (accession.split(peptideFilter.getProtein()).length > 1) {
-                            found = true;
-                            break;
-                        }
-                        if (sequenceFactory.getHeader(accession).getSimpleProteinDescription() != null
-                                && sequenceFactory.getHeader(accession).getSimpleProteinDescription().split(peptideFilter.getProtein()).length > 1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        return false;
-                    }
-                }
-            }
-
-            // sequence pattern
-            if (peptideFilter.getSequence() != null && peptideFilter.getSequence().trim().length() > 0) {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-                Matcher m;
-                if (peptideFilter.getSequencePattern() != null) {
-                    m = peptideFilter.getSequencePattern().matcher(peptideSequence);
-                } else {
-                    Pattern p = Pattern.compile("(.*?)" + peptideFilter.getSequence() + "(.*?)");
-                    m = p.matcher(peptideSequence);
-                }
-                if (!m.matches()) {
-                    return false;
-                }
-            }
-
-            // protein pattern
-            if (peptideFilter.getProtein() != null && peptideFilter.getProtein().trim().length() > 0) {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                String accessions = "";
-                for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
-                    accessions += accession + " ";
-                }
-                Matcher m;
-                if (peptideFilter.getProteinPattern() != null) {
-                    m = peptideFilter.getProteinPattern().matcher(accessions);
-                } else {
-                    Pattern p = Pattern.compile("(.*?)" + peptideFilter.getProtein() + "(.*?)");
-                    m = p.matcher(accessions);
-                }
-                if (!m.matches()) {
-                    return false;
-                }
-            }
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            peptideShakerGUI.catchException(e);
-            return false;
-        }
-    }
-
-    /**
-     * Tests whether a spectrum match is validated by a given filter.
-     *
-     * @param spectrumKey the key of the spectrum match
-     * @param psmFilter the filter
-     * @return a boolean indicating whether a spectrum match is validated by a
-     * given filter
-     */
-    public boolean isValidated(String spectrumKey, PsmFilter psmFilter) {
-
-        try {
-            if (psmFilter.getExceptions().contains(spectrumKey)) {
-                return false;
-            }
-            if (psmFilter.getManualValidation().size() > 0) {
-                if (psmFilter.getManualValidation().contains(spectrumKey)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            Identification identification = peptideShakerGUI.getIdentification();
-            PSParameter psParameter = new PSParameter();
-
-            if (psmFilter.getPsmScore() != null
-                    || psmFilter.getPsmConfidence() != null) {
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                if (psmFilter.getPsmScore() != null) {
-                    if (psmFilter.getPsmScoreComparison() == ComparisonType.AFTER) {
-                        if (psParameter.getPsmScore() <= psmFilter.getPsmScore()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.BEFORE) {
-                        if (psParameter.getPsmScore() >= psmFilter.getPsmScore()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.EQUAL) {
-                        if (psParameter.getPsmScore() != psmFilter.getPsmScore()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.NOT_EQUAL) {
-                        if (psParameter.getPsmScore() == psmFilter.getPsmScore()) {
-                            return false;
-                        }
-                    }
-                }
-
-                if (psmFilter.getPsmConfidence() != null) {
-                    if (psmFilter.getPsmConfidenceComparison() == ComparisonType.AFTER) {
-                        if (psParameter.getPsmConfidence() <= psmFilter.getPsmConfidence()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.BEFORE) {
-                        if (psParameter.getPsmConfidence() >= psmFilter.getPsmConfidence()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.EQUAL) {
-                        if (psParameter.getPsmConfidence() != psmFilter.getPsmConfidence()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.NOT_EQUAL) {
-                        if (psParameter.getPsmConfidence() == psmFilter.getPsmConfidence()) {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            if (psmFilter.getPrecursorMz() != null
-                    || psmFilter.getPrecursorRT() != null
-                    || psmFilter.getPrecursorMzError() != null) {
-                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                if (psmFilter.getPrecursorMz() != null) {
-                    if (psmFilter.getPrecursorMzComparison() == ComparisonType.AFTER) {
-                        if (precursor.getMz() <= psmFilter.getPrecursorMz()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.BEFORE) {
-                        if (precursor.getMz() >= psmFilter.getPrecursorMz()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.EQUAL) {
-                        if (precursor.getMz() != psmFilter.getPrecursorMz()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.NOT_EQUAL) {
-                        if (precursor.getMz() == psmFilter.getPrecursorMz()) {
-                            return false;
-                        }
-                    }
-                }
-
-                if (psmFilter.getPrecursorRT() != null) {
-                    if (psmFilter.getPrecursorRTComparison() == ComparisonType.AFTER) {
-                        if (precursor.getRt() <= psmFilter.getPrecursorRT()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.BEFORE) {
-                        if (precursor.getRt() >= psmFilter.getPrecursorRT()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.EQUAL) {
-                        if (precursor.getRt() != psmFilter.getPrecursorRT()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.NOT_EQUAL) {
-                        if (precursor.getRt() == psmFilter.getPrecursorRT()) {
-                            return false;
-                        }
-                    }
-                }
-
-                if (psmFilter.getPrecursorMzError() != null) {
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
-                    if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.AFTER) {
-                        if (error <= psmFilter.getPrecursorMzError()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.BEFORE) {
-                        if (error >= psmFilter.getPrecursorMzError()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.EQUAL) {
-                        if (error != psmFilter.getPrecursorMzError()) {
-                            return false;
-                        }
-                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.NOT_EQUAL) {
-                        if (error == psmFilter.getPrecursorMzError()) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            if (psmFilter.getCharges().size() != peptideShakerGUI.getMetrics().getFoundCharges().size()) {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                if (!psmFilter.getCharges().contains(charge)) {
-                    return false;
-                }
-            }
-
-            if (!psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
-                return false;
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            peptideShakerGUI.catchException(e);
-            return false;
-        }
     }
 }

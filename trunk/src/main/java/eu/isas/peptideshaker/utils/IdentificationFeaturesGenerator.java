@@ -287,7 +287,7 @@ public class IdentificationFeaturesGenerator {
 
             peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-            if (peptidePSParameter.isValidated()) {
+            if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 boolean enzymatic = false;
@@ -347,7 +347,7 @@ public class IdentificationFeaturesGenerator {
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-            if (pSParameter.isValidated()) {
+            if (pSParameter.getMatchValidationLevel().isValidated()) {
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 for (int peptideTempStart : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
@@ -507,7 +507,7 @@ public class IdentificationFeaturesGenerator {
                 identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), pSParameter, null);
                 for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
-                    if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
+                    if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.getMatchValidationLevel().isValidated()) {
                         result += ratio;
                     }
                 }
@@ -538,7 +538,7 @@ public class IdentificationFeaturesGenerator {
                 identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                    if (pSParameter.isValidated()) {
+                    if (pSParameter.getMatchValidationLevel().isValidated()) {
                         result++;
                     }
                 }
@@ -654,7 +654,7 @@ public class IdentificationFeaturesGenerator {
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
-                if (probabilities.isValidated()) {
+                if (probabilities.getMatchValidationLevel().isValidated()) {
                     cpt++;
                 }
             }
@@ -683,7 +683,7 @@ public class IdentificationFeaturesGenerator {
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-            if (pSParameter.isValidated()) {
+            if (pSParameter.getMatchValidationLevel().isValidated()) {
                 cpt++;
             }
         }
@@ -893,7 +893,7 @@ public class IdentificationFeaturesGenerator {
             identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                if (psParameter.isValidated()) {
+                if (psParameter.getMatchValidationLevel().isValidated()) {
                     result++;
                 }
             }
@@ -951,7 +951,7 @@ public class IdentificationFeaturesGenerator {
         identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
-            if (psParameter.isValidated()) {
+            if (psParameter.getMatchValidationLevel().isValidated()) {
                 nValidated++;
             }
         }
@@ -1385,7 +1385,7 @@ public class IdentificationFeaturesGenerator {
                                 }
                             }
 
-                            if (probabilities.isValidated()) {
+                            if (probabilities.getMatchValidationLevel().isValidated()) {
                                 nValidatedProteins++;
                             }
                         }
@@ -1481,7 +1481,7 @@ public class IdentificationFeaturesGenerator {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 if (!psParameter.isHidden()) {
                     proteinListAfterHiding.add(proteinKey);
-                    if (psParameter.isValidated()) {
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedProteins++;
                         validatedProteinList.add(proteinKey);
                     }
@@ -1614,7 +1614,7 @@ public class IdentificationFeaturesGenerator {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter); // @TODO: could be replaced by batch selection?
 
                 if (!psParameter.isHidden()) {
-                    if (psParameter.isValidated()) {
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedPsms++;
                     }
 

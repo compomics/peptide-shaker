@@ -152,7 +152,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 String peptideKey = peptideKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
                 pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                return pSParameter.isValidated();
+                return pSParameter.getMatchValidationLevel().getIndex();
             } else {
                 return "";
             }

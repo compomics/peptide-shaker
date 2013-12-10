@@ -1030,7 +1030,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 3:
                     return pSParameter.getProteinConfidence();
                 case 4:
-                    return pSParameter.isValidated();
+                    return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }
@@ -1100,7 +1100,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 3:
                     return pSParameter.getProteinConfidence();
                 case 4:
-                    return pSParameter.isValidated();
+                    return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
             }

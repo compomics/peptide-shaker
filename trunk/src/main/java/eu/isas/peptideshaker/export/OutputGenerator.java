@@ -332,7 +332,7 @@ public class OutputGenerator {
                             proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
-                                if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
+                                if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !proteinPSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && proteinPSParameter.isStarred()) || !onlyStarred) {
                                             if (indexes) {
@@ -433,7 +433,7 @@ public class OutputGenerator {
                                                     String peptideSequence = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence();
                                                     peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-                                                    if (peptidePSParameter.isValidated()) {
+                                                    if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
@@ -501,11 +501,7 @@ public class OutputGenerator {
                                                 writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                                             }
                                             if (!onlyValidated) {
-                                                if (proteinPSParameter.isValidated()) {
-                                                    writer.write(1 + SEPARATOR);
-                                                } else {
-                                                    writer.write(0 + SEPARATOR);
-                                                }
+                                                    writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
                                             }
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
@@ -761,7 +757,7 @@ public class OutputGenerator {
                             peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
                             if (!peptideMatch.getTheoreticPeptide().isDecoy() || !onlyValidated) {
-                                if ((onlyValidated && peptidePSParameter.isValidated()) || !onlyValidated) {
+                                if ((onlyValidated && peptidePSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !peptidePSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
 
@@ -998,7 +994,7 @@ public class OutputGenerator {
                                                     identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
-                                                        if (secondaryPSParameter.isValidated()) {
+                                                        if (secondaryPSParameter.getMatchValidationLevel().isValidated()) {
                                                             cpt++;
                                                         }
                                                     }
@@ -1014,11 +1010,7 @@ public class OutputGenerator {
                                                     writer.write(peptidePSParameter.getPeptideConfidence() + SEPARATOR);
                                                 }
                                                 if (!onlyValidated) {
-                                                    if (peptidePSParameter.isValidated()) {
-                                                        writer.write(1 + SEPARATOR);
-                                                    } else {
-                                                        writer.write(0 + SEPARATOR);
-                                                    }
+                                                        writer.write(peptidePSParameter.getMatchValidationLevel() + SEPARATOR);
                                                     if (peptideMatch.getTheoreticPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
@@ -1267,7 +1259,7 @@ public class OutputGenerator {
                                 PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
                                 if (!bestAssumption.getPeptide().isDecoy() || !onlyValidated) {
-                                    if ((onlyValidated && psParameter.isValidated()) || !onlyValidated) {
+                                    if ((onlyValidated && psParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                         if ((!includeHidden && !psParameter.isHidden()) || includeHidden) {
                                             if ((onlyStarred && psParameter.isStarred()) || !onlyStarred) {
 
@@ -1480,11 +1472,7 @@ public class OutputGenerator {
                                                     writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                                 }
                                                 if (!onlyValidated) {
-                                                    if (psParameter.isValidated()) {
-                                                        writer.write(1 + SEPARATOR);
-                                                    } else {
-                                                        writer.write(0 + SEPARATOR);
-                                                    }
+                                                        writer.write(psParameter.getMatchValidationLevel() + SEPARATOR);
                                                     if (bestAssumption.getPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
@@ -1829,11 +1817,7 @@ public class OutputGenerator {
                                 writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                 writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
-                                if (psParameter.isValidated()) {
-                                    writer.write(1 + SEPARATOR);
-                                } else {
-                                    writer.write(0 + SEPARATOR);
-                                }
+                                    writer.write(psParameter.getMatchValidationLevel() + SEPARATOR);
                                 if (bestAssumption.getPeptide().isDecoy()) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
@@ -1970,11 +1954,7 @@ public class OutputGenerator {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
-                            if (proteinPSParameter.isValidated()) {
-                                writer.write(1 + SEPARATOR);
-                            } else {
-                                writer.write(0 + SEPARATOR);
-                            }
+                                writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
                             if (proteinMatch.isDecoy()) {
                                 writer.write(1 + SEPARATOR);
                             } else {
@@ -2250,7 +2230,7 @@ public class OutputGenerator {
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                                if (!onlyValidated || psParameter.isValidated()) {
+                                if (!onlyValidated || psParameter.getMatchValidationLevel().isValidated()) {
                                     for (int se : spectrumMatch.getAdvocates()) {
                                         ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
                                         Collections.sort(eValues);
@@ -2604,7 +2584,7 @@ public class OutputGenerator {
                             proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
-                                if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
+                                if ((onlyValidated && proteinPSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !proteinPSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && proteinPSParameter.isStarred()) || !onlyStarred) {
                                             if (indexes) {
@@ -2779,7 +2759,7 @@ public class OutputGenerator {
                                                     String peptideSequence = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence();
                                                     peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-                                                    if (peptidePSParameter.isValidated()) {
+                                                    if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
                                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
@@ -2796,11 +2776,7 @@ public class OutputGenerator {
                                                 writer.write(!allPeptidesEnzymatic + SEPARATOR);
                                             }
                                             if (!onlyValidated) {
-                                                if (proteinPSParameter.isValidated()) {
-                                                    writer.write(1 + SEPARATOR);
-                                                } else {
-                                                    writer.write(0 + SEPARATOR);
-                                                }
+                                                    writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
                                             }
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);

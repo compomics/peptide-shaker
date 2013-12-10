@@ -361,7 +361,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
-                                        if (psParameter.isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.isHidden()) {
+                                        if (psParameter.getMatchValidationLevel().isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.isHidden()) {
                                             ArrayList<String> goTerms = goFactory.getProteinGoAccessions(proteinKey);
                                             if (!goTerms.isEmpty()) {
                                                 totalNumberOfGoMappedProteinsInProject++;
