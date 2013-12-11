@@ -31,6 +31,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
@@ -295,7 +296,7 @@ public class OutputGenerator {
                                 writer.write("Confidence" + SEPARATOR);
                             }
                             if (!onlyValidated) {
-                                writer.write("Validated" + SEPARATOR);
+                                writer.write("Validation" + SEPARATOR);
                             }
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
@@ -500,9 +501,12 @@ public class OutputGenerator {
                                             if (confidence) {
                                                 writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                                             }
-                                            if (!onlyValidated) {
-                                                    writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
-                                            }
+                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
@@ -714,8 +718,8 @@ public class OutputGenerator {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
+                                writer.write("Validation" + SEPARATOR);
                             if (!onlyValidated) {
-                                writer.write("Validated" + SEPARATOR);
                                 writer.write("Decoy" + SEPARATOR);
                             }
                             if (includeHidden) {
@@ -1009,8 +1013,13 @@ public class OutputGenerator {
                                                 if (confidence) {
                                                     writer.write(peptidePSParameter.getPeptideConfidence() + SEPARATOR);
                                                 }
+                                                MatchValidationLevel matchValidationLevel = peptidePSParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !peptidePSParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + peptidePSParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
-                                                        writer.write(peptidePSParameter.getMatchValidationLevel() + SEPARATOR);
                                                     if (peptideMatch.getTheoreticPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
@@ -1203,8 +1212,8 @@ public class OutputGenerator {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
+                                writer.write("Validation" + SEPARATOR);
                             if (!onlyValidated) {
-                                writer.write("Validated" + SEPARATOR);
                                 writer.write("Decoy" + SEPARATOR);
                             }
                             if (includeHidden) {
@@ -1471,8 +1480,13 @@ public class OutputGenerator {
                                                 if (confidence) {
                                                     writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                                 }
+                                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
-                                                        writer.write(psParameter.getMatchValidationLevel() + SEPARATOR);
                                                     if (bestAssumption.getPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
@@ -1625,7 +1639,7 @@ public class OutputGenerator {
                         }
                         writer.write("Isotope" + SEPARATOR);
                         writer.write("Confidence" + SEPARATOR);
-                        writer.write("Validated" + SEPARATOR);
+                        writer.write("Validation" + SEPARATOR);
                         writer.write("Decoy" + SEPARATOR);
 
                         writer.write(System.getProperty("line.separator"));
@@ -1817,7 +1831,12 @@ public class OutputGenerator {
                                 writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                 writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
-                                    writer.write(psParameter.getMatchValidationLevel() + SEPARATOR);
+                                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                 if (bestAssumption.getPeptide().isDecoy()) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
@@ -1860,7 +1879,7 @@ public class OutputGenerator {
                         writer.write("NSAF" + SEPARATOR);
                         writer.write("MW (kDa)" + SEPARATOR);
                         writer.write("Confidence" + SEPARATOR);
-                        writer.write("Validated" + SEPARATOR);
+                        writer.write("Validation" + SEPARATOR);
                         writer.write("Decoy" + SEPARATOR);
                         writer.write(System.getProperty("line.separator"));
 
@@ -1954,7 +1973,12 @@ public class OutputGenerator {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
-                                writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
+                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                             if (proteinMatch.isDecoy()) {
                                 writer.write(1 + SEPARATOR);
                             } else {
@@ -2775,9 +2799,12 @@ public class OutputGenerator {
 
                                                 writer.write(!allPeptidesEnzymatic + SEPARATOR);
                                             }
-                                            if (!onlyValidated) {
-                                                    writer.write(proteinPSParameter.getMatchValidationLevel() + SEPARATOR);
-                                            }
+                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }

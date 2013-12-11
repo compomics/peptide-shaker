@@ -704,19 +704,33 @@ public class PeptideShaker {
                     }
                     boolean noValidated = targetDecoyResults.noValidated();
                     if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+                        String reasonDoubtful = null;
                         boolean filterPassed = true;
                         for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters()) {
                             if (!filter.isValidated(spectrumKey, identification, metrics.getFoundCharges(), searchParameters)) { //@TODO: check that the charges are already loaded
                                 filterPassed = false;
+                                reasonDoubtful = filter.getDescription();
                                 break;
                             }
                         }
                         boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                        if (!confidenceThresholdPassed && reasonDoubtful == null) {
+                            reasonDoubtful = "Low confidence";
+                        }
                         boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                        if (!enoughHits && reasonDoubtful == null) {
+                            reasonDoubtful = "Low number of hits";
+                        }
+                        if (!enoughSequences && reasonDoubtful == null) {
+                            reasonDoubtful = "Database too small";
+                        }
                         if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                             psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                         } else {
                             psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                            if (reasonDoubtful != null) {
+                                psParameter.setReasonDoubtful(reasonDoubtful);
+                            }
                         }
                     } else {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
@@ -752,19 +766,33 @@ public class PeptideShaker {
                 }
                 boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
                 if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
+                    String reasonDoubtful = null;
                     boolean filterPassed = true;
                     for (PeptideFilter filter : peptideMap.getDoubtfulMatchesFilters()) {
                         if (!filter.isValidated(peptideKey, identification, identificationFeaturesGenerator)) {
                             filterPassed = false;
+                            reasonDoubtful = filter.getDescription();
                             break;
                         }
                     }
                     boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                    if (!confidenceThresholdPassed && reasonDoubtful == null) {
+                        reasonDoubtful = "Low confidence";
+                    }
                     boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                    if (!enoughHits && reasonDoubtful == null) {
+                        reasonDoubtful = "Low number of hits";
+                    }
+                    if (!enoughSequences && reasonDoubtful == null) {
+                        reasonDoubtful = "Database too small";
+                    }
                     if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                     } else {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                        if (reasonDoubtful != null) {
+                            psParameter.setReasonDoubtful(reasonDoubtful);
+                        }
                     }
 
                 } else {
@@ -860,19 +888,33 @@ public class PeptideShaker {
             if (sequenceFactory.concatenatedTargetDecoy()) {
 
                 if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
+                    String reasonDoubtful = null;
                     boolean filterPassed = true;
                     for (ProteinFilter filter : proteinMap.getDoubtfulMatchesFilters()) {
                         if (!filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters)) {
                             filterPassed = false;
+                            reasonDoubtful = filter.getDescription();
                             break;
                         }
                     }
                     boolean confidenceThresholdPassed = psParameter.getProteinConfidence() >= proteinConfidentThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                    if (!confidenceThresholdPassed && reasonDoubtful == null) {
+                        reasonDoubtful = "Low confidence";
+                    }
                     boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                    if (!enoughHits && reasonDoubtful == null) {
+                        reasonDoubtful = "Low number of hits";
+                    }
+                    if (!enoughSequences && reasonDoubtful == null) {
+                        reasonDoubtful = "Database too small";
+                    }
                     if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                     } else {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                        if (reasonDoubtful != null) {
+                            psParameter.setReasonDoubtful(reasonDoubtful);
+                        }
                     }
 
                 } else {

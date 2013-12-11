@@ -353,7 +353,11 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-            line.append(probabilities.getMatchValidationLevel()).append(SEPARATOR);
+            line.append(probabilities.getMatchValidationLevel());
+            if (!probabilities.getReasonDoubtful().equals("")) {
+                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+            }
+            line.append(SEPARATOR);
 
         try {
             line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription());
@@ -483,6 +487,9 @@ public class TxtExporter {
         }
 
             line.append(probabilities.getMatchValidationLevel());
+            if (!probabilities.getReasonDoubtful().equals("")) {
+                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+            }
 
         line.append(System.getProperty("line.separator"));
 
@@ -764,6 +771,9 @@ public class TxtExporter {
         }
 
             line.append(probabilities.getMatchValidationLevel());
+            if (!probabilities.getReasonDoubtful().equals("")) {
+                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+            }
 
         line.append(System.getProperty("line.separator"));
 
@@ -873,6 +883,9 @@ public class TxtExporter {
 
                     try {
                             line += probabilities.getMatchValidationLevel();
+                            if (!probabilities.getReasonDoubtful().equals("")) {
+                                line += " (" + probabilities.getReasonDoubtful() + ")";
+                            }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
