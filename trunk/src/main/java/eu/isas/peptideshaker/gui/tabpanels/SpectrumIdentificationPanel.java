@@ -3499,6 +3499,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
                                         writer.write(probabilities.getMatchValidationLevel() + System.getProperty("line.separator"));
+                            if (!probabilities.getReasonDoubtful().equals("") ) {
+                                writer.write(" (" + probabilities.getReasonDoubtful() + ")");
+                            }
 
 
                                         // the search engine tables

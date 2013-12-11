@@ -307,6 +307,7 @@ public class PeptideSpecificMap implements Serializable {
         ArrayList<PeptideFilter> filters = new ArrayList<PeptideFilter>();
         
         PeptideFilter peptideFilter = new PeptideFilter("n confident spectra");
+        peptideFilter.setDescription("No confident PSM");
         peptideFilter.setNConfidentSpectra(0);
         peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         filters.add(peptideFilter);

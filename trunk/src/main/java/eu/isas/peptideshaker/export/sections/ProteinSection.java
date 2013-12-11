@@ -442,7 +442,11 @@ public class ProteinSection {
                             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                             parameterKey = proteinKey;
                         }
-                            writer.write(psParameter.getMatchValidationLevel() + separator);
+                            writer.write(psParameter.getMatchValidationLevel().toString());
+                            if (!psParameter.getReasonDoubtful().equals("") ) {
+                                writer.write(" (" + psParameter.getReasonDoubtful() + ")");
+                            }
+                            writer.write(separator);
                         break;
                     default:
                         writer.write("Not implemented");

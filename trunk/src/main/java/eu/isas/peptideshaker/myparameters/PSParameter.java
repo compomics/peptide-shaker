@@ -59,6 +59,10 @@ public class PSParameter implements UrParameter {
      */
     private MatchValidationLevel matchValidationLevel;
     /**
+     * The reason why a match is flagged as doubtful
+     */
+    private String reasonDoubtful = null;
+    /**
      * Boolean indicating whether this is a hidden match.
      */
     private boolean hidden = false;
@@ -727,6 +731,29 @@ public class PSParameter implements UrParameter {
             return null;
         }
     }
+
+    /**
+     * Returns the reason why a match is set as doubtful. An empty string if none set.
+     * 
+     * @return the reason why a match is set as doubtful
+     */
+    public String getReasonDoubtful() {
+        if (reasonDoubtful == null) {
+            return "";
+        }
+        return reasonDoubtful;
+    }
+
+    /**
+     * Sets the reason why a match is set as doubtful.
+     * 
+     * @param reasonDoubtful the reason why a match is set as doubtful
+     */
+    public void setReasonDoubtful(String reasonDoubtful) {
+        this.reasonDoubtful = reasonDoubtful;
+    }
+    
+    
 
     @Override
     public String getFamilyName() {
