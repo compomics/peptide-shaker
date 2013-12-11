@@ -1,18 +1,13 @@
 package eu.isas.peptideshaker.scoring;
 
-import com.compomics.util.experiment.identification.Identification;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.PsmFilter;
-import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.RowFilter;
 
 /**
  * This map will store target decoy informations about the psms grouped
@@ -23,7 +18,7 @@ import javax.swing.RowFilter;
 public class PsmSpecificMap implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility.
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 746516685643358198L;
     /**
@@ -36,7 +31,7 @@ public class PsmSpecificMap implements Serializable {
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
     /**
-     * The filters to use to flag doubtful matches
+     * The filters to use to flag doubtful matches.
      */
     private ArrayList<PsmFilter> doubtfulMatchesFilters = getDefaultPsmFilters();
 
@@ -47,7 +42,7 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the filters used to flag doubtful matches
+     * Returns the filters used to flag doubtful matches.
      * 
      * @return the filters used to flag doubtful matches
      */
@@ -59,7 +54,7 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Sets the filters used to flag doubtful matches
+     * Sets the filters used to flag doubtful matches.
      * 
      * @param doubtfulMatchesFilters the filters used to flag doubtful matches
      */
@@ -68,7 +63,7 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Estimate the posterior error probabilities of the psms.
+     * Estimate the posterior error probabilities of the PSMs.
      *
      * @param waitingHandler the handler displaying feedback to the user
      */

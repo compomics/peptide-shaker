@@ -40,6 +40,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -349,11 +350,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
+
+        // use a gray color for no decoy searches
+        Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
+        if (!sequenceFactory.concatenatedTargetDecoy()) {
+            nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
+        }
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+                peptideShakerGUI.getSparklineColor(), nonValidatedColor, false));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+                peptideShakerGUI.getSparklineColor(), nonValidatedColor, false));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
@@ -375,10 +382,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
-        proteinTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
+        proteinTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
@@ -452,13 +456,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
         peptideTable.getColumn("Start").setCellRenderer(new JSparklinesMultiIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 100d, peptideShakerGUI.getSparklineColor()));
+
+        // use a gray color for no decoy searches
+        Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
+        if (!sequenceFactory.concatenatedTargetDecoy()) {
+            nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
+        }
         peptideTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+                peptideShakerGUI.getSparklineColor(), nonValidatedColor, false));
         ((JSparklinesTwoValueBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
-        peptideTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
+        peptideTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         peptideTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
@@ -536,10 +543,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
-        psmTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
+        psmTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         psmTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
@@ -2131,11 +2135,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     PSParameter psParameter = new PSParameter();
                     try {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
-                    if (!psParameter.isStarred()) {
-                        peptideShakerGUI.getStarHider().starProtein(proteinKey);
-                    } else {
-                        peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
-                    }
+                        if (!psParameter.isStarred()) {
+                            peptideShakerGUI.getStarHider().starProtein(proteinKey);
+                        } else {
+                            peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
+                        }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }

@@ -35,7 +35,7 @@ public class ProteinMap implements Serializable {
     }
 
     /**
-     * Returns the filters used to flag doubtful matches
+     * Returns the filters used to flag doubtful matches.
      * 
      * @return the filters used to flag doubtful matches
      */
@@ -47,7 +47,7 @@ public class ProteinMap implements Serializable {
     }
 
     /**
-     * Sets the filters used to flag doubtful matches
+     * Sets the filters used to flag doubtful matches.
      * 
      * @param doubtfulMatchesFilters the filters used to flag doubtful matches
      */

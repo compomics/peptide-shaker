@@ -48,7 +48,6 @@ import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
@@ -57,8 +56,10 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.sections.PeptideSection;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.sql.SQLException;
+import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 
 /**
  * The Spectrum ID panel.
@@ -240,10 +241,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotCorner.setBackground(omssaTable.getTableHeader().getBackground());
         mascotTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, mascotCorner);
 
-        peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
+        peptideShakerJTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
 
         searchEngineTable.getTableHeader().setReorderingAllowed(false);
         peptideShakerJTable.getTableHeader().setReorderingAllowed(false);

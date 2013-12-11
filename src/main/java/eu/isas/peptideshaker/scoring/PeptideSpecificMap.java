@@ -8,12 +8,10 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.RowFilter;
 
 /**
  * This class contains the various peptides matches sorted according to their
@@ -45,7 +43,7 @@ public class PeptideSpecificMap implements Serializable {
      */
     public final static String SEPARATOR = "_cus_";
     /**
-     * The filters to use to flag doubtful matches
+     * The filters to use to flag doubtful matches.
      */
     private ArrayList<PeptideFilter> doubtfulMatchesFilters = getDefaultPeptideFilters();
 
@@ -56,7 +54,7 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the filters used to flag doubtful matches
+     * Returns the filters used to flag doubtful matches.
      * 
      * @return the filters used to flag doubtful matches
      */
@@ -68,7 +66,7 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * Sets the filters used to flag doubtful matches
+     * Sets the filters used to flag doubtful matches.
      * 
      * @param doubtfulMatchesFilters the filters used to flag doubtful matches
      */

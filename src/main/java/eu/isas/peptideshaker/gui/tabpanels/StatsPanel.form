@@ -1727,6 +1727,9 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Threshold type"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="thresholdTypeCmbActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
