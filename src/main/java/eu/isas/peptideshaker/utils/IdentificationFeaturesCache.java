@@ -31,8 +31,8 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         sequence_coverage,
         /**
-         * the expected sequence coverage of a given protein stored as small
-         * object
+         * The expected sequence coverage of a given protein stored as small
+         * object.
          */
         expected_coverage,
         /**
