@@ -12,66 +12,66 @@ import java.sql.SQLException;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
- * Protein Filter
+ * Protein Filter.
  *
  * @author Marc Vaudel
  */
 public class ProteinFilter extends MatchFilter {
 
     /**
-     * Serial number for serialization compatibility
+     * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = 5753850468907866679L;
     /**
-     * regex in the protein accession
+     * Regex in the protein accession.
      */
     private String accessionRegex = null;
     /**
-     * protein coverage limit
+     * Protein coverage limit.
      */
     private Double proteinCoverage = null;
     /**
-     * The type of comparison to be used for the protein coverage
+     * The type of comparison to be used for the protein coverage.
      */
     private ComparisonType proteinCoverageComparison = ComparisonType.EQUAL;
     /**
-     * spectrum counting limit
+     * Spectrum counting limit.
      */
     private Double spectrumCounting = null;
     /**
-     * The type of comparison to be used for the spectrum counting
+     * The type of comparison to be used for the spectrum counting.
      */
     private ComparisonType spectrumCountingComparison = ComparisonType.EQUAL;
     /**
-     * Number of peptides limit
+     * Number of peptides limit.
      */
     private Integer nPeptides = null;
     /**
-     * The type of comparison to be used for the number of peptides
+     * The type of comparison to be used for the number of peptides.
      */
     private ComparisonType nPeptidesComparison = ComparisonType.EQUAL;
     /**
-     * Number of spectra limit
+     * Number of spectra limit.
      */
     private Integer nSpectra = null;
     /**
-     * The type of comparison to be used for the number of spectra
+     * The type of comparison to be used for the number of spectra.
      */
     private ComparisonType nSpectraComparison = ComparisonType.EQUAL;
     /**
-     * Score limit
+     * Score limit.
      */
     private Double proteinScore = null;
     /**
-     * The type of comparison to be used for the protein score
+     * The type of comparison to be used for the protein score.
      */
     private ComparisonType proteinScoreComparison = ComparisonType.EQUAL;
     /**
-     * Confidence limit
+     * Confidence limit.
      */
     private Double proteinConfidence = null;
     /**
-     * The type of comparison to be used for the protein confidence
+     * The type of comparison to be used for the protein confidence.
      */
     private ComparisonType proteinConfidenceComparison = ComparisonType.EQUAL;
     /**
@@ -79,7 +79,7 @@ public class ProteinFilter extends MatchFilter {
      */
     private int pi = 5;
     /**
-     * The type of comparison to be used for the PI
+     * The type of comparison to be used for the PI.
      */
     private ComparisonType piComparison = ComparisonType.EQUAL;
 
@@ -94,7 +94,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the number of peptides
+     * Returns the threshold for the number of peptides.
      *
      * @return the threshold for the number of peptides
      */
@@ -103,7 +103,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the number of peptides
+     * Returns the threshold for the number of peptides.
      *
      * @param nPeptides the threshold for the number of peptides
      */
@@ -112,7 +112,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the protein confidence
+     * Returns the threshold for the protein confidence.
      *
      * @return the threshold for the protein confidence
      */
@@ -121,7 +121,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the protein confidence
+     * Sets the threshold for the protein confidence.
      *
      * @param proteinConfidence the threshold for the protein confidence
      */
@@ -130,7 +130,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the protein coverage
+     * Returns the threshold for the protein coverage.
      *
      * @return the threshold for the protein coverage
      */
@@ -139,7 +139,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * sets the threshold for the protein coverage
+     * sets the threshold for the protein coverage.
      *
      * @param proteinCoverage the threshold for the protein coverage
      */
@@ -148,7 +148,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the number of spectra
+     * Returns the threshold for the number of spectra.
      *
      * @return the threshold for the number of spectra
      */
@@ -157,7 +157,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the number of spectra
+     * Sets the threshold for the number of spectra.
      *
      * @param nSpectra the threshold for the number of spectra
      */
@@ -166,7 +166,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the protein score
+     * Returns the threshold for the protein score.
      *
      * @return the threshold for the protein score
      */
@@ -175,7 +175,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the protein score
+     * Sets the threshold for the protein score.
      *
      * @param proteinScore the threshold for the protein score
      */
@@ -184,7 +184,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the spectrum counting
+     * Returns the threshold for the spectrum counting.
      *
      * @return the threshold for the spectrum counting
      */
@@ -193,7 +193,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the spectrum counting
+     * Sets the threshold for the spectrum counting.
      *
      * @param spectrumCounting the threshold for the spectrum counting
      */
@@ -202,7 +202,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the number of peptides
+     * Returns the comparison type used for the number of peptides.
      *
      * @return the comparison type used for the number of peptides
      */
@@ -211,7 +211,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the number of peptides
+     * Sets the comparison type used for the number of peptides.
      *
      * @param nPeptidesComparison the comparison type used for the number of
      * peptides
@@ -221,7 +221,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the number of spectra
+     * Returns the comparison type used for the number of spectra.
      *
      * @return the comparison type used for the number of spectra
      */
@@ -230,7 +230,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the number of spectra
+     * Sets the comparison type used for the number of spectra.
      *
      * @param nSpectraComparison the comparison type used for the number of
      * spectra
@@ -240,7 +240,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the protein inference desired
+     * Returns the protein inference desired.
      *
      * @return the protein inference desired
      */
@@ -249,7 +249,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the protein inference desired
+     * Sets the protein inference desired.
      *
      * @param pi the protein inference desired
      */
@@ -258,7 +258,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the confidence
+     * Returns the comparison type used for the confidence.
      *
      * @return the comparison type used for the confidence
      */
@@ -267,7 +267,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the confidence
+     * Sets the comparison type used for the confidence.
      *
      * @param proteinConfidenceComparison the comparison type used for the
      * confidence
@@ -277,7 +277,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the protein coverage
+     * Returns the comparison type used for the protein coverage.
      *
      * @return the comparison type used for the protein coverage
      */
@@ -286,7 +286,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the protein coverage
+     * Sets the comparison type used for the protein coverage.
      *
      * @param proteinCoverageComparison the comparison type used for the protein
      * coverage
@@ -296,7 +296,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the protein score
+     * Returns the comparison type used for the protein score.
      *
      * @return the comparison type used for the protein score
      */
@@ -305,7 +305,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the protein score
+     * Sets the comparison type used for the protein score.
      *
      * @param proteinScoreComparison the comparison type used for the protein
      * score
@@ -315,7 +315,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the spectrum counting
+     * Returns the comparison type used for the spectrum counting.
      *
      * @return the comparison type used for the spectrum counting
      */
@@ -324,7 +324,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the spectrum counting
+     * Sets the comparison type used for the spectrum counting.
      *
      * @param spectrumCountingComparison the comparison type used for the
      * spectrum counting
@@ -334,7 +334,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the regex contained in the accession
+     * Returns the regex contained in the accession.
      *
      * @return the regex contained in the accession
      */
@@ -343,7 +343,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the regex contained in the accession
+     * Sets the regex contained in the accession.
      *
      * @param accessionRegex the regex contained in the accession
      */
@@ -352,7 +352,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type to use for the PI
+     * Returns the comparison type to use for the PI.
      *
      * @return the comparison type to use for the PI
      */
@@ -361,7 +361,7 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type to use for the PI
+     * Sets the comparison type to use for the PI.
      *
      * @param piComparison the comparison type to use for the PI
      */
@@ -381,11 +381,15 @@ public class ProteinFilter extends MatchFilter {
      *
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
      */
-    public boolean isValidated(String proteinKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
+    public boolean isValidated(String proteinKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
         return isValidated(proteinKey, this, identification, identificationFeaturesGenerator, searchParameters);
     }
-
 
     /**
      * Tests whether a protein match is validated by a given filter.
@@ -400,6 +404,10 @@ public class ProteinFilter extends MatchFilter {
      *
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
      */
     public static boolean isValidated(String proteinKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
@@ -410,11 +418,7 @@ public class ProteinFilter extends MatchFilter {
         }
 
         if (proteinFilter.getManualValidation().size() > 0) {
-            if (proteinFilter.getManualValidation().contains(proteinKey)) {
-                return true;
-            } else {
-                return false;
-            }
+            return proteinFilter.getManualValidation().contains(proteinKey);
         }
 
         if (proteinFilter.getIdentifierRegex() != null) {

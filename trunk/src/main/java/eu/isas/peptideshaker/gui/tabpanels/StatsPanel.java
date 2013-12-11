@@ -390,8 +390,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 groupSelectionHelpJButtonActionPerformed(evt);
             }
         });
+        groupSelectionLayeredPane.add(groupSelectionHelpJButton);
         groupSelectionHelpJButton.setBounds(170, 130, 27, 25);
-        groupSelectionLayeredPane.add(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        groupSelectionLayeredPane.setLayer(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         groupSelectionScrollPaneScrollPane.setOpaque(false);
 
@@ -431,8 +432,8 @@ public class StatsPanel extends javax.swing.JPanel {
         });
         groupSelectionScrollPaneScrollPane.setViewportView(groupSelectionTable);
 
+        groupSelectionLayeredPane.add(groupSelectionScrollPaneScrollPane);
         groupSelectionScrollPaneScrollPane.setBounds(0, 0, 200, 170);
-        groupSelectionLayeredPane.add(groupSelectionScrollPaneScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout groupListJPanelLayout = new javax.swing.GroupLayout(groupListJPanel);
         groupListJPanel.setLayout(groupListJPanelLayout);
@@ -817,8 +818,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         pepChartPanel.setOpaque(false);
         pepChartPanel.setLayout(new javax.swing.BoxLayout(pepChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        pepPlotLayeredPane.add(pepChartPanel);
         pepChartPanel.setBounds(0, 90, 587, 168);
-        pepPlotLayeredPane.add(pepChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         pepPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pepPlotHelpJButton.setToolTipText("Help");
@@ -839,8 +840,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 pepPlotHelpJButtonActionPerformed(evt);
             }
         });
+        pepPlotLayeredPane.add(pepPlotHelpJButton);
         pepPlotHelpJButton.setBounds(577, 10, 10, 25);
-        pepPlotLayeredPane.add(pepPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pepPlotLayeredPane.setLayer(pepPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         pepPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         pepPlotExportJButton.setToolTipText("Export");
@@ -863,8 +865,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 pepPlotExportJButtonActionPerformed(evt);
             }
         });
+        pepPlotLayeredPane.add(pepPlotExportJButton);
         pepPlotExportJButton.setBounds(550, 10, 10, 25);
-        pepPlotLayeredPane.add(pepPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pepPlotLayeredPane.setLayer(pepPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pepPanelLayout = new javax.swing.GroupLayout(pepPanel);
         pepPanel.setLayout(pepPanelLayout);
@@ -877,7 +880,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     .addGroup(pepPanelLayout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel27)))
                 .addContainerGap())
@@ -918,8 +921,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         fdrsChartPanel.setOpaque(false);
         fdrsChartPanel.setLayout(new javax.swing.BoxLayout(fdrsChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        fdrsPlotLayeredPane.add(fdrsChartPanel);
         fdrsChartPanel.setBounds(0, 80, 588, 173);
-        fdrsPlotLayeredPane.add(fdrsChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fdrsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrsPlotHelpJButton.setToolTipText("Help");
@@ -940,8 +943,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrsPlotHelpJButtonActionPerformed(evt);
             }
         });
+        fdrsPlotLayeredPane.add(fdrsPlotHelpJButton);
         fdrsPlotHelpJButton.setBounds(570, 10, 10, 25);
-        fdrsPlotLayeredPane.add(fdrsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        fdrsPlotLayeredPane.setLayer(fdrsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         fdrPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         fdrPlotExportJButton.setToolTipText("Export");
@@ -964,8 +968,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrPlotExportJButtonActionPerformed(evt);
             }
         });
+        fdrsPlotLayeredPane.add(fdrPlotExportJButton);
         fdrPlotExportJButton.setBounds(550, 10, 10, 25);
-        fdrsPlotLayeredPane.add(fdrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        fdrsPlotLayeredPane.setLayer(fdrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout fdrsPanelLayout = new javax.swing.GroupLayout(fdrsPanel);
         fdrsPanel.setLayout(fdrsPanelLayout);
@@ -978,7 +983,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     .addGroup(fdrsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel34)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel35)))
                 .addContainerGap())
@@ -1002,7 +1007,7 @@ public class StatsPanel extends javax.swing.JPanel {
         estimatorOptimizationTab.setLayout(estimatorOptimizationTabLayout);
         estimatorOptimizationTabLayout.setHorizontalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1104, Short.MAX_VALUE)
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1041,8 +1046,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         confidenceChartPanel.setOpaque(false);
         confidenceChartPanel.setLayout(new javax.swing.BoxLayout(confidenceChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        confidencePlotLayeredPane.add(confidenceChartPanel);
         confidenceChartPanel.setBounds(0, 0, 500, 460);
-        confidencePlotLayeredPane.add(confidenceChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         confidencePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         confidencePlotHelpJButton.setToolTipText("Help");
@@ -1063,8 +1068,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 confidencePlotHelpJButtonActionPerformed(evt);
             }
         });
+        confidencePlotLayeredPane.add(confidencePlotHelpJButton);
         confidencePlotHelpJButton.setBounds(480, 0, 10, 25);
-        confidencePlotLayeredPane.add(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        confidencePlotLayeredPane.setLayer(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         confidencePlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         confidencePlotExportJButton.setToolTipText("Export");
@@ -1087,8 +1093,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 confidencePlotExportJButtonActionPerformed(evt);
             }
         });
+        confidencePlotLayeredPane.add(confidencePlotExportJButton);
         confidencePlotExportJButton.setBounds(460, 0, 10, 25);
-        confidencePlotLayeredPane.add(confidencePlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        confidencePlotLayeredPane.setLayer(confidencePlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout confidencePanelLayout = new javax.swing.GroupLayout(confidencePanel);
         confidencePanel.setLayout(confidencePanelLayout);
@@ -1101,7 +1108,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     .addGroup(confidencePanelLayout.createSequentialGroup()
                         .addComponent(jLabel25)
                         .addGap(18, 18, 18)
-                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel26)))
                 .addContainerGap())
@@ -1150,8 +1157,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         fdrFnrChartPanel.setOpaque(false);
         fdrFnrChartPanel.setLayout(new javax.swing.BoxLayout(fdrFnrChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        fdrPlotLayeredPane.add(fdrFnrChartPanel);
         fdrFnrChartPanel.setBounds(0, 3, 320, 450);
-        fdrPlotLayeredPane.add(fdrFnrChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fdrFnrPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrFnrPlotHelpJButton.setToolTipText("Help");
@@ -1172,8 +1179,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrFnrPlotHelpJButtonActionPerformed(evt);
             }
         });
+        fdrPlotLayeredPane.add(fdrFnrPlotHelpJButton);
         fdrFnrPlotHelpJButton.setBounds(300, 10, 10, 25);
-        fdrPlotLayeredPane.add(fdrFnrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        fdrPlotLayeredPane.setLayer(fdrFnrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         fdrFnrPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         fdrFnrPlotExportJButton.setToolTipText("Export");
@@ -1196,8 +1204,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrFnrPlotExportJButtonActionPerformed(evt);
             }
         });
+        fdrPlotLayeredPane.add(fdrFnrPlotExportJButton);
         fdrFnrPlotExportJButton.setBounds(290, 10, 10, 25);
-        fdrPlotLayeredPane.add(fdrFnrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        fdrPlotLayeredPane.setLayer(fdrFnrPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout fdrFnrPanelLayout = new javax.swing.GroupLayout(fdrFnrPanel);
         fdrFnrPanel.setLayout(fdrFnrPanelLayout);
@@ -1210,7 +1219,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                         .addComponent(jLabel28)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel29)))
                 .addContainerGap())
@@ -1253,8 +1262,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         costBenefitChartPanel.setOpaque(false);
         costBenefitChartPanel.setLayout(new javax.swing.BoxLayout(costBenefitChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        costBenefitPlotLayeredPane.add(costBenefitChartPanel);
         costBenefitChartPanel.setBounds(0, -4, 326, 450);
-        costBenefitPlotLayeredPane.add(costBenefitChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         costBenefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         costBenefitPlotHelpJButton.setToolTipText("Help");
@@ -1275,8 +1284,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 costBenefitPlotHelpJButtonActionPerformed(evt);
             }
         });
+        costBenefitPlotLayeredPane.add(costBenefitPlotHelpJButton);
         costBenefitPlotHelpJButton.setBounds(300, 10, 10, 25);
-        costBenefitPlotLayeredPane.add(costBenefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        costBenefitPlotLayeredPane.setLayer(costBenefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         costBenefitPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         costBenefitPlotExportJButton.setToolTipText("Export");
@@ -1299,8 +1309,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 costBenefitPlotExportJButtonActionPerformed(evt);
             }
         });
+        costBenefitPlotLayeredPane.add(costBenefitPlotExportJButton);
         costBenefitPlotExportJButton.setBounds(290, 10, 10, 25);
-        costBenefitPlotLayeredPane.add(costBenefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        costBenefitPlotLayeredPane.setLayer(costBenefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout costBenefitPanelLayout = new javax.swing.GroupLayout(costBenefitPanel);
         costBenefitPanel.setLayout(costBenefitPanelLayout);
@@ -1313,7 +1324,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     .addGroup(costBenefitPanelLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel33)))
                 .addContainerGap())
@@ -1339,7 +1350,7 @@ public class StatsPanel extends javax.swing.JPanel {
         thresholdOptimizationTab.setLayout(thresholdOptimizationTabLayout);
         thresholdOptimizationTabLayout.setHorizontalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1104, Short.MAX_VALUE)
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1436,6 +1447,11 @@ public class StatsPanel extends javax.swing.JPanel {
 
         thresholdTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Confidence", "FDR", "FNR" }));
         thresholdTypeCmb.setToolTipText("Threshold type");
+        thresholdTypeCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thresholdTypeCmbActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Threshold (%):");
         jLabel8.setToolTipText("Threshold in percent");
@@ -1632,6 +1648,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 currentResults.setClassicalEstimators(false);
             }
 
+            applyButton.setEnabled(true);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             updateResults();
             updateDisplayedComponents();
@@ -2773,6 +2790,11 @@ public class StatsPanel extends javax.swing.JPanel {
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_estimatorHelpJButtonActionPerformed
+
+    private void thresholdTypeCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdTypeCmbActionPerformed
+        validateButton.setEnabled(true);
+    }//GEN-LAST:event_thresholdTypeCmbActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel confidenceChartPanel;

@@ -528,7 +528,8 @@ public class PeptideShaker {
      * for 1% FDR)
      * @param aPeptideFDR Accepted FDR at Peptide level (e.g. '1.0' for 1% FDR)
      * @param aProteinFDR Accepted FDR at Protein level (e.g. '1.0' for 1% FDR)
-     * @param searchParameters the identification parameters used for this project
+     * @param searchParameters the identification parameters used for this
+     * project
      */
     public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters) {
 
@@ -697,7 +698,7 @@ public class PeptideShaker {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
                     }
                 } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.none); // @TODO: also set psm probability to 0?
                 }
                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
                 if (waitingHandler != null) {
@@ -717,7 +718,7 @@ public class PeptideShaker {
         for (String peptideKey : identification.getPeptideIdentification()) {
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
-            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                 double peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getScoreLimit();
                 boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
                 if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
@@ -738,7 +739,7 @@ public class PeptideShaker {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
                 }
             } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+                psParameter.setMatchValidationLevel(MatchValidationLevel.none); // @TODO: also set peptide probability to 0?
             }
 
             // set the fraction details
@@ -818,9 +819,9 @@ public class PeptideShaker {
         for (String proteinKey : identification.getProteinIdentification()) {
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
 
-            if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
+                if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                     boolean filterPassed = true;
                     for (ProteinFilter filter : proteinMap.getDoubtfulMatchesFilters()) {
                         if (!filter.isValidated(proteinKey, identification, null, searchParameters)) { //@TODO: add an identification features generator if needed here. Then it should be passed to the GUI.
@@ -838,7 +839,7 @@ public class PeptideShaker {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
                 }
             } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+                psParameter.setMatchValidationLevel(MatchValidationLevel.none); // @TODO: also set protein probability to 0?
             }
 
             // set the fraction details

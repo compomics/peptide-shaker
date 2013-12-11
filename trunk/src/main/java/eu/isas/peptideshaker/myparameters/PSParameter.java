@@ -55,7 +55,7 @@ public class PSParameter implements UrParameter {
      */
     private boolean validated = false;
     /**
-     * The validation level of a given match
+     * The validation level of a given match.
      */
     private MatchValidationLevel matchValidationLevel;
     /**

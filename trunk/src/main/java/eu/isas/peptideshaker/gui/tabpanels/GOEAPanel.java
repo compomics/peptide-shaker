@@ -5,6 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.XYPlottingDialog;
@@ -16,6 +17,7 @@ import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -45,6 +47,7 @@ import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
@@ -96,6 +99,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      * The gene factory.
      */
     private GeneFactory geneFactory = GeneFactory.getInstance();
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The distribution chart panel.
      */
@@ -187,8 +194,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 null,
                 "Selected", null));
 
-        setProteinGoTableProperties();
-
         // make the tabs in the tabbed pane go from right to left
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
@@ -239,21 +244,24 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+
+        // use a gray color for no decoy searches
+        Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
+        if (!sequenceFactory.concatenatedTargetDecoy()) {
+            nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
+        }
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+                peptideShakerGUI.getSparklineColor(), nonValidatedColor, false));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+                peptideShakerGUI.getSparklineColor(), nonValidatedColor, false));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
+        proteinTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
@@ -384,7 +392,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     progressDialog.setValue(0);
                                     progressDialog.setMaxPrimaryProgressCounter(goFactory.getNumberOfTerms());
 
-
                                     // update the table
                                     Double maxLog2Diff = 0.0;
                                     ArrayList<Integer> indexes = new ArrayList<Integer>();
@@ -422,7 +429,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                                 goFactory.getNumberOfProteins(), // population size
                                                 frequencyAll, // number of successes
                                                 totalNumberOfGoMappedProteinsInProject // sample size
-                                                ).probability(frequencyDataset);
+                                        ).probability(frequencyDataset);
                                         Double log2Diff = Math.log(percentDataset / percentAll) / Math.log(2);
 
                                         if (!log2Diff.isInfinite() && Math.abs(log2Diff) > maxLog2Diff) {
@@ -525,7 +532,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                                 indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
-                                                pValues.get(0) < significanceLevel);
+                                                        pValues.get(0) < significanceLevel);
                                         ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0),
                                                 goMappingsTable.getColumn("p-value").getModelIndex());
 
@@ -657,7 +664,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         maxLog2Diff = Math.ceil(maxLog2Diff);
 
-
         JFreeChart distributionChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
         distributionChartPanel = new ChartPanel(distributionChart);
 
@@ -711,7 +717,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         goFrequencyPlotPanel.revalidate();
         goFrequencyPlotPanel.repaint();
 
-
         JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
         signChartPanel = new ChartPanel(significanceChart);
 
@@ -723,7 +728,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         BarChartColorRenderer signRenderer = new BarChartColorRenderer(significanceColors);
         signRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
         significanceChart.getCategoryPlot().setRenderer(signRenderer);
-
 
         // add mouse listener
         signChartPanel.addChartMouseListener(new ChartMouseListener() {
@@ -1408,7 +1412,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         mappingsTableLayeredPane.revalidate();
         mappingsTableLayeredPane.repaint();
 
-
         // move the icons
         plotLayeredPane.getComponent(0).setBounds(
                 plotLayeredPane.getWidth() - plotLayeredPane.getComponent(0).getWidth() - 10,
@@ -1860,11 +1863,11 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             signChartPanel.getChart().getCategoryPlot().addDomainMarker(
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
-                    Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
+                            Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
 
             distributionChartPanel.getChart().getCategoryPlot().addDomainMarker(
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
-                    Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
+                            Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
 
             ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis - "
                     + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
@@ -2093,7 +2096,6 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void updateProteinTable() {
 
         // @TODO: order the proteins in some way?
-
         if (goMappingsTable.getSelectedRow() != -1) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI,

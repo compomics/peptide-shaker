@@ -449,49 +449,62 @@ public class JumpToPanel extends javax.swing.JPanel {
                                         }
                                     }
 
-                                    ArrayList<String> secondaryCandidates = new ArrayList<String>();
-
-                                    // pre-caching
-                                    PSParameter psParameter = new PSParameter();
-                                    peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
-                                    String matchingInput = AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-
-                                    for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                                        try {
-                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-                                        } catch (Exception e) {
-                                            peptideShakerGUI.catchException(e);
-                                            return;
-                                        }
-                                        if (!psParameter.isHidden()) {
-                                            if (peptideKey.startsWith(matchingInput)) {
-                                                possibilities.get(jumpType).add(peptideKey);
-                                                types.get(jumpType).add(Type.PEPTIDE);
-                                            } else if (peptideKey.toLowerCase().contains(matchingInput)) {
-                                                secondaryCandidates.add(peptideKey);
-                                            }
-                                        }
+                                    // check if it's a valid peptide sequence
+                                    boolean validPeptideSequence;
+                                    try {
+                                        AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                        validPeptideSequence = true;
+                                    } catch (IllegalArgumentException e) {
+                                        // ignore, not a peptide sequence
+                                        validPeptideSequence = false;
                                     }
 
-                                    // pre-caching
-                                    peptideShakerGUI.getIdentification().loadPeptideMatches(null);
+                                    if (validPeptideSequence) {
 
-                                    for (String secondaryCandidate : secondaryCandidates) {
-                                        try {
-                                            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
-                                            ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping(); // we don't have time to remap proteins here
-                                            if (proteins != null) {
-                                            for (String protein : proteins) {
-                                                if (!ProteinMatch.isDecoy(protein)) {
-                                                    possibilities.get(jumpType).add(secondaryCandidate);
+                                        ArrayList<String> secondaryCandidates = new ArrayList<String>();
+
+                                        // pre-caching
+                                        PSParameter psParameter = new PSParameter();
+                                        peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
+                                        String matchingInput = AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+
+                                        for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                                            try {
+                                                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                                return;
+                                            }
+                                            if (!psParameter.isHidden()) {
+                                                if (peptideKey.startsWith(matchingInput)) {
+                                                    possibilities.get(jumpType).add(peptideKey);
                                                     types.get(jumpType).add(Type.PEPTIDE);
-                                                    break;
+                                                } else if (peptideKey.toLowerCase().contains(matchingInput)) {
+                                                    secondaryCandidates.add(peptideKey);
                                                 }
                                             }
+                                        }
+
+                                        // pre-caching
+                                        peptideShakerGUI.getIdentification().loadPeptideMatches(null);
+
+                                        for (String secondaryCandidate : secondaryCandidates) {
+                                            try {
+                                                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
+                                                ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping(); // we don't have time to remap proteins here
+                                                if (proteins != null) {
+                                                    for (String protein : proteins) {
+                                                        if (!ProteinMatch.isDecoy(protein)) {
+                                                            possibilities.get(jumpType).add(secondaryCandidate);
+                                                            types.get(jumpType).add(Type.PEPTIDE);
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                                return;
                                             }
-                                        } catch (Exception e) {
-                                            peptideShakerGUI.catchException(e);
-                                            return;
                                         }
                                     }
                                 } else {
