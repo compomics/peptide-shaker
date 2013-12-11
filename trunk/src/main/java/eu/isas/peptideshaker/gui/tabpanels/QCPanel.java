@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
@@ -61,6 +62,10 @@ public class QCPanel extends javax.swing.JPanel {
      * Values of the validated target hits.
      */
     public ArrayList<Double> validatedValues;
+    /**
+     * Values of the doubtful validated target hits.
+     */
+    public ArrayList<Double> validatedDoubtfulValues;
     /**
      * Values of the non validated target hits.
      */
@@ -110,11 +115,12 @@ public class QCPanel extends javax.swing.JPanel {
         initComponents();
 
         // set the histogram colors
-        histogramColors = new Color[4];
-        histogramColors[0] = peptideShakerGUI.getSparklineColor();
-        histogramColors[1] = new Color(255, 51, 51);
-        histogramColors[2] = new Color(100, 150, 255);
-        histogramColors[3] = Color.lightGray;
+        histogramColors = new Color[5];
+        histogramColors[0] = peptideShakerGUI.getSparklineColor(); // Validated True Positives
+        histogramColors[1] = new Color(255, 204, 0); // Doubtful True Positives
+        histogramColors[2] = new Color(255, 51, 51); // Validated False Positives
+        histogramColors[3] = new Color(100, 150, 255); // Non-Validated True Positives
+        histogramColors[4] = Color.lightGray; // Non-Validated False Positives
 
         // make the tabs in the spectrum tabbed pane go from right to left
         tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -209,7 +215,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(psmPrecursorMassErrorJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(psmPrecursorChargeJRadioButton)
-                .addContainerGap(375, Short.MAX_VALUE))
+                .addContainerGap(419, Short.MAX_VALUE))
         );
         psmPlotTypePanelLayout.setVerticalGroup(
             psmPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,8 +235,8 @@ public class QCPanel extends javax.swing.JPanel {
 
         psmQCPlotPanel.setOpaque(false);
         psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        psmPlotLayeredPane.add(psmQCPlotPanel);
         psmQCPlotPanel.setBounds(0, 0, 650, 420);
-        psmPlotLayeredPane.add(psmQCPlotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         psmPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         psmPlotHelpJButton.setToolTipText("Help");
@@ -251,8 +257,9 @@ public class QCPanel extends javax.swing.JPanel {
                 psmPlotHelpJButtonActionPerformed(evt);
             }
         });
+        psmPlotLayeredPane.add(psmPlotHelpJButton);
         psmPlotHelpJButton.setBounds(640, 0, 10, 25);
-        psmPlotLayeredPane.add(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        psmPlotLayeredPane.setLayer(psmPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPsmPlotJButton.setToolTipText("Export");
@@ -275,8 +282,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPsmPlotJButtonActionPerformed(evt);
             }
         });
+        psmPlotLayeredPane.add(exportPsmPlotJButton);
         exportPsmPlotJButton.setBounds(630, 0, 10, 25);
-        psmPlotLayeredPane.add(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        psmPlotLayeredPane.setLayer(exportPsmPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
@@ -289,19 +297,19 @@ public class QCPanel extends javax.swing.JPanel {
             .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         psmPanelLayout.setVerticalGroup(
             psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createSequentialGroup()
-                .addContainerGap(446, Short.MAX_VALUE)
+                .addContainerGap(452, Short.MAX_VALUE)
                 .addComponent(psmPlotTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(psmPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
                     .addGap(93, 93, 93)))
         );
 
@@ -354,7 +362,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(peptideMissedCleavagesJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(peptideLengthJRadioButton)
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addContainerGap(306, Short.MAX_VALUE))
         );
         peptidesPlotTypePanelLayout.setVerticalGroup(
             peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -375,8 +383,8 @@ public class QCPanel extends javax.swing.JPanel {
 
         peptideQCPlotPanel.setOpaque(false);
         peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        peptidesPlotLayeredPane.add(peptideQCPlotPanel);
         peptideQCPlotPanel.setBounds(0, 0, 660, 420);
-        peptidesPlotLayeredPane.add(peptideQCPlotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         peptidesPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         peptidesPlotHelpJButton.setToolTipText("Help");
@@ -397,8 +405,9 @@ public class QCPanel extends javax.swing.JPanel {
                 peptidesPlotHelpJButtonActionPerformed(evt);
             }
         });
+        peptidesPlotLayeredPane.add(peptidesPlotHelpJButton);
         peptidesPlotHelpJButton.setBounds(640, 0, 10, 25);
-        peptidesPlotLayeredPane.add(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        peptidesPlotLayeredPane.setLayer(peptidesPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportPeptidesPlotJButton.setToolTipText("Export");
@@ -421,8 +430,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPeptidesPlotJButtonActionPerformed(evt);
             }
         });
+        peptidesPlotLayeredPane.add(exportPeptidesPlotJButton);
         exportPeptidesPlotJButton.setBounds(630, 0, 10, 25);
-        peptidesPlotLayeredPane.add(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        peptidesPlotLayeredPane.setLayer(exportPeptidesPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
@@ -435,19 +445,19 @@ public class QCPanel extends javax.swing.JPanel {
             .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         peptidePanelLayout.setVerticalGroup(
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidePanelLayout.createSequentialGroup()
-                .addContainerGap(446, Short.MAX_VALUE)
+                .addContainerGap(452, Short.MAX_VALUE)
                 .addComponent(peptidesPlotTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(peptidesPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
                     .addGap(93, 93, 93)))
         );
 
@@ -463,8 +473,8 @@ public class QCPanel extends javax.swing.JPanel {
 
         proteinQCPlotPanel.setOpaque(false);
         proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        proteinsPlotLayeredPane.add(proteinQCPlotPanel);
         proteinQCPlotPanel.setBounds(0, 0, 0, 0);
-        proteinsPlotLayeredPane.add(proteinQCPlotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         proteinsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         proteinsPlotHelpJButton.setToolTipText("Help");
@@ -485,8 +495,9 @@ public class QCPanel extends javax.swing.JPanel {
                 proteinsPlotHelpJButtonActionPerformed(evt);
             }
         });
+        proteinsPlotLayeredPane.add(proteinsPlotHelpJButton);
         proteinsPlotHelpJButton.setBounds(640, 0, 10, 25);
-        proteinsPlotLayeredPane.add(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        proteinsPlotLayeredPane.setLayer(proteinsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsPlotJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
         exportProteinsPlotJButton.setToolTipText("Export");
@@ -509,8 +520,9 @@ public class QCPanel extends javax.swing.JPanel {
                 exportProteinsPlotJButtonActionPerformed(evt);
             }
         });
+        proteinsPlotLayeredPane.add(exportProteinsPlotJButton);
         exportProteinsPlotJButton.setBounds(630, 0, 10, 25);
-        proteinsPlotLayeredPane.add(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        proteinsPlotLayeredPane.setLayer(exportProteinsPlotJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         proteinPlotTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
         proteinPlotTypePanel.setOpaque(false);
@@ -598,7 +610,7 @@ public class QCPanel extends javax.swing.JPanel {
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                .addComponent(proteinsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
                 .addGap(4, 4, 4)
                 .addComponent(proteinPlotTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -614,14 +626,14 @@ public class QCPanel extends javax.swing.JPanel {
             qcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(qcPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
         qcPanelLayout.setVerticalGroup(
             qcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(qcPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
 
@@ -1145,6 +1157,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
@@ -1165,6 +1178,7 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(90.0);
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", "%", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", "%", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", "%", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", "%", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", "%", true);
@@ -1186,6 +1200,7 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(500.0);
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1205,6 +1220,7 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(3000.0);
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1222,6 +1238,7 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setSeriesPaint(1, histogramColors[1]);
                         renderer.setSeriesPaint(2, histogramColors[2]);
                         renderer.setSeriesPaint(3, histogramColors[3]);
+                        renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         proteinChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1255,10 +1272,9 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         proteinChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         proteinChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
-                        
+
                         // rotate the x-axis labels to make sure that they are readable
                         //proteinChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
-
                         // hide the outline
                         proteinChart.getPlot().setOutlineVisible(false);
 
@@ -1328,6 +1344,7 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(500.0);
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1342,6 +1359,7 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(3.0);
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1358,6 +1376,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1375,6 +1394,7 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setSeriesPaint(1, histogramColors[1]);
                         renderer.setSeriesPaint(2, histogramColors[2]);
                         renderer.setSeriesPaint(3, histogramColors[3]);
+                        renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         peptideChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1400,10 +1420,9 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         peptideChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         peptideChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
-                        
+
                         // rotate the x-axis labels to make sure that they are readable
                         //peptideChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
-
                         // hide the outline
                         peptideChart.getPlot().setOutlineVisible(false);
 
@@ -1468,6 +1487,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
@@ -1483,6 +1503,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
                         getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
                         getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
@@ -1500,6 +1521,7 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setSeriesPaint(1, histogramColors[1]);
                         renderer.setSeriesPaint(2, histogramColors[2]);
                         renderer.setSeriesPaint(3, histogramColors[3]);
+                        renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         psmChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1521,7 +1543,7 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         psmChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         psmChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
-                        
+
                         // rotate the x-axis labels to make sure that they are readable
                         if (psmPrecursorMassErrorJRadioButton.isSelected()) {
                             psmChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
@@ -1559,6 +1581,7 @@ public class QCPanel extends javax.swing.JPanel {
             if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
                 // Values for the number of validated peptides
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1587,7 +1610,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!proteinMatch.isDecoy()) {
                             if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                validatedValues.add(value);
+                                if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    validatedValues.add(value);
+                                } else {
+                                    validatedDoubtfulValues.add(value);
+                                }
                             } else {
                                 nonValidatedValues.add(value);
                             }
@@ -1607,6 +1634,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the spectrum counting
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1637,7 +1665,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                             if (!proteinMatch.isDecoy()) {
                                 if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedValues.add(value);
+                                    if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                        validatedValues.add(value);
+                                    } else {
+                                        validatedDoubtfulValues.add(value);
+                                    }
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
@@ -1659,6 +1691,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the sequence coverage
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1682,7 +1715,11 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                             if (!proteinMatch.isDecoy()) {
                                 if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedValues.add(value);
+                                    if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                        validatedValues.add(value);
+                                    } else {
+                                        validatedDoubtfulValues.add(value);
+                                    }
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
@@ -1703,6 +1740,7 @@ public class QCPanel extends javax.swing.JPanel {
             } else if (proteinSequenceLengthJRadioButton.isSelected()) {
                 // Values for the sequence length
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1732,7 +1770,11 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                         if (!ProteinMatch.isDecoy(proteinKey)) {
                             if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                validatedValues.add(value);
+                                if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    validatedValues.add(value);
+                                } else {
+                                    validatedDoubtfulValues.add(value);
+                                }
                             } else {
                                 nonValidatedValues.add(value);
                             }
@@ -1771,6 +1813,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the number of validated PSMs
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1805,7 +1848,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedValues.add(value);
+                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    validatedValues.add(value);
+                                } else {
+                                    validatedDoubtfulValues.add(value);
+                                }
                             } else {
                                 nonValidatedValues.add(value);
                             }
@@ -1824,6 +1871,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the missed cleavages
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1849,7 +1897,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedValues.add(value);
+                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    validatedValues.add(value);
+                                } else {
+                                    validatedDoubtfulValues.add(value);
+                                }
                             } else {
                                 nonValidatedValues.add(value);
                             }
@@ -1868,6 +1920,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the peptide length
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -1892,7 +1945,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
-                                validatedValues.add(length);
+                                if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    validatedValues.add(length);
+                                } else {
+                                    validatedDoubtfulValues.add(length);
+                                }
                             } else {
                                 nonValidatedValues.add(length);
                             }
@@ -1931,12 +1988,12 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the precursor mass deviation
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
                 SpectrumMatch spectrumMatch;
                 Precursor precursor;
-
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
                     identification.loadSpectrumMatches(spectrumFileName, progressDialog);
@@ -1962,7 +2019,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                             if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedValues.add(value);
+                                    if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                        validatedValues.add(value);
+                                    } else {
+                                        validatedDoubtfulValues.add(value);
+                                    }
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
@@ -1982,6 +2043,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 // Values for the precursor charge
                 validatedValues = new ArrayList<Double>();
+                validatedDoubtfulValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
@@ -2006,7 +2068,11 @@ public class QCPanel extends javax.swing.JPanel {
 
                             if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedValues.add(value);
+                                    if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                        validatedValues.add(value);
+                                    } else {
+                                        validatedDoubtfulValues.add(value);
+                                    }
                                 } else {
                                     nonValidatedValues.add(value);
                                 }
@@ -2072,7 +2138,6 @@ public class QCPanel extends javax.swing.JPanel {
                 binData[binData.length - 1]++;
             }
         }
-
 
         for (int i = 0; i < bins.size() + 1 && !progressDialog.isRunCanceled(); i++) {
             if (i == 0) {

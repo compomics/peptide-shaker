@@ -59,7 +59,7 @@ public class PSParameter implements UrParameter {
      */
     private MatchValidationLevel matchValidationLevel;
     /**
-     * The reason why a match is flagged as doubtful
+     * The reason why a match is flagged as doubtful.
      */
     private String reasonDoubtful = null;
     /**

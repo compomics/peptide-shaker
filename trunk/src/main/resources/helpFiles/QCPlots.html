@@ -22,12 +22,16 @@
             the identification process. <b>PeptideShaker</b> allows you to screen metrics at the protein, peptide and peptide to spectrum match 
             level. If a metric of interest is missing, please contact the developers and we will try to add it.
             <br><br>
-            <b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into four classes:
+            <b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into five classes:
         </p>
 
         <ul>
             <li> 
                 <b>Validated True Positives:</b> the amount of validated true positives. Note that the validation settings can be tuned in the <i>Validation</i> tab.
+            </li>
+            <li> 
+                <b>Doubtful True Positives:</b> the amount of doubtful true positives, meaning proteins, peptide and PSMs that have passed the validation filter, but 
+                where the amount of evidence is low. For example a protein identified by only one validated peptide.
             </li>
             <li> 
                 <b>Validated False Positives:</b> The amount of false positives validated. Note that this estimation can be biased by the <i>Target/Decoy</i> 

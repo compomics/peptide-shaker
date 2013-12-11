@@ -519,20 +519,20 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         MatchValidationLevel matchValidationLevel = peptideProbabilities.getMatchValidationLevel();
                         if (matchValidationLevel == MatchValidationLevel.doubtful && !peptideProbabilities.getReasonDoubtful().equals("")) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + " (" + peptideProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + " (" + peptideProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
                         } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
                         }
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         matchValidationLevel = psmProbabilities.getMatchValidationLevel();
                         if (matchValidationLevel == MatchValidationLevel.doubtful && !psmProbabilities.getReasonDoubtful().equals("")) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + " (" + psmProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + " (" + psmProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
                         } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
                         }
-                        
+
                         writeCvTerm(new CvTerm("MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
                         //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
 
@@ -582,12 +582,12 @@ public class PRIDEExport {
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-               MatchValidationLevel matchValidationLevel = psmProbabilities.getMatchValidationLevel();
-                        if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinProbabilities.getReasonDoubtful().equals("")) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + " (" + proteinProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
-                        } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
-                        }
+                MatchValidationLevel matchValidationLevel = psmProbabilities.getMatchValidationLevel();
+                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinProbabilities.getReasonDoubtful().equals("")) {
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + " (" + proteinProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
+                } else {
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
+                }
                 String otherProteins = "";
                 boolean first = true;
                 for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
