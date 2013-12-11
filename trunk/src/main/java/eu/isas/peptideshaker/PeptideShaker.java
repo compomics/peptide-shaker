@@ -280,7 +280,9 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
-        inputMap.estimateProbabilities(waitingHandler);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            inputMap.estimateProbabilities(waitingHandler);
+        }
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -698,7 +700,7 @@ public class PeptideShaker {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
                     }
                 } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.none); // @TODO: also set psm probability to 0?
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.none);
                 }
                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
                 if (waitingHandler != null) {
@@ -717,8 +719,8 @@ public class PeptideShaker {
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
 
-            if (sequenceFactory.concatenatedTargetDecoy()) {
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+            if (sequenceFactory.concatenatedTargetDecoy()) {
                 double peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getScoreLimit();
                 boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
                 if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
@@ -818,8 +820,8 @@ public class PeptideShaker {
         identification.loadProteinMatchParameters(new PSParameter(), null);
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            if (sequenceFactory.concatenatedTargetDecoy()) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+            if (sequenceFactory.concatenatedTargetDecoy()) {
 
                 if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                     boolean filterPassed = true;
@@ -839,7 +841,7 @@ public class PeptideShaker {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
                 }
             } else {
-                psParameter.setMatchValidationLevel(MatchValidationLevel.none); // @TODO: also set protein probability to 0?
+                psParameter.setMatchValidationLevel(MatchValidationLevel.none);
             }
 
             // set the fraction details
@@ -974,7 +976,7 @@ public class PeptideShaker {
 
                         if (!identifications.contains(id)) {
                             psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
-                            if (multiSE) {
+                            if (multiSE && sequenceFactory.concatenatedTargetDecoy()) {
                                 p = psParameter.getSearchEngineProbability();
                             } else {
                                 p = peptideAssumption1.getScore();
@@ -1233,19 +1235,29 @@ public class PeptideShaker {
                     for (double eValue : eValues) {
 
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
+
                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                             PSParameter psParameter = new PSParameter();
-                            double newP = inputMap.getProbability(searchEngine, eValue);
 
-                            if (newP > previousP) {
-                                psParameter.setSearchEngineProbability(newP);
-                                previousP = newP;
+                            if (sequenceFactory.concatenatedTargetDecoy()) {
+
+                                double newP = inputMap.getProbability(searchEngine, eValue);
+
+                                if (newP > previousP) {
+                                    psParameter.setSearchEngineProbability(newP);
+                                    previousP = newP;
+                                } else {
+                                    psParameter.setSearchEngineProbability(previousP);
+                                }
+
                             } else {
-                                psParameter.setSearchEngineProbability(previousP);
+                                psParameter.setSearchEngineProbability(1.0);
                             }
 
                             peptideAssumption.addUrParam(psParameter);
+
                         }
+
                     }
                 }
 
@@ -1282,7 +1294,11 @@ public class PeptideShaker {
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
+                if (sequenceFactory.concatenatedTargetDecoy()) {
+                    psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
+                } else {
+                    psParameter.setPsmProbability(1.0);
+                }
                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
 
                 identification.buildPeptidesAndProteins(spectrumKey, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
@@ -2430,9 +2446,17 @@ public class PeptideShaker {
         identification.loadPeptideMatchParameters(psParameter, null);
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-            psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPeptideProbabilityScore()));
+            if (sequenceFactory.concatenatedTargetDecoy()) {
+                psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPeptideProbabilityScore()));
+            } else {
+                psParameter.setPeptideProbability(1.0);
+            }
             for (String fraction : psParameter.getFractions()) {
-                psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
+                if (sequenceFactory.concatenatedTargetDecoy()) {
+                    psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
+                } else {
+                    psParameter.setFractionPEP(fraction, 1.0);
+                }
             }
             identification.updatePeptideMatchParameter(peptideKey, psParameter); // @TODO: batch insert?
             waitingHandler.increaseSecondaryProgressCounter();
@@ -2535,11 +2559,19 @@ public class PeptideShaker {
             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-            double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
-            psParameter.setProteinProbability(proteinProbability);
+            if (sequenceFactory.concatenatedTargetDecoy()) {
+                double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
+                psParameter.setProteinProbability(proteinProbability);
+            } else {
+                psParameter.setProteinProbability(1.0);
+            }
 
             for (String fraction : psParameter.getFractions()) {
-                psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
+                if (sequenceFactory.concatenatedTargetDecoy()) {
+                    psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
+                } else {
+                    psParameter.setFractionPEP(fraction, 1.0);
+                }
 
                 // set the fraction molecular weights
                 if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > processingPreferences.getProteinConfidenceMwPlots()) {
