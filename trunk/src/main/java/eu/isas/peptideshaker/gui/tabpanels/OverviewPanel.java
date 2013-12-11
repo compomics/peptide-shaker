@@ -124,7 +124,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private SpectrumPanel spectrumPanel;
     /**
-     * boolean indicating whether the spectrum shall be displayed.
+     * Boolean indicating whether the spectrum shall be displayed.
      */
     private boolean displaySpectrum = true;
     /**

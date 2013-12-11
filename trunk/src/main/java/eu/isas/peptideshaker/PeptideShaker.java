@@ -134,7 +134,7 @@ public class PeptideShaker {
     private Metrics metrics = new Metrics();
     /**
      * An identification features generator which will compute figures on the
-     * identification matches and keep some of them in memory
+     * identification matches and keep some of them in memory.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
