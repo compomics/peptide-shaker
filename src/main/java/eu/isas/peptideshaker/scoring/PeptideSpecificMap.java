@@ -8,7 +8,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
