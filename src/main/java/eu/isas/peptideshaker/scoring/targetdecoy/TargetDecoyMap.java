@@ -255,6 +255,20 @@ public class TargetDecoyMap implements Serializable {
         }
         return nmax;
     }
+    
+    /**
+     * Returns the minimal detectable PEP variation in percent.
+     * 
+     * @return the minimal detectable PEP variation in percent
+     */
+    public double getResolution() {
+        double pmin = 0;
+        int nMax = getnMax();
+        if (nMax != 0) {
+            pmin = 100.0 / nMax;
+        }
+        return pmin;
+    }
 
     /**
      * Returns the number of target hits before the first decoy hit.

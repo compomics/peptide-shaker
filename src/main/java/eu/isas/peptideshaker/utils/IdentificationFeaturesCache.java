@@ -50,10 +50,20 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         number_of_validated_spectra,
         /**
+         * The number of validated spectra of a given peptide or protein stored
+         * as small object.
+         */
+        number_of_confident_spectra,
+        /**
          * The number of validated peptides of a given protein stored as small
          * object.
          */
         number_of_validated_peptides,
+        /**
+         * The number of confident peptides of a given protein stored as small
+         * object.
+         */
+        number_of_confident_peptides,
         /**
          * The max mz value for all the PSMs for a given peptide stored as small
          * object.
@@ -168,6 +178,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_spectra:
             case number_of_validated_spectra:
             case number_of_validated_peptides:
+            case number_of_confident_spectra:
+            case number_of_confident_peptides:
             case max_psm_mz_for_peptides:
             case unique_peptides:
                 smallObjectsCache.remove(type);
@@ -225,6 +237,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_spectra:
             case number_of_validated_spectra:
             case number_of_validated_peptides:
+            case number_of_confident_spectra:
+            case number_of_confident_peptides:
             case max_psm_mz_for_peptides:
             case unique_peptides:
                 if (!smallObjectsCache.containsKey(type)) {
@@ -287,6 +301,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_spectra:
             case number_of_validated_spectra:
             case number_of_validated_peptides:
+            case number_of_confident_spectra:
+            case number_of_confident_peptides:
             case max_psm_mz_for_peptides:
             case unique_peptides:
                 if (smallObjectsCache.containsKey(type)) {
@@ -527,6 +543,10 @@ public class IdentificationFeaturesCache implements Serializable {
                 return "#validated_spectra";
             case number_of_validated_peptides:
                 return "#validated_peptides";
+            case number_of_confident_spectra:
+                return "#confident_spectra";
+            case number_of_confident_peptides:
+                return "#confident_peptides";
             case max_psm_mz_for_peptides:
                 return "max_psm_mz_for_peptides";
             case tryptic_protein:
@@ -561,6 +581,10 @@ public class IdentificationFeaturesCache implements Serializable {
             return ObjectType.number_of_validated_spectra;
         } else if (objectTypeAsString.equals("#validated_peptides")) {
             return ObjectType.number_of_validated_peptides;
+        } else if (objectTypeAsString.equals("#confident_spectra")) {
+            return ObjectType.number_of_confident_spectra;
+        } else if (objectTypeAsString.equals("#confident_peptides")) {
+            return ObjectType.number_of_confident_peptides;
         } else if (objectTypeAsString.equals("max_psm_mz_for_peptides")) {
             return ObjectType.max_psm_mz_for_peptides;
         } else if (objectTypeAsString.equals("tryptic_protein")) {

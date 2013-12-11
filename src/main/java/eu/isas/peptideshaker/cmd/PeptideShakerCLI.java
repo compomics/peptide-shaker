@@ -399,11 +399,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // metrics saved while processing the data
             metrics = peptideShaker.getMetrics();
 
+            // the identification feature generator
+            identificationFeaturesGenerator = peptideShaker.getIdentificationFeaturesGenerator();
+
             // the cache used for identification
             objectsCache = peptideShaker.getCache();
-
-            // the identification feature generator
-            identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
             if (waitingHandler instanceof WaitingDialog) {
                 projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));

@@ -740,9 +740,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
+                peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
                 peptideShakerGUI.setCache(peptideShaker.getCache());
                 peptideShakerGUI.setUpInitialFilters();
-                peptideShakerGUI.resetFeatureGenerator();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));

@@ -3933,7 +3933,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             clearDatabaseFolder();
         }
 
-        resetFeatureGenerator();
+        resetIdentificationFeaturesGenerator();
 
         // set up the tabs/panels
         scoresJCheckBoxMenuItem.setSelected(false);
@@ -5655,19 +5655,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
+     * Resets the feature generator.
+     */
+    public void resetIdentificationFeaturesGenerator() {
+        cpsBean.resetIdentificationFeaturesGenerator();
+    }
+
+    /**
+     * Sets the feature generator.
+     * 
+     * @param identificationFeaturesGenerator the identification features generator
+     */
+    public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+        cpsBean.setIdentificationFeaturesGenerator(identificationFeaturesGenerator);
+    }
+
+    /**
      * Returns the display features generator.
      *
      * @return the display features generator
      */
     public DisplayFeaturesGenerator getDisplayFeaturesGenerator() {
         return displayFeaturesGenerator;
-    }
-
-    /**
-     * Resets the feature generator.
-     */
-    public void resetFeatureGenerator() {
-        cpsBean.resetFeatureGenerator();
     }
 
     /**

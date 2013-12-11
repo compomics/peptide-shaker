@@ -47,9 +47,25 @@ public class ProteinFilter extends MatchFilter {
      */
     private Integer nPeptides = null;
     /**
+     * Number of validated peptides limit.
+     */
+    private Integer nValidatedPeptides = null;
+    /**
+     * Number of confident peptides limit.
+     */
+    private Integer nConfidentPeptides = null;
+    /**
      * The type of comparison to be used for the number of peptides.
      */
     private ComparisonType nPeptidesComparison = ComparisonType.EQUAL;
+    /**
+     * The type of comparison to be used for the number of peptides.
+     */
+    private ComparisonType nValidatedPeptidesComparison = ComparisonType.EQUAL;
+    /**
+     * The type of comparison to be used for the number of peptides.
+     */
+    private ComparisonType nConfidentPeptidesComparison = ComparisonType.EQUAL;
     /**
      * Number of spectra limit.
      */
@@ -58,6 +74,22 @@ public class ProteinFilter extends MatchFilter {
      * The type of comparison to be used for the number of spectra.
      */
     private ComparisonType nSpectraComparison = ComparisonType.EQUAL;
+    /**
+     * Number of validated spectra limit.
+     */
+    private Integer nValidatedSpectra = null;
+    /**
+     * The type of comparison to be used for the number of validated spectra.
+     */
+    private ComparisonType nValidatedSpectraComparison = ComparisonType.EQUAL;
+    /**
+     * Number of confident spectra limit.
+     */
+    private Integer nConfidentSpectra = null;
+    /**
+     * The type of comparison to be used for the number of confident spectra.
+     */
+    private ComparisonType nConfidentSpectraComparison = ComparisonType.EQUAL;
     /**
      * Score limit.
      */
@@ -112,6 +144,42 @@ public class ProteinFilter extends MatchFilter {
     }
 
     /**
+     * Returns the threshold for the number of validated peptides.
+     *
+     * @return the threshold for the number of validated peptides
+     */
+    public Integer getnValidatedPeptides() {
+        return nValidatedPeptides;
+    }
+
+    /**
+     * Returns the threshold for the number of validated peptides.
+     *
+     * @param nValidatedPeptides the threshold for the number of validated peptides
+     */
+    public void setnValidatedPeptides(int nValidatedPeptides) {
+        this.nValidatedPeptides = nValidatedPeptides;
+    }
+
+    /**
+     * Returns the threshold for the number of confident peptides.
+     *
+     * @return the threshold for the number of confident peptides
+     */
+    public Integer getnConfidentPeptides() {
+        return nConfidentPeptides;
+    }
+
+    /**
+     * Returns the threshold for the number of confident peptides.
+     *
+     * @param nConfidentPeptides the threshold for the number of confident peptides
+     */
+    public void setnConfidentPeptides(int nConfidentPeptides) {
+        this.nConfidentPeptides = nConfidentPeptides;
+    }
+
+    /**
      * Returns the threshold for the protein confidence.
      *
      * @return the threshold for the protein confidence
@@ -163,6 +231,42 @@ public class ProteinFilter extends MatchFilter {
      */
     public void setProteinNSpectra(Integer nSpectra) {
         this.nSpectra = nSpectra;
+    }
+
+    /**
+     * Returns the threshold for the number of validated spectra.
+     *
+     * @return the threshold for the number of validated spectra
+     */
+    public Integer getProteinNValidatedSpectra() {
+        return nValidatedSpectra;
+    }
+
+    /**
+     * Sets the threshold for the number of validated spectra.
+     *
+     * @param nValidatedSpectra the threshold for the number of validated spectra
+     */
+    public void setProteinNValidatedSpectra(Integer nValidatedSpectra) {
+        this.nValidatedSpectra = nValidatedSpectra;
+    }
+
+    /**
+     * Returns the threshold for the number of confident spectra.
+     *
+     * @return the threshold for the number of confident spectra
+     */
+    public Integer getProteinNConfidentSpectra() {
+        return nConfidentSpectra;
+    }
+
+    /**
+     * Sets the threshold for the number of confident spectra.
+     *
+     * @param nConfidentSpectra the threshold for the number of confident spectra
+     */
+    public void setProteinNConfidentSpectra(Integer nConfidentSpectra) {
+        this.nConfidentSpectra = nConfidentSpectra;
     }
 
     /**
@@ -237,6 +341,82 @@ public class ProteinFilter extends MatchFilter {
      */
     public void setnSpectraComparison(ComparisonType nSpectraComparison) {
         this.nSpectraComparison = nSpectraComparison;
+    }
+
+    /**
+     * Returns the comparison type used for the number of validated spectra.
+     *
+     * @return the comparison type used for the number of validated spectra
+     */
+    public ComparisonType getnValidatedSpectraComparison() {
+        return nValidatedSpectraComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the number of validated spectra.
+     *
+     * @param nValidatedSpectraComparison the comparison type used for the number of validated
+     * spectra
+     */
+    public void setnValidatedSpectraComparison(ComparisonType nValidatedSpectraComparison) {
+        this.nValidatedSpectraComparison = nValidatedSpectraComparison;
+    }
+
+    /**
+     * Returns the comparison type used for the number of confident spectra.
+     *
+     * @return the comparison type used for the number of confident spectra
+     */
+    public ComparisonType getnConfidentSpectraComparison() {
+        return nConfidentSpectraComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the number of confident spectra.
+     *
+     * @param nConfidentSpectraComparison the comparison type used for the number of confident
+     * spectra
+     */
+    public void setnConfidentSpectraComparison(ComparisonType nConfidentSpectraComparison) {
+        this.nConfidentSpectraComparison = nConfidentSpectraComparison;
+    }
+
+    /**
+     * Returns the comparison type used for the number of validated peptides.
+     *
+     * @return the comparison type used for the number of validated peptides
+     */
+    public ComparisonType getnValidatedPeptidesComparison() {
+        return nValidatedPeptidesComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the number of validated peptides.
+     *
+     * @param nValidatedPeptidesComparison the comparison type used for the number of validated
+     * peptides
+     */
+    public void setnValidatedPeptidesComparison(ComparisonType nValidatedPeptidesComparison) {
+        this.nValidatedPeptidesComparison = nValidatedPeptidesComparison;
+    }
+
+    /**
+     * Returns the comparison type used for the number of confident peptides.
+     *
+     * @return the comparison type used for the number of confident peptides
+     */
+    public ComparisonType getnConfidentPeptidesComparison() {
+        return nConfidentPeptidesComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the number of confident peptides.
+     *
+     * @param nConfidentPeptidesComparison the comparison type used for the number of confident
+     * peptides
+     */
+    public void setnConfidentPeptidesComparison(ComparisonType nConfidentPeptidesComparison) {
+        this.nConfidentPeptidesComparison = nConfidentPeptidesComparison;
     }
 
     /**
@@ -394,7 +574,7 @@ public class ProteinFilter extends MatchFilter {
     /**
      * Tests whether a protein match is validated by a given filter.
      *
-     * @param proteinKey the key of the protein match
+     * @param proteinMatchKey the key of the protein match
      * @param proteinFilter the filter
      * @param identification the identification where to get the information
      * from
@@ -409,23 +589,23 @@ public class ProteinFilter extends MatchFilter {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      */
-    public static boolean isValidated(String proteinKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
+    public static boolean isValidated(String proteinMatchKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
-        if (proteinFilter.getExceptions().contains(proteinKey)) {
+        if (proteinFilter.getExceptions().contains(proteinMatchKey)) {
             return false;
         }
 
         if (proteinFilter.getManualValidation().size() > 0) {
-            return proteinFilter.getManualValidation().contains(proteinKey);
+            return proteinFilter.getManualValidation().contains(proteinMatchKey);
         }
 
         if (proteinFilter.getIdentifierRegex() != null) {
-            String test = "test_" + proteinKey + "_test";
+            String test = "test_" + proteinMatchKey + "_test";
             if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
                 boolean found = false;
-                for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
                     test = "test_" + sequenceFactory.getHeader(accession).getSimpleProteinDescription().toLowerCase() + "_test";
                     if (test.split(proteinFilter.getIdentifierRegex().toLowerCase()).length > 1) {
                         found = true;
@@ -439,7 +619,7 @@ public class ProteinFilter extends MatchFilter {
         }
 
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
 
         if (proteinFilter.getPi() != 5) {
             if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
@@ -492,10 +672,14 @@ public class ProteinFilter extends MatchFilter {
         }
 
         if (proteinFilter.getnPeptides() != null
+                || proteinFilter.getnValidatedPeptides()!= null
+                || proteinFilter.getnConfidentPeptides()!= null
                 || proteinFilter.getProteinNSpectra() != null
+                || proteinFilter.getProteinNValidatedSpectra() != null
+                || proteinFilter.getProteinNConfidentSpectra() != null
                 || proteinFilter.getProteinCoverage() != null
                 || proteinFilter.getSpectrumCounting() != null) {
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
 
             if (proteinFilter.getnPeptides() != null) {
                 if (proteinFilter.getnPeptidesComparison() == ComparisonType.AFTER) {
@@ -517,28 +701,111 @@ public class ProteinFilter extends MatchFilter {
                 }
             }
 
+            if (proteinFilter.getnValidatedPeptides() != null) {
+                int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinMatchKey);
+                if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.AFTER) {
+                    if (nValidatedPeptides <= proteinFilter.getnValidatedPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.BEFORE) {
+                    if (nValidatedPeptides >= proteinFilter.getnValidatedPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.EQUAL) {
+                    if (nValidatedPeptides != proteinFilter.getnValidatedPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.NOT_EQUAL) {
+                    if (nValidatedPeptides == proteinFilter.getnValidatedPeptides()) {
+                        return false;
+                    }
+                }
+            }
+
+            if (proteinFilter.getnConfidentPeptides() != null) {
+                if (proteinFilter.getnConfidentPeptidesComparison() == ComparisonType.AFTER) {
+                    if (proteinMatch.getPeptideMatches().size() <= proteinFilter.getnConfidentPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.BEFORE) {
+                    if (proteinMatch.getPeptideMatches().size() >= proteinFilter.getnConfidentPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.EQUAL) {
+                    if (proteinMatch.getPeptideMatches().size() != proteinFilter.getnConfidentPeptides()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.NOT_EQUAL) {
+                    if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnConfidentPeptides()) {
+                        return false;
+                    }
+                }
+            }
+
             if (proteinFilter.getProteinNSpectra() != null) {
                 if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
+                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey) <= proteinFilter.getProteinNSpectra()) {
                         return false;
                     }
                 } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinKey) >= proteinFilter.getProteinNSpectra()) {
+                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey) >= proteinFilter.getProteinNSpectra()) {
                         return false;
                     }
                 } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() != proteinFilter.getProteinNSpectra().intValue()) {
+                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey).intValue() != proteinFilter.getProteinNSpectra().intValue()) {
                         return false;
                     }
                 } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() == proteinFilter.getProteinNSpectra().intValue()) {
+                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey).intValue() == proteinFilter.getProteinNSpectra().intValue()) {
+                        return false;
+                    }
+                }
+            }
+
+            if (proteinFilter.getProteinNValidatedSpectra()!= null) {
+                int nValidatedSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinMatchKey);
+                if (proteinFilter.getnValidatedSpectraComparison()== ComparisonType.AFTER) {
+                    if (nValidatedSpectra <= proteinFilter.getProteinNValidatedSpectra()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedSpectraComparison() == ComparisonType.BEFORE) {
+                    if (nValidatedSpectra >= proteinFilter.getProteinNValidatedSpectra()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedSpectraComparison() == ComparisonType.EQUAL) {
+                    if (nValidatedSpectra != proteinFilter.getProteinNValidatedSpectra().intValue()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnValidatedSpectraComparison() == ComparisonType.NOT_EQUAL) {
+                    if (nValidatedSpectra == proteinFilter.getProteinNValidatedSpectra().intValue()) {
+                        return false;
+                    }
+                }
+            }
+
+            if (proteinFilter.getProteinNConfidentSpectra()!= null) {
+                int nConfidentSpectra = identificationFeaturesGenerator.getNConfidentSpectra(proteinMatchKey);
+                if (proteinFilter.getnConfidentSpectraComparison()== ComparisonType.AFTER) {
+                    if (nConfidentSpectra <= proteinFilter.getProteinNConfidentSpectra()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnConfidentSpectraComparison() == ComparisonType.BEFORE) {
+                    if (nConfidentSpectra >= proteinFilter.getProteinNConfidentSpectra()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnConfidentSpectraComparison() == ComparisonType.EQUAL) {
+                    if (nConfidentSpectra != proteinFilter.getProteinNConfidentSpectra().intValue()) {
+                        return false;
+                    }
+                } else if (proteinFilter.getnConfidentSpectraComparison() == ComparisonType.NOT_EQUAL) {
+                    if (nConfidentSpectra == proteinFilter.getProteinNConfidentSpectra().intValue()) {
                         return false;
                     }
                 }
             }
 
             if (proteinFilter.getProteinCoverage() != null) {
-                double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinMatchKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                 if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
                     if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
                         return false;
@@ -559,7 +826,7 @@ public class ProteinFilter extends MatchFilter {
             }
 
             if (proteinFilter.getSpectrumCounting() != null) {
-                double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinMatchKey);
                 if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
                     if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
                         return false;

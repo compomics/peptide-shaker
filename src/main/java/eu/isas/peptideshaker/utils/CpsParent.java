@@ -732,7 +732,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     /**
      * Resets the feature generator.
      */
-    public void resetFeatureGenerator() {
+    public void resetIdentificationFeaturesGenerator() {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
     }
 }

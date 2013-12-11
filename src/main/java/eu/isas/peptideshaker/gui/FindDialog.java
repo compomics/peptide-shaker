@@ -1309,7 +1309,7 @@ public class FindDialog extends javax.swing.JDialog {
                 }
             }
             if (peptideFilter == null) {
-                peptideFilter = new PeptideFilter("find peptide filter", modifications);
+                peptideFilter = new PeptideFilter("find peptide filter");
             } else {
                 peptideFilter.setModificationStatus(modifications);
             }

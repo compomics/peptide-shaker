@@ -129,10 +129,14 @@ public class ProteinMap implements Serializable {
     public static ArrayList<ProteinFilter> getDefaultProteinFilters() {
         ArrayList<ProteinFilter> filters = new ArrayList<ProteinFilter>();
         
-        // at least two peptides @TODO: use validated peptides
-        ProteinFilter proteinFilter = new ProteinFilter("n validated peptides");
-        proteinFilter.setnPeptides(2);
-        proteinFilter.setnPeptidesComparison(RowFilter.ComparisonType.AFTER);
+        ProteinFilter proteinFilter = new ProteinFilter("n confident peptides");
+        proteinFilter.setnConfidentPeptides(1);
+        proteinFilter.setnConfidentPeptidesComparison(RowFilter.ComparisonType.AFTER);
+        filters.add(proteinFilter);
+        
+        proteinFilter = new ProteinFilter("n confident spectra");
+        proteinFilter.setProteinNConfidentSpectra(1);
+        proteinFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         filters.add(proteinFilter);
         
         return filters;

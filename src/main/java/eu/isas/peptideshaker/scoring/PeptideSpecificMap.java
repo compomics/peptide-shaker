@@ -8,10 +8,12 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
+import eu.isas.peptideshaker.filtering.ProteinFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.RowFilter;
 
 /**
  * This class contains the various peptides matches sorted according to their
@@ -304,7 +306,10 @@ public class PeptideSpecificMap implements Serializable {
     public static ArrayList<PeptideFilter> getDefaultPeptideFilters() {
         ArrayList<PeptideFilter> filters = new ArrayList<PeptideFilter>();
         
-        //@TODO: add something here?
+        PeptideFilter peptideFilter = new PeptideFilter("n confident spectra");
+        peptideFilter.setNConfidentSpectra(0);
+        peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
+        filters.add(peptideFilter);
         
         return filters;
     }
