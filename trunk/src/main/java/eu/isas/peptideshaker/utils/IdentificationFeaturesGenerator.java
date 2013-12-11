@@ -22,6 +22,7 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -692,6 +693,37 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Estimates the number of confident peptides for a given protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * 
+     * @return the number of confident peptides
+     * 
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    private int estimateNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int cpt = 0;
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        PSParameter pSParameter = new PSParameter();
+
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
+            if (pSParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                cpt++;
+            }
+        }
+
+        return cpt;
+    }
+
+    /**
      * Returns the number of unique peptides for this protein match. Note, this
      * is independent of the validation status.
      *
@@ -755,6 +787,30 @@ public class IdentificationFeaturesGenerator {
         if (result == null) {
             result = estimateNValidatedPeptides(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey, result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the number of confident peptides for a given protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * 
+     * @return the number of confident peptides
+     * 
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int getNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNConfidentPeptides(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
         }
 
         return result;
@@ -863,6 +919,30 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Returns the number of confident spectra for a given protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * 
+     * @return the number of validated spectra
+     * 
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int getNConfidentSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNConfidentSpectra(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey, result);
+        }
+
+        return result;
+    }
+
+    /**
      * Indicates whether the number of validated spectra is in cache for the
      * given protein match.
      *
@@ -903,6 +983,34 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Estimates the number of confident spectra for a given protein match.
+     *
+     * @param proteinMatch the protein match of interest
+     * @return the number of spectra where this protein was found
+     */
+    private int estimateNConfidentSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int result = 0;
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        PSParameter psParameter = new PSParameter();
+
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                    result++;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Returns the number of validated spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
@@ -925,6 +1033,30 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Returns the number of confident spectra for a given peptide match.
+     *
+     * @param peptideMatchKey the key of the peptide match
+     * 
+     * @return the number of confident spectra
+     * 
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int getNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey);
+
+        if (result == null) {
+            result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
+        }
+
+        return result;
+    }
+
+    /**
      * Indicates whether the number of validated spectra for a peptide match is
      * in cache.
      *
@@ -936,10 +1068,35 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Estimates the number of confident spectra for a given peptide match.
+     *
+     * @param peptideMatchKey the peptide match of interest
+     * 
+     * @return the number of confident spectra where this peptide was found
+     */
+    private int estimateNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int nValidated = 0;
+
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
+        PSParameter psParameter = new PSParameter();
+
+        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
+            if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                nValidated++;
+            }
+        }
+
+        return nValidated;
+    }
+
+    /**
      * Estimates the number of validated spectra for a given peptide match.
      *
      * @param peptideMatchKey the peptide match of interest
-     * @return the number of spectra where this peptide was found
+     * @return the number of validated spectra where this peptide was found
      */
     private int estimateNValidatedSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 

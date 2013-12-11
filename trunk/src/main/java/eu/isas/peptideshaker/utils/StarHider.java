@@ -387,7 +387,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                     validated = true;
                 }
             }
@@ -395,7 +395,7 @@ public class StarHider {
             if (!validated) {
                 PeptideFilter peptideFilter;
                 if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundVariableModifications()); // @TODO: should also show fixed ptms like iTRAQ? but this breaks the peptide filter...
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION);
                     peptideFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
                 } else {
@@ -429,7 +429,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                     matchFilter.addException(match);
                 }
             }
@@ -460,7 +460,7 @@ public class StarHider {
                 if (matchFilter.getExceptions().contains(match)) {
                     matchFilter.removeException(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                     validated = true;
                 }
             }
@@ -468,7 +468,7 @@ public class StarHider {
             if (!validated) {
                 PeptideFilter peptideFilter;
                 if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundVariableModifications()); // @TODO: should also show fixed ptms like iTRAQ? but this breaks the peptide filter...
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION);
                     peptideFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
                 } else {
@@ -502,7 +502,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                     matchFilter.addException(match);
                 }
             }
@@ -701,7 +701,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                 return true;
             }
         }
@@ -779,7 +779,7 @@ public class StarHider {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification())) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator())) {
                 return true;
             }
         }
