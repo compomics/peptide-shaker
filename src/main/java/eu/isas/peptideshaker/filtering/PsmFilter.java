@@ -7,6 +7,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class PsmFilter extends MatchFilter {
     /**
      * The charges allowed.
      */
-    private ArrayList<Integer> charges;
+    private ArrayList<Integer> charges = null;
     /**
      * the precursor m/z.
      */
@@ -315,7 +316,6 @@ public class PsmFilter extends MatchFilter {
      *
      * @param spectrumKey the key of the spectrum match
      * @param identification the identification object to get the information from
-     * @param foundCharges the charges found in that project
      * @param searchParameters the identification parameters
      * 
      * @return a boolean indicating whether a spectrum match is validated by a
@@ -327,8 +327,8 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isValidated(String spectrumKey, Identification identification, ArrayList<Integer> foundCharges, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, this, identification, foundCharges, searchParameters);
+    public boolean isValidated(String spectrumKey, Identification identification, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        return isValidated(spectrumKey, this, identification, searchParameters);
     }
     
 
@@ -338,7 +338,6 @@ public class PsmFilter extends MatchFilter {
      * @param spectrumKey the key of the spectrum match
      * @param psmFilter the filter
      * @param identification the identification object to get the information from
-     * @param foundCharges the charges found in that project
      * @param searchParameters the identification parameters
      * 
      * @return a boolean indicating whether a spectrum match is validated by a
@@ -350,7 +349,7 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ArrayList<Integer> foundCharges, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
             if (psmFilter.getExceptions().contains(spectrumKey)) {
                 return false;
@@ -477,7 +476,7 @@ public class PsmFilter extends MatchFilter {
                     }
                 }
             }
-            if (psmFilter.getCharges().size() != foundCharges.size()) {
+            if (psmFilter.getCharges() != null) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 if (!psmFilter.getCharges().contains(charge)) {
@@ -489,5 +488,10 @@ public class PsmFilter extends MatchFilter {
                 return false;
             }
             return true;
+    }
+
+    @Override
+    public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+        return isValidated(matchKey, identification, searchParameters);
     }
 }

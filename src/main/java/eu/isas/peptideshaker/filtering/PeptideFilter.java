@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Peptide Filter.
@@ -667,5 +669,10 @@ public class PeptideFilter extends MatchFilter {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+        return isValidated(matchKey, identification, identificationFeaturesGenerator);
     }
 }

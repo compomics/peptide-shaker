@@ -1,10 +1,16 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMatch;
+import com.compomics.util.experiment.identification.SearchParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Abstract representing a filter
@@ -181,4 +187,26 @@ public abstract class MatchFilter implements Serializable {
     public void removeException(String matchKey) {
         exceptions.remove(matchKey);
     }
+    
+
+    /**
+     * Tests whether a match is validated by this filter.
+     *
+     * @param matchKey the key of the match
+     * @param identification the identification where to get the information
+     * from
+     * @param identificationFeaturesGenerator the identification features
+     * generator providing identification features
+     * @param searchParameters the identification parameters
+     *
+     * @return a boolean indicating whether a match is validated by a
+     * given filter
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
+     */
+    public abstract boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException;
 }

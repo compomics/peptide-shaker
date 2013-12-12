@@ -707,7 +707,7 @@ public class PeptideShaker {
                         String reasonDoubtful = null;
                         boolean filterPassed = true;
                         for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters()) {
-                            if (!filter.isValidated(spectrumKey, identification, metrics.getFoundCharges(), searchParameters)) { //@TODO: check that the charges are already loaded
+                            if (!filter.isValidated(spectrumKey, identification, searchParameters)) {
                                 filterPassed = false;
                                 reasonDoubtful = filter.getDescription();
                                 break;

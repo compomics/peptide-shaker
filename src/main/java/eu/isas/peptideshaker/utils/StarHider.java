@@ -534,7 +534,7 @@ public class StarHider {
                     if (matchFilter.getExceptions().contains(match)) {
                         matchFilter.removeException(match);
                     }
-                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                         validated = true;
                     }
                 }
@@ -574,7 +574,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -606,7 +606,7 @@ public class StarHider {
                     if (matchFilter.getExceptions().contains(match)) {
                         matchFilter.removeException(match);
                     }
-                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+                    if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                         validated = true;
                     }
                 }
@@ -646,7 +646,7 @@ public class StarHider {
                 if (matchFilter.getManualValidation().contains(match)) {
                     matchFilter.removeManualValidation(match);
                 }
-                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+                if (matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                     matchFilter.addException(match);
                 }
             }
@@ -672,8 +672,9 @@ public class StarHider {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      * @throws java.lang.InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isProteinHidden(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
+    public boolean isProteinHidden(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
             if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters())) {
@@ -722,12 +723,13 @@ public class StarHider {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      * @throws java.lang.InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public boolean isPsmHidden(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
@@ -748,8 +750,9 @@ public class StarHider {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      * @throws java.lang.InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isProteinStarred(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
+    public boolean isProteinStarred(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
@@ -805,7 +808,7 @@ public class StarHider {
     public boolean isPsmStarred(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getCharges(), peptideShakerGUI.getSearchParameters())) {
+            if (matchFilter.isActive() && matchFilter.isValidated(match, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSearchParameters())) {
                 return true;
             }
         }
