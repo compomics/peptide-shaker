@@ -159,18 +159,30 @@ public class ProteinGoTableModel extends DefaultTableModel {
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 4:
                     try {
-                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
                         proteinMatch = identification.getProteinMatch(proteinKey);
-                        return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                        double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
+                        double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+                        
+                        ArrayList<Double> values = new ArrayList<Double>();
+                        values.add(nConfidentPeptides);
+                        values.add(nDoubtfulPeptides);
+                        values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                        return values;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;
                     }
                 case 5:
                     try {
-                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                        double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectra(proteinKey);
+                        double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                         int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                        
+                        ArrayList<Double> values = new ArrayList<Double>();
+                        values.add(nConfidentSpectra);
+                        values.add(nDoubtfulSpectra);
+                        values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                        return values;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;

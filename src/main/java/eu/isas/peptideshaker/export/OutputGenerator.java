@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;

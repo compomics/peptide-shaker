@@ -164,7 +164,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 String proteinKey = proteinKeys.get(viewIndex);
                 switch (column) {
                     case 0:
-                        return viewIndex +1;
+                        return viewIndex + 1;
                     case 1:
                         PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                         if (!useDB && pSParameter == null) {
@@ -239,8 +239,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                        return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                        double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
+                        double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+
+                        ArrayList<Double> values = new ArrayList<Double>();
+                        values.add(nConfidentPeptides);
+                        values.add(nDoubtfulPeptides);
+                        values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                        return values;
                     case 8:
                         proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB
@@ -250,9 +256,15 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                        double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectra(proteinKey);
+                        double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                         int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+
+                        values = new ArrayList<Double>();
+                        values.add(nConfidentSpectra);
+                        values.add(nDoubtfulSpectra);
+                        values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                        return values;
                     case 9:
                         proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && !peptideShakerGUI.getIdentificationFeaturesGenerator().spectrumCountingInCache(proteinKey)
