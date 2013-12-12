@@ -10,6 +10,7 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.RowFilter.ComparisonType;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Protein Filter.
@@ -549,25 +550,9 @@ public class ProteinFilter extends MatchFilter {
         this.piComparison = piComparison;
     }
 
-    /**
-     * Tests whether a protein match is validated by this filter.
-     *
-     * @param proteinKey the key of the protein match
-     * @param identification the identification where to get the information
-     * from
-     * @param identificationFeaturesGenerator the identification features
-     * generator providing identification features
-     * @param searchParameters the identification parameters
-     *
-     * @return a boolean indicating whether a protein match is validated by a
-     * given filter
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     */
+    @Override
     public boolean isValidated(String proteinKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
+            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         return isValidated(proteinKey, this, identification, identificationFeaturesGenerator, searchParameters);
     }
 
