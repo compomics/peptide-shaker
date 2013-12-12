@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -18,7 +17,6 @@ import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.Collections;
 import no.uib.jsparklines.data.StartIndexes;
-import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * Table model for a set of peptide matches.
@@ -57,12 +55,12 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @param proteinAccession
      * @param peptideKeys
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      * @throws ClassNotFoundException
      * @throws IllegalArgumentException
-     * @throws SQLException  
+     * @throws SQLException
      */
-    public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) 
+    public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys)
             throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
@@ -186,8 +184,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     try {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                         String peptideSequence = Peptide.getSequence(peptideKey);
-                        indexes = currentProtein.getPeptideStart(peptideSequence, 
-                                PeptideShaker.MATCHING_TYPE, 
+                        indexes = currentProtein.getPeptideStart(peptideSequence,
+                                PeptideShaker.MATCHING_TYPE,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (IOException e) {
                         peptideShakerGUI.catchException(e);
@@ -203,9 +201,17 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+
+                    double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectraForPeptide(peptideKey);
+                    double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
-                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+
+                    ArrayList<Double> values = new ArrayList<Double>();
+                    values.add(nConfidentSpectra);
+                    values.add(nDoubtfulSpectra);
+                    values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                    return values;
+
                 case 6:
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
