@@ -2322,6 +2322,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (column == peptideTable.getColumn("PI").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 peptideTable.setToolTipText(null);
+            } else if (column == peptideTable.getColumn("").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else if (column == peptideTable.getColumn("Sequence").getModelIndex()) {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2486,7 +2488,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             } else {
                 psmTable.setToolTipText(null);
             }
-            if (column == 2) {
+            if (column == 2 || column == psmTable.getColumn("").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
