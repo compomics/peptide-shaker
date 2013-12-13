@@ -708,20 +708,21 @@ public class ProteinFilter extends MatchFilter {
             }
 
             if (proteinFilter.getnConfidentPeptides() != null) {
+                int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinMatchKey);
                 if (proteinFilter.getnConfidentPeptidesComparison() == ComparisonType.AFTER) {
-                    if (proteinMatch.getPeptideMatches().size() <= proteinFilter.getnConfidentPeptides()) {
+                    if (nConfidentPeptides <= proteinFilter.getnConfidentPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.BEFORE) {
-                    if (proteinMatch.getPeptideMatches().size() >= proteinFilter.getnConfidentPeptides()) {
+                    if (nConfidentPeptides >= proteinFilter.getnConfidentPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.EQUAL) {
-                    if (proteinMatch.getPeptideMatches().size() != proteinFilter.getnConfidentPeptides()) {
+                    if (nConfidentPeptides != proteinFilter.getnConfidentPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnValidatedPeptidesComparison() == ComparisonType.NOT_EQUAL) {
-                    if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnConfidentPeptides()) {
+                    if (nConfidentPeptides == proteinFilter.getnConfidentPeptides()) {
                         return false;
                     }
                 }
