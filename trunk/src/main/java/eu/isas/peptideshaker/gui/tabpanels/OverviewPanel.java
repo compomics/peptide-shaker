@@ -361,7 +361,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
         sparklineColors.add(new Color(255, 204, 0));
         sparklineColors.add(nonValidatedColor);
-        
+
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
@@ -4817,7 +4817,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
                     try {
-                        title += peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/";
+                        try {
+                            int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
+                            if (nConfident > 0) {
+                                title += nConfident + " / ";
+                            }
+                        } catch (Exception eNConfident) {
+                            peptideShakerGUI.catchException(eNConfident);
+                        }
+                        int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
+                        title += nValidated + " / ";
                     } catch (Exception eNValidated) {
                         peptideShakerGUI.catchException(eNValidated);
                     }

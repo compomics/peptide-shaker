@@ -2000,6 +2000,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         if (!progressDialog.isRunCanceled()) {
                             // update the other tabs
                             peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
+                            peptideShakerGUI.getMetrics().setnConfidentProteins(-1);
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
