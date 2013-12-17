@@ -1896,35 +1896,42 @@ public class PeptideShaker {
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
         int nValidatedProteins = 0;
+        int nConfidentProteins = 0;
         PSParameter psParameter = new PSParameter();
         double tempSpectrumCounting, maxSpectrumCounting = 0;
         Enzyme enzyme = searchParameters.getEnzyme();
         int maxPepLength = idFilter.getMaxPepLength();
 
         for (String proteinKey : identification.getProteinIdentification()) {
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences);
+            if (!ProteinMatch.isDecoy(proteinKey)) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences);
 
-            if (metrics != null) {
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    nValidatedProteins++;
-                }
-                if (spectrumCountingPreferences != null) {
-                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
-                    if (tempSpectrumCounting > maxSpectrumCounting) {
-                        maxSpectrumCounting = tempSpectrumCounting;
+                if (metrics != null) {
+                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
+                        nValidatedProteins++;
+                        if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                            nConfidentProteins++;
+                        }
+                    }
+                    if (spectrumCountingPreferences != null) {
+                        tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
+                        if (tempSpectrumCounting > maxSpectrumCounting) {
+                            maxSpectrumCounting = tempSpectrumCounting;
+                        }
                     }
                 }
-            }
-            waitingHandler.increaseSecondaryProgressCounter();
-            if (waitingHandler.isRunCanceled()) {
-                return;
+                waitingHandler.increaseSecondaryProgressCounter();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
         if (metrics != null) {
             metrics.setMaxSpectrumCounting(maxSpectrumCounting);
             metrics.setnValidatedProteins(nValidatedProteins);
+            metrics.setnConfidentProteins(nConfidentProteins);
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -2268,15 +2275,22 @@ public class PeptideShaker {
         String mainSequence = psPeptide.getSequence();
         ArrayList<String> modifications = new ArrayList<String>();
 
+        int nace = 0;
         for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 String modificationName = modificationMatch.getTheoreticPtm();
+                if (modificationName.contains("ace")) {
+                    nace++;
+                }
                 if (!modifications.contains(modificationName)) {
                     modifications.add(modificationName);
                     modificationProfiles.put(modificationName, new ArrayList<Integer>());
                 }
                 modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
             }
+        }
+        if (nace > 1) {
+            int debug = nace;
         }
 
         if (!modifications.isEmpty()) {

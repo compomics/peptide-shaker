@@ -629,10 +629,10 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the amount of validated proteins. Note that this value is only
+     * Returns the number of validated proteins. Note that this value is only
      * available after getSortedProteinKeys has been called.
      *
-     * @return the amount of validated proteins
+     * @return the number of validated proteins
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -647,7 +647,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Estimates the amount of validated proteins and saves it in the metrics.
+     * Estimates the number of validated proteins and saves it in the metrics.
      */
     private void estimateNValidatedProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter probabilities = new PSParameter();
@@ -661,6 +661,41 @@ public class IdentificationFeaturesGenerator {
             }
         }
         metrics.setnValidatedProteins(cpt);
+    }
+
+    /**
+     * Returns the number of confident proteins. Note that this value is only
+     * available after getSortedProteinKeys has been called.
+     *
+     * @return the number of validated proteins
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int getNConfidentProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        if (metrics.getnConfidentProteins()== -1) {
+            estimateNConfidentProteins();
+        }
+        return metrics.getnConfidentProteins();
+    }
+
+    /**
+     * Estimates the number of confident proteins and saves it in the metrics.
+     */
+    private void estimateNConfidentProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        PSParameter probabilities = new PSParameter();
+        int cpt = 0;
+        for (String proteinKey : identification.getProteinIdentification()) {
+            if (!ProteinMatch.isDecoy(proteinKey)) {
+                probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
+                if (probabilities.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                    cpt++;
+                }
+            }
+        }
+        metrics.setnConfidentProteins(cpt);
     }
 
     /**
@@ -1506,10 +1541,11 @@ public class IdentificationFeaturesGenerator {
             int maxPeptides = 0, maxSpectra = 0;
             double maxSpectrumCounting = 0, maxMW = 0;
             int nValidatedProteins = 0;
+            int nConfidentProteins = 0;
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
-                if (!sequenceFactory.isDecoyAccession(proteinKey)) {
+                if (!ProteinMatch.isDecoy(proteinKey)) {
                     probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                     if (!probabilities.isHidden()) {
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1544,6 +1580,9 @@ public class IdentificationFeaturesGenerator {
 
                             if (probabilities.getMatchValidationLevel().isValidated()) {
                                 nValidatedProteins++;
+                                if (probabilities.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                    nConfidentProteins++;
+                                }
                             }
                         }
 
@@ -1579,6 +1618,7 @@ public class IdentificationFeaturesGenerator {
                 metrics.setMaxSpectrumCounting(maxSpectrumCounting);
                 metrics.setMaxMW(maxMW);
                 metrics.setnValidatedProteins(nValidatedProteins);
+                metrics.setnConfidentProteins(nConfidentProteins);
             }
 
             ArrayList<String> proteinList = new ArrayList<String>();
@@ -1633,15 +1673,21 @@ public class IdentificationFeaturesGenerator {
             ArrayList<String> validatedProteinList = new ArrayList<String>();
             PSParameter psParameter = new PSParameter();
             int nValidatedProteins = 0;
+            int nConfidentProteins = 0;
 
             for (String proteinKey : identificationFeaturesCache.getProteinList()) {
+                if (!ProteinMatch.isDecoy(proteinKey)) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 if (!psParameter.isHidden()) {
                     proteinListAfterHiding.add(proteinKey);
                     if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedProteins++;
                         validatedProteinList.add(proteinKey);
+                        if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                            nConfidentProteins++;
+                        }
                     }
+                }
                 }
 
                 if (waitingHandler != null) {
@@ -1656,6 +1702,7 @@ public class IdentificationFeaturesGenerator {
             identificationFeaturesCache.setProteinListAfterHiding(proteinListAfterHiding);
             identificationFeaturesCache.setValidatedProteinList(validatedProteinList);
             metrics.setnValidatedProteins(nValidatedProteins);
+            metrics.setnConfidentProteins(nConfidentProteins);
         }
 
         return identificationFeaturesCache.getProteinListAfterHiding();

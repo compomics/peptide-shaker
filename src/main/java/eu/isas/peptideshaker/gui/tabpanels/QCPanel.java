@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
@@ -116,11 +117,11 @@ public class QCPanel extends javax.swing.JPanel {
 
         // set the histogram colors
         histogramColors = new Color[5];
-        histogramColors[0] = peptideShakerGUI.getSparklineColor(); // Validated True Positives
+        histogramColors[0] = peptideShakerGUI.getSparklineColor(); // Confident True Positives
         histogramColors[1] = new Color(255, 204, 0); // Doubtful True Positives
-        histogramColors[2] = new Color(255, 51, 51); // Validated False Positives
-        histogramColors[3] = new Color(100, 150, 255); // Non-Validated True Positives
-        histogramColors[4] = Color.lightGray; // Non-Validated False Positives
+        histogramColors[2] = new Color(255, 51, 51); // False Positives
+        histogramColors[3] = new Color(100, 150, 255); // False Negatives
+        histogramColors[4] = Color.lightGray; // True Negatives
 
         // make the tabs in the spectrum tabbed pane go from right to left
         tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -1156,11 +1157,11 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(Util.roundDouble(temp, 1));
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
 
                         currentProteinPlotType = PlotType.Protein_MS2_QuantScores;
 
@@ -1177,11 +1178,11 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(80.0);
                         bins.add(90.0);
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", "%", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", "%", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", "%", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", "%", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", "%", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", "%", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", "%", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", "%", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", "%", true);
 
                         currentProteinPlotType = PlotType.Protein_Sequence_Coverage;
 
@@ -1199,11 +1200,11 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(200.0);
                         bins.add(500.0);
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentProteinPlotType = PlotType.Protein_Validated_Peptides;
 
@@ -1219,11 +1220,11 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(2500.0);
                         bins.add(3000.0);
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentProteinPlotType = PlotType.Protein_Sequence_Length;
                     }
@@ -1343,11 +1344,11 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(200.0);
                         bins.add(500.0);
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Validated_PSMs;
 
@@ -1358,11 +1359,11 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(2.0);
                         bins.add(3.0);
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Missed_Cleavages;
 
@@ -1375,11 +1376,11 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(new Double(i));
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Length;
                     }
@@ -1486,11 +1487,11 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(bin);
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
 
                         currentPsmPlotType = PlotType.PSM_Precursor_Mass_Error;
 
@@ -1502,11 +1503,11 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add((double) i);
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
 
                         currentPsmPlotType = PlotType.PSM_Precursor_Charge;
                     }
@@ -1574,221 +1575,69 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         try {
-            PSParameter peptideParameter = new PSParameter();
+
+            Identification identification = peptideShakerGUI.getIdentification();
+            IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+
             PSParameter proteinParameter = new PSParameter();
             maxValue = Double.MIN_VALUE;
 
-            if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
-                // Values for the number of validated peptides
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
+            validatedValues = new ArrayList<Double>();
+            validatedDoubtfulValues = new ArrayList<Double>();
+            nonValidatedValues = new ArrayList<Double>();
+            validatedDecoyValues = new ArrayList<Double>();
+            nonValidatedDecoyValues = new ArrayList<Double>();
 
-                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+            for (String proteinKey : identification.getProteinIdentification()) {
 
-                    if (progressDialog.isRunCanceled()) {
-                        break;
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                double value = 0;
+
+                if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
+                    value = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                    value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                    if (value > 0) {
+                        value = Math.log10(value);
                     }
+                } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
+                    value = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                } else if (proteinSequenceLengthJRadioButton.isSelected()) {
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                    value = currentProtein.getSequence().length();
+                }
 
-                    double value = 0;
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideParameter, null);
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        peptideParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideParameter);
-                        if (peptideParameter.getMatchValidationLevel().isValidated() && !peptideParameter.isHidden()) {
-                            value++;
-                        }
-                    }
+                proteinParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinParameter);
+
+                if (!proteinParameter.isHidden()) {
+
                     if (value > maxValue) {
                         maxValue = value;
                     }
-                    proteinParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, proteinParameter);
-
-                    if (!proteinParameter.isHidden()) {
-
-                        if (!proteinMatch.isDecoy()) {
-                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
+                    if (!ProteinMatch.isDecoy(proteinKey)) {
+                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
+                            if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                validatedValues.add(value);
                             } else {
-                                nonValidatedValues.add(value);
+                                validatedDoubtfulValues.add(value);
                             }
                         } else {
-                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                validatedDecoyValues.add(value);
-                            } else {
-                                nonValidatedDecoyValues.add(value);
-                            }
+                            nonValidatedValues.add(value);
                         }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
-                }
-
-            } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                // Values for the spectrum counting
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
-
-                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    proteinParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, proteinParameter);
-
-                    if (!proteinParameter.isHidden()) {
-                        try {
-                            double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                            if (value > 0) {
-                                value = Math.log10(value);
-                            }
-
-                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                if (value > 0) {
-                                    if (value > maxValue) {
-                                        maxValue = value;
-                                    }
-                                }
-                            }
-
-                            if (!proteinMatch.isDecoy()) {
-                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                        validatedValues.add(value);
-                                    } else {
-                                        validatedDoubtfulValues.add(value);
-                                    }
-                                } else {
-                                    nonValidatedValues.add(value);
-                                }
-                            } else {
-                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedDecoyValues.add(value);
-                                } else {
-                                    nonValidatedDecoyValues.add(value);
-                                }
-                            }
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
-                }
-            } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
-
-                // Values for the sequence coverage
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
-
-                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    proteinParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, proteinParameter);
-
-                    if (!proteinParameter.isHidden()) {
-
-                        try {
-                            double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-
-                            if (value > maxValue) {
-                                maxValue = value;
-                            }
-                            if (!proteinMatch.isDecoy()) {
-                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                        validatedValues.add(value);
-                                    } else {
-                                        validatedDoubtfulValues.add(value);
-                                    }
-                                } else {
-                                    nonValidatedValues.add(value);
-                                }
-                            } else {
-                                if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                    validatedDecoyValues.add(value);
-                                } else {
-                                    nonValidatedDecoyValues.add(value);
-                                }
-                            }
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-                    }
-
-                    progressDialog.increasePrimaryProgressCounter();
-                }
-            } else if (proteinSequenceLengthJRadioButton.isSelected()) {
-                // Values for the sequence length
-                validatedValues = new ArrayList<Double>();
-                validatedDoubtfulValues = new ArrayList<Double>();
-                nonValidatedValues = new ArrayList<Double>();
-                validatedDecoyValues = new ArrayList<Double>();
-                nonValidatedDecoyValues = new ArrayList<Double>();
-
-                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    String mainMatch;
-                    if (ProteinMatch.getNProteins(proteinKey) == 1) {
-                        mainMatch = proteinKey;
                     } else {
-                        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                        mainMatch = proteinMatch.getMainMatch();
-                    }
-                    proteinParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, proteinParameter);
-
-                    if (!proteinParameter.isHidden()) {
-
-                        Protein currentProtein = sequenceFactory.getProtein(mainMatch);
-                        double value = currentProtein.getSequence().length();
-
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-                        if (!ProteinMatch.isDecoy(proteinKey)) {
-                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                if (proteinParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                                    validatedValues.add(value);
-                                } else {
-                                    validatedDoubtfulValues.add(value);
-                                }
-                            } else {
-                                nonValidatedValues.add(value);
-                            }
+                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
+                            validatedDecoyValues.add(value);
                         } else {
-                            if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                                validatedDecoyValues.add(value);
-                            } else {
-                                nonValidatedDecoyValues.add(value);
-                            }
+                            nonValidatedDecoyValues.add(value);
                         }
                     }
-
-                    progressDialog.increasePrimaryProgressCounter();
                 }
+
+                progressDialog.increasePrimaryProgressCounter();
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

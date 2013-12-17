@@ -57,9 +57,13 @@ public class Metrics implements Serializable {
      */
     private Integer maxProteinKeyLength = null;
     /**
-     * Amount of validated proteins.
+     * Number of validated proteins.
      */
     private int nValidatedProteins = -1;
+    /**
+     * Number of validated confident proteins.
+     */
+    private Integer nConfidentProteins = -1;
     /**
      * List of modifications found in the dataset.
      */
@@ -308,6 +312,27 @@ public class Metrics implements Serializable {
      */
     public void setnValidatedProteins(int nValidatedProteins) {
         this.nValidatedProteins = nValidatedProteins;
+    }
+
+    /**
+     * Returns the number of confident proteins.
+     *
+     * @return the number of confident proteins
+     */
+    public Integer getnConfidentProteins() {
+        if (nConfidentProteins == null) { // Backward compatibility check
+            return -1;
+        }
+        return nConfidentProteins;
+    }
+
+    /**
+     * Sets the number of confident proteins.
+     *
+     * @param nConfidentProteins the number of confident proteins
+     */
+    public void setnConfidentProteins(int nConfidentProteins) {
+        this.nConfidentProteins = nConfidentProteins;
     }
 
     /**
