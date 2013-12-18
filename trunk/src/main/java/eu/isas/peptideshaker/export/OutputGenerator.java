@@ -500,12 +500,12 @@ public class OutputGenerator {
                                             if (confidence) {
                                                 writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                                             }
-                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
+                                            MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                            writer.write(matchValidationLevel.toString());
+                                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                            }
+                                            writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
@@ -717,7 +717,7 @@ public class OutputGenerator {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
-                                writer.write("Validation" + SEPARATOR);
+                            writer.write("Validation" + SEPARATOR);
                             if (!onlyValidated) {
                                 writer.write("Decoy" + SEPARATOR);
                             }
@@ -1211,7 +1211,7 @@ public class OutputGenerator {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
-                                writer.write("Validation" + SEPARATOR);
+                            writer.write("Validation" + SEPARATOR);
                             if (!onlyValidated) {
                                 writer.write("Decoy" + SEPARATOR);
                             }
@@ -1830,12 +1830,12 @@ public class OutputGenerator {
                                 writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                 writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
-                                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
+                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                                writer.write(matchValidationLevel.toString());
+                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
+                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
+                                }
+                                writer.write(SEPARATOR);
                                 if (bestAssumption.getPeptide().isDecoy()) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
@@ -1972,12 +1972,12 @@ public class OutputGenerator {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
-                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
+                            MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                            writer.write(matchValidationLevel.toString());
+                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                            }
+                            writer.write(SEPARATOR);
                             if (proteinMatch.isDecoy()) {
                                 writer.write(1 + SEPARATOR);
                             } else {
@@ -2165,6 +2165,7 @@ public class OutputGenerator {
                             SequenceFactory.getInstance().getDefaultProteinTree();
                             progressDialog.resetPrimaryProgressCounter();
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                            progressDialog.setTitle("Copying to File. Please Wait...");
                         }
 
                         if (includeHeader) {
@@ -2798,12 +2799,12 @@ public class OutputGenerator {
 
                                                 writer.write(!allPeptidesEnzymatic + SEPARATOR);
                                             }
-                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
+                                            MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                            writer.write(matchValidationLevel.toString());
+                                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                            }
+                                            writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
