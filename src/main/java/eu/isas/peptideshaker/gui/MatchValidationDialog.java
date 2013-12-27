@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.filtering.MatchFilter;
@@ -26,57 +19,54 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class displays information about the validation of a match
+ * This class displays information about the validation of a match.
  *
  * @author Marc
  */
 public class MatchValidationDialog extends javax.swing.JDialog {
 
     /**
-     * The key of the match
+     * The key of the match.
      */
     private String matchKey;
     /**
-     * The ps parameter of the match
+     * The ps parameter of the match.
      */
     private PSParameter psParameter;
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The exception handler
+     * The exception handler.
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * Indicates whether the validation status of the match changed
+     * Indicates whether the validation status of the match changed.
      */
     private boolean validationChanged = false;
     /**
-     * The type of match selected
+     * The type of match selected.
      */
     private Type type;
     /**
-     * the color to use when writing in green
+     * The color to use when writing in green.
      */
     private static final Color green = new Color(0, 125, 0);
     /**
-     * the color to use when writing in orange
+     * The color to use when writing in orange.
      */
     private static final Color orange = new Color(220, 110, 0);
 
@@ -84,13 +74,14 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * Type of match selected.
      */
     private enum Type {
+
         PROTEIN,
         PEPTIDE,
         PSM
     }
 
     /**
-     * Constructor for a protein match validation dialog
+     * Constructor for a protein match validation dialog.
      *
      * @param parent the parent frame
      * @param exceptionHandler the handler catches exception happening when
@@ -106,8 +97,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      * @throws java.lang.ClassNotFoundException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
 
@@ -124,15 +117,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
         populateGUI(identificationFeaturesGenerator, searchParameters, targetDecoyMap, filters, "Proteins");
-        
+
         setTitle("Protein Group Validation Quality");
-        
+
         setLocationRelativeTo(parent);
         setVisible(true);
     }
 
     /**
-     * Creates a peptide match validation dialog
+     * Creates a peptide match validation dialog.
      *
      * @param parent the parent frame
      * @param exceptionHandler the handler catches exception happening when
@@ -148,8 +141,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
 
@@ -172,15 +167,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         }
         groupName += "Peptides";
         populateGUI(identificationFeaturesGenerator, searchParameters, targetDecoyMap, filters, groupName);
-        
+
         setTitle("Peptide Validation Quality");
-        
+
         setLocationRelativeTo(parent);
         setVisible(true);
     }
 
     /**
-     * Creates a peptide match validation dialog
+     * Creates a peptide match validation dialog.
      *
      * @param parent the parent frame
      * @param exceptionHandler the handler catches exception happening when
@@ -196,8 +191,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
 
@@ -220,15 +217,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         }
         groupName += " PSMs";
         populateGUI(identificationFeaturesGenerator, searchParameters, targetDecoyMap, filters, groupName);
-        
+
         setTitle("PSM Validation Quality");
-        
+
         setLocationRelativeTo(parent);
         setVisible(true);
     }
 
     /**
-     * Populates the gui with information on a protein match.
+     * Populates the GUI with information on a protein match.
      *
      * @param identificationFeaturesGenerator
      * @param proteinMap
@@ -238,7 +235,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private void populateGUI(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, TargetDecoyMap targetDecoyMap, ArrayList<MatchFilter> filters, String targetDecoyCategory) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void populateGUI(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, TargetDecoyMap targetDecoyMap,
+            ArrayList<MatchFilter> filters, String targetDecoyCategory) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         // Validation level
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
@@ -325,14 +323,14 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
                 null,
                 "Yes", "No"));
-        
+
         int valid = 0;
         for (MatchFilter matchFilter : filters) {
             if (matchFilter.isValidated(matchKey, identification, identificationFeaturesGenerator, searchParameters)) {
                 valid++;
             }
         }
-        ((TitledBorder) tablePanel.getBorder()).setTitle("Quality Filters (" + valid + "/" + filters.size() + ")");
+        ((TitledBorder) qualityFiltersPanel.getBorder()).setTitle("Quality Filters (" + valid + "/" + filters.size() + ")");
     }
 
     /**
@@ -341,24 +339,24 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private class FiltersTableModel extends DefaultTableModel {
 
         /**
-         * List of filters
+         * List of filters.
          */
         private ArrayList<MatchFilter> filters;
         /**
-         * The identification
+         * The identification.
          */
         private Identification identification;
         /**
-         * The identification features generator
+         * The identification features generator.
          */
         private IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The identification parameters used for the search
+         * The identification parameters used for the search.
          */
         private SearchParameters searchParameters;
 
         /**
-         * Constructor
+         * Constructor.
          *
          * @param identification the identification
          * @param identificationFeaturesGenerator the identification features
@@ -436,7 +434,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Indicates whether the validation level changed
+     * Indicates whether the validation level changed.
      *
      * @return a boolean indicating whether the validation level changed
      */
@@ -455,16 +453,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         bitRecommendationLabel1 = new javax.swing.JLabel();
         bitLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        validationLevelPanel = new javax.swing.JPanel();
         validationLevelJComboBox = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        tablePanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        qualityFiltersTable = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
+        validationTypeLabel = new javax.swing.JLabel();
+        databaseSearchPanel = new javax.swing.JPanel();
         bitRecommendationLabel3 = new javax.swing.JLabel();
         targetDecoyLbl = new javax.swing.JLabel();
         bitRecommendationLabel4 = new javax.swing.JLabel();
@@ -474,10 +467,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         matchesBeforeFirstDecoyLbl = new javax.swing.JLabel();
         bitRecommendationLabel6 = new javax.swing.JLabel();
         confidenceResolutionLbl = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        targetDecoyPanel = new javax.swing.JPanel();
         validationThresoldLbl = new javax.swing.JLabel();
         confidenceLbl = new javax.swing.JLabel();
         confidenceThresholdLbl = new javax.swing.JLabel();
+        qualityFiltersPanel = new javax.swing.JPanel();
+        qualityFiltersTableScrollPane = new javax.swing.JScrollPane();
+        qualityFiltersTable = new javax.swing.JTable();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         bitRecommendationLabel1.setFont(bitRecommendationLabel1.getFont().deriveFont((bitRecommendationLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
         bitRecommendationLabel1.setText("Recommended: Concatenated Target/Decoy");
@@ -486,21 +484,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jButton1.setText("Cancel");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Validation Level"));
+        validationLevelPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Validation Level"));
+        validationLevelPanel.setOpaque(false);
 
         validationLevelJComboBox.setModel(new DefaultComboBoxModel(MatchValidationLevel.getValidationLevelsNames()));
         validationLevelJComboBox.setToolTipText("Validation Level");
@@ -510,59 +497,31 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel2.setText("Type:");
+        validationTypeLabel.setText("Type");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout validationLevelPanelLayout = new javax.swing.GroupLayout(validationLevelPanel);
+        validationLevelPanel.setLayout(validationLevelPanelLayout);
+        validationLevelPanelLayout.setHorizontalGroup(
+            validationLevelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(validationLevelPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(validationTypeLabel)
                 .addGap(20, 20, 20)
                 .addComponent(validationLevelJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        validationLevelPanelLayout.setVerticalGroup(
+            validationLevelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(validationLevelPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                .addGroup(validationLevelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(validationTypeLabel)
                     .addComponent(validationLevelJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Quality Filters"));
-
-        qualityFiltersTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(qualityFiltersTable);
-
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Database Search"));
+        databaseSearchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Database Search"));
+        databaseSearchPanel.setOpaque(false);
 
         bitRecommendationLabel3.setFont(bitRecommendationLabel3.getFont().deriveFont((bitRecommendationLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
         bitRecommendationLabel3.setText("Recommended: Concatenated Target/Decoy");
@@ -574,38 +533,39 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         nTargetLbl.setText("xx,xxx target sequences");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout databaseSearchPanelLayout = new javax.swing.GroupLayout(databaseSearchPanel);
+        databaseSearchPanel.setLayout(databaseSearchPanelLayout);
+        databaseSearchPanelLayout.setHorizontalGroup(
+            databaseSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(databaseSearchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(databaseSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(databaseSearchPanelLayout.createSequentialGroup()
                         .addComponent(targetDecoyLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(266, 266, 266)
                         .addComponent(bitRecommendationLabel3))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(databaseSearchPanelLayout.createSequentialGroup()
                         .addComponent(nTargetLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(266, 266, 266)
                         .addComponent(bitRecommendationLabel4)))
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        databaseSearchPanelLayout.setVerticalGroup(
+            databaseSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(databaseSearchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(databaseSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(targetDecoyLbl)
                     .addComponent(bitRecommendationLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(databaseSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nTargetLbl)
                     .addComponent(bitRecommendationLabel4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         targetDecoyGroupPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Target/Decoy Group"));
+        targetDecoyGroupPanel.setOpaque(false);
 
         bitRecommendationLabel5.setFont(bitRecommendationLabel5.getFont().deriveFont((bitRecommendationLabel5.getFont().getStyle() | java.awt.Font.ITALIC)));
         bitRecommendationLabel5.setText("Recommended: 100 matches before the first decoy hit");
@@ -648,7 +608,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Target/Decoy Results"));
+        targetDecoyPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Target/Decoy Results"));
+        targetDecoyPanel.setOpaque(false);
 
         validationThresoldLbl.setFont(validationThresoldLbl.getFont().deriveFont((validationThresoldLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
         validationThresoldLbl.setText("Validation threshold: x%");
@@ -658,27 +619,27 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         confidenceThresholdLbl.setFont(confidenceThresholdLbl.getFont().deriveFont((confidenceThresholdLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
         confidenceThresholdLbl.setText("Confidence threshold: x%");
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout targetDecoyPanelLayout = new javax.swing.GroupLayout(targetDecoyPanel);
+        targetDecoyPanel.setLayout(targetDecoyPanelLayout);
+        targetDecoyPanelLayout.setHorizontalGroup(
+            targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                         .addComponent(confidenceLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(266, 266, 266)
                         .addComponent(validationThresoldLbl))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(confidenceThresholdLbl)))
                 .addContainerGap())
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        targetDecoyPanelLayout.setVerticalGroup(
+            targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confidenceLbl)
                     .addComponent(validationThresoldLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -686,42 +647,86 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        qualityFiltersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Quality Filters"));
+        qualityFiltersPanel.setOpaque(false);
+
+        qualityFiltersTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        qualityFiltersTableScrollPane.setViewportView(qualityFiltersTable);
+
+        javax.swing.GroupLayout qualityFiltersPanelLayout = new javax.swing.GroupLayout(qualityFiltersPanel);
+        qualityFiltersPanel.setLayout(qualityFiltersPanelLayout);
+        qualityFiltersPanelLayout.setHorizontalGroup(
+            qualityFiltersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(qualityFiltersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(targetDecoyGroupPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(qualityFiltersTableScrollPane)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        qualityFiltersPanelLayout.setVerticalGroup(
+            qualityFiltersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(qualityFiltersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(qualityFiltersTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(validationLevelPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addComponent(qualityFiltersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(databaseSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(targetDecoyGroupPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(targetDecoyPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(validationLevelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(databaseSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(targetDecoyGroupPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(targetDecoyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(qualityFiltersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -729,17 +734,22 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    /**
+     * Save any changes and close the dialog.
+     *
+     * @param evt
+     */
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
         String newValue = validationLevelJComboBox.getSelectedItem().toString();
         if (!newValue.equals(psParameter.getMatchValidationLevel().getName())) {
@@ -758,57 +768,69 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 exceptionHandler.catchException(e);
             }
         }
+
         dispose();
+    }//GEN-LAST:event_okButtonActionPerformed
 
-    }//GEN-LAST:event_jButton2ActionPerformed
-
+    /**
+     * Change the validation level or show a warning if the level cannot be
+     * changed.
+     *
+     * @param evt
+     */
     private void validationLevelJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationLevelJComboBoxActionPerformed
         String newValue = validationLevelJComboBox.getSelectedItem().toString();
         MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
         if (psParameter.getMatchValidationLevel().isValidated() && (matchValidationLevel == MatchValidationLevel.none || matchValidationLevel == MatchValidationLevel.not_validated)) {
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                    "The statistical validation level cannot be changed. Please use non-statistical levels" + MatchValidationLevel.confident.getName() + " or " + MatchValidationLevel.doubtful.getName() + "."
-                    + " To change the statistical validation threshold, use the Validation tab."),
-                    "Validation level error", JOptionPane.ERROR_MESSAGE);
+                    "The statistical validation level cannot be changed. Please use non-statistical levels\n"
+                    + MatchValidationLevel.confident.getName() + " or " + MatchValidationLevel.doubtful.getName() + ".\n"
+                    + "To change the statistical validation threshold, use the Validation tab."),
+                    "Validation Level Error", JOptionPane.ERROR_MESSAGE);
             validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
         } else if (!psParameter.getMatchValidationLevel().isValidated() && matchValidationLevel != psParameter.getMatchValidationLevel()) {
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                    "The statistical validation level cannot be changed."
-                    + " To change the statistical validation threshold, use the Validation tab."),
-                    "Validation level error", JOptionPane.ERROR_MESSAGE);
+                    "The statistical validation level cannot be changed. To change\n"
+                    + "the statistical validation threshold, use the Validation tab."),
+                    "Validation Level Error", JOptionPane.ERROR_MESSAGE);
             validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
         }
     }//GEN-LAST:event_validationLevelJComboBoxActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    /**
+     * Close the dialog without saving any changes.
+     * 
+     * @param evt 
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JLabel bitLabel1;
     private javax.swing.JLabel bitRecommendationLabel1;
     private javax.swing.JLabel bitRecommendationLabel3;
     private javax.swing.JLabel bitRecommendationLabel4;
     private javax.swing.JLabel bitRecommendationLabel5;
     private javax.swing.JLabel bitRecommendationLabel6;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel confidenceLbl;
     private javax.swing.JLabel confidenceResolutionLbl;
     private javax.swing.JLabel confidenceThresholdLbl;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel databaseSearchPanel;
     private javax.swing.JLabel matchesBeforeFirstDecoyLbl;
     private javax.swing.JLabel nTargetLbl;
+    private javax.swing.JButton okButton;
+    private javax.swing.JPanel qualityFiltersPanel;
     private javax.swing.JTable qualityFiltersTable;
-    private javax.swing.JPanel tablePanel;
+    private javax.swing.JScrollPane qualityFiltersTableScrollPane;
     private javax.swing.JPanel targetDecoyGroupPanel;
     private javax.swing.JLabel targetDecoyLbl;
+    private javax.swing.JPanel targetDecoyPanel;
     private javax.swing.JComboBox validationLevelJComboBox;
+    private javax.swing.JPanel validationLevelPanel;
     private javax.swing.JLabel validationThresoldLbl;
+    private javax.swing.JLabel validationTypeLabel;
     // End of variables declaration//GEN-END:variables
 }
