@@ -728,9 +728,6 @@ public class FileImporter {
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     String peptideSequence = peptide.getSequence();
 
-                                    if (match.getKey().equals("mESC_shotgun_10.mgf_cus_521,V9910_mESC_E14_shotgun_fr2_3412_4727_1_3.mgf")) {
-                                        int debug = 1;
-                                    }
                                     // change the search engine modifications into expected modifications
                                     // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                                     ModificationProfile modificationProfile = searchParameters.getModificationProfile();
