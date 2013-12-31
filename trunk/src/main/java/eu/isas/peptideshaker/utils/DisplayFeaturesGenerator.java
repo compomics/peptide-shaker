@@ -7,12 +7,12 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,9 +25,21 @@ import java.util.HashMap;
 public class DisplayFeaturesGenerator {
 
     /**
-     * The main GUI instance.
+     * The modification profile containing the colors of the ptms
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private ModificationProfile modificationProfile;
+    /**
+     * the notSelectedRowHtmlTagFontColor
+     */
+    private String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
+    /**
+     * The exception handler used to catch exceptions
+     */
+    private ExceptionHandler exceptionHandler;
+    /**
+     * list of PTMs to display
+     */
+    private ArrayList<String> displayedPTMs;
     /**
      * The sequence factory.
      */
@@ -38,12 +50,14 @@ public class DisplayFeaturesGenerator {
     private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
-     * Constructor.
-     *
-     * @param peptideShakerGUI the main instance of the GUI
+     * Constructor
+     * 
+     * @param modificationProfile the modification profile containing the colors of the ptms
+     * @param exceptionHandler an exception handler to catch exceptions
      */
-    public DisplayFeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
-        this.peptideShakerGUI = peptideShakerGUI;
+    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
+        this.modificationProfile = modificationProfile;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -71,11 +85,11 @@ public class DisplayFeaturesGenerator {
 
                     if (databaseType == Header.DatabaseType.IPI || databaseType == Header.DatabaseType.UniProt) {
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
                     } else if (databaseType == Header.DatabaseType.NCBI) {
                         accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
                     } else {
                         // unknown database!
@@ -83,7 +97,7 @@ public class DisplayFeaturesGenerator {
                 }
             }
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            exceptionHandler.catchException(e);
         }
 
         return accessionNumberWithLink;
@@ -125,7 +139,7 @@ public class DisplayFeaturesGenerator {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
                             accessionNumberWithLink.append("\">");
                             accessionNumberWithLink.append(proteinAccession);
                             accessionNumberWithLink.append("</font></a>, ");
@@ -133,7 +147,7 @@ public class DisplayFeaturesGenerator {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getNcbiAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
-                            accessionNumberWithLink.append(peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
                             accessionNumberWithLink.append("\">");
                             accessionNumberWithLink.append(proteinAccession);
                             accessionNumberWithLink.append("</font></a>, ");
@@ -220,19 +234,17 @@ public class DisplayFeaturesGenerator {
         String tooltip = "<html>";
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
-        DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             String modName = modMatch.getTheoreticPtm();
             PTM ptm = ptmFactory.getPTM(modName);
 
-            if ((ptm.getType() == PTM.MODAA && modMatch.isVariable()) && displayPreferences.isDisplayedPTM(modName)) {
+            if (ptm.getType() == PTM.MODAA && displayedPTMs.contains(modName)) {
 
                 int modSite = modMatch.getModificationSite();
 
                 if (modSite > 0) {
                     char affectedResidue = peptide.getSequence().charAt(modSite - 1);
-                    Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modName);
+                    Color ptmColor = modificationProfile.getColor(modName);
 
                     if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
                         tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
@@ -270,23 +282,23 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+            
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
-            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences);
+            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
             HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
             HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
 
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
             if (ptmScores != null) {
-                mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences);
-                secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences);
+                mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayedPTMs);
+                secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayedPTMs);
             }
-            return Peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(),
+            return Peptide.getTaggedModifiedSequence(modificationProfile,
                     peptide, mainLocations, secondaryLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            exceptionHandler.catchException(e);
             return "Error";
         }
     }
@@ -311,12 +323,9 @@ public class DisplayFeaturesGenerator {
         HashMap<Integer, ArrayList<String>> secondaryModificationSites = new HashMap<Integer, ArrayList<String>>();
         HashMap<Integer, ArrayList<String>> fixedModificationSites = new HashMap<Integer, ArrayList<String>>();
 
-        ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
-        DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             String modName = modMatch.getTheoreticPtm();
-            if (displayPreferences.isDisplayedPTM(modName)) {
+            if (displayedPTMs.contains(modName)) {
 
                 if (ptmFactory.getPTM(modMatch.getTheoreticPtm()).getType() == PTM.MODAA) { // exclude terminal ptms
 
@@ -353,15 +362,16 @@ public class DisplayFeaturesGenerator {
      *
      * @param modificationMap the map of modifications to filter (amino acid ->
      * list of modifications, 1 is the first amino acid)
-     * @param displayPreferences the display preferences
+     * @param displayedPtms list of PTMs to display
+     * 
      * @return a map of filtered modifications based on the user display
      * preferences
      */
-    public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, DisplayPreferences displayPreferences) {
+    public static HashMap<Integer, ArrayList<String>> getFilteredModifications(HashMap<Integer, ArrayList<String>> modificationMap, ArrayList<String> displayedPtms) {
         HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
         for (int aa : modificationMap.keySet()) {
             for (String ptm : modificationMap.get(aa)) {
-                if (displayPreferences.isDisplayedPTM(ptm)) {
+                if (displayedPtms.contains(ptm)) {
                     if (!result.containsKey(aa)) {
                         result.put(aa, new ArrayList<String>());
                     }
@@ -382,7 +392,7 @@ public class DisplayFeaturesGenerator {
      */
     public String addGoLink(String goAccession) { // @TODO: move method to utilities...
         return "<html><a href=\"" + getGoAccessionLink(goAccession)
-                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                 + goAccession + "</font></a></html>";
     }
 
@@ -395,5 +405,14 @@ public class DisplayFeaturesGenerator {
      */
     public String getGoAccessionLink(String goAccession) {
         return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
+    }
+
+    /**
+     * Sets the PTMs to display.
+     * 
+     * @param displayedPTMs the names of the PTMs to display in a list
+     */
+    public void setDisplayedPTMs(ArrayList<String> displayedPTMs) {
+        this.displayedPTMs = displayedPTMs;
     }
 }

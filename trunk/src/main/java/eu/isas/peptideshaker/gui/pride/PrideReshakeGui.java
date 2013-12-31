@@ -30,6 +30,7 @@ import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.io.FTPDownloader;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -194,7 +195,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         projectsTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
 
-        projectsTable.getColumn("Title").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        projectsTable.getColumn("Title").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         projectsTableToolTips = new ArrayList<String>();
         projectsTableToolTips.add("Reanalyze PRIDE Project");
@@ -249,7 +250,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 false,
                 new Integer(accession),
                 "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
-                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                 + title + "</font></a><html>",
                 "",
                 "",
@@ -317,7 +318,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         false,
                         accession,
                         "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
-                        + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                         + title + "</font></a><html>",
                         project,
                         species,
@@ -346,9 +347,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             projectsTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumPeptides, peptideShakerGUI.getSparklineColor()));
             projectsTable.getColumn("#Proteins").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumProteins, peptideShakerGUI.getSparklineColor()));
 
-            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).setLogScale(true);
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).setLogScale(true);

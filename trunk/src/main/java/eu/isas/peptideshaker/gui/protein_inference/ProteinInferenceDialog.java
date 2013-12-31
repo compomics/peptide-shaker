@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
+import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
@@ -215,7 +216,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
 
         proteinMatchTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+                TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
         proteinMatchTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
@@ -223,20 +224,20 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 "Enzymatic", "Not Enzymatic"));
 
         uniqueHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+                TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         uniqueHitsTable.getColumn(" ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         uniqueHitsTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         uniqueHitsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-        ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
 
         relatedHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+                TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         relatedHitsTable.getColumn(" ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         relatedHitsTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         relatedHitsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-        ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
 
         // set up the table header tooltips
         candidateProteinsTableToolTips = new ArrayList<String>();
