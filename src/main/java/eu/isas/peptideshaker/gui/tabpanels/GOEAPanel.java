@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
+import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -176,17 +177,17 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         // cell renderers
-        goMappingsTable.getColumn("GO Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        goMappingsTable.getColumn("GO Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         goMappingsTable.getColumn("Frequency All (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, Color.RED));
-        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         goMappingsTable.getColumn("Frequency Dataset (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         goMappingsTable.getColumn("p-value").setCellRenderer(
                 new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor(), Color.lightGray, significanceLevel));
-        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
                 PlotOrientation.HORIZONTAL, -10.0, 10.0, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
-        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         goMappingsTable.getColumn("Frequency (%)").setCellRenderer(new JSparklinesTableCellRenderer(
                 JSparklinesTableCellRenderer.PlotType.barChart,
                 PlotOrientation.HORIZONTAL, 0.0, 100.0));
@@ -244,7 +245,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
 
-        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
@@ -257,18 +258,18 @@ public class GOEAPanel extends javax.swing.JPanel {
         sparklineColors.add(nonValidatedColor);
         
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         proteinTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
 
         // make sure that the user is made aware that the tool is doing something during sorting of the protein table
         proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
@@ -591,7 +592,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
                                                 PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
-                                        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+                                        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
                                         // update the plots
                                         updateGoPlots();
@@ -1970,7 +1971,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
                 PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor(), Color.lightGray, significanceLevel));
 
-        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
         String selectedSpecies = peptideShakerGUI.getGenePreferences().getCurrentSpecies();
         String speciesDatabase = peptideShakerGUI.getGenePreferences().getAllSpeciesMap().get(peptideShakerGUI.getGenePreferences().getCurrentSpeciesType()).get(selectedSpecies);

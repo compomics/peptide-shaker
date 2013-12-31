@@ -198,8 +198,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-            HashMap<Integer, ArrayList<String>> mainLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences);
-            HashMap<Integer, ArrayList<String>> secondaryLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences);
+            HashMap<Integer, ArrayList<String>> mainLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> secondaryLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences.getDisplayedPtms());
 
             String modName = ptm.getName();
             int aa;

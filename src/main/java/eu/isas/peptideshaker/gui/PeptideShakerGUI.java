@@ -278,20 +278,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private ExceptionHandler exceptionHandler = new ExceptionHandler(this, "http://code.google.com/p/peptide-shaker/issues/list");
     /**
-     * The label with for the numbers in the jsparklines columns.
-     */
-    private int labelWidth = 50;
-    /**
-     * The color to use for the HTML tags for the selected rows, in HTML color
-     * code.
-     */
-    private String selectedRowHtmlTagFontColor = "#FFFFFF";
-    /**
-     * The color to use for the HTML tags for the rows that are not selected, in
-     * HTML color code.
-     */
-    private String notSelectedRowHtmlTagFontColor = "#0101DF";
-    /**
      * The spectrum annotator.
      */
     private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
@@ -311,7 +297,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * The class used to provide graphical sexy features out of the
      * identification.
      */
-    private DisplayFeaturesGenerator displayFeaturesGenerator = new DisplayFeaturesGenerator(this);
+    private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
      * The charge menus.
      */
@@ -326,10 +312,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * 6...)
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
-    /**
-     * Boolean indicating that PeptideShaker is closing a project.
-     */
-    private boolean isClosing = false;
     /**
      * The list of the default modifications.
      */
@@ -2199,9 +2181,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
-                isClosing = true;
+                exceptionHandler.setIgnoreExceptions(true);
                 clearData(true, true);
-                isClosing = false;
+                exceptionHandler.setIgnoreExceptions(false);
                 clearPreferences();
                 getUserPreferences().addRecentProject(selectedFile);
                 updateRecentProjectsList();
@@ -2814,6 +2796,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         }
 
         updatePtmColorCoding();
+        displayFeaturesGenerator.setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**
@@ -3669,24 +3652,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the label width for the sparklines.
-     *
-     * @return the labelWidth
-     */
-    public int getLabelWidth() {
-        return labelWidth;
-    }
-
-    /**
-     * Set the label width for the sparklines.
-     *
-     * @param labelWidth the labelWidth to set
-     */
-    public void setLabelWidth(int labelWidth) {
-        this.labelWidth = labelWidth;
-    }
-
-    /**
      * Get the sparklines color.
      *
      * @return the sparklineColor
@@ -3747,28 +3712,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public double getBubbleScale() {
         return bubbleScale;
-    }
-
-    /**
-     * Returns the color to use for the HTML tags for the selected rows, in HTML
-     * color code.
-     *
-     * @return the color to use for the HTML tags for the selected rows, in HTML
-     * color code
-     */
-    public String getSelectedRowHtmlTagFontColor() {
-        return selectedRowHtmlTagFontColor;
-    }
-
-    /**
-     * Returns the color to use for the HTML tags for the rows that are not
-     * selected, in HTML color code.
-     *
-     * @return the color to use for the HTML tags for the rows that are not
-     * selected, in HTML color code
-     */
-    public String getNotSelectedRowHtmlTagFontColor() {
-        return notSelectedRowHtmlTagFontColor;
     }
 
     /**
@@ -4488,7 +4431,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private void closePeptideShaker() {
 
-        isClosing = true;
+        exceptionHandler.setIgnoreExceptions(true);
 
         progressDialog = new ProgressDialogX(this,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -5087,6 +5030,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                     }
 
+                    // Resets the display features generator according to the new project
+                    resetDisplayFeaturesGenerator();
+                    
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
 
@@ -5669,6 +5615,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         cpsBean.setIdentificationFeaturesGenerator(identificationFeaturesGenerator);
     }
+    
+    /**
+     * Resets the display features generator
+     */
+    public void resetDisplayFeaturesGenerator() {
+        displayFeaturesGenerator = new DisplayFeaturesGenerator(getSearchParameters().getModificationProfile(), exceptionHandler);
+        displayFeaturesGenerator.setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
+    }
 
     /**
      * Returns the display features generator.
@@ -6186,15 +6140,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     @Override
     public Image getWaitingIcon() {
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif"));
-    }
-
-    /**
-     * Returns true of the tool is currently closing a project.
-     *
-     * @return true of the tool is currently closing a project
-     */
-    public boolean isClosing() {
-        return isClosing;
     }
 
     /**

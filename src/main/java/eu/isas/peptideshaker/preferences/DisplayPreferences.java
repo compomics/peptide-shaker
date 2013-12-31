@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -181,5 +182,20 @@ public class DisplayPreferences implements Serializable {
         if (displayedPTMs == null) {
             setDefaultSelection(modificationProfile);
         }
+    }
+    
+    /**
+     * Returns a list containing the names of the PTMs to display.
+     * 
+     * @return a list containing the names of the PTMs to display
+     */
+    public ArrayList<String> getDisplayedPtms() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (String ptmName : displayedPTMs.keySet()) {
+            if (displayedPTMs.get(ptmName)) {
+                result.add(ptmName);
+            }
+        }
+        return result;
     }
 }

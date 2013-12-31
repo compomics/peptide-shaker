@@ -140,4 +140,20 @@ public enum MatchValidationLevel {
         }
         throw new IllegalArgumentException("No match validation level found for name " + name + ".");
     }
+    
+    /**
+     * Returns the match validation level associated to a given index.
+     * 
+     * @param index the index
+     * 
+     * @return the match validation level associated to a given index
+     */
+    public static MatchValidationLevel getMatchValidationLevel(int index) {
+        for (MatchValidationLevel matchValidationLevel : getValidationLevels()) {
+            if (matchValidationLevel.getIndex() == index) {
+                return matchValidationLevel;
+            }
+        }
+        throw new IllegalArgumentException("No match validation level found for index " + index + ".");
+    }
 }
