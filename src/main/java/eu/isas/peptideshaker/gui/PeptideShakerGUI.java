@@ -2990,7 +2990,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             speciesJMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
-            //allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
+            allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
 
         } catch (Exception e) {
 
