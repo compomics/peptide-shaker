@@ -5617,7 +5617,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
     
     /**
-     * Resets the display features generator
+     * Resets the display features generator.
      */
     public void resetDisplayFeaturesGenerator() {
         displayFeaturesGenerator = new DisplayFeaturesGenerator(getSearchParameters().getModificationProfile(), exceptionHandler);
