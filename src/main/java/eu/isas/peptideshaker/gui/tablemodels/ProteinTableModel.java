@@ -44,27 +44,27 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     private Identification identification;
     /**
      * The identification features generator provides identification information
-     * on the matches
+     * on the matches.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The display features generator provides display features
+     * The display features generator provides display features.
      */
     private DisplayFeaturesGenerator displayFeaturesGenerator;
     /**
-     * The exception handler catches exceptions
+     * The exception handler catches exceptions.
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * The identification parameters used for the search
+     * The identification parameters used for the search.
      */
     private SearchParameters searchParameters;
     /**
-     * if true the scores will be displayed instead of the confidence
+     * If true the scores will be displayed instead of the confidence.
      */
     private boolean displayScores = false;
     /**
-     * The list of the keys of the protein matches being displayed
+     * The list of the keys of the protein matches being displayed.
      */
     private ArrayList<String> proteinKeys = null;
 

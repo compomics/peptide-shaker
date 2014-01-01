@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class DisplayFeaturesGenerator {
 
     /**
-     * The modification profile containing the colors of the ptms
+     * The modification profile containing the colors of the PTMs.
      */
     private ModificationProfile modificationProfile;
     /**
