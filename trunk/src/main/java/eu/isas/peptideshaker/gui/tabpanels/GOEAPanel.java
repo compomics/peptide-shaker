@@ -232,8 +232,14 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinTable.getColumn(" ").setMinWidth(60);
         proteinTable.getColumn("  ").setMaxWidth(30);
         proteinTable.getColumn("  ").setMinWidth(30);
-        proteinTable.getColumn("Confidence").setMaxWidth(90);
-        proteinTable.getColumn("Confidence").setMinWidth(90);
+
+        try {
+            proteinTable.getColumn("Confidence").setMaxWidth(90);
+            proteinTable.getColumn("Confidence").setMinWidth(90);
+        } catch (IllegalArgumentException w) {
+            proteinTable.getColumn("Score").setMaxWidth(90);
+            proteinTable.getColumn("Score").setMinWidth(90);
+        }
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
@@ -256,16 +262,24 @@ public class GOEAPanel extends javax.swing.JPanel {
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
         sparklineColors.add(new Color(255, 204, 0));
         sparklineColors.add(nonValidatedColor);
-        
+
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+
+        try {
+            proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+                    true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        } catch (IllegalArgumentException e) {
+            proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
+                    true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        }
+
         proteinTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
@@ -2070,6 +2084,23 @@ public class GOEAPanel extends javax.swing.JPanel {
     }
 
     /**
+     * Hides or displays the score column in the protein table.
+     */
+    public void updateScores() {
+
+        ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
+        setProteinGoTableProperties();
+
+        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
+        } else {
+            proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
+        }
+
+        setProteinGoTableProperties();
+    }
+
+    /**
      * Displays or hide sparklines in the tables.
      *
      * @param showSparkLines boolean indicating whether sparklines shall be
@@ -2085,14 +2116,21 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.revalidate();
         goMappingsTable.repaint();
 
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        if (proteinTable.getModel() instanceof ProteinGoTableModel) {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+            ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
+            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
-        proteinTable.revalidate();
-        proteinTable.repaint();
+            try {
+                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+            } catch (IllegalArgumentException e) {
+                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+            }
+
+            proteinTable.revalidate();
+            proteinTable.repaint();
+        }
     }
 
     /**

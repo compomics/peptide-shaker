@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
@@ -2146,6 +2145,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         overviewPanel.updateScores();
         proteinStructurePanel.updateScores();
         proteinFractionsPanel.updateScores();
+        goPanel.updateScores();
 
         // make sure that the jsparklines are showing correctly
         sparklinesJCheckBoxMenuItemActionPerformed(null);
@@ -2898,8 +2898,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Open the Notes Dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void notesButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButtonMouseReleased
         NotesDialog notesDialog = new NotesDialog(this, false, currentNotes);
@@ -2990,7 +2990,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             speciesJMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
-            allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
+            //allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
 
         } catch (Exception e) {
 
@@ -5032,7 +5032,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();
-                    
+
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
 
@@ -5078,8 +5078,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     int cpt = 0, total = getIdentification().getSpectrumFiles().size();
                     for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
-                        
-                    progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
+
+                        progressDialog.setTitle("Loading Spectrum Files (" + ++cpt + " of " + total + "). Please Wait...");
                         progressDialog.increasePrimaryProgressCounter();
 
                         boolean found;
@@ -5609,13 +5609,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Sets the feature generator.
-     * 
-     * @param identificationFeaturesGenerator the identification features generator
+     *
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      */
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         cpsBean.setIdentificationFeaturesGenerator(identificationFeaturesGenerator);
     }
-    
+
     /**
      * Resets the display features generator.
      */
@@ -5808,9 +5809,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Displays a news feed at the bottom of the GUI.
      */
     public void checkNewsFeed() {
-        
-        // @TODO: re-enable later!
 
+        // @TODO: re-enable later!
 //        new Thread("NewsFeedThread") {
 //            @Override
 //            public synchronized void run() {
@@ -6079,13 +6079,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 progressDialog.setValue(0);
                                 progressDialog.setMaxPrimaryProgressCounter(dataFiles.size());
 
+                                // create the data folder in the zip file
+                                out.putNextEntry(new ZipEntry("data/"));
+
+                                // add the files to the data folder
                                 for (int i = 0; i < dataFiles.size() && !progressDialog.isRunCanceled(); i++) {
 
                                     progressDialog.increasePrimaryProgressCounter();
 
                                     fi = new FileInputStream(new File(dataFiles.get(i)));
                                     origin = new BufferedInputStream(fi, BUFFER);
-                                    entry = new ZipEntry("data" + File.separator + new File(dataFiles.get(i)).getName());
+                                    entry = new ZipEntry("data/" + new File(dataFiles.get(i)).getName());
                                     out.putNextEntry(entry);
                                     while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
                                         out.write(data, 0, count);
@@ -6384,9 +6388,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Show a note notification pop up.
      */
     public void showNotesNotification() {
-        
+
         // @TODO: reenable later!
-        
 //        if (currentNotes.size() > 0) {
 //
 //            // show a pop up

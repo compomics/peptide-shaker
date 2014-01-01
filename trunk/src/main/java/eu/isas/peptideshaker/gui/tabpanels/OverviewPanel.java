@@ -4807,9 +4807,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // update the table model
                     if (proteinTable.getRowCount() > 0) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getDisplayPreferences().showScores(), proteinKeys);
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getDisplayPreferences().showScores(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI, proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
 
