@@ -29,15 +29,15 @@ public class DisplayFeaturesGenerator {
      */
     private ModificationProfile modificationProfile;
     /**
-     * the notSelectedRowHtmlTagFontColor
+     * The notSelectedRowHtmlTagFontColor.
      */
     private String notSelectedRowHtmlTagFontColor = TableProperties.getNotSelectedRowHtmlTagFontColor();
     /**
-     * The exception handler used to catch exceptions
+     * The exception handler used to catch exceptions.
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * list of PTMs to display
+     * List of PTMs to display.
      */
     private ArrayList<String> displayedPTMs;
     /**

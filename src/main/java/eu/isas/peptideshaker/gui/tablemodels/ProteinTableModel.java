@@ -60,34 +60,34 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      */
     private SearchParameters searchParameters;
     /**
-     * If true the scores will be displayed instead of the confidence.
-     */
-    private boolean displayScores = false;
-    /**
      * The list of the keys of the protein matches being displayed.
      */
     private ArrayList<String> proteinKeys = null;
+    /**
+     * The main GUI class.
+     */
+    private PeptideShakerGUI peptideShakerGUI;
+
+    /**
+     * Constructor which sets a new empty table.
+     *
+     */
+    public ProteinTableModel() {
+    }
 
     /**
      * Constructor
      *
-     * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param displayFeaturesGenerator the display features generator
-     * @param searchParameters the identification parameters
-     * @param displayScores boolean indicating whether scores should be
-     * displayed instead of the confidence
-     * @param exceptionHandler exception handler
+     * @param peptideShakerGUI instance of the main GUI class
      * @param proteinKeys list of the keys of the matches to be displayed
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, SearchParameters searchParameters, boolean displayScores, ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.displayFeaturesGenerator = displayFeaturesGenerator;
-        this.searchParameters = searchParameters;
-        this.displayScores = displayScores;
-        this.exceptionHandler = exceptionHandler;
+    public ProteinTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteinKeys) {
+        this.peptideShakerGUI = peptideShakerGUI;
+        identification = peptideShakerGUI.getIdentification();
+        identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+        displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
+        searchParameters = peptideShakerGUI.getSearchParameters();
+        exceptionHandler = peptideShakerGUI.getExceptionHandler();
         this.proteinKeys = proteinKeys;
     }
 
@@ -95,42 +95,17 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features
-     * generator
-     * @param displayFeaturesGenerator the display features generator
-     * @param searchParameters the identification parameters
-     * @param displayScores boolean indicating whether scores should be
-     * displayed instead of the confidence
+     * @param peptideShakerGUI instance of the main GUI class
      * @param proteinKeys list of the keys of the matches to be displayed
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, SearchParameters searchParameters, boolean displayScores, ArrayList<String> proteinKeys) {
-        this.identification = identification;
-        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.displayFeaturesGenerator = displayFeaturesGenerator;
-        this.searchParameters = searchParameters;
-        this.displayScores = displayScores;
-        this.proteinKeys = proteinKeys;
-    }
-
-    /**
-     * Set up the table model.
-     *
-     * @param peptideShakerGUI
-     */
-    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteinKeys) {
+        this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
-        if (identification != null) {
-            try {
-                if (peptideShakerGUI.getDisplayPreferences().showValidatedProteinsOnly()) {
-                    proteinKeys = identificationFeaturesGenerator.getValidatedProteins(peptideShakerGUI.getFilterPreferences()); // show validated proteins only
-                } else {
-                    proteinKeys = identificationFeaturesGenerator.getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences()); // show all proteins
-                }
-            } catch (Exception e) {
-                exceptionHandler.catchException(e);
-            }
-        }
+        identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+        displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
+        searchParameters = peptideShakerGUI.getSearchParameters();
+        exceptionHandler = peptideShakerGUI.getExceptionHandler();
+        this.proteinKeys = proteinKeys;
     }
 
     /**
@@ -138,13 +113,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      */
     public void reset() {
         proteinKeys = null;
-    }
-
-    /**
-     * Constructor which sets a new empty table.
-     *
-     */
-    public ProteinTableModel() {
     }
 
     @Override
@@ -187,7 +155,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             case 10:
                 return "MW";
             case 11:
-                if (displayScores) {
+                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
                     return "Score";
                 } else {
                     return "Confidence";
@@ -339,7 +307,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
                         if (pSParameter != null) {
-                            if (displayScores) {
+                            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                                 return pSParameter.getProteinScore();
                             } else {
                                 return pSParameter.getProteinConfidence();
