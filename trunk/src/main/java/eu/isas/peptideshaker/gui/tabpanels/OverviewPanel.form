@@ -1603,6 +1603,9 @@
                                                   <SubComponents>
                                                     <Container class="javax.swing.JPanel" name="secondarySpectrumPlotsJPanel">
                                                       <Properties>
+                                                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                                                          <Dimension value="[0, 80]"/>
+                                                        </Property>
                                                         <Property name="opaque" type="boolean" value="false"/>
                                                       </Properties>
                                                       <Constraints>
