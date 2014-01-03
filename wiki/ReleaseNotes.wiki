@@ -3,6 +3,26 @@
 
 ----
 
+*Changes in PeptideShaker 0.23.1  (January ?. 2014):*
+ * NEW FEATURE: Validated protein, peptide and PSM matches are now also filtered for quality and marked if doubtful, e.g., less than 2 peptides detected for a given protein.
+ * NEW FEATURE: The user can now click the id and spectrum files text field in the New Project dialog to see and edit the list of selected files.
+
+ * FEATURE IMPROVEMENT: The peptide and spectrum count columns plus the QC plots now include the new "doubtful" category.
+ * FEATURE IMPROVEMENT: PeptideShaker now corrects for input where the same ptm is found multiple times.
+ * FEATURE IMPROVEMENT: PeptideShaker projects zipped on Windows can now also be opened on Mac and Linux.
+
+ * BUG FIX: Fixed an issue where the height if the spectrum sub plots ended up as too small if hidden and then re-displayed.
+ * BUG FIX: Corrected bugs in the sparklines for the protein table in the GO and Fractions tabs.
+ * BUG FIX: Fixed bugs in the hide/show of the Score/Confidence column.
+ * BUG FIX: Fixed a bug in the jump to feature where strings that could not be converted to amino acid characters broke the search.
+ * BUG FIX: Corrected a typo impairing the calculation of NSAF indexes.
+
+ * LIBRARY UPDATE: Updated jsparklines to version 0.6.4.
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.7.5.
+ * LIBRARY UPDATE: Updated utilities to version 3.20.2.
+
+----
+
 *Changes in PeptideShaker 0.23.0  (December 9. 2013):*
  * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
  * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
