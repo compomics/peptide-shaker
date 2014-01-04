@@ -7,6 +7,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -46,17 +47,17 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="saveAsJButton1" pref="323" max="32767" attributes="0"/>
-                      <Component id="saveAsJButton" alignment="0" max="32767" attributes="0"/>
+                      <Component id="saveAsJButton" pref="323" max="32767" attributes="0"/>
+                      <Component id="saveJButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="exportJButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="exportPrideJButton" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
-                      <Component id="jLabel2" min="-2" pref="235" max="-2" attributes="0"/>
-                      <Component id="jLabel3" alignment="0" min="-2" pref="203" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="0" min="-2" pref="220" max="-2" attributes="0"/>
+                      <Component id="saveLabel" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
+                      <Component id="saveAsLabel" min="-2" pref="235" max="-2" attributes="0"/>
+                      <Component id="exportZipLabel" alignment="0" min="-2" pref="203" max="-2" attributes="0"/>
+                      <Component id="exportPrideLabel" alignment="0" min="-2" pref="220" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
@@ -67,23 +68,23 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="saveAsJButton" linkSize="5" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="saveJButton" linkSize="5" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="saveLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="saveAsJButton1" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="saveAsJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="saveAsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="exportJButton" linkSize="5" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportZipLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="exportPrideJButton" linkSize="5" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportPrideLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               </Group>
@@ -91,11 +92,11 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="saveAsJButton">
+        <Component class="javax.swing.JButton" name="saveJButton">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="saveAsJButton" property="font" relativeSize="true" size="3"/>
+                <Font bold="true" component="saveJButton" property="font" relativeSize="true" size="3"/>
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -108,7 +109,7 @@
             <Property name="iconTextGap" type="int" value="27"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsJButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveJButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="exportJButton">
@@ -151,11 +152,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPrideJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="saveAsJButton1">
+        <Component class="javax.swing.JButton" name="saveAsJButton">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="saveAsJButton1" property="font" relativeSize="true" size="3"/>
+                <Font bold="true" component="saveAsJButton" property="font" relativeSize="true" size="3"/>
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -168,44 +169,44 @@
             <Property name="iconTextGap" type="int" value="27"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsJButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="saveLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="jLabel1" italic="true" property="font" relativeSize="true" size="1"/>
+                <Font bold="true" component="saveLabel" italic="true" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" value="Save the project locally"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="saveAsLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="jLabel2" italic="true" property="font" relativeSize="true" size="1"/>
+                <Font bold="true" component="saveAsLabel" italic="true" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" value="Save the project under a new name"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="exportZipLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="jLabel3" italic="true" property="font" relativeSize="true" size="1"/>
+                <Font bold="true" component="exportZipLabel" italic="true" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" value="Export the project as a zip file"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel4">
+        <Component class="javax.swing.JLabel" name="exportPrideLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="jLabel4" italic="true" property="font" relativeSize="true" size="1"/>
+                <Font bold="true" component="exportPrideLabel" italic="true" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" value="Export the project as PRIDE XML"/>
