@@ -466,11 +466,7 @@ public class PeptideFilter extends MatchFilter {
         }
 
         if (peptideFilter.getManualValidation().size() > 0) {
-            if (peptideFilter.getManualValidation().contains(peptideMatchKey)) {
-                return true;
-            } else {
-                return false;
-            }
+            return peptideFilter.getManualValidation().contains(peptideMatchKey);
         }
 
         if (peptideFilter.getModificationStatus() != null) {
@@ -672,7 +668,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     @Override
-    public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         return isValidated(matchKey, identification, identificationFeaturesGenerator);
     }
 }

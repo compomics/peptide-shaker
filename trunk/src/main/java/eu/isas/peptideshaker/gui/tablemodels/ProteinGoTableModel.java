@@ -123,93 +123,98 @@ public class ProteinGoTableModel extends DefaultTableModel {
     @Override
     public Object getValueAt(int row, int column) {
 
-        try {
-            String proteinKey = proteins.get(row);
+        if (!proteins.isEmpty()) {
 
-            switch (column) {
-                case 0:
-                    return row + 1;
-                case 1:
-                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                    String mainMatch = proteinMatch.getMainMatch();
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
-                case 2:
-                    proteinMatch = identification.getProteinMatch(proteinKey);
-                    String description = "";
-                    try {
-                        description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                    return description;
-                case 3:
-                    double sequenceCoverage;
-                    try {
-                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
-                    double possibleCoverage = 100;
-                    try {
-                        possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                    return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
-                case 4:
-                    try {
+            try {
+                String proteinKey = proteins.get(row);
+
+                switch (column) {
+                    case 0:
+                        return row + 1;
+                    case 1:
+                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                        String mainMatch = proteinMatch.getMainMatch();
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
+                    case 2:
                         proteinMatch = identification.getProteinMatch(proteinKey);
-                        double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
-                        double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
-                        
-                        ArrayList<Double> values = new ArrayList<Double>();
-                        values.add(nConfidentPeptides);
-                        values.add(nDoubtfulPeptides);
-                        values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                        return values;
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
-                case 5:
-                    try {
-                        double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectra(proteinKey);
-                        double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
-                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                        
-                        ArrayList<Double> values = new ArrayList<Double>();
-                        values.add(nConfidentSpectra);
-                        values.add(nDoubtfulSpectra);
-                        values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                        return values;
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
-                case 6:
-                    try {
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
-                case 7:
-                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        return pSParameter.getProteinScore();
-                    } else {
-                        return pSParameter.getProteinConfidence();
-                    }
-                case 8:
-                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.getMatchValidationLevel().getIndex();
-                default:
-                    return "";
+                        String description = "";
+                        try {
+                            description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                        return description;
+                    case 3:
+                        double sequenceCoverage;
+                        try {
+                            sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            return Double.NaN;
+                        }
+                        double possibleCoverage = 100;
+                        try {
+                            possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                        return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
+                    case 4:
+                        try {
+                            proteinMatch = identification.getProteinMatch(proteinKey);
+                            double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
+                            double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
+
+                            ArrayList<Double> values = new ArrayList<Double>();
+                            values.add(nConfidentPeptides);
+                            values.add(nDoubtfulPeptides);
+                            values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                            return values;
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            return Double.NaN;
+                        }
+                    case 5:
+                        try {
+                            double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectra(proteinKey);
+                            double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
+                            int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+
+                            ArrayList<Double> values = new ArrayList<Double>();
+                            values.add(nConfidentSpectra);
+                            values.add(nDoubtfulSpectra);
+                            values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                            return values;
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            return Double.NaN;
+                        }
+                    case 6:
+                        try {
+                            return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            return Double.NaN;
+                        }
+                    case 7:
+                        PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                            return pSParameter.getProteinScore();
+                        } else {
+                            return pSParameter.getProteinConfidence();
+                        }
+                    case 8:
+                        pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                        return pSParameter.getMatchValidationLevel().getIndex();
+                    default:
+                        return "";
+                }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return "";
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            return "";
+        } else {
+            return null;
         }
     }
 

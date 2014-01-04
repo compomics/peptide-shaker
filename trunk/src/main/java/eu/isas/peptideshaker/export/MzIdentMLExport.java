@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.*;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;

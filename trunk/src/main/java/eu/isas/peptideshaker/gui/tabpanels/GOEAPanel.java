@@ -2205,9 +2205,36 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                         if (proteinTable.getRowCount() > 0) {
 
-                            ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis - "
+                            // get the number of confident and doubtful matches
+                            int nConfident = 0;
+                            int nDoubtful = 0;
+                            PSParameter psParameter = new PSParameter();
+
+                            for (String proteinKey : proteinKeys) {
+                                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                                MatchValidationLevel level = psParameter.getMatchValidationLevel();
+
+                                if (level == MatchValidationLevel.confident) {
+                                    nConfident++;
+                                } else if (level == MatchValidationLevel.doubtful) {
+                                    nDoubtful++;
+                                }
+                            }
+
+                            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis - "
                                     + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
-                                    + " (" + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                                    + " (";
+                            try {
+                                if (nConfident > 0) {
+                                    title += (nConfident + nDoubtful) + "/" + proteinKeys.size() + " - " + nConfident + " confident, " + nDoubtful + " doubtful";
+                                } else {
+                                    title += proteinKeys.size();
+                                }
+                            } catch (Exception eNValidated) {
+                                peptideShakerGUI.catchException(eNValidated);
+                            }
+                            title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+                            ((TitledBorder) plotPanel.getBorder()).setTitle(title);
                             plotPanel.repaint();
 
                             proteinTable.setRowSelectionInterval(0, 0);
