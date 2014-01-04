@@ -2500,9 +2500,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
         if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().exists()) {
-            saveProject(false);
+            saveProject(false, false);
         } else {
-            saveProjectAs(false);
+            saveProjectAs(false, false);
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
@@ -4414,9 +4414,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (value == JOptionPane.YES_OPTION) {
                 if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().exists()) {
-                    saveProject(true);
+                    saveProject(true, false);
                 } else {
-                    saveProjectAs(true);
+                    saveProjectAs(true, false);
                 }
             } else if (value == JOptionPane.NO_OPTION) {
                 closePeptideShaker();
@@ -5402,8 +5402,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Saves the modifications made to the project.
      *
      * @param aCloseWhenDone if true, PeptideShaker closes after saving
+     * @param aExportToZipWhenDone if true, the project is also saved as a zip
+     * file
      */
-    public void saveProject(boolean aCloseWhenDone) {
+    public void saveProject(boolean aCloseWhenDone, boolean aExportToZipWhenDone) {
 
         // check if the project is the example project
         if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().equals(new File(getJarFilePath() + EXAMPLE_DATASET_PATH))) {
@@ -5412,7 +5414,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     + "Please save to a different location.", "Example Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (value == JOptionPane.OK_OPTION) {
-                saveProjectAs(aCloseWhenDone);
+                saveProjectAs(aCloseWhenDone, aExportToZipWhenDone);
             } else {
                 // cancel the saving
             }
@@ -5420,6 +5422,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } else {
 
             final boolean closeWhenDone = aCloseWhenDone;
+            final boolean exportToZipWhenDone = aExportToZipWhenDone;
 
             progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -5464,6 +5467,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             } else {
                                 JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                                 dataSaved = true;
+                                if (exportToZipWhenDone) {
+                                    exportProjectAsZip();
+                                }
                             }
                         } else {
                             progressDialog.setRunFinished();
@@ -5684,12 +5690,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Save the project to the currentPSFile location.
      *
      * @param closeWhenDone if true, PeptideShaker closes when done saving
+     * @param aExportToZipWhenDone if true, the project is also saved as a zip
+     * file
      */
-    public void saveProjectAs(boolean closeWhenDone) {
+    public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
         File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
         cpsBean.setCpsFile(selectedFile);
         if (selectedFile != null) {
-            saveProject(closeWhenDone);
+            saveProject(closeWhenDone, aExportToZipWhenDone);
         }
     }
 
@@ -5945,10 +5953,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void exportProjectAsZip() {
 
         if (!dataSaved) {
-            JOptionPane.showMessageDialog(this, "You first need to save the data.", "Unsaved Data", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You first need to save the project.", "Unsaved Data", JOptionPane.INFORMATION_MESSAGE);
 
             // save the data first
-            saveMenuItemActionPerformed(null);
+            if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().exists()) {
+                saveProject(false, true);
+            } else {
+                saveProjectAs(false, true);
+            }
+
         } else {
 
             if (cpsBean.getCpsFile() != null) {
