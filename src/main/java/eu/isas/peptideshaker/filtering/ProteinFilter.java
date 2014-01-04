@@ -574,7 +574,8 @@ public class ProteinFilter extends MatchFilter {
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
      */
-    public static boolean isValidated(String proteinMatchKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
+    public static boolean isValidated(String proteinMatchKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 

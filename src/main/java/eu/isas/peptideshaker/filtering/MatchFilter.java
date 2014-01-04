@@ -1,10 +1,7 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMatch;
 import com.compomics.util.experiment.identification.SearchParameters;
-import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,66 +10,68 @@ import java.util.ArrayList;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * Abstract representing a filter
+ * Abstract representing a filter.
  *
  * @author Marc Vaudel
  */
 public abstract class MatchFilter implements Serializable {
 
     /**
-     * Serial number for serialization compatibility
+     * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = 7413446840381260115L;
     /**
-     * Name of the filter
+     * Name of the filter.
      */
     protected String name;
     /**
-     * Description of the filter
+     * Description of the filter.
      */
     protected String description = "";
     /**
-     * boolean indicating whether the filter is active
+     * boolean indicating whether the filter is active.
      */
     private boolean active = true;
     /**
-     * The key of the manually validated matches
+     * The key of the manually validated matches.
      */
     private ArrayList<String> manualValidation = new ArrayList<String>();
     /**
-     * The exceptions to the rule
+     * The exceptions to the rule.
      */
     private ArrayList<String> exceptions = new ArrayList<String>();
 
     /**
-     * Name of the manual selection filter
+     * Name of the manual selection filter.
      */
     public static final String MANUAL_SELECTION = "manual selection";
+
     /**
-     * Enum for the type of possible filter
+     * Enum for the type of possible filter.
      */
     public enum FilterType {
 
         /**
-         * a Protein filter
+         * Protein filter.
          */
         PROTEIN,
         /**
-         * a Peptide filter
+         * Peptide filter.
          */
         PEPTIDE,
         /**
-         * a PSM filter
+         * PSM filter.
          */
         PSM
     }
     /**
-     * The type of filter
+     * The type of filter.
      */
     protected FilterType filterType;
 
     /**
-     * Return the name of the filter
+     * Return the name of the filter.
+     *
      * @return the name of the filter
      */
     public String getName() {
@@ -80,14 +79,17 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Sets the name of the filter
+     * Sets the name of the filter.
+     *
      * @param newName the name to be given to the filter
      */
     public void setName(String newName) {
         name = newName;
     }
+
     /**
-     * Return the type of the filter
+     * Return the type of the filter.
+     *
      * @return the type of the filter
      */
     public FilterType getType() {
@@ -95,7 +97,8 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Returns the description of the filter
+     * Returns the description of the filter.
+     *
      * @return the description of the filter
      */
     public String getDescription() {
@@ -103,7 +106,8 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Sets the description of the filter
+     * Sets the description of the filter.
+     *
      * @param description the description of the filter
      */
     public void setDescription(String description) {
@@ -111,7 +115,8 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Indicates whether the filter is active
+     * Indicates whether the filter is active.
+     *
      * @return a boolean indicating whether the filter is active
      */
     public boolean isActive() {
@@ -119,7 +124,8 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Sets whether the filter is active
+     * Sets whether the filter is active.
+     *
      * @param active a boolean indicating whether the filter is active
      */
     public void setActive(boolean active) {
@@ -127,15 +133,17 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Returns the exceptions to the rule
-     * @return the exceptions to the rule 
+     * Returns the exceptions to the rule.
+     *
+     * @return the exceptions to the rule
      */
     public ArrayList<String> getExceptions() {
         return exceptions;
     }
 
     /**
-     * Returns the manually validated items
+     * Returns the manually validated items.
+     *
      * @return the manually validated items
      */
     public ArrayList<String> getManualValidation() {
@@ -143,7 +151,8 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Adds a manually validated Match
+     * Adds a manually validated Match.
+     *
      * @param matchKey the key of the match to add
      */
     public void addManualValidation(String matchKey) {
@@ -151,14 +160,17 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Sets the list of manually validated keys
+     * Sets the list of manually validated keys.
+     *
      * @param manualValidation list of manually validated keys
      */
     public void setManualValidation(ArrayList<String> manualValidation) {
         this.manualValidation = manualValidation;
     }
+
     /**
-     * Adds an exception
+     * Adds an exception.
+     *
      * @param matchKey the key of the exception to add
      */
     public void addException(String matchKey) {
@@ -166,14 +178,17 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Sets the excepted matches
+     * Sets the excepted matches.
+     *
      * @param exceptions the excepted matches
      */
     public void setExceptions(ArrayList<String> exceptions) {
         this.exceptions = exceptions;
     }
+
     /**
-     * Removes a manually validated Match
+     * Removes a manually validated Match.
+     *
      * @param matchKey the key of the match to remove
      */
     public void removeManualValidation(String matchKey) {
@@ -181,13 +196,13 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Removes an exception
+     * Removes an exception.
+     *
      * @param matchKey the key of the exception to remove
      */
     public void removeException(String matchKey) {
         exceptions.remove(matchKey);
     }
-    
 
     /**
      * Tests whether a match is validated by this filter.
@@ -199,13 +214,14 @@ public abstract class MatchFilter implements Serializable {
      * generator providing identification features
      * @param searchParameters the identification parameters
      *
-     * @return a boolean indicating whether a match is validated by a
-     * given filter
-     * 
+     * @return a boolean indicating whether a match is validated by a given
+     * filter
+     *
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public abstract boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException;

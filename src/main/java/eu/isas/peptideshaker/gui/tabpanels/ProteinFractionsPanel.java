@@ -369,15 +369,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
                 try {
-                    try {
-                    } catch (Exception eNConfident) {
-                        peptideShakerGUI.catchException(eNConfident);
-                    }
                     int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
-                    title += nValidated + "/" + proteinTable.getRowCount();
                     int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
+                    int nProteins = proteinTable.getRowCount();
                     if (nConfident > 0) {
-                        title += ", " + nConfident + " confident";
+                        title += nValidated + "/" + nProteins + " - " + nConfident + " confident, " + (nValidated - nConfident) + " doubtful";
+                    } else {
+                        title += nValidated + "/" + nProteins;
                     }
                 } catch (Exception eNValidated) {
                     peptideShakerGUI.catchException(eNValidated);

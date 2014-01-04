@@ -2349,6 +2349,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideTable.setToolTipText(null);
             } else if (column == peptideTable.getColumn("").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                peptideTable.setToolTipText(null);
             } else if (column == peptideTable.getColumn("Sequence").getModelIndex()) {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -4649,12 +4650,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 int nValidatedPsms = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey);
                 int nConfidentPsms = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(peptideKey);
-                String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches ("
-                        + nValidatedPsms + "/" + psmTable.getRowCount();
+                int nPsms = psmTable.getRowCount();
+                String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches (";
                 if (nConfidentPsms > 0) {
-                    title += ", " + nConfidentPsms + " confident";
+                    title += nValidatedPsms + "/" + nPsms + " - " + nConfidentPsms + " confident, " + (nValidatedPsms - nConfidentPsms) + " doubtful";
+                } else {
+                    title += nValidatedPsms + "/" + nPsms;
                 }
-                 title +=  ")"+ PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+                title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
                 ((TitledBorder) psmsPanel.getBorder()).setTitle(title);
                 psmsPanel.repaint();
 
@@ -4705,7 +4708,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             try {
                 Identification identification = peptideShakerGUI.getIdentification();
                 IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-                
+
                 String proteinMatchKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
                 String accession = proteinMatch.getMainMatch();
@@ -4744,10 +4747,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (";
                 try {
                     int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinMatchKey);
-                    title += nValidatedPeptides + "/" + proteinMatch.getPeptideCount();
                     int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinMatchKey);
+                    int nPeptides = proteinMatch.getPeptideCount();
                     if (nConfidentPeptides > 0) {
-                        title += ", " + nConfidentPeptides + " confident";
+                        title += nValidatedPeptides + "/" + nPeptides + " - " + nConfidentPeptides + " confident, " + (nValidatedPeptides - nConfidentPeptides) + " doubtful";
+                    } else {
+                        title += nValidatedPeptides + "/" + nPeptides;
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -4857,20 +4862,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
                     try {
-                        try {
-                        } catch (Exception eNConfident) {
-                            peptideShakerGUI.catchException(eNConfident);
-                        }
                         int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
-                        title += nValidated + "/" + proteinTable.getRowCount();
-                            int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
-                            if (nConfident > 0) {
-                                title += ", " + nConfident + " confident";
-                            }
+                        int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
+                        int nProteins = proteinTable.getRowCount();
+                        if (nConfident > 0) {
+                            title += nValidated + "/" + nProteins + " - " + nConfident + " confident, " + (nValidated - nConfident) + " doubtful";
+                        } else {
+                            title += nValidated + "/" + nProteins;
+                        }
                     } catch (Exception eNValidated) {
                         peptideShakerGUI.catchException(eNValidated);
                     }
-                    title +=  ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+                    title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
 
                     ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle(title);
                     proteinsLayeredPanel.repaint();

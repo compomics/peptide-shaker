@@ -5,7 +5,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.general.ExceptionHandler;
-import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -33,7 +34,8 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 /**
  * This class displays information about the validation of a match.
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class MatchValidationDialog extends javax.swing.JDialog {
 
@@ -103,6 +105,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
+        setUpGui();
 
         this.matchKey = proteinMatchKey;
         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, new PSParameter());
@@ -147,6 +150,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
+        setUpGui();
 
         this.matchKey = peptideMatchKey;
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideMatchKey, new PSParameter());
@@ -197,6 +201,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
+        setUpGui();
 
         this.matchKey = psmMatchKey;
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmMatchKey, new PSParameter());
@@ -222,6 +227,20 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(parent);
         setVisible(true);
+    }
+
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGui() {
+
+        // make sure that the scroll panes are see-through
+        qualityFiltersTableScrollPane.getViewport().setOpaque(false);
+
+        // disable column reordering
+        qualityFiltersTable.getTableHeader().setReorderingAllowed(false);
+
+        validationLevelJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
 
     /**
@@ -261,7 +280,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         }
 
         // Target/Decoy group
-        ((TitledBorder) targetDecoyGroupPanel.getBorder()).setTitle(targetDecoyCategory + " target/decoy distributions");
+        ((TitledBorder) targetDecoyGroupPanel.getBorder()).setTitle(targetDecoyCategory + " Target/Decoy Distributions");
         targetDecoyGroupPanel.repaint();
         if (targetDecoy) {
             int nTargetOnly = targetDecoyMap.getnTargetOnly();
@@ -289,7 +308,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         // Target/decoy results
         if (targetDecoy) {
-            double confidence = psParameter.getProteinConfidence();
+            double confidence = 0;
+
+            if (targetDecoyCategory.equalsIgnoreCase("Proteins")) {
+                confidence = psParameter.getProteinConfidence();
+            } else if (targetDecoyCategory.endsWith("Peptides")) {
+                confidence = psParameter.getPeptideConfidence();
+            } else if (targetDecoyCategory.endsWith("PSMs")) {
+                confidence = psParameter.getPsmConfidence();
+            }
+
             confidenceLbl.setText("Confidence: " + Util.roundDouble(confidence, 2) + "%");
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
             double validationThreshold = targetDecoyResults.getConfidenceLimit();
@@ -320,8 +348,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         qualityFiltersTable.getColumn("").setMaxWidth(50);
         qualityFiltersTable.getColumn(" ").setMaxWidth(50);
         qualityFiltersTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
-                null,
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Yes", "No"));
 
         int valid = 0;
@@ -483,6 +511,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         bitLabel1.setText("Concatenated Target/Decoy");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(700, 600));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -507,8 +536,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(validationTypeLabel)
                 .addGap(20, 20, 20)
-                .addComponent(validationLevelJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(validationLevelJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         validationLevelPanelLayout.setVerticalGroup(
             validationLevelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -586,7 +615,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addGroup(targetDecoyGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(targetDecoyGroupPanelLayout.createSequentialGroup()
                         .addComponent(matchesBeforeFirstDecoyLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
-                        .addGap(266, 266, 266)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
                         .addComponent(bitRecommendationLabel5))
                     .addGroup(targetDecoyGroupPanelLayout.createSequentialGroup()
                         .addComponent(confidenceResolutionLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -664,7 +693,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         qualityFiltersPanel.setLayout(qualityFiltersPanelLayout);
         qualityFiltersPanelLayout.setHorizontalGroup(
             qualityFiltersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(qualityFiltersPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, qualityFiltersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(qualityFiltersTableScrollPane)
                 .addContainerGap())
@@ -673,8 +702,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             qualityFiltersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(qualityFiltersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(qualityFiltersTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(qualityFiltersTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         okButton.setText("OK");
@@ -715,19 +744,19 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(validationLevelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(databaseSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(targetDecoyGroupPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(targetDecoyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(qualityFiltersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(qualityFiltersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -738,7 +767,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -782,25 +811,25 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         String newValue = validationLevelJComboBox.getSelectedItem().toString();
         MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
         if (psParameter.getMatchValidationLevel().isValidated() && (matchValidationLevel == MatchValidationLevel.none || matchValidationLevel == MatchValidationLevel.not_validated)) {
-            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                    "The statistical validation level cannot be changed. Please use non-statistical levels\n"
-                    + MatchValidationLevel.confident.getName() + " or " + MatchValidationLevel.doubtful.getName() + ".\n"
-                    + "To change the statistical validation threshold, use the Validation tab."),
-                    "Validation Level Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "The statistical validation level cannot be changed. Please use the\n"
+                    + "non-statistical levels " + MatchValidationLevel.confident.getName() + " or " + MatchValidationLevel.doubtful.getName() + ".\n\n"
+                    + "To change the statistical validation threshold, use the Validation tab.",
+                    "Validation Level Error", JOptionPane.WARNING_MESSAGE);
             validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
         } else if (!psParameter.getMatchValidationLevel().isValidated() && matchValidationLevel != psParameter.getMatchValidationLevel()) {
-            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+            JOptionPane.showMessageDialog(this,
                     "The statistical validation level cannot be changed. To change\n"
-                    + "the statistical validation threshold, use the Validation tab."),
-                    "Validation Level Error", JOptionPane.ERROR_MESSAGE);
+                    + "the statistical validation threshold, use the Validation tab.",
+                    "Validation Level Error", JOptionPane.WARNING_MESSAGE);
             validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
         }
     }//GEN-LAST:event_validationLevelJComboBoxActionPerformed
 
     /**
      * Close the dialog without saving any changes.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();

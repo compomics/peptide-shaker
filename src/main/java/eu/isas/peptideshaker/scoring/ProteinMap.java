@@ -36,7 +36,7 @@ public class ProteinMap implements Serializable {
 
     /**
      * Returns the filters used to flag doubtful matches.
-     * 
+     *
      * @return the filters used to flag doubtful matches
      */
     public ArrayList<ProteinFilter> getDoubtfulMatchesFilters() {
@@ -48,7 +48,7 @@ public class ProteinMap implements Serializable {
 
     /**
      * Sets the filters used to flag doubtful matches.
-     * 
+     *
      * @param doubtfulMatchesFilters the filters used to flag doubtful matches
      */
     public void setDoubtfulMatchesFilters(ArrayList<ProteinFilter> doubtfulMatchesFilters) {
@@ -120,27 +120,27 @@ public class ProteinMap implements Serializable {
     public TargetDecoyMap getTargetDecoyMap() {
         return proteinMatchMap;
     }
-    
+
     /**
      * Returns the default filters for setting a match as doubtful.
-     * 
+     *
      * @return the default filters for setting a match as doubtful
      */
     public static ArrayList<ProteinFilter> getDefaultProteinFilters() {
         ArrayList<ProteinFilter> filters = new ArrayList<ProteinFilter>();
-        
+
         ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides"); // the name is used to show what we expect
-        proteinFilter.setDescription("< 2 confident peptides"); // the description is displayed as failure explanation
+        proteinFilter.setDescription("<2 confident peptides"); // the description is displayed as failure explanation
         proteinFilter.setnConfidentPeptides(1);
         proteinFilter.setnConfidentPeptidesComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(proteinFilter); 
-        
+        filters.add(proteinFilter);
+
         proteinFilter = new ProteinFilter(">=2 confident spectra");
-        proteinFilter.setDescription("< 2 confident spectra");
+        proteinFilter.setDescription("<2 confident spectra");
         proteinFilter.setProteinNConfidentSpectra(1);
         proteinFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         filters.add(proteinFilter);
-        
+
         return filters;
     }
 }
