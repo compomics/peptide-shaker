@@ -10,6 +10,7 @@
  * FEATURE IMPROVEMENT: The peptide and spectrum count columns plus the QC plots now include the new "doubtful" category.
  * FEATURE IMPROVEMENT: PeptideShaker now corrects for input where the same ptm is found multiple times.
  * FEATURE IMPROVEMENT: PeptideShaker projects zipped on Windows can now also be opened on Mac and Linux.
+ * FEATURE IMPROVEMENT: Improved the way export to zip is performed if the project is not already saved.
 
  * BUG FIX: Fixed an issue where the height if the spectrum sub plots ended up as too small if hidden and then re-displayed.
  * BUG FIX: Corrected bugs in the sparklines for the protein table in the GO and Fractions tabs.
