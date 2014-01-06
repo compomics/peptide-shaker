@@ -5072,7 +5072,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
 
                     progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                    progressDialog.resetPrimaryProgressCounter();
                     progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumFiles().size() + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
