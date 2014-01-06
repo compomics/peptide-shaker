@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Protocol;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
+import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -32,7 +32,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     /**
      * The PRIDE Export Dialog.
      */
-    private PrideExportDialog prideExportDialog;
+    private ProjectExportDialog prideExportDialog;
     /**
      * The last valid input for contact name
      */
@@ -44,7 +44,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * @param prideExportDialog
      * @param modal
      */
-    public NewProtocolDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewProtocolDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 
@@ -65,7 +65,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * @param modal
      * @param protcol
      */
-    public NewProtocolDialog(PrideExportDialog prideExportDialog, boolean modal, Protocol protcol) {
+    public NewProtocolDialog(ProjectExportDialog prideExportDialog, boolean modal, Protocol protcol) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 

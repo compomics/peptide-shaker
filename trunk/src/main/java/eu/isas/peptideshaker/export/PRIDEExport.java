@@ -17,22 +17,24 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.pride.prideobjects.*;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,11 +51,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PRIDEExport {
 
-    // @TODO: make gui independent
-    /**
-     * The main instance of the GUI.
-     */
-    private PeptideShakerGUI peptideShakerGUI;
     /**
      * The experiment title.
      */
@@ -133,17 +130,60 @@ public class PRIDEExport {
      */
     private final int CONFIDENCE_DECIMALS = 2;
     /**
-     * A reference to the PrideExportDialog.
+     * The waiting handler.
      */
-    private PrideExportDialog prideExportDialog;
+    private WaitingHandler waitingHandler;
+    /**
+     * The identifications.
+     */
+    private Identification identification;
+    /**
+     * The project details.
+     */
+    private ProjectDetails projectDetails;
+    /**
+     * The PeptideShaker version.
+     */
+    private String peptideShakerVersion;
+    /**
+     * The search parameters.
+     */
+    private SearchParameters searchParameters;
+    /**
+     * The PTM scoring preferences.
+     */
+    private PTMScoringPreferences ptmScoringPreferences;
+    /**
+     * The spectrum counting preferences.
+     */
+    private SpectrumCountingPreferences spectrumCountingPreferences;
+    /**
+     * The identification feature generator.
+     */
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The peptide spectrum annotator.
+     */
+    private PeptideSpectrumAnnotator spectrumAnnotator;
+    /**
+     * The annotation preferences.
+     */
+    private AnnotationPreferences annotationPreferences;
 
     /**
      * Constructor.
      *
-     * @param peptideShakerGUI Instance of the main GUI class
-     * @param prideExportDialog A reference to the PrideExportDialog.
+     * @param peptideShakerVersion
+     * @param identification
+     * @param projectDetails
      * @param experimentTitle Title of the experiment
+     * @param spectrumCountingPreferences
+     * @param identificationFeaturesGenerator
+     * @param searchParameters
+     * @param annotationPreferences
+     * @param spectrumAnnotator
      * @param experimentLabel Label of the experiment
+     * @param ptmScoringPreferences
      * @param experimentDescription Description of the experiment
      * @param experimentProject project of the experiment
      * @param referenceGroup References for the experiment
@@ -153,6 +193,7 @@ public class PRIDEExport {
      * @param instrument Instruments used in this experiment
      * @param outputFolder Output folder
      * @param fileName the file name without extension
+     * @param waitingHandler
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
      * @throws IOException Exception thrown whenever an error occurred while
@@ -160,11 +201,20 @@ public class PRIDEExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public PRIDEExport(PeptideShakerGUI peptideShakerGUI, PrideExportDialog prideExportDialog, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
+    public PRIDEExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
+            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
+            AnnotationPreferences annotationPreferences, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ReferenceGroup referenceGroup, ContactGroup contactGroup, Sample sample, Protocol protocol, Instrument instrument,
-            File outputFolder, String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
-        this.peptideShakerGUI = peptideShakerGUI;
-        this.prideExportDialog = prideExportDialog;
+            File outputFolder, String fileName, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+        this.peptideShakerVersion = peptideShakerVersion;
+        this.identification = identification;
+        this.projectDetails = projectDetails;
+        this.searchParameters = searchParameters;
+        this.ptmScoringPreferences = ptmScoringPreferences;
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+        this.spectrumAnnotator = spectrumAnnotator;
+        this.annotationPreferences = annotationPreferences;
         this.experimentTitle = experimentTitle;
         this.experimentLabel = experimentLabel;
         this.experimentDescription = experimentDescription;
@@ -174,6 +224,7 @@ public class PRIDEExport {
         this.sample = sample;
         this.protocol = protocol;
         this.instrument = instrument;
+        this.waitingHandler = waitingHandler;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
         r = new FileWriter(new File(outputFolder, fileName + ".xml"));
@@ -208,7 +259,7 @@ public class PRIDEExport {
         // the protocol
         writeProtocol();
 
-        if (prideExportDialog.progressCancelled()) {
+        if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
             return;
@@ -224,7 +275,7 @@ public class PRIDEExport {
         progressDialog.setMaxPrimaryProgressCounter(100);
         progressDialog.setValue(0);
 
-        if (prideExportDialog.progressCancelled()) {
+        if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
             return;
@@ -233,7 +284,7 @@ public class PRIDEExport {
         // the mzData element
         writeMzData(progressDialog);
 
-        if (prideExportDialog.progressCancelled()) {
+        if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
             return;
@@ -242,7 +293,7 @@ public class PRIDEExport {
         // the PSMs
         writePsms(progressDialog);
 
-        if (prideExportDialog.progressCancelled()) {
+        if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
             return;
@@ -251,7 +302,7 @@ public class PRIDEExport {
         // the additional tags
         writeAdditionalTags();
 
-        if (prideExportDialog.progressCancelled()) {
+        if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
             return;
@@ -277,7 +328,6 @@ public class PRIDEExport {
 
         try {
             SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-            Identification identification = peptideShakerGUI.getIdentification();
             PSParameter proteinProbabilities = new PSParameter();
             PSParameter peptideProbabilities = new PSParameter();
             PSParameter psmProbabilities = new PSParameter();
@@ -286,14 +336,14 @@ public class PRIDEExport {
             long increment = totalProgress / (2 * identification.getProteinIdentification().size());
 
             PSMaps pSMaps = new PSMaps();
-            pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+            pSMaps = (PSMaps) identification.getUrParam(pSMaps);
             ProteinMap proteinTargetDecoyMap = pSMaps.getProteinMap();
             PsmSpecificMap psmTargetDecoyMap = pSMaps.getPsmSpecificMap();
             PeptideSpecificMap peptideTargetDecoyMap = pSMaps.getPeptideSpecificMap();
 
             // get the list of search engines used
             IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-            ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
+            ArrayList<File> idFiles = projectDetails.getIdentificationFiles();
 
             ArrayList<Integer> seList = new ArrayList<Integer>();
 
@@ -318,7 +368,7 @@ public class PRIDEExport {
                 searchEngineReport += SpectrumIdentificationAlgorithm.getName(seList.get(i));
             }
 
-            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerGUI.getVersion();
+            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
 
             for (String spectrumFile : identification.getSpectrumFiles()) {
                 identification.loadSpectrumMatches(spectrumFile, null);
@@ -333,7 +383,7 @@ public class PRIDEExport {
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
-                if (prideExportDialog.progressCancelled()) {
+                if (waitingHandler.isRunCanceled()) {
                     break;
                 }
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -352,19 +402,19 @@ public class PRIDEExport {
 
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
-                    if (prideExportDialog.progressCancelled()) {
+                    if (waitingHandler.isRunCanceled()) {
                         break;
                     }
 
                     PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
-                    peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideProbabilities);
+                    peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
                     identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
                     identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, null);
 
                     for (String spectrumKey : currentMatch.getSpectrumMatches()) {
 
-                        if (prideExportDialog.progressCancelled()) {
+                        if (waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -403,7 +453,7 @@ public class PRIDEExport {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                         if (!scores.containsKey(se) || scores.get(se) > eValue) {
                                             scores.put(se, eValue);
                                             if (se == Advocate.MASCOT) {
@@ -463,7 +513,7 @@ public class PRIDEExport {
 
                         StringBuilder probabilisticScore = new StringBuilder();
 
-                        if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()) {
+                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
 
                             for (String mod : modifications) {
 
@@ -499,7 +549,7 @@ public class PRIDEExport {
                         }
 
                         // @TODO: the line below uses the protein tree, which has to be rebuilt if not available...
-                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         String peptideProteins = "";
                         for (String accession : peptideParentProteins) {
                             if (!peptideProteins.equals("")) {
@@ -552,9 +602,9 @@ public class PRIDEExport {
                         if (dScore.length() > 0) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
-                        if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
+                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM "
-                                    + peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName()
+                                    + ptmScoringPreferences.getSelectedProbabilisticScore().getName()
                                     + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
@@ -573,14 +623,14 @@ public class PRIDEExport {
                     br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + System.getProperty("line.separator"));
                 }
                 try {
-                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        writeCvTerm(new CvTerm("MS", "MS:1001905", "emPAI value", "" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey)));
+                    if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
+                        writeCvTerm(new CvTerm("MS", "MS:1001905", "emPAI value", "" + identificationFeaturesGenerator.getSpectrumCounting(proteinKey)));
                     } else {
                         br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
-                                + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                                + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
                     }
                 } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
+                    e.printStackTrace(); // @TODO: add better error handling
                 }
                 MatchValidationLevel matchValidationLevel = psmProbabilities.getMatchValidationLevel();
                 if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinProbabilities.getReasonDoubtful().equals("")) {
@@ -623,7 +673,7 @@ public class PRIDEExport {
                 progressDialog.setValue((int) ((100 * progress) / totalProgress));
             }
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            e.printStackTrace(); // @TODO: add better error handling
         }
     }
 
@@ -639,9 +689,7 @@ public class PRIDEExport {
     private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
         MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
@@ -814,17 +862,15 @@ public class PRIDEExport {
 
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
-        Identification identification = peptideShakerGUI.getIdentification();
-
         for (String mgfFile : spectrumFactory.getMgfFileNames()) {
 
-            if (prideExportDialog.progressCancelled()) {
+            if (waitingHandler.isRunCanceled()) {
                 break;
             }
 
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
 
-                if (prideExportDialog.progressCancelled()) {
+                if (waitingHandler.isRunCanceled()) {
                     break;
                 }
 
@@ -1002,7 +1048,7 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "<software>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<name>" + "PeptideShaker" + "</name>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<version>" + peptideShakerGUI.getVersion() + "</version>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<version>" + peptideShakerVersion + "</version>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</software>" + System.getProperty("line.separator"));
 
@@ -1012,15 +1058,15 @@ public class PRIDEExport {
 
         // fragment mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000161\" name=\"Fragment mass tolerance setting\" value=\""
-                + peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));
 
         // precursor mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000078\" name=\"Peptide mass tolerance setting\" value=\""
-                + peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getPrecursorAccuracy() + "\" />" + System.getProperty("line.separator"));
 
         // allowed missed cleavages
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000162\" name=\"Allowed missed cleavages\" value=\""
-                + peptideShakerGUI.getSearchParameters().getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
+                + searchParameters.getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
 
         // @TODO: add more settings??
         tabCounter--;
@@ -1130,7 +1176,7 @@ public class PRIDEExport {
 
         // XML generation software
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" "
-                + "value=\"PeptideShaker v" + peptideShakerGUI.getVersion() + "\" />" + System.getProperty("line.separator"));
+                + "value=\"PeptideShaker v" + peptideShakerVersion + "\" />" + System.getProperty("line.separator"));
 
         // Project
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "

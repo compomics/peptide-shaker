@@ -4467,7 +4467,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             }
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                             Peptide currentPeptide = peptideAssumption.getPeptide();
-                            PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
+                            PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnotator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                             annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());

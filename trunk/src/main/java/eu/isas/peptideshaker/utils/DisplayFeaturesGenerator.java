@@ -216,7 +216,7 @@ public class DisplayFeaturesGenerator {
      * @param projectAccession the project accession number
      * @return the project accession web link
      */
-    public String getPrideAccessionLink(String projectAccession) {
+    public static String getPrideAccessionLink(String projectAccession) {
         return "http://www.ebi.ac.uk/pride/directLink.do?experimentAccessionNumber=" + projectAccession;
     }
 

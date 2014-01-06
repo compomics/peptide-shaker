@@ -34,6 +34,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.io.FTPDownloader;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
+import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import uk.ac.ebi.pride.jaxb.model.*;
@@ -249,7 +250,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                 false,
                 new Integer(accession),
-                "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAccessionLink("" + accession)
                 + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                 + title + "</font></a><html>",
                 "",
@@ -317,7 +318,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                         false,
                         accession,
-                        "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAccessionLink("" + accession)
                         + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                         + title + "</font></a><html>",
                         project,
