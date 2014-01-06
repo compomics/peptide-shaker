@@ -123,6 +123,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private final int MAX_SEQUENCE_LENGTH = 6000;
     /**
+     * The maximum sequence length for annotation and interaction in the
+     * sequence coverage panel.
+     */
+    private final int MAX_SEQUENCE_ANNOTATION_LENGTH = 2500;
+    /**
      * The current spectrum panel.
      */
     private SpectrumPanel spectrumPanel;
@@ -4169,8 +4174,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     if (covered) {
 
-                        // @TODO: is very slow for larger protein sequences...
-                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
+                        if (currentProteinSequence.length() < MAX_SEQUENCE_ANNOTATION_LENGTH) {
+                            proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
+                        } else {
+                            // backup for long proteins sequences (0.21% of all of UniProt), as interaction is then too slow
+                            ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                            annotations.add(new ResidueAnnotation("(Annotation and interaction disabled. Protein sequence too long.)", null, false));
+                            proteinTooltips.put(sparkLineDataSeriesCoverage.size(), annotations);
+                        }
 
                         if (selectedPeptideEnd.contains(Integer.valueOf(i + 1))) {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);

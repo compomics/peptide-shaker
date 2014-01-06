@@ -211,7 +211,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     values.add(nDoubtfulSpectra);
                     values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
                     return values;
-
                 case 6:
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
