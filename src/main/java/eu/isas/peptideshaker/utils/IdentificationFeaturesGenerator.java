@@ -208,7 +208,7 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      * @param matchingType the sequence matching type to use
      * @param massTolerance the mass tolerance to use
-     * 
+     *
      * @return the sequence coverage
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -315,14 +315,15 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      * @param matchingType the sequence matching type to use
      * @param massTolerance the mass tolerance to use
-     * 
+     *
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws InterruptedException
      * @throws ClassNotFoundException
      */
-    public void updateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = estimateSequenceCoverage(proteinMatchKey, matchingType, massTolerance);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
     }
@@ -333,19 +334,24 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      * @param matchingType the sequence matching type to use
      * @param massTolerance the mass tolerance to use
-     * 
+     *
      * @return the sequence coverage
      */
-    private double estimateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private double estimateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+
         // an array containing the coverage index for each residue
         int[] coverage = new int[sequence.length() + 1];
         PSParameter pSParameter = new PSParameter();
 
-        // iterate the peptide table and store the coverage for each peptide
+        // batch load the required data
         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
+
+        // iterate the peptide table and store the coverage for each peptide
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
             if (pSParameter.getMatchValidationLevel().isValidated()) {
@@ -652,6 +658,10 @@ public class IdentificationFeaturesGenerator {
     private void estimateNValidatedProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter probabilities = new PSParameter();
         int cpt = 0;
+
+        // batch load the protein parameters
+        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null);
+
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
@@ -660,6 +670,7 @@ public class IdentificationFeaturesGenerator {
                 }
             }
         }
+
         metrics.setnValidatedProteins(cpt);
     }
 
@@ -675,7 +686,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public int getNConfidentProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        if (metrics.getnConfidentProteins()== -1) {
+        if (metrics.getnConfidentProteins() == -1) {
             estimateNConfidentProteins();
         }
         return metrics.getnConfidentProteins();
@@ -687,6 +698,10 @@ public class IdentificationFeaturesGenerator {
     private void estimateNConfidentProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter probabilities = new PSParameter();
         int cpt = 0;
+
+        // batch load the protein parameters
+        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null);
+
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
@@ -716,7 +731,9 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         PSParameter pSParameter = new PSParameter();
 
+        // batch load the peptide match parameters
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
+
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
             if (pSParameter.getMatchValidationLevel().isValidated()) {
@@ -731,9 +748,9 @@ public class IdentificationFeaturesGenerator {
      * Estimates the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
+     *
      * @return the number of confident peptides
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -747,7 +764,9 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         PSParameter pSParameter = new PSParameter();
 
+        // batch load the peptide match parameters
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
+
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
             if (pSParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
@@ -831,9 +850,9 @@ public class IdentificationFeaturesGenerator {
      * Returns the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
+     *
      * @return the number of confident peptides
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -957,9 +976,9 @@ public class IdentificationFeaturesGenerator {
      * Returns the number of confident spectra for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
+     *
      * @return the number of validated spectra
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -1071,9 +1090,9 @@ public class IdentificationFeaturesGenerator {
      * Returns the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
-     * 
+     *
      * @return the number of confident spectra
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -1106,7 +1125,7 @@ public class IdentificationFeaturesGenerator {
      * Estimates the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the peptide match of interest
-     * 
+     *
      * @return the number of confident spectra where this peptide was found
      */
     private int estimateNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1677,17 +1696,17 @@ public class IdentificationFeaturesGenerator {
 
             for (String proteinKey : identificationFeaturesCache.getProteinList()) {
                 if (!ProteinMatch.isDecoy(proteinKey)) {
-                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                if (!psParameter.isHidden()) {
-                    proteinListAfterHiding.add(proteinKey);
-                    if (psParameter.getMatchValidationLevel().isValidated()) {
-                        nValidatedProteins++;
-                        validatedProteinList.add(proteinKey);
-                        if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                            nConfidentProteins++;
+                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                    if (!psParameter.isHidden()) {
+                        proteinListAfterHiding.add(proteinKey);
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+                            nValidatedProteins++;
+                            validatedProteinList.add(proteinKey);
+                            if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                                nConfidentProteins++;
+                            }
                         }
                     }
-                }
                 }
 
                 if (waitingHandler != null) {

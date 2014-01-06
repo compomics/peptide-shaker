@@ -3961,7 +3961,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Update the protein sequence coverage plot.
+     * Update the protein sequence coverage plot data.
      *
      * @param proteinAccession
      * @throws IOException
@@ -4168,6 +4168,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     JSparklinesDataSeries sparklineDataseries;
 
                     if (covered) {
+
+                        // @TODO: is very slow for larger protein sequences...
                         proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
 
                         if (selectedPeptideEnd.contains(Integer.valueOf(i + 1))) {
