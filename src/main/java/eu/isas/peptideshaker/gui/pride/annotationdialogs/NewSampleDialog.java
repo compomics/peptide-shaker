@@ -4,7 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Sample;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
+import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -39,7 +39,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     /**
      * The PRIDE Export Dialog.
      */
-    private PrideExportDialog prideExportDialog;
+    private ProjectExportDialog prideExportDialog;
     /**
      * The NEWT taxonony root.
      */
@@ -71,7 +71,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * @param prideExportDialog
      * @param modal
      */
-    public NewSampleDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewSampleDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 
@@ -91,7 +91,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * @param modal
      * @param sample
      */
-    public NewSampleDialog(PrideExportDialog prideExportDialog, boolean modal, Sample sample) {
+    public NewSampleDialog(ProjectExportDialog prideExportDialog, boolean modal, Sample sample) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 

@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Instrument;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
+import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -28,7 +28,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * The PRIDE Export Dialog.
      */
-    private PrideExportDialog prideExportDialog;
+    private ProjectExportDialog prideExportDialog;
     /**
      * The table column header tooltips.
      */
@@ -44,7 +44,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      * @param prideExportDialog
      * @param modal
      */
-    public NewInstrumentDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewInstrumentDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
@@ -62,7 +62,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      * @param modal
      * @param instrument
      */
-    public NewInstrumentDialog(PrideExportDialog prideExportDialog, boolean modal, Instrument instrument) {
+    public NewInstrumentDialog(ProjectExportDialog prideExportDialog, boolean modal, Instrument instrument) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 
@@ -450,7 +450,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             searchTerm = instrumentDetectorJTextField.getText();
 
             ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]"));
-            ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
+            ontology = ProjectExportDialog.getOntologyFromCvTerm(ontology);
 
             searchTerm = instrumentDetectorJTextField.getText().substring(
                     0, instrumentDetectorJTextField.getText().lastIndexOf("[") - 1);
@@ -484,7 +484,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             searchTerm = instrumentSourceJTextField.getText();
 
             ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]"));
-            ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
+            ontology = ProjectExportDialog.getOntologyFromCvTerm(ontology);
 
             searchTerm = instrumentSourceJTextField.getText().substring(0, instrumentSourceJTextField.getText().lastIndexOf("[") - 1);
             searchTerm = searchTerm.replaceAll("-", " ");
@@ -656,12 +656,12 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         String tempSource = instrumentSourceJTextField.getText();
         String termSource = tempSource.substring(0, tempSource.lastIndexOf("[") - 1);
         String accessionSource = tempSource.substring(tempSource.lastIndexOf("[") + 1, tempSource.lastIndexOf("]"));
-        String ontologySource = PrideExportDialog.getOntologyFromCvTerm(accessionSource);
+        String ontologySource = ProjectExportDialog.getOntologyFromCvTerm(accessionSource);
 
         String tempDetector = instrumentDetectorJTextField.getText();
         String termDetector = tempDetector.substring(0, tempDetector.lastIndexOf("[") - 1);
         String accessionDetector = tempDetector.substring(tempDetector.lastIndexOf("[") + 1, tempDetector.lastIndexOf("]"));
-        String ontologyDetector = PrideExportDialog.getOntologyFromCvTerm(accessionDetector);
+        String ontologyDetector = ProjectExportDialog.getOntologyFromCvTerm(accessionDetector);
 
         prideExportDialog.setInstrument(new Instrument(nameJTextField.getText(),
                 new CvTerm(ontologySource, accessionSource, termSource, null),

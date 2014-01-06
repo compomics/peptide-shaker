@@ -67,7 +67,7 @@ import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
+import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -738,8 +738,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         identificationFeaturesMenuItem = new javax.swing.JMenuItem();
         followUpAnalysisMenuItem = new javax.swing.JMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
+        projectExportMenu = new javax.swing.JMenu();
         exportProjectMenuItem = new javax.swing.JMenuItem();
         exportPrideMenuItem = new javax.swing.JMenuItem();
+        exportMzIdentMLMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1508,8 +1510,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         exportJMenu.add(followUpAnalysisMenuItem);
         exportJMenu.add(jSeparator10);
 
-        exportProjectMenuItem.setMnemonic('E');
-        exportProjectMenuItem.setText("PeptideShaker Project");
+        projectExportMenu.setText("PeptideShaker Project As");
+
+        exportProjectMenuItem.setMnemonic('Z');
+        exportProjectMenuItem.setText("Zip");
         exportProjectMenuItem.setToolTipText("Export the complete project as a zip file");
         exportProjectMenuItem.setEnabled(false);
         exportProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1517,7 +1521,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 exportProjectMenuItemActionPerformed(evt);
             }
         });
-        exportJMenu.add(exportProjectMenuItem);
+        projectExportMenu.add(exportProjectMenuItem);
 
         exportPrideMenuItem.setMnemonic('P');
         exportPrideMenuItem.setText("PRIDE XML");
@@ -1528,7 +1532,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 exportPrideMenuItemActionPerformed(evt);
             }
         });
-        exportJMenu.add(exportPrideMenuItem);
+        projectExportMenu.add(exportPrideMenuItem);
+
+        exportMzIdentMLMenuItem.setMnemonic('M');
+        exportMzIdentMLMenuItem.setText("mzIdentML");
+        exportMzIdentMLMenuItem.setToolTipText("Export the project as mzIdentML");
+        exportMzIdentMLMenuItem.setEnabled(false);
+        exportMzIdentMLMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMzIdentMLMenuItemActionPerformed(evt);
+            }
+        });
+        projectExportMenu.add(exportMzIdentMLMenuItem);
+
+        exportJMenu.add(projectExportMenu);
 
         menuBar.add(exportJMenu);
 
@@ -2838,7 +2855,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void exportPrideMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideMenuItemActionPerformed
-        new PrideExportDialog(this, true);
+        new ProjectExportDialog(this, true, true);
     }//GEN-LAST:event_exportPrideMenuItemActionPerformed
 
     /**
@@ -2909,6 +2926,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         currentNotes = new ArrayList<String>();
         updateNotesNotificationCounter();
     }//GEN-LAST:event_notesButtonMouseReleased
+
+    /**
+     * Export to mzIdentML.
+     * 
+     * @param evt 
+     */
+    private void exportMzIdentMLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMzIdentMLMenuItemActionPerformed
+        new ProjectExportDialog(this, false, true);
+    }//GEN-LAST:event_exportMzIdentMLMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -2985,9 +3011,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             scoresJCheckBoxMenuItem.setEnabled(true);
             sparklinesJCheckBoxMenuItem.setEnabled(true);
             quantifyMenuItem.setEnabled(true);
-            exportPrideMenuItem.setEnabled(true);
-            exportProjectMenuItem.setEnabled(true);
             speciesJMenuItem.setEnabled(true);
+            
+            projectExportMenu.setEnabled(true);
+            exportPrideMenuItem.setEnabled(true);
+            exportMzIdentMLMenuItem.setEnabled(true);
+            exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, getIdentification().getSpectrumFiles().size() > 1);
@@ -3042,6 +3071,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
     private javax.swing.JMenu exportJMenu;
     private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportMzIdentMLMenuItem;
     private javax.swing.JMenuItem exportPrideMenuItem;
     private javax.swing.JMenuItem exportProjectMenuItem;
     private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
@@ -3105,6 +3135,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JCheckBoxMenuItem precursorCheckMenu;
     private javax.swing.JMenuItem preferencesMenuItem;
     private javax.swing.JMenuItem processingParametersMenuItem;
+    private javax.swing.JMenu projectExportMenu;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JPanel proteinFractionsJPanel;
     private javax.swing.JPanel proteinStructureJPanel;
@@ -3315,7 +3346,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @return the spectrum annotator
      */
-    public PeptideSpectrumAnnotator getSpectrumAnnorator() {
+    public PeptideSpectrumAnnotator getSpectrumAnnotator() {
         return spectrumAnnotator;
     }
 

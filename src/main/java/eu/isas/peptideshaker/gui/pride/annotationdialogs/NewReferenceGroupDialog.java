@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.ReferenceGroup;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
+import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -21,7 +21,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
     /**
      * A reference to the PRIDE export dialog.
      */
-    private PrideExportDialog prideExportDialog;
+    private ProjectExportDialog prideExportDialog;
     /**
      * The last valid input for reference name.
      */
@@ -33,7 +33,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
      * @param prideExportDialog
      * @param modal
      */
-    public NewReferenceGroupDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewReferenceGroupDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
@@ -51,7 +51,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
      * @param modal
      * @param referenceGroup
      */
-    public NewReferenceGroupDialog(PrideExportDialog prideExportDialog, boolean modal, ReferenceGroup referenceGroup) {
+    public NewReferenceGroupDialog(ProjectExportDialog prideExportDialog, boolean modal, ReferenceGroup referenceGroup) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
