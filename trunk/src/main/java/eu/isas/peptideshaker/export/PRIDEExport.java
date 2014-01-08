@@ -447,15 +447,15 @@ public class PRIDEExport {
                         writeFragmentIons(spectrumMatch);
 
                         // Get scores
-                        HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
+                        HashMap<Integer, Double> eValues = new HashMap<Integer, Double>();
                         Double mascotScore = null;
                         for (int se : spectrumMatch.getAdvocates()) {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                                        if (!scores.containsKey(se) || scores.get(se) > eValue) {
-                                            scores.put(se, eValue);
+                                        if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
+                                            eValues.put(se, eValue);
                                             if (se == Advocate.MASCOT) {
                                                 mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                                             }
@@ -587,16 +587,36 @@ public class PRIDEExport {
                         //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
 
                         // search engine specific parameters
-                        ArrayList<Integer> searchEngines = new ArrayList<Integer>(scores.keySet());
+                        ArrayList<Integer> searchEngines = new ArrayList<Integer>(eValues.keySet());
                         Collections.sort(searchEngines);
-                        Advocate advocate;
+
+                        // add the search engine e-values
                         for (int se : searchEngines) {
-                            advocate = AdvocateFactory.getInstance().getAdvocate(se);
-                            br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + scores.get(se) + "\" />" + System.getProperty("line.separator"));
+                            switch (se) {
+                                case Advocate.MASCOT:
+                                    writeCvTerm(new CvTerm("MS", "MS:1001172", "Mascot:expectation value", "" + eValues.get(se)));
+                                    break;
+                                case Advocate.OMSSA:
+                                    writeCvTerm(new CvTerm("MS", "MS:1001328", "OMSSA:evalue", "" + eValues.get(se)));
+                                    break;
+                                case Advocate.XTANDEM:
+                                    writeCvTerm(new CvTerm("MS", "MS:1001330", "X!Tandem:expect", "" + eValues.get(se)));
+                                    break;
+                                default:
+                                    Advocate advocate = AdvocateFactory.getInstance().getAdvocate(se);
+                                    br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(se) + "\" />" + System.getProperty("line.separator"));
+                            }
                         }
+
+                        // add the additional search engine scores
                         if (mascotScore != null) {
                             writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
                         }
+
+                        // @TODO: add additional scores for OMSSA and X!Tandem as well
+                        // "MS:1001329", "OMSSA:pvalue"
+                        // "PRIDE:0000182","X|Tandem Z score"
+                        // "MS:1001331", "X!Tandem:hyperscore"
 
                         // PTM scoring
                         if (dScore.length() > 0) {
