@@ -22,10 +22,11 @@
             the identification process. <b>PeptideShaker</b> allows you to screen metrics at the protein, peptide and peptide to spectrum match 
             level. If a metric of interest is missing, please contact the developers and we will try to add it.
             <br><br>
-            <b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into five classes:
+            <!--><b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into five classes:<-->
+            <b>PeptideShaker</b> sorts the selected population according to the selected metric. Matches are separated into three classes:
         </p>
 
-        <ul>
+        <!--<ul>
             <li> 
                 <b>Validated True Positives:</b> the amount of validated true positives. Note that the validation settings can be tuned in the <i>Validation</i> tab.
             </li>
@@ -46,7 +47,21 @@
                 <b>Non-Validated False Positives:</b> A rough estimate of the amount of non-validated false positives. 
                 Here as well the estimation might not be robust.
             </li>
+        </ul>-->
+        
+        <ul>
+            <li> 
+                <b>Confident:</b> the amount of validated confident matches. Note that the validation settings can be tuned in the <i>Validation</i> tab.
+            </li>
+            <li> 
+                <b>Doubtful:</b> the amount of doubtful matches, meaning proteins, peptide and PSMs that have passed the validation filter, but 
+                where the amount of evidence is low. For example a protein identified by only one validated peptide.
+            </li>
+            <li> 
+                <b>Not Validated:</b> the amount of matches that did not pass the statistical validation.
+            </li>
         </ul>
+        
         <p align="justify">
             These plots will also help you defining thresholds for downstream analysis like inclusion/exclusion lists generation, 
             quantification analysis or PTM investigations.
@@ -62,7 +77,7 @@
             <li> 
                 <b>Number of Validated Peptides:</b> One should only trust protein matches with many different peptides. The more 
                 peptides per protein, the better the identification. Proteins presenting many confident peptides will be particularly
-                interesting for following-up analysis like quantification studies or can be excluded of downstream research using 
+                interesting for follow-up analysis like quantification studies or can be excluded in downstream research using 
                 exclusion lists.
             </li>
             <li> 
@@ -71,7 +86,7 @@
                 spectrum counting methods usually present similar QC plots.
             </li>
             <li> 
-                <b>Sequence Coverage:</b> A protein heavily covered is more confident. Also, its coverage will be interesting for 
+                <b>Sequence Coverage:</b> A heavily covered protein is more confident. Also, its coverage will be interesting for 
                 further processing like PTM screening.
             </li>
             <li> 
@@ -100,7 +115,7 @@
             <li> 
                 <b>Peptide Length:</b> Displays the distribution of the length of the detected peptides. If there are numerous 
                 peptides below the minimum length and/or above the maximum peptide length it may be worth looking into extending the 
-                allowed peptide length range in the <i>Import Filtes</i> settings found in the <i>New Project</i> dialog when opening 
+                allowed peptide length range in the <i>Import Filters</i> settings found in the <i>New Project</i> dialog when opening 
                 a new project.
             </li>
         </ul>
@@ -120,7 +135,7 @@
             <li> 
                 <b>Precursor Charge:</b> the precursor charge plot will allow you to verify the quality of the peptide ionization. 
                 Modifications like iTRAQ or phorphorylation might have an impact on the precursor ability to carry a charge. This 
-                plot will also allow you to fine tune your search settings. Not that PSMs found in second pass searches (typically 
+                plot will also allow you to fine tune your search settings. Note that PSMs found in second pass searches (typically 
                 high charges) are not compatible with <i>Target/Decoy</i> analysis. The amount of false positive PSMs is thus underestimated!      
             </li>
         </ul>

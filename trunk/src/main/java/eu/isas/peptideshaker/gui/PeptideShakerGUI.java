@@ -1513,7 +1513,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         projectExportMenu.setText("PeptideShaker Project As");
 
         exportProjectMenuItem.setMnemonic('Z');
-        exportProjectMenuItem.setText("Zip");
+        exportProjectMenuItem.setText("Zip File");
         exportProjectMenuItem.setToolTipText("Export the complete project as a zip file");
         exportProjectMenuItem.setEnabled(false);
         exportProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {

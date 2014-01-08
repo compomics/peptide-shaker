@@ -270,7 +270,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             targetDecoyLbl.setForeground(green);
         }
         int nTarget = sequenceFactory.getNTargetSequences();
-        nTargetLbl.setText(nTarget + " target sequences.");
+        nTargetLbl.setText(nTarget + " target sequences");
         if (nTarget < 10000) {
             nTargetLbl.setForeground(Color.red);
         } else if (nTarget > 100000) {
