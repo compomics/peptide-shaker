@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.23.1  (January ?. 2014):*
+*Changes in PeptideShaker 0.24.0  (January 8. 2014):*
  * NEW FEATURE: Validated protein, peptide and PSM matches are now also filtered for quality and marked if doubtful, e.g., less than 2 peptides detected for a given protein.
  * NEW FEATURE: The user can now click the id and spectrum files text field in the New Project dialog to see and edit the list of selected files.
 
@@ -74,6 +74,8 @@
  * LIBRARY UPDATE: Updated omssa parser to version 1.6.1.
  * LIBRARY UPDATE: Updated xtandem parser to version 1.7.3.
  * LIBRARY UPDATE: Updated utilities to version 3.19.5.
+
+Download Count: 103
 
 ----
 
