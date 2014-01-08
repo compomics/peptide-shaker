@@ -732,7 +732,7 @@
                 <MenuItem class="javax.swing.JMenuItem" name="exportProjectMenuItem">
                   <Properties>
                     <Property name="mnemonic" type="int" value="90"/>
-                    <Property name="text" type="java.lang.String" value="Zip"/>
+                    <Property name="text" type="java.lang.String" value="Zip File"/>
                     <Property name="toolTipText" type="java.lang.String" value="Export the complete project as a zip file"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>

@@ -1157,11 +1157,14 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(Util.roundDouble(temp, 1));
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
+                        getBinData(bins, validatedValues, dataset, "Confident", false);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", false);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", false);
 
                         currentProteinPlotType = PlotType.Protein_MS2_QuantScores;
 
@@ -1178,11 +1181,14 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(80.0);
                         bins.add(90.0);
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", "%", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", "%", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", "%", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", "%", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", "%", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", "%", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", "%", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", "%", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", "%", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", "%", true);
+                        getBinData(bins, validatedValues, dataset, "Confident", "%", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", "%", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", "%", true);
 
                         currentProteinPlotType = PlotType.Protein_Sequence_Coverage;
 
@@ -1200,11 +1206,14 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(200.0);
                         bins.add(500.0);
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentProteinPlotType = PlotType.Protein_Validated_Peptides;
 
@@ -1220,11 +1229,14 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(2500.0);
                         bins.add(3000.0);
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentProteinPlotType = PlotType.Protein_Sequence_Length;
                     }
@@ -1237,9 +1249,10 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setShadowVisible(false);
                         renderer.setSeriesPaint(0, histogramColors[0]);
                         renderer.setSeriesPaint(1, histogramColors[1]);
-                        renderer.setSeriesPaint(2, histogramColors[2]);
-                        renderer.setSeriesPaint(3, histogramColors[3]);
-                        renderer.setSeriesPaint(4, histogramColors[4]);
+                        //renderer.setSeriesPaint(2, histogramColors[2]);
+                        renderer.setSeriesPaint(2, histogramColors[4]);
+                        //renderer.setSeriesPaint(3, histogramColors[3]);
+                        //renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         proteinChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1344,11 +1357,15 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(200.0);
                         bins.add(500.0);
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Validated_PSMs;
 
@@ -1359,11 +1376,15 @@ public class QCPanel extends javax.swing.JPanel {
                         bins.add(2.0);
                         bins.add(3.0);
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Missed_Cleavages;
 
@@ -1376,11 +1397,15 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(new Double(i));
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentPeptidePlotType = PlotType.Peptide_Length;
                     }
@@ -1393,9 +1418,10 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setShadowVisible(false);
                         renderer.setSeriesPaint(0, histogramColors[0]);
                         renderer.setSeriesPaint(1, histogramColors[1]);
-                        renderer.setSeriesPaint(2, histogramColors[2]);
-                        renderer.setSeriesPaint(3, histogramColors[3]);
-                        renderer.setSeriesPaint(4, histogramColors[4]);
+                        renderer.setSeriesPaint(2, histogramColors[4]);
+                        //renderer.setSeriesPaint(2, histogramColors[2]);
+//                        renderer.setSeriesPaint(3, histogramColors[3]);
+//                        renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         peptideChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1487,11 +1513,15 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add(bin);
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", false);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
+                        
+                        getBinData(bins, validatedValues, dataset, "Confident", false);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", false);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", false);
 
                         currentPsmPlotType = PlotType.PSM_Precursor_Mass_Error;
 
@@ -1503,11 +1533,15 @@ public class QCPanel extends javax.swing.JPanel {
                             bins.add((double) i);
                         }
 
-                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
-                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
-                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
-                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
-                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+//                        getBinData(bins, validatedValues, dataset, "Confident True Positives", true);
+//                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful True Positives", true);
+//                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
+//                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
+//                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
+                        
+                        getBinData(bins, validatedValues, dataset, "Confident", true);
+                        getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
+                        getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
 
                         currentPsmPlotType = PlotType.PSM_Precursor_Charge;
                     }
@@ -1520,9 +1554,10 @@ public class QCPanel extends javax.swing.JPanel {
                         renderer.setShadowVisible(false);
                         renderer.setSeriesPaint(0, histogramColors[0]);
                         renderer.setSeriesPaint(1, histogramColors[1]);
-                        renderer.setSeriesPaint(2, histogramColors[2]);
-                        renderer.setSeriesPaint(3, histogramColors[3]);
-                        renderer.setSeriesPaint(4, histogramColors[4]);
+                        renderer.setSeriesPaint(2, histogramColors[4]);
+//                        renderer.setSeriesPaint(2, histogramColors[2]);
+//                        renderer.setSeriesPaint(3, histogramColors[3]);
+//                        renderer.setSeriesPaint(4, histogramColors[4]);
                         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                         psmChart.getCategoryPlot().setRenderer(0, renderer);
 
@@ -1628,13 +1663,14 @@ public class QCPanel extends javax.swing.JPanel {
                         } else {
                             nonValidatedValues.add(value);
                         }
-                    } else {
-                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
-                        }
                     }
+//                    else {
+//                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
+//                            validatedDecoyValues.add(value);
+//                        } else {
+//                            nonValidatedDecoyValues.add(value);
+//                        }
+//                    }
                 }
 
                 progressDialog.increasePrimaryProgressCounter();
