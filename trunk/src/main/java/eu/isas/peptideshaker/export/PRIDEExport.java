@@ -736,6 +736,7 @@ public class PRIDEExport {
 
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
+        // @TODO: implement reporter ions! (required cv terms not found)
         CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
 
         if (fragmentIonTerm != null) {
