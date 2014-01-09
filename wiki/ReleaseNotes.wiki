@@ -3,6 +3,13 @@
 
 ----
 
+*Changes in PeptideShaker 0.24.1  (January 9. 2014):*
+ * BUG FIX: Fixing an issue with the fragment ion annotation in the PRIDE export.
+ 
+ * LIBRARY UPDATE: Updated utilities to version 3.20.3.
+
+----
+
 *Changes in PeptideShaker 0.24.0  (January 8. 2014):*
  * NEW FEATURE: Validated protein, peptide and PSM matches are now also filtered for quality and marked if doubtful, e.g., less than 2 peptides detected for a given protein.
  * NEW FEATURE: The user can now click the id and spectrum files text field in the New Project dialog to see and edit the list of selected files.
@@ -21,6 +28,8 @@
  * LIBRARY UPDATE: Updated jsparklines to version 0.6.4.
  * LIBRARY UPDATE: Updated xtandem parser to version 1.7.5.
  * LIBRARY UPDATE: Updated utilities to version 3.20.2.
+
+Download Count: 12
 
 ----
 
