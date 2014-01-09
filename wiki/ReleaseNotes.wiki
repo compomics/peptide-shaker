@@ -4,7 +4,7 @@
 ----
 
 *Changes in PeptideShaker 0.24.1  (January 9. 2014):*
- * BUG FIX: Fixing an issue with the fragment ion annotation in the PRIDE export.
+ * BUG FIX: Fixed an issue with the fragment ion annotation in the PRIDE export.
  
  * LIBRARY UPDATE: Updated utilities to version 3.20.3.
 
