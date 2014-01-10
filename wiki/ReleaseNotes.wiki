@@ -3,6 +3,11 @@
 
 ----
 
+*Changes in PeptideShaker 0.24.2  (January 10. 2014):*
+ * LIBRARY UPDATE: Updated ols-dialog to version 3.4.2, fixing a bug in the View Term Hierarchy Graph.
+
+----
+
 *Changes in PeptideShaker 0.24.1  (January 9. 2014):*
  * BUG FIX: Fixed an issue with the fragment ion annotation in the PRIDE export.
  
