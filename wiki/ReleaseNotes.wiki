@@ -3,8 +3,15 @@
 
 ----
 
+*Changes in PeptideShaker 0.24.3  (January 10. 2014):*
+ * BUG FIX: Corrected the peptide key used in the spectrum and Progenesis exports.
+
+----
+
 *Changes in PeptideShaker 0.24.2  (January 10. 2014):*
  * LIBRARY UPDATE: Updated ols-dialog to version 3.4.2, fixing a bug in the View Term Hierarchy Graph.
+
+Download Count: 2
 
 ----
 
@@ -12,6 +19,8 @@
  * BUG FIX: Fixed an issue with the fragment ion annotation in the PRIDE export.
  
  * LIBRARY UPDATE: Updated utilities to version 3.20.3.
+
+Download Count: 12
 
 ----
 
