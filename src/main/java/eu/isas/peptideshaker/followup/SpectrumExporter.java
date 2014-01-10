@@ -181,9 +181,9 @@ public class SpectrumExporter {
      * @param spectrumKey the key of the spectrum
      * @param exportType the export type number
      * @param searchParameters the search parameters used for the search
-     * 
+     *
      * @return whether a spectrum shall be exported
-     * 
+     *
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -221,7 +221,7 @@ public class SpectrumExporter {
                         }
                     }
                     if (!decoy) {
-                        String peptideKey = peptide.getKey();
+                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
                             if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -244,7 +244,7 @@ public class SpectrumExporter {
                         }
                     }
                     if (!decoy) {
-                        String peptideKey = peptide.getKey();
+                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         if (exportType == ExportType.non_validated_proteins
                                 || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).getMatchValidationLevel().isValidated()
                                 && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
