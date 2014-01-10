@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.24.1</version>
+    <version>0.24.2</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
 
@@ -431,7 +431,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>ols-dialog</artifactId>
-            <version>3.4.1</version>
+            <version>3.4.2</version>
         </dependency>
 
         <!-- use for adding desktop shortcuts -->
