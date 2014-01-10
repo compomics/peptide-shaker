@@ -46,6 +46,7 @@ public class ProgenesisExport {
      * allowing canceling the process
      * @param targetedPTMs the PTMs of interest in case of a PTM export. Ignored
      * otherwise.
+     * @param searchParameters the identificatoin parameters
      *
      * @throws IOException
      * @throws SQLException
@@ -139,7 +140,7 @@ public class ProgenesisExport {
                                         if (exportType == ExportType.validated_psms) {
                                             writePsm(writer, spectrumKey, identification, searchParameters);
                                         } else {
-                                            String peptideKey = peptide.getKey();
+                                            String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                                 if (exportType == ExportType.validated_psms_peptides) {
