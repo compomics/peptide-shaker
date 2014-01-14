@@ -599,9 +599,9 @@ public class SearchParameters implements Serializable {
         }
         if (currentPrecursorAccuracyType != null) {
             if (currentPrecursorAccuracyType == PrecursorAccuracyType.PPM) {
-                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.PPM);
+                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.MassAccuracyType.PPM);
             } else {
-                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.DA);
+                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.MassAccuracyType.DA);
             }
         }
         if (fractionMolecularWeights != null) {

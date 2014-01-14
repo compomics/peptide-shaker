@@ -439,7 +439,7 @@ public class PeptideShaker {
                 } else {
                     detailedReport += ", ";
                 }
-                detailedReport += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
+                detailedReport += Advocate.getAdvocate(searchEngine).getName();
             }
 
             if (suspiciousInput.size() > 0) {
@@ -1263,7 +1263,7 @@ public class PeptideShaker {
                 }
                 Peptide psPeptide = new Peptide(sePeptide.getSequence(), psModificationMatches);
                 psPeptide.setParentProteins(psProteins);
-                PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.PEPTIDE_SHAKER, bestAssumption.getIdentificationCharge(), retainedP);
+                PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.PeptideShaker.getIndex(), bestAssumption.getIdentificationCharge(), retainedP);
                 spectrumMatch.setBestPeptideAssumption(psAssumption);
                 psParameter = new PSParameter();
                 psParameter.setSpectrumProbabilityScore(retainedP);

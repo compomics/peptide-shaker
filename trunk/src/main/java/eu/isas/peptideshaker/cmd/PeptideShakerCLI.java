@@ -31,7 +31,6 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -635,9 +634,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
+        if (aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id)) {
 
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_PARAMETERS.id).trim();
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id).trim();
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
                 try {
@@ -671,7 +670,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("\n==============================" + System.getProperty("line.separator"));
+                lPrintWriter.print(System.getProperty("line.separator") + "==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print("==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());

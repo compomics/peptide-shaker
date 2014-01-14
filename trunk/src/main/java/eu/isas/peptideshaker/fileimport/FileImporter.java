@@ -13,7 +13,6 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -596,7 +595,7 @@ public class FileImporter {
             IdfileReader fileReader = null;
 
             try {
-                if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
+                if (searchEngine == Advocate.Mascot.getIndex() && idFile.length() > mascotMaxSize * 1048576) {
                     fileReader = new MascotIdfileReader(idFile, true);
                 } else {
                     fileReader = readerFactory.getFileReader(idFile, null);
@@ -740,7 +739,7 @@ public class FileImporter {
                                         HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                         if (modMatch.isVariable()) {
                                             String sePTM = modMatch.getTheoreticPtm();
-                                            if (searchEngine == Advocate.OMSSA) {
+                                            if (searchEngine == Advocate.OMSSA.getIndex()) {
                                                 Integer omssaIndex = null;
                                                 try {
                                                     omssaIndex = new Integer(sePTM);
@@ -759,7 +758,7 @@ public class FileImporter {
                                                     }
                                                     tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                                 }
-                                            } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
+                                            } else if (searchEngine == Advocate.Mascot.getIndex() || searchEngine == Advocate.XTandem.getIndex()) {
                                                 String[] parsedName = sePTM.split("@");
                                                 double seMass = 0;
                                                 try {
@@ -770,7 +769,8 @@ public class FileImporter {
                                                 }
                                                 tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, PeptideShaker.MATCHING_TYPE);
                                             } else {
-                                                throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SpectrumIdentificationAlgorithm.getName(searchEngine) + ".");
+                                                Advocate advocate = Advocate.getAdvocate(searchEngine);
+                                                throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
                                             }
                                             ArrayList<String> allNames = new ArrayList<String>();
                                             for (ArrayList<String> namesAtAA : tempNames.values()) {
@@ -928,7 +928,7 @@ public class FileImporter {
                                         }
                                     }
                                     inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.getPeptide().isDecoy());
-                                    identification.addSpectrumMatch(match);
+                                    identification.addSpectrumMatch(match, false); //@TODO: adapt to the different scores
                                     nRetained++;
                                     break;
                                 }
@@ -978,7 +978,7 @@ public class FileImporter {
                     double meanRejected = (proteinIssue + peptideIssue + ptmIssue + precursorIssue) / 4;
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
-                        if (searchEngine == SpectrumIdentificationAlgorithm.MASCOT) {
+                        if (searchEngine == Advocate.Mascot.getIndex()) {
                             report += " and make sure that you use Mascot with the 'decoy' option disabled.";
                         }
                         report += ".";
@@ -991,7 +991,7 @@ public class FileImporter {
                     }
                     if (ptmIssue > meanRejected) {
                         report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project.";
-                        if (searchEngine == SpectrumIdentificationAlgorithm.MASCOT) {
+                        if (searchEngine == Advocate.Mascot.getIndex()) {
                             report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible.";
                         }
                     }

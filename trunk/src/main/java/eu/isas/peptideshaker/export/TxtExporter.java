@@ -717,16 +717,16 @@ public class TxtExporter {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                        if (se == Advocate.MASCOT) {
+                        if (se == Advocate.Mascot.getIndex()) {
                             if (mascotEValue == null || mascotEValue > eValue) {
                                 mascotEValue = eValue;
                                 mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                             }
-                        } else if (se == Advocate.OMSSA) {
+                        } else if (se == Advocate.OMSSA.getIndex()) {
                             if (omssaEValue == null || omssaEValue > eValue) {
                                 omssaEValue = eValue;
                             }
-                        } else if (se == Advocate.XTANDEM) {
+                        } else if (se == Advocate.XTandem.getIndex()) {
                             if (xtandemEValue == null || xtandemEValue > eValue) {
                                 xtandemEValue = eValue;
                             }
@@ -812,11 +812,11 @@ public class TxtExporter {
 
                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
-                    if (se == Advocate.MASCOT) {
+                    if (se == Advocate.Mascot.getIndex()) {
                         line += "M" + SEPARATOR;
-                    } else if (se == Advocate.OMSSA) {
+                    } else if (se == Advocate.OMSSA.getIndex()) {
                         line += "O" + SEPARATOR;
-                    } else if (se == Advocate.XTANDEM) {
+                    } else if (se == Advocate.XTandem.getIndex()) {
                         line += "X" + SEPARATOR;
                     }
 
@@ -845,7 +845,7 @@ public class TxtExporter {
                     line += Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
                     line += Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
 
-                    if (se == Advocate.MASCOT) {
+                    if (se == Advocate.Mascot.getIndex()) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
                         line += score.getScore() + SEPARATOR;
                         line += assumption.getScore() + SEPARATOR;
@@ -853,13 +853,13 @@ public class TxtExporter {
                         line += SEPARATOR + SEPARATOR;
                     }
 
-                    if (se == Advocate.OMSSA) {
+                    if (se == Advocate.OMSSA.getIndex()) {
                         line += assumption.getScore() + "";
                     }
 
                     line += SEPARATOR;
 
-                    if (se == Advocate.XTANDEM) {
+                    if (se == Advocate.XTandem.getIndex()) {
                         line += assumption.getScore() + "";
                     }
 
