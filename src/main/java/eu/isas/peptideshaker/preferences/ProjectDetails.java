@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import java.io.File;
 import java.io.Serializable;
@@ -402,7 +402,7 @@ public class ProjectDetails implements Serializable {
         IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
         ArrayList<File> idFiles = identificationFiles;
         for (File idFile : idFiles) {
-            String searchEngine = SpectrumIdentificationAlgorithm.getName(idFileReaderFactory.getSearchEngine(idFile));
+            String searchEngine = Advocate.getAdvocate(idFileReaderFactory.getSearchEngine(idFile)).getName();
             if (!searchEngines.contains(searchEngine)) {
                 searchEngines.add(searchEngine);
             }

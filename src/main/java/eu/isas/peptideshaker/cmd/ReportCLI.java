@@ -218,7 +218,7 @@ public class ReportCLI extends CpsParent {
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("\n===============================================" + System.getProperty("line.separator"));
+                lPrintWriter.print(System.getProperty("line.separator") + "===============================================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker Report Exporter - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print("===============================================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());

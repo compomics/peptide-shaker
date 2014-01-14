@@ -276,8 +276,8 @@ public class PeptideShakerCLIInputBean {
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
-            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_PARAMETERS.id);
+        if (aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id)) {
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id);
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
                 identificationParameters = SearchParameters.getIdentificationParameters(testFile);

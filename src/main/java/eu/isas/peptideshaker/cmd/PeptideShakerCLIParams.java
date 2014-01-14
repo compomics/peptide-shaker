@@ -27,7 +27,7 @@ public enum PeptideShakerCLIParams {
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
-    SEARCH_PARAMETERS("search_params", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false),
+    IDENTIFICATION_PARAMETERS("id_params", "The identification parameters file. Can be generated using SeachGUI or using the IdentificationParametersCLI (see http://code.google.com/p/searchgui/wiki/IdentificationParametersCLI for details).", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     PTM_SCORE("ptm_score", "The PTM probabilistic score to use for PTM localization. " + PtmScore.getCommandLineOptions() + ".", false),
     PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM scores. Automatic mode will be used if not set.", false),
@@ -91,7 +91,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(PSM_FDR.id, true, PSM_FDR.description);
         aOptions.addOption(PEPTIDE_FDR.id, true, PEPTIDE_FDR.description);
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
-        aOptions.addOption(SEARCH_PARAMETERS.id, true, SEARCH_PARAMETERS.description);
+        aOptions.addOption(IDENTIFICATION_PARAMETERS.id, true, IDENTIFICATION_PARAMETERS.description);
         aOptions.addOption(GUI.id, true, GUI.description);
         aOptions.addOption(PTM_SCORE.id, true, PTM_SCORE.description);
         aOptions.addOption(PTM_THRESHOLD.id, true, PTM_THRESHOLD.description);
@@ -133,7 +133,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
         output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + IDENTIFICATION_FILES.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + PEPTIDESHAKER_OUTPUT.description + "\n";
-        output += "-" + String.format(formatter, SEARCH_PARAMETERS.id) + SEARCH_PARAMETERS.description + "\n";
+        output += "-" + String.format(formatter, IDENTIFICATION_PARAMETERS.id) + IDENTIFICATION_PARAMETERS.description + "\n";
 
         output += "\n\nOptional gene annotation parameter:\n\n";
         output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";

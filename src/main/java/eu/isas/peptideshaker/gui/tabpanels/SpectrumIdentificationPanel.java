@@ -8,7 +8,6 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
-import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -2484,11 +2483,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     mascotUsed = false;
 
                     for (int i = 0; i < idFiles.size(); i++) {
-                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.OMSSA) {
+                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.OMSSA.getIndex()) {
                             omssaUsed = true;
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.XTANDEM) {
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.XTandem.getIndex()) {
                             xtandemUsed = true;
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SpectrumIdentificationAlgorithm.MASCOT) {
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.Mascot.getIndex()) {
                             mascotUsed = true;
                         }
                     }
@@ -2524,20 +2523,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                 totalPeptideShakerIds++;
 
-                                if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
-                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.MASCOT);
+                                if (spectrumMatch.getFirstHit(Advocate.Mascot.getIndex()) != null) {
+                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.Mascot.getIndex());
                                     if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         mascot = true;
                                     }
                                 }
-                                if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
-                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.OMSSA);
+                                if (spectrumMatch.getFirstHit(Advocate.OMSSA.getIndex()) != null) {
+                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.OMSSA.getIndex());
                                     if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         omssa = true;
                                     }
                                 }
-                                if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
-                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.XTANDEM);
+                                if (spectrumMatch.getFirstHit(Advocate.XTandem.getIndex()) != null) {
+                                    PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.XTandem.getIndex());
                                     if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         xTandem = true;
                                     }
@@ -3005,12 +3004,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
 
                     // Fill Mascot table
-                    if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
-                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
+                    if (spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()) != null) {
+                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
                         Collections.sort(eValues);
                         int rank = 0;
                         for (double eValue : eValues) {
-                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
+                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                                 ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
@@ -3030,12 +3029,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // Fill OMSSA table
                     omssaPeptideKeys = new HashMap<Integer, String>();
 
-                    if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
-                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
+                    if (spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()) != null) {
+                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
                         Collections.sort(eValues);
                         int rank = 0;
                         for (double eValue : eValues) {
-                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
+                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                                 ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
@@ -3055,12 +3054,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // Fill X!Tandem table
                     xtandemPeptideKeys = new HashMap<Integer, String>();
 
-                    if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
-                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
+                    if (spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()) != null) {
+                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).keySet());
                         Collections.sort(eValues);
                         int rank = 0;
                         for (double eValue : eValues) {
-                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
+                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValue)) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                                 ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
@@ -3175,14 +3174,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             // omssa annotation (if any)
                             if (omssaTable.getSelectedRow() != -1) {
 
-                                ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
+                                ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
                                 Collections.sort(omssaEValues);
                                 PeptideAssumption currentPeptideAssumption = null;
                                 int cpt = 0;
                                 boolean found = false;
 
                                 for (double eValue : omssaEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
+                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
                                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                         if (cpt == omssaTable.getSelectedRow()) {
                                             currentPeptideAssumption = peptideAssumption;
@@ -3224,14 +3223,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             // xtandem annotation (if any)
                             if (xTandemTable.getSelectedRow() != -1) {
 
-                                ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
+                                ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).keySet());
                                 Collections.sort(xTandemEValues);
                                 PeptideAssumption currentPeptideAssumption = null;
                                 int cpt = 0;
                                 boolean found = false;
 
                                 for (double eValue : xTandemEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
+                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValue)) {
                                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                         if (cpt == xTandemTable.getSelectedRow()) {
                                             currentPeptideAssumption = peptideAssumption;
@@ -3274,14 +3273,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             // mascot annotation (if any)
                             if (mascotTable.getSelectedRow() != -1) {
 
-                                ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
+                                ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
                                 Collections.sort(mascotEValues);
                                 PeptideAssumption currentPeptideAssumption = null;
                                 int cpt = 0;
                                 boolean found = false;
 
                                 for (double eValue : mascotEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
+                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
                                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                         if (cpt == mascotTable.getSelectedRow()) {
                                             currentPeptideAssumption = peptideAssumption;
@@ -3477,11 +3476,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         writer.write("\t");
 
-                                        writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), false, false, true) + "\t");
-                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestPeptideAssumption().getPeptide(), false) + "\t");
-                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestPeptideAssumption().getPeptide(), true) + "\t");
-                                        writer.write(PeptideSection.getPeptideModificationLocations(spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                                identification.getPeptideMatch(spectrumMatch.getBestPeptideAssumption().getPeptide().getKey()), modificationProfile) + "\t");
+                                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+
+                                        writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptide, false, false, true) + "\t");
+                                        writer.write(OutputGenerator.getPeptideModificationsAsString(peptide, false) + "\t");
+                                        writer.write(OutputGenerator.getPeptideModificationsAsString(peptide, true) + "\t");
+                                        writer.write(PeptideSection.getPeptideModificationLocations(peptide,
+                                                identification.getPeptideMatch(peptideKey), modificationProfile) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
                                         writer.write(probabilities.getMatchValidationLevel() + System.getProperty("line.separator"));
@@ -3492,15 +3494,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         // the search engine tables
                                         writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "OMSSA" + System.getProperty("line.separator") + System.getProperty("line.separator"));
                                         writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.OMSSA));
+                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.OMSSA.getIndex()));
 
                                         writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "X!Tandem" + System.getProperty("line.separator") + System.getProperty("line.separator"));
                                         writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.XTANDEM));
+                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.XTandem.getIndex()));
 
                                         writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "Mascot" + System.getProperty("line.separator") + System.getProperty("line.separator"));
                                         writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.MASCOT));
+                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.Mascot.getIndex()));
                                     } catch (Exception e) {
                                         peptideShakerGUI.catchException(e);
                                     }
@@ -3577,8 +3579,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     result.append(OutputGenerator.getPeptideModificationsAsString(peptideAssumption.getPeptide(), true));
                     result.append("\t");
                     try {
+                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         result.append(PeptideSection.getPeptideModificationLocations(peptideAssumption.getPeptide(),
-                                identification.getPeptideMatch(peptideAssumption.getPeptide().getKey()), modificationProfile));
+                                identification.getPeptideMatch(peptideKey), modificationProfile));
                         result.append("\t");
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -3644,39 +3648,39 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int xtandemCharge = -1;
         int mascotCharge = -1;
 
-        if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
+        if (spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
             Collections.sort(eValues);
 
             if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).size() > 0) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0);
+                if (spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValues.get(0)).size() > 0) {
+                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValues.get(0)).get(0);
                     omssaMatch = peptideAssumption.getPeptide();
                     omssaCharge = peptideAssumption.getIdentificationCharge().value;
                 }
             }
         }
 
-        if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
+        if (spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).keySet());
             Collections.sort(eValues);
 
             if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).size() > 0) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0);
+                if (spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValues.get(0)).size() > 0) {
+                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValues.get(0)).get(0);
                     xtandemMatch = peptideAssumption.getPeptide();
                     xtandemCharge = peptideAssumption.getIdentificationCharge().value;
                 }
             }
         }
 
-        if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
+        if (spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
             Collections.sort(eValues);
 
             if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).size() > 0) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0);
+                if (spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValues.get(0)).size() > 0) {
+                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValues.get(0)).get(0);
                     mascotMatch = peptideAssumption.getPeptide();
                     mascotCharge = peptideAssumption.getIdentificationCharge().value;
                 }

@@ -218,7 +218,7 @@ public class InclusionListExport {
                 if (range < rtWindow) {
                     range = rtWindow;
                 }
-                if (searchParameters.getPrecursorAccuracyType() == SearchParameters.PrecursorAccuracyType.PPM) {
+                if (searchParameters.getPrecursorAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
                     double deltaMZ = searchParameters.getPrecursorAccuracy() / 1000000 * precursor.getMz();
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;

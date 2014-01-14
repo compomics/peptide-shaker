@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
-import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
@@ -903,7 +902,7 @@ public class MzIdentMLExport {
             }
 
             Collections.sort(seList);
-            String searchEngineReport = SpectrumIdentificationAlgorithm.getName(seList.get(0));
+            String searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
 
             for (int i = 1; i < seList.size(); i++) {
 
@@ -913,7 +912,7 @@ public class MzIdentMLExport {
                     searchEngineReport += ", ";
                 }
 
-                searchEngineReport += SpectrumIdentificationAlgorithm.getName(seList.get(i));
+                searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
             }
 
             searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
@@ -1004,7 +1003,7 @@ public class MzIdentMLExport {
                                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                         if (!scores.containsKey(se) || scores.get(se) > eValue) {
                                             scores.put(se, eValue);
-                                            if (se == Advocate.MASCOT) {
+                                            if (se == Advocate.Mascot.getIndex()) {
                                                 mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                                             }
                                         }
@@ -1135,7 +1134,7 @@ public class MzIdentMLExport {
                         Collections.sort(searchEngines);
                         Advocate advocate;
                         for (int se : searchEngines) {
-                            advocate = AdvocateFactory.getInstance().getAdvocate(se);
+                            advocate = Advocate.getAdvocate(se);
                             br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + scores.get(se) + "\" />" + System.getProperty("line.separator"));
                         }
                         if (mascotScore != null) {

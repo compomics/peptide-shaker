@@ -22,6 +22,7 @@ import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
@@ -3468,7 +3469,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                    peptideKey = spectrumMatch.getBestPeptideAssumption().getPeptide().getKey();
+                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                    peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;
