@@ -6,7 +6,9 @@ import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.*;
+import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.advocates.SpectrumIdentificationAlgorithm;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -22,6 +24,7 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.pride.prideobjects.*;
+import com.compomics.util.protein.Header;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -36,6 +39,7 @@ import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -205,8 +209,8 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences, 
-            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator, 
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
+            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
             AnnotationPreferences annotationPreferences, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ReferenceGroup referenceGroup, ContactGroup contactGroup, Sample sample, Protocol protocol, Instrument instrument,
             File outputFolder, String fileName, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -243,8 +247,11 @@ public class MzIdentMLExport {
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
+     * @throws SQLException
      */
-    public void createMzIdentMLFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    public void createMzIdentMLFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 
         // the mzIdentML start tag
         writeMzIdentMLStartTag();
@@ -273,63 +280,6 @@ public class MzIdentMLExport {
         // write the data collection
         writeDataCollection();
 
-        // the experiment title
-        writeTitle();
-
-        // the references, if any
-        if (referenceGroup != null && referenceGroup.getReferences().size() > 0) {
-            writeReferences();
-        }
-
-        // the short label
-        writeShortLabel();
-
-        // the protocol
-        writeProtocol();
-
-        if (waitingHandler.isRunCanceled()) {
-            br.close();
-            r.close();
-            return;
-        }
-
-        // get the spectrum count
-        totalProgress = 0;
-        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-            totalProgress += spectrumFactory.getNSpectra(mgfFile);
-        }
-        totalProgress = 2 * totalProgress;
-        progressDialog.setPrimaryProgressCounterIndeterminate(false);
-        progressDialog.setMaxPrimaryProgressCounter(100);
-        progressDialog.setValue(0);
-
-        if (waitingHandler.isRunCanceled()) {
-            br.close();
-            r.close();
-            return;
-        }
-
-        // the mzData element
-        writeMzData(progressDialog);
-
-        if (waitingHandler.isRunCanceled()) {
-            br.close();
-            r.close();
-            return;
-        }
-
-        // the PSMs
-        writePsms(progressDialog);
-
-        if (waitingHandler.isRunCanceled()) {
-            br.close();
-            r.close();
-            return;
-        }
-
-        // the additional tags
-        writeAdditionalTags();
-
         if (waitingHandler.isRunCanceled()) {
             br.close();
             r.close();
@@ -355,18 +305,18 @@ public class MzIdentMLExport {
         tabCounter++;
 
         br.write(getCurrentTabSpace()
-                + "<cv=id=\"PSI-MS\" "
+                + "<cv id=\"PSI-MS\" "
                 + "uri=\"http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo\" "
                 + "version=\"2.25.0\" "
                 + "fullName=\"PSI-MS\"/>" + System.getProperty("line.separator"));
 
         br.write(getCurrentTabSpace()
-                + "<cv=id=\"UNIMODS\" "
+                + "<cv id=\"UNIMODS\" "
                 + "uri=\"http://www.unimod.org/obo/unimod.obo\" "
                 + "fullName=\"UNIMOD\"/>" + System.getProperty("line.separator"));
 
         br.write(getCurrentTabSpace()
-                + "<cv=id=\"UO\" "
+                + "<cv id=\"UO\" "
                 + "uri=\"http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo\" "
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + System.getProperty("line.separator"));
 
@@ -382,25 +332,32 @@ public class MzIdentMLExport {
      */
     private void writeAnalysisSoftwareList() throws IOException {
 
+        br.write(getCurrentTabSpace() + "<AnalysisSoftwareList>" + System.getProperty("line.separator"));
+        tabCounter++;
+
         // @TODO: also add SearchGUI and search engines used
         br.write(getCurrentTabSpace() + "<AnalysisSoftware "
-                + "version=\"" + peptideShakerVersion + " "
-                + "name=\"PeptideShaker "
+                + "version=\"" + peptideShakerVersion + "\" "
+                + "name=\"PeptideShaker \" "
                 + "id=\"ID_software\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<SoftwareName>" + System.getProperty("line.separator"));
+        tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001476 " // @TODO: add PeptideShaker CV term
-                + "cvRef=\"PSI-MS "
-                + "name=\"PeptideShaker\">"
+                + "accession=\"MS:1001476\" " // @TODO: add PeptideShaker CV term
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"PeptideShaker\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SoftwareName>" + System.getProperty("line.separator"));
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AnalysisSoftware>" + System.getProperty("line.separator"));
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</AnalysisSoftwareList>" + System.getProperty("line.separator"));
     }
 
     /**
@@ -410,7 +367,7 @@ public class MzIdentMLExport {
      */
     private void writeProviderDetails() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<Provider id=PROVIDER xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Provider id=\"PROVIDER\" xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<ContactRole contact_ref=\"PERSON_DOC_OWNER\">" + System.getProperty("line.separator"));
@@ -419,9 +376,9 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<Role>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001271 " // @TODO: add PeptideShaker CV term
-                + "cvRef=\"PSI-MS "
-                + "name=\"researcher\">" // @TODO: add the data owner name here!!
+                + "accession=\"MS:1001271\" " // @TODO: add PeptideShaker CV term
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"researcher\" />" // @TODO: add the data owner name here!!
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Role>" + System.getProperty("line.separator"));
@@ -444,8 +401,8 @@ public class MzIdentMLExport {
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<Person "
-                + "firstName=\"firstname " // @TODO: add from user input
-                + "lastName=\"lastname " // @TODO: add from user input
+                + "firstName=\"firstname\" " // @TODO: add from user input
+                + "lastName=\"lastname\" " // @TODO: add from user input
                 + "id=\"PERSON_DOC_OWNER\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
@@ -461,29 +418,100 @@ public class MzIdentMLExport {
 
     /**
      * Write the sequence collection.
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws ClassNotFoundException
+     * @throws SQLException
      */
-    private void writeSequenceCollection() {
-        // <SequenceCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
+    private void writeSequenceCollection() throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
+
+        br.write(getCurrentTabSpace() + "<SequenceCollection  xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\">" + System.getProperty("line.separator"));
+        tabCounter++;
+
+        // get the sequence database
+        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        ProteinIterator iterator = sequenceFactory.getProteinIterator(true); // @TODO: also iterate decoys??
+
+        String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown);
+        FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
+        if (fastaIndex != null) {
+            dbType = Header.getDatabaseTypeAsString(fastaIndex.getDatabaseType());
+        }
+
         // iterate all the protein sequences
-//        <DBSequence accession="psu|NC_LIV_020800" searchDatabase_ref="SearchDB_1" length="376"
-//            id="dbseq_psu|NC_LIV_020800">
-//            <Seq>MADEEVQALVVDNGSGNVKAGVAGDDAPRAVFPSIVGKPKNPGIMVGMEEKDCYVGDEAQSKRGILTLKYPIEHGIVTNWDDMEKIWHHTFYNELRVAPEEHPVLLTEAPLNPKANRERMTQIMFETFNVPAMYVAIQAVLSLYSSGRTTGIVLDSGDGVSHTVPIYEGYALPHAIMRLDLAGRDLTEYMMKILHERGYGFTTSAEKEIVRDIKEKLCYIALDFDEEMKAAEDSSDIEKSYELPDGNIITVGNERFRCPEALFQPSFLGKEAAGVHRTTFDSIMKCDVDIRKDLYGNVVLSGGTTMYEGIGERLTKELTSLAPSTMKIKVVAPPERKYSVWIGGSILSSLSTFQQMWITKEEYDESGPSIVHRKCF</Seq>
-//        </DBSequence>
+        while (iterator.hasNext()) {
+            Protein currentProtein = iterator.getNextProtein();
+
+            br.write(getCurrentTabSpace() + "<DBSequence id=\"DBSeq_1_" + currentProtein.getAccession() + "\" "
+                    + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + dbType + "\" >" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8"))); // @TODO: have to escape non-html!!
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
+        }
+
+        iterator.close();
+
+        identification.loadPeptideMatches(null); // @TODO: use waiting handler?
+
         // iterate all the peptides
-//        <Peptide id="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_">
-//            <PeptideSequence>LCYIALDFDEEMKAAEDSSDIEK</PeptideSequence>
-//            <Modification monoisotopicMassDelta="57.0215" residues="C" location="2">
-//                <cvParam accession="UNIMOD:4" cvRef="UNIMOD" name="Carbamidomethyl"/>
-//            </Modification>
-//            <Modification monoisotopicMassDelta="15.9949" residues="M" location="12">
-//                <cvParam accession="UNIMOD:35" cvRef="UNIMOD" name="Oxidation"/>
-//            </Modification>
-//        </Peptide>
+        for (String peptideKey : identification.getPeptideIdentification()) {
+
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+
+            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\" >" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideMatch.getTheoreticPeptide().getSequence() + "</PeptideSequence>" + System.getProperty("line.separator"));
+
+            for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+
+                PTM currentPtm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+
+                br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getMass() + "\" "
+                        //+ "residues=\"" + currentPtm.getPattern().getAminoAcidsAtTarget() + "\"" // @TODO: get targets as a string
+                        + "location=\"" + modMatch.getModificationSite() + "\" >" + System.getProperty("line.separator"));
+
+                CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+                if (ptmCvTerm != null) {
+                    tabCounter++;
+                    writeCvTerm(ptmCvTerm);
+                    tabCounter--;
+                }
+
+                br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
+            }
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</Peptide>" + System.getProperty("line.separator"));
+        }
+
+        int peptideEvidenceId = 1;
+
         // iterate the peptide evidence
-//        <PeptideEvidence isDecoy="false" post="S" pre="K" end="239" start="217"
-//            peptide_ref="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_"
-//            dBSequence_ref="dbseq_psu|NC_LIV_020800" id="PE1_2_0"/>
-        // </SequenceCollection>
+        for (String peptideKey : identification.getPeptideIdentification()) {
+
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            Peptide peptide = peptideMatch.getTheoreticPeptide();
+
+            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy() + "\" "
+                    //+ "pre=\"" + amino acid before + "\" " // @TODO: get aa before
+                    //+ "post=\"" + amino acid after + "\" " // @TODO: get aa after
+                    //+ "start=\"" + startIndex + "\" " // @TODO: get aa before
+                    //+ "end=\"" + endIndex + "\" " // @TODO: get aa after
+                    + "peptide_ref=\"" + peptideKey + "\" "
+                    + "dBSequence_ref=\"" + "DBSeq_1_temp" + "\" " // @TODO: add protein sequence ref, example: DBSeq_1_JAK1_HUMAN
+                    + "id=\"" + peptideEvidenceId++ + "\" " // @TODO: create an id
+                    + "/>" + System.getProperty("line.separator"));
+        }
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</SequenceCollection>" + System.getProperty("line.separator"));
     }
 
     /**
@@ -531,9 +559,9 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<SearchType>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001083 "
-                + "cvRef=\"PSI-MS "
-                + "name=\"ms-ms search\">"
+                + "accession=\"MS:1001083\" "
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"ms-ms search\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SearchType>" + System.getProperty("line.separator"));
@@ -542,14 +570,14 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<AdditionalSearchParams>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001211 "
-                + "cvRef=\"PSI-MS "
-                + "name=\"parent mass type mono\">"
+                + "accession=\"MS:1001211\" "
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"parent mass type mono\" />"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001256 "
-                + "cvRef=\"PSI-MS "
-                + "name=\"fragment mass type mono\">"
+                + "accession=\"MS:1001256\" "
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"fragment mass type mono\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AdditionalSearchParams>" + System.getProperty("line.separator"));
@@ -569,14 +597,14 @@ public class MzIdentMLExport {
 //                </SearchModification>
 //        
 //        br.write(getCurrentTabSpace() + "<cvParam "
-//                + "accession=\"MS:1001211 " // @TODO: add PeptideShaker CV term
-//                + "cvRef=\"PSI-MS " 
-//                + "name=\"parent mass type mono\">" // @TODO: add the data owner name here!!
+//                + "accession=\"MS:1001211\" " // @TODO: add PeptideShaker CV term
+//                + "cvRef=\"PSI-MS\" " 
+//                + "name=\"parent mass type mono\" />" // @TODO: add the data owner name here!!
 //                + System.getProperty("line.separator"));
 //        br.write(getCurrentTabSpace() + "<cvParam "
-//                + "accession=\"MS:1001256 " // @TODO: add PeptideShaker CV term
-//                + "cvRef=\"PSI-MS " 
-//                + "name=\"fragment mass type mono\">" // @TODO: add the data owner name here!!
+//                + "accession=\"MS:1001256\" " // @TODO: add PeptideShaker CV term
+//                + "cvRef=\"PSI-MS\" " 
+//                + "name=\"fragment mass type mono\" />" // @TODO: add the data owner name here!!
 //                + System.getProperty("line.separator"));
 //        tabCounter--;  
 //        br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
@@ -599,9 +627,9 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<EnzymeName>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001251 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "name=\"Trypsin\">" // @TODO: set the enymes from the search params
+                + "accession=\"MS:1001251\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"Trypsin\" />" // @TODO: set the enymes from the search params
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</EnzymeName>" + System.getProperty("line.separator"));
@@ -616,22 +644,22 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<FragmentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001412 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "unitCvRef=\"UO "
-                + "unitName=\"dalton "
-                + "unitAccession=\"UO:0000221 "
-                + "value=\"0.8 "
-                + "name=\"search tolerance plus value\">"
+                + "accession=\"MS:1001412\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"dalton\" "
+                + "unitAccession=\"UO:0000221\" "
+                + "value=\"0.8\" "
+                + "name=\"search tolerance plus value\" />"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001413 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "unitCvRef=\"UO "
-                + "unitName=\"dalton "
-                + "unitAccession=\"UO:0000221 "
-                + "value=\"0.8 "
-                + "name=\"search tolerance minus value\">"
+                + "accession=\"MS:1001413\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"dalton\" "
+                + "unitAccession=\"UO:0000221\" "
+                + "value=\"0.8\" "
+                + "name=\"search tolerance minus value\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</FragmentTolerance>" + System.getProperty("line.separator"));
@@ -640,22 +668,22 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ParentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001412 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "unitCvRef=\"UO "
-                + "unitName=\"dalton "
-                + "unitAccession=\"UO:0000221 "
-                + "value=\"1.5 "
-                + "name=\"search tolerance plus value\">"
+                + "accession=\"MS:1001412\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"dalton\" "
+                + "unitAccession=\"UO:0000221\" "
+                + "value=\"1.5\" "
+                + "name=\"search tolerance plus value\" />"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001413 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "unitCvRef=\"UO "
-                + "unitName=\"dalton "
-                + "unitAccession=\"UO:0000221 "
-                + "value=\"1.5 "
-                + "name=\"search tolerance minus value\">"
+                + "accession=\"MS:1001413\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "unitCvRef=\"UO\" "
+                + "unitName=\"dalton\" "
+                + "unitAccession=\"UO:0000221\" "
+                + "value=\"1.5\" "
+                + "name=\"search tolerance minus value\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ParentTolerance>" + System.getProperty("line.separator"));
@@ -664,9 +692,9 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<Threshold>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001494 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS "
-                + "name=\"no threshold\">"
+                + "accession=\"MS:1001494\" " // @TODO: set the enymes from the search params
+                + "cvRef=\"PSI-MS\" "
+                + "name=\"no threshold\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Threshold>" + System.getProperty("line.separator"));
@@ -1800,7 +1828,7 @@ public class MzIdentMLExport {
      */
     private void writeMzIdentMLStartTag() throws IOException {
         br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
-        br.write("MzIdentML xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        br.write("<MzIdentML id=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://www.psidev.info/sites/default/files/mzIdentML1.1.0.xsd\" "
                 + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\">"
                 + System.getProperty("line.separator"));
@@ -1994,7 +2022,7 @@ public class MzIdentMLExport {
     private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "cvLabel=\"" + cvTerm.getOntology() + "\" "
+                + "cvRef=\"" + cvTerm.getOntology() + "\" "
                 + "accession=\"" + cvTerm.getAccession() + "\" "
                 + "name=\"" + cvTerm.getName() + "\"");
 
