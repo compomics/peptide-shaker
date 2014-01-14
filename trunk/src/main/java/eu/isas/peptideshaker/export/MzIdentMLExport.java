@@ -2,12 +2,15 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.BinaryArrayImpl;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.AminoAcid;
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.*;
+import static com.compomics.util.experiment.identification.Advocate.OMSSA;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -431,7 +434,7 @@ public class MzIdentMLExport {
 
         // get the sequence database
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-        ProteinIterator iterator = sequenceFactory.getProteinIterator(true); // @TODO: also iterate decoys??
+        ProteinIterator iterator = sequenceFactory.getProteinIterator(false);
 
         String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown);
         FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
@@ -448,7 +451,7 @@ public class MzIdentMLExport {
             tabCounter++;
 
             br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8"))); // @TODO: have to escape non-html!!
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8")));
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
@@ -462,19 +465,27 @@ public class MzIdentMLExport {
         for (String peptideKey : identification.getPeptideIdentification()) {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
             br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
 
-            br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideMatch.getTheoreticPeptide().getSequence() + "</PeptideSequence>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
 
             for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
 
                 PTM currentPtm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+                int ptmLocation = modMatch.getModificationSite();
+
+                if (currentPtm.isNTerm()) {
+                    ptmLocation = 0;
+                } else if (currentPtm.isCTerm()) {
+                    ptmLocation = peptideSequence.length() + 1;
+                }
 
                 br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getMass() + "\" "
-                        //+ "residues=\"" + currentPtm.getPattern().getAminoAcidsAtTarget() + "\"" // @TODO: get targets as a string
-                        + "location=\"" + modMatch.getModificationSite() + "\" >" + System.getProperty("line.separator"));
+                        + "residues=\"" + peptideSequence.charAt(modMatch.getModificationSite() - 1) + "\" "
+                        + "location=\"" + ptmLocation + "\" >" + System.getProperty("line.separator"));
 
                 CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
                 if (ptmCvTerm != null) {
@@ -498,14 +509,56 @@ public class MzIdentMLExport {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
+//            HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
+//                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+//            
+            String before = "";
+            String after = "";
+//
+//            if (aaSurrounding.size() == 1) {
+//                for (int index : aaSurrounding.keySet()) {
+//                    before = aaSurrounding.get(index)[0];
+//                    after = aaSurrounding.get(index)[1];
+//                }
+//            } else {
+//                boolean first = true;
+//                ArrayList<Integer> indexes = new ArrayList<Integer>(aaSurrounding.keySet());
+//                Collections.sort(indexes);
+//                for (int index : indexes) {
+//                    if (first) {
+//                        first = false;
+//                    } else {
+//                        before += "|";
+//                        after += "|";
+//                    }
+//                    before += aaSurrounding.get(index)[0];
+//                    after += aaSurrounding.get(index)[1];
+//                }
+//            }
+//            
+//            if (!before.equals("")) {
+//                before = "-";
+//            }
+//            if (!after.equals("")) {
+//                after = "-";
+//            }
+//
+//            ArrayList<Integer> indexes;
+//
+//            Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
+//            String peptideSequence = Peptide.getSequence(peptideKey);
+//            indexes = currentProtein.getPeptideStart(peptideSequence,
+//                    PeptideShaker.MATCHING_TYPE,
+//                    searchParameters.getFragmentIonAccuracy());
+
             br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy() + "\" "
-                    //+ "pre=\"" + amino acid before + "\" " // @TODO: get aa before
-                    //+ "post=\"" + amino acid after + "\" " // @TODO: get aa after
-                    //+ "start=\"" + startIndex + "\" " // @TODO: get aa before
-                    //+ "end=\"" + endIndex + "\" " // @TODO: get aa after
+                    //+ "pre=\"" + before + "\" " // @TODO: get aa before
+                    //+ "post=\"" + after + "\" " // @TODO: get aa after
+                    //+ "start=\"" + startIndex + "\" " // @TODO: add start index
+                    //+ "end=\"" + endIndex + "\" " // @TODO: add end index
                     + "peptide_ref=\"" + peptideKey + "\" "
                     + "dBSequence_ref=\"" + "DBSeq_1_temp" + "\" " // @TODO: add protein sequence ref, example: DBSeq_1_JAK1_HUMAN
-                    + "id=\"" + peptideEvidenceId++ + "\" " // @TODO: create an id
+                    + "id=\"" + peptideEvidenceId++ + "\" " // @TODO: create a better id?
                     + "/>" + System.getProperty("line.separator"));
         }
 
@@ -585,40 +638,49 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ModificationParams>" + System.getProperty("line.separator"));
         tabCounter++;
 
-        // @TODO: add the modification mappings
-//        br.write(getCurrentTabSpace() + "<SearchModification>" + System.getProperty("line.separator"));
-//        tabCounter++;
-//                <SearchModification residues="M" massDelta="15.99492" fixedMod="false">
-//                    <cvParam accession="UNIMOD:35" cvRef="UNIMOD" name="Oxidation"/>
-//                </SearchModification>
-//                <SearchModification residues="C" massDelta="57.02147" fixedMod="true">
-//                    <cvParam accession="UNIMOD:4" cvRef="UNIMOD" name="Carbamidomethyl"/>
-//                </SearchModification>
-//        
-//        br.write(getCurrentTabSpace() + "<cvParam "
-//                + "accession=\"MS:1001211\" " // @TODO: add PeptideShaker CV term
-//                + "cvRef=\"PSI-MS\" " 
-//                + "name=\"parent mass type mono\" />" // @TODO: add the data owner name here!!
-//                + System.getProperty("line.separator"));
-//        br.write(getCurrentTabSpace() + "<cvParam "
-//                + "accession=\"MS:1001256\" " // @TODO: add PeptideShaker CV term
-//                + "cvRef=\"PSI-MS\" " 
-//                + "name=\"fragment mass type mono\" />" // @TODO: add the data owner name here!!
-//                + System.getProperty("line.separator"));
-//        tabCounter--;  
-//        br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
+        // iterate and add the ptms
+        for (String ptm : searchParameters.getModificationProfile().getAllModifications()) {
+
+            PTM currentPtm = ptmFactory.getPTM(ptm);
+
+            String aminoAcidsAtTarget = "";
+            if (currentPtm.getType() == PTM.MODN
+                    || currentPtm.getType() == PTM.MODNP
+                    || currentPtm.getType() == PTM.MODC
+                    || currentPtm.getType() == PTM.MODCP) {
+                aminoAcidsAtTarget = ".";
+            } else {
+                for (AminoAcid aa : currentPtm.getPattern().getAminoAcidsAtTarget()) {
+                    aminoAcidsAtTarget += aa.singleLetterCode;
+                }
+            }
+
+            br.write(getCurrentTabSpace() + "<SearchModification residues=\"" + aminoAcidsAtTarget + "\" massDelta=\"" + currentPtm.getMass()
+                    + "\" fixedMod= \"" + searchParameters.getModificationProfile().getFixedModifications().contains(ptm) + "\" >" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            CvTerm cvTerm = ptmToPrideMap.getCVTerm(ptm);
+            if (cvTerm != null) {
+                writeCvTerm(cvTerm);
+            }
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ModificationParams>" + System.getProperty("line.separator"));
 
         // enzyme
-        br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + System.getProperty("line.separator")); // @TODO: what does false mean???
+        br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + System.getProperty("line.separator"));
+        // If there are multiple enzymes specified, independent is set to true if cleavage with different enzymes is performed independently
         tabCounter++;
 
-        // @TODO: set the enymes from the search params
+        Enzyme enzyme = searchParameters.getEnzyme();
         br.write(getCurrentTabSpace() + "<Enzyme "
-                + "semiSpecific=\"false\" " // @TODO: what does false mean???
-                + "cTermGain=\"OH\" "
-                + "nTermGain=\"H\" "
+                + "semiSpecific=\"" + enzyme.isSemiSpecific() + "\" "
+                //+ "cTermGain=\"OH\" " // Element formula gained at CTerm
+                //+ "nTermGain=\"H\" " // Element formula gained at NTerm
                 + "id=\"Enz1\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
@@ -626,9 +688,9 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<EnzymeName>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001251\" " // @TODO: set the enymes from the search params
+                + "accession=\"MS:1001251\" " // @TODO: set the enzyme cv term!!
                 + "cvRef=\"PSI-MS\" "
-                + "name=\"Trypsin\" />" // @TODO: set the enymes from the search params
+                + "name=\"" + enzyme.getName() + "\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</EnzymeName>" + System.getProperty("line.separator"));
@@ -642,22 +704,23 @@ public class MzIdentMLExport {
         // fragment tolerance
         br.write(getCurrentTabSpace() + "<FragmentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
+
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001412\" " // @TODO: set the enymes from the search params
+                + "accession=\"MS:1001412\" "
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
                 + "unitName=\"dalton\" "
                 + "unitAccession=\"UO:0000221\" "
-                + "value=\"0.8\" "
+                + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance plus value\" />"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001413\" " // @TODO: set the enymes from the search params
+                + "accession=\"MS:1001413\" "
                 + "cvRef=\"PSI-MS\" "
                 + "unitCvRef=\"UO\" "
                 + "unitName=\"dalton\" "
                 + "unitAccession=\"UO:0000221\" "
-                + "value=\"0.8\" "
+                + "value=\"" + searchParameters.getFragmentIonAccuracy() + "\" "
                 + "name=\"search tolerance minus value\" />"
                 + System.getProperty("line.separator"));
         tabCounter--;
@@ -666,35 +729,66 @@ public class MzIdentMLExport {
         // precursor tolerance
         br.write(getCurrentTabSpace() + "<ParentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001412\" " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS\" "
-                + "unitCvRef=\"UO\" "
-                + "unitName=\"dalton\" "
-                + "unitAccession=\"UO:0000221\" "
-                + "value=\"1.5\" "
-                + "name=\"search tolerance plus value\" />"
-                + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001413\" " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS\" "
-                + "unitCvRef=\"UO\" "
-                + "unitName=\"dalton\" "
-                + "unitAccession=\"UO:0000221\" "
-                + "value=\"1.5\" "
-                + "name=\"search tolerance minus value\" />"
-                + System.getProperty("line.separator"));
+
+        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+            br.write(getCurrentTabSpace() + "<cvParam "
+                    + "accession=\"MS:1001412\" "
+                    + "cvRef=\"PSI-MS\" "
+                    + "unitCvRef=\"UO\" "
+                    + "unitName=\"dalton\" "
+                    + "unitAccession=\"UO:0000221\" "
+                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                    + "name=\"search tolerance plus value\" />"
+                    + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<cvParam "
+                    + "accession=\"MS:1001413\" "
+                    + "cvRef=\"PSI-MS\" "
+                    + "unitCvRef=\"UO\" "
+                    + "unitName=\"dalton\" "
+                    + "unitAccession=\"UO:0000221\" "
+                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                    + "name=\"search tolerance minus value\" />"
+                    + System.getProperty("line.separator"));
+        } else {
+            br.write(getCurrentTabSpace() + "<cvParam "
+                    + "accession=\"MS:1001412\" "
+                    + "cvRef=\"PSI-MS\" "
+                    + "unitCvRef=\"UO\" "
+                    + "unitName=\"parts per million\" "
+                    + "unitAccession=\"UO:0000169\" "
+                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                    + "name=\"search tolerance plus value\" />"
+                    + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<cvParam "
+                    + "accession=\"MS:1001413\" "
+                    + "cvRef=\"PSI-MS\" "
+                    + "unitCvRef=\"UO\" "
+                    + "unitName=\"parts per million\" "
+                    + "unitAccession=\"UO:0000169\" "
+                    + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
+                    + "name=\"search tolerance minus value\" />"
+                    + System.getProperty("line.separator"));
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ParentTolerance>" + System.getProperty("line.separator"));
 
         // thresholds
         br.write(getCurrentTabSpace() + "<Threshold>" + System.getProperty("line.separator"));
         tabCounter++;
+
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001494\" " // @TODO: set the enymes from the search params
+                + "accession=\"MS:1001494\" "
                 + "cvRef=\"PSI-MS\" "
-                + "name=\"no threshold\" />"
+                + "name=\"no threshold\" />" // @TODO: set from the search results!!
                 + System.getProperty("line.separator"));
+
+//        br.write(getCurrentTabSpace() + "<cvParam "
+//                + "accession=\"MS:1002369\" "
+//                + "cvRef=\"PSI-MS\" "
+//                + "name=\"protein group-level global FDR\""
+//                + "value=\"" + protein fdr + "\" />"
+//                + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Threshold>" + System.getProperty("line.separator"));
 
@@ -831,32 +925,87 @@ public class MzIdentMLExport {
 //                </FragmentationTable>
     }
 
-    private void writeInputFileDetails() {
-        // @TODO: add the file details
-//        <Inputs xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-//            <SourceFile location="build/classes/resources/55merge_tandem.xml" id="SourceFile_1">
-//                <FileFormat>
-//                    <cvParam accession="MS:1001401" cvRef="PSI-MS" name="xtandem xml file"/>
-//                </FileFormat>
-//            </SourceFile>
-//            <SearchDatabase numDatabaseSequences="22348" location="no description" id="SearchDB_1">
-//                <FileFormat>
-//                    <cvParam accession="MS:1001348" cvRef="PSI-MS" name="FASTA format"/>
-//                </FileFormat>
-//                <DatabaseName>
-//                    <userParam name="no description"/>
-//                </DatabaseName>
-//            </SearchDatabase>
-//            <SpectraData location="D:/TestSpace/NeoTestMarch2011/55merge.mgf" id="SID_1">
-//                <FileFormat>
-//                    <cvParam accession="MS:1001062" cvRef="PSI-MS" name="Mascot MGF file"/>
-//                </FileFormat>
-//                <SpectrumIDFormat>
-//                    <cvParam accession="MS:1000774" cvRef="PSI-MS"
-//                        name="multiple peak list nativeID format"/>
-//                </SpectrumIDFormat>
-//            </SpectraData>
-//        </Inputs>
+    private void writeInputFileDetails() throws IOException {
+
+        br.write(getCurrentTabSpace() + "<Inputs xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\">" + System.getProperty("line.separator"));
+        tabCounter++;
+
+        int sourceFileCounter = 1; 
+        
+        // add the search result files
+        for (File idFile : projectDetails.getIdentificationFiles()) {
+
+            br.write(getCurrentTabSpace() + "<SourceFile location=\"" + idFile.getAbsolutePath() + "\" id=\"SourceFile_" + sourceFileCounter++ + "\">" + System.getProperty("line.separator"));
+            tabCounter++;
+            br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            int searchEngine = IdfileReaderFactory.getInstance().getSearchEngine(idFile);
+            Advocate advocate = Advocate.getAdvocate(searchEngine);
+
+            switch (advocate) {
+                case Mascot:
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001199", "Mascot DAT format", null));
+                    break;
+                case OMSSA:
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "xtandem xml file", null));
+                    break;
+                case XTandem:
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
+                    break;
+                default:
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Unknown\"/>"); // @TODO: add cv term
+                    break;
+            }
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</SourceFile>" + System.getProperty("line.separator"));
+        }
+
+        // add the database
+        br.write(getCurrentTabSpace() + "<SearchDatabase numDatabaseSequences=\"" + SequenceFactory.getInstance().getNSequences() + "\" location=\"no description\" "
+                + "id=\"" + "SearchDB_1\">" + System.getProperty("line.separator"));
+        tabCounter++;
+        br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
+        tabCounter++;
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001348", "FASTA format", null));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<DatabaseName>" + System.getProperty("line.separator"));
+        tabCounter++;
+        br.write(getCurrentTabSpace() + "<userParam name=\"no description\"/>" + System.getProperty("line.separator"));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</DatabaseName>" + System.getProperty("line.separator"));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</SearchDatabase>" + System.getProperty("line.separator"));
+
+        // add the spectra location
+        for (String mgfFileNames : spectrumFactory.getMgfFileNames()) {
+            File mgfFile = projectDetails.getSpectrumFile(mgfFileNames);
+
+            br.write(getCurrentTabSpace() + "<SpectraData location=\"" + mgfFile.getAbsolutePath() + "\" id=\"" + mgfFileNames + "\">" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
+            tabCounter++;
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001062", "Mascot MGF file", null));
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
+
+            br.write(getCurrentTabSpace() + "<SpectrumIDFormat>" + System.getProperty("line.separator"));
+            tabCounter++;
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1000774", "multiple peak list nativeID format", null)); // @TODO: not sure about this one...
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</SpectrumIDFormat>" + System.getProperty("line.separator"));
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</SpectraData>" + System.getProperty("line.separator"));
+        }
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</Inputs>" + System.getProperty("line.separator"));
     }
 
     /////////////////////////////////////////////

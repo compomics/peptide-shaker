@@ -53,5 +53,5 @@ Using large databases?<br><br>When using large databases the import of your file
 Need exports for algorithm training or spectral libraries?<br><br>Contact us at our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!
 PeptideShaker runs a lot faster on SSD discs!<br><br>Given that a lot of information is extracted from the mgf and FASTA files it is recommened to store these on an SSD disc!
 Terminal modifications on degraded proteins?<br><br><b>PeptideShaker</b> excludes all protein terminal modifications which do not occur at the terminus of a protein sequence or on the second amino acid when the first is a methionine. If you need more flexible modification mapping use modifications at peptide termini.
-Doubtful matches?<br><br><b>PeptideShaker</b> flags low confidence validation with a yellow warning. Clicking on the sign will provide you all details!
+Doubtful matches?<br><br><b>PeptideShaker</b> flags low confidence validation with a yellow warning icon. Clicking on the icon will provide you all details!
 Using <b>PeptideShaker</b> without <b>SearchGUI</b>?<br><br>Don't forget to provide the identification parameters when creating a project!
