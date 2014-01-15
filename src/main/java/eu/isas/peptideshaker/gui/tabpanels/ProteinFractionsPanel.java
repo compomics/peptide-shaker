@@ -286,7 +286,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 "Starred", null, null));
 
         // set the preferred size of the accession column
-        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
 
         if (width != null) {
             proteinTable.getColumn("Accession").setMinWidth(width);

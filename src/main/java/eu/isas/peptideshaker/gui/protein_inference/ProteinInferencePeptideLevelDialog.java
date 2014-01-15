@@ -12,6 +12,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -195,7 +196,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn("Evidence").setMaxWidth(90);
 
         // set the preferred size of the accession column
-        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
         if (width != null) {
             otherProteinJTable.getColumn("Accession").setMinWidth(width);
             otherProteinJTable.getColumn("Accession").setMaxWidth(width);
@@ -207,7 +208,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
 
         // set the preferred size of the accession column
-        width = peptideShakerGUI.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6);
+        width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
         if (width != null) {
             retainedProteinJTable.getColumn("Accession").setMinWidth(width);
             retainedProteinJTable.getColumn("Accession").setMaxWidth(width);
