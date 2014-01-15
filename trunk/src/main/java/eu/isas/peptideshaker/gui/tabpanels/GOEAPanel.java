@@ -17,6 +17,7 @@ import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
+import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.BasicStroke;
@@ -242,7 +243,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         // set the preferred size of the accession column
-        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
         if (width != null) {
             proteinTable.getColumn("Accession").setMinWidth(width);
             proteinTable.getColumn("Accession").setMaxWidth(width);
@@ -593,7 +594,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                                         // set the preferred size of the accession column
-                                        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
+                                        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
                                         if (width != null) {
                                             goMappingsTable.getColumn("GO Accession").setMinWidth(width);
                                             goMappingsTable.getColumn("GO Accession").setMaxWidth(width);

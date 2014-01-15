@@ -309,6 +309,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * The horizontal padding used before and after the text in the titled
      * borders. (Needed to make it look as good in Java 7 as it did in Java
      * 6...)
+     * @TODO: move to utilities?
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
     /**
@@ -3720,6 +3721,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
+     * Get the not found sparklines color.
+     *
+     * @return the not found sparklineColor
+     */
+    public Color getSparklineColorNotFound() {
+        return utilitiesUserPreferences.getSparklineColorNotFound();
+    }
+
+    /**
      * Get the possible sparklines color.
      *
      * @return the possible sparklineColor
@@ -4155,43 +4165,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public GOEAPanel getGOPanel() {
         return goPanel;
-    }
-
-    /**
-     * Gets the preferred width of the column specified by colIndex. The column
-     * will be just wide enough to show the column head and the widest cell in
-     * the column. Margin pixels are added to the left and right (resulting in
-     * an additional width of 2*margin pixels. Returns null if the max width
-     * cannot be set.
-     *
-     * @param table the table
-     * @param colIndex the colum index
-     * @param margin the margin to add
-     * @return the preferred width of the column
-     */
-    public Integer getPreferredAccessionColumnWidth(JTable table, int colIndex, int margin) {
-
-        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
-        TableColumn col = colModel.getColumn(colIndex);
-
-        // get width of column header
-        TableCellRenderer renderer = col.getHeaderRenderer();
-        if (renderer == null) {
-            renderer = table.getTableHeader().getDefaultRenderer();
-        }
-
-        Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-        int width = comp.getPreferredSize().width;
-
-        // get maximum width of column data
-        if (getMetrics() == null || getMetrics().getMaxProteinKeyLength() > (table.getColumnName(colIndex).length() + margin)) {
-            return null;
-        }
-
-        // add margin
-        width += 2 * margin;
-
-        return width;
     }
 
     /**

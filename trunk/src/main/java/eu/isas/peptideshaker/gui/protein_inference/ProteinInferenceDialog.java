@@ -13,6 +13,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.Toolkit;
@@ -179,7 +180,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
-        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
+        Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
         if (width != null) {
             proteinMatchTable.getColumn("Accession").setMinWidth(width);
             proteinMatchTable.getColumn("Accession").setMaxWidth(width);
