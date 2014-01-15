@@ -75,7 +75,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     }
 
     /**
-     * Constructor
+     * Constructor.
+     * Warning: when changing this method please update reporter as well!
      *
      * @param identification the identification containing the protein information
      * @param identificationFeaturesGenerator the identification features generator generating the features of the identification
@@ -97,6 +98,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
+     * Warning: when changing this method please update reporter as well!
      * 
      * @param identification the identification containing the protein information
      * @param identificationFeaturesGenerator the identification features generator generating the features of the identification
