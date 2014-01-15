@@ -2819,9 +2819,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     // update the table model
                     if (proteinTable.getRowCount() > 0) {
-                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeys);
+                        ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                     } else {
-                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI, proteinKeys);
+                        ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getDisplayFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getExceptionHandler(), proteinKeys);
                         proteinTable.setModel(proteinTableModel);
                     }
 
@@ -3306,6 +3306,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * Hides or displays the score columns in the protein and peptide tables.
      */
     public void updateScores() {
+        
+        ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setTableProperties();
 
