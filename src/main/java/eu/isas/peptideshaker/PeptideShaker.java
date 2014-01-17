@@ -1726,9 +1726,9 @@ public class PeptideShaker {
                                 ptmScoring.setSiteConfidence(modMatch.getModificationSite(), PtmScoring.VERY_CONFIDENT);
                             }
                         } else {
-                            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                            if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && !ptmScoring.getProbabilisticSites().isEmpty()) {
                                 Double ptmMass = ptm.getMass();
-                                int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value);
+                                int key = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                                 TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
                                 if (currentMap == null) {
                                     currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);

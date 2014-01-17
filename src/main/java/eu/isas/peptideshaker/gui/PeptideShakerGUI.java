@@ -2980,6 +2980,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             // Display the variable modifications
             getDisplayPreferences().setDefaultSelection(getSearchParameters().getModificationProfile());
+            getDisplayFeaturesGenerator().setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
