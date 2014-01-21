@@ -26,7 +26,13 @@ public class ProjectDetails implements Serializable {
      */
     private ArrayList<File> identificationFiles = new ArrayList<File>();
     /**
-     * List of the spectrum files
+     * Map of the search engine versions used to generate the identification
+     * files. Key: identification file name, element: the search engine name and
+     * version.
+     */
+    private HashMap<String, String> identificationFileSearchEngineVersion = new HashMap<String, String>();
+    /**
+     * List of the spectrum files.
      */
     private HashMap<String, File> spectrumFiles = new HashMap<String, File>();
     /**
@@ -375,9 +381,11 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Returns a list of search engines used based on the identification files of the project.
-     * 
-     * @return a list of search engines indexed by the static field of the SearchEngine class
+     * Returns a list of search engines used based on the identification files
+     * of the project.
+     *
+     * @return a list of search engines indexed by the static field of the
+     * SearchEngine class
      */
     public ArrayList<Integer> getSearchEnginesIndexes() {
         ArrayList<Integer> searchEngines = new ArrayList<Integer>();
@@ -393,8 +401,9 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Returns a list of search engines used based on the identification files of the project.
-     * 
+     * Returns a list of search engines used based on the identification files
+     * of the project.
+     *
      * @return a list of search engines indexed by their name
      */
     public ArrayList<String> getSearchEnginesNames() {
@@ -408,5 +417,31 @@ public class ProjectDetails implements Serializable {
             }
         }
         return searchEngines;
+    }
+
+    /**
+     * Returns the map of the search engine versions used to generate the
+     * identification files. Key: identification file name, element: the search
+     * engine name and version.
+     *
+     * @return the identificationFileSearchEngineVersion
+     */
+    public HashMap<String, String> getIdentificationFileSearchEngineVersions() {
+        if (identificationFileSearchEngineVersion == null) {
+            identificationFileSearchEngineVersion = new HashMap<String, String>();
+        }
+        return identificationFileSearchEngineVersion;
+    }
+
+    /**
+     * Set the map of the search engine versions used to generate the
+     * identification files. Key: identification file name, element: the search
+     * engine name and version.
+     *
+     * @param identificationFileSearchEngineVersion the
+     * identificationFileSearchEngineVersion to set
+     */
+    public void setIdentificationFileSearchEngineVersion(HashMap<String, String> identificationFileSearchEngineVersion) {
+        this.identificationFileSearchEngineVersion = identificationFileSearchEngineVersion;
     }
 }
