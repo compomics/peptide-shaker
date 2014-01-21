@@ -83,7 +83,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -309,6 +311,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * The horizontal padding used before and after the text in the titled
      * borders. (Needed to make it look as good in Java 7 as it did in Java
      * 6...)
+     *
      * @TODO: move to utilities?
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
@@ -2930,8 +2933,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Export to mzIdentML.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportMzIdentMLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMzIdentMLMenuItemActionPerformed
         new ProjectExportDialog(this, false, true);
@@ -3014,7 +3017,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             sparklinesJCheckBoxMenuItem.setEnabled(true);
             quantifyMenuItem.setEnabled(true);
             speciesJMenuItem.setEnabled(true);
-            
+
             projectExportMenu.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
             //exportMzIdentMLMenuItem.setEnabled(true);
@@ -5468,6 +5471,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             cpsBean.getUserPreferences().addRecentProject(cpsBean.getCpsFile());
                             updateRecentProjectsList();
 
+                            // save the peptide shaker report next to the cps file
+                            String report = getExtendedProjectReport();
+
+                            if (report != null) {
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+                                String fileName = "PeptideShaker Report " + cpsBean.getCpsFile().getName() + " " + df.format(new Date()) + ".html";
+                                File psReportFile = new File(cpsBean.getCpsFile().getParentFile(), fileName);
+                                FileWriter fw = new FileWriter(psReportFile);
+                                fw.write(report);
+                                fw.close();
+                            }
+
                             if (closeWhenDone) {
                                 closePeptideShaker();
                             } else {
@@ -6426,5 +6441,56 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 //                //SwingUtils.fadeInAndOut(notificationDialog);
 //            }
 //        }
+    }
+
+    /**
+     * Returns an extended HTML project report.
+     *
+     * @return an extended HTML project report
+     */
+    public String getExtendedProjectReport() {
+
+        ProjectDetails projectDetails = getProjectDetails();
+        String report = null;
+
+        if (projectDetails != null) {
+
+            report = "<html><br>";
+            report += "<b>Experiment</b>: " + getExperiment().getReference() + "<br>";
+            report += "<b>Sample:</b> " + getSample().getReference() + "<br>";
+            report += "<b>Replicate number:</b> " + getReplicateNumber() + "<br><br>";
+
+            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
+
+            report += "<b>Identification Files</b>:<br>";
+            for (File idFile : projectDetails.getIdentificationFiles()) {
+                report += idFile.getAbsolutePath();
+
+                if (projectDetails.getIdentificationFileSearchEngineVersions().containsKey(idFile.getName())) {
+                    report += " - (" + projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) + ")";
+                }
+
+                report += "<br>";
+            }
+
+            report += "<br><b>Spectrum Files:</b><br>";
+            for (String mgfFileNames : getIdentification().getSpectrumFiles()) {
+                report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
+            }
+
+            report += "<br><b>FASTA File:</b><br>";
+            report += getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
+
+            report += "<br><br><b>Report:</b><br>";
+            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
+                report += "<pre>" + projectDetails.getReport() + "</pre>";
+            } else {
+                report += projectDetails.getReport();
+            }
+
+            report += "</html>";
+        }
+
+        return report;
     }
 }

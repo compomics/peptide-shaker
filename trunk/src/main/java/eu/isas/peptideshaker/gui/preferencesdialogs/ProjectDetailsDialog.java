@@ -1,67 +1,35 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.preferences.ProjectDetails;
-import java.io.File;
 
 /**
  * This dialog displays the project properties.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProjectDetailsDialog extends javax.swing.JDialog {
 
     /**
      * Creates a dialog to display the project properties.
      *
-     * @param parent
+     * @param peptideShakerGUI
      */
-    public ProjectDetailsDialog(PeptideShakerGUI parent) {
-        super(parent, true);
+    public ProjectDetailsDialog(PeptideShakerGUI peptideShakerGUI ){
+        super(peptideShakerGUI, true);
         initComponents();
+        setTitle("Project Properties - " + peptideShakerGUI.getExperiment().getReference());
 
-        ProjectDetails projectDetails = parent.getProjectDetails();
-
-        if (projectDetails != null) {
-
-            String report = "<html><br>";
-            report += "<b>Experiment</b>: " + parent.getExperiment().getReference() + "<br>";
-            report += "<b>Sample:</b> " + parent.getSample().getReference() + "<br>";
-            report += "<b>Replicate number:</b> " + parent.getReplicateNumber() + "<br><br>";
-
-            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
-
-            report += "<b>Identification Files</b>:<br>";
-            for (File idFile : projectDetails.getIdentificationFiles()) {
-                report += idFile.getAbsolutePath() + "<br>";
-            }
-
-            report += "<br><b>Spectrum Files:</b><br>";
-            for (String mgfFileNames : parent.getIdentification().getSpectrumFiles()) {
-                report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
-            }
-
-            report += "<br><b>FASTA File:</b><br>";
-            report += parent.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
-
-            report += "<br><br><b>Report:</b><br>";
-            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
-                report += "<pre>" + projectDetails.getReport() + "</pre>";
-            } else {
-                report += projectDetails.getReport();
-            }
-
-            report += "</html>";
-
+        String report = peptideShakerGUI.getExtendedProjectReport();
+        
+        if (report == null) {
+             projectDetailsJEditorPane.setText("Project properties not availale.");
+        } else {
             projectDetailsJEditorPane.setText(report);
             projectDetailsJEditorPane.setCaretPosition(0);
-
-            setTitle("Project Properties - " + parent.getExperiment().getReference());
-        } else {
-            projectDetailsJEditorPane.setText("No project loaded.");
         }
 
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 

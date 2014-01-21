@@ -611,6 +611,9 @@ public class FileImporter {
                 return;
             }
 
+            // set the search engine versions
+            projectDetails.getIdentificationFileSearchEngineVersions().put(idFile.getName(), fileReader.getSoftwareVersion());
+
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             HashSet<SpectrumMatch> tempSet = null;
             try {
