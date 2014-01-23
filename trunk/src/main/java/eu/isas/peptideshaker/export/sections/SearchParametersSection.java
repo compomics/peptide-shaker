@@ -93,13 +93,6 @@ public class SearchParametersSection {
                 case enzyme:
                     writer.write(searchParameters.getEnzyme().getName());
                     break;
-                case estimate_charge:
-                    if (searchParameters.isEstimateCharge()) {
-                        writer.write("Yes");
-                    } else {
-                        writer.write("No");
-                    }
-                    break;
                 case fixed_modifications:
                     String modifications = "";
                     for (String modification : searchParameters.getModificationProfile().getFixedModifications()) {
@@ -120,9 +113,19 @@ public class SearchParametersSection {
                     }
                     writer.write(modifications);
                     break;
-                case refinement_modifications:
+                case refinement_variable_modifications:
                     modifications = "";
-                    for (String modification : searchParameters.getModificationProfile().getRefinementModifications()) {
+                    for (String modification : searchParameters.getModificationProfile().getRefinementVariableModifications()) {
+                        if (!modifications.equals("")) {
+                            modifications += ", ";
+                        }
+                        modifications += modification;
+                    }
+                    writer.write(modifications);
+                    break;
+                case refinement_fixed_modifications:
+                    modifications = "";
+                    for (String modification : searchParameters.getModificationProfile().getRefinementFixedModifications()) {
                         if (!modifications.equals("")) {
                             modifications += ", ";
                         }
@@ -137,24 +140,6 @@ public class SearchParametersSection {
                 case fragment_tolerance:
                     writer.write(searchParameters.getFragmentIonAccuracy() + "");
                     break;
-                case hitlist_length:
-                    writer.write(searchParameters.getHitListLength() + "");
-                    break;
-                case max_Evalue:
-                    writer.write(searchParameters.getMaxEValue() + "");
-                    break;
-                case max_pep_length:
-                    writer.write(searchParameters.getMaxPeptideLength() + "");
-                    break;
-                case mc:
-                    writer.write(searchParameters.getnMissedCleavages() + "");
-                    break;
-                case min_pep_length:
-                    writer.write(searchParameters.getMinPeptideLength() + "");
-                    break;
-                case minimalChargeForMultipleChargedFragments:
-                    writer.write(searchParameters.getMinimalChargeForMultipleChargedFragments().toString());
-                    break;
                 case precursor_accuracy_unit:
                     if (searchParameters.isPrecursorAccuracyTypePpm()) {
                         writer.write("ppm");
@@ -165,23 +150,9 @@ public class SearchParametersSection {
                 case precursor_tolerance:
                     writer.write(searchParameters.getPrecursorAccuracy() + "");
                     break;
-                case remove_precursor:
-                    if (searchParameters.isRemovePrecursor()) {
-                        writer.write("Yes");
-                    } else {
-                        writer.write("No");
-                    }
-                    break;
                 case rewind_ion:
                     ionName = PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched2());
                     writer.write(ionName);
-                    break;
-                case scale_precursor:
-                    if (searchParameters.isScalePrecursor()) {
-                        writer.write("Yes");
-                    } else {
-                        writer.write("No");
-                    }
                     break;
                 default:
                     writer.write("Not implemented");
