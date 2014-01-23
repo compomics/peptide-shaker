@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures.missed_cleavages;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +31,7 @@ public enum PsmFeatures implements ExportFeature {
     theoretical_mass("Theoretical Mass", "The theoretical mass of the peptide."),
     isotope("Isotope Number", "The isotope number targetted by the instrument."),
     mz_error("Precursor m/z Error", "The precursor m/z matching error."),
-    score("Score", "Score of the retained peptide as a combination of the algorithms scores (used to rank PSMs)."),
+    score("Score", "Score of the retained peptide as a combination of the algorithm scores (used to rank PSMs)."),
     confidence("Confidence", "Confidence in percent associated to the peptide."),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no)."),
     validated("Validated", "Indicates whether the peptide passed the validation process (1: yes, 0: no)."),
