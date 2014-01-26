@@ -19,15 +19,15 @@ public enum PeptideShakerCLIParams {
     SAMPLE("sample", "Specifies the sample name.", true),
     REPLICATE("replicate", "The replicate number.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", true),
-    IDENTIFICATION_FILES("identification_files", "Identification files (.dat, .omx or .t.xml), comma separated list or an entire folder.", true),
+    IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .omx or .dat), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
     PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms, soon deprecated).", false),
-    PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
-    PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented)", false),
+    //PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
+    //PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented)", false),
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
-    IDENTIFICATION_PARAMETERS("id_params", "The identification parameters file. Can be generated using SeachGUI or using the IdentificationParametersCLI (see http://code.google.com/p/searchgui/wiki/IdentificationParametersCLI for details).", false),
+    IDENTIFICATION_PARAMETERS("id_params", "The identification parameters file. Generated using SeachGUI or via IdentificationParametersCLI.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is '0').", false),
     PTM_SCORE("ptm_score", "The PTM probabilistic score to use for PTM localization. " + PtmScore.getCommandLineOptions() + ".", false),
     PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM scores. Automatic mode will be used if not set.", false),
@@ -86,8 +86,8 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(IDENTIFICATION_FILES.id, true, IDENTIFICATION_FILES.description);
         aOptions.addOption(PEPTIDESHAKER_OUTPUT.id, true, PEPTIDESHAKER_OUTPUT.description);
         aOptions.addOption(PEPTIDESHAKER_TXT_1.id, true, PEPTIDESHAKER_TXT_1.description);
-        aOptions.addOption(PEPTIDESHAKER_TXT_2.id, true, PEPTIDESHAKER_TXT_2.description);
-        aOptions.addOption(PEPTIDESHAKER_PRIDE.id, true, PEPTIDESHAKER_PRIDE.description);
+        //aOptions.addOption(PEPTIDESHAKER_TXT_2.id, true, PEPTIDESHAKER_TXT_2.description);
+        //aOptions.addOption(PEPTIDESHAKER_PRIDE.id, true, PEPTIDESHAKER_PRIDE.description);
         aOptions.addOption(PSM_FDR.id, true, PSM_FDR.description);
         aOptions.addOption(PEPTIDE_FDR.id, true, PEPTIDE_FDR.description);
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
@@ -160,11 +160,11 @@ public enum PeptideShakerCLIParams {
 
         output += "\n\nOptional output parameters:\n\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
+        //output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
+        //output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
 
-        output += "\n\n\nFollow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
-        output += "\nReport export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
+        output += "\n\n\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
+        output += "\nFor report export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
 
         return output;
     }
