@@ -16,6 +16,8 @@ Note that ReportCLI and FollowUpCLI options can also be appended to PeptideShake
 
 All command line options have the same overall structure and only differ in the features and parameters available.
 
+The recommended way to generate an identification parameters file for use in PeptideShakerCLI, is via the SearchGUI graphical user interface. But the file can also be created using the [http://code.google.com/p/compomics-utilities/wiki/IdentificationParametersCLI IdentificationParametersCLI]. 
+
 ----
 
 ==A) PeptideShakerCLI==
