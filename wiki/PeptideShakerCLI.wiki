@@ -20,8 +20,6 @@ All command line options have the same overall structure and only differ in the 
 
 ==A) PeptideShakerCLI==
 
-_Available from PeptideShaker version 0.19.0._
-
 *Standard command line:*
 
 {{{
@@ -41,8 +39,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            separated list or an entire folder.
                            Example: "file1.mgf, file2.mgf".
 
--identification_files      The identification files (Mascot .dat,
-                           OMSSA .omx and X!Tandem .t.xml formats) in
+-identification_files      The identification files (X!Tandem .t.xml,
+                           OMSSA .omx and Mascot .dat formats) in
                            a comma separated list or an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
@@ -50,38 +48,22 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            already exists it will be silently 
                            overwritten.
 
--search_params             The search parameters as a serialized
-                           file of com.compomics.util.experiment.
-                           identification.SearchParameters. This file 
-                           is automatically saved by SearchGUI along 
-                           with the identification files.
+-id_params                 The identification parameters file. 
+                           Generated using SeachGUI or via IdentificationParametersCLI. 
+                           This file is automatically saved by SearchGUI along with the 
+                           identification files.
 }}}
-
-_Note that the search parameters are not strictly mandatory, as a default set of search parameters can be used. But in most case one will provide the search parameters as part of the command line._
 
 *Optional gene annotation parameter:*
 
 {{{
 -species                   The species to use for the gene annotation, e.g., 'Homo sapiens'. 
-                           Supported species are listed in the GUI. (v0.21.0 and newer.)
+                           Supported species are listed in the GUI.
 
 -species_type              The species type to use for the gene annotation, e.g., 'Vertebrates' or 'Plants'. 
-                           Supported species types are listed in the GUI. (v0.22.4 and newer.)
+                           Supported species types are listed in the GUI.
 }}}
 
-*Optional output parameters:*
-
-{{{
--out_txt_1                 Output folder for text summary - format 1 
-                           (three files: proteins, peptides and psms).
-
--out_txt_2                 Output folder for text summary - format 2 
-                           (one file: proteins and peptides). (Not
-                           yet implemented.)
-
--out_pride                 PeptideShaker PRIDE XML output file. (Not
-                           yet implemented.)
-}}}
 
 *Optional processing parameters:*
 
@@ -97,9 +79,11 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 
 -ptm_score                 The PTM probabilistic score to use if any (0: A-score, 1: phosphoRS).
 
--ptm_threshold             The threshold to use for the PTM scores. If none set, an automatic threshold will be used.
+-ptm_threshold             The threshold to use for the PTM scores. If none set, 
+                           an automatic threshold will be used.
 
--score_neutral_losses      Include neutral losses of mass different from the PTM in spectrum annotation of the PTM score 
+-score_neutral_losses      Include neutral losses of mass different from the PTM 
+                           in spectrum annotation of the PTM score 
                            (1: true, 0: false, default is '0').
 
 -protein_fraction_mw_confidence     
@@ -129,6 +113,13 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 -exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
 }}}
 
+*Optional output parameters:*
+
+{{{
+-out_txt_1                 Output folder for text summary - format 1 
+                           (three files: proteins, peptides and PSMs).
+}}}
+
 *PeptideShakerCLI Example:*
 
 PeptideShakerCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
@@ -137,7 +128,7 @@ PeptideShakerCLI example where _X_, _Y_ and _Z_ have to be replaced by the actua
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
 -identification_files "C:\my folder" -spectrum_files "C:\my folder" 
--search_params "C:\my folder\my_search_params.parameters" 
+-id_params "C:\my folder\my_search_params.parameters" 
 -out "C:\my folder\myCpsFile.cps"
 }}}
 
@@ -148,8 +139,6 @@ _Note that for readability the command is here split over multiple lines. When u
 ----
 
 ==B) ReportCLI==
-
-_Available from PeptideShaker version 0.23.0._
 
 *Standard command line:*
 
@@ -200,8 +189,6 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0
 ----
 
 ==C) FollowUpCLI==
-
-_Available from PeptideShaker version 0.23.0._
 
 *Standard command line:*
 
