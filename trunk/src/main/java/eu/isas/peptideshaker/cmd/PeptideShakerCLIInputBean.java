@@ -180,21 +180,21 @@ public class PeptideShakerCLIInputBean {
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
-            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
-            File testFile = new File(filesTxt);
-            if (testFile.exists()) {
-                textSummaryDirectoryFormat2 = testFile;
-            } else {
-                throw new FileNotFoundException(filesTxt + " not found.");
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
-            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
-            File testFile = new File(filesTxt);
-            prideFile = testFile;
-        }
+//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
+//            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
+//            File testFile = new File(filesTxt);
+//            if (testFile.exists()) {
+//                textSummaryDirectoryFormat2 = testFile;
+//            } else {
+//                throw new FileNotFoundException(filesTxt + " not found.");
+//            }
+//        }
+//
+//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
+//            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
+//            File testFile = new File(filesTxt);
+//            prideFile = testFile;
+//        }
 
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id));
