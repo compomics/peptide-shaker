@@ -451,7 +451,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
-                + "The PeptideShaker command line takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
+                + "The PeptideShaker command line takes identification files from X!Tandem, OMSSA and Mascot and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see http://peptide-shaker.googlecode.com and http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -555,24 +555,24 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
-            File testFile = new File(filesTxt);
-            if (!testFile.exists()) {
-                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
-                return false;
-            }
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
-            File testFile = new File(filesTxt.trim());
-            File parentFolder = testFile.getParentFile();
-            if (!parentFolder.exists()) {
-                System.out.println("\nDestination folder for PRIDE file \'" + parentFolder.getPath() + "\' not found.\n");
-                return false;
-            }
-        }
+//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
+//            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
+//            File testFile = new File(filesTxt);
+//            if (!testFile.exists()) {
+//                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
+//                return false;
+//            }
+//        }
+//
+//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
+//            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
+//            File testFile = new File(filesTxt.trim());
+//            File parentFolder = testFile.getParentFile();
+//            if (!parentFolder.exists()) {
+//                System.out.println("\nDestination folder for PRIDE file \'" + parentFolder.getPath() + "\' not found.\n");
+//                return false;
+//            }
+//        }
 
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id).trim();
