@@ -3221,7 +3221,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 }
                 System.err.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
                         + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
+                System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory()+ "." + System.getProperty("line.separator"));
                 System.err.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
+                System.err.println("Free memory: " + Runtime.getRuntime().freeMemory()+ "." + System.getProperty("line.separator"));
                 System.err.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(

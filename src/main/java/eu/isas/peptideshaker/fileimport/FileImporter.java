@@ -965,7 +965,7 @@ public class FileImporter {
                             + "See <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a> for help.", true, true);
                     waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                    double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
+                    double share = ((double) 1073741824) / (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
                     share = Math.min(share, 1);
                     peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -1011,7 +1011,7 @@ public class FileImporter {
          * @return a boolean indicating whether a GB of memory is free
          */
         public boolean halfGbFree() {
-            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() > 536870912;
+            return Runtime.getRuntime().maxMemory() - (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) > 536870912;
         }
 
         /**
@@ -1020,7 +1020,7 @@ public class FileImporter {
          * @return the share of memory being used
          */
         public double memoryUsed() {
-            return Runtime.getRuntime().totalMemory() / Runtime.getRuntime().maxMemory();
+            return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory();
         }
 
         /**
