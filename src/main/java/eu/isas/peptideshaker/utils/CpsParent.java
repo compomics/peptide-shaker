@@ -347,6 +347,7 @@ public abstract class CpsParent extends UserPreferencesParent {
             File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
             spectrumFactory.addSpectra(mgfFile, waitingHandler);
         }
+
         return true;
     }
 
