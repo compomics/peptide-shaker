@@ -15,6 +15,7 @@ import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
+import eu.isas.peptideshaker.followup.SwathExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -106,6 +107,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         graphDatabasesLabel = new javax.swing.JLabel();
         graphDatabaseFormat = new javax.swing.JComboBox();
         graphDatabasetButton = new javax.swing.JButton();
+        swathPanel = new javax.swing.JPanel();
+        swathButton = new javax.swing.JButton();
+        psmSelectionComboBoxSwath = new javax.swing.JComboBox();
+        swathExportLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
@@ -361,6 +366,56 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        swathPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("SWATH Library (beta)"));
+        swathPanel.setOpaque(false);
+
+        swathButton.setText("Export as TXT");
+        swathButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                swathButtonActionPerformed(evt);
+            }
+        });
+
+        psmSelectionComboBoxSwath.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
+
+        swathExportLabel.setText("Text Export");
+        swathExportLabel.setToolTipText("Click for Progenesis LC-MS export help");
+        swathExportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                swathExportLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                swathExportLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                swathExportLabelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout swathPanelLayout = new javax.swing.GroupLayout(swathPanel);
+        swathPanel.setLayout(swathPanelLayout);
+        swathPanelLayout.setHorizontalGroup(
+            swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, swathPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(swathExportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(psmSelectionComboBoxSwath, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(swathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        swathPanelLayout.setVerticalGroup(
+            swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(swathPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(swathPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(psmSelectionComboBoxSwath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(swathButton)
+                    .addComponent(swathExportLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -372,7 +427,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(swathPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -388,6 +444,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(swathPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -780,6 +838,80 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_graphDatabasetButtonActionPerformed
 
+    private void swathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_swathButtonActionPerformed
+        exportSwath();
+    }//GEN-LAST:event_swathButtonActionPerformed
+
+    private void swathExportLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_swathExportLabelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_swathExportLabelMouseClicked
+
+    private void swathExportLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_swathExportLabelMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_swathExportLabelMouseEntered
+
+    private void swathExportLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_swathExportLabelMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_swathExportLabelMouseExited
+
+    /**
+     * Exports a text file containing the information to create a swath library
+     */
+    private void exportSwath() {
+        
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+
+        if (finalOutputFile != null) {
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Exporting PSMs. Please Wait...");
+
+            final int userChoice = psmSelectionComboBoxSwath.getSelectedIndex();
+            ArrayList<String> ptms = new ArrayList<String>();
+            if (userChoice == 3) {
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                if (ptmChooser.isCanceled()) {
+                    return;
+                }
+                ptms = ptmChooser.getSelection();
+            }
+            final ArrayList<String> ptmSelection = ptms;
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ProgenesisPsmThread") {
+                @Override
+                public void run() {
+                    try {
+
+                        SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                        
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            }.start();
+        }
+    }
     /**
      * Export proteins.
      *
@@ -959,10 +1091,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox proteinExportCmb2;
     private javax.swing.JPanel proteinsPanel;
     private javax.swing.JComboBox psmSelectionComboBox;
+    private javax.swing.JComboBox psmSelectionComboBoxSwath;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
+    private javax.swing.JButton swathButton;
+    private javax.swing.JLabel swathExportLabel;
+    private javax.swing.JPanel swathPanel;
     // End of variables declaration//GEN-END:variables
 }

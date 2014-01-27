@@ -321,13 +321,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             confidenceLbl.setText("Confidence: " + Util.roundDouble(confidence, 2) + "%");
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
             double validationThreshold = targetDecoyResults.getConfidenceLimit();
-            validationThresoldLbl.setText("Validation threshold: " + Util.roundDouble(validationThreshold, 2) + "%");
+            validationThresoldLbl.setText("Confidence at threshold: " + Util.roundDouble(validationThreshold, 2) + "%");
             double resolution = targetDecoyMap.getResolution();
             double confidenceThreshold = validationThreshold + resolution;
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
             }
-            confidenceThresholdLbl.setText("Confidence threshold: " + Util.roundDouble(confidenceThreshold, 2) + "%");
+            confidenceThresholdLbl.setText("Confident confidence: " + Util.roundDouble(confidenceThreshold, 2) + "%");
             if (confidence < validationThreshold) {
                 confidenceLbl.setForeground(Color.red);
             } else if (confidence < confidenceThreshold) {

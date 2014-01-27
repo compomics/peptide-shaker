@@ -2512,13 +2512,13 @@ public class PeptideShaker {
             }
         }
 
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+
         // set the fraction psm matches
         metrics.setFractionPsmMatches(fractionPsmMatches);
 
         // set the ptms
         metrics.setFoundModifications(foundModifications);
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**
