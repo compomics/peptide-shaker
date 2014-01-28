@@ -736,4 +736,55 @@ public abstract class CpsParent extends UserPreferencesParent {
     public void resetIdentificationFeaturesGenerator() {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
     }
+
+    /**
+     * Returns an extended HTML project report.
+     *
+     * @return an extended HTML project report
+     */
+    public String getExtendedProjectReport() {
+
+        String report = null;
+
+        if (projectDetails != null) {
+
+            report = "<html><br>";
+            report += "<b>Experiment</b>: " + experiment.getReference() + "<br>";
+            report += "<b>Sample:</b> " + sample.getReference() + "<br>";
+            report += "<b>Replicate number:</b> " + replicateNumber + "<br><br>";
+
+            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
+
+            report += "<b>Identification Files</b>:<br>";
+            for (File idFile : projectDetails.getIdentificationFiles()) {
+                report += idFile.getAbsolutePath();
+
+                if (projectDetails.getIdentificationFileSearchEngineVersions().containsKey(idFile.getName())
+                        && projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) != null) {
+                    report += " - (" + projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) + ")";
+                }
+
+                report += "<br>";
+            }
+
+            report += "<br><b>Spectrum Files:</b><br>";
+            for (String mgfFileNames : getIdentification().getSpectrumFiles()) {
+                report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
+            }
+
+            report += "<br><b>FASTA File:</b><br>";
+            report += getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
+
+            report += "<br><br><b>Report:</b><br>";
+            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
+                report += "<pre>" + projectDetails.getReport() + "</pre>";
+            } else {
+                report += projectDetails.getReport();
+            }
+
+            report += "</html>";
+        }
+
+        return report;
+    }
 }
