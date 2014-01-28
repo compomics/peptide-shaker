@@ -14,7 +14,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;

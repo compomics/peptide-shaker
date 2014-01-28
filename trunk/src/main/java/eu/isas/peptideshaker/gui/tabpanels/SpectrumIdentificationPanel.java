@@ -26,7 +26,7 @@ import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;

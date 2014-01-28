@@ -21,7 +21,7 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;

@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
-import eu.isas.peptideshaker.export.ExportFactory;
+import eu.isas.peptideshaker.export.PSExportFactory;
 import java.io.File;
 import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
@@ -46,14 +46,14 @@ public class ReportCLIInputBean {
         }
         if (aLine.hasOption(ReportCLIParams.REPORT_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.REPORT_TYPE.id), ",");
-            ExportFactory exportFactory = ExportFactory.getInstance();
+            PSExportFactory exportFactory = PSExportFactory.getInstance();
             for (int option : options) {
                 reportTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }
         }
         if (aLine.hasOption(ReportCLIParams.DOCUMENTATION_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.DOCUMENTATION_TYPE.id), ",");
-            ExportFactory exportFactory = ExportFactory.getInstance();
+            PSExportFactory exportFactory = PSExportFactory.getInstance();
             for (int option : options) {
                 documentationTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }

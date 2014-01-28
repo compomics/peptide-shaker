@@ -15,7 +15,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;

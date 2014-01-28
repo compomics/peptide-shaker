@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;

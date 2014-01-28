@@ -25,7 +25,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
+import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;

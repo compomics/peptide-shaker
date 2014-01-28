@@ -6,8 +6,8 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.export.ExportFactory;
-import eu.isas.peptideshaker.export.ExportScheme;
+import eu.isas.peptideshaker.export.PSExportFactory;
+import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
@@ -238,10 +238,10 @@ public class CLIMethods {
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException {
-        ExportFactory exportFactory = ExportFactory.getInstance();
+        PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
-        File reportFile = new File(reportCLIInputBean.getOutputFolder(), ExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
-        ExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, 
+        File reportFile = new File(reportCLIInputBean.getOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
+        PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, 
                 searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
 
@@ -256,9 +256,9 @@ public class CLIMethods {
      * @throws IOException
      */
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
-        ExportFactory exportFactory = ExportFactory.getInstance();
+        PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
-        File reportFile = new File(reportCLIInputBean.getOutputFolder(), ExportFactory.getDefaultDocumentation(reportType));
-        ExportFactory.writeDocumentation(exportScheme, reportFile);
+        File reportFile = new File(reportCLIInputBean.getOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
+        PSExportFactory.writeDocumentation(exportScheme, reportFile);
     }
 }

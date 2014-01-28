@@ -11,7 +11,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_type;

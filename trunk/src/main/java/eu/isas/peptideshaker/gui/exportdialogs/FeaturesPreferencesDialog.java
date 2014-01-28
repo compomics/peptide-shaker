@@ -1,10 +1,11 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
+import com.compomics.util.gui.export.export.ReportEditor;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import eu.isas.peptideshaker.export.ExportFactory;
-import eu.isas.peptideshaker.export.ExportScheme;
+import eu.isas.peptideshaker.export.PSExportFactory;
+import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -39,7 +40,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     /**
      * The export factory
      */
-    private ExportFactory exportFactory = ExportFactory.getInstance();
+    private PSExportFactory exportFactory = PSExportFactory.getInstance();
     /**
      * List of the available export schemes
      */
@@ -1945,7 +1946,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReportMenuItemActionPerformed
-        new ReportEditor(peptideShakerGUI, (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1), true);
+        String reportName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+        new ReportEditor(peptideShakerGUI, exportFactory, reportName, true);
         int selectedRow = reportsTable.getSelectedRow();
         updateReportsList();
         ((DefaultTableModel) reportsTable.getModel()).fireTableDataChanged();
@@ -1961,7 +1963,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void addReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReportMenuItemActionPerformed
-        new ReportEditor(peptideShakerGUI);
+        new ReportEditor(peptideShakerGUI, exportFactory);
         int selectedRow = reportsTable.getSelectedRow();
         updateReportsList();
         ((DefaultTableModel) reportsTable.getModel()).fireTableDataChanged();
@@ -2170,7 +2172,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
-                        ExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
+                        PSExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
@@ -2231,7 +2233,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     try {
                         String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
-                        ExportFactory.writeDocumentation(exportScheme, selectedFile);
+                        PSExportFactory.writeDocumentation(exportScheme, selectedFile);
                     } catch (Exception e) {
                         error = true;
                         peptideShakerGUI.catchException(e);

@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import java.io.Serializable;
 import java.util.ArrayList;
 

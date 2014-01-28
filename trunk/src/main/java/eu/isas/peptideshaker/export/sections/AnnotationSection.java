@@ -4,7 +4,7 @@ import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
 import java.io.BufferedWriter;
 import java.io.IOException;
