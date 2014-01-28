@@ -5473,7 +5473,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             updateRecentProjectsList();
 
                             // save the peptide shaker report next to the cps file
-                            String report = getExtendedProjectReport();
+                            String report = cpsBean.getExtendedProjectReport();
 
                             if (report != null) {
                                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
@@ -6450,49 +6450,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @return an extended HTML project report
      */
     public String getExtendedProjectReport() {
-
-        ProjectDetails projectDetails = getProjectDetails();
-        String report = null;
-
-        if (projectDetails != null) {
-
-            report = "<html><br>";
-            report += "<b>Experiment</b>: " + getExperiment().getReference() + "<br>";
-            report += "<b>Sample:</b> " + getSample().getReference() + "<br>";
-            report += "<b>Replicate number:</b> " + getReplicateNumber() + "<br><br>";
-
-            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
-
-            report += "<b>Identification Files</b>:<br>";
-            for (File idFile : projectDetails.getIdentificationFiles()) {
-                report += idFile.getAbsolutePath();
-
-                if (projectDetails.getIdentificationFileSearchEngineVersions().containsKey(idFile.getName()) && 
-                        projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) != null) {
-                    report += " - (" + projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) + ")";
-                }
-
-                report += "<br>";
-            }
-
-            report += "<br><b>Spectrum Files:</b><br>";
-            for (String mgfFileNames : getIdentification().getSpectrumFiles()) {
-                report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
-            }
-
-            report += "<br><b>FASTA File:</b><br>";
-            report += getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
-
-            report += "<br><br><b>Report:</b><br>";
-            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
-                report += "<pre>" + projectDetails.getReport() + "</pre>";
-            } else {
-                report += projectDetails.getReport();
-            }
-
-            report += "</html>";
-        }
-
-        return report;
+        return cpsBean.getExtendedProjectReport();
     }
 }

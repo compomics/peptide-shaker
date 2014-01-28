@@ -38,6 +38,8 @@ import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -145,6 +147,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             saveProject(waitingHandler, true);
             waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
+
+            // save the peptide shaker report next to the cps file
+            String report = getExtendedProjectReport();
+
+            if (report != null) {
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+                String fileName = "PeptideShaker Report " + getCpsFile().getName() + " " + df.format(new Date()) + ".html";
+                File psReportFile = new File(getCpsFile().getParentFile(), fileName);
+                FileWriter fw = new FileWriter(psReportFile);
+                fw.write(report);
+                fw.close();
+            }
         } catch (Exception e) {
             waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
             e.printStackTrace();
@@ -573,7 +587,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 //                return false;
 //            }
 //        }
-
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id).trim();
             try {
