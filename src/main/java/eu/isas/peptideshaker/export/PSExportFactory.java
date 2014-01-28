@@ -1,9 +1,12 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.io.export.ExportScheme;
+import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.SerializationUtils;
+import com.compomics.util.io.export.ExportFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -44,11 +47,11 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This factory is used to manage and generate reports.
+ * The PeptideShaker export factory
  *
  * @author Marc Vaudel
  */
-public class ExportFactory implements Serializable {
+public class PSExportFactory implements ExportFactory {
 
     /**
      * Serial number for backward compatibility.
@@ -57,7 +60,7 @@ public class ExportFactory implements Serializable {
     /**
      * The instance of the factory.
      */
-    private static ExportFactory instance = null;
+    private static PSExportFactory instance = null;
     /**
      * User defined factory containing the user schemes.
      */
@@ -74,7 +77,7 @@ public class ExportFactory implements Serializable {
     /**
      * Constructor.
      */
-    private ExportFactory() {
+    private PSExportFactory() {
     }
 
     /**
@@ -82,13 +85,13 @@ public class ExportFactory implements Serializable {
      *
      * @return the instance of the factory
      */
-    public static ExportFactory getInstance() {
+    public static PSExportFactory getInstance() {
         if (instance == null) {
             try {
                 File savedFile = new File(SERIALIZATION_FILE);
-                instance = (ExportFactory) SerializationUtils.readObject(savedFile);
+                instance = (PSExportFactory) SerializationUtils.readObject(savedFile);
             } catch (Exception e) {
-                instance = new ExportFactory();
+                instance = new PSExportFactory();
                 try {
                     instance.saveFactory();
                 } catch (IOException ioe) {
@@ -123,12 +126,7 @@ public class ExportFactory implements Serializable {
         return new ArrayList<String>(userSchemes.keySet());
     }
 
-    /**
-     * Returns the export scheme indexed by the given name.
-     *
-     * @param schemeName the name of the desired export scheme
-     * @return the desired export scheme
-     */
+    @Override
     public ExportScheme getExportScheme(String schemeName) {
         ExportScheme exportScheme = userSchemes.get(schemeName);
         if (exportScheme == null) {
@@ -137,23 +135,57 @@ public class ExportFactory implements Serializable {
         return exportScheme;
     }
 
-    /**
-     * Removes a user scheme.
-     *
-     * @param schemeName the name of the scheme to remove
-     */
+    @Override
     public void removeExportScheme(String schemeName) {
         userSchemes.remove(schemeName);
     }
 
-    /**
-     * Adds an export scheme to the map of user schemes.
-     *
-     * @param exportScheme the new export scheme, will be accessible via its
-     * name
-     */
+    @Override
     public void addExportScheme(ExportScheme exportScheme) {
         userSchemes.put(exportScheme.getName(), exportScheme);
+    }
+
+    @Override
+    public ArrayList<String> getImplementedSections() {
+        ArrayList<String> result = new ArrayList<String>();
+        result.add(AnnotationFeatures.type);
+        result.add(InputFilterFeatures.type);
+        result.add(ProteinFeatures.type);
+        result.add(PeptideFeatures.type);
+        result.add(PsmFeatures.type);
+        result.add(FragmentFeatures.type);
+        result.add(ProjectFeatures.type);
+        result.add(PtmScoringFeatures.type);
+        result.add(SearchFeatures.type);
+        result.add(SpectrumCountingFeatures.type);
+        result.add(ValidationFeatures.type);
+        return result;
+    }
+
+    @Override
+    public ArrayList<ExportFeature> getExportFeatures(String sectionName) {
+        if (sectionName.equals(AnnotationFeatures.type)) {
+            return AnnotationFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(InputFilterFeatures.type)) {
+            return InputFilterFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(PeptideFeatures.type)) {
+            return PeptideFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(ProjectFeatures.type)) {
+            return ProjectFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(ProteinFeatures.type)) {
+            return ProteinFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(PsmFeatures.type)) {
+            return PsmFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(PtmScoringFeatures.type)) {
+            return PtmScoringFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(SearchFeatures.type)) {
+            return SearchFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
+            return SpectrumCountingFeatures.values()[0].getExportFeatures();
+        } else if (sectionName.equals(ValidationFeatures.type)) {
+            return ValidationFeatures.values()[0].getExportFeatures();
+        }
+        return new ArrayList<ExportFeature>();
     }
 
     /**
@@ -217,11 +249,10 @@ public class ExportFactory implements Serializable {
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         // @TODO: implement other formats, put sometimes text instead of tables
-
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
 
         String mainTitle = exportScheme.getMainTitle();
@@ -318,27 +349,6 @@ public class ExportFactory implements Serializable {
         for (int i = 1; i <= nSeparationLines; i++) {
             writer.newLine();
         }
-    }
-
-    /**
-     * Returns the implemented sections.
-     *
-     * @return the implemented sections
-     */
-    public static ArrayList<String> getImplementedSections() {
-        ArrayList<String> result = new ArrayList<String>();
-        result.add(AnnotationFeatures.type);
-        result.add(InputFilterFeatures.type);
-        result.add(ProteinFeatures.type);
-        result.add(PeptideFeatures.type);
-        result.add(PsmFeatures.type);
-        result.add(FragmentFeatures.type);
-        result.add(ProjectFeatures.type);
-        result.add(PtmScoringFeatures.type);
-        result.add(SearchFeatures.type);
-        result.add(SpectrumCountingFeatures.type);
-        result.add(ValidationFeatures.type);
-        return result;
     }
 
     /**
@@ -513,16 +523,14 @@ public class ExportFactory implements Serializable {
         sectionContent.add(PsmFeatures.confidence);
         sectionContent.add(PsmFeatures.decoy);
         sectionContent.add(PsmFeatures.validated);
-        
+
         exportFeatures.put(ProteinFeatures.type, sectionContent);
 
         ExportScheme topDownReport = new ExportScheme("Default Top Down Report", false, exportFeatures, "\t", true, true, 0, false);
 
-
         ///////////////////////////
         // Default protein report
         ///////////////////////////
-        
         exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
         sectionContent = new ArrayList<ExportFeature>();
 
@@ -560,16 +568,14 @@ public class ExportFactory implements Serializable {
         sectionContent.add(ProteinFeatures.confidence);
         sectionContent.add(ProteinFeatures.decoy);
         sectionContent.add(ProteinFeatures.validated);
-        
+
         exportFeatures.put(ProteinFeatures.type, sectionContent);
 
         ExportScheme proteinReport = new ExportScheme("Default Protein Report", false, exportFeatures, "\t", true, true, 0, false);
 
-
         ///////////////////////////
         // Default peptide report
         ///////////////////////////
-        
         exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
         sectionContent = new ArrayList<ExportFeature>();
 
@@ -596,16 +602,14 @@ public class ExportFactory implements Serializable {
         sectionContent.add(PeptideFeatures.confidence);
         sectionContent.add(PeptideFeatures.decoy);
         sectionContent.add(PeptideFeatures.validated);
-        
+
         exportFeatures.put(PeptideFeatures.type, sectionContent);
 
         ExportScheme peptideReport = new ExportScheme("Default Peptide Report", false, exportFeatures, "\t", true, true, 0, false);
 
-
         ///////////////////////////
         // Default PSM report
         ///////////////////////////
-        
         exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
         sectionContent = new ArrayList<ExportFeature>();
 
@@ -639,18 +643,16 @@ public class ExportFactory implements Serializable {
         sectionContent.add(PsmFeatures.confidence);
         sectionContent.add(PsmFeatures.decoy);
         sectionContent.add(PsmFeatures.validated);
-        
+
         exportFeatures.put(PsmFeatures.type, sectionContent);
 
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false);
 
-
         ///////////////////////////
         // Certificate of analysis
         ///////////////////////////
-        
         exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
-                ArrayList<String> sectionsList = new ArrayList<String>();
+        ArrayList<String> sectionsList = new ArrayList<String>();
 
         // project details
         sectionContent = new ArrayList<ExportFeature>();
@@ -686,7 +688,7 @@ public class ExportFactory implements Serializable {
         // annotation settings
         sectionsList.add(AnnotationFeatures.type);
         exportFeatures.put(AnnotationFeatures.type, AnnotationFeatures.values()[0].getExportFeatures());
-        
+
         ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, ": ", true, false, 2, true);
 
         HashMap<String, ExportScheme> defaultSchemes = new HashMap<String, ExportScheme>();

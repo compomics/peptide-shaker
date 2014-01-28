@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import eu.isas.peptideshaker.export.ExportFactory;
+import eu.isas.peptideshaker.export.PSExportFactory;
 import org.apache.commons.cli.Options;
 
 /**
@@ -12,8 +12,8 @@ public enum ReportCLIParams {
 
     CPS_FILE("in", "PeptideShaker project (.cps file)", true),
     EXPORT_FOLDER("out", "Output folder for report files. (Existing files will be overwritten.)", true),
-    REPORT_TYPE("reports", "Comma separated list of types of report to export. " + ExportFactory.getInstance().getCommandLineOptions(), false),
-    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + ExportFactory.getInstance().getCommandLineOptions(), false);
+    REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false),
+    DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false);
     /**
      * Short Id for the CLI parameter.
      */

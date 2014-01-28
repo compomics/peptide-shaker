@@ -4,7 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.SearchFeatures;
 import java.io.BufferedWriter;
 import java.io.IOException;

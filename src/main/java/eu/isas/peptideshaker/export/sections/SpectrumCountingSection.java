@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.export.ExportFeature;
+import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.io.BufferedWriter;
