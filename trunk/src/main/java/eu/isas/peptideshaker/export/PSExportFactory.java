@@ -39,7 +39,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,6 +90,7 @@ public class PSExportFactory implements ExportFactory {
                 File savedFile = new File(SERIALIZATION_FILE);
                 instance = (PSExportFactory) SerializationUtils.readObject(savedFile);
             } catch (Exception e) {
+                e.getMessage(); // print the message to the error log
                 instance = new PSExportFactory();
                 try {
                     instance.saveFactory();
