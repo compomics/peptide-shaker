@@ -221,7 +221,7 @@ public class PeptideShakerCLIInputBean {
                 } else if (aScoreNeutralLossesOption.trim().equals("1")) {
                     ptmScoreNeutralLosses = true;
                 } else {
-                    throw new IllegalArgumentException("Unkown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id + ".");
+                    throw new IllegalArgumentException("Unknown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.SCORE_NEUTRAL_LOSSES.id + ".");
                 }
             }
         }
@@ -261,7 +261,7 @@ public class PeptideShakerCLIInputBean {
             } else if (tempMaxPrecursorErrorType.trim().equals("1")) {
                 maxMassDeviationIsPpm = false;
             } else {
-                throw new IllegalArgumentException("Unkown value \'" + maxMassDeviationIsPpm + "\' for " + PeptideShakerCLIParams.MAX_PRECURSOR_ERROR_TYPE.id + ".");
+                throw new IllegalArgumentException("Unknown value \'" + maxMassDeviationIsPpm + "\' for " + PeptideShakerCLIParams.MAX_PRECURSOR_ERROR_TYPE.id + ".");
             }
         }
 
@@ -272,7 +272,7 @@ public class PeptideShakerCLIInputBean {
             } else if (tempExcludeUnknownPtms.trim().equals("1")) {
                 excludeUnknownPtm = false;
             } else {
-                throw new IllegalArgumentException("Unkown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id + ".");
+                throw new IllegalArgumentException("Unknown value \'" + ptmScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id + ".");
             }
         }
 
@@ -303,7 +303,6 @@ public class PeptideShakerCLIInputBean {
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
-
     }
 
     /**

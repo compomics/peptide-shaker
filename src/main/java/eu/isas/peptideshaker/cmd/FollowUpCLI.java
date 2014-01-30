@@ -2,8 +2,6 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -36,22 +34,6 @@ public class FollowUpCLI extends CpsParent {
      * PeptideShaker processes.
      */
     private WaitingHandler waitingHandler;
-    /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
-    /**
-     * The GO factory.
-     */
-    private GOFactory goFactory = GOFactory.getInstance();
-    /**
-     * The sequence factory
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
-    /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
     /**
      * The compomics PTM factory.
      */
@@ -228,7 +210,6 @@ public class FollowUpCLI extends CpsParent {
 
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().closeFile();
-        GOFactory.getInstance().closeFiles();
         identification.close();
 
         File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
