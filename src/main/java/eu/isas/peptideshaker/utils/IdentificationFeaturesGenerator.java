@@ -871,6 +871,21 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Set the number of confident peptides for a given protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void setNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = estimateNConfidentPeptides(proteinMatchKey);
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
+    }
+
+    /**
      * Indicates whether the number of validated peptides is in cache for a
      * given protein match.
      *
@@ -1087,7 +1102,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the number of confident spectra for a given peptide match.
+     * Sets the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
      *
@@ -1108,6 +1123,21 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+    }
+
+    /**
+     * Sets the number of confident spectra for a given peptide match.
+     *
+     * @param peptideMatchKey the key of the peptide match
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void setNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
     }
 
     /**
@@ -1953,5 +1983,14 @@ public class IdentificationFeaturesGenerator {
      */
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {
         this.identificationFeaturesCache = identificationFeaturesCache;
+    }
+
+    /**
+     * Returns the metrics.
+     *
+     * @return the metrics
+     */
+    public Metrics getMetrics() {
+        return metrics;
     }
 }
