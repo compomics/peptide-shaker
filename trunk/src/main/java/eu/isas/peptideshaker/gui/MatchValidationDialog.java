@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.utils.Metrics;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -51,6 +52,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * The identification.
      */
     private Identification identification;
+    /**
+     * The identification feature generator.
+     */
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
      * The exception handler.
      */
@@ -111,6 +116,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, new PSParameter());
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         type = Type.PROTEIN;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -156,6 +162,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideMatchKey, new PSParameter());
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         type = Type.PEPTIDE;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -207,6 +214,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmMatchKey, new PSParameter());
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         type = Type.PSM;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -785,12 +793,20 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
             psParameter.setMatchValidationLevel(matchValidationLevel);
             try {
+                Metrics metrics = identificationFeaturesGenerator.getMetrics();
                 if (type == Type.PROTEIN) {
                     identification.updateProteinMatchParameter(matchKey, psParameter);
+                    if (matchValidationLevel == MatchValidationLevel.confident) {
+                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
+                    } else if (matchValidationLevel == MatchValidationLevel.doubtful) {
+                        metrics.setnConfidentProteins(metrics.getnConfidentProteins() - 1);
+                    }
                 } else if (type == Type.PEPTIDE) {
                     identification.updatePeptideMatchParameter(matchKey, psParameter);
+                    //identificationFeaturesGenerator.setNConfidentPeptides(matchKey); // @TODO: need the protein key and not the peptide key...
                 } else if (type == Type.PSM) {
                     identification.updateSpectrumMatchParameter(matchKey, psParameter);
+                    //identificationFeaturesGenerator.setNConfidentSpectraForPeptide(matchKey); // @TODO: need the peptide key and not the spectrum key...
                 }
                 validationChanged = true;
             } catch (Exception e) {

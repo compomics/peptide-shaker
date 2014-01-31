@@ -9,6 +9,7 @@ import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
+import com.compomics.software.autoupdater.MavenJarFile;
 import com.compomics.software.dialogs.JavaOptionsDialog;
 import com.compomics.software.dialogs.JavaOptionsDialogParent;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
@@ -79,6 +80,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -404,120 +406,126 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public PeptideShakerGUI(File cpsFile, boolean showWelcomeDialog) {
 
-        // check for new version
-        CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker");
-
         // set up the ErrorLog
         setUpLogFile(true);
 
-        // load the user preferences
-        loadUserPreferences();
-
-        // set this version as the default PeptideShaker version
+        // check for new version
+        boolean newVersion = false;
         if (!getJarFilePath().equalsIgnoreCase(".")) {
-            utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
-            UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
+            newVersion = checkForNewVersion();
         }
 
-        // check for 64 bit java and for at least 4 gb memory 
-        boolean java64bit = CompomicsWrapper.is64BitJava();
-        boolean memoryOk = (utilitiesUserPreferences.getMemoryPreference() >= 4000);
+        if (!newVersion) {
 
-        // add desktop shortcut?
-        if (!getJarFilePath().equalsIgnoreCase(".")
-                && System.getProperty("os.name").lastIndexOf("Windows") != -1
-                && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
+            // load the user preferences
+            loadUserPreferences();
 
-            // @TODO: add support for desktop icons in mac and linux??
-            // delete the firstRun file such that the user is not asked the next time around
-            boolean fileDeleted = new File(getJarFilePath() + "/resources/conf/firstRun").delete();
-
-            if (!fileDeleted) {
-                JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
-                        + "Please delete it manually.", "File Error", JOptionPane.OK_OPTION);
+            // set this version as the default PeptideShaker version
+            if (!getJarFilePath().equalsIgnoreCase(".")) {
+                utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
+                UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
             }
 
-            int value = JOptionPane.showConfirmDialog(this,
-                    "Create a shortcut to PeptideShaker on the desktop?",
-                    "Create Desktop Shortcut?",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
+            // check for 64 bit java and for at least 4 gb memory 
+            boolean java64bit = CompomicsWrapper.is64BitJava();
+            boolean memoryOk = (utilitiesUserPreferences.getMemoryPreference() >= 4000);
 
-            if (value == JOptionPane.YES_OPTION) {
-                addShortcutAtDeskTop();
+            // add desktop shortcut?
+            if (!getJarFilePath().equalsIgnoreCase(".")
+                    && System.getProperty("os.name").lastIndexOf("Windows") != -1
+                    && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
+
+                // @TODO: add support for desktop icons in mac and linux??
+                // delete the firstRun file such that the user is not asked the next time around
+                boolean fileDeleted = new File(getJarFilePath() + "/resources/conf/firstRun").delete();
+
+                if (!fileDeleted) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
+                            + "Please delete it manually.", "File Error", JOptionPane.OK_OPTION);
+                }
+
+                int value = JOptionPane.showConfirmDialog(this,
+                        "Create a shortcut to PeptideShaker on the desktop?",
+                        "Create Desktop Shortcut?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+
+                if (value == JOptionPane.YES_OPTION) {
+                    addShortcutAtDeskTop();
+                }
             }
-        }
 
-        // set the font color for the titlted borders, looks better than the default black
-        UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
+            // set the font color for the titlted borders, looks better than the default black
+            UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
 
-        initComponents();
+            initComponents();
 
-        reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
-        quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
-        jSeparator2.setVisible(false); // @TODO: re-enable later?
-        reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
+            reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
+            quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
+            jSeparator2.setVisible(false); // @TODO: re-enable later?
+            reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
 
-        notesButton.setVisible(false); // @TODO: re-enable later?
-        newsButton.setVisible(false); // @TODO: re-enable later?
-        tipsButton.setVisible(false); // @TODO: re-enable later?
+            notesButton.setVisible(false); // @TODO: re-enable later?
+            newsButton.setVisible(false); // @TODO: re-enable later?
+            tipsButton.setVisible(false); // @TODO: re-enable later?
 
-        // add icons to the tab componets
-        //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
-        overviewPanel = new OverviewPanel(this);
-        overviewJPanel.add(overviewPanel);
-        spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-        proteinFractionsPanel = new ProteinFractionsPanel(this);
-        proteinFractionsJPanel.add(proteinFractionsPanel);
-        ptmPanel = new PtmPanel(this);
-        proteinStructurePanel = new ProteinStructurePanel(this);
-        proteinStructureJPanel.add(proteinStructurePanel);
-        annotationPanel = new AnnotationPanel(this);
-        statsPanel = new StatsPanel(this);
+            // add icons to the tab componets
+            //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
+            overviewPanel = new OverviewPanel(this);
+            overviewJPanel.add(overviewPanel);
+            spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
+            proteinFractionsPanel = new ProteinFractionsPanel(this);
+            proteinFractionsJPanel.add(proteinFractionsPanel);
+            ptmPanel = new PtmPanel(this);
+            proteinStructurePanel = new ProteinStructurePanel(this);
+            proteinStructureJPanel.add(proteinStructurePanel);
+            annotationPanel = new AnnotationPanel(this);
+            statsPanel = new StatsPanel(this);
 
-        jumpToPanel = new JumpToPanel(this);
-        jumpToPanel.setEnabled(false);
+            jumpToPanel = new JumpToPanel(this);
+            jumpToPanel.setEnabled(false);
 
-        menuBar.add(Box.createHorizontalGlue());
+            menuBar.add(Box.createHorizontalGlue());
 
-        menuBar.add(jumpToPanel);
+            menuBar.add(jumpToPanel);
 
-        setUpPanels(true);
-        repaintPanels();
+            setUpPanels(true);
+            repaintPanels();
 
-        // load the list of recently used projects
-        updateRecentProjectsList();
+            // load the list of recently used projects
+            updateRecentProjectsList();
 
-        // set the title
-        updateFrameTitle();
+            // set the title
+            updateFrameTitle();
 
-        // set the title of the frame and add the icon
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            // set the title of the frame and add the icon
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-        this.setExtendedState(MAXIMIZED_BOTH);
+            this.setExtendedState(MAXIMIZED_BOTH);
 
-        loadGeneMappings();
-        loadEnzymes();
-        resetPtmFactory();
+            loadGeneMappings();
+            loadEnzymes();
+            resetPtmFactory();
 
-        File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
-        File modUseFile = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
-        modificationUse = SearchSettingsDialog.loadModificationsUse(modUseFile);
+            File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
+            File modUseFile = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
+            modificationUse = SearchSettingsDialog.loadModificationsUse(modUseFile);
 
-        //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
+            //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
+            IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
+            IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
 
-        setLocationRelativeTo(null);
+            setLocationRelativeTo(null);
 
-        if (cpsFile == null) {
-            if (showWelcomeDialog) {
-                // open the welcome dialog
-                new WelcomeDialog(this, !java64bit || !memoryOk, true);
+            if (cpsFile == null) {
+                if (showWelcomeDialog) {
+                    // open the welcome dialog
+                    new WelcomeDialog(this, !java64bit || !memoryOk, true);
+                }
+            } else {
+                setVisible(true);
+                importPeptideShakerFile(cpsFile);
             }
-        } else {
-            setVisible(true);
-            importPeptideShakerFile(cpsFile);
         }
     }
 
@@ -6451,5 +6459,27 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public String getExtendedProjectReport() {
         return cpsBean.getExtendedProjectReport();
+    }
+
+    /**
+     * Check for new version.
+     *
+     * @return true if a new version is to be downloaded
+     */
+    public boolean checkForNewVersion() {
+        try {
+            File jarFile = new File(PeptideShakerGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
+            URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
+            return CompomicsWrapper.checkForNewDeployedVersion("PeptideShaker", oldMavenJarFile, jarRepository, "peptide-shaker.ico",
+                    false, true, true, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

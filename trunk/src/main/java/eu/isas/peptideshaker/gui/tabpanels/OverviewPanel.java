@@ -62,8 +62,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
-import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
-import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.*;
 import org.jfree.chart.*;
@@ -723,14 +721,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
+            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinTableMouseReleased(evt);
             }
         });
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1082,14 +1080,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptideTableMouseReleased(evt);
+            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 peptideTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                peptideTableMouseReleased(evt);
             }
         });
         peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1261,11 +1259,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         });
         psmTable.setOpaque(false);
         psmTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                psmTableMouseReleased(evt);
+            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 psmTableMouseClicked(evt);
             }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                psmTableMouseReleased(evt);
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                psmTableMouseExited(evt);
             }
         });
         psmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -2040,7 +2041,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key, peptideShakerGUI.getSearchParameters());
                     if (matchValidationDialog.isValidationChanged()) {
-                        // @TODO: update the line
+                        IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+                        int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
+                        String peptideKey = peptideKeys.get(peptideIndex);
+                        int nValidatedPsms = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey);
+                        int nConfidentPsms = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(peptideKey);
+                        int nPsms = psmTable.getRowCount();
+                        String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches (";
+                        if (nConfidentPsms > 0) {
+                            title += nValidatedPsms + "/" + nPsms + " - " + nConfidentPsms + " confident, " + (nValidatedPsms - nConfidentPsms) + " doubtful";
+                        } else {
+                            title += nValidatedPsms + "/" + nPsms;
+                        }
+                        title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+                        ((TitledBorder) psmsPanel.getBorder()).setTitle(title);
+                        psmsPanel.repaint();
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -2144,7 +2159,23 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getProteinMap(), proteinKey, peptideShakerGUI.getSearchParameters());
                         if (matchValidationDialog.isValidationChanged()) {
-                            // @TODO: update the line
+                            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
+                            try {
+                                int nValidated = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
+                                int nConfident = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentProteins();
+                                int nProteins = proteinTable.getRowCount();
+                                if (nConfident > 0) {
+                                    title += nValidated + "/" + nProteins + " - " + nConfident + " confident, " + (nValidated - nConfident) + " doubtful";
+                                } else {
+                                    title += nValidated + "/" + nProteins;
+                                }
+                            } catch (Exception eNValidated) {
+                                peptideShakerGUI.catchException(eNValidated);
+                            }
+                            title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+
+                            ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle(title);
+                            proteinsLayeredPanel.repaint();
                         }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2218,7 +2249,26 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPeptideSpecificMap(), peptideKey, peptideShakerGUI.getSearchParameters());
                     if (matchValidationDialog.isValidationChanged()) {
-                        // @TODO: update the line
+                        String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (";
+                        try {
+                            IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+                            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
+                            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                            int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                            int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
+                            int nPeptides = proteinMatch.getPeptideCount();
+                            if (nConfidentPeptides > 0) {
+                                title += nValidatedPeptides + "/" + nPeptides + " - " + nConfidentPeptides + " confident, " + (nValidatedPeptides - nConfidentPeptides) + " doubtful";
+                            } else {
+                                title += nValidatedPeptides + "/" + nPeptides;
+                            }
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                        title += ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+
+                        ((TitledBorder) peptidesPanel.getBorder()).setTitle(title);
+                        peptidesPanel.repaint();
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3482,6 +3532,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             popupMenu.show(psmTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_psmTableMouseClicked
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void psmTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_psmTableMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
