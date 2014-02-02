@@ -8,6 +8,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
@@ -165,11 +166,12 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
                             double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                            ArrayList<Double> values = new ArrayList<Double>();
-                            values.add(nConfidentPeptides);
-                            values.add(nDoubtfulPeptides);
-                            values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                            return values;
+                            ArrayList<Double> doubleValues = new ArrayList<Double>();
+                            doubleValues.add(nConfidentPeptides);
+                            doubleValues.add(nDoubtfulPeptides);
+                            doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                            return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             return Double.NaN;
@@ -180,11 +182,12 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                             int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
 
-                            ArrayList<Double> values = new ArrayList<Double>();
-                            values.add(nConfidentSpectra);
-                            values.add(nDoubtfulSpectra);
-                            values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                            return values;
+                            ArrayList<Double> doubleValues = new ArrayList<Double>();
+                            doubleValues.add(nConfidentSpectra);
+                            doubleValues.add(nDoubtfulSpectra);
+                            doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                            return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             return Double.NaN;

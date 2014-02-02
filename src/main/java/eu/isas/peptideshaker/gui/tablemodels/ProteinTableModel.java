@@ -26,12 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.Chromosome;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
@@ -304,11 +302,12 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
                         double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                        ArrayList<Double> values = new ArrayList<Double>();
-                        values.add(nConfidentPeptides);
-                        values.add(nDoubtfulPeptides);
-                        values.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                        return values;
+                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        doubleValues.add(nConfidentPeptides);
+                        doubleValues.add(nDoubtfulPeptides);
+                        doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
+                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        return arrrayListDataPoints;
                     case 8:
                         proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB
@@ -322,11 +321,12 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         double nDoubtfulSpectra = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                         int nSpectra = identificationFeaturesGenerator.getNSpectra(proteinKey);
 
-                        values = new ArrayList<Double>();
-                        values.add(nConfidentSpectra);
-                        values.add(nDoubtfulSpectra);
-                        values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                        return values;
+                        doubleValues = new ArrayList<Double>();
+                        doubleValues.add(nConfidentSpectra);
+                        doubleValues.add(nDoubtfulSpectra);
+                        doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        return arrrayListDataPoints;
                     case 9:
                         proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                         if (!useDB && !identificationFeaturesGenerator.spectrumCountingInCache(proteinKey)
