@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.Collections;
+import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.StartIndexes;
 
 /**
@@ -206,11 +207,12 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
 
-                    ArrayList<Double> values = new ArrayList<Double>();
-                    values.add(nConfidentSpectra);
-                    values.add(nDoubtfulSpectra);
-                    values.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                    return values;
+                    ArrayList<Double> doubleValues = new ArrayList<Double>();
+                    doubleValues.add(nConfidentSpectra);
+                    doubleValues.add(nDoubtfulSpectra);
+                    doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                    ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                    return arrrayListDataPoints;
                 case 6:
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
