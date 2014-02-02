@@ -481,6 +481,16 @@
                 <Property name="text" type="java.lang.String" value="Open Recent Project"/>
               </Properties>
             </Menu>
+            <MenuItem class="javax.swing.JMenuItem" name="openExampleMenuItem">
+              <Properties>
+                <Property name="mnemonic" type="int" value="69"/>
+                <Property name="text" type="java.lang.String" value="Open Example"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open a PeptideShaker example project"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openExampleMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">

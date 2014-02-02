@@ -718,6 +718,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
+        openExampleMenuItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         reshakeMenuItem = new javax.swing.JMenuItem();
         quantifyMenuItem = new javax.swing.JMenuItem();
@@ -1302,6 +1303,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         openRecentJMenu.setMnemonic('R');
         openRecentJMenu.setText("Open Recent Project");
         fileJMenu.add(openRecentJMenu);
+
+        openExampleMenuItem.setMnemonic('E');
+        openExampleMenuItem.setText("Open Example");
+        openExampleMenuItem.setToolTipText("Open a PeptideShaker example project");
+        openExampleMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openExampleMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(openExampleMenuItem);
         fileJMenu.add(jSeparator8);
 
         reshakeMenuItem.setMnemonic('E');
@@ -2949,6 +2960,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }//GEN-LAST:event_exportMzIdentMLMenuItemActionPerformed
 
     /**
+     * Open the PeptideShaker example dataset.
+     * 
+     * @param evt 
+     */
+    private void openExampleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openExampleMenuItemActionPerformed
+        openExampleFile();
+    }//GEN-LAST:event_openExampleMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -3140,6 +3160,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JButton newsButton;
     private javax.swing.JButton notesButton;
+    private javax.swing.JMenuItem openExampleMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu openRecentJMenu;
     private javax.swing.JMenu otherMenu;
