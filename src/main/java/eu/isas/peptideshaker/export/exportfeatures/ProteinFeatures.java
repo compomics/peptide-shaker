@@ -38,7 +38,7 @@ public enum ProteinFeatures implements ExportFeature {
     score(new String[]{"Score"}, "Score of the protein group."),
     confidence(new String[]{"Confidence"}, "Confidence in percent associated to the protein group."),
     decoy(new String[]{"Decoy"}, "Indicates whether the protein group is a decoy (1: yes, 0: no)."),
-    validated(new String[]{"Validation"}, "Indicates whether the validation level of the protein group."),
+    validated(new String[]{"Validation"}, "Indicates the validation level of the protein group."),
     starred(new String[]{"Starred"}, "Indicates whether the match was starred in the interface (1: yes, 0: no)."),
     hidden(new String[]{"Hidden"}, "Indicates whether the match was hidden in the interface (1: yes, 0: no).");
     /**

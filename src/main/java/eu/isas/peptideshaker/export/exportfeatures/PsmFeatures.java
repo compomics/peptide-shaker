@@ -34,7 +34,7 @@ public enum PsmFeatures implements ExportFeature {
     score("Score", "Score of the retained peptide as a combination of the algorithm scores (used to rank PSMs)."),
     confidence("Confidence", "Confidence in percent associated to the peptide."),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no)."),
-    validated("Validation", "Indicates whether the validation level of the protein group."),
+    validated("Validation", "Indicates the validation level of the protein group."),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no)."),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).");
     /**
