@@ -83,7 +83,16 @@ public class SearchParametersSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            writer.write(exportFeature.getTitle(separator) + separator);
+            boolean firstTitle = true;
+            for (String title : exportFeature.getTitles()) {
+                if (firstTitle) {
+                    firstTitle = false;
+                } else {
+                    writer.write(", ");
+                }
+                writer.write(title);
+            }
+            writer.write(separator);
             SearchFeatures searchFeatures = (SearchFeatures) exportFeature;
             switch (searchFeatures) {
                 case database:

@@ -100,15 +100,8 @@ public enum ProteinFeatures implements ExportFeature {
     }
 
     @Override
-    public String getTitle(String separator) {
-        StringBuilder result = new StringBuilder();
-        for (String subTitle : title) {
-            if (result.length() > 0) {
-                result.append(separator);
-            }
-            result.append(subTitle);
-        }
-        return result.toString();
+    public String[] getTitles() {
+        return title;
     }
 
     @Override

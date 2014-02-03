@@ -84,7 +84,9 @@ public class AnnotationSection {
                 writer.write(line + separator);
             }
 
-            writer.write(exportFeature.getTitle(separator) + separator);
+            for (String title : exportFeature.getTitles()) {
+                writer.write(title + separator);
+            }
             AnnotationFeatures annotationFeature = (AnnotationFeatures) exportFeature;
 
             switch (annotationFeature) {

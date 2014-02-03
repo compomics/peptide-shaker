@@ -82,7 +82,9 @@ public class SpectrumCountingSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            writer.write(exportFeature.getTitle(separator) + separator);
+            for (String title : exportFeature.getTitles()) {
+                writer.write(title + separator);
+            }
             SpectrumCountingFeatures spectrumCountingFeatures = (SpectrumCountingFeatures) exportFeature;
             switch (spectrumCountingFeatures) {
                 case method:
