@@ -1253,7 +1253,7 @@ public class IdentificationFeaturesGenerator {
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
 
         for (int aa = 0; aa < sequence.length(); aa++) {
-            if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+            if (psPtmScores != null && !psPtmScores.getMainModificationsAt(aa).isEmpty()) {
                 int index = aa + 1;
                 for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
                     if (!locations.containsKey(ptm)) {
@@ -1334,10 +1334,6 @@ public class IdentificationFeaturesGenerator {
 
         String resultsAsString = result.toString();
 
-        if (resultsAsString.equalsIgnoreCase("|")) {
-            resultsAsString = "";
-        }
-
         return resultsAsString;
     }
 
@@ -1387,7 +1383,7 @@ public class IdentificationFeaturesGenerator {
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
 
         for (int aa = 0; aa < sequence.length(); aa++) {
-            if (!psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
+            if (psPtmScores != null && !psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
                 int index = aa + 1;
                 for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
                     if (!locations.containsKey(ptm)) {

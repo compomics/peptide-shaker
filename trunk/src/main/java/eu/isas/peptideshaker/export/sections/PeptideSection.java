@@ -16,7 +16,9 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -36,10 +38,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PeptideSection {
 
-    /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The peptide features to export.
      */
@@ -79,8 +77,10 @@ public class PeptideSection {
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PeptideFeatures) {
                 peptideFeatures.add(exportFeature);
-            } else {
+            } else if (exportFeature instanceof PsmFeatures || exportFeature instanceof FragmentFeatures) {
                 psmFeatures.add(exportFeature);
+            } else {
+                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
             }
         }
         if (!psmFeatures.isEmpty()) {
@@ -131,7 +131,6 @@ public class PeptideSection {
 
         PSParameter psParameter = new PSParameter();
         PeptideMatch peptideMatch;
-        String parameterKey = "";
         int line = 1;
 
         if (waitingHandler != null) {
@@ -161,6 +160,7 @@ public class PeptideSection {
             }
 
             peptideMatch = identification.getPeptideMatch(peptideKey);
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (indexes) {
                 if (linePrefix != null) {
@@ -171,192 +171,7 @@ public class PeptideSection {
 
             for (ExportFeature exportFeature : peptideFeatures) {
                 PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
-                switch (peptideFeature) {
-                    case accessions:
-                        String proteins = "";
-                        ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        Collections.sort(accessions);
-                        for (String accession : accessions) {
-                            if (!proteins.equals("")) {
-                                proteins += ", ";
-                            }
-                            proteins += accession;
-                        }
-                        writer.write(proteins + separator);
-                        break;
-                    case confidence:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                        writer.write(psParameter.getPeptideConfidence() + separator);
-                        break;
-                    case decoy:
-                        if (peptideMatch.getTheoreticPeptide().isDecoy()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case hidden:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                        if (psParameter.isHidden()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case localization_confidence:
-                        writer.write(getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, searchParameters.getModificationProfile()) + separator);
-                        break;
-                    case pi:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                        writer.write(psParameter.getProteinInferenceClassAsString() + separator);
-                        break;
-                    case position:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        Collections.sort(accessions);
-                        Peptide peptide = peptideMatch.getTheoreticPeptide();
-                        String start = "";
-                        for (String proteinAccession : accessions) {
-                            Protein protein = sequenceFactory.getProtein(proteinAccession);
-                            ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
-                                    PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                            Collections.sort(starts);
-                            boolean first = true;
-                            for (int startAa : starts) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    start += ", ";
-                                }
-                                start += startAa;
-                            }
-
-                            start += "; ";
-                        }
-                        writer.write(start + separator);
-                        break;
-                    case psms:
-                        writer.write(peptideMatch.getSpectrumCount() + separator);
-                        break;
-                    case variable_ptms:
-                        writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true) + separator);
-                        break;
-                    case fixed_ptms:
-                        writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false) + separator);
-                        break;
-                    case score:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                        writer.write(psParameter.getPsmScore() + separator);
-                        break;
-                    case sequence:
-                        writer.write(Peptide.getSequence(peptideKey) + separator);
-                        break;
-                    case missed_cleavages:
-                        String sequence = Peptide.getSequence(peptideKey);
-                        writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
-                        break;
-                    case modified_sequence:
-                        writer.write(peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
-                        break;
-                    case starred:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                        if (psParameter.isStarred()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case aaBefore:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        Collections.sort(accessions);
-                        peptide = peptideMatch.getTheoreticPeptide();
-                        String subSequence = "";
-                        for (String proteinAccession : accessions) {
-                            if (!subSequence.equals("")) {
-                                subSequence += ";";
-                            }
-                            HashMap<Integer, String[]> surroundingAAs = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                    nSurroundingAA, PeptideShaker.MATCHING_TYPE,
-                                    searchParameters.getFragmentIonAccuracy());
-                            ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
-                            Collections.sort(starts);
-                            boolean first = true;
-                            for (int startAa : starts) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    subSequence += "|";
-                                }
-                                subSequence += surroundingAAs.get(startAa)[0];
-                            }
-                        }
-                        writer.write(subSequence + separator);
-                        break;
-                    case aaAfter:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        Collections.sort(accessions);
-                        peptide = peptideMatch.getTheoreticPeptide();
-                        subSequence = "";
-                        for (String proteinAccession : accessions) {
-                            if (!subSequence.equals("")) {
-                                subSequence += ";";
-                            }
-                            HashMap<Integer, String[]> surroundingAAs
-                                    = sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                            nSurroundingAA, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                            ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
-                            Collections.sort(starts);
-                            boolean first = true;
-                            for (int startAa : starts) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    subSequence += "|";
-                                }
-                                subSequence += surroundingAAs.get(startAa)[1];
-                            }
-                        }
-                        writer.write(subSequence + separator);
-                        break;
-                    case unique:
-                        peptide = peptideMatch.getTheoreticPeptide();
-                        if (identification.isUnique(peptide)) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case validated:
-                        if (!parameterKey.equals(peptideKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            parameterKey = peptideKey;
-                        }
-                            writer.write(psParameter.getMatchValidationLevel().toString());
-                            if (!psParameter.getReasonDoubtful().equals("") ) {
-                                writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                            }
-                            writer.write(separator);
-                        break;
-                    case validated_psms:
-                        writer.write(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) + separator);
-                        break;
-                    default:
-                        writer.write("Not implemented" + separator);
-                }
+                writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, waitingHandler));
             }
             writer.newLine();
             if (psmSection != null) {
@@ -369,6 +184,177 @@ public class PeptideSection {
             }
             line++;
         }
+    }
+
+    /**
+     * Returns the component of the section corresponding to the given feature.
+     *
+     * @param identification the identification of the project
+     * @param identificationFeaturesGenerator the identification features
+     * generator of the project
+     * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
+     * @param keys the keys of the protein matches to output
+     * @param nSurroundingAA the number of surrounding amino acids to export
+     * @param linePrefix the line prefix to use.
+     * @param separator the column separator
+     * @param peptideMatch the peptide match
+     * @param psParameter the PeptideShaker parameters of the match
+     * @param peptideFeature the peptide feature to export
+     * @param waitingHandler the waiting handler
+     * 
+     * @return the component of the section corresponding to the given feature
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file.
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeatures peptideFeature, WaitingHandler waitingHandler)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        switch (peptideFeature) {
+            case accessions:
+                String proteins = "";
+                ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                for (String accession : accessions) {
+                    if (!proteins.equals("")) {
+                        proteins += ", ";
+                    }
+                    proteins += accession;
+                }
+                return proteins;
+            case confidence:
+                return psParameter.getPeptideConfidence() + "";
+            case decoy:
+                if (peptideMatch.getTheoreticPeptide().isDecoy()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case hidden:
+                if (psParameter.isHidden()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case localization_confidence:
+                return getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, searchParameters.getModificationProfile()) + "";
+            case pi:
+                return psParameter.getProteinInferenceClassAsString();
+            case position:
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                Peptide peptide = peptideMatch.getTheoreticPeptide();
+                String start = "";
+                for (String proteinAccession : accessions) {
+                    Protein protein = SequenceFactory.getInstance().getProtein(proteinAccession);
+                    ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
+                            PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            start += ", ";
+                        }
+                        start += startAa;
+                    }
+
+                    start += "; ";
+                }
+                return start;
+            case psms:
+                return peptideMatch.getSpectrumCount() + "";
+            case variable_ptms:
+                return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true);
+            case fixed_ptms:
+                return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
+            case score:
+                return psParameter.getPsmScore() + "";
+            case sequence:
+                return peptideMatch.getTheoreticPeptide().getSequence();
+            case missed_cleavages:
+                String sequence = peptideMatch.getTheoreticPeptide().getSequence();
+                return Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + "";
+            case modified_sequence:
+                return peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true);
+            case starred:
+                if (psParameter.isStarred()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case aaBefore:
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                peptide = peptideMatch.getTheoreticPeptide();
+                String subSequence = "";
+                for (String proteinAccession : accessions) {
+                    if (!subSequence.equals("")) {
+                        subSequence += ";";
+                    }
+                    HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                            nSurroundingAA, PeptideShaker.MATCHING_TYPE,
+                            searchParameters.getFragmentIonAccuracy());
+                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            subSequence += "|";
+                        }
+                        subSequence += surroundingAAs.get(startAa)[0];
+                    }
+                }
+                return subSequence;
+            case aaAfter:
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                peptide = peptideMatch.getTheoreticPeptide();
+                subSequence = "";
+                for (String proteinAccession : accessions) {
+                    if (!subSequence.equals("")) {
+                        subSequence += ";";
+                    }
+                    HashMap<Integer, String[]> surroundingAAs
+                            = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                                    nSurroundingAA, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                    Collections.sort(starts);
+                    boolean first = true;
+                    for (int startAa : starts) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            subSequence += "|";
+                        }
+                        subSequence += surroundingAAs.get(startAa)[1];
+                    }
+                }
+                return subSequence;
+            case unique:
+                peptide = peptideMatch.getTheoreticPeptide();
+                if (identification.isUnique(peptide)) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case validated:
+                return psParameter.getMatchValidationLevel().toString();
+            case validated_psms:
+                return identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()) + "";
+            default:
+                return "Not implemented";
+        }
+
     }
 
     /**
@@ -463,18 +449,18 @@ public class PeptideSection {
                     } else {
                         result.append(", ");
                     }
-                int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
-                if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                    result.append(site).append(": Not Scored"); // Well this should not happen
-                } else if (ptmConfidence == PtmScoring.RANDOM) {
-                    result.append(site).append(": Random");
-                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                    result.append(site).append(": Doubtfull");
-                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                    result.append(site).append(": Confident");
-                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                    result.append(site).append(": Very Confident");
-                }
+                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                        result.append(site).append(": Not Scored"); // Well this should not happen
+                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                        result.append(site).append(": Random");
+                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                        result.append(site).append(": Doubtfull");
+                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                        result.append(site).append(": Confident");
+                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                        result.append(site).append(": Very Confident");
+                    }
                 }
             } else {
                 result.append("Not Scored");
@@ -501,7 +487,7 @@ public class PeptideSection {
             } else {
                 writer.write(separator);
             }
-            writer.write(exportFeature.getTitle());
+            writer.write(exportFeature.getTitle(separator));
         }
         writer.newLine();
     }

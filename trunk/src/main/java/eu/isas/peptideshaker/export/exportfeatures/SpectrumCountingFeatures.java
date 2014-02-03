@@ -45,7 +45,7 @@ public enum SpectrumCountingFeatures implements ExportFeature {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(String separator) {
         return title;
     }
 

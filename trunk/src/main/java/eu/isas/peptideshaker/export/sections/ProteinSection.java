@@ -11,6 +11,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
@@ -34,10 +35,6 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class ProteinSection {
 
-    /**
-     * The sequence factory.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The protein features to export.
      */
@@ -79,8 +76,10 @@ public class ProteinSection {
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof ProteinFeatures) {
                 proteinFeatures.add(exportFeature);
-            } else if (exportFeature instanceof PeptideFeatures || exportFeature instanceof PsmFeatures) {
+            } else if (exportFeature instanceof PeptideFeatures || exportFeature instanceof PsmFeatures || exportFeature instanceof FragmentFeatures) {
                 peptideFeatures.add(exportFeature);
+            } else {
+                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
             }
         }
         if (!peptideFeatures.isEmpty()) {
@@ -114,7 +113,7 @@ public class ProteinSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler) 
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -128,11 +127,9 @@ public class ProteinSection {
         if (keys == null) {
             keys = identification.getProteinIdentification();
         }
-
+        int line = 1;
         PSParameter psParameter = new PSParameter();
         ProteinMatch proteinMatch = null;
-        String matchKey = "", parameterKey = "";
-        int line = 1;
 
         if (peptideSection != null) {
             if (waitingHandler != null) {
@@ -174,289 +171,240 @@ public class ProteinSection {
             }
 
             if (indexes) {
-                writer.write(line + separator); // @TODO: there is something off with the indexes in the Default PSM Report
+                writer.write(line + separator);
             }
+
+            proteinMatch = identification.getProteinMatch(proteinKey);
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
             for (ExportFeature exportFeature : proteinFeatures) {
                 ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
-                switch (tempProteinFeatures) {
-                    case accession:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        writer.write(proteinMatch.getMainMatch() + separator);
-                        break;
-                    case protein_description:
-                        writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + separator);
-                        break;
-                    case ensembl_gene_id:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
-                            GeneFactory geneFactory = GeneFactory.getInstance();
-                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                            if (geneName != null) {
-                                String ensemblId = geneFactory.getGeneEnsemblId(geneName);
-                                if (ensemblId != null) {
-                                    writer.write(ensemblId);
-                                }
-                            }
-                        }
-                        writer.write(separator);
-                        break;
-                    case gene_name:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
-                            GeneFactory geneFactory = GeneFactory.getInstance();
-                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                            if (geneName != null) {
-                                writer.write(geneName);
-                            }
-                        }
-                        writer.write(separator);
-                        break;
-                    case chromosome:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
-                            GeneFactory geneFactory = GeneFactory.getInstance();
-                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                            if (geneName != null) {
-                                String chromosome = geneFactory.getChromosomeForGeneName(geneName);
-                                if (chromosome != null) {
-                                    writer.write(chromosome);
-                                }
-                            }
-                        }
-                        writer.write(separator);
-                        break;
-                    case go_accession:
-                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
-                            ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
-                            if (goTermaccessions != null) {
-                                boolean first = true;
-                                for (String accession : goTermaccessions) {
-                                    if (first) {
-                                        first = false;
-                                    } else {
-                                        writer.write(", ");
-                                    }
-                                    writer.write(accession);
-                                }
-                            }
-                        }
-                        writer.write(separator);
-                        break;
-                    case go_description:
-                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
-                            ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
-                            if (goTermDescriptions != null) {
-                                boolean first = true;
-                                for (String description : goTermDescriptions) {
-                                    if (first) {
-                                        first = false;
-                                    } else {
-                                        writer.write(", ");
-                                    }
-                                    writer.write(description);
-                                }
-                            }
-                        }
-                        writer.write(separator);
-                        break;
-                    case other_proteins:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        String mainAccession = proteinMatch.getMainMatch();
-                        StringBuilder otherProteins = new StringBuilder();
-                        List<String> otherAccessions = Arrays.asList(ProteinMatch.getAccessions(matchKey));
-                        Collections.sort(otherAccessions);
-                        for (String accession : otherAccessions) {
-                            if (!accession.equals(mainAccession)) {
-                                if (otherProteins.length() > 0) {
-                                    otherProteins.append(", ");
-                                }
-                                otherProteins.append(accession);
-                            }
-                        }
-
-                        writer.write(otherProteins.toString() + separator);
-                        break;
-                    case protein_group:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        StringBuilder completeProteinGroup = new StringBuilder();
-                        List<String> allAccessions = Arrays.asList(ProteinMatch.getAccessions(matchKey));
-                        Collections.sort(allAccessions);
-                        for (String accession : allAccessions) {
-                            if (completeProteinGroup.length() > 0) {
-                                completeProteinGroup.append(", ");
-                            }
-                            completeProteinGroup.append(accession);
-                        }
-
-                        writer.write(completeProteinGroup.toString() + separator);
-                        break;
-                    case confidence:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                        writer.write(psParameter.getProteinConfidence() + separator);
-                        break;
-                    case confident_PTMs:
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator));
-                        break;
-                    case other_PTMs:
-                        writer.write(identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator));
-                        break;
-                    case confident_phosphosites:
-                        ArrayList<String> modifications = new ArrayList<String>();
-                        for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
-                            if (ptm.contains("phospho")) {
-                                modifications.add(ptm);
-                            }
-                        }
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator) + separator);
-                        break;
-                    case other_phosphosites:
-                        modifications = new ArrayList<String>();
-                        for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
-                            if (ptm.contains("phospho")) {
-                                modifications.add(ptm);
-                            }
-                        }
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator) + separator);
-                        break;
-                    case coverage:
-                        Double result = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        writer.write(Util.roundDouble(result, 2) + separator);
-                        break;
-                    case possible_coverage:
-                        result = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                        writer.write(Util.roundDouble(result, 2) + separator);
-                        break;
-                    case decoy:
-                        if (ProteinMatch.isDecoy(proteinKey)) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case hidden:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                        if (psParameter.isHidden()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case mw:
-                        Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
-                        writer.write(proteinMW + separator);
-                        break;
-                    case non_enzymatic:
-                        ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, searchParameters.getEnzyme());
-                        writer.write(nonEnzymatic.size() + separator);
-                        break;
-                    case pi:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                        writer.write(psParameter.getProteinInferenceClassAsString() + separator);
-                        break;
-                    case peptides:
-                        if (!matchKey.equals(proteinKey)) {
-                            proteinMatch = identification.getProteinMatch(proteinKey);
-                            matchKey = proteinKey;
-                        }
-                        writer.write(proteinMatch.getPeptideCount() + separator);
-                        break;
-                    case psms:
-                        int nHits = identificationFeaturesGenerator.getNSpectra(proteinKey);
-                        writer.write(nHits + separator);
-                        break;
-                    case validated_peptides:
-                        nHits = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
-                        writer.write(nHits + separator);
-                        break;
-                    case unique_peptides:
-                        nHits = identificationFeaturesGenerator.getNUniquePeptides(proteinKey);
-                        writer.write(nHits + separator);
-                        break;
-                    case validated_psms:
-                        nHits = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
-                        writer.write(nHits + separator);
-                        break;
-                    case score:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                        writer.write(psParameter.getProteinProbabilityScore() + separator);
-                        break;
-                    case spectrum_counting_nsaf:
-                        try {
-                            writer.write(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                                    SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + separator);
-                        } catch (Exception e) {
-                            writer.write("error: " + e.getLocalizedMessage() + separator);
-                        }
-                        break;
-                    case spectrum_counting_empai:
-                        try {
-                            writer.write(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
-                                    SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + separator);
-                        } catch (Exception e) {
-                            writer.write("error: " + e.getLocalizedMessage() + separator);
-                        }
-                        break;
-                    case starred:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                        if (psParameter.isStarred()) {
-                            writer.write(1 + separator);
-                        } else {
-                            writer.write(0 + separator);
-                        }
-                        break;
-                    case validated:
-                        if (!parameterKey.equals(proteinKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                            parameterKey = proteinKey;
-                        }
-                            writer.write(psParameter.getMatchValidationLevel().toString());
-                            if (!psParameter.getReasonDoubtful().equals("") ) {
-                                writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                            }
-                            writer.write(separator);
-                        break;
-                    default:
-                        writer.write("Not implemented");
-                }
+                writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler) + separator);
             }
             writer.newLine();
             if (peptideSection != null) {
                 peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", null);
             }
             line++;
+        }
+    }
+
+    /**
+     * Returns the part of the desired section.
+     *
+     * @param identificationFeaturesGenerator the identification features
+     * generator of the project
+     * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
+     * @param keys the keys of the protein matches to output. if null all
+     * proteins will be exported.
+     * @param separator the column separator
+     * @param nSurroundingAas in case a peptide export is included with
+     * surrounding amino-acids, the number of surrounding amino acids to use
+     * @param proteinKey the key of the protein match being written
+     * @param proteinMatch the protein match, can be null if not needed
+     * @param psParameter the protein match parameter containing the
+     * PeptideShaker parameters, can be null if not needed
+     * @param tempProteinFeatures the protein feature to write
+     * @param waitingHandler the waiting handler
+     * 
+     * @return the string to write
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file.
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, ProteinFeatures tempProteinFeatures, WaitingHandler waitingHandler)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        switch (tempProteinFeatures) {
+            case accession:
+                return proteinMatch.getMainMatch();
+            case protein_description:
+                return SequenceFactory.getInstance().getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+            case ensembl_gene_id:
+                if (!proteinMatch.isDecoy()) {
+                    GeneFactory geneFactory = GeneFactory.getInstance();
+                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    if (geneName != null) {
+                        String ensemblId = geneFactory.getGeneEnsemblId(geneName);
+                        if (ensemblId != null) {
+                            return ensemblId;
+                        }
+                    }
+                }
+                return "";
+            case gene_name:
+                if (!proteinMatch.isDecoy()) {
+                    GeneFactory geneFactory = GeneFactory.getInstance();
+                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    if (geneName != null) {
+                        return geneName;
+                    }
+                }
+                return "";
+            case chromosome:
+                if (!proteinMatch.isDecoy()) {
+                    GeneFactory geneFactory = GeneFactory.getInstance();
+                    String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                    if (geneName != null) {
+                        String chromosome = geneFactory.getChromosomeForGeneName(geneName);
+                        if (chromosome != null) {
+                            return chromosome;
+                        }
+                    }
+                }
+                return "";
+            case go_accession:
+                StringBuilder result = new StringBuilder();
+                if (!proteinMatch.isDecoy()) {
+                    ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
+                    if (goTermaccessions != null) {
+                        for (String accession : goTermaccessions) {
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(accession);
+                        }
+                    }
+                }
+                return result.toString();
+            case go_description:
+                result = new StringBuilder();
+                if (!proteinMatch.isDecoy()) {
+                    ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
+                    if (goTermDescriptions != null) {
+                        boolean first = true;
+                        for (String description : goTermDescriptions) {
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(description);
+                        }
+                    }
+                }
+                return result.toString();
+            case other_proteins:
+                String mainAccession = proteinMatch.getMainMatch();
+                result = new StringBuilder();
+                List<String> otherAccessions = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
+                Collections.sort(otherAccessions);
+                for (String accession : otherAccessions) {
+                    if (!accession.equals(mainAccession)) {
+                        if (result.length() > 0) {
+                            result.append(", ");
+                        }
+                        result.append(accession);
+                    }
+                }
+                return result.toString();
+            case protein_group:
+                StringBuilder completeProteinGroup = new StringBuilder();
+                List<String> allAccessions = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
+                Collections.sort(allAccessions);
+                for (String accession : allAccessions) {
+                    if (completeProteinGroup.length() > 0) {
+                        completeProteinGroup.append(", ");
+                    }
+                    completeProteinGroup.append(accession);
+                }
+
+                return completeProteinGroup.toString();
+            case confidence:
+                return psParameter.getProteinConfidence() + "";
+            case confident_PTMs:
+                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator);
+            case other_PTMs:
+                return identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator);
+            case confident_phosphosites:
+                ArrayList<String> modifications = new ArrayList<String>();
+                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
+            case other_phosphosites:
+                modifications = new ArrayList<String>();
+                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
+            case coverage:
+                Double value = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                return Util.roundDouble(value, 2) + "";
+            case possible_coverage:
+                value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                return Util.roundDouble(value, 2) + "";
+            case decoy:
+                if (ProteinMatch.isDecoy(proteinKey)) {
+                    return 1 + "";
+                } else {
+                    return 0 + "";
+                }
+            case hidden:
+                if (psParameter.isHidden()) {
+                    return 1 + "";
+                } else {
+                    return 0 + "";
+                }
+            case mw:
+                Double proteinMW = SequenceFactory.getInstance().computeMolecularWeight(proteinMatch.getMainMatch());
+                return proteinMW.toString();
+            case non_enzymatic:
+                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, searchParameters.getEnzyme());
+                return nonEnzymatic.size() + "";
+            case pi:
+                return psParameter.getProteinInferenceClassAsString();
+            case peptides:
+                return proteinMatch.getPeptideCount() + "";
+            case psms:
+                int nHits = identificationFeaturesGenerator.getNSpectra(proteinKey);
+                return nHits + "";
+            case validated_peptides:
+                nHits = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
+                return nHits + "";
+            case unique_peptides:
+                nHits = identificationFeaturesGenerator.getNUniquePeptides(proteinKey);
+                return nHits + "";
+            case validated_psms:
+                nHits = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
+                return nHits + "";
+            case score:
+                return psParameter.getProteinProbabilityScore() + "";
+            case spectrum_counting_nsaf:
+                try {
+                    return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                            SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + "";
+                } catch (Exception e) {
+                    return "error: " + e.getLocalizedMessage();
+                }
+            case spectrum_counting_empai:
+                try {
+                    return identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                            SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + "";
+                } catch (Exception e) {
+                    return "error: " + e.getLocalizedMessage();
+                }
+            case starred:
+                if (psParameter.isStarred()) {
+                    return 1 + "";
+                } else {
+                    return 0 + "";
+                }
+            case validated:
+                result = new StringBuilder();
+                result.append(psParameter.getMatchValidationLevel().toString());
+                return result.toString();
+            default:
+                return "Not implemented";
         }
     }
 
@@ -476,7 +424,7 @@ public class ProteinSection {
             } else {
                 writer.write(separator);
             }
-            writer.write(exportFeature.getTitle());
+            writer.write(exportFeature.getTitle(separator));
         }
         writer.newLine();
     }

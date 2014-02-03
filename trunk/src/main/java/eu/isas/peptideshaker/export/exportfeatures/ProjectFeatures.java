@@ -54,7 +54,7 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(String separator) {
         return title;
     }
 
