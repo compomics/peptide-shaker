@@ -57,7 +57,7 @@ public enum InputFilterFeatures implements ExportFeature {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitle(String separator) {
         return title;
     }
 

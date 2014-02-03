@@ -126,6 +126,17 @@ public class PSExportFactory implements ExportFactory {
         return new ArrayList<String>(userSchemes.keySet());
     }
 
+    /**
+     * Returns the desired default export scheme. Null if not found.
+     *
+     * @param schemeName the name of the default export scheme
+     *
+     * @return the default export scheme
+     */
+    public static ExportScheme getDefaultExportScheme(String schemeName) {
+        return getDefaultExportSchemes().get(schemeName);
+    }
+
     @Override
     public ExportScheme getExportScheme(String schemeName) {
         ExportScheme exportScheme = userSchemes.get(schemeName);
@@ -193,7 +204,7 @@ public class PSExportFactory implements ExportFactory {
      *
      * @return a list of the default export schemes
      */
-    public ArrayList<String> getDefaultExportSchemesNames() {
+    public static ArrayList<String> getDefaultExportSchemesNames() {
         ArrayList<String> result = new ArrayList<String>(getDefaultExportSchemes().keySet());
         Collections.sort(result);
         return result;
@@ -330,7 +341,7 @@ public class PSExportFactory implements ExportFactory {
                 writer.newLine();
             }
             for (ExportFeature exportFeature : exportScheme.getExportFeatures(sectionName)) {
-                writer.write(exportFeature.getTitle() + exportScheme.getSeparator() + exportFeature.getDescription());
+                writer.write(exportFeature.getTitle(", ") + exportScheme.getSeparator() + exportFeature.getDescription());
                 writer.newLine();
             }
             writeSeparationLines(writer, exportScheme.getSeparationLines());

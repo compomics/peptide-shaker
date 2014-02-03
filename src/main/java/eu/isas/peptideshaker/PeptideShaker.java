@@ -1903,7 +1903,6 @@ public class PeptideShaker {
         int maxPepLength = idFilter.getMaxPepLength();
 
         for (String proteinKey : identification.getProteinIdentification()) {
-            if (!ProteinMatch.isDecoy(proteinKey)) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                 scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences);
 
@@ -1926,7 +1925,6 @@ public class PeptideShaker {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-            }
         }
         if (metrics != null) {
             metrics.setMaxSpectrumCounting(maxSpectrumCounting);

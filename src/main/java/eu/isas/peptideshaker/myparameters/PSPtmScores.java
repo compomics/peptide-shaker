@@ -123,11 +123,11 @@ public class PSPtmScores implements UrParameter {
      * empty list if none foud
      */
     public ArrayList<String> getMainModificationsAt(int aa) {
-        if (mainModificationSites.containsKey(aa)) {
-            return mainModificationSites.get(aa);
-        } else {
-            return new ArrayList<String>();
+        ArrayList<String> result = mainModificationSites.get(aa);
+        if (result == null) {
+            result = new ArrayList<String>();
         }
+        return result;
     }
 
     /**

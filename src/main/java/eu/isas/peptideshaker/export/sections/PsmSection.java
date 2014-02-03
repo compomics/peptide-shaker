@@ -14,6 +14,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.total_spectrum_intensity;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -29,20 +30,12 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class outputs the PSM related export features.
+ * This class outputs the PSM level export features.
  *
  * @author Marc Vaudel
  */
 public class PsmSection {
 
-    /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The PTM factory.
-     */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
      * The features to export.
      */
@@ -82,8 +75,10 @@ public class PsmSection {
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsmFeatures) {
                 psmFeatures.add(exportFeature);
-            } else {
+            } else if (exportFeature instanceof FragmentFeatures) {
                 fragmentFeatures.add(exportFeature);
+            } else {
+                throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
             }
         }
         if (!fragmentFeatures.isEmpty()) {
@@ -142,7 +137,6 @@ public class PsmSection {
 
         PSParameter psParameter = new PSParameter();
         SpectrumMatch spectrumMatch = null;
-        String matchKey = "", parameterKey = "";
         int line = 1;
 
         int totalSize = 0;
@@ -198,367 +192,12 @@ public class PsmSection {
                     writer.write(line + separator);
                 }
 
+                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
                 for (ExportFeature exportFeature : psmFeatures) {
                     PsmFeatures psmFeature = (PsmFeatures) exportFeature;
-                    switch (psmFeature) {
-                        case variable_ptms:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true);
-                            ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
-                            Collections.sort(modList);
-
-                            boolean first = true;
-
-                            for (String mod : modList) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    writer.write(", ");
-                                }
-                                boolean first2 = true;
-                                writer.write(mod + "(");
-                                for (int aa : modMap.get(mod)) {
-                                    if (first2) {
-                                        first2 = false;
-                                    } else {
-                                        writer.write(", ");
-                                    }
-                                    writer.write(aa + "");
-                                }
-                                writer.write(")");
-                            }
-
-                            writer.write(separator);
-                            break;
-                        case fixed_ptms:
-
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), false);
-                            modList = new ArrayList<String>(modMap.keySet());
-                            Collections.sort(modList);
-
-                            first = true;
-
-                            for (String mod : modList) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    writer.write(", ");
-                                }
-                                boolean first2 = true;
-                                writer.write(mod + "(");
-                                for (int aa : modMap.get(mod)) {
-                                    if (first2) {
-                                        first2 = false;
-                                    } else {
-                                        writer.write(", ");
-                                    }
-                                    writer.write(aa + "");
-                                }
-                                writer.write(")");
-                            }
-
-                            writer.write(separator);
-                            break;
-                        case probabilistic_score:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            StringBuilder output = new StringBuilder();
-                            PSPtmScores ptmScores = new PSPtmScores();
-                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
-                            if (ptmScores != null) {
-                                modList = new ArrayList<String>(ptmScores.getScoredPTMs());
-                                Collections.sort(modList);
-                                for (String mod : modList) {
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
-                                    if (!sites.isEmpty()) {
-                                        Collections.sort(sites);
-                                        if (output.length() > 0) {
-                                            output.append(", ");
-                                        }
-                                        output.append(mod).append(" (");
-                                        boolean firstSite = true;
-                                        for (int site : sites) {
-                                            if (firstSite) {
-                                                firstSite = false;
-                                            } else {
-                                                output.append(", ");
-                                            }
-                                            output.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
-                                        }
-                                        output.append(")");
-                                    }
-                                }
-                            }
-                            writer.write(output + separator);
-                            break;
-                        case d_score:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            output = new StringBuilder();
-                            ptmScores = new PSPtmScores();
-                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
-                            if (ptmScores != null) {
-                                modList = new ArrayList<String>(ptmScores.getScoredPTMs());
-                                Collections.sort(modList);
-                                for (String mod : modList) {
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
-                                    if (!sites.isEmpty()) {
-                                        Collections.sort(sites);
-                                        if (output.length() > 0) {
-                                            output.append(", ");
-                                        }
-                                        output.append(mod).append(" (");
-                                        boolean firstSite = true;
-                                        for (int site : sites) {
-                                            if (firstSite) {
-                                                firstSite = false;
-                                            } else {
-                                                output.append(", ");
-                                            }
-                                            output.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
-                                        }
-                                        output.append(")");
-                                    }
-                                }
-                            }
-                            writer.write(output + separator);
-                            break;
-                        case accessions:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            output = new StringBuilder();
-                            ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                            for (String accession : accessions) {
-                                if (output.length() > 0) {
-                                    output.append(", ");
-                                }
-                                output.append(accession);
-                            }
-                            writer.write(output + separator);
-                            break;
-                        case confidence:
-                            if (!parameterKey.equals(spectrumKey)) {
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                parameterKey = spectrumKey;
-                            }
-                            writer.write(psParameter.getPsmConfidence() + separator);
-                            break;
-                        case decoy:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
-                                writer.write(1 + separator);
-                            } else {
-                                writer.write(0 + separator);
-                            }
-                            break;
-                        case hidden:
-                            if (!parameterKey.equals(spectrumKey)) {
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                parameterKey = spectrumKey;
-                            }
-                            if (psParameter.isHidden()) {
-                                writer.write(1 + separator);
-                            } else {
-                                writer.write(0 + separator);
-                            }
-                            break;
-                        case identification_charge:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString() + separator);
-                            break;
-                        case isotope:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + separator);
-                            break;
-                        case localization_confidence:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
-                            Collections.sort(modList);
-                            ptmScores = new PSPtmScores();
-                            output = new StringBuilder();
-                            for (String mod : modList) {
-
-                                PTM ptm = ptmFactory.getPTM(mod);
-
-                                if (ptm.getType() == PTM.MODAA) {
-
-                                    if (output.length() > 0) {
-                                        output.append(", ");
-                                    }
-                                    output.append(mod);
-
-                                    output.append(" (");
-                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-
-                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                            PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                            boolean firstSite = true;
-
-                                            ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
-                                            if (sites.isEmpty()) {
-                                                output.append("Not Scored");
-                                            } else {
-                                                for (int site : ptmScoring.getOrderedPtmLocations()) {
-
-                                                    if (firstSite) {
-                                                        firstSite = false;
-                                                    } else {
-                                                        output.append(", ");
-                                                    }
-                                                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
-
-                                                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                                        output.append(site).append(": Not Scored");
-                                                    } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                                        output.append(site).append(": Random");
-                                                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                                        output.append(site).append(": Doubtfull");
-                                                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                                        output.append(site).append(": Confident");
-                                                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                                        output.append(site).append(": Very Confident");
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            output.append("Not Scored");
-                                        }
-
-                                    } else {
-                                        output.append("Not Scored");
-                                    }
-                                    output.append(")");
-                                }
-                            }
-                            writer.write(output + separator);
-                            break;
-                        case mz:
-                            precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(precursor.getMz() + separator);
-                            break;
-                        case total_spectrum_intensity:
-                            Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
-                            writer.write(spectrum.getTotalIntensity() + separator);
-                            break;
-                        case max_intensity:
-                            spectrum = spectrumFactory.getSpectrum(spectrumKey);
-                            writer.write(spectrum.getMaxIntensity() + separator);
-                            break;
-                        case mz_error:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + separator);
-                            break;
-                        case rt:
-                            precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(precursor.getRt() + separator);
-                            break;
-                        case score:
-                            if (!parameterKey.equals(spectrumKey)) {
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                parameterKey = spectrumKey;
-                            }
-                            writer.write(psParameter.getPsmProbabilityScore() + separator);
-                            break;
-                        case sequence:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence() + separator);
-                            break;
-                        case missed_cleavages:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                            writer.write(Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + separator);
-                            break;
-                        case modified_sequence:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
-                            break;
-                        case spectrum_charge:
-                            precursor = spectrumFactory.getPrecursor(spectrumKey);
-                            writer.write(precursor.getPossibleChargesAsString() + separator);
-                            break;
-                        case spectrum_file:
-                            writer.write(spectrumFile + separator);
-                            break;
-                        case spectrum_scan_number:
-                            writer.write(spectrumFactory.getSpectrum(spectrumKey).getScanNumber() + separator);
-                            break;
-                        case spectrum_title:
-                            writer.write(Spectrum.getSpectrumTitle(spectrumKey) + separator);
-                            break;
-                        case starred:
-                            if (!parameterKey.equals(spectrumKey)) {
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                parameterKey = spectrumKey;
-                            }
-                            if (psParameter.isStarred()) {
-                                writer.write(1 + separator);
-                            } else {
-                                writer.write(0 + separator);
-                            }
-                            break;
-                        case theoretical_mass:
-                            if (!matchKey.equals(spectrumKey)) {
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                matchKey = spectrumKey;
-                            }
-                            writer.write(spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + separator);
-                            break;
-                        case validated:
-                            if (!parameterKey.equals(spectrumKey)) {
-                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                parameterKey = spectrumKey;
-                            }
-                                writer.write(psParameter.getMatchValidationLevel().toString());
-                            if (!psParameter.getReasonDoubtful().equals("") ) {
-                                writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                            }
-                            writer.write(separator);
-                            break;
-                        default:
-                            writer.write("Not implemented" + separator);
-                    }
+                    getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, waitingHandler);
                 }
                 writer.newLine();
                 if (fragmentSection != null) {
@@ -567,15 +206,297 @@ public class PsmSection {
                         fractionPrefix += linePrefix;
                     }
                     fractionPrefix += line + ".";
-                    if (!matchKey.equals(spectrumKey)) {
-                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        matchKey = spectrumKey;
-                    }
                     fragmentSection.writeSection(spectrumMatch, searchParameters, annotationPreferences, fractionPrefix, null);
                 }
                 line++;
             }
         }
+    }
+
+    /**
+     * Writes the given feature of the current section.
+     *
+     * @param identification the identification of the project
+     * @param identificationFeaturesGenerator the identification features
+     * generator of the project
+     * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
+     * @param keys the keys of the PSM matches to output
+     * @param linePrefix the line prefix
+     * @param separator the column separator
+     * @param spectrumMatch the spectrum match inspected
+     * @param psParameter the PeptideShaker parameter of the match
+     * @param psmFeature the feature to export
+     * @param waitingHandler the waiting handler
+     * 
+     * @return the content corresponding to the given feature of the current section
+     * 
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file.
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, String separator, SpectrumMatch spectrumMatch, PSParameter psParameter, PsmFeatures psmFeature, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        switch (psmFeature) {
+            case variable_ptms:
+                HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true);
+                ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
+                Collections.sort(modList);
+
+                StringBuilder result = new StringBuilder();
+                for (String mod : modList) {
+                    if (result.length() > 0) {
+                        result.append(", ");
+                    }
+                    boolean firstAa = true;
+                    result.append(mod).append("(");
+                    for (int aa : modMap.get(mod)) {
+                        if (firstAa) {
+                            firstAa = false;
+                        } else {
+                            result.append(", ");
+                        }
+                        result.append(aa).append("");
+                    }
+                    result.append(")");
+                }
+                return result.toString();
+            case fixed_ptms:
+                modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), false);
+                modList = new ArrayList<String>(modMap.keySet());
+                Collections.sort(modList);
+
+                result = new StringBuilder();
+                for (String mod : modList) {
+                    if (result.length() > 0) {
+                        result.append(", ");
+                    }
+                    boolean first2 = true;
+                    result.append(mod).append("(");
+                    for (int aa : modMap.get(mod)) {
+                        if (first2) {
+                            first2 = false;
+                        } else {
+                            result.append(", ");
+                        }
+                        result.append(aa).append("");
+                    }
+                    result.append(")");
+                }
+                return result.toString();
+            case probabilistic_score:
+                result = new StringBuilder();
+                PSPtmScores ptmScores = new PSPtmScores();
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                if (ptmScores != null) {
+                    modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    Collections.sort(modList);
+                    for (String mod : modList) {
+                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                        if (!sites.isEmpty()) {
+                            Collections.sort(sites);
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(mod).append(" (");
+                            boolean firstSite = true;
+                            for (int site : sites) {
+                                if (firstSite) {
+                                    firstSite = false;
+                                } else {
+                                    result.append(", ");
+                                }
+                                result.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
+                            }
+                            result.append(")");
+                        }
+                    }
+                }
+                return result.toString();
+            case d_score:
+                result = new StringBuilder();
+                ptmScores = new PSPtmScores();
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                if (ptmScores != null) {
+                    modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    Collections.sort(modList);
+                    for (String mod : modList) {
+                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                        if (!sites.isEmpty()) {
+                            Collections.sort(sites);
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(mod).append(" (");
+                            boolean firstSite = true;
+                            for (int site : sites) {
+                                if (firstSite) {
+                                    firstSite = false;
+                                } else {
+                                    result.append(", ");
+                                }
+                                result.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
+                            }
+                            result.append(")");
+                        }
+                    }
+                }
+                return result.toString();
+            case accessions:
+                result = new StringBuilder();
+                ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                for (String accession : accessions) {
+                    if (result.length() > 0) {
+                        result.append(", ");
+                    }
+                    result.append(accession);
+                }
+                return result.toString();
+            case confidence:
+                return psParameter.getPsmConfidence() + "";
+            case decoy:
+                if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case hidden:
+                if (psParameter.isHidden()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case identification_charge:
+                return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString();
+            case isotope:
+                String spectrumKey = spectrumMatch.getKey();
+                Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + "";
+            case localization_confidence:
+                modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
+                Collections.sort(modList);
+                ptmScores = new PSPtmScores();
+                result = new StringBuilder();
+                for (String mod : modList) {
+
+                    PTM ptm = PTMFactory.getInstance().getPTM(mod);
+
+                    if (ptm.getType() == PTM.MODAA) {
+
+                        if (result.length() > 0) {
+                            result.append(", ");
+                        }
+                        result.append(mod);
+
+                        result.append(" (");
+                        if (spectrumMatch.getUrParam(ptmScores) != null) {
+                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+
+                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                boolean firstSite = true;
+
+                                ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
+                                if (sites.isEmpty()) {
+                                    result.append("Not Scored");
+                                } else {
+                                    for (int site : ptmScoring.getOrderedPtmLocations()) {
+
+                                        if (firstSite) {
+                                            firstSite = false;
+                                        } else {
+                                            result.append(", ");
+                                        }
+                                        int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+
+                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                            result.append(site).append(": Not Scored");
+                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                            result.append(site).append(": Random");
+                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                            result.append(site).append(": Doubtfull");
+                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                            result.append(site).append(": Confident");
+                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                            result.append(site).append(": Very Confident");
+                                        }
+                                    }
+                                }
+                            } else {
+                                result.append("Not Scored");
+                            }
+
+                        } else {
+                            result.append("Not Scored");
+                        }
+                        result.append(")");
+                    }
+                }
+                return result.toString();
+            case mz:
+                spectrumKey = spectrumMatch.getKey();
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return precursor.getMz() + "";
+            case total_spectrum_intensity:
+                spectrumKey = spectrumMatch.getKey();
+                Spectrum spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
+                return spectrum.getTotalIntensity() + "";
+            case max_intensity:
+                spectrumKey = spectrumMatch.getKey();
+                spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
+                return spectrum.getMaxIntensity() + "";
+            case mz_error:
+                spectrumKey = spectrumMatch.getKey();
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + "";
+            case rt:
+                spectrumKey = spectrumMatch.getKey();
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return precursor.getRt() + "";
+            case score:
+                return psParameter.getPsmProbabilityScore() + "";
+            case sequence:
+                return spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+            case missed_cleavages:
+                String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                return Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + "";
+            case modified_sequence:
+                return spectrumMatch.getBestPeptideAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + "";
+            case spectrum_charge:
+                spectrumKey = spectrumMatch.getKey();
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return precursor.getPossibleChargesAsString() + "";
+            case spectrum_file:
+                spectrumKey = spectrumMatch.getKey();
+                String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+                return spectrumFile;
+            case spectrum_scan_number:
+                spectrumKey = spectrumMatch.getKey();
+                return SpectrumFactory.getInstance().getSpectrum(spectrumKey).getScanNumber();
+            case spectrum_title:
+                spectrumKey = spectrumMatch.getKey();
+                return Spectrum.getSpectrumTitle(spectrumKey);
+            case starred:
+                if (psParameter.isStarred()) {
+                    return "1";
+                } else {
+                    return "0";
+                }
+            case theoretical_mass:
+                return spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + "";
+            case validated:
+                return psParameter.getMatchValidationLevel().toString();
+            default:
+                return "Not implemented";
+        }
+
     }
 
     /**
@@ -587,7 +508,7 @@ public class PsmSection {
      * only the fixed PTMs
      * @return the map of the modifications on a peptide sequence
      */
-    private HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
+    private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -618,7 +539,7 @@ public class PsmSection {
             } else {
                 writer.write(separator);
             }
-            writer.write(exportFeature.getTitle());
+            writer.write(exportFeature.getTitle(separator));
         }
         writer.newLine();
     }

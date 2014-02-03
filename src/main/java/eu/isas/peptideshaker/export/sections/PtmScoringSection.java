@@ -81,7 +81,7 @@ public class PtmScoringSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            writer.write(exportFeature.getTitle() + separator);
+            writer.write(exportFeature.getTitle(separator) + separator);
             PtmScoringFeatures ptmScoringFeatures = (PtmScoringFeatures) exportFeature;
             switch (ptmScoringFeatures) {
                 case aScore:

@@ -223,7 +223,7 @@ public class FragmentSection {
             } else {
                 writer.write(separator);
             }
-            writer.write(exportFeature.getTitle());
+            writer.write(exportFeature.getTitle(separator));
         }
         writer.newLine();
     }
