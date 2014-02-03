@@ -223,7 +223,9 @@ public class FragmentSection {
             } else {
                 writer.write(separator);
             }
-            writer.write(exportFeature.getTitle(separator));
+            for (String title : exportFeature.getTitles()) {
+                writer.write(title + separator);
+            }
         }
         writer.newLine();
     }

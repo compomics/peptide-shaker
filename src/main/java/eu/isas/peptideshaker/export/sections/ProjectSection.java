@@ -85,7 +85,16 @@ public class ProjectSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            writer.write(exportFeature.getTitle(separator) + separator);
+            boolean firstTitle = true;
+            for (String title : exportFeature.getTitles()) {
+                if (firstTitle) {
+                    firstTitle = false;
+                } else {
+                    writer.write(", ");
+                }
+                writer.write(title);
+            }
+            writer.write(separator);
             ProjectFeatures projectFeatures = (ProjectFeatures) exportFeature;
             switch (projectFeatures) {
                 case date:

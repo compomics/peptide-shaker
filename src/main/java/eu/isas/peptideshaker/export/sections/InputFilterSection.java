@@ -82,7 +82,9 @@ public class InputFilterSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            writer.write(exportFeature.getTitle(separator) + separator);
+            for (String title : exportFeature.getTitles()) {
+                writer.write(title + separator);
+            }
             InputFilterFeatures inputFilterFeatures = (InputFilterFeatures) exportFeature;
 
             switch (inputFilterFeatures) {

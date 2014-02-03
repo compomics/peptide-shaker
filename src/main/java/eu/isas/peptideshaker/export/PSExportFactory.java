@@ -341,7 +341,17 @@ public class PSExportFactory implements ExportFactory {
                 writer.newLine();
             }
             for (ExportFeature exportFeature : exportScheme.getExportFeatures(sectionName)) {
-                writer.write(exportFeature.getTitle(", ") + exportScheme.getSeparator() + exportFeature.getDescription());
+                boolean firstTitle = true;
+                for (String title : exportFeature.getTitles()) {
+                    if (firstTitle) {
+                        firstTitle = false;
+                    } else {
+                        writer.write(", ");
+                    }
+                    writer.write(title);
+                }
+                writer.write(exportScheme.getSeparator());
+                writer.write(exportFeature.getDescription());
                 writer.newLine();
             }
             writeSeparationLines(writer, exportScheme.getSeparationLines());
