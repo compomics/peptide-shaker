@@ -306,7 +306,7 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * returns the sequence coverage by fragment ions threshold in percent.
+     * Returns the sequence coverage by fragment ions threshold in percent.
      *
      * @return the sequence coverage by fragment ions threshold in percent
      */
