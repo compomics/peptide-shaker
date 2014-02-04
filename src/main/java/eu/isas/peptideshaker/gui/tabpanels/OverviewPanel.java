@@ -4152,13 +4152,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         possibleToCoverCounter++;
 
-                        while (i < coveragePossible.length && coveragePossible[i] && coverage[i + 1] == 0) {
+                        while (i < coveragePossible.length && coveragePossible[i] && i + 1 < coverage.length && coverage[i + 1] == 0) {
                             possibleToCoverCounter++;
                             sequenceCounter++;
                             i++;
                         }
                     } else {
-                        while (i + 1 < coverage.length && coverage[i + 1] == 0 && !coveragePossible[i]) {
+                        while (i + 1 < coverage.length && coverage[i + 1] == 0 && i < coveragePossible.length && !coveragePossible[i]) {
                             sequenceCounter++;
                             i++;
                         }
