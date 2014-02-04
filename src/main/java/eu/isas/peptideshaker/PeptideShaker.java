@@ -890,7 +890,7 @@ public class PeptideShaker {
     }
 
     /**
-     * updates the validation status of a protein match. If the match was
+     * Updates the validation status of a protein match. If the match was
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
@@ -921,7 +921,7 @@ public class PeptideShaker {
     }
 
     /**
-     * updates the validation status of a protein match. If the match was
+     * Updates the validation status of a protein match. If the match was
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
@@ -1015,7 +1015,7 @@ public class PeptideShaker {
     }
 
     /**
-     * updates the validation status of a peptide match. If the match was
+     * Updates the validation status of a peptide match. If the match was
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
@@ -1105,11 +1105,11 @@ public class PeptideShaker {
     }
 
     /**
-     * updates the validation status of a spectrum match. If the match was
+     * Updates the validation status of a spectrum match. If the match was
      * manually validated nothing will be changed.
      *
      * @param identification the identification object
-     * @param psmMap the psm level target/decoy scoring map
+     * @param psmMap the PSM level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param searchParameters the settings used for the identification

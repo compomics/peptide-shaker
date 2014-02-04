@@ -3591,7 +3591,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Updates the protein panel title with the number of validated/confident
-     * proteins
+     * proteins.
      */
     public void updateProteinPanelTitle() {
         String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
@@ -3614,7 +3614,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Updates the peptide panel title with the number of validated/confident
-     * proteins
+     * proteins.
      */
     public void updatePeptidePanelTitle() {
         String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (";
@@ -3642,7 +3642,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Updates the PSM panel title with the number of validated/confident
-     * proteins
+     * proteins.
      * 
      * @throws java.sql.SQLException
      * @throws java.io.IOException

@@ -59,7 +59,7 @@ public class PSParameter implements UrParameter {
      */
     private MatchValidationLevel matchValidationLevel;
     /**
-     * Boolean indicating whether the validation confidence was manually updated
+     * Boolean indicating whether the validation confidence was manually updated.
      */
     private Boolean manualValidation = false;
     /**
