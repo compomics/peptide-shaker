@@ -221,22 +221,22 @@ public class FindDialog extends javax.swing.JDialog {
 
             if (ptm.equalsIgnoreCase(PtmPanel.NO_MODIFICATION)) {
                 ((DefaultTableModel) modificationTable.getModel()).addRow(new Object[]{
-                            true,
-                            Color.lightGray,
-                            PtmPanel.NO_MODIFICATION});
+                    true,
+                    Color.lightGray,
+                    PtmPanel.NO_MODIFICATION});
             } else {
                 ((DefaultTableModel) modificationTable.getModel()).addRow(new Object[]{
-                            true,
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptm),
-                            ptm});
+                    true,
+                    peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptm),
+                    ptm});
             }
         }
 
         for (String fileName : identification.getSpectrumFiles()) {
             ((DefaultTableModel) spectrumFilesTable.getModel()).addRow(new Object[]{
-                        true,
-                        fileName
-                    });
+                true,
+                fileName
+            });
         }
 
         proteinTable.setAutoCreateRowSorter(true);
@@ -395,7 +395,6 @@ public class FindDialog extends javax.swing.JDialog {
         spectrumFilesTable.getColumn(" ").setMaxWidth(30);
         spectrumFilesTable.getColumn(" ").setMinWidth(30);
 
-
         // add cell renderers
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -470,7 +469,6 @@ public class FindDialog extends javax.swing.JDialog {
         peptideTable.getColumn("H").setCellRenderer(new NimbusCheckBoxRenderer());
 
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra()); // @TODO: this is not the correct max value
-
 
         psmTable.getColumn("S").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
@@ -1512,7 +1510,6 @@ public class FindDialog extends javax.swing.JDialog {
                                     psmTable.getColumn("Mass Error").getModelIndex()));
                         }
 
-
                         text = psmConfidenceTxt.getText().trim();
                         if (!text.equals("")) {
                             Double value = new Double(text);
@@ -1601,11 +1598,10 @@ public class FindDialog extends javax.swing.JDialog {
                 }
             }
             if (psmFilter == null) {
-                psmFilter = new PsmFilter("find psm filter", charges, files);
-            } else {
-                psmFilter.setCharges(charges);
-                psmFilter.setFileNames(files);
+                psmFilter = new PsmFilter("find psm filter");
             }
+            psmFilter.setCharges(charges);
+            psmFilter.setFileNames(files);
             if (!precursorRTTxt.getText().trim().equals("")) {
                 psmFilter.setPrecursorRT(new Double(precursorRTTxt.getText().trim()));
                 psmFilter.setPrecursorRTComparison(getComparisonType(precursorRTCmb.getSelectedIndex()));

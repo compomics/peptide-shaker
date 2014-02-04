@@ -3,11 +3,13 @@ package eu.isas.peptideshaker.scoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.RowFilter;
 
 /**
  * This map will store target decoy informations about the psms grouped
@@ -290,7 +292,11 @@ public class PsmSpecificMap implements Serializable {
     public static ArrayList<PsmFilter> getDefaultPsmFilters() {
         ArrayList<PsmFilter> filters = new ArrayList<PsmFilter>();
         
-        //@TODO: add something here?
+//        PsmFilter psmFilter = new PsmFilter("25% Fragment Ion Sequence Coverage");
+//        psmFilter.setDescription("<25% sequence coverage by fragment ions");
+//        psmFilter.setSequenceCoverage(25.0);
+//        psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
+//        filters.add(psmFilter);
         
         return filters;
     }
