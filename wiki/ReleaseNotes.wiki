@@ -3,8 +3,37 @@
 
 ----
 
+*Changes in PeptideShaker 0.25.0  (February 4. 2014):*
+ 
+ * NEW FEATURE: The versions of the search engines are now stored in the project details and showed in the project report.
+ * NEW FEATURE: The PeptideShaker report is now saved together with the cps file.
+ * NEW FEATURE: Added the possibility to create identification parameters files from the command line.
+ * NEW FEATURE: Added a simple swath export.
+ * NEW FEATURE: New auto updater feature for PeptideShaker and SearchGUI.
+ * NEW FEATURE: Added an "Open Example Dataset" option to the file menu.
+
+ * FEATURE IMPROVEMENT: Improved the memory handling.
+ * FEATURE IMPROVEMENT: The number of confident/doubtful proteins/peptides/PSMs can now be changed by the user.
+
+ * BUG FIX: Fixed a bug in the SpectrumFactory where one ended up with partial index files if the process was canceled by the user.
+ * BUG FIX: Fixed a bug in the sorting of the #Peptides and #Spectra columns, causing the sorting to be fairly random.
+ * BUG FIX: Corrected a bug resulting in a null pointer when the A-score was used and only multiply modified peptides are found at a given charge.
+ * BUG FIX: Corrected a bug where modifications were disappearing from the GUI.
+ * BUG FIX: Fixed a backwards compatibility issues with the precursor accuracy in the search parameters.
+ * BUG FIX: Fixed a bug in the peptide keys used in the spectrum and Progenesis exports.
+
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.7.7.
+ * LIBRARY UPDATE: Updated omssa parser to version 1.6.3.
+ * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.19.
+ * LIBRARY UPDATE: Updated utilities to version 3.21.26.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.6.5.
+
+----
+
 *Changes in PeptideShaker 0.24.3  (January 10. 2014):*
  * BUG FIX: Corrected the peptide key used in the spectrum and Progenesis exports.
+
+Download Count: 92
 
 ----
 
