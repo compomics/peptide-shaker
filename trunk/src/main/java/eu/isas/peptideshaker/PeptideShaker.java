@@ -685,60 +685,14 @@ public class PeptideShaker {
                     + identification.getSpectrumIdentificationSize());
         }
 
-        // the minimal number of protein sequences to trust the target decoy approach
-        boolean enoughSequences = sequenceFactory.getNTargetSequences() > 10000; //@TODO: use a better metric
-
         // validate the spectra
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                if (sequenceFactory.concatenatedTargetDecoy()) {
-                    TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey()));
-                    TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                    double psmThreshold = targetDecoyResults.getScoreLimit();
-                    double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
-                    if (confidenceThreshold > 100) {
-                        confidenceThreshold = 100;
-                    }
-                    boolean noValidated = targetDecoyResults.noValidated();
-                    if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
-                        String reasonDoubtful = null;
-                        boolean filterPassed = true;
-                        for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters()) {
-                            if (!filter.isValidated(spectrumKey, identification, searchParameters)) {
-                                filterPassed = false;
-                                reasonDoubtful = filter.getDescription();
-                                break;
-                            }
-                        }
-                        boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
-                        if (!confidenceThresholdPassed && reasonDoubtful == null) {
-                            reasonDoubtful = "Low confidence";
-                        }
-                        boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
-                        if (!enoughHits && reasonDoubtful == null) {
-                            reasonDoubtful = "Low number of hits";
-                        }
-                        if (!enoughSequences && reasonDoubtful == null) {
-                            reasonDoubtful = "Database too small";
-                        }
-                        if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
-                            psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
-                        } else {
-                            psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
-                            if (reasonDoubtful != null) {
-                                psParameter.setReasonDoubtful(reasonDoubtful);
-                            }
-                        }
-                    } else {
-                        psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
-                    }
-                } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.none);
-                }
-                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+
+                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, psmMap, spectrumKey);
+
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressCounter();
                     if (waitingHandler.isRunCanceled()) {
@@ -755,54 +709,10 @@ public class PeptideShaker {
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
 
-            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-            if (sequenceFactory.concatenatedTargetDecoy()) {
-                TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double peptideThreshold = targetDecoyResults.getScoreLimit();
-                double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
-                if (confidenceThreshold > 100) {
-                    confidenceThreshold = 100;
-                }
-                boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
-                if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
-                    String reasonDoubtful = null;
-                    boolean filterPassed = true;
-                    for (PeptideFilter filter : peptideMap.getDoubtfulMatchesFilters()) {
-                        if (!filter.isValidated(peptideKey, identification, identificationFeaturesGenerator)) {
-                            filterPassed = false;
-                            reasonDoubtful = filter.getDescription();
-                            break;
-                        }
-                    }
-                    boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
-                    if (!confidenceThresholdPassed && reasonDoubtful == null) {
-                        reasonDoubtful = "Low confidence";
-                    }
-                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
-                    if (!enoughHits && reasonDoubtful == null) {
-                        reasonDoubtful = "Low number of hits";
-                    }
-                    if (!enoughSequences && reasonDoubtful == null) {
-                        reasonDoubtful = "Database too small";
-                    }
-                    if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
-                        psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
-                    } else {
-                        psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
-                        if (reasonDoubtful != null) {
-                            psParameter.setReasonDoubtful(reasonDoubtful);
-                        }
-                    }
-
-                } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
-                }
-            } else {
-                psParameter.setMatchValidationLevel(MatchValidationLevel.none);
-            }
+            updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
 
             // set the fraction details
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>();
@@ -884,47 +794,10 @@ public class PeptideShaker {
         identification.loadProteinMatchParameters(new PSParameter(), null);
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-            if (sequenceFactory.concatenatedTargetDecoy()) {
-
-                if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
-                    String reasonDoubtful = null;
-                    boolean filterPassed = true;
-                    for (ProteinFilter filter : proteinMap.getDoubtfulMatchesFilters()) {
-                        if (!filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters)) {
-                            filterPassed = false;
-                            reasonDoubtful = filter.getDescription();
-                            break;
-                        }
-                    }
-                    boolean confidenceThresholdPassed = psParameter.getProteinConfidence() >= proteinConfidentThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
-                    if (!confidenceThresholdPassed && reasonDoubtful == null) {
-                        reasonDoubtful = "Low confidence";
-                    }
-                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
-                    if (!enoughHits && reasonDoubtful == null) {
-                        reasonDoubtful = "Low number of hits";
-                    }
-                    if (!enoughSequences && reasonDoubtful == null) {
-                        reasonDoubtful = "Database too small";
-                    }
-                    if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
-                        psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
-                    } else {
-                        psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
-                        if (reasonDoubtful != null) {
-                            psParameter.setReasonDoubtful(reasonDoubtful);
-                        }
-                    }
-
-                } else {
-                    psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
-                }
-            } else {
-                psParameter.setMatchValidationLevel(MatchValidationLevel.none);
-            }
+            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, targetDecoyMap, proteinThreshold, proteinThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
 
             // set the fraction details
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
@@ -933,9 +806,7 @@ public class PeptideShaker {
             ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatches();
 
             identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
-            for (int j = 0; j < peptideKeys.size(); j++) {
-
-                String currentPeptideKey = peptideKeys.get(j);
+            for (String currentPeptideKey : peptideKeys) {
 
                 psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter2);
 
@@ -1014,6 +885,266 @@ public class PeptideShaker {
         metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
         metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
         metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
+    }
+
+    /**
+     * updates the validation status of a protein match. If the match was
+     * manually validated nothing will be changed.
+     *
+     * @param identification the identification object
+     * @param proteinMap the protein level target/decoy scoring map
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param searchParameters the settings used for the identification
+     * @param proteinKey the key of the protein match of interest
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, ProteinMap proteinMap,
+            String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
+        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+        double proteinThreshold = targetDecoyResults.getScoreLimit();
+        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+        if (proteinConfidentThreshold > 100) {
+            proteinConfidentThreshold = 100;
+        }
+        boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
+        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+    }
+
+    /**
+     * updates the validation status of a protein match. If the match was
+     * manually validated nothing will be changed.
+     *
+     * @param identification the identification object
+     * @param targetDecoyMap the protein level target/decoy map
+     * @param scoreThreshold the validation score threshold
+     * @param confidenceThreshold the confidence threshold after which a match
+     * should be considered as confident
+     * @param noValidated boolean indicating whether no validation was actually
+     * conducted
+     * @param doubtfulMatchFilters the filters to use for quality filtering
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param searchParameters the settings used for the identification
+     * @param proteinKey the key of the protein match of interest
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold, double confidenceThreshold, boolean noValidated, ArrayList<ProteinFilter> doubtfulMatchFilters,
+            String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
+        if (!psParameter.isManualValidation()) {
+
+            if (sequenceFactory.concatenatedTargetDecoy()) {
+
+                if (!noValidated && psParameter.getProteinProbabilityScore() <= scoreThreshold) {
+                    String reasonDoubtful = null;
+                    boolean filterPassed = true;
+                    for (ProteinFilter filter : doubtfulMatchFilters) {
+                        if (!filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters)) {
+                            filterPassed = false;
+                            reasonDoubtful = filter.getDescription();
+                            break;
+                        }
+                    }
+                    boolean confidenceThresholdPassed = psParameter.getProteinConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                    if (!confidenceThresholdPassed) {
+                        if (reasonDoubtful == null) {
+                            reasonDoubtful = "";
+                        } else {
+                            reasonDoubtful += ", ";
+                        }
+                        reasonDoubtful += "Low confidence";
+                    }
+                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                    if (!enoughHits) {
+                        if (reasonDoubtful == null) {
+                            reasonDoubtful = "";
+                        } else {
+                            reasonDoubtful += ", ";
+                        }
+                        reasonDoubtful += "Low number of hits";
+                    }
+                    if (!sequenceFactory.hasEnoughSequences()) {
+                        if (reasonDoubtful == null) {
+                            reasonDoubtful = "";
+                        } else {
+                            reasonDoubtful += ", ";
+                        }
+                        reasonDoubtful += "Database too small";
+                    }
+                    if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                        psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
+                    } else {
+                        psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                        if (reasonDoubtful != null) {
+                            psParameter.setReasonDoubtful(reasonDoubtful);
+                        }
+                    }
+                } else {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+                }
+            } else {
+                psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+            }
+
+            identification.updateProteinMatchParameter(proteinKey, psParameter);
+        }
+    }
+
+    /**
+     * updates the validation status of a peptide match. If the match was
+     * manually validated nothing will be changed.
+     *
+     * @param identification the identification object
+     * @param peptideMap the peptide level target/decoy scoring map
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param searchParameters the settings used for the identification
+     * @param peptideKey the key of the peptide match of interest
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, PeptideSpecificMap peptideMap,
+            String peptideKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double peptideThreshold = targetDecoyResults.getScoreLimit();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            if (confidenceThreshold > 100) {
+                confidenceThreshold = 100;
+            }
+            boolean noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
+            if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
+                String reasonDoubtful = null;
+                boolean filterPassed = true;
+                for (PeptideFilter filter : peptideMap.getDoubtfulMatchesFilters()) {
+                    if (!filter.isValidated(peptideKey, identification, identificationFeaturesGenerator)) {
+                        filterPassed = false;
+                        reasonDoubtful = filter.getDescription();
+                        break;
+                    }
+                }
+                boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                if (!confidenceThresholdPassed && reasonDoubtful == null) {
+                    reasonDoubtful = "Low confidence";
+                }
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                if (!enoughHits && reasonDoubtful == null) {
+                    reasonDoubtful = "Low number of hits";
+                }
+                if (!sequenceFactory.hasEnoughSequences() && reasonDoubtful == null) {
+                    reasonDoubtful = "Database too small";
+                }
+                if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
+                } else {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                    if (reasonDoubtful != null) {
+                        psParameter.setReasonDoubtful(reasonDoubtful);
+                    }
+                }
+
+            } else {
+                psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+            }
+        } else {
+            psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+        }
+        identification.updatePeptideMatchParameter(peptideKey, psParameter);
+    }
+
+    /**
+     * updates the validation status of a spectrum match. If the match was
+     * manually validated nothing will be changed.
+     *
+     * @param identification the identification object
+     * @param psmMap the psm level target/decoy scoring map
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param searchParameters the settings used for the identification
+     * @param spectrumKey the key of the spectrum match of interest
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, PsmSpecificMap psmMap,
+            String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double psmThreshold = targetDecoyResults.getScoreLimit();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            if (confidenceThreshold > 100) {
+                confidenceThreshold = 100;
+            }
+            boolean noValidated = targetDecoyResults.noValidated();
+            if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+                String reasonDoubtful = null;
+                boolean filterPassed = true;
+                for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters()) {
+                    if (!filter.isValidated(spectrumKey, identification, searchParameters)) {
+                        filterPassed = false;
+                        reasonDoubtful = filter.getDescription();
+                        break;
+                    }
+                }
+                boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                if (!confidenceThresholdPassed && reasonDoubtful == null) {
+                    reasonDoubtful = "Low confidence";
+                }
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                if (!enoughHits && reasonDoubtful == null) {
+                    reasonDoubtful = "Low number of hits";
+                }
+                if (!sequenceFactory.hasEnoughSequences() && reasonDoubtful == null) {
+                    reasonDoubtful = "Database too small";
+                }
+                if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
+                } else {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                    if (reasonDoubtful != null) {
+                        psParameter.setReasonDoubtful(reasonDoubtful);
+                    }
+                }
+            } else {
+                psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+            }
+        } else {
+            psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+        }
+        identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
     }
 
     /**
@@ -1903,28 +2034,28 @@ public class PeptideShaker {
         int maxPepLength = idFilter.getMaxPepLength();
 
         for (String proteinKey : identification.getProteinIdentification()) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences);
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences);
 
-                if (metrics != null) {
-                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                    if (psParameter.getMatchValidationLevel().isValidated()) {
-                        nValidatedProteins++;
-                        if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
-                            nConfidentProteins++;
-                        }
-                    }
-                    if (spectrumCountingPreferences != null) {
-                        tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
-                        if (tempSpectrumCounting > maxSpectrumCounting) {
-                            maxSpectrumCounting = tempSpectrumCounting;
-                        }
+            if (metrics != null) {
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+                    nValidatedProteins++;
+                    if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
+                        nConfidentProteins++;
                     }
                 }
-                waitingHandler.increaseSecondaryProgressCounter();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                if (spectrumCountingPreferences != null) {
+                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
+                    if (tempSpectrumCounting > maxSpectrumCounting) {
+                        maxSpectrumCounting = tempSpectrumCounting;
+                    }
                 }
+            }
+            waitingHandler.increaseSecondaryProgressCounter();
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
         }
         if (metrics != null) {
             metrics.setMaxSpectrumCounting(maxSpectrumCounting);
