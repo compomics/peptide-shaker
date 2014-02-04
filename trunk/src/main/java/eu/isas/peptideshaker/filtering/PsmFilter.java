@@ -77,7 +77,7 @@ public class PsmFilter extends MatchFilter {
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
     /**
-     * The amino acid coverage by fragment ions
+     * The amino acid coverage by fragment ions.
      */
     private Double sequenceCoverage = null;
     /**
@@ -89,7 +89,7 @@ public class PsmFilter extends MatchFilter {
      */
     private ArrayList<String> fileName = null;
     /**
-     * a spectrum annotator to annotate spectra
+     * A spectrum annotator to annotate spectra.
      */
     private PeptideSpectrumAnnotator spectrumAnnotator = null;
 

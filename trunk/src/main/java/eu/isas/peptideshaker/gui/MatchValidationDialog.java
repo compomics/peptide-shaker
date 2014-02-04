@@ -75,7 +75,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private Type type;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
@@ -87,11 +87,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private static final Color orange = new Color(220, 110, 0);
     /**
-     * The settings used to identify the spectra
+     * The settings used to identify the spectra.
      */
     private SearchParameters searchParameters;
     /**
-     * the spectrum annotation preferences
+     * The spectrum annotation preferences.
      */
     private AnnotationPreferences annotationPreferences;
 
@@ -295,7 +295,6 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
 
         // Database info
-        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         boolean targetDecoy = sequenceFactory.concatenatedTargetDecoy();
         if (!targetDecoy) {
             targetDecoyLbl.setText("Target only");
