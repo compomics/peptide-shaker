@@ -1,16 +1,22 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.RowFilter;
 import javax.swing.RowFilter.ComparisonType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -71,22 +77,30 @@ public class PsmFilter extends MatchFilter {
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
     /**
+     * The amino acid coverage by fragment ions
+     */
+    private Double sequenceCoverage = null;
+    /**
+     * The type of comparison to be used for the psm confidence.
+     */
+    private ComparisonType sequenceCoverageComparison = ComparisonType.EQUAL;
+    /**
      * List of spectrum files names retained.
      */
     private ArrayList<String> fileName = null;
+    /**
+     * a spectrum annotator to annotate spectra
+     */
+    private PeptideSpectrumAnnotator spectrumAnnotator = null;
 
     /**
      * Constructor.
      *
      * @param name the name of the filter
-     * @param charges list of allowed charges
-     * @param files list of allowed files
      */
-    public PsmFilter(String name, ArrayList<Integer> charges, ArrayList<String> files) {
+    public PsmFilter(String name) {
         this.name = name;
         this.filterType = FilterType.PSM;
-        this.charges = charges;
-        this.fileName = files;
     }
 
     /**
@@ -292,6 +306,62 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
+     * returns the sequence coverage by fragment ions threshold in percent.
+     *
+     * @return the sequence coverage by fragment ions threshold in percent
+     */
+    public Double getSequenceCoverage() {
+        return sequenceCoverage;
+    }
+
+    /**
+     * Sets the sequence coverage by fragment ions threshold in percent.
+     *
+     * @param sequenceCoverage the sequence coverage by fragment ions threshold
+     * in percent
+     */
+    public void setSequenceCoverage(Double sequenceCoverage) {
+        this.sequenceCoverage = sequenceCoverage;
+    }
+
+    /**
+     * Returns the comparator for the sequence coverage by fragment ions.
+     *
+     * @return the comparator for the sequence coverage by fragment ions
+     */
+    public ComparisonType getSequenceCoverageComparison() {
+        return sequenceCoverageComparison;
+    }
+
+    /**
+     * Sets the comparator for the sequence coverage by fragment ions.
+     *
+     * @param sequenceCoverageComparison the comparator for the sequence
+     * coverage by fragment ions
+     */
+    public void setSequenceCoverageComparison(ComparisonType sequenceCoverageComparison) {
+        this.sequenceCoverageComparison = sequenceCoverageComparison;
+    }
+
+    /**
+     * Returns the spectrum annotator of this filter.
+     *
+     * @return the spectrum annotator of this filter
+     */
+    public PeptideSpectrumAnnotator getSpectrumAnnotator() {
+        return spectrumAnnotator;
+    }
+
+    /**
+     * Sets the spectrum annotator of this filter
+     *
+     * @param spectrumAnnotator the spectrum annotator of this filter
+     */
+    public void setSpectrumAnnotator(PeptideSpectrumAnnotator spectrumAnnotator) {
+        this.spectrumAnnotator = spectrumAnnotator;
+    }
+
+    /**
      * Returns the list of spectrum files containing the desired spectra.
      *
      * @return the list of spectrum files containing the desired spectra
@@ -317,6 +387,7 @@ public class PsmFilter extends MatchFilter {
      * @param identification the identification object to get the information
      * from
      * @param searchParameters the identification parameters
+     * @param annotationPreferences the spectrum annotation preferences
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -327,9 +398,9 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isValidated(String spectrumKey, Identification identification, SearchParameters searchParameters) 
+    public boolean isValidated(String spectrumKey, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, this, identification, searchParameters);
+        return isValidated(spectrumKey, this, identification, searchParameters, annotationPreferences);
     }
 
     /**
@@ -340,6 +411,7 @@ public class PsmFilter extends MatchFilter {
      * @param identification the identification object to get the information
      * from
      * @param searchParameters the identification parameters
+     * @param annotationPreferences the spectrum annotation preferences
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -350,7 +422,7 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, SearchParameters searchParameters) 
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (psmFilter.getExceptions().contains(spectrumKey)) {
@@ -484,12 +556,59 @@ public class PsmFilter extends MatchFilter {
             }
         }
 
-        return psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey));
+        if (psmFilter.getSequenceCoverage() != null) {
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+            PeptideSpectrumAnnotator spectrumAnnotator = psmFilter.getSpectrumAnnotator();
+            if (spectrumAnnotator == null) {
+                spectrumAnnotator = new PeptideSpectrumAnnotator();
+                psmFilter.setSpectrumAnnotator(spectrumAnnotator);
+            }
+            HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                    spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value, spectrum, peptide, annotationPreferences.getAnnotationIntensityLimit(),
+                    searchParameters.getFragmentIonAccuracy(), false);
+
+            double nCovered = 0;
+            int nAA = peptide.getSequence().length();
+            for (int i = 0; i < nAA; i++) {
+                ArrayList<IonMatch> matchesAtAa = ionMatches.get(i);
+                if (matchesAtAa != null && !matchesAtAa.isEmpty()) {
+                    nCovered++;
+                }
+            }
+            double coverarge = 100 * nCovered / nAA;
+
+            if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.AFTER) {
+                if (coverarge <= psmFilter.getSequenceCoverage()) {
+                    return false;
+                }
+            } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.BEFORE) {
+                if (coverarge >= psmFilter.getSequenceCoverage()) {
+                    return false;
+                }
+            } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.EQUAL) {
+                if (coverarge != psmFilter.getSequenceCoverage()) {
+                    return false;
+                }
+            } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                if (coverarge == psmFilter.getSequenceCoverage()) {
+                    return false;
+                }
+            }
+        }
+
+        if (psmFilter.getFileNames() != null && !psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
+            return false;
+        }
+        
+        return true;
     }
 
     @Override
     public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        return isValidated(matchKey, identification, searchParameters);
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+        return isValidated(matchKey, identification, searchParameters, annotationPreferences);
     }
 }
