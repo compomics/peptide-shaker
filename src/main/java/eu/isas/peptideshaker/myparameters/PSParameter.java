@@ -59,6 +59,10 @@ public class PSParameter implements UrParameter {
      */
     private MatchValidationLevel matchValidationLevel;
     /**
+     * Boolean indicating whether the validation confidence was manually updated
+     */
+    private Boolean manualValidation = false;
+    /**
      * The reason why a match is flagged as doubtful.
      */
     private String reasonDoubtful = null;
@@ -752,8 +756,27 @@ public class PSParameter implements UrParameter {
     public void setReasonDoubtful(String reasonDoubtful) {
         this.reasonDoubtful = reasonDoubtful;
     }
-    
-    
+
+    /**
+     * Indicates whether the match validation was manually inspected.
+     * 
+     * @return a boolean indicating whether the match validation was manually inspected
+     */
+    public Boolean isManualValidation() {
+        if (manualValidation == null) {
+            manualValidation = false;
+        }
+        return manualValidation;
+    }
+
+    /**
+     * Sets whether the match validation was manually inspected.
+     * 
+     * @param manualValidation a boolean indicating whether the match validation was manually inspected
+     */
+    public void setManualValidation(Boolean manualValidation) {
+        this.manualValidation = manualValidation;
+    }
 
     @Override
     public String getFamilyName() {

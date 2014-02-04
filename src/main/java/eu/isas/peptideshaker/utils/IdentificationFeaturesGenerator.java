@@ -871,16 +871,17 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Set the number of confident peptides for a given protein match.
+     * Updates the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
+     * 
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void setNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
     }
@@ -1126,7 +1127,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Sets the number of confident spectra for a given peptide match.
+     * Updates the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
      * @throws IOException
@@ -1135,7 +1136,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void setNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey, result);
     }
