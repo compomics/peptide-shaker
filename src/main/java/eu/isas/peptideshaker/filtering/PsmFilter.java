@@ -61,6 +61,22 @@ public class PsmFilter extends MatchFilter {
      */
     private ComparisonType precursorMzErrorComparison = ComparisonType.EQUAL;
     /**
+     * The minimal precursor m/z error.
+     */
+    private Double minPrecursorMzError = null;
+    /**
+     * The type of comparison to be used for the min precursor m/z error.
+     */
+    private ComparisonType precursorMinMzErrorComparison = ComparisonType.EQUAL;
+    /**
+     * The maximal precursor m/z error.
+     */
+    private Double maxPrecursorMzError = null;
+    /**
+     * The type of comparison to be used for the max precursor m/z error.
+     */
+    private ComparisonType precursorMaxMzErrorComparison = ComparisonType.EQUAL;
+    /**
      * Score limit.
      */
     private Double psmScore = null;
@@ -287,6 +303,80 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
+     * Returns the minimal precursor m/z error
+     * 
+     * @return the minimal precursor m/z error
+     */
+    public Double getMinPrecursorMzError() {
+        return minPrecursorMzError;
+    }
+
+    /**
+     * Sets the minimal precursor m/z error.
+     * 
+     * @param minPrecursorMzError the minimal precursor m/z error
+     */
+    public void setMinPrecursorMzError(Double minPrecursorMzError) {
+        this.minPrecursorMzError = minPrecursorMzError;
+    }
+
+    /**
+     * Returns the comparison type used for the precursor min m/z error comparison.
+     *
+     * @return the comparison type used for the precursor min m/z error comparison
+     */
+    public ComparisonType getPrecursorMinMzErrorComparison() {
+        return precursorMinMzErrorComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the precursor min m/z error comparison.
+     *
+     * @param precursorMinMzErrorComparison the comparison type used for the
+     * precursor min m/z error comparison
+     */
+    public void setPrecursorMinMzErrorComparison(ComparisonType precursorMinMzErrorComparison) {
+        this.precursorMinMzErrorComparison = precursorMinMzErrorComparison;
+    }
+
+    /**
+     * Returns the maximal precursor m/z error.
+     * 
+     * @return the maximal precursor m/z error
+     */
+    public Double getMaxPrecursorMzError() {
+        return maxPrecursorMzError;
+    }
+
+    /**
+     * Sets the maximal precursor m/z error.
+     * 
+     * @param maxPrecursorMzError the maximal precursor m/z error
+     */
+    public void setMaxPrecursorMzError(Double maxPrecursorMzError) {
+        this.maxPrecursorMzError = maxPrecursorMzError;
+    }
+
+    /**
+     * Returns the comparison type used for the precursor max m/z error comparison.
+     *
+     * @return the comparison type used for the precursor max m/z error comparison
+     */
+    public ComparisonType getPrecursorMaxMzErrorComparison() {
+        return precursorMaxMzErrorComparison;
+    }
+
+    /**
+     * Sets the comparison type used for the precursor max m/z error comparison.
+     *
+     * @param precursorMaxMzErrorComparison the comparison type used for the
+     * precursor max m/z error comparison
+     */
+    public void setPrecursorMaxMzErrorComparison(ComparisonType precursorMaxMzErrorComparison) {
+        this.precursorMaxMzErrorComparison = precursorMaxMzErrorComparison;
+    }
+
+    /**
      * Returns the comparison type used for the precursor RT comparison.
      *
      * @return the comparison type used for the precursor RT comparison
@@ -481,7 +571,9 @@ public class PsmFilter extends MatchFilter {
 
         if (psmFilter.getPrecursorMz() != null
                 || psmFilter.getPrecursorRT() != null
-                || psmFilter.getPrecursorMzError() != null) {
+                || psmFilter.getPrecursorMzError() != null
+                || psmFilter.getMinPrecursorMzError() != null
+                || psmFilter.getMaxPrecursorMzError() != null) {
 
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
             Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
@@ -543,6 +635,50 @@ public class PsmFilter extends MatchFilter {
                     }
                 } else if (psmFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
                     if (error == psmFilter.getPrecursorMzError()) {
+                        return false;
+                    }
+                }
+            }
+
+            if (psmFilter.getMinPrecursorMzError() != null) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                if (psmFilter.getPrecursorMinMzErrorComparison()== RowFilter.ComparisonType.AFTER) {
+                    if (error <= psmFilter.getMinPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.BEFORE) {
+                    if (error >= psmFilter.getMinPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.EQUAL) {
+                    if (error != psmFilter.getMinPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                    if (error == psmFilter.getMinPrecursorMzError()) {
+                        return false;
+                    }
+                }
+            }
+
+            if (psmFilter.getMaxPrecursorMzError() != null) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                if (psmFilter.getPrecursorMaxMzErrorComparison()== RowFilter.ComparisonType.AFTER) {
+                    if (error <= psmFilter.getMaxPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.BEFORE) {
+                    if (error >= psmFilter.getMaxPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.EQUAL) {
+                    if (error != psmFilter.getMaxPrecursorMzError()) {
+                        return false;
+                    }
+                } else if (psmFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                    if (error == psmFilter.getMaxPrecursorMzError()) {
                         return false;
                     }
                 }

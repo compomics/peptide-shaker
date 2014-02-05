@@ -16,8 +16,10 @@ import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.math.statistics.ditributions.NonSymmetricalNormalDistribution;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -684,16 +687,25 @@ public class PeptideShaker {
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
-                    + identification.getSpectrumIdentificationSize());
+                    + 2 * identification.getSpectrumIdentificationSize());
         }
 
         // validate the spectra
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
+            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+                    double precursorMzError = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                    precursorMzDeviations.add(precursorMzError);
+                }
 
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressCounter();
@@ -701,6 +713,48 @@ public class PeptideShaker {
                         return;
                     }
                 }
+            }
+            // Check if we should narrow the mass accuracy window, if yes, do a second pass validation
+            NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
+            Double minDeviation = precDeviationDistribution.getMinValueForProbability(0.0001);
+            Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(0.0001);
+            boolean needSecondPass = false;
+            if (minDeviation < maxDeviation) {
+                String unit = "ppm";
+                if (!searchParameters.isPrecursorAccuracyTypePpm()) {
+                    unit = "Da";
+                }
+                if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
+                    needSecondPass = true;
+                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + minDeviation + " " + unit);
+                    psmFilter.setDescription("Precursor m/z deviation < " + minDeviation + " " + unit);
+                    psmFilter.setMinPrecursorMzError(minDeviation);
+                    psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
+                    psmMap.addDoubtfulMatchesFilter(psmFilter);
+                }
+                if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
+                    needSecondPass = true;
+                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + maxDeviation + unit);
+                    psmFilter.setDescription("Precursor m/z deviation > " + maxDeviation + unit);
+                    psmFilter.setMaxPrecursorMzError(maxDeviation);
+                    psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
+                    psmMap.addDoubtfulMatchesFilter(psmFilter);
+                }
+            }
+            if (needSecondPass) {
+                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+
+                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+
+                    if (waitingHandler != null) {
+                        waitingHandler.increaseSecondaryProgressCounter();
+                        if (waitingHandler.isRunCanceled()) {
+                            return;
+                        }
+                    }
+                }
+            } else if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
             }
         }
 
@@ -796,7 +850,7 @@ public class PeptideShaker {
         identification.loadProteinMatchParameters(new PSParameter(), null);
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, targetDecoyMap, proteinThreshold, proteinThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
 
             // set the fraction details
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
@@ -961,11 +1015,11 @@ public class PeptideShaker {
                     for (ProteinFilter filter : doubtfulMatchFilters) {
                         if (!filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences)) {
                             filterPassed = false;
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                            if (reasonDoubtful == null) {
+                                reasonDoubtful = "";
+                            } else {
+                                reasonDoubtful += ", ";
+                            }
                             reasonDoubtful += filter.getDescription();
                         }
                     }
@@ -1062,28 +1116,28 @@ public class PeptideShaker {
                 }
                 boolean confidenceThresholdPassed = psParameter.getPeptideConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
                 if (!confidenceThresholdPassed) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Low confidence";
                 }
                 boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
                 if (!enoughHits) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Low number of hits";
                 }
                 if (!sequenceFactory.hasEnoughSequences()) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Database too small";
                 }
                 if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
@@ -1149,33 +1203,32 @@ public class PeptideShaker {
                             reasonDoubtful += ", ";
                         }
                         reasonDoubtful += filter.getDescription();
-                        break;
                     }
                 }
                 boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
                 if (!confidenceThresholdPassed) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Low confidence";
                 }
                 boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
                 if (!enoughHits) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Low number of hits";
                 }
                 if (!sequenceFactory.hasEnoughSequences()) {
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
                     reasonDoubtful += "Database too small";
                 }
                 if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
