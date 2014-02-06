@@ -2961,8 +2961,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Open the PeptideShaker example dataset.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void openExampleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openExampleMenuItemActionPerformed
         openExampleFile();
@@ -5204,7 +5204,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     dataSaved = true;
 
                 } catch (OutOfMemoryError error) {
-                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
+
+                    System.err.println("Ran out of memory!");
+                    System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
+                    System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
+                    System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
+
                     Runtime.getRuntime().gc();
                     JOptionPane.showMessageDialog(PeptideShakerGUI.this, JOptionEditorPane.getJOptionEditorPane(
                             "PeptideShaker used up all the available memory and had to be stopped.<br>"

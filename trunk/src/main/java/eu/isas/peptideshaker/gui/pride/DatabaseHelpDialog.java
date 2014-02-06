@@ -652,6 +652,10 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                         e.printStackTrace();
                         return;
                     } catch (OutOfMemoryError error) {
+                        System.err.println("Ran out of memory!");
+                        System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
+                        System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
+                        System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
                         Runtime.getRuntime().gc();
                         progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(finalRef,

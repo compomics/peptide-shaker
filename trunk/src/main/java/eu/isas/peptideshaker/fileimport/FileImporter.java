@@ -485,8 +485,11 @@ public class FileImporter {
             } catch (OutOfMemoryError error) {
 
                 System.out.println("<CompomicsError> PeptideShaker ran out of memory! See the PeptideShaker log for details. </CompomicsError>");
+                System.err.println("Ran out of memory!");
+                System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
+                System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
+                System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
 
-                System.err.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                 Runtime.getRuntime().gc();
                 waitingHandler.appendReportEndLine();
                 waitingHandler.appendReport("Ran out of memory!", true, true);
