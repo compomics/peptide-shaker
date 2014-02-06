@@ -303,8 +303,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the minimal precursor m/z error
-     * 
+     * Returns the minimal precursor m/z error.
+     *
      * @return the minimal precursor m/z error
      */
     public Double getMinPrecursorMzError() {
@@ -313,7 +313,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the minimal precursor m/z error.
-     * 
+     *
      * @param minPrecursorMzError the minimal precursor m/z error
      */
     public void setMinPrecursorMzError(Double minPrecursorMzError) {
@@ -321,9 +321,11 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the precursor min m/z error comparison.
+     * Returns the comparison type used for the precursor min m/z error
+     * comparison.
      *
-     * @return the comparison type used for the precursor min m/z error comparison
+     * @return the comparison type used for the precursor min m/z error
+     * comparison
      */
     public ComparisonType getPrecursorMinMzErrorComparison() {
         return precursorMinMzErrorComparison;
@@ -341,7 +343,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the maximal precursor m/z error.
-     * 
+     *
      * @return the maximal precursor m/z error
      */
     public Double getMaxPrecursorMzError() {
@@ -350,7 +352,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the maximal precursor m/z error.
-     * 
+     *
      * @param maxPrecursorMzError the maximal precursor m/z error
      */
     public void setMaxPrecursorMzError(Double maxPrecursorMzError) {
@@ -358,9 +360,11 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the precursor max m/z error comparison.
+     * Returns the comparison type used for the precursor max m/z error
+     * comparison.
      *
-     * @return the comparison type used for the precursor max m/z error comparison
+     * @return the comparison type used for the precursor max m/z error
+     * comparison
      */
     public ComparisonType getPrecursorMaxMzErrorComparison() {
         return precursorMaxMzErrorComparison;
@@ -643,7 +647,7 @@ public class PsmFilter extends MatchFilter {
             if (psmFilter.getMinPrecursorMzError() != null) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
-                if (psmFilter.getPrecursorMinMzErrorComparison()== RowFilter.ComparisonType.AFTER) {
+                if (psmFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= psmFilter.getMinPrecursorMzError()) {
                         return false;
                     }
@@ -665,7 +669,7 @@ public class PsmFilter extends MatchFilter {
             if (psmFilter.getMaxPrecursorMzError() != null) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 double error = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
-                if (psmFilter.getPrecursorMaxMzErrorComparison()== RowFilter.ComparisonType.AFTER) {
+                if (psmFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= psmFilter.getMaxPrecursorMzError()) {
                         return false;
                     }
@@ -738,7 +742,7 @@ public class PsmFilter extends MatchFilter {
         if (psmFilter.getFileNames() != null && !psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
             return false;
         }
-        
+
         return true;
     }
 
