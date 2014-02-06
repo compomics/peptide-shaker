@@ -3515,7 +3515,7 @@ public class PeptideShaker {
     private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, SearchParameters searchParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
         Enzyme enzyme = searchParameters.getEnzyme();
-        if (!enzyme.isSemiSpecific()) {
+        if (enzyme != null && !enzyme.isSemiSpecific()) { // null enzymes should not occur, but could happen with old search param files
 
             // @TODO: could semi-specific, top-down, whole protein, and non enzyme be handled better??
             double ms2tolerance = searchParameters.getFragmentIonAccuracy();
@@ -3574,7 +3574,6 @@ public class PeptideShaker {
         }
 
         return 0;
-
     }
 
     /**
