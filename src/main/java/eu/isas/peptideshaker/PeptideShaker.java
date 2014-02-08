@@ -742,21 +742,22 @@ public class PeptideShaker {
                     psmMap.addDoubtfulMatchesFilter(psmFilter);
                 }
             }
-            if (needSecondPass) {
-                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-
-                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-
-                    if (waitingHandler != null) {
-                        waitingHandler.increaseSecondaryProgressCounter();
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
-                    }
-                }
-            } else if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
-            }
+            // @TODO: debug
+//            if (needSecondPass) {
+//                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+//
+//                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+//
+//                    if (waitingHandler != null) {
+//                        waitingHandler.increaseSecondaryProgressCounter();
+//                        if (waitingHandler.isRunCanceled()) {
+//                            return;
+//                        }
+//                    }
+//                }
+//            } else if (waitingHandler != null) {
+//                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
+//            }
         }
 
         HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
@@ -2519,9 +2520,6 @@ public class PeptideShaker {
                 }
                 modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
             }
-        }
-        if (nace > 1) {
-            int debug = nace;
         }
 
         if (!modifications.isEmpty()) {

@@ -469,7 +469,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     return (row + 1);
                 case 1:
                     MatchFilter filter = filters.get(row);
-                    return filter.getDescription();
+                    return filter.getName();
                 case 2:
                     filter = filters.get(row);
                     try {

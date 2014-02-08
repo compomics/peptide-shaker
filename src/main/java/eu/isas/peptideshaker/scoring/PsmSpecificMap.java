@@ -304,7 +304,7 @@ public class PsmSpecificMap implements Serializable {
         psmFilter.setDescription("<40% sequence coverage by fragment ions");
         psmFilter.setSequenceCoverage(40.0);
         psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(psmFilter);
+//        filters.add(psmFilter);
         
         return filters;
     }
