@@ -727,7 +727,7 @@ public class PeptideShaker {
                 }
                 if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
                     needSecondPass = true;
-                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + minDeviation + " " + unit);
+                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + Util.roundDouble(minDeviation, 2) + " " + unit);
                     psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
                     psmFilter.setMinPrecursorMzError(minDeviation);
                     psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
@@ -735,7 +735,7 @@ public class PeptideShaker {
                 }
                 if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
                     needSecondPass = true;
-                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + maxDeviation + " " + unit);
+                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                     psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                     psmFilter.setMaxPrecursorMzError(maxDeviation);
                     psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
