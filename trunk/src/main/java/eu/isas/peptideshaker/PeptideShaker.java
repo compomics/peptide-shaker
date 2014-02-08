@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -727,15 +728,15 @@ public class PeptideShaker {
                 if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
                     needSecondPass = true;
                     PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + minDeviation + " " + unit);
-                    psmFilter.setDescription("Precursor m/z deviation < " + minDeviation + " " + unit);
+                    psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
                     psmFilter.setMinPrecursorMzError(minDeviation);
                     psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
                     psmMap.addDoubtfulMatchesFilter(psmFilter);
                 }
                 if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
                     needSecondPass = true;
-                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + maxDeviation + unit);
-                    psmFilter.setDescription("Precursor m/z deviation > " + maxDeviation + unit);
+                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + maxDeviation + " " + unit);
+                    psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                     psmFilter.setMaxPrecursorMzError(maxDeviation);
                     psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
                     psmMap.addDoubtfulMatchesFilter(psmFilter);

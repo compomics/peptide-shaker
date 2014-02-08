@@ -718,22 +718,22 @@ public class PsmFilter extends MatchFilter {
                     nCovered++;
                 }
             }
-            double coverarge = 100 * nCovered / nAA;
+            double coverage = 100 * nCovered / nAA;
 
             if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.AFTER) {
-                if (coverarge <= psmFilter.getSequenceCoverage()) {
+                if (coverage <= psmFilter.getSequenceCoverage()) {
                     return false;
                 }
             } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.BEFORE) {
-                if (coverarge >= psmFilter.getSequenceCoverage()) {
+                if (coverage >= psmFilter.getSequenceCoverage()) {
                     return false;
                 }
             } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.EQUAL) {
-                if (coverarge != psmFilter.getSequenceCoverage()) {
+                if (coverage != psmFilter.getSequenceCoverage()) {
                     return false;
                 }
             } else if (psmFilter.getSequenceCoverageComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
-                if (coverarge == psmFilter.getSequenceCoverage()) {
+                if (coverage == psmFilter.getSequenceCoverage()) {
                     return false;
                 }
             }
