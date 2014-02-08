@@ -6,7 +6,8 @@
 *Changes in PeptideShaker 0.25.1  (February 8. 2014):*
 
  * BUG FIX: Fixed a memory issue occurring during the protein database loading for Mac and Linux.
- * BUG FIX: Added a test for no enzyme set, as old search parameter files could result in a null pointer exception.
+ * BUG FIX: Added a test for no enzyme set, as old search parameter files could result in a null pointer exception. 
+ * BUG FIX: Tried to get rid of one of the reasons for the "please contact the developers" message when moving around in the Overview tab.
 
  * LIBRARY UPDATE: Updated utilities to version 3.21.30.
 
