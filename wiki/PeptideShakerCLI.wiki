@@ -153,7 +153,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 {{{
 -in                        PeptideShaker project (.cps file)
 
--out                       Output folder for report files. (Existing files will be overwritten.)
+-out_reports               Output folder for report files. (Existing files will be overwritten.)
 }}}
 
 *Optional report options:*
