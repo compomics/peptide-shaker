@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.25.2  (February 10. 2014):*
+ 
+ * BUG FIX: Fixed a bug in the report command line export, where two options with the same name (-out) could get confused.
+
+----
+
 *Changes in PeptideShaker 0.25.1  (February 8. 2014):*
 
  * BUG FIX: Fixed a memory issue occurring during the protein database loading for Mac and Linux.
