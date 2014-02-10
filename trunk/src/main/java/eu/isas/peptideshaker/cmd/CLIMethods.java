@@ -240,7 +240,7 @@ public class CLIMethods {
             InterruptedException, MzMLUnmarshallerException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
-        File reportFile = new File(reportCLIInputBean.getOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
+        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
         PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, 
                 searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
@@ -258,7 +258,7 @@ public class CLIMethods {
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
-        File reportFile = new File(reportCLIInputBean.getOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
+        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
         PSExportFactory.writeDocumentation(exportScheme, reportFile);
     }
 }

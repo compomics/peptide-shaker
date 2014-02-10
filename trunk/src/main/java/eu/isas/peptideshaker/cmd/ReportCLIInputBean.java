@@ -21,7 +21,7 @@ public class ReportCLIInputBean {
     /**
      * Folder where to export the reports.
      */
-    private File outputFolder = null;
+    private File reportOutputFolder = null;
     /**
      * The report types required by the user.
      */
@@ -42,7 +42,7 @@ public class ReportCLIInputBean {
             cpsFile = new File(aLine.getOptionValue(ReportCLIParams.CPS_FILE.id));
         }
         if (aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id)) {
-            outputFolder = new File(aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id));
+            reportOutputFolder = new File(aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id));
         }
         if (aLine.hasOption(ReportCLIParams.REPORT_TYPE.id)) {
             ArrayList<Integer> options = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(ReportCLIParams.REPORT_TYPE.id), ",");
@@ -70,12 +70,21 @@ public class ReportCLIInputBean {
     }
 
     /**
-     * Returns the output folder.
+     * Returns the report output folder.
      *
      * @return the output folder
      */
-    public File getOutputFolder() {
-        return outputFolder;
+    public File getReportOutputFolder() {
+        return reportOutputFolder;
+    }
+
+    /**
+     * Set the report output folder.
+     *
+     * @param outputFolder
+     */
+    public void setReportOutputFolder(File outputFolder) {
+        this.reportOutputFolder = outputFolder;
     }
 
     /**
@@ -111,7 +120,7 @@ public class ReportCLIInputBean {
      * @return true if a report export is required
      */
     public boolean reportExportNeeded() {
-        return outputFolder != null && !reportTypes.isEmpty();
+        return reportOutputFolder != null && !reportTypes.isEmpty();
     }
 
     /**
@@ -120,6 +129,6 @@ public class ReportCLIInputBean {
      * @return true if documentation export is require
      */
     public boolean documentationExportNeeded() {
-        return outputFolder != null && !documentationTypes.isEmpty();
+        return reportOutputFolder != null && !documentationTypes.isEmpty();
     }
 }
