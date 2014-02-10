@@ -229,7 +229,8 @@ public class PeptideShaker {
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
             ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
-        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")<br>", true, true);
+        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
+        waitingHandler.appendReportEndLine();
 
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);

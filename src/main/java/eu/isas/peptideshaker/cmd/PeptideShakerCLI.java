@@ -239,12 +239,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // Report export if needed
         ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
+
+        // see if output folder is set, and if not set to the same folder as the cps file
+        if (reportCLIInputBean.getReportOutputFolder() == null) {
+            reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
+        }
+
         if (reportCLIInputBean.exportNeeded()) {
             waitingHandler.appendReport("Starting report export.", true, true);
 
             // Export report(s)
             if (reportCLIInputBean.exportNeeded()) {
-                int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
+                int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
                 for (String reportType : reportCLIInputBean.getReportTypes()) {
                     try {
                         CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
