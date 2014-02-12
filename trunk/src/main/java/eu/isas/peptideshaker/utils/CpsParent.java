@@ -352,6 +352,45 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
+     * Loads the spectra in the spectrum factory.
+     *
+     * @param spectrumFileName the name of the spectrum file to load
+     * @param waitingHandler a waiting handler displaying progress to the user.
+     * Can be null
+     * @throws FileNotFoundException
+     * @throws IOException
+     *
+     * @return a boolean indicating whether the loading was successful
+     */
+    public boolean loadSpectrumFile(String spectrumFileName, WaitingHandler waitingHandler) throws FileNotFoundException, IOException {
+
+        SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+
+        File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
+        File projectFolder = cpsFile.getParentFile();
+        File dataFolder = new File(projectFolder, "data");
+
+        // try to locate the spectrum file
+        if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+            File fileInProjectFolder = new File(projectFolder, spectrumFileName);
+            File fileInDataFolder = new File(dataFolder, spectrumFileName);
+
+            if (fileInProjectFolder.exists()) {
+                projectDetails.addSpectrumFile(fileInProjectFolder);
+            } else if (fileInDataFolder.exists()) {
+                projectDetails.addSpectrumFile(fileInDataFolder);
+            } else {
+                return false;
+            }
+        }
+
+        File mgfFile = projectDetails.getSpectrumFile(spectrumFileName);
+        spectrumFactory.addSpectra(mgfFile, waitingHandler);
+
+        return true;
+    }
+
+    /**
      * Imports the gene mapping.
      *
      * @param waitingHandler the waiting handler

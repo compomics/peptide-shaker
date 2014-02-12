@@ -5124,7 +5124,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                         boolean found;
                         try {
-                            found = cpsBean.loadSpectrumFiles(new File(getLastSelectedFolder()), progressDialog);
+                            found = cpsBean.loadSpectrumFile(spectrumFileName, progressDialog);
                         } catch (Exception e) {
                             found = false;
                         }
@@ -5463,6 +5463,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 // cancel the saving
             }
 
+        } else if (cpsBean.getCpsFile() == null) {
+            saveProjectAs(false, false);
         } else {
 
             final boolean closeWhenDone = aCloseWhenDone;
