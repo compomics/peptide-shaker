@@ -85,48 +85,39 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private enum TableIndex {
 
-        SEARCH_ENGINE_PERFORMANCE, SPECTRUM_FILES, PSM_TABLES
+        ID_SOFTWARE_PERFORMANCE, SPECTRUM_FILES, PSM_TABLES
     };
     /**
-     * Static index for the search engine agreement: no psm found.
+     * Static index for the ID software agreement: no psm found.
      */
     public static final int NO_ID = 0;
     /**
-     * Static index for the search engine agreement: the search engines have
+     * Static index for the ID software agreement: the ID software have
      * different top ranking peptides.
      */
     public static final int CONFLICT = 1;
     /**
-     * Static index for the search engine agreement: one or more of the search
-     * engines did not identify the spectrum, while one or more of the others
-     * did.
+     * Static index for the ID software agreement: one or more of the softwares
+     * did not identify the spectrum, while one or more of the others did.
      */
     public static final int PARTIALLY_MISSING = 2;
     /**
-     * Static index for the search engine agreement: the search engines all have
-     * the same top ranking peptide without accounting for modification
+     * Static index for the ID software agreement: the ID softwares all have the
+     * same top ranking peptide without accounting for modification
      * localization.
      */
     public static final int AGREEMENT = 3;
     /**
-     * Static index for the search engine agreement: the search engines all have
-     * the same top ranking peptide.
+     * Static index for the ID software agreement: the ID softwares all have the
+     * same top ranking peptide.
      */
     public static final int AGREEMENT_WITH_MODS = 4;
     /**
-     * The peptide sequence tooltips for the OMSSA table.
+     * The peptide sequence tooltips for the search results table.
      */
-    private HashMap<Integer, String> omssaTablePeptideTooltips = null;
+    private HashMap<Integer, String> searchResultsTablePeptideTooltips = null;
     /**
-     * The peptide sequence tooltips for the XTandem table.
-     */
-    private HashMap<Integer, String> xTandemTablePeptideTooltips = null;
-    /**
-     * The peptide sequence tooltips for the Mascot table.
-     */
-    private HashMap<Integer, String> mascotTablePeptideTooltips = null;
-    /**
-     * The peptide sequence tooltips for the OMSSA table.
+     * The peptide sequence tooltips for the search results table.
      */
     private String peptideShakerJTablePeptideTooltip = null;
     /**
@@ -134,9 +125,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private String currentSpectrumKey = "";
     /**
-     * The search engine table column header tooltips.
+     * The ID software table column header tooltips.
      */
-    private ArrayList<String> searchEngineTableToolTips;
+    private ArrayList<String> idSoftwareTableToolTips;
     /**
      * The spectrum table column header tooltips.
      */
@@ -146,47 +137,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> peptideShakerTableToolTips;
     /**
-     * The OMSSA table column header tooltips.
+     * The ID results table column header tooltips.
      */
-    private ArrayList<String> omssaTableToolTips;
+    private ArrayList<String> idResultsTableToolTips;
     /**
-     * The X!Tandem table column header tooltips.
-     */
-    private ArrayList<String> xTandemTableToolTips;
-    /**
-     * The Mascot table column header tooltips.
-     */
-    private ArrayList<String> mascotTableToolTips;
-    /**
-     * The spectrum annotator for search engine specific results
+     * The spectrum annotator for ID software specific results.
      */
     private PeptideSpectrumAnnotator specificAnnotator = new PeptideSpectrumAnnotator();
     /**
-     * The list of OMSSA peptide keys.
+     * The list of search results.
      */
-    private HashMap<Integer, String> omssaPeptideKeys = new HashMap<Integer, String>();
+    private HashMap<Integer, PeptideAssumption> searchResultsPeptideKeys = new HashMap<Integer, PeptideAssumption>();
     /**
-     * The list of X!Tandem peptide keys.
-     */
-    private HashMap<Integer, String> xtandemPeptideKeys = new HashMap<Integer, String>();
-    /**
-     * The list of Mascot peptide keys.
-     */
-    private HashMap<Integer, String> mascotPeptideKeys = new HashMap<Integer, String>();
-    /**
-     * The main GUI
+     * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The file currently selected
+     * The file currently selected.
      */
     private String fileSelected = null;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
@@ -212,16 +187,24 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         initComponents();
         formComponentResized(null);
 
-        searchEnginetableJScrollPane.getViewport().setOpaque(false);
+        idSoftwareTableJScrollPane.getViewport().setOpaque(false);
         spectrumTableJScrollPane.getViewport().setOpaque(false);
         peptideShakerJScrollPane.getViewport().setOpaque(false);
-        xTandemTableJScrollPane.getViewport().setOpaque(false);
-        mascotTableJScrollPane.getViewport().setOpaque(false);
-        omssaTableJScrollPane.getViewport().setOpaque(false);
+        idResultsTableJScrollPane.getViewport().setOpaque(false);
 
         fileNamesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
+        setUpGUI();
         setTableProperties();
+    }
+
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGUI() {
+        ((TitledBorder) idSoftwarePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Identification Software Performance" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+        ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+        ((TitledBorder) spectrumPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
     }
 
     /**
@@ -233,27 +216,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         JPanel spectrumCorner = new JPanel();
         spectrumCorner.setBackground(spectrumTable.getTableHeader().getBackground());
         spectrumTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, spectrumCorner);
-        JPanel omssaCorner = new JPanel();
-        omssaCorner.setBackground(omssaTable.getTableHeader().getBackground());
-        omssaTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, omssaCorner);
-        JPanel xtandemCorner = new JPanel();
-        xtandemCorner.setBackground(xTandemTable.getTableHeader().getBackground());
-        xTandemTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, xtandemCorner);
-        JPanel mascotCorner = new JPanel();
-        mascotCorner.setBackground(omssaTable.getTableHeader().getBackground());
-        mascotTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, mascotCorner);
+        JPanel idResultsCorner = new JPanel();
+        idResultsCorner.setBackground(searchResultsTable.getTableHeader().getBackground());
+        idResultsTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, idResultsCorner);
 
         peptideShakerJTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
 
-        searchEngineTable.getTableHeader().setReorderingAllowed(false);
+        idSoftwareTable.getTableHeader().setReorderingAllowed(false);
         peptideShakerJTable.getTableHeader().setReorderingAllowed(false);
         spectrumTable.getTableHeader().setReorderingAllowed(false);
-        omssaTable.getTableHeader().setReorderingAllowed(false);
-        mascotTable.getTableHeader().setReorderingAllowed(false);
-        xTandemTable.getTableHeader().setReorderingAllowed(false);
+        searchResultsTable.getTableHeader().setReorderingAllowed(false);
 
         spectrumTable.setAutoCreateRowSorter(true);
-        searchEngineTable.setAutoCreateRowSorter(true);
+        idSoftwareTable.setAutoCreateRowSorter(true);
 
         // make sure that the user is made aware that the tool is doing something during sorting of the spectrum table
         spectrumTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
@@ -281,8 +256,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.getColumn(" ").setMaxWidth(30);
         peptideShakerJTable.getColumn("  ").setMinWidth(30);
         peptideShakerJTable.getColumn("  ").setMaxWidth(30);
-        searchEngineTable.getColumn(" ").setMinWidth(30);
-        searchEngineTable.getColumn(" ").setMaxWidth(30);
+        idSoftwareTable.getColumn(" ").setMinWidth(30);
+        idSoftwareTable.getColumn(" ").setMaxWidth(30);
         spectrumTable.getColumn(" ").setMinWidth(50);
         spectrumTable.getColumn(" ").setMaxWidth(50);
         spectrumTable.getColumn("  ").setMinWidth(30);
@@ -290,106 +265,74 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("Confidence").setMaxWidth(90);
         spectrumTable.getColumn("Confidence").setMinWidth(90);
 
-        omssaTable.getColumn(" ").setMinWidth(30);
-        omssaTable.getColumn(" ").setMaxWidth(30);
-        mascotTable.getColumn(" ").setMinWidth(30);
-        mascotTable.getColumn(" ").setMaxWidth(30);
-        xTandemTable.getColumn(" ").setMinWidth(30);
-        xTandemTable.getColumn(" ").setMaxWidth(30);
+        searchResultsTable.getColumn(" ").setMinWidth(30);
+        searchResultsTable.getColumn(" ").setMaxWidth(30);
 
-        peptideShakerJTable.getColumn("SE").setMaxWidth(37);
-        peptideShakerJTable.getColumn("SE").setMinWidth(37);
-        spectrumTable.getColumn("SE").setMaxWidth(37);
-        spectrumTable.getColumn("SE").setMinWidth(37);
+        peptideShakerJTable.getColumn("ID").setMaxWidth(37);
+        peptideShakerJTable.getColumn("ID").setMinWidth(37);
+        spectrumTable.getColumn("ID").setMaxWidth(37);
+        spectrumTable.getColumn("ID").setMinWidth(37);
 
         peptideShakerJTable.getColumn("Confidence").setMaxWidth(90);
         peptideShakerJTable.getColumn("Confidence").setMinWidth(90);
-        peptideShakerJTable.getColumn("Score").setMaxWidth(90);
-        peptideShakerJTable.getColumn("Score").setMinWidth(90);
-        omssaTable.getColumn("Confidence").setMaxWidth(90);
-        omssaTable.getColumn("Confidence").setMinWidth(90);
-        mascotTable.getColumn("Confidence").setMaxWidth(90);
-        mascotTable.getColumn("Confidence").setMinWidth(90);
-        xTandemTable.getColumn("Confidence").setMaxWidth(90);
-        xTandemTable.getColumn("Confidence").setMinWidth(90);
-        omssaTable.getColumn("Charge").setMaxWidth(90);
-        omssaTable.getColumn("Charge").setMinWidth(90);
-        omssaTable.getColumn("e-value").setMaxWidth(90);
-        omssaTable.getColumn("e-value").setMinWidth(90);
-        mascotTable.getColumn("Charge").setMaxWidth(90);
-        mascotTable.getColumn("Charge").setMinWidth(90);
-        mascotTable.getColumn("e-value").setMaxWidth(90);
-        mascotTable.getColumn("e-value").setMinWidth(90);
-        xTandemTable.getColumn("Charge").setMaxWidth(90);
-        xTandemTable.getColumn("Charge").setMinWidth(90);
-        xTandemTable.getColumn("e-value").setMaxWidth(90);
-        xTandemTable.getColumn("e-value").setMinWidth(90);
+        searchResultsTable.getColumn("Confidence").setMaxWidth(90);
+        searchResultsTable.getColumn("Confidence").setMinWidth(90);
+        searchResultsTable.getColumn("Charge").setMaxWidth(90);
+        searchResultsTable.getColumn("Charge").setMinWidth(90);
+        //searchResultsTable.getColumn("e-value").setMaxWidth(90);
+        //searchResultsTable.getColumn("e-value").setMinWidth(90);
 
         // set up the psm color map
-        HashMap<Integer, java.awt.Color> searchEngineColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEngineColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
-        searchEngineColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
-        searchEngineColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
-        searchEngineColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
+        HashMap<Integer, java.awt.Color> softwareAgreementColorMap = new HashMap<Integer, java.awt.Color>();
+        softwareAgreementColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id softwares agree with PTM certainty
+        softwareAgreementColorMap.put(AGREEMENT, java.awt.Color.CYAN); // id softwares agree on peptide but not ptm certainty
+        softwareAgreementColorMap.put(CONFLICT, java.awt.Color.YELLOW); // id softwares don't agree
+        softwareAgreementColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some id softwares id'ed some didn't
 
         // set up the psm tooltip map
-        HashMap<Integer, String> searchEngineTooltipMap = new HashMap<Integer, String>();
-        searchEngineTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
-        searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
-        searchEngineTooltipMap.put(CONFLICT, "Search Engines Disagree");
-        searchEngineTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
+        HashMap<Integer, String> idSoftwareTooltipMap = new HashMap<Integer, String>();
+        idSoftwareTooltipMap.put(AGREEMENT_WITH_MODS, "ID Software Agree");
+        idSoftwareTooltipMap.put(AGREEMENT, "ID Software Agree - PTM Certainty Issues");
+        idSoftwareTooltipMap.put(CONFLICT, "ID Software Disagree");
+        idSoftwareTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
-        peptideShakerJTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineColorMap, searchEngineTooltipMap));
-        peptideShakerJTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        peptideShakerJTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, softwareAgreementColorMap, idSoftwareTooltipMap));
         peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
-                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
-        omssaTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+        searchResultsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        xTandemTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        mascotTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        searchResultsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
 
-        omssaTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-        xTandemTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-        mascotTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-
-        searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("Unassigned").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("ID Rate (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("ID Rate (%)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        idSoftwareTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        idSoftwareTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        idSoftwareTable.getColumn("Unassigned").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        idSoftwareTable.getColumn("ID Rate (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("ID Rate (%)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
         // set up the psm color map
-        HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEngineSpectrumLevelColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
-        searchEngineSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
-        searchEngineSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
-        searchEngineSpectrumLevelColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
-        searchEngineSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
+        HashMap<Integer, java.awt.Color> idSoftwareSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
+        idSoftwareSpectrumLevelColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id softwares agree with PTM certainty
+        idSoftwareSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // id softwares agree on peptide but not ptm certainty
+        idSoftwareSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // id softwares don't agree
+        idSoftwareSpectrumLevelColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some id softwares id'ed some didn't
+        idSoftwareSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
 
         // set up the psm tooltip map
-        HashMap<Integer, String> searchEngineSpectrumLevelTooltipMap = new HashMap<Integer, String>();
-        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
-        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
-        searchEngineSpectrumLevelTooltipMap.put(CONFLICT, "Search Engines Disagree");
-        searchEngineSpectrumLevelTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
-        searchEngineSpectrumLevelTooltipMap.put(NO_ID, "(No PSM)");
+        HashMap<Integer, String> idSoftwareSpectrumLevelTooltipMap = new HashMap<Integer, String>();
+        idSoftwareSpectrumLevelTooltipMap.put(AGREEMENT_WITH_MODS, "ID Software Agree");
+        idSoftwareSpectrumLevelTooltipMap.put(AGREEMENT, "ID Software Agree - PTM Certainty Issues");
+        idSoftwareSpectrumLevelTooltipMap.put(CONFLICT, "ID Software Disagree");
+        idSoftwareSpectrumLevelTooltipMap.put(PARTIALLY_MISSING, "ID Software(s) Missing");
+        idSoftwareSpectrumLevelTooltipMap.put(NO_ID, "(No PSM)");
 
-        spectrumTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineSpectrumLevelColorMap, searchEngineSpectrumLevelTooltipMap));
+        spectrumTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, idSoftwareSpectrumLevelColorMap, idSoftwareSpectrumLevelTooltipMap));
         spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 4d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1000d, peptideShakerGUI.getSparklineColor()));
@@ -408,17 +351,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         // set up the table header tooltips
-        searchEngineTableToolTips = new ArrayList<String>();
-        searchEngineTableToolTips.add(null);
-        searchEngineTableToolTips.add("Search Engine");
-        searchEngineTableToolTips.add("Validated Peptide-Spectrum Matches");
-        searchEngineTableToolTips.add("Unique Pepttide-Spectrum Matches");
-        searchEngineTableToolTips.add("Unassigned Spectra");
-        searchEngineTableToolTips.add("Identificaiton Rate (%)");
+        idSoftwareTableToolTips = new ArrayList<String>();
+        idSoftwareTableToolTips.add(null);
+        idSoftwareTableToolTips.add("Identification Software");
+        idSoftwareTableToolTips.add("Validated Peptide-Spectrum Matches");
+        idSoftwareTableToolTips.add("Unique Pepttide-Spectrum Matches");
+        idSoftwareTableToolTips.add("Unassigned Spectra");
+        idSoftwareTableToolTips.add("Identificaiton Rate (%)");
 
         spectrumTableToolTips = new ArrayList<String>();
         spectrumTableToolTips.add(null);
-        spectrumTableToolTips.add("Search Engine Agreement");
+        spectrumTableToolTips.add("ID Software Agreement");
         spectrumTableToolTips.add("Spectrum Title");
         spectrumTableToolTips.add("Precursor m/z");
         spectrumTableToolTips.add("Precursor Charge");
@@ -431,33 +374,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         peptideShakerTableToolTips = new ArrayList<String>();
         peptideShakerTableToolTips.add(null);
-        peptideShakerTableToolTips.add("Search Engine Agreement");
+        peptideShakerTableToolTips.add("ID Software Agreement");
         peptideShakerTableToolTips.add("Mapping Protein(s)");
         peptideShakerTableToolTips.add("Peptide Sequence");
-        peptideShakerTableToolTips.add("Peptide Score");
         peptideShakerTableToolTips.add("Peptide Confidence");
         peptideShakerTableToolTips.add("Validated");
 
-        omssaTableToolTips = new ArrayList<String>();
-        omssaTableToolTips.add("Search Engine Peptide Rank");
-        omssaTableToolTips.add("Peptide Sequence");
-        omssaTableToolTips.add("Precursor Charge");
-        omssaTableToolTips.add("Peptide e-value");
-        omssaTableToolTips.add("Peptide Confidence");
-
-        xTandemTableToolTips = new ArrayList<String>();
-        xTandemTableToolTips.add("Search Engine Peptide Rank");
-        xTandemTableToolTips.add("Peptide Sequence");
-        xTandemTableToolTips.add("Precursor Charge");
-        xTandemTableToolTips.add("Peptide e-value");
-        xTandemTableToolTips.add("Peptide Confidence");
-
-        mascotTableToolTips = new ArrayList<String>();
-        mascotTableToolTips.add("Search Engine Peptide Rank");
-        mascotTableToolTips.add("Peptide Sequence");
-        mascotTableToolTips.add("Precursor Charge");
-        mascotTableToolTips.add("Peptide e-value");
-        mascotTableToolTips.add("Peptide Confidence");
+        idResultsTableToolTips = new ArrayList<String>();
+        idResultsTableToolTips.add("ID Software Peptide Rank");
+        idResultsTableToolTips.add("Peptide Sequence");
+        idResultsTableToolTips.add("Precursor Charge");
+        //searchResultsTableToolTips.add("Peptide e-value");
+        idResultsTableToolTips.add("Peptide Confidence");
+        idResultsTableToolTips.add("Identification Software");
     }
 
     /**
@@ -467,28 +396,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("ID Rate (%)").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("ID Rate (%)").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
 
-        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
-        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
-        searchEngineTable.revalidate();
-        searchEngineTable.repaint();
+        idSoftwareTable.revalidate();
+        idSoftwareTable.repaint();
 
         spectrumTable.revalidate();
         spectrumTable.repaint();
@@ -496,14 +420,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.revalidate();
         peptideShakerJTable.repaint();
 
-        omssaTable.revalidate();
-        omssaTable.repaint();
-
-        xTandemTable.revalidate();
-        xTandemTable.repaint();
-
-        mascotTable.revalidate();
-        mascotTable.repaint();
+        searchResultsTable.revalidate();
+        searchResultsTable.repaint();
     }
 
     /**
@@ -534,50 +452,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 };
             }
         };
-        jLabel1 = new javax.swing.JLabel();
-        omssaPanel = new javax.swing.JPanel();
-        omssaTableJScrollPane = new javax.swing.JScrollPane();
-        omssaTable = new JTable() {
+        peptideShakerPsmLabel = new javax.swing.JLabel();
+        idResultsPanel = new javax.swing.JPanel();
+        spectrumIdResultsLabel = new javax.swing.JLabel();
+        idResultsTableJScrollPane = new javax.swing.JScrollPane();
+        searchResultsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) omssaTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
-        jLabel3 = new javax.swing.JLabel();
-        xTandemPanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        xTandemTableJScrollPane = new javax.swing.JScrollPane();
-        xTandemTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) xTandemTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
-        mascotPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        mascotTableJScrollPane = new javax.swing.JScrollPane();
-        mascotTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) mascotTableToolTips.get(realIndex);
+                        String tip = (String) idResultsTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -600,28 +486,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumHelpJButton = new javax.swing.JButton();
         exportSpectrumJButton = new javax.swing.JButton();
         contextMenuSpectrumBackgroundPanel = new javax.swing.JPanel();
-        searchEngineSpectrumSelectionSplitPane = new javax.swing.JSplitPane();
-        searchEnginesJPanel = new javax.swing.JPanel();
-        searchEnginesJLayeredPane = new javax.swing.JLayeredPane();
-        searchEnginesPanel = new javax.swing.JPanel();
-        searchEnginetableJScrollPane = new javax.swing.JScrollPane();
-        searchEngineTable = new JTable() {
+        idSoftwareSpectrumSelectionSplitPane = new javax.swing.JSplitPane();
+        idSoftwareJPanel = new javax.swing.JPanel();
+        idSoftwareJLayeredPane = new javax.swing.JLayeredPane();
+        idSoftwarePanel = new javax.swing.JPanel();
+        idSoftwareTableJScrollPane = new javax.swing.JScrollPane();
+        idSoftwareTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) searchEngineTableToolTips.get(realIndex);
+                        String tip = (String) idSoftwareTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
             }
         };
         vennDiagramButton = new javax.swing.JButton();
-        searchEnginesHelpJButton = new javax.swing.JButton();
-        exportSearchEnginePerformanceJButton = new javax.swing.JButton();
-        contextMenuSearchEnginesBackgroundPanel = new javax.swing.JPanel();
+        idSoftwareHelpJButton = new javax.swing.JButton();
+        exportIdPerformancePerformanceJButton = new javax.swing.JButton();
+        contextMenuIdSoftwareBackgroundPanel = new javax.swing.JPanel();
         spectrumSelectionJPanel = new javax.swing.JPanel();
         spectrumSelectionLayeredPane = new javax.swing.JLayeredPane();
         spectrumSelectionPanel = new javax.swing.JPanel();
@@ -676,14 +562,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "SE", "Protein(s)", "Sequence", "Score", "Confidence", "  "
+                " ", "ID", "Protein(s)", "Sequence", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -711,23 +597,27 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         peptideShakerJScrollPane.setViewportView(peptideShakerJTable);
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont((jLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel1.setText("PeptideShaker");
+        peptideShakerPsmLabel.setFont(peptideShakerPsmLabel.getFont().deriveFont((peptideShakerPsmLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        peptideShakerPsmLabel.setText("PeptideShaker");
 
-        omssaPanel.setOpaque(false);
+        idResultsPanel.setOpaque(false);
 
-        omssaTableJScrollPane.setOpaque(false);
+        spectrumIdResultsLabel.setFont(spectrumIdResultsLabel.getFont().deriveFont((spectrumIdResultsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        spectrumIdResultsLabel.setText("Spectrum Identification Results");
 
-        omssaTable.setModel(new javax.swing.table.DefaultTableModel(
+        idResultsTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
+        idResultsTableJScrollPane.setOpaque(false);
+
+        searchResultsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                " ", "Sequence", "Charge", "e-value", "Confidence"
+                " ", "Sequence", "Charge", "Confidence", "ID Software"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
@@ -741,188 +631,46 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        omssaTable.setOpaque(false);
-        omssaTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        omssaTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        searchResultsTable.setOpaque(false);
+        searchResultsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        searchResultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                omssaTableMouseReleased(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                omssaTableMouseExited(evt);
-            }
-        });
-        omssaTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                omssaTableMouseMoved(evt);
-            }
-        });
-        omssaTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                omssaTableKeyReleased(evt);
-            }
-        });
-        omssaTableJScrollPane.setViewportView(omssaTable);
-
-        jLabel3.setFont(jLabel3.getFont().deriveFont((jLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel3.setText("OMSSA");
-
-        javax.swing.GroupLayout omssaPanelLayout = new javax.swing.GroupLayout(omssaPanel);
-        omssaPanel.setLayout(omssaPanelLayout);
-        omssaPanelLayout.setHorizontalGroup(
-            omssaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(omssaPanelLayout.createSequentialGroup()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(omssaTableJScrollPane)
-        );
-        omssaPanelLayout.setVerticalGroup(
-            omssaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(omssaPanelLayout.createSequentialGroup()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))
-        );
-
-        xTandemPanel.setOpaque(false);
-
-        jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel4.setText("X!Tandem");
-
-        xTandemTableJScrollPane.setOpaque(false);
-
-        xTandemTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "Sequence", "Charge", "e-value", "Confidence"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        xTandemTable.setOpaque(false);
-        xTandemTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        xTandemTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                xTandemTableMouseReleased(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                xTandemTableMouseExited(evt);
-            }
-        });
-        xTandemTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                xTandemTableMouseMoved(evt);
-            }
-        });
-        xTandemTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                xTandemTableKeyReleased(evt);
-            }
-        });
-        xTandemTableJScrollPane.setViewportView(xTandemTable);
-
-        javax.swing.GroupLayout xTandemPanelLayout = new javax.swing.GroupLayout(xTandemPanel);
-        xTandemPanel.setLayout(xTandemPanelLayout);
-        xTandemPanelLayout.setHorizontalGroup(
-            xTandemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(xTandemPanelLayout.createSequentialGroup()
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(xTandemTableJScrollPane)
-        );
-        xTandemPanelLayout.setVerticalGroup(
-            xTandemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(xTandemPanelLayout.createSequentialGroup()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))
-        );
-
-        mascotPanel.setOpaque(false);
-
-        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel2.setText("Mascot");
-
-        mascotTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
-        mascotTableJScrollPane.setOpaque(false);
-
-        mascotTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "Sequence", "Charge", "e-value", "Confidence"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        mascotTable.setOpaque(false);
-        mascotTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        mascotTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                mascotTableMouseReleased(evt);
+                searchResultsTableMouseReleased(evt);
             }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mascotTableMouseClicked(evt);
+                searchResultsTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                mascotTableMouseExited(evt);
+                searchResultsTableMouseExited(evt);
             }
         });
-        mascotTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        searchResultsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                mascotTableMouseMoved(evt);
+                searchResultsTableMouseMoved(evt);
             }
         });
-        mascotTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        searchResultsTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                mascotTableKeyReleased(evt);
+                searchResultsTableKeyReleased(evt);
             }
         });
-        mascotTableJScrollPane.setViewportView(mascotTable);
+        idResultsTableJScrollPane.setViewportView(searchResultsTable);
 
-        javax.swing.GroupLayout mascotPanelLayout = new javax.swing.GroupLayout(mascotPanel);
-        mascotPanel.setLayout(mascotPanelLayout);
-        mascotPanelLayout.setHorizontalGroup(
-            mascotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mascotPanelLayout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
+        javax.swing.GroupLayout idResultsPanelLayout = new javax.swing.GroupLayout(idResultsPanel);
+        idResultsPanel.setLayout(idResultsPanelLayout);
+        idResultsPanelLayout.setHorizontalGroup(
+            idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(idResultsPanelLayout.createSequentialGroup()
+                .addComponent(spectrumIdResultsLabel)
+                .addContainerGap())
+            .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
         );
-        mascotPanelLayout.setVerticalGroup(
-            mascotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mascotPanelLayout.createSequentialGroup()
-                .addComponent(jLabel2)
+        idResultsPanelLayout.setVerticalGroup(
+            idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(idResultsPanelLayout.createSequentialGroup()
+                .addComponent(spectrumIdResultsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 74, Short.MAX_VALUE))
+                .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout psmsPanelLayout = new javax.swing.GroupLayout(psmsPanel);
@@ -931,10 +679,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mascotPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(xTandemPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(omssaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmsPanelLayout.createSequentialGroup()
@@ -942,27 +687,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
                         .addGroup(psmsPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel1)
+                            .addComponent(peptideShakerPsmLabel)
                             .addGap(0, 0, Short.MAX_VALUE)))
                     .addContainerGap()))
         );
         psmsPanelLayout.setVerticalGroup(
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmsPanelLayout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(omssaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(xTandemPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mascotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(108, 108, 108)
+                .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jLabel1)
+                    .addComponent(peptideShakerPsmLabel)
                     .addGap(9, 9, 9)
                     .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(342, Short.MAX_VALUE)))
+                    .addContainerGap()))
         );
 
         psmsLayeredPane.add(psmsPanel);
@@ -1252,25 +993,25 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         verticalSplitPane.setRightComponent(psmAndSpectrumSplitPane);
 
-        searchEngineSpectrumSelectionSplitPane.setBorder(null);
-        searchEngineSpectrumSelectionSplitPane.setDividerLocation(155);
-        searchEngineSpectrumSelectionSplitPane.setDividerSize(0);
-        searchEngineSpectrumSelectionSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        searchEngineSpectrumSelectionSplitPane.setOpaque(false);
+        idSoftwareSpectrumSelectionSplitPane.setBorder(null);
+        idSoftwareSpectrumSelectionSplitPane.setDividerLocation(155);
+        idSoftwareSpectrumSelectionSplitPane.setDividerSize(0);
+        idSoftwareSpectrumSelectionSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        idSoftwareSpectrumSelectionSplitPane.setOpaque(false);
 
-        searchEnginesJPanel.setOpaque(false);
+        idSoftwareJPanel.setOpaque(false);
 
-        searchEnginesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Engine Performance"));
-        searchEnginesPanel.setOpaque(false);
+        idSoftwarePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Software Performance"));
+        idSoftwarePanel.setOpaque(false);
 
-        searchEnginetableJScrollPane.setOpaque(false);
+        idSoftwareTableJScrollPane.setOpaque(false);
 
-        searchEngineTable.setModel(new javax.swing.table.DefaultTableModel(
+        idSoftwareTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                " ", "Search Engine", "Validated PSMs", "Unique PSMs", "Unassigned", "ID Rate (%)"
+                " ", "ID Software", "Validated PSMs", "Unique PSMs", "Unassigned", "ID Rate (%)"
             }
         ) {
             Class[] types = new Class [] {
@@ -1288,119 +1029,119 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        searchEngineTable.setOpaque(false);
-        searchEnginetableJScrollPane.setViewportView(searchEngineTable);
+        idSoftwareTable.setOpaque(false);
+        idSoftwareTableJScrollPane.setViewportView(idSoftwareTable);
 
         vennDiagramButton.setBackground(new java.awt.Color(255, 255, 255));
         vennDiagramButton.setBorderPainted(false);
         vennDiagramButton.setContentAreaFilled(false);
         vennDiagramButton.setFocusable(false);
 
-        javax.swing.GroupLayout searchEnginesPanelLayout = new javax.swing.GroupLayout(searchEnginesPanel);
-        searchEnginesPanel.setLayout(searchEnginesPanelLayout);
-        searchEnginesPanelLayout.setHorizontalGroup(
-            searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout idSoftwarePanelLayout = new javax.swing.GroupLayout(idSoftwarePanel);
+        idSoftwarePanel.setLayout(idSoftwarePanelLayout);
+        idSoftwarePanelLayout.setHorizontalGroup(
+            idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1268, Short.MAX_VALUE)
-            .addGroup(searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(searchEnginesPanelLayout.createSequentialGroup()
+            .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(idSoftwarePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1009, Short.MAX_VALUE)
+                    .addComponent(idSoftwareTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1009, Short.MAX_VALUE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                     .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap()))
         );
-        searchEnginesPanelLayout.setVerticalGroup(
-            searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        idSoftwarePanelLayout.setVerticalGroup(
+            idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 127, Short.MAX_VALUE)
-            .addGroup(searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(searchEnginesPanelLayout.createSequentialGroup()
+            .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(idSoftwarePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(idSoftwareTableJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        searchEnginesJLayeredPane.add(searchEnginesPanel);
-        searchEnginesPanel.setBounds(0, 0, 1280, 150);
+        idSoftwareJLayeredPane.add(idSoftwarePanel);
+        idSoftwarePanel.setBounds(0, 0, 1280, 150);
 
-        searchEnginesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        searchEnginesHelpJButton.setToolTipText("Help");
-        searchEnginesHelpJButton.setBorder(null);
-        searchEnginesHelpJButton.setBorderPainted(false);
-        searchEnginesHelpJButton.setContentAreaFilled(false);
-        searchEnginesHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        searchEnginesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        idSoftwareHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        idSoftwareHelpJButton.setToolTipText("Help");
+        idSoftwareHelpJButton.setBorder(null);
+        idSoftwareHelpJButton.setBorderPainted(false);
+        idSoftwareHelpJButton.setContentAreaFilled(false);
+        idSoftwareHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        idSoftwareHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                searchEnginesHelpJButtonMouseEntered(evt);
+                idSoftwareHelpJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                searchEnginesHelpJButtonMouseExited(evt);
+                idSoftwareHelpJButtonMouseExited(evt);
             }
         });
-        searchEnginesHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+        idSoftwareHelpJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchEnginesHelpJButtonActionPerformed(evt);
+                idSoftwareHelpJButtonActionPerformed(evt);
             }
         });
-        searchEnginesJLayeredPane.add(searchEnginesHelpJButton);
-        searchEnginesHelpJButton.setBounds(1290, 0, 10, 19);
-        searchEnginesJLayeredPane.setLayer(searchEnginesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        idSoftwareJLayeredPane.add(idSoftwareHelpJButton);
+        idSoftwareHelpJButton.setBounds(1290, 0, 10, 19);
+        idSoftwareJLayeredPane.setLayer(idSoftwareHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        exportSearchEnginePerformanceJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSearchEnginePerformanceJButton.setToolTipText("Copy to File");
-        exportSearchEnginePerformanceJButton.setBorder(null);
-        exportSearchEnginePerformanceJButton.setBorderPainted(false);
-        exportSearchEnginePerformanceJButton.setContentAreaFilled(false);
-        exportSearchEnginePerformanceJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSearchEnginePerformanceJButton.setEnabled(false);
-        exportSearchEnginePerformanceJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        exportSearchEnginePerformanceJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        exportIdPerformancePerformanceJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportIdPerformancePerformanceJButton.setToolTipText("Copy to File");
+        exportIdPerformancePerformanceJButton.setBorder(null);
+        exportIdPerformancePerformanceJButton.setBorderPainted(false);
+        exportIdPerformancePerformanceJButton.setContentAreaFilled(false);
+        exportIdPerformancePerformanceJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportIdPerformancePerformanceJButton.setEnabled(false);
+        exportIdPerformancePerformanceJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportIdPerformancePerformanceJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportSearchEnginePerformanceJButtonMouseEntered(evt);
+                exportIdPerformancePerformanceJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportSearchEnginePerformanceJButtonMouseExited(evt);
+                exportIdPerformancePerformanceJButtonMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportSearchEnginePerformanceJButtonMouseReleased(evt);
+                exportIdPerformancePerformanceJButtonMouseReleased(evt);
             }
         });
-        searchEnginesJLayeredPane.add(exportSearchEnginePerformanceJButton);
-        exportSearchEnginePerformanceJButton.setBounds(1280, 0, 10, 19);
-        searchEnginesJLayeredPane.setLayer(exportSearchEnginePerformanceJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        idSoftwareJLayeredPane.add(exportIdPerformancePerformanceJButton);
+        exportIdPerformancePerformanceJButton.setBounds(1280, 0, 10, 19);
+        idSoftwareJLayeredPane.setLayer(exportIdPerformancePerformanceJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        contextMenuSearchEnginesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        contextMenuIdSoftwareBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        javax.swing.GroupLayout contextMenuSearchEnginesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuSearchEnginesBackgroundPanel);
-        contextMenuSearchEnginesBackgroundPanel.setLayout(contextMenuSearchEnginesBackgroundPanelLayout);
-        contextMenuSearchEnginesBackgroundPanelLayout.setHorizontalGroup(
-            contextMenuSearchEnginesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout contextMenuIdSoftwareBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuIdSoftwareBackgroundPanel);
+        contextMenuIdSoftwareBackgroundPanel.setLayout(contextMenuIdSoftwareBackgroundPanelLayout);
+        contextMenuIdSoftwareBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuIdSoftwareBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 30, Short.MAX_VALUE)
         );
-        contextMenuSearchEnginesBackgroundPanelLayout.setVerticalGroup(
-            contextMenuSearchEnginesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        contextMenuIdSoftwareBackgroundPanelLayout.setVerticalGroup(
+            contextMenuIdSoftwareBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        searchEnginesJLayeredPane.add(contextMenuSearchEnginesBackgroundPanel);
-        contextMenuSearchEnginesBackgroundPanel.setBounds(1280, 0, 30, 19);
-        searchEnginesJLayeredPane.setLayer(contextMenuSearchEnginesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+        idSoftwareJLayeredPane.add(contextMenuIdSoftwareBackgroundPanel);
+        contextMenuIdSoftwareBackgroundPanel.setBounds(1280, 0, 30, 19);
+        idSoftwareJLayeredPane.setLayer(contextMenuIdSoftwareBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        javax.swing.GroupLayout searchEnginesJPanelLayout = new javax.swing.GroupLayout(searchEnginesJPanel);
-        searchEnginesJPanel.setLayout(searchEnginesJPanelLayout);
-        searchEnginesJPanelLayout.setHorizontalGroup(
-            searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchEnginesJLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
+        javax.swing.GroupLayout idSoftwareJPanelLayout = new javax.swing.GroupLayout(idSoftwareJPanel);
+        idSoftwareJPanel.setLayout(idSoftwareJPanelLayout);
+        idSoftwareJPanelLayout.setHorizontalGroup(
+            idSoftwareJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(idSoftwareJLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
-        searchEnginesJPanelLayout.setVerticalGroup(
-            searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchEnginesJPanelLayout.createSequentialGroup()
-                .addComponent(searchEnginesJLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+        idSoftwareJPanelLayout.setVerticalGroup(
+            idSoftwareJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(idSoftwareJPanelLayout.createSequentialGroup()
+                .addComponent(idSoftwareJLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        searchEngineSpectrumSelectionSplitPane.setTopComponent(searchEnginesJPanel);
+        idSoftwareSpectrumSelectionSplitPane.setTopComponent(idSoftwareJPanel);
 
         spectrumSelectionJPanel.setOpaque(false);
 
@@ -1547,9 +1288,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addComponent(spectrumSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
         );
 
-        searchEngineSpectrumSelectionSplitPane.setBottomComponent(spectrumSelectionJPanel);
+        idSoftwareSpectrumSelectionSplitPane.setBottomComponent(spectrumSelectionJPanel);
 
-        verticalSplitPane.setLeftComponent(searchEngineSpectrumSelectionSplitPane);
+        verticalSplitPane.setLeftComponent(idSoftwareSpectrumSelectionSplitPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -1594,7 +1335,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (evt.getButton() == MouseEvent.BUTTON1 && row != -1 && column != -1) {
 
             // open protein link in web browser
-            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
                 String link = (String) spectrumTable.getValueAt(row, column);
@@ -1658,28 +1399,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 psmsLayeredPane.repaint();
 
                 // move the icons
-                searchEnginesJLayeredPane.getComponent(0).setBounds(
-                        searchEnginesJLayeredPane.getWidth() - searchEnginesJLayeredPane.getComponent(0).getWidth() - 10,
+                idSoftwareJLayeredPane.getComponent(0).setBounds(
+                        idSoftwareJLayeredPane.getWidth() - idSoftwareJLayeredPane.getComponent(0).getWidth() - 10,
                         -3,
-                        searchEnginesJLayeredPane.getComponent(0).getWidth(),
-                        searchEnginesJLayeredPane.getComponent(0).getHeight());
+                        idSoftwareJLayeredPane.getComponent(0).getWidth(),
+                        idSoftwareJLayeredPane.getComponent(0).getHeight());
 
-                searchEnginesJLayeredPane.getComponent(1).setBounds(
-                        searchEnginesJLayeredPane.getWidth() - searchEnginesJLayeredPane.getComponent(1).getWidth() - 20,
+                idSoftwareJLayeredPane.getComponent(1).setBounds(
+                        idSoftwareJLayeredPane.getWidth() - idSoftwareJLayeredPane.getComponent(1).getWidth() - 20,
                         -3,
-                        searchEnginesJLayeredPane.getComponent(1).getWidth(),
-                        searchEnginesJLayeredPane.getComponent(1).getHeight());
+                        idSoftwareJLayeredPane.getComponent(1).getWidth(),
+                        idSoftwareJLayeredPane.getComponent(1).getHeight());
 
-                searchEnginesJLayeredPane.getComponent(2).setBounds(
-                        searchEnginesJLayeredPane.getWidth() - searchEnginesJLayeredPane.getComponent(2).getWidth() - 5,
+                idSoftwareJLayeredPane.getComponent(2).setBounds(
+                        idSoftwareJLayeredPane.getWidth() - idSoftwareJLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
-                        searchEnginesJLayeredPane.getComponent(2).getWidth(),
-                        searchEnginesJLayeredPane.getComponent(2).getHeight());
+                        idSoftwareJLayeredPane.getComponent(2).getWidth(),
+                        idSoftwareJLayeredPane.getComponent(2).getHeight());
 
                 // resize the plot area
-                searchEnginesJLayeredPane.getComponent(3).setBounds(0, 0, searchEnginesJLayeredPane.getWidth(), searchEnginesJLayeredPane.getHeight());
-                searchEnginesJLayeredPane.revalidate();
-                searchEnginesJLayeredPane.repaint();
+                idSoftwareJLayeredPane.getComponent(3).setBounds(0, 0, idSoftwareJLayeredPane.getWidth(), idSoftwareJLayeredPane.getHeight());
+                idSoftwareJLayeredPane.revalidate();
+                idSoftwareJLayeredPane.repaint();
 
                 // move the icons
                 spectrumSelectionLayeredPane.getComponent(0).setBounds(
@@ -1744,151 +1485,46 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formComponentResized
 
     /**
-     * Update the OMSSA psm selection.
+     * Update the id results psm selection.
      *
      * @param evt
      */
-    private void omssaTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_omssaTableKeyReleased
-        omssaTableMouseReleased(null);
-    }//GEN-LAST:event_omssaTableKeyReleased
+    private void searchResultsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchResultsTableKeyReleased
+        searchResultsTableMouseClicked(null);
+    }//GEN-LAST:event_searchResultsTableKeyReleased
 
-    /**
-     * Update the X!Tandem psm selection.
-     *
-     * @param evt
-     */
-    private void xTandemTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTandemTableKeyReleased
-        xTandemTableMouseReleased(null);
-    }//GEN-LAST:event_xTandemTableKeyReleased
-
-    /**
-     * Update the Mascot psm selection.
-     *
-     * @param evt
-     */
-    private void mascotTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mascotTableKeyReleased
-        mascotTableMouseClicked(null);
-    }//GEN-LAST:event_mascotTableKeyReleased
-
-    private void mascotTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseClicked
-        if (mascotTable.getSelectedRow() != -1) {
-
-            if (xTandemTable.getSelectedRow() != -1) {
-                xTandemTable.removeRowSelectionInterval(xTandemTable.getSelectedRow(), xTandemTable.getSelectedRow());
-            }
-
-            if (omssaTable.getSelectedRow() != -1) {
-                omssaTable.removeRowSelectionInterval(omssaTable.getSelectedRow(), omssaTable.getSelectedRow());
-            }
-
+    private void searchResultsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultsTableMouseClicked
+        if (searchResultsTable.getSelectedRow() != -1) {
             updateSpectrum();
         }
-    }//GEN-LAST:event_mascotTableMouseClicked
+    }//GEN-LAST:event_searchResultsTableMouseClicked
 
     /**
-     * Update the OMSSA psm selection.
+     * Update the id results psm selection.
      *
      * @param evt
      */
-    private void omssaTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_omssaTableMouseReleased
-        if (omssaTable.getSelectedRow() != -1) {
-
-            if (xTandemTable.getSelectedRow() != -1) {
-                xTandemTable.removeRowSelectionInterval(xTandemTable.getSelectedRow(), xTandemTable.getSelectedRow());
-            }
-
-            if (mascotTable.getSelectedRow() != -1) {
-                mascotTable.removeRowSelectionInterval(mascotTable.getSelectedRow(), mascotTable.getSelectedRow());
-            }
+    private void searchResultsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultsTableMouseReleased
+        if (searchResultsTable.getSelectedRow() != -1) {
 
             updateSpectrum();
 
             // open protein links in web browser
             if (evt != null) {
-                int row = omssaTable.rowAtPoint(evt.getPoint());
-                int column = omssaTable.columnAtPoint(evt.getPoint());
+                int row = searchResultsTable.rowAtPoint(evt.getPoint());
+                int column = searchResultsTable.columnAtPoint(evt.getPoint());
 
                 if (column == 1) {
 
                     // open protein links in web browser
                     if (evt.getButton() == MouseEvent.BUTTON1
-                            && ((String) omssaTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                        peptideShakerGUI.openProteinLinks((String) omssaTable.getValueAt(row, column));
+                            && ((String) searchResultsTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) searchResultsTable.getValueAt(row, column));
                     }
                 }
             }
         }
-    }//GEN-LAST:event_omssaTableMouseReleased
-
-    /**
-     * Update the X!Tandem psm selection.
-     *
-     * @param evt
-     */
-    private void xTandemTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xTandemTableMouseReleased
-        if (xTandemTable.getSelectedRow() != -1) {
-
-            if (mascotTable.getSelectedRow() != -1) {
-                mascotTable.removeRowSelectionInterval(mascotTable.getSelectedRow(), mascotTable.getSelectedRow());
-            }
-
-            if (omssaTable.getSelectedRow() != -1) {
-                omssaTable.removeRowSelectionInterval(omssaTable.getSelectedRow(), omssaTable.getSelectedRow());
-            }
-
-            updateSpectrum();
-
-            // open protein links in web browser
-            if (evt != null) {
-                int row = xTandemTable.rowAtPoint(evt.getPoint());
-                int column = xTandemTable.columnAtPoint(evt.getPoint());
-
-                if (column == 1) {
-
-                    // open protein links in web browser
-                    if (evt.getButton() == MouseEvent.BUTTON1
-                            && ((String) xTandemTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                        peptideShakerGUI.openProteinLinks((String) xTandemTable.getValueAt(row, column));
-                    }
-                }
-            }
-        }
-    }//GEN-LAST:event_xTandemTableMouseReleased
-
-    /**
-     * Update the Mascot psm selection.
-     *
-     * @param evt
-     */
-    private void mascotTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseReleased
-        if (mascotTable.getSelectedRow() != -1) {
-
-            if (xTandemTable.getSelectedRow() != -1) {
-                xTandemTable.removeRowSelectionInterval(xTandemTable.getSelectedRow(), xTandemTable.getSelectedRow());
-            }
-
-            if (omssaTable.getSelectedRow() != -1) {
-                omssaTable.removeRowSelectionInterval(omssaTable.getSelectedRow(), omssaTable.getSelectedRow());
-            }
-
-            updateSpectrum();
-
-            // open protein links in web browser
-            if (evt != null) {
-                int row = mascotTable.rowAtPoint(evt.getPoint());
-                int column = mascotTable.columnAtPoint(evt.getPoint());
-
-                if (column == 1) {
-
-                    // open protein links in web browser
-                    if (evt.getButton() == MouseEvent.BUTTON1
-                            && ((String) mascotTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                        peptideShakerGUI.openProteinLinks((String) mascotTable.getValueAt(row, column));
-                    }
-                }
-            }
-        }
-    }//GEN-LAST:event_mascotTableMouseReleased
+    }//GEN-LAST:event_searchResultsTableMouseReleased
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an HTML
@@ -1962,27 +1598,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void omssaTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_omssaTableMouseExited
+    private void searchResultsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultsTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_omssaTableMouseExited
-
-    /**
-     * Changes the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void xTandemTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xTandemTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_xTandemTableMouseExited
-
-    /**
-     * Changes the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void mascotTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_mascotTableMouseExited
+    }//GEN-LAST:event_searchResultsTableMouseExited
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an HTML
@@ -1991,73 +1609,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void omssaTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_omssaTableMouseMoved
-        int row = omssaTable.rowAtPoint(evt.getPoint());
-        int column = omssaTable.columnAtPoint(evt.getPoint());
+    private void searchResultsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultsTableMouseMoved
+        int row = searchResultsTable.rowAtPoint(evt.getPoint());
+        int column = searchResultsTable.columnAtPoint(evt.getPoint());
 
-        if (omssaTable.getValueAt(row, column) != null) {
+        if (searchResultsTable.getValueAt(row, column) != null) {
 
-            if (column == omssaTable.getColumn("Sequence").getModelIndex()) {
+            if (column == searchResultsTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                omssaTable.setToolTipText(omssaTablePeptideTooltips.get((Integer) omssaTable.getValueAt(row, 0)));
+                searchResultsTable.setToolTipText(searchResultsTablePeptideTooltips.get(row));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                omssaTable.setToolTipText(null);
+                searchResultsTable.setToolTipText(null);
             }
         } else {
-            omssaTable.setToolTipText(null);
+            searchResultsTable.setToolTipText(null);
         }
-    }//GEN-LAST:event_omssaTableMouseMoved
-
-    /**
-     * Changes the cursor into a hand cursor if the table cell contains an HTML
-     * link. Or shows a tooltip with modification details is over the sequence
-     * column.
-     *
-     * @param evt
-     */
-    private void xTandemTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xTandemTableMouseMoved
-        int row = xTandemTable.rowAtPoint(evt.getPoint());
-        int column = xTandemTable.columnAtPoint(evt.getPoint());
-
-        if (xTandemTable.getValueAt(row, column) != null) {
-
-            if (column == xTandemTable.getColumn("Sequence").getModelIndex()) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                xTandemTable.setToolTipText(xTandemTablePeptideTooltips.get((Integer) xTandemTable.getValueAt(row, 0)));
-            } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                xTandemTable.setToolTipText(null);
-            }
-        } else {
-            xTandemTable.setToolTipText(null);
-        }
-    }//GEN-LAST:event_xTandemTableMouseMoved
-
-    /**
-     * Changes the cursor into a hand cursor if the table cell contains an HTML
-     * link. Or shows a tooltip with modification details is over the sequence
-     * column.
-     *
-     * @param evt
-     */
-    private void mascotTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseMoved
-        int row = mascotTable.rowAtPoint(evt.getPoint());
-        int column = mascotTable.columnAtPoint(evt.getPoint());
-
-        if (mascotTable.getValueAt(row, column) != null) {
-
-            if (column == mascotTable.getColumn("Sequence").getModelIndex()) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                mascotTable.setToolTipText(mascotTablePeptideTooltips.get((Integer) mascotTable.getValueAt(row, 0)));
-            } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                mascotTable.setToolTipText(null);
-            }
-        } else {
-            mascotTable.setToolTipText(null);
-        }
-    }//GEN-LAST:event_mascotTableMouseMoved
+    }//GEN-LAST:event_searchResultsTableMouseMoved
 
     /**
      * Updates the slider value when the user scrolls.
@@ -2206,50 +1774,50 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void searchEnginesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonMouseEntered
+    private void idSoftwareHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idSoftwareHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_searchEnginesHelpJButtonMouseEntered
+    }//GEN-LAST:event_idSoftwareHelpJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void searchEnginesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonMouseExited
+    private void idSoftwareHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idSoftwareHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_searchEnginesHelpJButtonMouseExited
+    }//GEN-LAST:event_idSoftwareHelpJButtonMouseExited
 
     /**
      * Open the help dialog.
      *
      * @param evt
      */
-    private void searchEnginesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonActionPerformed
+    private void idSoftwareHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idSoftwareHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#SearchEnginePerformance",
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#IdSoftwarePerformance",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_searchEnginesHelpJButtonActionPerformed
+    }//GEN-LAST:event_idSoftwareHelpJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
      *
      * @param evt
      */
-    private void exportSearchEnginePerformanceJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseEntered
+    private void exportIdPerformancePerformanceJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportIdPerformancePerformanceJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseEntered
+    }//GEN-LAST:event_exportIdPerformancePerformanceJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void exportSearchEnginePerformanceJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseExited
+    private void exportIdPerformancePerformanceJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportIdPerformancePerformanceJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseExited
+    }//GEN-LAST:event_exportIdPerformancePerformanceJButtonMouseExited
 
     /**
      * Change the cursor to a hand cursor.
@@ -2365,13 +1933,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void exportSearchEnginePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseReleased
+    private void exportIdPerformancePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportIdPerformancePerformanceJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboardOrFile(TableIndex.SEARCH_ENGINE_PERFORMANCE);
+                copyTableContentToClipboardOrFile(TableIndex.ID_SOFTWARE_PERFORMANCE);
             }
         });
 
@@ -2386,8 +1954,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         popupMenu.add(menuItem);
 
-        popupMenu.show(exportSearchEnginePerformanceJButton, evt.getX(), evt.getY());
-    }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseReleased
+        popupMenu.show(exportIdPerformancePerformanceJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportIdPerformancePerformanceJButtonMouseReleased
 
     /**
      * Export the spectrum.
@@ -2499,45 +2067,40 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
+    private javax.swing.JPanel contextMenuIdSoftwareBackgroundPanel;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;
-    private javax.swing.JPanel contextMenuSearchEnginesBackgroundPanel;
     private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
     private javax.swing.JPanel contextMenuSpectrumSelectionBackgroundPanel;
+    private javax.swing.JButton exportIdPerformancePerformanceJButton;
     private javax.swing.JButton exportPsmsJButton;
-    private javax.swing.JButton exportSearchEnginePerformanceJButton;
     private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JButton exportSpectrumSelectionJButton;
     private javax.swing.JComboBox fileNamesCmb;
+    private javax.swing.JPanel idResultsPanel;
+    private javax.swing.JScrollPane idResultsTableJScrollPane;
+    private javax.swing.JButton idSoftwareHelpJButton;
+    private javax.swing.JLayeredPane idSoftwareJLayeredPane;
+    private javax.swing.JPanel idSoftwareJPanel;
+    private javax.swing.JPanel idSoftwarePanel;
+    private javax.swing.JSplitPane idSoftwareSpectrumSelectionSplitPane;
+    private javax.swing.JTable idSoftwareTable;
+    private javax.swing.JScrollPane idSoftwareTableJScrollPane;
     private javax.swing.JSlider intensitySlider;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel mascotPanel;
-    private javax.swing.JTable mascotTable;
-    private javax.swing.JScrollPane mascotTableJScrollPane;
-    private javax.swing.JPanel omssaPanel;
-    private javax.swing.JTable omssaTable;
-    private javax.swing.JScrollPane omssaTableJScrollPane;
     private javax.swing.JScrollPane peptideShakerJScrollPane;
     private javax.swing.JTable peptideShakerJTable;
+    private javax.swing.JLabel peptideShakerPsmLabel;
     private javax.swing.JSplitPane psmAndSpectrumSplitPane;
     private javax.swing.JButton psmsHelpJButton;
     private javax.swing.JPanel psmsJPanel;
     private javax.swing.JLayeredPane psmsLayeredPane;
     private javax.swing.JPanel psmsPanel;
-    private javax.swing.JSplitPane searchEngineSpectrumSelectionSplitPane;
-    private javax.swing.JTable searchEngineTable;
-    private javax.swing.JButton searchEnginesHelpJButton;
-    private javax.swing.JLayeredPane searchEnginesJLayeredPane;
-    private javax.swing.JPanel searchEnginesJPanel;
-    private javax.swing.JPanel searchEnginesPanel;
-    private javax.swing.JScrollPane searchEnginetableJScrollPane;
+    private javax.swing.JTable searchResultsTable;
     private javax.swing.JPanel slidersPanel;
     private javax.swing.JSplitPane slidersSplitPane;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
     private javax.swing.JPanel spectrumChartPanel;
     private javax.swing.JButton spectrumHelpJButton;
+    private javax.swing.JLabel spectrumIdResultsLabel;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JPanel spectrumJPanel1;
     private javax.swing.JToolBar spectrumJToolBar;
@@ -2551,9 +2114,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane spectrumTableJScrollPane;
     private javax.swing.JButton vennDiagramButton;
     private javax.swing.JSplitPane verticalSplitPane;
-    private javax.swing.JPanel xTandemPanel;
-    private javax.swing.JTable xTandemTable;
-    private javax.swing.JScrollPane xTandemTableJScrollPane;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -2611,7 +2171,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     progressDialog.setValue(0);
 
                     // @TODO: this should be moved to when the files are loaded and done only once...?
-                    // get the list of search engines used
+                    // get the list of id software used
                     IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
                     ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
 
@@ -2629,10 +2189,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    // @TODO: hide the unused search engine columns in the Search Engine Performance table
-                    // @TODO: hide the columns in the table for the search engines that are not used...
-                    // @TODO: calculate the 'All' column values based on only the used search engines and not all three like now...
-                    // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead? And make it search engine independent for when I add other search engines :)
                     int fileCounter = 1;
 
                     for (String fileName : filesArray) {
@@ -2740,45 +2296,45 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             mx = null;
                         }
 
-                        // update the search engine venn diagram
+                        // update the id software performance venn diagram
                         updateVennDiagram(nOMSSA, nXTandem, nMascot, ox, mo, mx, omx);
 
-                        int searchEngineRowCounter = 0;
+                        int idSoftwareRowCounter = 0;
 
                         if (omssaUsed) {
-                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                ++searchEngineRowCounter, "OMSSA",
+                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
+                                ++idSoftwareRowCounter, "OMSSA",
                                 nOMSSA, uniqueOmssa, no_o, (((double) nOMSSA) / (nOMSSA + no_o)) * 100
                             });
                         }
                         if (xtandemUsed) {
-                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                ++searchEngineRowCounter, "X!Tandem",
+                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
+                                ++idSoftwareRowCounter, "X!Tandem",
                                 nXTandem, uniqueXTandem, no_x, (((double) nXTandem) / (nXTandem + no_x)) * 100
                             });
                         }
                         if (mascotUsed) {
-                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                ++searchEngineRowCounter, "Mascot",
+                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
+                                ++idSoftwareRowCounter, "Mascot",
                                 nMascot, uniqueMascot, no_m, (((double) nMascot) / (nMascot + no_m)) * 100
                             });
                         }
 
                         // add the peptide shaker results
-                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                            ++searchEngineRowCounter, "PeptideShaker",
+                        ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
+                            ++idSoftwareRowCounter, "PeptideShaker",
                             totalPeptideShakerIds, null,
                             totalNumberOfSpectra - totalPeptideShakerIds, (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100
                         });
 
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
 
                         showSparkLines(peptideShakerGUI.showSparklines());
 
-                        searchEngineTable.revalidate();
-                        searchEngineTable.repaint();
+                        idSoftwareTable.revalidate();
+                        idSoftwareTable.repaint();
 
                         progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
 
@@ -2792,7 +2348,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         formComponentResized(null);
 
                         // enable the contextual export options
-                        exportSearchEnginePerformanceJButton.setEnabled(true);
+                        exportIdPerformancePerformanceJButton.setEnabled(true);
                         exportSpectrumSelectionJButton.setEnabled(true);
                         exportSpectrumJButton.setEnabled(true);
                         exportPsmsJButton.setEnabled(true);
@@ -3082,21 +2638,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 dm.getDataVector().removeAllElements();
                 dm.fireTableDataChanged();
 
-                dm = (DefaultTableModel) omssaTable.getModel();
+                dm = (DefaultTableModel) searchResultsTable.getModel();
                 dm.getDataVector().removeAllElements();
                 dm.fireTableDataChanged();
 
-                dm = (DefaultTableModel) mascotTable.getModel();
-                dm.getDataVector().removeAllElements();
-                dm.fireTableDataChanged();
-
-                dm = (DefaultTableModel) xTandemTable.getModel();
-                dm.getDataVector().removeAllElements();
-                dm.fireTableDataChanged();
-
-                omssaTablePeptideTooltips = new HashMap<Integer, String>();
-                xTandemTablePeptideTooltips = new HashMap<Integer, String>();
-                mascotTablePeptideTooltips = new HashMap<Integer, String>();
+                searchResultsTablePeptideTooltips = new HashMap<Integer, String>();
 
                 String key = getSelectedSpectrumKey();
 
@@ -3112,67 +2658,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
-                        isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters()),
+                        isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters()),
                         proteins,
                         displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), true, true, true),
-                        probabilities.getPsmScore(),
+                        //probabilities.getPsmScore(),
                         probabilities.getPsmConfidence(),
                         probabilities.getMatchValidationLevel().getIndex()
                     });
 
                     peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
 
-                    // Fill Mascot table
-                    if (spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()) != null) {
-                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
-                        Collections.sort(eValues);
-                        int rank = 0;
-                        for (double eValue : eValues) {
-                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
-                                probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
-                                    ++rank,
-                                    displayFeaturesGenerator.getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
-                                    currentAssumption.getIdentificationCharge().value,
-                                    currentAssumption.getScore(),
-                                    probabilities.getSearchEngineConfidence()
-                                });
+                    int searchResultsCounter = 0;
+                    searchResultsPeptideKeys = new HashMap<Integer, PeptideAssumption>();
 
-                                mascotTablePeptideTooltips.put(rank, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
-                                mascotPeptideKeys.put(rank, peptideAssumption.getPeptide().getKey());
-                            }
-                        }
-                    }
-
-                    // Fill OMSSA table
-                    omssaPeptideKeys = new HashMap<Integer, String>();
-
-                    if (spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()) != null) {
-                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
-                        Collections.sort(eValues);
-                        int rank = 0;
-                        for (double eValue : eValues) {
-                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
-                                probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
-                                    ++rank,
-                                    displayFeaturesGenerator.getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
-                                    currentAssumption.getIdentificationCharge().value,
-                                    currentAssumption.getScore(),
-                                    probabilities.getSearchEngineConfidence()
-                                });
-
-                                omssaTablePeptideTooltips.put(rank, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
-                                omssaPeptideKeys.put(rank, peptideAssumption.getPeptide().getKey());
-                            }
-                        }
-                    }
-
-                    // Fill X!Tandem table
-                    xtandemPeptideKeys = new HashMap<Integer, String>();
-
+                    // add the xtandem search results
                     if (spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()) != null) {
                         ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).keySet());
                         Collections.sort(eValues);
@@ -3181,42 +2680,81 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValue)) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
+                                ((DefaultTableModel) searchResultsTable.getModel()).addRow(new Object[]{
                                     ++rank,
                                     displayFeaturesGenerator.getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
                                     currentAssumption.getIdentificationCharge().value,
-                                    currentAssumption.getScore(),
-                                    probabilities.getSearchEngineConfidence()
+                                    //currentAssumption.getScore(),
+                                    probabilities.getSearchEngineConfidence(),
+                                    "X!Tandem"
                                 });
 
-                                xTandemTablePeptideTooltips.put(rank, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
-                                xtandemPeptideKeys.put(rank, peptideAssumption.getPeptide().getKey());
+                                searchResultsTablePeptideTooltips.put(searchResultsCounter, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
+                                searchResultsPeptideKeys.put(searchResultsCounter++, peptideAssumption);
+                            }
+                        }
+                    }
+
+                    // add the omssa search results
+                    if (spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()) != null) {
+                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
+                        Collections.sort(eValues);
+                        int rank = 0;
+                        for (double eValue : eValues) {
+                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
+                                PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
+                                probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
+                                ((DefaultTableModel) searchResultsTable.getModel()).addRow(new Object[]{
+                                    ++rank,
+                                    displayFeaturesGenerator.getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
+                                    currentAssumption.getIdentificationCharge().value,
+                                    //currentAssumption.getScore(),
+                                    probabilities.getSearchEngineConfidence(),
+                                    "OMSSA"
+                                });
+
+                                searchResultsTablePeptideTooltips.put(searchResultsCounter, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
+                                searchResultsPeptideKeys.put(searchResultsCounter++, peptideAssumption);
+                            }
+                        }
+                    }
+
+                    // add the mascot search results
+                    if (spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()) != null) {
+                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
+                        Collections.sort(eValues);
+                        int rank = 0;
+                        for (double eValue : eValues) {
+                            for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
+                                PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
+                                probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
+                                ((DefaultTableModel) searchResultsTable.getModel()).addRow(new Object[]{
+                                    ++rank,
+                                    displayFeaturesGenerator.getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
+                                    currentAssumption.getIdentificationCharge().value,
+                                    //currentAssumption.getScore(),
+                                    probabilities.getSearchEngineConfidence(),
+                                    "Mascot"
+                                });
+
+                                searchResultsTablePeptideTooltips.put(searchResultsCounter, displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
+                                searchResultsPeptideKeys.put(searchResultsCounter++, peptideAssumption);
                             }
                         }
                     }
 
                     ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableDataChanged();
-                    ((DefaultTableModel) omssaTable.getModel()).fireTableDataChanged();
-                    ((DefaultTableModel) mascotTable.getModel()).fireTableDataChanged();
-                    ((DefaultTableModel) xTandemTable.getModel()).fireTableDataChanged();
+                    ((DefaultTableModel) searchResultsTable.getModel()).fireTableDataChanged();
 
                     // select one of the matches
-                    if (omssaTable.getRowCount() > 0) {
-                        omssaTable.setRowSelectionInterval(0, 0);
-                    } else if (xTandemTable.getRowCount() > 0) {
-                        xTandemTable.setRowSelectionInterval(0, 0);
-                    } else if (mascotTable.getRowCount() > 0) {
-                        mascotTable.setRowSelectionInterval(0, 0);
+                    if (searchResultsTable.getRowCount() > 0) {
+                        searchResultsTable.setRowSelectionInterval(0, 0);
                     }
 
                     peptideShakerJTable.revalidate();
                     peptideShakerJTable.repaint();
-                    mascotTable.revalidate();
-                    mascotTable.repaint();
-                    xTandemTable.revalidate();
-                    xTandemTable.repaint();
-                    omssaTable.revalidate();
-                    omssaTable.repaint();
+                    searchResultsTable.revalidate();
+                    searchResultsTable.repaint();
                 }
 
                 newItemSelection();
@@ -3252,7 +2790,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 String key = getSelectedSpectrumKey();
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(key);
-                SpectrumPanel spectrum = null;
+                SpectrumPanel tempSpectrumPanel = null;
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
                 if (currentSpectrum != null) {
@@ -3265,17 +2803,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         charge = precursor.getPossibleChargesAsString();
                     }
                     if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
-                        spectrum = new SpectrumPanel(
+                        tempSpectrumPanel = new SpectrumPanel(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                 precursor.getMz(), charge,
                                 "", 40, false, false, false, 2, false);
-                        spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
-                        spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
-                        spectrum.setBorder(null);
-                        spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
-                        spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
-                        spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
-                        spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
+                        tempSpectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
+                        tempSpectrumPanel.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
+                        tempSpectrumPanel.setBorder(null);
+                        tempSpectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                        tempSpectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
+                        tempSpectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
+                        tempSpectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
                     }
                 }
 
@@ -3286,162 +2824,45 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
                     int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
 
-                    if (currentSpectrum != null) {
+                    if (currentSpectrum != null && tempSpectrumPanel != null) {
 
                         if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
 
-                            // omssa annotation (if any)
-                            if (omssaTable.getSelectedRow() != -1) {
+                            if (searchResultsTable.getSelectedRow() != -1) {
+                                PeptideAssumption currentPeptideAssumption = searchResultsPeptideKeys.get(searchResultsTable.getSelectedRow());
 
-                                ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).keySet());
-                                Collections.sort(omssaEValues);
-                                PeptideAssumption currentPeptideAssumption = null;
-                                int cpt = 0;
-                                boolean found = false;
+                                if (currentPeptideAssumption != null) {
+                                    annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
+                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                    ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                                            annotationPreferences.getNeutralLosses(),
+                                            annotationPreferences.getValidatedCharges(),
+                                            currentPeptideAssumption.getIdentificationCharge().value,
+                                            currentSpectrum, currentPeptideAssumption.getPeptide(),
+                                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                                            annotationPreferences.getFragmentIonAccuracy(), false);
+                                    currentSpectrumKey = spectrumMatch.getKey();
 
-                                for (double eValue : omssaEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
-                                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                        if (cpt == omssaTable.getSelectedRow()) {
-                                            currentPeptideAssumption = peptideAssumption;
-                                            found = true;
-                                            break;
-                                        }
-                                        cpt++;
-                                    }
+                                    // add the spectrum annotations
+                                    tempSpectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                                    tempSpectrumPanel.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                                    tempSpectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
-                                    if (found) {
-                                        break;
-                                    }
+                                    // add de novo sequencing
+                                    tempSpectrumPanel.addAutomaticDeNovoSequencing(currentPeptideAssumption.getPeptide(), annotations,
+                                            forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
+                                            annotationPreferences.showForwardIonDeNovoTags(),
+                                            annotationPreferences.showRewindIonDeNovoTags());
+
+                                    peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
                                 }
-
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                                ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                        annotationPreferences.getNeutralLosses(),
-                                        annotationPreferences.getValidatedCharges(),
-                                        currentPeptideAssumption.getIdentificationCharge().value,
-                                        currentSpectrum, currentPeptideAssumption.getPeptide(),
-                                        currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy(), false);
-                                currentSpectrumKey = spectrumMatch.getKey();
-
-                                // add the spectrum annotations
-                                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                                spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
-
-                                // add de novo sequencing
-                                spectrum.addAutomaticDeNovoSequencing(currentPeptideAssumption.getPeptide(), annotations,
-                                        forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
-                                        annotationPreferences.showForwardIonDeNovoTags(),
-                                        annotationPreferences.showRewindIonDeNovoTags());
-
-                                peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
-                            }
-
-                            // xtandem annotation (if any)
-                            if (xTandemTable.getSelectedRow() != -1) {
-
-                                ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).keySet());
-                                Collections.sort(xTandemEValues);
-                                PeptideAssumption currentPeptideAssumption = null;
-                                int cpt = 0;
-                                boolean found = false;
-
-                                for (double eValue : xTandemEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValue)) {
-                                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                        if (cpt == xTandemTable.getSelectedRow()) {
-                                            currentPeptideAssumption = peptideAssumption;
-                                            found = true;
-                                            break;
-                                        }
-                                        cpt++;
-                                    }
-
-                                    if (found) {
-                                        break;
-                                    }
-                                }
-
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                                ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                        annotationPreferences.getNeutralLosses(),
-                                        annotationPreferences.getValidatedCharges(),
-                                        currentPeptideAssumption.getIdentificationCharge().value,
-                                        currentSpectrum, currentPeptideAssumption.getPeptide(),
-                                        currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy(), false);
-                                currentSpectrumKey = spectrumMatch.getKey();
-
-                                // add the spectrum annotations
-                                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                                spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
-
-                                // add de novo sequencing
-                                spectrum.addAutomaticDeNovoSequencing(currentPeptideAssumption.getPeptide(), annotations,
-                                        forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
-                                        annotationPreferences.showForwardIonDeNovoTags(),
-                                        annotationPreferences.showRewindIonDeNovoTags());
-
-                                peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
-
-                            }
-
-                            // mascot annotation (if any)
-                            if (mascotTable.getSelectedRow() != -1) {
-
-                                ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).keySet());
-                                Collections.sort(mascotEValues);
-                                PeptideAssumption currentPeptideAssumption = null;
-                                int cpt = 0;
-                                boolean found = false;
-
-                                for (double eValue : mascotEValues) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
-                                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                        if (cpt == mascotTable.getSelectedRow()) {
-                                            currentPeptideAssumption = peptideAssumption;
-                                            found = true;
-                                            break;
-                                        }
-                                        cpt++;
-                                    }
-
-                                    if (found) {
-                                        break;
-                                    }
-                                }
-
-                                annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                                ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                        annotationPreferences.getNeutralLosses(),
-                                        annotationPreferences.getValidatedCharges(),
-                                        currentPeptideAssumption.getIdentificationCharge().value,
-                                        currentSpectrum, currentPeptideAssumption.getPeptide(),
-                                        currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy(), false);
-                                currentSpectrumKey = spectrumMatch.getKey();
-
-                                // add the spectrum annotations
-                                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                                spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
-
-                                // add de novo sequencing
-                                spectrum.addAutomaticDeNovoSequencing(currentPeptideAssumption.getPeptide(), annotations,
-                                        forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
-                                        annotationPreferences.showForwardIonDeNovoTags(),
-                                        annotationPreferences.showRewindIonDeNovoTags());
-
-                                peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
                             }
                         }
                     }
                 }
-                if (spectrum != null) {
-                    spectrumChartPanel.add(spectrum);
+
+                if (tempSpectrumPanel != null) {
+                    spectrumChartPanel.add(tempSpectrumPanel);
                 }
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -3532,7 +2953,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         final TableIndex tableIndex = index;
 
-        if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE
+        if (tableIndex == TableIndex.ID_SOFTWARE_PERFORMANCE
                 || tableIndex == TableIndex.SPECTRUM_FILES
                 || tableIndex == TableIndex.PSM_TABLES) {
 
@@ -3566,8 +2987,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                             try {
 
-                                if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE) {
-                                    Util.tableToFile(searchEngineTable, "\t", progressDialog, true, writer);
+                                if (tableIndex == TableIndex.ID_SOFTWARE_PERFORMANCE) {
+                                    Util.tableToFile(idSoftwareTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.SPECTRUM_FILES) {
                                     Util.tableToFile(spectrumTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
@@ -3749,15 +3170,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns true if all the used search engines agree on the top PSM without
+     * Returns true if all the used id software agree on the top PSM without
      * accounting for modification localization, false otherwise.
      *
      * @param spectrumMatch the PSM to check
-     * @param searchParameters the paramters used for the search
+     * @param searchParameters the parameters used for the search
      *
-     * @return true if all the used search engines agree on the top PSM
+     * @return true if all the used id software agree on the top PSM
      */
-    public static int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch, SearchParameters searchParameters) {
+    public static int isBestPsmEqualForAllIdSoftwares(SpectrumMatch spectrumMatch, SearchParameters searchParameters) {
 
         // @TODO: there's probably an easier more elegant way of doing all of this (yes but it would ruin the backward compatibility, we'll wait a bit)
         Peptide omssaMatch = null;
@@ -3918,7 +3339,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 case 0:
                     return " ";
                 case 1:
-                    return "SE";
+                    return "ID";
                 case 2:
                     return "Title";
                 case 3:
@@ -3953,14 +3374,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 0:
                         return row + 1;
                     case 1:
-                        int searchEngineAgreement;
+                        int idSoftwareAgreement;
                         if (!identification.matchExists(spectrumKey)) {
-                            searchEngineAgreement = NO_ID;
+                            idSoftwareAgreement = NO_ID;
                         } else {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters());
                         }
-                        return searchEngineAgreement;
+                        return idSoftwareAgreement;
                     case 2:
                         return spectrumFactory.getSpectrumTitles(fileSelected).get(row);
                     case 3:
@@ -4057,7 +3478,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the search engine Venn diagram.
+     * Updates the ID software Venn diagram.
      */
     private void updateVennDiagram(final Integer nOMSSA, final Integer nXTandem, final Integer nMascot, final Integer ox, final Integer mo, final Integer mx, final Integer omx) {
         SwingUtilities.invokeLater(new Runnable() {

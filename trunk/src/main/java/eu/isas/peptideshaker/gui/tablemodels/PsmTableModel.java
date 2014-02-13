@@ -101,7 +101,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             case 1:
                 return "  ";
             case 2:
-                return "SE";
+                return "ID";
             case 3:
                 return "Sequence";
             case 4:
@@ -145,7 +145,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                    return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters());
                 case 3:
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
