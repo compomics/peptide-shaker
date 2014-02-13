@@ -126,20 +126,16 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="mascotPanel" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="xTandemPanel" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="omssaPanel" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="idResultsPanel" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="peptideShakerJScrollPane" pref="618" max="32767" attributes="2"/>
                                           <Group type="102" attributes="0">
-                                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                              <Component id="peptideShakerPsmLabel" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -151,21 +147,17 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
-                                  <Component id="omssaPanel" max="32767" attributes="2"/>
-                                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                  <Component id="xTandemPanel" max="32767" attributes="2"/>
-                                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                  <Component id="mascotPanel" max="32767" attributes="2"/>
+                                  <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
+                                  <Component id="idResultsPanel" max="32767" attributes="2"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="peptideShakerPsmLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                                       <Component id="peptideShakerJScrollPane" min="-2" pref="51" max="-2" attributes="0"/>
-                                      <EmptySpace pref="342" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -185,12 +177,11 @@
                             <Component class="javax.swing.JTable" name="peptideShakerJTable">
                               <Properties>
                                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="7" rowCount="0">
+                                  <Table columnCount="6" rowCount="0">
                                     <Column editable="false" title=" " type="java.lang.Integer"/>
-                                    <Column editable="false" title="SE" type="java.lang.Integer"/>
+                                    <Column editable="false" title="ID" type="java.lang.Integer"/>
                                     <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                                     <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                    <Column editable="false" title="Score" type="java.lang.Double"/>
                                     <Column editable="false" title="Confidence" type="java.lang.Double"/>
                                     <Column editable="false" title="  " type="java.lang.Boolean"/>
                                   </Table>
@@ -251,17 +242,17 @@
                             </Component>
                           </SubComponents>
                         </Container>
-                        <Component class="javax.swing.JLabel" name="jLabel1">
+                        <Component class="javax.swing.JLabel" name="peptideShakerPsmLabel">
                           <Properties>
                             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                               <FontInfo relative="true">
-                                <Font component="jLabel1" italic="true" property="font" relativeSize="true" size="0"/>
+                                <Font component="peptideShakerPsmLabel" italic="true" property="font" relativeSize="true" size="0"/>
                               </FontInfo>
                             </Property>
                             <Property name="text" type="java.lang.String" value="PeptideShaker"/>
                           </Properties>
                         </Component>
-                        <Container class="javax.swing.JPanel" name="omssaPanel">
+                        <Container class="javax.swing.JPanel" name="idResultsPanel">
                           <Properties>
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
@@ -270,250 +261,34 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="omssaTableJScrollPane" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="idResultsTableJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="omssaTableJScrollPane" pref="74" max="32767" attributes="2"/>
+                                      <Component id="idResultsTableJScrollPane" pref="288" max="32767" attributes="2"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
                           </Layout>
                           <SubComponents>
-                            <Container class="javax.swing.JScrollPane" name="omssaTableJScrollPane">
-                              <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-                              <AuxValues>
-                                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                              </AuxValues>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                              <SubComponents>
-                                <Component class="javax.swing.JTable" name="omssaTable">
-                                  <Properties>
-                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="5" rowCount="0">
-                                        <Column editable="false" title=" " type="java.lang.Integer"/>
-                                        <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                        <Column editable="false" title="Charge" type="java.lang.Integer"/>
-                                        <Column editable="false" title="e-value" type="java.lang.Double"/>
-                                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
-                                      </Table>
-                                    </Property>
-                                    <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                                      <TableColumnModel selectionModel="0">
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                      </TableColumnModel>
-                                    </Property>
-                                    <Property name="opaque" type="boolean" value="false"/>
-                                    <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                                      <JTableSelectionModel selectionMode="0"/>
-                                    </Property>
-                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                    </Property>
-                                  </Properties>
-                                  <Events>
-                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="omssaTableMouseReleased"/>
-                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="omssaTableMouseExited"/>
-                                    <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="omssaTableMouseMoved"/>
-                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="omssaTableKeyReleased"/>
-                                  </Events>
-                                  <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) omssaTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
-                                  </AuxValues>
-                                </Component>
-                              </SubComponents>
-                            </Container>
-                            <Component class="javax.swing.JLabel" name="jLabel3">
+                            <Component class="javax.swing.JLabel" name="spectrumIdResultsLabel">
                               <Properties>
                                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                                   <FontInfo relative="true">
-                                    <Font component="jLabel3" italic="true" property="font" relativeSize="true" size="0"/>
+                                    <Font component="spectrumIdResultsLabel" italic="true" property="font" relativeSize="true" size="0"/>
                                   </FontInfo>
                                 </Property>
-                                <Property name="text" type="java.lang.String" value="OMSSA"/>
+                                <Property name="text" type="java.lang.String" value="Spectrum Identification Results"/>
                               </Properties>
                             </Component>
-                          </SubComponents>
-                        </Container>
-                        <Container class="javax.swing.JPanel" name="xTandemPanel">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-
-                          <Layout>
-                            <DimensionLayout dim="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="xTandemTableJScrollPane" alignment="0" max="32767" attributes="2"/>
-                              </Group>
-                            </DimensionLayout>
-                            <DimensionLayout dim="1">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="xTandemTableJScrollPane" pref="74" max="32767" attributes="2"/>
-                                  </Group>
-                              </Group>
-                            </DimensionLayout>
-                          </Layout>
-                          <SubComponents>
-                            <Component class="javax.swing.JLabel" name="jLabel4">
-                              <Properties>
-                                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-                                  <FontInfo relative="true">
-                                    <Font component="jLabel4" italic="true" property="font" relativeSize="true" size="0"/>
-                                  </FontInfo>
-                                </Property>
-                                <Property name="text" type="java.lang.String" value="X!Tandem"/>
-                              </Properties>
-                            </Component>
-                            <Container class="javax.swing.JScrollPane" name="xTandemTableJScrollPane">
-                              <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-                              <AuxValues>
-                                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                              </AuxValues>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                              <SubComponents>
-                                <Component class="javax.swing.JTable" name="xTandemTable">
-                                  <Properties>
-                                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="5" rowCount="0">
-                                        <Column editable="false" title=" " type="java.lang.Integer"/>
-                                        <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                        <Column editable="false" title="Charge" type="java.lang.Integer"/>
-                                        <Column editable="false" title="e-value" type="java.lang.Double"/>
-                                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
-                                      </Table>
-                                    </Property>
-                                    <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                                      <TableColumnModel selectionModel="0">
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                          <Title/>
-                                          <Editor/>
-                                          <Renderer/>
-                                        </Column>
-                                      </TableColumnModel>
-                                    </Property>
-                                    <Property name="opaque" type="boolean" value="false"/>
-                                    <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                                      <JTableSelectionModel selectionMode="0"/>
-                                    </Property>
-                                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                    </Property>
-                                  </Properties>
-                                  <Events>
-                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="xTandemTableMouseReleased"/>
-                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="xTandemTableMouseExited"/>
-                                    <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="xTandemTableMouseMoved"/>
-                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="xTandemTableKeyReleased"/>
-                                  </Events>
-                                  <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) xTandemTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
-                                  </AuxValues>
-                                </Component>
-                              </SubComponents>
-                            </Container>
-                          </SubComponents>
-                        </Container>
-                        <Container class="javax.swing.JPanel" name="mascotPanel">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-
-                          <Layout>
-                            <DimensionLayout dim="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="mascotTableJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
-                              </Group>
-                            </DimensionLayout>
-                            <DimensionLayout dim="1">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="mascotTableJScrollPane" pref="74" max="32767" attributes="2"/>
-                                  </Group>
-                              </Group>
-                            </DimensionLayout>
-                          </Layout>
-                          <SubComponents>
-                            <Component class="javax.swing.JLabel" name="jLabel2">
-                              <Properties>
-                                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-                                  <FontInfo relative="true">
-                                    <Font component="jLabel2" italic="true" property="font" relativeSize="true" size="0"/>
-                                  </FontInfo>
-                                </Property>
-                                <Property name="text" type="java.lang.String" value="Mascot"/>
-                              </Properties>
-                            </Component>
-                            <Container class="javax.swing.JScrollPane" name="mascotTableJScrollPane">
+                            <Container class="javax.swing.JScrollPane" name="idResultsTableJScrollPane">
                               <Properties>
                                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                   <Dimension value="[23, 87]"/>
@@ -526,15 +301,15 @@
 
                               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                               <SubComponents>
-                                <Component class="javax.swing.JTable" name="mascotTable">
+                                <Component class="javax.swing.JTable" name="searchResultsTable">
                                   <Properties>
                                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                                       <Table columnCount="5" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
                                         <Column editable="false" title="Charge" type="java.lang.Integer"/>
-                                        <Column editable="false" title="e-value" type="java.lang.Double"/>
                                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
+                                        <Column editable="false" title="ID Software" type="java.lang.String"/>
                                       </Table>
                                     </Property>
                                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -575,14 +350,14 @@
                                     </Property>
                                   </Properties>
                                   <Events>
-                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mascotTableMouseReleased"/>
-                                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mascotTableMouseClicked"/>
-                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mascotTableMouseExited"/>
-                                    <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="mascotTableMouseMoved"/>
-                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="mascotTableKeyReleased"/>
+                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="searchResultsTableMouseReleased"/>
+                                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="searchResultsTableMouseClicked"/>
+                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="searchResultsTableMouseExited"/>
+                                    <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="searchResultsTableMouseMoved"/>
+                                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="searchResultsTableKeyReleased"/>
                                   </Events>
                                   <AuxValues>
-                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) mascotTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) idResultsTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
                                   </AuxValues>
                                 </Component>
                               </SubComponents>
@@ -997,7 +772,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JSplitPane" name="searchEngineSpectrumSelectionSplitPane">
+        <Container class="javax.swing.JSplitPane" name="idSoftwareSpectrumSelectionSplitPane">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
@@ -1015,7 +790,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="searchEnginesJPanel">
+            <Container class="javax.swing.JPanel" name="idSoftwareJPanel">
               <Properties>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
@@ -1028,30 +803,30 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="searchEnginesJLayeredPane" alignment="1" max="32767" attributes="0"/>
+                      <Component id="idSoftwareJLayeredPane" alignment="1" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="searchEnginesJLayeredPane" min="-2" pref="152" max="-2" attributes="0"/>
+                          <Component id="idSoftwareJLayeredPane" min="-2" pref="152" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JLayeredPane" name="searchEnginesJLayeredPane">
+                <Container class="javax.swing.JLayeredPane" name="idSoftwareJLayeredPane">
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
                     <Property name="useNullLayout" type="boolean" value="true"/>
                   </Layout>
                   <SubComponents>
-                    <Container class="javax.swing.JPanel" name="searchEnginesPanel">
+                    <Container class="javax.swing.JPanel" name="idSoftwarePanel">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Search Engine Performance"/>
+                            <TitledBorder title="Spectrum Software Performance"/>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
@@ -1069,7 +844,7 @@
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="searchEnginetableJScrollPane" pref="1009" max="32767" attributes="0"/>
+                                      <Component id="idSoftwareTableJScrollPane" pref="1009" max="32767" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="vennDiagramButton" min="-2" pref="229" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -1084,7 +859,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="searchEnginetableJScrollPane" pref="0" max="32767" attributes="0"/>
+                                          <Component id="idSoftwareTableJScrollPane" pref="0" max="32767" attributes="0"/>
                                           <Component id="vennDiagramButton" pref="105" max="32767" attributes="2"/>
                                       </Group>
                                       <EmptySpace max="32767" attributes="0"/>
@@ -1094,7 +869,7 @@
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="searchEnginetableJScrollPane">
+                        <Container class="javax.swing.JScrollPane" name="idSoftwareTableJScrollPane">
                           <Properties>
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
@@ -1104,12 +879,12 @@
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                           <SubComponents>
-                            <Component class="javax.swing.JTable" name="searchEngineTable">
+                            <Component class="javax.swing.JTable" name="idSoftwareTable">
                               <Properties>
                                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                                   <Table columnCount="6" rowCount="0">
                                     <Column editable="false" title=" " type="java.lang.Integer"/>
-                                    <Column editable="false" title="Search Engine" type="java.lang.String"/>
+                                    <Column editable="false" title="ID Software" type="java.lang.String"/>
                                     <Column editable="false" title="Validated PSMs" type="java.lang.Integer"/>
                                     <Column editable="false" title="Unique PSMs" type="java.lang.Integer"/>
                                     <Column editable="false" title="Unassigned" type="java.lang.Integer"/>
@@ -1136,7 +911,7 @@
                                 </Property>
                               </Properties>
                               <AuxValues>
-                                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) searchEngineTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) idSoftwareTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
                               </AuxValues>
                             </Component>
                           </SubComponents>
@@ -1153,7 +928,7 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Component class="javax.swing.JButton" name="searchEnginesHelpJButton">
+                    <Component class="javax.swing.JButton" name="idSoftwareHelpJButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
@@ -1169,9 +944,9 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="searchEnginesHelpJButtonMouseEntered"/>
-                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="searchEnginesHelpJButtonMouseExited"/>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchEnginesHelpJButtonActionPerformed"/>
+                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="idSoftwareHelpJButtonMouseEntered"/>
+                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="idSoftwareHelpJButtonMouseExited"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="idSoftwareHelpJButtonActionPerformed"/>
                       </Events>
                       <AuxValues>
                         <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -1182,7 +957,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Component class="javax.swing.JButton" name="exportSearchEnginePerformanceJButton">
+                    <Component class="javax.swing.JButton" name="exportIdPerformancePerformanceJButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
@@ -1202,9 +977,9 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSearchEnginePerformanceJButtonMouseEntered"/>
-                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSearchEnginePerformanceJButtonMouseExited"/>
-                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSearchEnginePerformanceJButtonMouseReleased"/>
+                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportIdPerformancePerformanceJButtonMouseEntered"/>
+                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportIdPerformancePerformanceJButtonMouseExited"/>
+                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportIdPerformancePerformanceJButtonMouseReleased"/>
                       </Events>
                       <AuxValues>
                         <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>
@@ -1215,7 +990,7 @@
                         </Constraint>
                       </Constraints>
                     </Component>
-                    <Container class="javax.swing.JPanel" name="contextMenuSearchEnginesBackgroundPanel">
+                    <Container class="javax.swing.JPanel" name="contextMenuIdSoftwareBackgroundPanel">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="ff" green="ff" red="ff" type="rgb"/>

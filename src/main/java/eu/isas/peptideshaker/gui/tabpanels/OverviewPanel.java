@@ -291,7 +291,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTableToolTips = new ArrayList<String>();
         psmTableToolTips.add(null);
         psmTableToolTips.add("Starred");
-        psmTableToolTips.add("Search Engine Agreement");
+        psmTableToolTips.add("Identification Software Agreement");
         psmTableToolTips.add("Peptide Sequence");
         psmTableToolTips.add("Precursor Charge");
         psmTableToolTips.add("Mass Error");
@@ -437,24 +437,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn("  ").setMinWidth(30);
 
         // the protein inference column
-        psmTable.getColumn("SE").setMaxWidth(37);
-        psmTable.getColumn("SE").setMinWidth(37);
+        psmTable.getColumn("ID").setMaxWidth(37);
+        psmTable.getColumn("ID").setMinWidth(37);
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> psmColorMap = new HashMap<Integer, java.awt.Color>();
-        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
-        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
-        psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
-        psmColorMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
+        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // id software agree with PTM certainty
+        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, java.awt.Color.CYAN); // id software agree on peptide but not ptm certainty
+        psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, java.awt.Color.YELLOW); // id software don't agree
+        psmColorMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, java.awt.Color.ORANGE); // some id software id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
-        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, "Search Engines Agree");
-        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
-        psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "Search Engines Disagree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, "ID Software Agree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "ID Software Agree - PTM Certainty Issues");
+        psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "ID Software Disagree");
         psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "First Hit(s) Missing");
 
-        psmTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
+        psmTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
@@ -721,14 +721,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinTableMouseReleased(evt);
-            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
             }
         });
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1080,14 +1080,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                peptideTableMouseReleased(evt);
-            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 peptideTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptideTableMouseReleased(evt);
             }
         });
         peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1239,7 +1239,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             },
             new String [] {
-                " ", "  ", "SE", "Sequence", "Charge", "Mass Error", "Confidence", ""
+                " ", "  ", "ID", "Sequence", "Charge", "Mass Error", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -1259,14 +1259,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         });
         psmTable.setOpaque(false);
         psmTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                psmTableMouseReleased(evt);
-            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 psmTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 psmTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                psmTableMouseReleased(evt);
             }
         });
         psmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
