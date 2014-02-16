@@ -42,7 +42,6 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.*;
@@ -200,6 +199,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true));
         peptideTable.setAutoCreateRowSorter(true);
+
+        setTableProperties();
     }
 
     /**
@@ -278,7 +279,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     private void setProteinTableProperties() {
 
-        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+        Integer maxProteinKeyLength = null;
+        
+        if (peptideShakerGUI.getMetrics() != null) {
+            maxProteinKeyLength = peptideShakerGUI.getMetrics().getMaxProteinKeyLength();
+            
+        }
+        
+        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
+                    peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
@@ -3214,7 +3223,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * Hides or displays the score columns in the protein and peptide tables.
      */
     public void updateScores() {
-        
+
         ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setTableProperties();

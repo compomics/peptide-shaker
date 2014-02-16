@@ -513,7 +513,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * confidence
      * @param maxProteinKeyLength the longest protein key to display
      */
-    public static void setProteinTableProperties(JTable proteinTable, Color sparklineColor, Color sparklineColorNotValidated, Color sparklineColorNotFound, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
+    public static void setProteinTableProperties(JTable proteinTable, Color sparklineColor, Color sparklineColorNotValidated, 
+            Color sparklineColorNotFound, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
 
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
@@ -561,7 +562,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
         // use a gray color for no decoy searches
         Color nonValidatedColor = sparklineColorNotValidated;
-        if (!SequenceFactory.getInstance().concatenatedTargetDecoy()) {
+        if (!SequenceFactory.getInstance().isClosed() && !SequenceFactory.getInstance().concatenatedTargetDecoy()) {
             nonValidatedColor = sparklineColorNotFound;
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
@@ -601,14 +602,16 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 "Starred", null, null));
 
         // set the preferred size of the accession column
-        Integer width = getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, maxProteinKeyLength);
+        if (maxProteinKeyLength != null) {
+            Integer width = getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, maxProteinKeyLength);
 
-        if (width != null) {
-            proteinTable.getColumn("Accession").setMinWidth(width);
-            proteinTable.getColumn("Accession").setMaxWidth(width);
-        } else {
-            proteinTable.getColumn("Accession").setMinWidth(15);
-            proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+            if (width != null) {
+                proteinTable.getColumn("Accession").setMinWidth(width);
+                proteinTable.getColumn("Accession").setMaxWidth(width);
+            } else {
+                proteinTable.getColumn("Accession").setMinWidth(15);
+                proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+            }
         }
     }
 
