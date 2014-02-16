@@ -5435,7 +5435,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             int psmRow = getPsmRow(psmKey);
-            psmTable.setRowSelectionInterval(psmRow, psmRow);
+            if (psmRow < psmTable.getRowCount()) {
+                psmTable.setRowSelectionInterval(psmRow, psmRow);
+            }
         }
     }
 
