@@ -93,10 +93,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
-                        }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -124,10 +120,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
-                        }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -150,10 +142,6 @@ public class ValidationSection {
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
                         }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
@@ -178,10 +166,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
-                        }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -204,10 +188,6 @@ public class ValidationSection {
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
                         }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
@@ -232,10 +212,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
-                        }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -258,10 +234,6 @@ public class ValidationSection {
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (peptideKeys.size() > 1) {
-                            title = peptideKey + " ";
                         }
                         boolean firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
@@ -431,10 +403,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
-                        }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -463,10 +431,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
-                        }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -490,10 +454,6 @@ public class ValidationSection {
                     for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
                         }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
@@ -519,10 +479,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
-                        }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -546,10 +502,6 @@ public class ValidationSection {
                     for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
                         }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
@@ -575,10 +527,6 @@ public class ValidationSection {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
-                        }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {
                             if (firstTitle) {
@@ -602,10 +550,6 @@ public class ValidationSection {
                     for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
-                        }
-                        String title = "";
-                        if (keys.size() > 1) {
-                            title = "Charge " + psmKeys.get(charge) + " ";
                         }
                         firstTitle = true;
                         for (String subTitle : exportFeature.getTitles()) {

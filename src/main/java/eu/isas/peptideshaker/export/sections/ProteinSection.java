@@ -425,7 +425,7 @@ public class ProteinSection {
                 writer.write(separator);
             }
             for (String title : exportFeature.getTitles()) {
-                writer.write(title + separator);
+                writer.write(title);
             }
         }
         writer.newLine();
