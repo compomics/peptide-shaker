@@ -197,7 +197,7 @@ public class PsmSection {
 
                 for (ExportFeature exportFeature : psmFeatures) {
                     PsmFeatures psmFeature = (PsmFeatures) exportFeature;
-                    writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, waitingHandler));
+                    writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, waitingHandler) + separator);
                 }
                 writer.newLine();
                 if (fragmentSection != null) {
