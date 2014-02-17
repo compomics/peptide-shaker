@@ -223,7 +223,7 @@ public class PeptideSection {
                 Collections.sort(accessions);
                 for (String accession : accessions) {
                     if (!proteins.equals("")) {
-                        proteins += ", ";
+                        proteins += "; ";
                     }
                     proteins += accession;
                 }
@@ -297,7 +297,7 @@ public class PeptideSection {
                 String subSequence = "";
                 for (String proteinAccession : accessions) {
                     if (!subSequence.equals("")) {
-                        subSequence += ";";
+                        subSequence += "; ";
                     }
                     HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                             nSurroundingAA, PeptideShaker.MATCHING_TYPE,
@@ -309,7 +309,7 @@ public class PeptideSection {
                         if (first) {
                             first = false;
                         } else {
-                            subSequence += "|";
+                            subSequence += ", ";
                         }
                         subSequence += surroundingAAs.get(startAa)[0];
                     }
@@ -322,7 +322,7 @@ public class PeptideSection {
                 subSequence = "";
                 for (String proteinAccession : accessions) {
                     if (!subSequence.equals("")) {
-                        subSequence += ";";
+                        subSequence += "; ";
                     }
                     HashMap<Integer, String[]> surroundingAAs
                             = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
@@ -334,7 +334,7 @@ public class PeptideSection {
                         if (first) {
                             first = false;
                         } else {
-                            subSequence += "|";
+                            subSequence += ", ";
                         }
                         subSequence += surroundingAAs.get(startAa)[1];
                     }
