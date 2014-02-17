@@ -635,9 +635,9 @@
                                 </Property>
                               </Properties>
                               <Events>
+                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseReleased"/>
                                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseEntered"/>
                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseExited"/>
-                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sequenceCoverageOptionsJButtonMouseReleased"/>
                               </Events>
                               <AuxValues>
                                 <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="300"/>

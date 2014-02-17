@@ -60,8 +60,19 @@ import eu.isas.peptideshaker.export.sections.PeptideSection;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  * The Spectrum ID panel.
@@ -71,6 +82,12 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
  */
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
+    /**
+     * Turns of the gradient painting for the bar charts.
+     */
+    static {
+        BarRenderer.setDefaultBarPainter(new StandardBarPainter());
+    }
     /**
      * The progress dialog.
      */
@@ -176,6 +193,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Shows if Mascot is used as part of the search.
      */
     private static boolean mascotUsed = false;
+    /**
+     * The search engine color map.
+     */
+    private HashMap<Integer, java.awt.Color> searchEnginesColorMap;
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -202,9 +223,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Set up the GUI.
      */
     private void setUpGUI() {
-        ((TitledBorder) idSoftwarePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Identification Software Performance" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+        ((TitledBorder) idSoftwarePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Identification Overview" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         ((TitledBorder) spectrumPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum & Fragment Ions" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Selection" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+
+        spectrumSelectionDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+        spectrumSelectionDialog.setModal(true);
+
+        // set up the search engines color map
+        searchEnginesColorMap = new HashMap<Integer, java.awt.Color>();
+        searchEnginesColorMap.put(Advocate.PeptideShaker.getIndex(), peptideShakerGUI.getSparklineColor());
+        searchEnginesColorMap.put(Advocate.XTandem.getIndex(), new java.awt.Color(153, 255, 255));
+        searchEnginesColorMap.put(Advocate.OMSSA.getIndex(), new java.awt.Color(153, 153, 255));
+        searchEnginesColorMap.put(Advocate.Mascot.getIndex(), new java.awt.Color(255, 153, 255));
     }
 
     /**
@@ -268,8 +300,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         searchResultsTable.getColumn(" ").setMinWidth(30);
         searchResultsTable.getColumn(" ").setMaxWidth(30);
-        searchResultsTable.getColumn("SW").setMinWidth(37);
-        searchResultsTable.getColumn("SW").setMaxWidth(37);
+        searchResultsTable.getColumn("SE").setMinWidth(37);
+        searchResultsTable.getColumn("SE").setMaxWidth(37);
         searchResultsTable.getColumn("  ").setMinWidth(30);
         searchResultsTable.getColumn("  ").setMaxWidth(30);
 
@@ -303,6 +335,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+
+        // set up the search engines tooltip map
+        HashMap<Integer, String> searchEnginesTooltipMap = new HashMap<Integer, String>();
+        searchEnginesTooltipMap.put(Advocate.PeptideShaker.getIndex(), Advocate.PeptideShaker.getName());
+        searchEnginesTooltipMap.put(Advocate.XTandem.getIndex(), Advocate.XTandem.getName());
+        searchEnginesTooltipMap.put(Advocate.OMSSA.getIndex(), Advocate.OMSSA.getName());
+        searchEnginesTooltipMap.put(Advocate.Mascot.getIndex(), Advocate.Mascot.getName());
+
+        searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), searchEnginesColorMap, searchEnginesTooltipMap));
 
         searchResultsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -385,7 +426,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         idResultsTableToolTips = new ArrayList<String>();
         idResultsTableToolTips.add("Peptide Rank");
-        idResultsTableToolTips.add("Identification Software");
+        idResultsTableToolTips.add("Search Engine / Identification Software");
         idResultsTableToolTips.add("Peptide Sequence");
         idResultsTableToolTips.add("Precursor Charge");
         idResultsTableToolTips.add("Peptide Confidence");
@@ -436,11 +477,27 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        spectrumSelectionDialog = new javax.swing.JDialog();
+        backgroundPanel = new javax.swing.JPanel();
+        fileNamesCmb = new javax.swing.JComboBox();
+        idSoftwareTableJScrollPane = new javax.swing.JScrollPane();
+        idSoftwareTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        String tip = (String) idSoftwareTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         spectrumSelectionPsmSplitPane = new javax.swing.JSplitPane();
         spectrumSelectionJPanel = new javax.swing.JPanel();
         spectrumSelectionLayeredPane = new javax.swing.JLayeredPane();
         spectrumSelectionPanel = new javax.swing.JPanel();
-        fileNamesCmb = new javax.swing.JComboBox();
         spectrumTableJScrollPane = new javax.swing.JScrollPane();
         spectrumTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -455,7 +512,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 };
             }
         };
-        spectrumFileLabel = new javax.swing.JLabel();
+        spectrumSelectionOptionsJButton = new javax.swing.JButton();
         spectrumSelectionHelpJButton = new javax.swing.JButton();
         exportSpectrumSelectionJButton = new javax.swing.JButton();
         contextMenuSpectrumSelectionBackgroundPanel = new javax.swing.JPanel();
@@ -513,24 +570,81 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareJPanel = new javax.swing.JPanel();
         idSoftwareJLayeredPane = new javax.swing.JLayeredPane();
         idSoftwarePanel = new javax.swing.JPanel();
-        idSoftwareTableJScrollPane = new javax.swing.JScrollPane();
-        idSoftwareTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) idSoftwareTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
         vennDiagramButton = new javax.swing.JButton();
+        overviewPlotsPanel = new javax.swing.JPanel();
         idSoftwareHelpJButton = new javax.swing.JButton();
         exportIdPerformancePerformanceJButton = new javax.swing.JButton();
         contextMenuIdSoftwareBackgroundPanel = new javax.swing.JPanel();
+
+        spectrumSelectionDialog.setTitle("Spectrum Selection");
+        spectrumSelectionDialog.setResizable(false);
+
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        fileNamesCmb.setBorder(null);
+        fileNamesCmb.setMinimumSize(new java.awt.Dimension(200, 20));
+        fileNamesCmb.setPreferredSize(new java.awt.Dimension(400, 20));
+        fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileNamesCmbActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileNamesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileNamesCmb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout spectrumSelectionDialogLayout = new javax.swing.GroupLayout(spectrumSelectionDialog.getContentPane());
+        spectrumSelectionDialog.getContentPane().setLayout(spectrumSelectionDialogLayout);
+        spectrumSelectionDialogLayout.setHorizontalGroup(
+            spectrumSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        spectrumSelectionDialogLayout.setVerticalGroup(
+            spectrumSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        idSoftwareTableJScrollPane.setOpaque(false);
+
+        idSoftwareTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "ID Software", "Validated PSMs", "Unique PSMs", "Unassigned", "ID Rate (%)"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        idSoftwareTable.setOpaque(false);
+        idSoftwareTableJScrollPane.setViewportView(idSoftwareTable);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -550,10 +664,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
         spectrumSelectionPanel.setOpaque(false);
-
-        fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileNamesCmbActionPerformed(evt);
+        spectrumSelectionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                spectrumSelectionPanelMouseReleased(evt);
+            }
+        });
+        spectrumSelectionPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                spectrumSelectionPanelMouseMoved(evt);
             }
         });
 
@@ -585,41 +703,47 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         spectrumTableJScrollPane.setViewportView(spectrumTable);
 
-        spectrumFileLabel.setText("Spectrum File");
-
         javax.swing.GroupLayout spectrumSelectionPanelLayout = new javax.swing.GroupLayout(spectrumSelectionPanel);
         spectrumSelectionPanel.setLayout(spectrumSelectionPanelLayout);
         spectrumSelectionPanelLayout.setHorizontalGroup(
             spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumSelectionPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(spectrumFileLabel)
-                .addGap(18, 18, 18)
-                .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(673, Short.MAX_VALUE))
-            .addGroup(spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumSelectionPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1238, Short.MAX_VALUE)
-                    .addContainerGap()))
+                .addContainerGap()
+                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1238, Short.MAX_VALUE)
+                .addContainerGap())
         );
         spectrumSelectionPanelLayout.setVerticalGroup(
             spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumSelectionPanelLayout.createSequentialGroup()
-                .addContainerGap(266, Short.MAX_VALUE)
-                .addGroup(spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spectrumFileLabel))
+            .addGroup(spectrumSelectionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumSelectionPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
-                    .addGap(40, 40, 40)))
         );
 
         spectrumSelectionLayeredPane.add(spectrumSelectionPanel);
         spectrumSelectionPanel.setBounds(0, 0, 1270, 320);
+
+        spectrumSelectionOptionsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_gray.png"))); // NOI18N
+        spectrumSelectionOptionsJButton.setToolTipText("Spectrum File Selection");
+        spectrumSelectionOptionsJButton.setBorder(null);
+        spectrumSelectionOptionsJButton.setBorderPainted(false);
+        spectrumSelectionOptionsJButton.setContentAreaFilled(false);
+        spectrumSelectionOptionsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_gray.png"))); // NOI18N
+        spectrumSelectionOptionsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_black.png"))); // NOI18N
+        spectrumSelectionOptionsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                spectrumSelectionOptionsJButtonMouseReleased(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                spectrumSelectionOptionsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumSelectionOptionsJButtonMouseExited(evt);
+            }
+        });
+        spectrumSelectionLayeredPane.add(spectrumSelectionOptionsJButton);
+        spectrumSelectionOptionsJButton.setBounds(1230, 0, 10, 19);
+        spectrumSelectionLayeredPane.setLayer(spectrumSelectionOptionsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         spectrumSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         spectrumSelectionHelpJButton.setToolTipText("Help");
@@ -765,11 +889,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "SW", "Sequence", "Charge", "Confidence", "  "
+                " ", "SE", "Sequence", "Charge", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -1139,64 +1263,41 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         idSoftwareJPanel.setOpaque(false);
 
-        idSoftwarePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Software Performance"));
+        idSoftwarePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Identification Overview"));
         idSoftwarePanel.setOpaque(false);
-
-        idSoftwareTableJScrollPane.setOpaque(false);
-
-        idSoftwareTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "ID Software", "Validated PSMs", "Unique PSMs", "Unassigned", "ID Rate (%)"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        idSoftwareTable.setOpaque(false);
-        idSoftwareTableJScrollPane.setViewportView(idSoftwareTable);
 
         vennDiagramButton.setBackground(new java.awt.Color(255, 255, 255));
         vennDiagramButton.setBorderPainted(false);
         vennDiagramButton.setContentAreaFilled(false);
         vennDiagramButton.setFocusable(false);
 
+        overviewPlotsPanel.setOpaque(false);
+        overviewPlotsPanel.setLayout(new javax.swing.BoxLayout(overviewPlotsPanel, javax.swing.BoxLayout.LINE_AXIS));
+
         javax.swing.GroupLayout idSoftwarePanelLayout = new javax.swing.GroupLayout(idSoftwarePanel);
         idSoftwarePanel.setLayout(idSoftwarePanelLayout);
         idSoftwarePanelLayout.setHorizontalGroup(
             idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1268, Short.MAX_VALUE)
+            .addGroup(idSoftwarePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1012, Short.MAX_VALUE)
+                .addGap(246, 246, 246))
             .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(idSoftwarePanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(idSoftwareTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1009, Short.MAX_VALUE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addContainerGap(1029, Short.MAX_VALUE)
                     .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap()))
         );
         idSoftwarePanelLayout.setVerticalGroup(
             idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 127, Short.MAX_VALUE)
+            .addGroup(idSoftwarePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
             .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(idSoftwarePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                        .addComponent(idSoftwareTableJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1235,14 +1336,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportIdPerformancePerformanceJButton.setEnabled(false);
         exportIdPerformancePerformanceJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportIdPerformancePerformanceJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportIdPerformancePerformanceJButtonMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 exportIdPerformancePerformanceJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportIdPerformancePerformanceJButtonMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportIdPerformancePerformanceJButtonMouseReleased(evt);
             }
         });
         idSoftwareJLayeredPane.add(exportIdPerformancePerformanceJButton);
@@ -1310,63 +1411,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Updates the spectrum table based on the currently selected mgf file.
-     *
-     * @param evt
-     */
-    private void fileNamesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNamesCmbActionPerformed
-        if (updateSelection) {
-            clearItemSelection();
-            fileSelectionChanged();
-        }
-    }//GEN-LAST:event_fileNamesCmbActionPerformed
-
-    /**
-     * Update the spectrum.
-     *
-     * @param evt
-     */
-    private void spectrumTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseReleased
-
-        int row = spectrumTable.getSelectedRow();
-        int column = spectrumTable.getSelectedColumn();
-
-        if (evt.getButton() == MouseEvent.BUTTON1 && row != -1 && column != -1) {
-
-            // open protein link in web browser
-            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
-
-                String link = (String) spectrumTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
-
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            }
-        }
-
-        spectrumSelectionChanged();
-    }//GEN-LAST:event_spectrumTableMouseReleased
-
-    /**
-     * Update the spectrum.
-     *
-     * @param evt
-     */
-    private void spectrumTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spectrumTableKeyReleased
-        spectrumSelectionChanged();
-    }//GEN-LAST:event_spectrumTableKeyReleased
-
-    /**
      * Reset the divider between the spectrum table and the spectrum.
      *
      * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
-        spectrumSelectionPsmSplitPane.setDividerLocation((spectrumSelectionPsmSplitPane.getHeight() / 100) * 32);
+        spectrumSelectionPsmSplitPane.setDividerLocation((spectrumSelectionPsmSplitPane.getHeight() / 100) * 34);
         psmAndSpectrumSplitPane.setDividerLocation(psmAndSpectrumSplitPane.getWidth() / 2);
 
         // invoke later to give time for components to update
@@ -1423,25 +1474,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 // move the icons
                 spectrumSelectionLayeredPane.getComponent(0).setBounds(
-                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(0).getWidth() - 10,
-                        -3,
+                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(0).getWidth() - 34,
+                        0,
                         spectrumSelectionLayeredPane.getComponent(0).getWidth(),
                         spectrumSelectionLayeredPane.getComponent(0).getHeight());
 
                 spectrumSelectionLayeredPane.getComponent(1).setBounds(
-                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(1).getWidth() - 20,
+                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(1).getWidth() - 10,
                         -3,
                         spectrumSelectionLayeredPane.getComponent(1).getWidth(),
                         spectrumSelectionLayeredPane.getComponent(1).getHeight());
 
                 spectrumSelectionLayeredPane.getComponent(2).setBounds(
-                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(2).getWidth() - 5,
+                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(2).getWidth() - 20,
                         -3,
                         spectrumSelectionLayeredPane.getComponent(2).getWidth(),
                         spectrumSelectionLayeredPane.getComponent(2).getHeight());
 
+                spectrumSelectionLayeredPane.getComponent(3).setBounds(
+                        spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(3).getWidth() - 5,
+                        -3,
+                        spectrumSelectionLayeredPane.getComponent(3).getWidth(),
+                        spectrumSelectionLayeredPane.getComponent(3).getHeight());
+
                 // resize the plot area
-                spectrumSelectionLayeredPane.getComponent(3).setBounds(0, 0, spectrumSelectionLayeredPane.getWidth(), spectrumSelectionLayeredPane.getHeight());
+                spectrumSelectionLayeredPane.getComponent(4).setBounds(0, 0, spectrumSelectionLayeredPane.getWidth(), spectrumSelectionLayeredPane.getHeight());
                 spectrumSelectionLayeredPane.revalidate();
                 spectrumSelectionLayeredPane.repaint();
 
@@ -1935,19 +1992,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void exportIdPerformancePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportIdPerformancePerformanceJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Table to File");
+        JMenuItem menuItem = new JMenuItem("Plots");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboardOrFile(TableIndex.ID_SOFTWARE_PERFORMANCE);
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        menuItem = new JMenuItem("Venn Diagram");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, vennDiagramButton);
+                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, overviewPlotsPanel); 
             }
         });
 
@@ -1986,26 +2034,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
 
     /**
-     * Show the statisics popup menu.
+     * Update the spectrum.
      *
      * @param evt
      */
-    private void spectrumTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseClicked
-        if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
-
-            JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
-                }
-            });
-            popupMenu.add(menuItem);
-            popupMenu.show(spectrumTable, evt.getX(), evt.getY());
-        }
-    }//GEN-LAST:event_spectrumTableMouseClicked
+    private void spectrumTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spectrumTableKeyReleased
+        spectrumSelectionChanged();
+    }//GEN-LAST:event_spectrumTableKeyReleased
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an HTML
@@ -2064,8 +2099,122 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumTableMouseExited
 
+    /**
+     * Show the statisics popup menu.
+     *
+     * @param evt
+     */
+    private void spectrumTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
+
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(spectrumTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_spectrumTableMouseClicked
+
+    /**
+     * Update the spectrum.
+     *
+     * @param evt
+     */
+    private void spectrumTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseReleased
+
+        int row = spectrumTable.getSelectedRow();
+        int column = spectrumTable.getSelectedColumn();
+
+        if (evt.getButton() == MouseEvent.BUTTON1 && row != -1 && column != -1) {
+
+            // open protein link in web browser
+            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) spectrumTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }
+
+        spectrumSelectionChanged();
+    }//GEN-LAST:event_spectrumTableMouseReleased
+
+    /**
+     * Updates the spectrum table based on the currently selected mgf file.
+     *
+     * @param evt
+     */
+    private void fileNamesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNamesCmbActionPerformed
+
+        spectrumSelectionDialog.setVisible(false);
+
+        if (updateSelection) {
+            clearItemSelection();
+            fileSelectionChanged();
+        }
+    }//GEN-LAST:event_fileNamesCmbActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void spectrumSelectionOptionsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionOptionsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_spectrumSelectionOptionsJButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void spectrumSelectionOptionsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionOptionsJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_spectrumSelectionOptionsJButtonMouseExited
+
+    /**
+     * Open the spectrum file selection drop down menu.
+     *
+     * @param evt
+     */
+    private void spectrumSelectionOptionsJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionOptionsJButtonMouseReleased
+        spectrumSelectionDialog.setSize(400, 65);
+        spectrumSelectionDialog.setLocationRelativeTo(spectrumSelectionOptionsJButton);
+        spectrumSelectionDialog.setVisible(true);
+    }//GEN-LAST:event_spectrumSelectionOptionsJButtonMouseReleased
+
+    private void spectrumSelectionPanelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionPanelMouseReleased
+        if (evt.getX() > 180 && evt.getX() < 400 && evt.getY() < 25) {
+            spectrumSelectionDialog.setSize(400, 65);
+            spectrumSelectionDialog.setLocation(evt.getLocationOnScreen());
+            spectrumSelectionDialog.setVisible(true);
+        }
+    }//GEN-LAST:event_spectrumSelectionPanelMouseReleased
+
+    private void spectrumSelectionPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionPanelMouseMoved
+        if (evt.getX() > 180 && evt.getX() < 400 && evt.getY() < 25) {
+            spectrumSelectionPanel.setToolTipText("Select Spectrum File");
+            setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else {
+            spectrumSelectionPanel.setToolTipText(null);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_spectrumSelectionPanelMouseMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JPanel contextMenuIdSoftwareBackgroundPanel;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;
     private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
@@ -2084,6 +2233,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JTable idSoftwareTable;
     private javax.swing.JScrollPane idSoftwareTableJScrollPane;
     private javax.swing.JSlider intensitySlider;
+    private javax.swing.JPanel overviewPlotsPanel;
     private javax.swing.JScrollPane peptideShakerJScrollPane;
     private javax.swing.JTable peptideShakerJTable;
     private javax.swing.JSplitPane psmAndSpectrumSplitPane;
@@ -2096,7 +2246,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane slidersSplitPane;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
     private javax.swing.JPanel spectrumChartPanel;
-    private javax.swing.JLabel spectrumFileLabel;
     private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JLabel spectrumIdResultsLabel;
     private javax.swing.JPanel spectrumJPanel;
@@ -2104,9 +2253,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JLayeredPane spectrumLayeredPane;
     private javax.swing.JPanel spectrumPanel;
+    private javax.swing.JDialog spectrumSelectionDialog;
     private javax.swing.JButton spectrumSelectionHelpJButton;
     private javax.swing.JPanel spectrumSelectionJPanel;
     private javax.swing.JLayeredPane spectrumSelectionLayeredPane;
+    private javax.swing.JButton spectrumSelectionOptionsJButton;
     private javax.swing.JPanel spectrumSelectionPanel;
     private javax.swing.JSplitPane spectrumSelectionPsmSplitPane;
     private javax.swing.JTable spectrumTable;
@@ -2216,19 +2367,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                 if (spectrumMatch.getFirstHit(Advocate.Mascot.getIndex()) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.Mascot.getIndex());
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         mascot = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.OMSSA.getIndex()) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.OMSSA.getIndex());
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         omssa = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.XTandem.getIndex()) != null) {
                                     PeptideAssumption firstHit = (PeptideAssumption) spectrumMatch.getFirstHit(Advocate.XTandem.getIndex());
-                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                    if (firstHit.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                         xTandem = true;
                                     }
                                 }
@@ -2294,8 +2448,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             mx = null;
                         }
 
-                        // update the id software performance venn diagram
-                        updateVennDiagram(nOMSSA, nXTandem, nMascot, ox, mo, mx, omx);
+                        // update the id software performance plots
+                        updateOverviewPlots(nOMSSA, nXTandem, nMascot, totalPeptideShakerIds,
+                                ox, mo, mx, omx,
+                                uniqueOmssa, uniqueXTandem, uniqueMascot,
+                                no_o, no_x, no_m, totalNumberOfSpectra - totalPeptideShakerIds,
+                                (((double) nOMSSA) / (nOMSSA + no_o)) * 100,
+                                (((double) nXTandem) / (nXTandem + no_x)) * 100,
+                                (((double) nMascot) / (nMascot + no_m)) * 100,
+                                (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100);
 
                         int idSoftwareRowCounter = 0;
 
@@ -2386,7 +2547,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param titleC the title of dataset C
      */
     private void updateThreeWayVennDiagram(JButton diagramButton, int a, int b, int c, int ab, int ac, int bc, int abc,
-            String titleA, String titleB, String titleC) {
+            String titleA, String titleB, String titleC, Color colorA, Color colorB, Color colorC) {
 
         double maxValue = Math.max(Math.max(a, b), c);
         if (maxValue < 1) {
@@ -2405,7 +2566,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
 
         chart.setCircleLegends(titleA, titleB, titleC);
-        chart.setCircleColors(Color.GREEN, Color.RED, Color.BLUE);
+        chart.setCircleColors(colorA, colorB, colorC);
 
         try {
             diagramButton.setText("");
@@ -2444,7 +2605,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param titleA the title of dataset A
      * @param titleB the title of dataset B
      */
-    private void updateTwoWayVennDiagram(JButton diagramButton, int a, int b, int ab, String titleA, String titleB) {
+    private void updateTwoWayVennDiagram(JButton diagramButton, int a, int b, int ab, String titleA, String titleB, Color colorA, Color colorB) {
 
         double maxValue = Math.max(a, b);
         if (maxValue < 1) {
@@ -2464,7 +2625,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             chart.setCircleLegends(titleA, titleB, "");
-            chart.setCircleColors(Color.GREEN, Color.RED, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
+            chart.setCircleColors(colorA, colorB, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
 
             diagramButton.setText("");
             ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
@@ -2529,8 +2690,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
-                    ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Selection ("
-                            + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                    ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("<html>" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "Spectrum Selection ("
+                            + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
+                            + "<a href=\"dummy\">" + fileSelected + "</a>)"
+                            + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "</html>");
                     spectrumSelectionPanel.repaint();
 
                     ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
@@ -2667,7 +2830,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Collections.sort(eValues);
                         for (double eValue : eValues) {
                             for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTandem.getIndex()).get(eValue)) {
-                                addIdResultsToTable(currentAssumption, probabilities, "X");
+                                addIdResultsToTable(currentAssumption, probabilities, Advocate.XTandem);
                             }
                         }
                     }
@@ -2678,7 +2841,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Collections.sort(eValues);
                         for (double eValue : eValues) {
                             for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA.getIndex()).get(eValue)) {
-                                addIdResultsToTable(currentAssumption, probabilities, "O");
+                                addIdResultsToTable(currentAssumption, probabilities, Advocate.OMSSA);
                             }
                         }
                     }
@@ -2689,7 +2852,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Collections.sort(eValues);
                         for (double eValue : eValues) {
                             for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).get(eValue)) {
-                                addIdResultsToTable(currentAssumption, probabilities, "M");
+                                addIdResultsToTable(currentAssumption, probabilities, Advocate.Mascot);
                             }
                         }
                     }
@@ -3446,20 +3609,163 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Updates the ID software Venn diagram.
      */
-    private void updateVennDiagram(final Integer nOMSSA, final Integer nXTandem, final Integer nMascot, final Integer ox, final Integer mo, final Integer mx, final Integer omx) {
+    private void updateOverviewPlots(final Integer nOMSSA, final Integer nXTandem, final Integer nMascot, final Integer nPeptideShaker,
+            final Integer ox, final Integer mo, final Integer mx, final Integer omx,
+            final Integer uniqueOmssa, final Integer uniqueXTandem, final Integer uniqueMascot,
+            final Integer nUnassignedOMSSA, final Integer nUnassignedXTandem, final Integer nUnassignedMascot, final Integer nUnassignedPeptideShaker,
+            final Double idRateOmssa, final Double idRateXTandem, final Double idRateMascot, final Double idRatePeptideShaker) {
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 
+                overviewPlotsPanel.removeAll();
+
+                DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
+                psmDataset.addValue(nOMSSA, "OMSSA", "#PSMs");
+                psmDataset.addValue(nXTandem, "X!Tandem", "#PSMs");
+                psmDataset.addValue(nMascot, "Mascot", "#PSMs");
+                psmDataset.addValue(nPeptideShaker, "PeptideShaker", "#PSMs");
+
+                JFreeChart psmChart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
+                CategoryPlot psmPlot = psmChart.getCategoryPlot();
+                ChartPanel psmChartPanel = new ChartPanel(psmChart);
+                psmChartPanel.setBackground(java.awt.Color.WHITE);
+                psmPlot.setBackgroundPaint(java.awt.Color.WHITE);
+                psmChart.setBackgroundPaint(java.awt.Color.WHITE);
+                psmPlot.setDomainGridlinesVisible(false);
+                psmPlot.setRangeGridlinesVisible(false);
+                ValueAxis psmRangeAxis = psmPlot.getRangeAxis();
+                psmRangeAxis.setLowerMargin(0.15);
+                psmRangeAxis.setUpperMargin(0.15);
+                psmPlot.setOutlineVisible(false);
+                BarRenderer psmRenderer = new BarRenderer();
+                psmRenderer.setShadowVisible(false);
+                psmRenderer.setBarPainter(new StandardBarPainter());
+                psmRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                psmRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                psmRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                psmRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                psmRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+                psmRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+                psmRenderer.setBaseItemLabelsVisible(true);
+                psmPlot.setRenderer(psmRenderer);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(psmChartPanel);
+
+                DefaultCategoryDataset uniquePsmsDataset = new DefaultCategoryDataset();
+                uniquePsmsDataset.addValue(uniqueOmssa, "OMSSA", "#Unique PSMs");
+                uniquePsmsDataset.addValue(uniqueXTandem, "X!Tandem", "#Unique PSMs");
+                uniquePsmsDataset.addValue(uniqueMascot, "Mascot", "#Unique PSMs");
+                uniquePsmsDataset.addValue(0, "PeptideShaker", "#Unique PSMs");
+
+                JFreeChart uniqueChart = ChartFactory.createBarChart(null, null, null, uniquePsmsDataset, PlotOrientation.VERTICAL, false, false, false);
+                CategoryPlot uniquePlot = uniqueChart.getCategoryPlot();
+                ChartPanel uniqueChartPanel = new ChartPanel(uniqueChart);
+                uniqueChartPanel.setBackground(java.awt.Color.WHITE);
+                uniquePlot.setBackgroundPaint(java.awt.Color.WHITE);
+                uniqueChart.setBackgroundPaint(java.awt.Color.WHITE);
+                uniquePlot.setDomainGridlinesVisible(false);
+                uniquePlot.setRangeGridlinesVisible(false);
+                ValueAxis uniqueRangeAxis = uniquePlot.getRangeAxis();
+                uniqueRangeAxis.setLowerMargin(0.15);
+                uniqueRangeAxis.setUpperMargin(0.15);
+                uniquePlot.setOutlineVisible(false);
+                BarRenderer uniqueRenderer = new BarRenderer();
+                uniqueRenderer.setShadowVisible(false);
+                uniqueRenderer.setBarPainter(new StandardBarPainter());
+                uniqueRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                uniqueRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                uniqueRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                uniqueRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                uniqueRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+                uniqueRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+                uniqueRenderer.setBaseItemLabelsVisible(true);
+                uniquePlot.setRenderer(uniqueRenderer);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(uniqueChartPanel);
+
+                DefaultCategoryDataset unassignedDataset = new DefaultCategoryDataset();
+                unassignedDataset.addValue(nUnassignedOMSSA, "OMSSA", "#Unassigned");
+                unassignedDataset.addValue(nUnassignedXTandem, "X!Tandem", "#Unassigned");
+                unassignedDataset.addValue(nUnassignedMascot, "Mascot", "#Unassigned");
+                unassignedDataset.addValue(nUnassignedPeptideShaker, "PeptideShaker", "#Unassigned");
+
+                JFreeChart unassignedChart = ChartFactory.createBarChart(null, null, null, unassignedDataset, PlotOrientation.VERTICAL, false, false, false);
+                CategoryPlot unassingedPlot = unassignedChart.getCategoryPlot();
+                ChartPanel unassignedChartPanel = new ChartPanel(unassignedChart);
+                unassignedChartPanel.setBackground(java.awt.Color.WHITE);
+                unassingedPlot.setBackgroundPaint(java.awt.Color.WHITE);
+                unassignedChart.setBackgroundPaint(java.awt.Color.WHITE);
+                unassingedPlot.setDomainGridlinesVisible(false);
+                unassingedPlot.setRangeGridlinesVisible(false);
+                ValueAxis unassignedRangeAxis = unassingedPlot.getRangeAxis();
+                unassignedRangeAxis.setLowerMargin(0.15);
+                unassignedRangeAxis.setUpperMargin(0.15);
+                unassingedPlot.setOutlineVisible(false);
+                BarRenderer unassignedRenderer = new BarRenderer();
+                unassignedRenderer.setShadowVisible(false);
+                unassignedRenderer.setBarPainter(new StandardBarPainter());
+                unassignedRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                unassignedRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                unassignedRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                unassignedRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                unassignedRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+                unassignedRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+                unassignedRenderer.setBaseItemLabelsVisible(true);
+                unassingedPlot.setRenderer(unassignedRenderer);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(unassignedChartPanel);
+
+                DefaultCategoryDataset idRateDataset = new DefaultCategoryDataset();
+                idRateDataset.addValue(idRateOmssa, "OMSSA", "ID Rate (%)");
+                idRateDataset.addValue(idRateXTandem, "X!Tandem", "ID Rate (%)");
+                idRateDataset.addValue(idRateMascot, "Mascot", "ID Rate (%)");
+                idRateDataset.addValue(idRatePeptideShaker, "PeptideShaker", "ID Rate (%)");
+
+                JFreeChart idRateChart = ChartFactory.createBarChart(null, null, null, idRateDataset, PlotOrientation.VERTICAL, false, false, false);
+                CategoryPlot idRatePlot = idRateChart.getCategoryPlot();
+                ChartPanel idRateChartPanel = new ChartPanel(idRateChart);
+                idRateChartPanel.setBackground(java.awt.Color.WHITE);
+                idRatePlot.setBackgroundPaint(java.awt.Color.WHITE);
+                idRateChart.setBackgroundPaint(java.awt.Color.WHITE);
+                idRatePlot.setDomainGridlinesVisible(false);
+                idRatePlot.setRangeGridlinesVisible(false);
+                idRatePlot.getRangeAxis().setRange(0, 100);
+                ValueAxis idRateRangeAxis = idRatePlot.getRangeAxis();
+                idRateRangeAxis.setLowerMargin(0.15);
+                idRateRangeAxis.setUpperMargin(0.15);
+                idRatePlot.setOutlineVisible(false);
+                BarRenderer idRateRenderer = new BarRenderer();
+                idRateRenderer.setShadowVisible(false);
+                idRateRenderer.setBarPainter(new StandardBarPainter());
+                idRateRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                idRateRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                idRateRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                idRateRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                idRateRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+                idRateRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, new DecimalFormat("0.0")));
+                idRateRenderer.setBaseItemLabelsVisible(true);
+                idRatePlot.setRenderer(idRateRenderer);
+
+                // add the plot to the chart
+                overviewPlotsPanel.add(idRateChartPanel);
+
+                overviewPlotsPanel.revalidate();
+                overviewPlotsPanel.repaint();
+
                 if (omssaUsed && xtandemUsed && mascotUsed) {
                     updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                            ox, mo, mx, omx,
-                            "OMSSA", "X!Tandem", "Mascot");
+                            ox, mo, mx, omx, "OMSSA", "X!Tandem", "Mascot",
+                            Color.MEDIUMSLATEBLUE, Color.PALETURQUOISE, Color.LIGHTPINK);
                 } else if (omssaUsed && xtandemUsed) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
+                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem", Color.MEDIUMSLATEBLUE, Color.PALETURQUOISE);
                 } else if (xtandemUsed && mascotUsed) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
+                    updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot", Color.PALETURQUOISE, Color.LIGHTPINK);
                 } else if (omssaUsed && mascotUsed) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
+                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot", Color.MEDIUMSLATEBLUE, Color.LIGHTPINK);
                 } else {
                     vennDiagramButton.setText(null);
                     vennDiagramButton.setToolTipText(null);
@@ -3476,7 +3782,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param aProbabilities
      * @param software
      */
-    private void addIdResultsToTable(SpectrumIdentificationAssumption currentAssumption, PSParameter aProbabilities, String software) {
+    private void addIdResultsToTable(SpectrumIdentificationAssumption currentAssumption, PSParameter aProbabilities, Advocate software) {
 
         PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
         PSParameter probabilities = (PSParameter) currentAssumption.getUrParam(aProbabilities);
@@ -3494,16 +3800,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
         }
-        
+
         // simple validation
         Integer validationType = MatchValidationLevel.not_validated.getIndex(); // @TODO: make this more advanced!!!
-        if (confidence > 60) { 
-             validationType = MatchValidationLevel.confident.getIndex();
+        if (confidence > 60) {
+            validationType = MatchValidationLevel.confident.getIndex();
         }
 
         Object[] rowData = new Object[]{
             currentRowNumber,
-            software,
+            software.getIndex(),
             peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
             currentAssumption.getIdentificationCharge().value,
             confidence,
