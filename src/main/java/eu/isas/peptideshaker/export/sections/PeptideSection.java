@@ -171,7 +171,7 @@ public class PeptideSection {
 
             for (ExportFeature exportFeature : peptideFeatures) {
                 PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
-                writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, waitingHandler));
+                writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, waitingHandler) + separator);
             }
             writer.newLine();
             if (psmSection != null) {
