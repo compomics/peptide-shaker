@@ -20,7 +20,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.math.statistics.ditributions.NonSymmetricalNormalDistribution;
+import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;

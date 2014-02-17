@@ -318,6 +318,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
     /**
+     * The horizontal padding used before and after the text in the titled
+     * borders. (Needed to make it look as good in Java 7 as it did in Java
+     * 6...)
+     *
+     * @TODO: move to utilities?
+     */
+    public static String TITLED_BORDER_HORIZONTAL_PADDING_HTML = "";
+    /**
      * The list of the default modifications.
      */
     private ArrayList<String> modificationUse = new ArrayList<String>();
@@ -371,6 +379,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         // need to add some padding to the text in the titled borders on Java 1.7 
         if (!System.getProperty("java.version").startsWith("1.6")) {
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
+            TITLED_BORDER_HORIZONTAL_PADDING_HTML = "&nbsp;&nbsp;&nbsp;";
         }
 
         // turn off the derby log file
