@@ -822,7 +822,7 @@ public class OutputGenerator {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
-                                                                secondaryProteins += ", ";
+                                                                secondaryProteins += "; ";
                                                                 secondaryProteinsDescriptions += "; ";
                                                             }
                                                             secondaryProteins += key;
@@ -844,7 +844,7 @@ public class OutputGenerator {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
-                                                                peptideProteins += ", ";
+                                                                peptideProteins += "; ";
                                                                 peptideProteinDescriptions += "; ";
                                                             }
                                                             peptideProteins += key;
@@ -891,12 +891,12 @@ public class OutputGenerator {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
-                                                                subSequence += "|";
+                                                                subSequence += ", ";
                                                             }
                                                             subSequence += surroundingAAs.get(proteinAccession).get(start)[0];
                                                         }
 
-                                                        subSequence += ";";
+                                                        subSequence += "; ";
                                                     }
 
                                                     subSequence = subSequence.substring(0, subSequence.length() - 1);
@@ -922,11 +922,11 @@ public class OutputGenerator {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
-                                                                subSequence += "|";
+                                                                subSequence += ", ";
                                                             }
                                                             subSequence += surroundingAAs.get(proteinAccession).get(start)[1];
                                                         }
-                                                        subSequence += ";";
+                                                        subSequence += "; ";
                                                     }
 
                                                     subSequence = subSequence.substring(0, subSequence.length() - 1);
