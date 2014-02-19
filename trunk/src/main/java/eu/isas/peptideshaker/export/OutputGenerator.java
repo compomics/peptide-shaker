@@ -1518,8 +1518,7 @@ public class OutputGenerator {
                         e.printStackTrace();
                     }
                 }
-            }.
-                    start();
+            }.start();
         }
     }
 

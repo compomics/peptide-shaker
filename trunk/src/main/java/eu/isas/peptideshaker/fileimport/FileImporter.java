@@ -191,7 +191,13 @@ public class FileImporter {
             int cacheSize = (int) availableCachSize;
             sequenceFactory.setnCache(cacheSize);
 
-            proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
+            try {
+                proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
+            } catch (SQLException e) {
+                waitingHandler.appendReport("Database" + sequenceFactory.getCurrentFastaFile().getName() + "could not be accessed, make sure that the file is not used by another program.", true, true);
+                e.printStackTrace();
+                waitingHandler.setRunCanceled();
+            }
 
             if (!waitingHandler.isRunCanceled()) {
                 waitingHandler.appendReport("FASTA file import completed.", true, true);
