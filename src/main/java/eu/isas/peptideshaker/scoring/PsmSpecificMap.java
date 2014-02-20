@@ -3,8 +3,11 @@ package eu.isas.peptideshaker.scoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.PsmFilter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -130,13 +133,19 @@ public class PsmSpecificMap implements Serializable {
      *
      * @param probabilityScore the estimated score
      * @param spectrumMatch the spectrum match of interest
+     * @param mzTolerance The ms2 m/z tolerance
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch) {
+    public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, double mzTolerance) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         int key = getKey(spectrumMatch);
         if (!psmsMaps.containsKey(key)) {
             psmsMaps.put(key, new TargetDecoyMap());
         }
-        psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy());
+        psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, mzTolerance));
     }
 
     /**

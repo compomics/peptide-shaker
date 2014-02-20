@@ -7,8 +7,11 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -118,13 +121,19 @@ public class PeptideSpecificMap implements Serializable {
      *
      * @param probabilityScore The estimated peptide probabilistic score
      * @param peptideMatch The corresponding peptide match
+     * @param mzTolerance The ms2 m/z tolerance
+     * 
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    public void addPoint(double probabilityScore, PeptideMatch peptideMatch) {
+    public void addPoint(double probabilityScore, PeptideMatch peptideMatch, double mzTolerance) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         String key = getKey(peptideMatch);
         if (!peptideMaps.containsKey(key)) {
             peptideMaps.put(key, new TargetDecoyMap());
         }
-        peptideMaps.get(key).put(probabilityScore, peptideMatch.getTheoreticPeptide().isDecoy());
+        peptideMaps.get(key).put(probabilityScore, peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, mzTolerance));
     }
 
     /**

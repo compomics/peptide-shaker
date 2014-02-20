@@ -357,7 +357,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
-        fillPeptideMaps(waitingHandler);
+        fillPeptideMaps(waitingHandler, searchParameters);
         peptideMap.cure();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -621,7 +621,7 @@ public class PeptideShaker {
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler, searchParameters);
-        fillPeptideMaps(waitingHandler);
+        fillPeptideMaps(waitingHandler, searchParameters);
         peptideMap.cure();
         peptideMap.estimateProbabilities(waitingHandler);
         attachPeptideProbabilities(waitingHandler);
@@ -1502,7 +1502,7 @@ public class PeptideShaker {
                 spectrumMatch.setBestPeptideAssumption(psAssumption);
                 psParameter = new PSParameter();
                 psParameter.setSpectrumProbabilityScore(retainedP);
-                psmMap.addPoint(retainedP, spectrumMatch);
+                psmMap.addPoint(retainedP, spectrumMatch, searchParameters.getFragmentIonAccuracy());
                 psParameter.setSpecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                 identification.updateSpectrumMatch(spectrumMatch);
@@ -2672,9 +2672,11 @@ public class PeptideShaker {
      * Fills the peptide specific map.
      *
      * @param waitingHandler the handler displaying feedback to the user
+     * @param searchParameters the search parameters
+     * 
      * @throws Exception
      */
-    private void fillPeptideMaps(WaitingHandler waitingHandler) throws Exception {
+    private void fillPeptideMaps(WaitingHandler waitingHandler, SearchParameters searchParameters) throws Exception {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
@@ -2733,7 +2735,7 @@ public class PeptideShaker {
             }
 
             identification.addPeptideMatchParameter(peptideKey, psParameter); // @TODO: batch insertion?
-            peptideMap.addPoint(probaScore, peptideMatch);
+            peptideMap.addPoint(probaScore, peptideMatch, searchParameters.getFragmentIonAccuracy());
 
             waitingHandler.increaseSecondaryProgressCounter();
 

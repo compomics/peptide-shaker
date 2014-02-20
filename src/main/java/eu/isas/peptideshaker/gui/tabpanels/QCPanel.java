@@ -1731,7 +1731,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!peptideParameter.isHidden()) {
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1780,7 +1780,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1828,7 +1828,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(length);
@@ -1902,7 +1902,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);
@@ -1951,7 +1951,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);

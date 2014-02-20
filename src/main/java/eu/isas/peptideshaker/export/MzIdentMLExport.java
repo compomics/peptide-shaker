@@ -551,7 +551,7 @@ public class MzIdentMLExport {
 //                    PeptideShaker.MATCHING_TYPE,
 //                    searchParameters.getFragmentIonAccuracy());
 
-            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy() + "\" "
+            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
                     //+ "pre=\"" + before + "\" " // @TODO: get aa before
                     //+ "post=\"" + after + "\" " // @TODO: get aa after
                     //+ "start=\"" + startIndex + "\" " // @TODO: add start index

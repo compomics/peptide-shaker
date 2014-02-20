@@ -480,7 +480,7 @@ public class TxtExporter {
 
         line.append(probabilities.getPeptideProbabilityScore()).append(SEPARATOR).append(probabilities.getPeptideProbability()).append(SEPARATOR);
 
-        if (peptideMatch.getTheoreticPeptide().isDecoy()) {
+        if (peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
             line.append("1").append(SEPARATOR);
         } else {
             line.append("0").append(SEPARATOR);
@@ -764,7 +764,7 @@ public class TxtExporter {
 
         line.append(probabilities.getPsmProbabilityScore()).append(SEPARATOR).append(probabilities.getPsmProbability()).append(SEPARATOR);
 
-        if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
+        if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
             line.append("1").append(SEPARATOR);
         } else {
             line.append("0").append(SEPARATOR);
@@ -875,7 +875,7 @@ public class TxtExporter {
                         line += SEPARATOR + SEPARATOR;
                     }
 
-                    if (peptideAssumption.getPeptide().isDecoy()) {
+                    if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         line += "1" + SEPARATOR;
                     } else {
                         line += "0" + SEPARATOR;

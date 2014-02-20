@@ -757,7 +757,7 @@ public class OutputGenerator {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-                            if (!peptideMatch.getTheoreticPeptide().isDecoy() || !onlyValidated) {
+                            if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !peptidePSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
@@ -1017,7 +1017,7 @@ public class OutputGenerator {
                                                 }
                                                 writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
-                                                    if (peptideMatch.getTheoreticPeptide().isDecoy()) {
+                                                    if (peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1265,7 +1265,7 @@ public class OutputGenerator {
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
                                 PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                                if (!bestAssumption.getPeptide().isDecoy() || !onlyValidated) {
+                                if (!bestAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) || !onlyValidated) {
                                     if ((onlyValidated && psParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                         if ((!includeHidden && !psParameter.isHidden()) || includeHidden) {
                                             if ((onlyStarred && psParameter.isStarred()) || !onlyStarred) {
@@ -1486,7 +1486,7 @@ public class OutputGenerator {
                                                 }
                                                 writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
-                                                    if (bestAssumption.getPeptide().isDecoy()) {
+                                                    if (bestAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1835,7 +1835,7 @@ public class OutputGenerator {
                                     writer.write(" (" + psParameter.getReasonDoubtful() + ")");
                                 }
                                 writer.write(SEPARATOR);
-                                if (bestAssumption.getPeptide().isDecoy()) {
+                                if (bestAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
                                     writer.write(0 + SEPARATOR);
@@ -2351,7 +2351,7 @@ public class OutputGenerator {
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
                                                 }
-                                                if (peptideAssumption.getPeptide().isDecoy()) {
+                                                if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                     writer.write(1 + SEPARATOR);
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
