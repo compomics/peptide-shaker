@@ -923,7 +923,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         assumptionValidated.setSelected(true);
         assumptionValidated.setText("Request Validated");
-        assumptionValidated.setToolTipText("Do the proteins have non enzymatic peptides?");
         assumptionValidated.setIconTextGap(10);
         assumptionValidated.setOpaque(false);
 

@@ -1162,7 +1162,6 @@
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="Request Validated"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Do the proteins have non enzymatic peptides?"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>

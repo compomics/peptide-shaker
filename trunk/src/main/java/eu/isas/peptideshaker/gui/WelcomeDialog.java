@@ -11,6 +11,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import javax.swing.*;
@@ -834,5 +835,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
         if (!visible) {
             ((DummyFrame) getParent()).dispose();
         }
+    }
+
+    @Override
+    public void setIconImage(Image image) {
+        super.setIconImage(image);
+        dummyParentFrame.setIconImage(image);
     }
 }
