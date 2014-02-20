@@ -1782,4 +1782,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     public ArrayList<String> getModificationUse() {
         return peptideShakerGUI.getModificationUse();
     }
+
+    @Override
+    public void setIconImage(Image image) {
+        super.setIconImage(image);
+        welcomeDialog.setIconImage(image);
+    }
 }
