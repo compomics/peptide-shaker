@@ -939,7 +939,7 @@ public class FileImporter {
                                             }
                                         }
                                     }
-                                    inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.getPeptide().isDecoy());
+                                    inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
                                     identification.addSpectrumMatch(match, false); //@TODO: adapt to the different scores
                                     nRetained++;
                                     break;

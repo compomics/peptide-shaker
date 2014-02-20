@@ -362,7 +362,7 @@ public class PsmSection {
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case decoy:
-                if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy()) {
+                if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                     return "1";
                 } else {
                     return "0";

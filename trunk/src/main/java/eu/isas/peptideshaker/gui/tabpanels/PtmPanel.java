@@ -3473,7 +3473,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                    if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
+                    if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
 
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
                         double p = probabilities.getPeptideProbability();

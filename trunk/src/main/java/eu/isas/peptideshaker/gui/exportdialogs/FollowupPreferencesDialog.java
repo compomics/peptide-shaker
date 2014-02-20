@@ -739,7 +739,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
                                         + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
+                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes

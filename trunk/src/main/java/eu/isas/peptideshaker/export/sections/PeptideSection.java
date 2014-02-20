@@ -231,7 +231,7 @@ public class PeptideSection {
             case confidence:
                 return psParameter.getPeptideConfidence() + "";
             case decoy:
-                if (peptideMatch.getTheoreticPeptide().isDecoy()) {
+                if (peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                     return "1";
                 } else {
                     return "0";
