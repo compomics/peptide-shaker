@@ -490,7 +490,7 @@ public class FileImporter {
                 }
             } catch (OutOfMemoryError error) {
 
-                System.out.println("<CompomicsError> PeptideShaker ran out of memory! See the PeptideShaker log for details. </CompomicsError>");
+                System.out.println("<CompomicsError>PeptideShaker ran out of memory! See the PeptideShaker log for details.</CompomicsError>");
                 System.err.println("Ran out of memory!");
                 System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
                 System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
@@ -526,7 +526,7 @@ public class FileImporter {
             } catch (Exception e) {
                 waitingHandler.setRunCanceled();
 
-                System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+                System.out.println("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
 
                 if (e instanceof NullPointerException) {
                     waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
