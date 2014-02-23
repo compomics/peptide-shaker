@@ -432,7 +432,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         } else {
             waitingHandler.setWaitingText("PeptideShaker Processing Canceled.");
-            System.out.println("<CompomicsError> PeptideShaker processing canceled. </CompomicsError>");
+            System.out.println("<CompomicsError>PeptideShaker processing canceled.</CompomicsError>");
         }
     }
 
@@ -704,14 +704,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 lPeptideShakerCLI.call();
             }
         } catch (OutOfMemoryError e) {
-            System.out.println("<CompomicsError> PeptideShaker used up all the memory and had to be stopped. See the PeptideShaker log for details. </CompomicsError>");
+            System.out.println("<CompomicsError>PeptideShaker used up all the memory and had to be stopped. See the PeptideShaker log for details.</CompomicsError>");
             System.err.println("Ran out of memory!");
             System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
             System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
             System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.print("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+            System.out.print("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
             e.printStackTrace();
         }
     }
