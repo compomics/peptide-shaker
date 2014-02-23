@@ -302,6 +302,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchResultsTable.getColumn(" ").setMaxWidth(30);
         searchResultsTable.getColumn("SE").setMinWidth(37);
         searchResultsTable.getColumn("SE").setMaxWidth(37);
+        searchResultsTable.getColumn("RK").setMinWidth(37);
+        searchResultsTable.getColumn("RK").setMaxWidth(37);
         searchResultsTable.getColumn("  ").setMinWidth(30);
         searchResultsTable.getColumn("  ").setMaxWidth(30);
 
@@ -427,6 +429,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idResultsTableToolTips = new ArrayList<String>();
         idResultsTableToolTips.add("Peptide Rank");
         idResultsTableToolTips.add("Search Engine / Identification Software");
+        idResultsTableToolTips.add("Search Engine Rank / Identification Software Rank");
         idResultsTableToolTips.add("Peptide Sequence");
         idResultsTableToolTips.add("Precursor Charge");
         idResultsTableToolTips.add("Peptide Confidence");
@@ -889,14 +892,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "SE", "Sequence", "Charge", "Confidence", "  "
+                " ", "SE", "RK", "Sequence", "Charge", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -3793,7 +3796,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // find the correct row to insert the match
         if (searchResultsTable.getRowCount() > 0) {
             for (int i = 0; i < searchResultsTable.getRowCount(); i++) {
-                if (confidence > (Double) searchResultsTable.getValueAt(i, 4)) {
+                if (confidence > (Double) searchResultsTable.getValueAt(i, 5)) {
                     currentRowNumber = i;
                     addRowAtBottom = false;
                     break;
@@ -3810,6 +3813,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         Object[] rowData = new Object[]{
             currentRowNumber,
             software.getIndex(),
+            currentAssumption.getRank(),
             peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true),
             currentAssumption.getIdentificationCharge().value,
             confidence,
