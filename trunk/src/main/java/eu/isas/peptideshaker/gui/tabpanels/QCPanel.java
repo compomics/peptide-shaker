@@ -1895,9 +1895,9 @@ public class QCPanel extends javax.swing.JPanel {
                         if (!psmParameter.isHidden()) {
 
                             precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                            double value = Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(
+                            double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
-                                    peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                                    peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
                             if (value > maxValue) {
                                 maxValue = value;
                             }

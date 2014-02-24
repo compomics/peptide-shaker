@@ -2324,8 +2324,8 @@ public class OutputGenerator {
                                                     writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
                                                     writer.write(prec.getRt() + SEPARATOR);
                                                     writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
-                                                    writer.write(Math.abs(peptideAssumption.getDeltaMass(prec.getMz(),
-                                                            peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR);
+                                                    writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
+                                                            peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                                     writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                 }
                                                 if (scores) {

@@ -842,8 +842,8 @@ public class TxtExporter {
                     line += fileName + SEPARATOR;
                     line += assumption.getIdentificationFile() + SEPARATOR;
                     line += spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + SEPARATOR;
-                    line += Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
-                    line += Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
+                    line += spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + SEPARATOR;
+                    line += spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + SEPARATOR;
 
                     if (se == Advocate.Mascot.getIndex()) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
