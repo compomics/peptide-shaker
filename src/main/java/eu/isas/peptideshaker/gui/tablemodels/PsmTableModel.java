@@ -169,7 +169,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     }
                     bestAssumption = spectrumMatch.getBestPeptideAssumption();
                     Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
-                    return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                    return bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
                 case 6:
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {

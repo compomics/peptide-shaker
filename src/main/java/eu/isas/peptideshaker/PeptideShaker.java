@@ -1369,11 +1369,11 @@ public class PeptideShaker {
                                     if (peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).containsKey(-1.0)) {
                                         ArrayList<PeptideAssumption> assumptions = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).get(-1.0);
                                         PeptideAssumption tempAssumption = assumptions.get(0);
-                                        double massError = tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                                        double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
                                         peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, assumptions);
                                         peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).remove(-1.0);
                                     }
-                                    double massError = peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                                    double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
                                     ArrayList<PeptideAssumption> assumptions = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).get(massError);
                                     if (assumptions == null) {
                                         assumptions = new ArrayList<PeptideAssumption>();
