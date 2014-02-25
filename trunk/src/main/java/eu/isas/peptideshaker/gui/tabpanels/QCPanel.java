@@ -216,7 +216,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(psmPrecursorMassErrorJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(psmPrecursorChargeJRadioButton)
-                .addContainerGap(419, Short.MAX_VALUE))
+                .addContainerGap(465, Short.MAX_VALUE))
         );
         psmPlotTypePanelLayout.setVerticalGroup(
             psmPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,7 +363,7 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(peptideMissedCleavagesJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(peptideLengthJRadioButton)
-                .addContainerGap(306, Short.MAX_VALUE))
+                .addContainerGap(362, Short.MAX_VALUE))
         );
         peptidesPlotTypePanelLayout.setVerticalGroup(
             peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -577,12 +577,12 @@ public class QCPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(proteinNumberValidatedPeptidesJRadioButton)
                 .addGap(18, 18, 18)
-                .addComponent(proteinSpectrumCountingScoreJRadioButton)
-                .addGap(18, 18, 18)
                 .addComponent(proteinSequenceCoverageJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(proteinSequenceLengthJRadioButton)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(proteinSpectrumCountingScoreJRadioButton)
+                .addContainerGap(147, Short.MAX_VALUE))
         );
         proteinPlotTypePanelLayout.setVerticalGroup(
             proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1141,20 +1141,33 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
 
-                        // attempt at using a range depending on the max value
-                        long intValue = StrictMath.round(maxValue);
+                        double tempMaxValue = maxValue;
 
-                        if (intValue == 0) {
-                            intValue = 1;
+                        // try to find a suitable range
+                        if (maxValue < 0.25) {
+                            tempMaxValue = 0.25;
+                        } else if (maxValue < 0.5) {
+                            tempMaxValue = 0.5;
+                        } else if (maxValue < 1) {
+                            tempMaxValue = 1;
+                        } else if (maxValue < 5) {
+                            tempMaxValue = 5;
+                        } else if (maxValue < 10) {
+                            tempMaxValue = 10;
+                        } else if (maxValue < 25) {
+                            tempMaxValue = 25;
+                        } else if (maxValue < 50) {
+                            tempMaxValue = 50;
+                        } else if (maxValue < 100) {
+                            tempMaxValue = 100;
+                        } else {
+                            tempMaxValue = Math.ceil(maxValue);
                         }
 
-                        double temp = 0;
-
-                        bins.add(Util.roundDouble(temp, 1));
-
-                        while (temp < intValue - ((double) intValue / 10)) {
-                            temp += ((double) intValue / 10);
-                            bins.add(Util.roundDouble(temp, 1));
+                        int nBins = 20;
+                        for (int i = 0; i <= nBins; i++) {
+                            double bin = i * tempMaxValue / nBins;
+                            bins.add(Util.roundDouble(bin, 4));
                         }
 
 //                        getBinData(bins, validatedValues, dataset, "Confident True Positives", false);
@@ -1288,7 +1301,10 @@ public class QCPanel extends javax.swing.JPanel {
                         proteinChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
 
                         // rotate the x-axis labels to make sure that they are readable
-                        //proteinChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+                        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                            proteinChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+                        }
+
                         // hide the outline
                         proteinChart.getPlot().setOutlineVisible(false);
 
@@ -1362,7 +1378,6 @@ public class QCPanel extends javax.swing.JPanel {
 //                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
 //                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
 //                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
-                        
                         getBinData(bins, validatedValues, dataset, "Confident", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
                         getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
@@ -1381,7 +1396,6 @@ public class QCPanel extends javax.swing.JPanel {
 //                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
 //                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
 //                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
-                        
                         getBinData(bins, validatedValues, dataset, "Confident", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
                         getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
@@ -1402,7 +1416,6 @@ public class QCPanel extends javax.swing.JPanel {
 //                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
 //                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
 //                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
-                        
                         getBinData(bins, validatedValues, dataset, "Confident", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
                         getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
@@ -1507,8 +1520,8 @@ public class QCPanel extends javax.swing.JPanel {
                     if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
                         double prec = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy();
-                        double nBins = 20;
-                        for (int i = 0; i <= nBins; i++) {
+                        int nBins = 20;
+                        for (int i = -nBins; i <= nBins; i++) {
                             double bin = i * prec / nBins;
                             bins.add(bin);
                         }
@@ -1518,7 +1531,6 @@ public class QCPanel extends javax.swing.JPanel {
 //                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", false);
 //                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", false);
 //                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", false);
-                        
                         getBinData(bins, validatedValues, dataset, "Confident", false);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", false);
                         getBinData(bins, nonValidatedValues, dataset, "Not Validated", false);
@@ -1538,7 +1550,6 @@ public class QCPanel extends javax.swing.JPanel {
 //                        getBinData(bins, validatedDecoyValues, dataset, "False Positives", true);
 //                        getBinData(bins, nonValidatedValues, dataset, "False Negatives", true);
 //                        getBinData(bins, nonValidatedDecoyValues, dataset, "True Negatives", true);
-                        
                         getBinData(bins, validatedValues, dataset, "Confident", true);
                         getBinData(bins, validatedDoubtfulValues, dataset, "Doubtful", true);
                         getBinData(bins, nonValidatedValues, dataset, "Not Validated", true);
@@ -1635,9 +1646,6 @@ public class QCPanel extends javax.swing.JPanel {
                     value = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
                 } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
                     value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                    if (value > 0) {
-                        value = Math.log10(value);
-                    }
                 } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
                     value = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 } else if (proteinSequenceLengthJRadioButton.isSelected()) {
@@ -1664,13 +1672,6 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedValues.add(value);
                         }
                     }
-//                    else {
-//                        if (proteinParameter.getMatchValidationLevel().isValidated()) {
-//                            validatedDecoyValues.add(value);
-//                        } else {
-//                            nonValidatedDecoyValues.add(value);
-//                        }
-//                    }
                 }
 
                 progressDialog.increasePrimaryProgressCounter();
@@ -1877,8 +1878,6 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
-                SpectrumMatch spectrumMatch;
-                Precursor precursor;
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
                     identification.loadSpectrumMatches(spectrumFileName, progressDialog);
@@ -1889,12 +1888,12 @@ public class QCPanel extends javax.swing.JPanel {
                             break;
                         }
 
-                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         psmParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmParameter);
 
                         if (!psmParameter.isHidden()) {
 
-                            precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                             double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
                                     peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
@@ -2026,38 +2025,32 @@ public class QCPanel extends javax.swing.JPanel {
 
         for (int i = 0; i < bins.size() + 1 && !progressDialog.isRunCanceled(); i++) {
             if (i == 0) {
-                if (bins.get(i) > 0.0) {
-
+                if (bins.get(i) > 0.0 || bins.get(i) < 0.0) {
                     if (integerBins) {
                         dataset.addValue(binData[i], categoryLabel, "<=" + bins.get(i).intValue() + dataType);
                     } else {
                         dataset.addValue(binData[i], categoryLabel, "<=" + bins.get(i) + dataType);
                     }
-
                 } else {
                     if (integerBins) {
                         dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
                     } else {
                         dataset.addValue(binData[i], categoryLabel, "" + bins.get(i) + dataType);
                     }
-
                 }
             } else if (i == bins.size()) {
                 if (integerBins) {
-                    dataset.addValue(binData[i], categoryLabel, ">" + bins.get(bins.size() - 1).intValue() + dataType);
+                    dataset.addValue(binData[i], categoryLabel, ">=" + bins.get(bins.size() - 1).intValue() + dataType);
                 } else {
-                    dataset.addValue(binData[i], categoryLabel, ">" + bins.get(bins.size() - 1) + dataType);
+                    dataset.addValue(binData[i], categoryLabel, ">=" + bins.get(bins.size() - 1) + dataType);
                 }
-
             } else {
                 if (integerBins) {
-
                     if (bins.get(i).intValue() == bins.get(i - 1).intValue() + 1) {
                         dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
                     } else {
                         dataset.addValue(binData[i], categoryLabel, bins.get(i - 1).intValue() + "-" + bins.get(i).intValue() + dataType);
                     }
-
                 } else {
                     dataset.addValue(binData[i], categoryLabel, bins.get(i - 1) + "-" + bins.get(i) + dataType);
                 }
