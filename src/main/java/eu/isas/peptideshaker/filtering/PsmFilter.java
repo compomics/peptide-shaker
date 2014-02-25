@@ -1,12 +1,9 @@
 package eu.isas.peptideshaker.filtering;
 
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -16,7 +13,6 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import javax.swing.RowFilter;
 import javax.swing.RowFilter.ComparisonType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -53,7 +49,7 @@ public class PsmFilter extends MatchFilter {
      */
     private Double psmScore = null;
     /**
-     * The type of comparison to be used for the psm score.
+     * The type of comparison to be used for the PSM score.
      */
     private ComparisonType psmScoreComparison = ComparisonType.EQUAL;
     /**
@@ -61,11 +57,11 @@ public class PsmFilter extends MatchFilter {
      */
     private Double psmConfidence = null;
     /**
-     * The type of comparison to be used for the psm confidence.
+     * The type of comparison to be used for the PSM confidence.
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
     /**
-     * The filter used to filter the best assumption
+     * The filter used to filter the best assumption.
      */
     private AssumptionFilter assumptionFilter;
     /**
@@ -74,46 +70,55 @@ public class PsmFilter extends MatchFilter {
     private ArrayList<String> fileName = null;
     /**
      * The charges allowed.
+     *
      * @deprecated use the assumption filter instead
      */
     private ArrayList<Integer> charges = null;
     /**
      * The precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private Double precursorMzError = null;
     /**
      * The type of comparison to be used for the precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private ComparisonType precursorMzErrorComparison = ComparisonType.EQUAL;
     /**
      * The minimal precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private Double minPrecursorMzError = null;
     /**
      * The type of comparison to be used for the min precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private ComparisonType precursorMinMzErrorComparison = ComparisonType.EQUAL;
     /**
      * The maximal precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private Double maxPrecursorMzError = null;
     /**
      * The type of comparison to be used for the max precursor m/z error.
+     *
      * @deprecated use the assumption filter instead
      */
     private ComparisonType precursorMaxMzErrorComparison = ComparisonType.EQUAL;
     /**
      * The amino acid coverage by fragment ions.
+     *
      * @deprecated use the assumption filter instead
      */
     private Double sequenceCoverage = null;
     /**
-     * The type of comparison to be used for the psm confidence.
+     * The type of comparison to be used for the PSM confidence.
+     *
      * @deprecated use the assumption filter instead
      */
     private ComparisonType sequenceCoverageComparison = ComparisonType.EQUAL;
@@ -128,9 +133,10 @@ public class PsmFilter extends MatchFilter {
         assumptionFilter = new AssumptionFilter(name);
         this.filterType = FilterType.PSM;
     }
-    
+
     /**
-     * Verifies that the filter is compatible with the current version and makes necessary updates if not
+     * Verifies that the filter is compatible with the current version and makes
+     * necessary updates if not.
      */
     private void compatibilityCheck() {
         if (assumptionFilter == null) {
@@ -308,7 +314,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the filter used to filter the best assumption of this match.
-     * 
+     *
      * @return the filter used to filter the best assumption of this match
      */
     public AssumptionFilter getAssumptionFilter() {
@@ -375,7 +381,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the search engine confidence of the best assumption.
+     * Sets the comparison type used for the search engine confidence of the
+     * best assumption.
      *
      * @param searchEngineConfidenceComparison the comparison type used for the
      * confidence
@@ -386,9 +393,11 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the search engine score if the best assumption.
+     * Sets the comparison type used for the search engine score if the best
+     * assumption.
      *
-     * @param searchEngineScoreComparison the comparison type used for the search engine score
+     * @param searchEngineScoreComparison the comparison type used for the
+     * search engine score
      */
     public void setSearchEngineScoreComparison(RowFilter.ComparisonType searchEngineScoreComparison) {
         compatibilityCheck();
@@ -406,9 +415,11 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the search engine confidence of the best assumption.
+     * Sets the threshold for the search engine confidence of the best
+     * assumption.
      *
-     * @param searchEngineConfidence the threshold for the search engine confidence
+     * @param searchEngineConfidence the threshold for the search engine
+     * confidence
      */
     public void setSearchEngineConfidence(Double searchEngineConfidence) {
         compatibilityCheck();
@@ -426,7 +437,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the precursor min m/z error comparison of the best assumption.
+     * Sets the comparison type used for the precursor min m/z error comparison
+     * of the best assumption.
      *
      * @param precursorMinMzErrorComparison the comparison type used for the
      * precursor min m/z error comparison
@@ -447,7 +459,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the precursor max m/z error comparison of the best assumption.
+     * Sets the comparison type used for the precursor max m/z error comparison
+     * of the best assumption.
      *
      * @param precursorMaxMzErrorComparison the comparison type used for the
      * precursor max m/z error comparison
@@ -458,7 +471,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the sequence coverage by fragment ions threshold in percent of the best assumption.
+     * Sets the sequence coverage by fragment ions threshold in percent of the
+     * best assumption.
      *
      * @param sequenceCoverage the sequence coverage by fragment ions threshold
      * in percent
@@ -469,7 +483,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparator for the sequence coverage by fragment ions of the best assumption.
+     * Sets the comparator for the sequence coverage by fragment ions of the
+     * best assumption.
      *
      * @param sequenceCoverageComparison the comparator for the sequence
      * coverage by fragment ions
@@ -638,7 +653,7 @@ public class PsmFilter extends MatchFilter {
         if (psmFilter.getFileNames() != null && !psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
             return false;
         }
-        
+
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), searchParameters, annotationPreferences);
     }

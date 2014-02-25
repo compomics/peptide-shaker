@@ -5,11 +5,9 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -22,11 +20,12 @@ import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * Assumption filter
+ * Assumption filter.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class AssumptionFilter extends MatchFilter {
+
     /**
      * The charges allowed.
      */
@@ -161,7 +160,8 @@ public class AssumptionFilter extends MatchFilter {
     /**
      * Sets the comparison type used for the search engine score.
      *
-     * @param searchEngineScoreComparison the comparison type used for the search engine score
+     * @param searchEngineScoreComparison the comparison type used for the
+     * search engine score
      */
     public void setSearchEngineScoreComparison(RowFilter.ComparisonType searchEngineScoreComparison) {
         this.searchEngineScoreComparison = searchEngineScoreComparison;
@@ -197,7 +197,8 @@ public class AssumptionFilter extends MatchFilter {
     /**
      * Sets the threshold for the search engine confidence.
      *
-     * @param searchEngineConfidence the threshold for the search engine confidence
+     * @param searchEngineConfidence the threshold for the search engine
+     * confidence
      */
     public void setSearchEngineConfidence(Double searchEngineConfidence) {
         this.searchEngineConfidence = searchEngineConfidence;
@@ -407,47 +408,47 @@ public class AssumptionFilter extends MatchFilter {
         }
 
         PSParameter psParameter = new PSParameter();
-            psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
 
-            if (assumptionFilter.getSearchEngineScore() != null) {
-                if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.AFTER) {
-                    if (peptideAssumption.getScore() <= assumptionFilter.getSearchEngineScore()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (peptideAssumption.getScore() >= assumptionFilter.getSearchEngineScore()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.EQUAL) {
-                    if (peptideAssumption.getScore() != assumptionFilter.getSearchEngineScore()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
-                    if (peptideAssumption.getScore() == assumptionFilter.getSearchEngineScore()) {
-                        return false;
-                    }
+        if (assumptionFilter.getSearchEngineScore() != null) {
+            if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.AFTER) {
+                if (peptideAssumption.getScore() <= assumptionFilter.getSearchEngineScore()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.BEFORE) {
+                if (peptideAssumption.getScore() >= assumptionFilter.getSearchEngineScore()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.EQUAL) {
+                if (peptideAssumption.getScore() != assumptionFilter.getSearchEngineScore()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineScoreComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                if (peptideAssumption.getScore() == assumptionFilter.getSearchEngineScore()) {
+                    return false;
                 }
             }
+        }
 
-            if (assumptionFilter.getSearchEngineConfidence() != null) {
-                if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.AFTER) {
-                    if (psParameter.getSearchEngineConfidence()<= assumptionFilter.getSearchEngineConfidence()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (psParameter.getSearchEngineConfidence() >= assumptionFilter.getSearchEngineConfidence()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.EQUAL) {
-                    if (psParameter.getSearchEngineConfidence() != assumptionFilter.getSearchEngineConfidence()) {
-                        return false;
-                    }
-                } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
-                    if (psParameter.getSearchEngineConfidence() == assumptionFilter.getSearchEngineConfidence()) {
-                        return false;
-                    }
+        if (assumptionFilter.getSearchEngineConfidence() != null) {
+            if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.AFTER) {
+                if (psParameter.getSearchEngineConfidence() <= assumptionFilter.getSearchEngineConfidence()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.BEFORE) {
+                if (psParameter.getSearchEngineConfidence() >= assumptionFilter.getSearchEngineConfidence()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.EQUAL) {
+                if (psParameter.getSearchEngineConfidence() != assumptionFilter.getSearchEngineConfidence()) {
+                    return false;
+                }
+            } else if (assumptionFilter.getSearchEngineConfidenceComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
+                if (psParameter.getSearchEngineConfidence() == assumptionFilter.getSearchEngineConfidence()) {
+                    return false;
                 }
             }
+        }
 
         if (assumptionFilter.getPrecursorMzError() != null
                 || assumptionFilter.getMinPrecursorMzError() != null
