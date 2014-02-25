@@ -456,10 +456,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         psmTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
+                -peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor())); 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                10.0, peptideShakerGUI.getSparklineColor()));
+                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
         psmTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         psmTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
@@ -467,11 +468,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
-
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(
-                peptideShakerGUI.getSearchParameters().getPrecursorAccuracy());
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
 
         try {
             psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -5529,7 +5525,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             psmRow = getPsmRow(psmKey);
         }
 
-        if (psmTable.getSelectedRow() != psmRow && psmRow != -1) {
+        if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
             psmTable.setRowSelectionInterval(psmRow, psmRow);
             if (scrollToVisible) {
                 psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));

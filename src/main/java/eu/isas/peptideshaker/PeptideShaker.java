@@ -717,48 +717,50 @@ public class PeptideShaker {
                 }
             }
             // Check if we should narrow the mass accuracy window, if yes, do a second pass validation
-            NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
-            Double minDeviation = precDeviationDistribution.getMinValueForProbability(0.0001);
-            Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(0.0001);
-            boolean needSecondPass = false;
-            if (minDeviation < maxDeviation) {
-                String unit = "ppm";
-                if (!searchParameters.isPrecursorAccuracyTypePpm()) {
-                    unit = "Da";
+            if (!precursorMzDeviations.isEmpty()) {
+                NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
+                Double minDeviation = precDeviationDistribution.getMinValueForProbability(0.0001);
+                Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(0.0001);
+                boolean needSecondPass = false;
+                if (minDeviation < maxDeviation) {
+                    String unit = "ppm";
+                    if (!searchParameters.isPrecursorAccuracyTypePpm()) {
+                        unit = "Da";
+                    }
+                    if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
+                        needSecondPass = true;
+                        PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + Util.roundDouble(minDeviation, 2) + " " + unit);
+                        psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
+                        psmFilter.setMinPrecursorMzError(minDeviation);
+                        psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
+                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+                    }
+                    if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
+                        needSecondPass = true;
+                        PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + Util.roundDouble(maxDeviation, 2) + " " + unit);
+                        psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
+                        psmFilter.setMaxPrecursorMzError(maxDeviation);
+                        psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
+                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+                    }
                 }
-                if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
-                    needSecondPass = true;
-                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + Util.roundDouble(minDeviation, 2) + " " + unit);
-                    psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
-                    psmFilter.setMinPrecursorMzError(minDeviation);
-                    psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
-                    psmMap.addDoubtfulMatchesFilter(psmFilter);
-                }
-                if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
-                    needSecondPass = true;
-                    PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + Util.roundDouble(maxDeviation, 2) + " " + unit);
-                    psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
-                    psmFilter.setMaxPrecursorMzError(maxDeviation);
-                    psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
-                    psmMap.addDoubtfulMatchesFilter(psmFilter);
-                }
+                // @TODO: debug
+    //            if (needSecondPass) {
+    //                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+    //
+    //                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+    //
+    //                    if (waitingHandler != null) {
+    //                        waitingHandler.increaseSecondaryProgressCounter();
+    //                        if (waitingHandler.isRunCanceled()) {
+    //                            return;
+    //                        }
+    //                    }
+    //                }
+    //            } else if (waitingHandler != null) {
+    //                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
+    //            }
             }
-            // @TODO: debug
-//            if (needSecondPass) {
-//                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-//
-//                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-//
-//                    if (waitingHandler != null) {
-//                        waitingHandler.increaseSecondaryProgressCounter();
-//                        if (waitingHandler.isRunCanceled()) {
-//                            return;
-//                        }
-//                    }
-//                }
-//            } else if (waitingHandler != null) {
-//                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
-//            }
         }
 
         HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
