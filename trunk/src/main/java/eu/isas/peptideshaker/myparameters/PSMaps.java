@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.FractionsMap;
+import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
@@ -31,6 +32,10 @@ public class PSMaps implements UrParameter {
      */
     private PeptideSpecificMap PeptideSpecificMap;
     /**
+     * The target decoy map of all search engine scores
+     */
+    private InputMap inputMap;
+    /**
      * The fractions map
      */
     private FractionsMap fractionsMap; // @TODO: this object should be made serializable
@@ -46,12 +51,14 @@ public class PSMaps implements UrParameter {
      *
      * @param proteinMap The protein map
      * @param PsmSpecificMap The PSM map
-     * @param PeptideSpecificMap the peptide map
+     * @param PeptideSpecificMap The peptide map
+     * @param inputMap The target decoy map of all search engine scores
      */
-    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap) {
+    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, InputMap inputMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
+        this.inputMap = inputMap;
     }
 
     /**
@@ -80,10 +87,20 @@ public class PSMaps implements UrParameter {
     public ProteinMap getProteinMap() {
         return proteinMap;
     }
+    
+    /**
+     * Returns the target decoy map of all search engine scores.
+     * 
+     * @return the target decoy map of all search engine scores
+     */
+    public InputMap getInputMap() {
+        return inputMap;
+    }
 
     /**
      * Getter for the fractions map.
      *
+     * @deprecated not implemented
      * @return the fractions map
      */
     public FractionsMap getFractionsMap() {

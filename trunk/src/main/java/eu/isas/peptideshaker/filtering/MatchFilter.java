@@ -63,7 +63,11 @@ public abstract class MatchFilter implements Serializable {
         /**
          * PSM filter.
          */
-        PSM
+        PSM,
+        /**
+         * Peptide Assumption filter
+         */
+        ASSUMPTION
     }
     /**
      * The type of filter.

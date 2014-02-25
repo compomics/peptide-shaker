@@ -3805,10 +3805,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
 
         // simple validation
-        Integer validationType = MatchValidationLevel.not_validated.getIndex(); // @TODO: make this more advanced!!!
-        if (confidence > 60) {
-            validationType = MatchValidationLevel.confident.getIndex();
-        }
+        Integer validationType = probabilities.getMatchValidationLevel().getIndex();
 
         Object[] rowData = new Object[]{
             currentRowNumber,

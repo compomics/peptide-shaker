@@ -1993,7 +1993,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                        miniShaker.validateIdentifications(progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                        miniShaker.validateIdentifications(pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 

@@ -139,7 +139,7 @@ public class PsmPTMMap implements Serializable {
      * This method groups the statistically non significant psms with the ones
      * having a charge directly smaller.
      */
-    public void cure() {
+    public void clean() {
         for (double ptmMass : psmMaps.keySet()) {
             ArrayList<Integer> charges = new ArrayList(psmMaps.get(ptmMass).keySet());
             Collections.sort(charges);
