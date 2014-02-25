@@ -658,7 +658,7 @@
                                       <Table columnCount="7" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="SE" type="java.lang.Integer"/>
-                                        <Column editable="false" title="RK" type="java.lang.Integer"/>
+                                        <Column editable="false" title="Rnk" type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
                                         <Column editable="false" title="Charge" type="java.lang.Integer"/>
                                         <Column editable="false" title="Confidence" type="java.lang.Double"/>

@@ -302,8 +302,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchResultsTable.getColumn(" ").setMaxWidth(30);
         searchResultsTable.getColumn("SE").setMinWidth(37);
         searchResultsTable.getColumn("SE").setMaxWidth(37);
-        searchResultsTable.getColumn("RK").setMinWidth(37);
-        searchResultsTable.getColumn("RK").setMaxWidth(37);
+        searchResultsTable.getColumn("Rnk").setMinWidth(37);
+        searchResultsTable.getColumn("Rnk").setMaxWidth(37);
         searchResultsTable.getColumn("  ").setMinWidth(30);
         searchResultsTable.getColumn("  ").setMaxWidth(30);
 
@@ -892,7 +892,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "SE", "RK", "Sequence", "Charge", "Confidence", "  "
+                " ", "SE", "Rnk", "Sequence", "Charge", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {

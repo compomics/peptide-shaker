@@ -16,32 +16,32 @@ import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 public class PSMaps implements UrParameter {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -7582248988590322280L;
     /**
-     * The protein map
+     * The protein map.
      */
     private ProteinMap proteinMap;
     /**
-     * The PSM map
+     * The PSM map.
      */
     private PsmSpecificMap PsmSpecificMap;
     /**
-     * The peptide map
+     * The peptide map.
      */
     private PeptideSpecificMap PeptideSpecificMap;
     /**
-     * The target decoy map of all search engine scores
+     * The target decoy map of all search engine scores.
      */
     private InputMap inputMap;
     /**
-     * The fractions map
+     * The fractions map,
      */
     private FractionsMap fractionsMap; // @TODO: this object should be made serializable
 
     /**
-     * constructor
+     * Constructor,
      */
     public PSMaps() {
     }
@@ -71,26 +71,26 @@ public class PSMaps implements UrParameter {
     }
 
     /**
-     * Getter for the psm map.
+     * Getter for the PSM map.
      *
-     * @return the psm map
+     * @return the PSM map
      */
     public PsmSpecificMap getPsmSpecificMap() {
         return PsmSpecificMap;
     }
 
     /**
-     * getter for the protein map.
+     * Getter for the protein map.
      *
      * @return the protein map
      */
     public ProteinMap getProteinMap() {
         return proteinMap;
     }
-    
+
     /**
      * Returns the target decoy map of all search engine scores.
-     * 
+     *
      * @return the target decoy map of all search engine scores
      */
     public InputMap getInputMap() {
