@@ -59,7 +59,7 @@ public class AssumptionFilter extends MatchFilter {
      */
     private Double sequenceCoverage = null;
     /**
-     * The type of comparison to be used for the psm confidence.
+     * The type of comparison to be used for the PSM confidence.
      */
     private RowFilter.ComparisonType sequenceCoverageComparison = RowFilter.ComparisonType.EQUAL;
     /**
