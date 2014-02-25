@@ -2035,7 +2035,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 try {
-                    MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                    MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), 
+                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key, 
+                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
                     }
