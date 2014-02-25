@@ -155,7 +155,7 @@ public class PeptideSpecificMap implements Serializable {
      * This method puts all the small peptide groups in the dustbin to be
      * analyzed together.
      */
-    public void cure() {
+    public void clean() {
         if (peptideMaps.size() > 1) {
             peptideMaps.put(DUSTBIN, new TargetDecoyMap());
             for (String key : peptideMaps.keySet()) {

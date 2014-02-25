@@ -4,6 +4,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -167,7 +168,7 @@ public class PsmSpecificMap implements Serializable {
      * This method groups the statistically non significant psms with the ones
      * having a charge directly smaller.
      */
-    public void cure() {
+    public void clean() {
         ArrayList<Integer> charges = new ArrayList(psmsMaps.keySet());
         Collections.sort(charges);
         int ref = 0;

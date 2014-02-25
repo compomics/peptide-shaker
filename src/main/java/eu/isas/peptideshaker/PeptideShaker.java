@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -307,7 +308,7 @@ public class PeptideShaker {
         }
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
         fillPsmMap(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter);
-        psmMap.cure();
+        psmMap.clean();
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -330,7 +331,7 @@ public class PeptideShaker {
         }
         if (ptmScoringPreferences.isEstimateFlr()) {
             waitingHandler.appendReport("Thresholding PTM localizations.", true, true);
-            psmPTMMap.cure();
+            psmPTMMap.clean();
             psmPTMMap.estimateProbabilities(waitingHandler);
             computeFLR(waitingHandler, ptmScoringPreferences.getFlrThreshold());
         }
@@ -358,7 +359,7 @@ public class PeptideShaker {
         }
         waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
         fillPeptideMaps(waitingHandler, searchParameters);
-        peptideMap.cure();
+        peptideMap.clean();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -403,7 +404,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications.", true, true);
         }
-        fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(), processingPreferences.getProteinFDR(), searchParameters, annotationPreferences, identificationFeaturesGenerator);
+        fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(), processingPreferences.getProteinFDR(), searchParameters, annotationPreferences, identificationFeaturesGenerator, inputMap);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -501,7 +502,7 @@ public class PeptideShaker {
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
-        identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
+        identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap, inputMap));
         waitingHandler.setRunFinished();
     }
 
@@ -547,8 +548,9 @@ public class PeptideShaker {
      * @param annotationPreferences the spectrum annotation preferences
      * @param identificationFeaturesGenerator the identification features
      * generator providing information about the matches
+     * @param inputMap the input target/decoy map
      */
-    public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
 
         waitingHandler.setWaitingText("Validating Identifications. Please Wait...");
 
@@ -561,7 +563,7 @@ public class PeptideShaker {
         currentResults.setFdrLimit(aProteinFDR);
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
-        int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size();
+        int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size() + inputMap.getNalgorithms();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
@@ -595,10 +597,25 @@ public class PeptideShaker {
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
+        for (int mapKey : inputMap.getInputAlgorithms()) {
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+            waitingHandler.increaseSecondaryProgressCounter();
+            currentMap = inputMap.getTargetDecoyMap(mapKey);
+            currentResults = currentMap.getTargetDecoyResults();
+            currentResults.setInputType(1);
+            currentResults.setUserInput(aPSMFDR);
+            currentResults.setClassicalEstimators(true);
+            currentResults.setClassicalValidation(true);
+            currentResults.setFdrLimit(aPSMFDR);
+            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        }
+
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
         try {
-            validateIdentifications(waitingHandler, identificationFeaturesGenerator, searchParameters, annotationPreferences);
+            validateIdentifications(inputMap, waitingHandler, identificationFeaturesGenerator, searchParameters, annotationPreferences);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while validating the results.", true, true);
             waitingHandler.setRunCanceled();
@@ -622,7 +639,7 @@ public class PeptideShaker {
         proteinMap = new ProteinMap();
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler, searchParameters);
         fillPeptideMaps(waitingHandler, searchParameters);
-        peptideMap.cure();
+        peptideMap.clean();
         peptideMap.estimateProbabilities(waitingHandler);
         attachPeptideProbabilities(waitingHandler);
         fillProteinMap(waitingHandler);
@@ -667,6 +684,7 @@ public class PeptideShaker {
     /**
      * This method will flag validated identifications.
      *
+     * @param inputMap the target decoy map of all search engine scores
      * @param waitingHandler the progress bar
      * @param identificationFeaturesGenerator an identification features
      * generator computing information about the identification matches
@@ -679,7 +697,7 @@ public class PeptideShaker {
      * @throws MzMLUnmarshallerException
      * @throws InterruptedException
      */
-    public void validateIdentifications(WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
+    public void validateIdentifications(InputMap inputMap, WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -692,7 +710,7 @@ public class PeptideShaker {
                     + 2 * identification.getSpectrumIdentificationSize());
         }
 
-        // validate the spectra
+        // validate the spectrum matches
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
@@ -707,6 +725,22 @@ public class PeptideShaker {
                     Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                     double precursorMzError = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                     precursorMzDeviations.add(precursorMzError);
+                }
+
+                // Go through the peptide assumptions
+                if (inputMap != null) { //backward compatibility check
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    for (Integer advocateId : spectrumMatch.getAdvocates()) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptions = spectrumMatch.getAllAssumptions(advocateId);
+                        for (double eValue : assumptions.keySet()) {
+                            for (SpectrumIdentificationAssumption spectrumIdAssumption : assumptions.get(eValue)) {
+                                if (spectrumIdAssumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
+                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, peptideAssumption);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (waitingHandler != null) {
@@ -1254,6 +1288,95 @@ public class PeptideShaker {
     }
 
     /**
+     * Updates the validation status of a peptide assumption. If the match was
+     * manually validated nothing will be changed.
+     *
+     * @param identificationFeaturesGenerator the identification features
+     * generator
+     * @param searchParameters the identification parameters
+     * @param annotationPreferences the annotation preferences
+     * @param inputMap the target decoy map of all search engine scores
+     * @param spectrumKey the key of the inspected spectrum
+     * @param peptideAssumption the peptide assumption of interest
+     *
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
+     */
+    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey,
+            PeptideAssumption peptideAssumption) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
+        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(peptideAssumption.getAdvocate());
+            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double seThreshold = targetDecoyResults.getScoreLimit();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            if (confidenceThreshold > 100) {
+                confidenceThreshold = 100;
+            }
+            boolean noValidated = targetDecoyResults.noValidated();
+            if (!noValidated && peptideAssumption.getScore() <= seThreshold) { //@TODO: include ascending/descending scores
+                String reasonDoubtful = null;
+                boolean filterPassed = true;
+                for (AssumptionFilter filter : inputMap.getDoubtfulMatchesFilters()) {
+                    if (!filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences)) {
+                        filterPassed = false;
+                        if (reasonDoubtful == null) {
+                            reasonDoubtful = "";
+                        } else {
+                            reasonDoubtful += ", ";
+                        }
+                        reasonDoubtful += filter.getDescription();
+                    }
+                }
+                boolean confidenceThresholdPassed = psParameter.getSearchEngineConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+                if (!confidenceThresholdPassed) {
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
+                    reasonDoubtful += "Low confidence";
+                }
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                if (!enoughHits) {
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
+                    reasonDoubtful += "Low number of hits";
+                }
+                if (!sequenceFactory.hasEnoughSequences()) {
+                    if (reasonDoubtful == null) {
+                        reasonDoubtful = "";
+                    } else {
+                        reasonDoubtful += ", ";
+                    }
+                    reasonDoubtful += "Database too small";
+                }
+                if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
+                } else {
+                    psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
+                    if (reasonDoubtful != null) {
+                        psParameter.setReasonDoubtful(reasonDoubtful);
+                    }
+                }
+            } else {
+                psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
+            }
+        } else {
+            psParameter.setMatchValidationLevel(MatchValidationLevel.none);
+        }
+    }
+
+    /**
      * Fills the PSM specific map.
      *
      * @param inputMap The input map
@@ -1274,7 +1397,7 @@ public class PeptideShaker {
         // map of the first hits for this spectrum: score -> max protein count -> max search engine votes -> sequence coverage annotated -> min mass deviation (unless you have a better idea?)
         HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>> peptideAssumptions;
         PSParameter psParameter, psParameter2;
-        boolean multiSE = inputMap.isMultipleSearchEngines();
+        boolean multiSE = inputMap.isMultipleAlgorithms();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
@@ -2675,7 +2798,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search parameters
-     * 
+     *
      * @throws Exception
      */
     private void fillPeptideMaps(WaitingHandler waitingHandler, SearchParameters searchParameters) throws Exception {

@@ -642,8 +642,8 @@ public class FindDialog extends javax.swing.JDialog {
             precursorMzTxt.setText(psmFilter.getPrecursorMz() + "");
             precursorMzCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorMzComparison()));
         }
-        if (psmFilter.getPrecursorMzError() != null) {
-            precursorErrorTxt.setText(psmFilter.getPrecursorMzError() + "");
+        if (psmFilter.getAssumptionFilter().getPrecursorMzError() != null) {
+            precursorErrorTxt.setText(psmFilter.getAssumptionFilter().getPrecursorMzError() + "");
             precursorErrorCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorMzErrorComparison()));
         }
         if (psmFilter.getPsmConfidence() != null) {
@@ -651,10 +651,10 @@ public class FindDialog extends javax.swing.JDialog {
             psmConfidenceCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPsmConfidenceComparison()));
         }
 
-        charge2CheckBox.setSelected(psmFilter.getCharges().contains(2));
-        charge3CheckBox.setSelected(psmFilter.getCharges().contains(3));
-        charge4CheckBox.setSelected(psmFilter.getCharges().contains(4));
-        chargeOver4CheckBox.setSelected(psmFilter.getCharges().contains(5));
+        charge2CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(2));
+        charge3CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(3));
+        charge4CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(4));
+        chargeOver4CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(5));
 
         for (int row = 0; row < spectrumFilesTable.getRowCount(); row++) {
             if (psmFilter.getFileNames().contains(
