@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.scoring;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -14,8 +15,12 @@ import javax.swing.RowFilter;
  *
  * @author Marc Vaudel
  */
-public class InputMap {
+public class InputMap implements Serializable {
 
+    /**
+     * Serial version UID for post-serialization compatibility.
+     */
+    static final long serialVersionUID = 1117083720476649996L;
     /**
      * Map of the hits as imported. One target/decoy map per search engine
      * (referenced by their compomics utilities index).
