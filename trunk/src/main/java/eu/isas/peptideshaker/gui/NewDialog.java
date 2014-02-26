@@ -10,12 +10,16 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.IdentificationAlgorithmParameter;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
@@ -1226,8 +1230,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Display the list of selected identification files.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void idFilesTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idFilesTxtMouseClicked
         if (!idFiles.isEmpty()) {
@@ -1242,8 +1246,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Display the list of selected spectrum files.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void spectrumFilesTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumFilesTxtMouseClicked
         if (!spectrumFiles.isEmpty()) {
@@ -1540,6 +1544,24 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                     output += ".\nPlease import it by editing the search parameters.";
                     JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+
+        IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.XTandem.getIndex());
+        if (algorithmParameter != null) {
+            XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
+            if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
+                PTM ptm = ptmFactory.getPTM("acetylation of protein n-term");
+                modificationProfile.addVariableModification(ptm);
+            }
+            String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
+            if (xtandemParameters.isQuickPyrolidone()) {
+                for (String ptmName : pyroMods) {
+                    if (!modificationProfile.getVariableModifications().contains(ptmName)) {
+                        PTM ptm = ptmFactory.getPTM(ptmName);
+                        modificationProfile.addVariableModification(ptm);
+                    }
                 }
             }
         }

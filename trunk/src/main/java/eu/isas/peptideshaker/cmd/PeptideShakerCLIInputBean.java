@@ -1,8 +1,14 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.identification.IdentificationAlgorithmParameter;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
+import com.compomics.util.preferences.ModificationProfile;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -195,7 +201,6 @@ public class PeptideShakerCLIInputBean {
 //            File testFile = new File(filesTxt);
 //            prideFile = testFile;
 //        }
-
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id));
         }
@@ -281,6 +286,24 @@ public class PeptideShakerCLIInputBean {
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
                 identificationParameters = SearchParameters.getIdentificationParameters(testFile);
+                ModificationProfile modificationProfile = identificationParameters.getModificationProfile();
+                IdentificationAlgorithmParameter algorithmParameter = identificationParameters.getIdentificationAlgorithmParameter(Advocate.XTandem.getIndex());
+                if (algorithmParameter != null) {
+                    XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
+                    if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
+                        PTM ptm = PTMFactory.getInstance().getPTM("acetylation of protein n-term");
+                        modificationProfile.addVariableModification(ptm);
+                    }
+                    String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
+                    if (xtandemParameters.isQuickPyrolidone()) {
+                        for (String ptmName : pyroMods) {
+                            if (!modificationProfile.getVariableModifications().contains(ptmName)) {
+                                PTM ptm = PTMFactory.getInstance().getPTM(ptmName);
+                                modificationProfile.addVariableModification(ptm);
+                            }
+                        }
+                    }
+                }
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
