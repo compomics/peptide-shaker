@@ -670,6 +670,10 @@ public class FileImporter {
                     String spectrumKey = match.getKey();
                     String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                     String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                    
+                    if (spectrumTitle.contains(".10708.")) {
+                        int debug = 1;
+                    }
 
                     if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                         fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
