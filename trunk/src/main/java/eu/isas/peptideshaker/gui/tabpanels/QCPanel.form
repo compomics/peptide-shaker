@@ -156,7 +156,7 @@
                               <Component id="psmPrecursorMassErrorJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="psmPrecursorChargeJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="419" max="32767" attributes="0"/>
+                              <EmptySpace pref="465" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -359,7 +359,7 @@
                               <Component id="peptideMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="peptideLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="306" max="32767" attributes="0"/>
+                              <EmptySpace pref="362" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -648,13 +648,13 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="proteinNumberValidatedPeptidesJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="proteinSpectrumCountingScoreJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="proteinSequenceCoverageJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="proteinSequenceLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="57" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="proteinSpectrumCountingScoreJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="147" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
