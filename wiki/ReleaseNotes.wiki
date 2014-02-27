@@ -3,6 +3,28 @@
 
 ----
 
+*Changes in PeptideShaker 0.25.3  (coming soon...):*
+
+ * FEATURE IMPROVEMENT: Reformatted the Spectrum IDs tab.
+ * FEATURE IMPROVEMENT: Mass errors are no longer in absolute values.
+ * FEATURE IMPROVEMENT: Updated the TMT modifications to support the new TMT 10-plex.
+ * FEATURE IMPROVEMENT: Tried to improve the x-axis for the MS2 Quant QC plot.
+
+ * BUG FIX: Corrected a bug in the import of the quick pyro and acetyl options of X!Tandem.
+ * BUG FIX: Fixed a bug in the psm validation code that resulted in the loading being canceled if an mgf file contained no validated psms.
+ * BUG FIX: Fixed a bug in the progress bar when loading spectrum files when loading a project.
+ * BUG FIX: Fixed a bug where using the Save option in the Save Dialog resulted in a null pointer if the project was not previously saved.
+ * BUG FIX: Fixed some issues with the hiding of the jsparklines.
+ * BUG FIX: Corrected a bug in the custom PSM and peptide exports.
+ * BUG FIX: Unified the separators in peptide exports.
+ * BUG FIX: Improved the handling of protein tree creation crashes.
+ * BUG FIX: Fixed a bug where the orange waiting icon was not used in the New Project dialog when updating the species.
+ * BUG FIX: If the protein mapping is not present when calling the isDecoy method of a peptide, the peptide will be mapped.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.23.7.
+
+----
+
 *Changes in PeptideShaker 0.25.2  (February 10. 2014):*
  
  * BUG FIX: Fixed a bug in the report command line export, where two options with the same name (-out) could get confused.
