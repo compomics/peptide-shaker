@@ -1071,7 +1071,7 @@ public class PeptideShaker {
                         }
                         reasonDoubtful += "Low confidence";
                     }
-                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
                     if (!enoughHits) {
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
@@ -1162,7 +1162,7 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Low confidence";
                 }
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -1253,7 +1253,7 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Low confidence";
                 }
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -1343,7 +1343,7 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Low confidence";
                 }
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100 && targetDecoyMap.getnTargetOnly() > targetDecoyMap.getnMax();
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";

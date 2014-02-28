@@ -1,6 +1,9 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import com.compomics.util.waiting.WaitingHandler;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,36 +139,41 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Estimates the metrics of the map: Nmax and NtargetOnly.
+     * Estimates the metrics of the map: Nmax and NtargetOnly. Scores of 1 and above will be skipped.
      */
     private void estimateNs() {
         if (scores == null) {
             estimateScores();
         }
-        double scoreMax = scores.get(scores.size() - 1); // used to avoid side effects at p=1
         boolean onlyTarget = true;
-        int nMax1 = 0;
+        nmax = 0;
         int targetCpt = 0;
         nTargetOnly = 0;
 
         for (double peptideP : scores) {
             TargetDecoyPoint point = hitMap.get(peptideP);
             if (onlyTarget) {
-                nTargetOnly += point.nTarget;
                 if (point.nDecoy > 0) {
+                    nTargetOnly += point.nTarget / 2 + point.nTarget % 2;
+                    targetCpt += point.nTarget / 2;
                     onlyTarget = false;
+                } else {
+                    nTargetOnly += point.nTarget;
                 }
             } else {
-                targetCpt += point.nTarget;
                 if (point.nDecoy > 0) {
-                    if (targetCpt > nMax1 && peptideP < scoreMax) {
-                        nMax1 = targetCpt;
+                    targetCpt += point.nTarget / 2 + point.nTarget % 2;
+                    if (targetCpt > nmax  
+                            && peptideP < 1.0
+                            && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
+                        nmax = targetCpt;
                     }
-                    targetCpt = point.nTarget;
+                    targetCpt = point.nTarget / 2;
+                } else {
+                    targetCpt += point.nTarget;
                 }
             }
         }
-        nmax = nMax1;
     }
 
     /**
@@ -246,7 +254,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the Nmax metric.
-     *
+     * 
      * @return the Nmax metric
      */
     public int getnMax() {
@@ -255,7 +263,7 @@ public class TargetDecoyMap implements Serializable {
         }
         return nmax;
     }
-    
+
     /**
      * Returns the minimal detectable PEP variation in percent.
      * 
@@ -320,7 +328,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns a boolean indicating if a suspicious input was detected.
-     *
+     * 
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput() {
@@ -355,7 +363,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the window size used for pep estimation.
-     *
+     * 
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
