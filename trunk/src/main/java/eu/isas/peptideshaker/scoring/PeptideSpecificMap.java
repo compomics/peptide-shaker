@@ -59,7 +59,7 @@ public class PeptideSpecificMap implements Serializable {
 
     /**
      * Returns the filters used to flag doubtful matches.
-     * 
+     *
      * @return the filters used to flag doubtful matches
      */
     public ArrayList<PeptideFilter> getDoubtfulMatchesFilters() {
@@ -71,7 +71,7 @@ public class PeptideSpecificMap implements Serializable {
 
     /**
      * Sets the filters used to flag doubtful matches.
-     * 
+     *
      * @param doubtfulMatchesFilters the filters used to flag doubtful matches
      */
     public void setDoubtfulMatchesFilters(ArrayList<PeptideFilter> doubtfulMatchesFilters) {
@@ -122,7 +122,7 @@ public class PeptideSpecificMap implements Serializable {
      * @param probabilityScore The estimated peptide probabilistic score
      * @param peptideMatch The corresponding peptide match
      * @param mzTolerance The ms2 m/z tolerance
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
@@ -305,21 +305,21 @@ public class PeptideSpecificMap implements Serializable {
             return result;
         }
     }
-    
+
     /**
      * Returns the default filters for setting a match as doubtful.
-     * 
+     *
      * @return the default filters for setting a match as doubtful
      */
     public static ArrayList<PeptideFilter> getDefaultPeptideFilters() {
         ArrayList<PeptideFilter> filters = new ArrayList<PeptideFilter>();
-        
+
         PeptideFilter peptideFilter = new PeptideFilter("One confident PSM");
         peptideFilter.setDescription("No confident PSM");
         peptideFilter.setNConfidentSpectra(0);
         peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         filters.add(peptideFilter);
-        
+
         return filters;
     }
 }
