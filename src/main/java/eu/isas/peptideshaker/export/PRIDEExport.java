@@ -775,6 +775,11 @@ public class PRIDEExport {
             PTM ptm = ptmFactory.getPTM(modName);
 
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
+
+            if (cvTerm == null) {
+                cvTerm = PtmToPrideMap.getDefaultCVTerm(ptm.getName());
+            }
+
             String cvTermName;
             String ptmMass;
 
@@ -807,12 +812,11 @@ public class PRIDEExport {
             br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
 
             if (cvTerm == null) {
-                // @TODO: perhaps this should be handled differently? as there is no real mapping...
                 br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MS" + "</ModDatabase>" + System.getProperty("line.separator"));
             } else {
                 br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + System.getProperty("line.separator"));
             }
 
             br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + System.getProperty("line.separator"));
@@ -820,9 +824,9 @@ public class PRIDEExport {
             br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
             tabCounter++;
             if (cvTerm == null) {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + "unknown" + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001460\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
             } else {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"UNIMOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
             }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
@@ -846,9 +850,11 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        // include the ontologies used, only MS is included by default
+        // include the ontologies used, only MS and Unimod is included by default
         br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" "
                 + "address=\"http://psidev.sourceforge.net/ontology\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"UNIMOD\" fullName=\"UNIMOD CV for modifications\" version=\"1.2\" "
+                + "address=\"http://www.unimod.org/obo/unimod.obo\" />" + System.getProperty("line.separator"));
 
         // write the mzData description (project description, sample details, contact details, instrument details and software details)
         writeMzDataDescription();
