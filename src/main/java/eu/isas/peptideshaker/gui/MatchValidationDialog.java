@@ -26,15 +26,18 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -94,6 +97,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * The spectrum annotation preferences.
      */
     private AnnotationPreferences annotationPreferences;
+    /**
+     * The filter table column header tooltips.
+     */
+    private ArrayList<String> validationTableToolTips;
 
     /**
      * Type of match selected.
@@ -276,6 +283,12 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         qualityFiltersTable.getTableHeader().setReorderingAllowed(false);
 
         validationLevelJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+
+        // set up the table header tooltips
+        validationTableToolTips = new ArrayList<String>();
+        validationTableToolTips.add(null);
+        validationTableToolTips.add("Filter Name");
+        validationTableToolTips.add("Filter Passed");
     }
 
     /**
@@ -534,7 +547,18 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         confidenceThresholdLbl = new javax.swing.JLabel();
         qualityFiltersPanel = new javax.swing.JPanel();
         qualityFiltersTableScrollPane = new javax.swing.JScrollPane();
-        qualityFiltersTable = new javax.swing.JTable();
+        qualityFiltersTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        return (String) validationTableToolTips.get(realIndex);
+                    }
+                };
+            }
+        };
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
