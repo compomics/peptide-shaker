@@ -207,7 +207,7 @@ public class ProteinSection {
      * PeptideShaker parameters, can be null if not needed
      * @param tempProteinFeatures the protein feature to write
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @return the string to write
      *
      * @throws IOException exception thrown whenever an error occurred while
@@ -419,12 +419,12 @@ public class ProteinSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : proteinFeatures) {
-            if (firstColumn) {
-                firstColumn = false;
-            } else {
-                writer.write(separator);
-            }
             for (String title : exportFeature.getTitles()) {
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
                 writer.write(title);
             }
         }
