@@ -540,7 +540,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="outpitFolderLabel" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="outputFolderLabel" min="-2" pref="75" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="outputFolderJTextField" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -554,7 +554,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="outpitFolderLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="outputFolderLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="outputFolderJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseOutputFolderJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -564,7 +564,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="outpitFolderLabel">
+            <Component class="javax.swing.JLabel" name="outputFolderLabel">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
