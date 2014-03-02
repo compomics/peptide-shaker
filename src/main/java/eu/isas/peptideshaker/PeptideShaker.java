@@ -1732,7 +1732,7 @@ public class PeptideShaker {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, null);
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-
+                
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (sequenceFactory.concatenatedTargetDecoy()) {
                     psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
