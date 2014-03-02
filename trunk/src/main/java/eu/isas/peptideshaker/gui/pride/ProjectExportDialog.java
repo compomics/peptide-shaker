@@ -379,7 +379,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         openDialogHelpJButton = new javax.swing.JButton();
         helpLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        outpitFolderLabel = new javax.swing.JLabel();
+        outputFolderLabel = new javax.swing.JLabel();
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
 
@@ -692,9 +692,9 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Folder"));
         jPanel1.setOpaque(false);
 
-        outpitFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
-        outpitFolderLabel.setText("Folder*");
-        outpitFolderLabel.setToolTipText("The folder where the PRIDE XML file will be saved");
+        outputFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
+        outputFolderLabel.setText("Folder*");
+        outputFolderLabel.setToolTipText("The folder where the PRIDE XML file will be saved");
 
         outputFolderJTextField.setEditable(false);
         outputFolderJTextField.setToolTipText("The folder where the PRIDE XML file will be saved");
@@ -713,7 +713,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(outpitFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(outputFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outputFolderJTextField)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -725,7 +725,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(outpitFolderLabel)
+                    .addComponent(outputFolderLabel)
                     .addComponent(outputFolderJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseOutputFolderJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1267,8 +1267,8 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField labelJTextField;
     private javax.swing.JButton openDialogHelpJButton;
-    private javax.swing.JLabel outpitFolderLabel;
     private javax.swing.JTextField outputFolderJTextField;
+    private javax.swing.JLabel outputFolderLabel;
     private javax.swing.JTextField projectJTextField;
     private javax.swing.JLabel projectLabel;
     private javax.swing.JComboBox protocolJComboBox;
@@ -1334,9 +1334,9 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         }
 
         if (outputFolderJTextField.getText().length() > 0) {
-            outpitFolderLabel.setForeground(Color.BLACK);
+            outputFolderLabel.setForeground(Color.BLACK);
         } else {
-            outpitFolderLabel.setForeground(Color.RED);
+            outputFolderLabel.setForeground(Color.RED);
         }
 
         if (contactGroupsJComboBox.getSelectedIndex() != 0) {
