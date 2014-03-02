@@ -181,7 +181,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn(" ").setMaxWidth(50);
         retainedProteinJTable.getColumn("Gene").setMinWidth(90);
         retainedProteinJTable.getColumn("Gene").setMaxWidth(90);
-        retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Chr").setMinWidth(50);
         retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
         retainedProteinJTable.getColumn("Evidence").setMinWidth(90);
         retainedProteinJTable.getColumn("Evidence").setMaxWidth(90);
@@ -190,7 +190,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn(" ").setMaxWidth(50);
         otherProteinJTable.getColumn("Gene").setMinWidth(90);
         otherProteinJTable.getColumn("Gene").setMaxWidth(90);
-        otherProteinJTable.getColumn("Chr").setMaxWidth(50);
+        otherProteinJTable.getColumn("Chr").setMinWidth(50);
         otherProteinJTable.getColumn("Chr").setMaxWidth(50);
         otherProteinJTable.getColumn("Evidence").setMinWidth(90);
         otherProteinJTable.getColumn("Evidence").setMaxWidth(90);
@@ -225,6 +225,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinsTableToolTips.add("Protein Accession");
         retainedProteinsTableToolTips.add("Protein Description");
         retainedProteinsTableToolTips.add("Gene Name");
+        retainedProteinsTableToolTips.add("Chromosome Number");
         retainedProteinsTableToolTips.add("Protein Evidence Level");
 
         otherProteinsTableToolTips = new ArrayList<String>();
@@ -232,6 +233,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinsTableToolTips.add("Protein Accession");
         otherProteinsTableToolTips.add("Protein Description");
         otherProteinsTableToolTips.add("Gene Name");
+        retainedProteinsTableToolTips.add("Chromosome Number");
         otherProteinsTableToolTips.add("Protein Evidence Level");
 
         setLocationRelativeTo(peptideShakerGUI);
