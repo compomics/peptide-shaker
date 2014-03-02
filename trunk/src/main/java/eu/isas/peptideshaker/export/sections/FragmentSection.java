@@ -218,12 +218,12 @@ public class FragmentSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : exportFeatures) {
+            for (String title : exportFeature.getTitles()) {
             if (firstColumn) {
                 firstColumn = false;
             } else {
                 writer.write(separator);
             }
-            for (String title : exportFeature.getTitles()) {
                 writer.write(title + separator);
             }
         }
