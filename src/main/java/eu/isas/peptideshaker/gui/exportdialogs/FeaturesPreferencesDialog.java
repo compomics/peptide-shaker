@@ -1918,6 +1918,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             removeReportMenuItem.setVisible(exportScheme.isEditable());
             reportDocumentationPopupMenu.show(reportsTable, evt.getX(), evt.getY());
         }
+        
+        if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            writeSelectedReport();
+        }
 
         exportReportButton.setEnabled(reportsTable.getSelectedRow() != -1);
     }//GEN-LAST:event_reportsTableMouseClicked

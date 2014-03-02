@@ -461,7 +461,7 @@ public class PsmSection {
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";
             case score:
-                return psParameter.getPsmProbabilityScore() + "";
+                return psParameter.getPsmScore()+ "";
             case sequence:
                 return spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
             case missed_cleavages:
@@ -534,12 +534,12 @@ public class PsmSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : psmFeatures) {
+            for (String title : exportFeature.getTitles()) {
             if (firstColumn) {
                 firstColumn = false;
             } else {
                 writer.write(separator);
             }
-            for (String title : exportFeature.getTitles()) {
                 writer.write(title);
             }
         }

@@ -202,7 +202,7 @@ public class PeptideSection {
      * @param psParameter the PeptideShaker parameters of the match
      * @param peptideFeature the peptide feature to export
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @return the component of the section corresponding to the given feature
      *
      * @throws IOException exception thrown whenever an error occurred while
@@ -276,7 +276,7 @@ public class PeptideSection {
             case fixed_ptms:
                 return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
             case score:
-                return psParameter.getPsmScore() + "";
+                return psParameter.getPeptideScore() + "";
             case sequence:
                 return peptideMatch.getTheoreticPeptide().getSequence();
             case missed_cleavages:
@@ -482,12 +482,12 @@ public class PeptideSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : peptideFeatures) {
-            if (firstColumn) {
-                firstColumn = false;
-            } else {
-                writer.write(separator);
-            }
             for (String title : exportFeature.getTitles()) {
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
                 writer.write(title);
             }
         }
