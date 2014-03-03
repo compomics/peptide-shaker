@@ -3,14 +3,18 @@
 
 ----
 
-*Changes in PeptideShaker 0.25.3  (coming soon...):*
+*Changes in PeptideShaker 0.26.0  (March 3. 2014):*
 
  * FEATURE IMPROVEMENT: Reformatted the Spectrum IDs tab.
  * FEATURE IMPROVEMENT: Mass errors are no longer in absolute values.
  * FEATURE IMPROVEMENT: Updated the TMT modifications to support the new TMT 10-plex.
  * FEATURE IMPROVEMENT: Tried to improve the x-axis for the MS2 Quant QC plot.
+ * FEATURE IMPROVEMENT: Improved the robustness of the FDR estimation.
+ * FEATURE IMPROVEMENT: Replaced PSI-MOD modification mappings with Unimod.
+ * FEATURE IMPROVEMENT: Added table column header tooltips for the MatchValidationDialog.
 
  * BUG FIX: Corrected a bug in the import of the quick pyro and acetyl options of X!Tandem.
+ * BUG FIX: Separated the PTM mass tolerance from the fragment mass tolerance in the PTM mapping of Mascot and X!Tandem, that could result in protein inference issues.
  * BUG FIX: Fixed a bug in the psm validation code that resulted in the loading being canceled if an mgf file contained no validated psms.
  * BUG FIX: Fixed a bug in the progress bar when loading spectrum files when loading a project.
  * BUG FIX: Fixed a bug where using the Save option in the Save Dialog resulted in a null pointer if the project was not previously saved.
@@ -20,8 +24,12 @@
  * BUG FIX: Improved the handling of protein tree creation crashes.
  * BUG FIX: Fixed a bug where the orange waiting icon was not used in the New Project dialog when updating the species.
  * BUG FIX: If the protein mapping is not present when calling the isDecoy method of a peptide, the peptide will be mapped.
+ * BUG FIX: Fixed a minor GUI bugs in the Peptide tab in the Export dialog.
+ * BUG FIX: Corrected minor bugs in the exports.
+ * BUG FIX: Fixed a bug in the table column header tooltips for the ProteinInferencePeptideLevelDialog.
+ * BUG FIX: Fixed is a problem with unmapped search engine advocates.
 
- * LIBRARY UPDATE: Updated utilities to version 3.23.7.
+ * LIBRARY UPDATE: Updated utilities to version 3.23.13.
 
 ----
 
