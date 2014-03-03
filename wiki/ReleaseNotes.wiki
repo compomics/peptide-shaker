@@ -5,6 +5,7 @@
 
 *Changes in PeptideShaker 0.26.0  (March 3. 2014):*
 
+ * FEATURE IMPROVEMENT: The loading of search results is now a lot quicker!
  * FEATURE IMPROVEMENT: Reformatted the Spectrum IDs tab.
  * FEATURE IMPROVEMENT: Mass errors are no longer in absolute values.
  * FEATURE IMPROVEMENT: Updated the TMT modifications to support the new TMT 10-plex.
