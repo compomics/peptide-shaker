@@ -767,7 +767,7 @@ public class PeptideShaker {
                         psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
                         psmFilter.setMinPrecursorMzError(minDeviation);
                         psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
-                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+//                        psmMap.addDoubtfulMatchesFilter(psmFilter);
                     }
                     if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
                         needSecondPass = true;
@@ -775,7 +775,7 @@ public class PeptideShaker {
                         psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                         psmFilter.setMaxPrecursorMzError(maxDeviation);
                         psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
-                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+//                        psmMap.addDoubtfulMatchesFilter(psmFilter);
                     }
                 }
                 // @TODO: debug
