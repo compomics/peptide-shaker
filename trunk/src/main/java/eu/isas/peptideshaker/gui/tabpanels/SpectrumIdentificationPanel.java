@@ -3624,9 +3624,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.removeAll();
 
                 DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
-                psmDataset.addValue(nOMSSA, "OMSSA", "#PSMs");
-                psmDataset.addValue(nXTandem, "X!Tandem", "#PSMs");
-                psmDataset.addValue(nMascot, "Mascot", "#PSMs");
+                if (omssaUsed) {
+                    psmDataset.addValue(nOMSSA, "OMSSA", "#PSMs");
+                }
+                if (xtandemUsed) {
+                    psmDataset.addValue(nXTandem, "X!Tandem", "#PSMs");
+                }
+                if (mascotUsed) {
+                    psmDataset.addValue(nMascot, "Mascot", "#PSMs");
+                }
                 psmDataset.addValue(nPeptideShaker, "PeptideShaker", "#PSMs");
 
                 JFreeChart psmChart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
@@ -3644,10 +3650,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 BarRenderer psmRenderer = new BarRenderer();
                 psmRenderer.setShadowVisible(false);
                 psmRenderer.setBarPainter(new StandardBarPainter());
-                psmRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
-                psmRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
-                psmRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
-                psmRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                int dataSeriesCounter = 0;
+                if (omssaUsed) {
+                    psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                }
+                if (xtandemUsed) {
+                    psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                }
+                if (mascotUsed) {
+                    psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                }
+                psmRenderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
                 psmRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 psmRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
                 psmRenderer.setBaseItemLabelsVisible(true);
@@ -3657,9 +3670,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.add(psmChartPanel);
 
                 DefaultCategoryDataset uniquePsmsDataset = new DefaultCategoryDataset();
-                uniquePsmsDataset.addValue(uniqueOmssa, "OMSSA", "#Unique PSMs");
-                uniquePsmsDataset.addValue(uniqueXTandem, "X!Tandem", "#Unique PSMs");
-                uniquePsmsDataset.addValue(uniqueMascot, "Mascot", "#Unique PSMs");
+                if (omssaUsed) {
+                    uniquePsmsDataset.addValue(uniqueOmssa, "OMSSA", "#Unique PSMs");
+                }
+                if (xtandemUsed) {
+                    uniquePsmsDataset.addValue(uniqueXTandem, "X!Tandem", "#Unique PSMs");
+                }
+                if (mascotUsed) {
+                    uniquePsmsDataset.addValue(uniqueMascot, "Mascot", "#Unique PSMs");
+                }
                 uniquePsmsDataset.addValue(0, "PeptideShaker", "#Unique PSMs");
 
                 JFreeChart uniqueChart = ChartFactory.createBarChart(null, null, null, uniquePsmsDataset, PlotOrientation.VERTICAL, false, false, false);
@@ -3677,10 +3696,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 BarRenderer uniqueRenderer = new BarRenderer();
                 uniqueRenderer.setShadowVisible(false);
                 uniqueRenderer.setBarPainter(new StandardBarPainter());
-                uniqueRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
-                uniqueRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
-                uniqueRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
-                uniqueRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                dataSeriesCounter = 0;
+                if (omssaUsed) {
+                    uniqueRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                }
+                if (xtandemUsed) {
+                    uniqueRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                }
+                if (mascotUsed) {
+                    uniqueRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                }
+                uniqueRenderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
                 uniqueRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 uniqueRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
                 uniqueRenderer.setBaseItemLabelsVisible(true);
@@ -3690,9 +3716,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.add(uniqueChartPanel);
 
                 DefaultCategoryDataset unassignedDataset = new DefaultCategoryDataset();
-                unassignedDataset.addValue(nUnassignedOMSSA, "OMSSA", "#Unassigned");
-                unassignedDataset.addValue(nUnassignedXTandem, "X!Tandem", "#Unassigned");
-                unassignedDataset.addValue(nUnassignedMascot, "Mascot", "#Unassigned");
+                if (omssaUsed) {
+                    unassignedDataset.addValue(nUnassignedOMSSA, "OMSSA", "#Unassigned");
+                }
+                if (xtandemUsed) {
+                    unassignedDataset.addValue(nUnassignedXTandem, "X!Tandem", "#Unassigned");
+                }
+                if (mascotUsed) {
+                    unassignedDataset.addValue(nUnassignedMascot, "Mascot", "#Unassigned");
+                }
                 unassignedDataset.addValue(nUnassignedPeptideShaker, "PeptideShaker", "#Unassigned");
 
                 JFreeChart unassignedChart = ChartFactory.createBarChart(null, null, null, unassignedDataset, PlotOrientation.VERTICAL, false, false, false);
@@ -3710,10 +3742,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 BarRenderer unassignedRenderer = new BarRenderer();
                 unassignedRenderer.setShadowVisible(false);
                 unassignedRenderer.setBarPainter(new StandardBarPainter());
-                unassignedRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
-                unassignedRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
-                unassignedRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
-                unassignedRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                dataSeriesCounter = 0;
+                if (omssaUsed) {
+                    unassignedRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                }
+                if (xtandemUsed) {
+                    unassignedRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                }
+                if (mascotUsed) {
+                    unassignedRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                }
+                unassignedRenderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
                 unassignedRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 unassignedRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
                 unassignedRenderer.setBaseItemLabelsVisible(true);
@@ -3723,9 +3762,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 overviewPlotsPanel.add(unassignedChartPanel);
 
                 DefaultCategoryDataset idRateDataset = new DefaultCategoryDataset();
-                idRateDataset.addValue(idRateOmssa, "OMSSA", "ID Rate (%)");
-                idRateDataset.addValue(idRateXTandem, "X!Tandem", "ID Rate (%)");
-                idRateDataset.addValue(idRateMascot, "Mascot", "ID Rate (%)");
+                if (omssaUsed) {
+                    idRateDataset.addValue(idRateOmssa, "OMSSA", "ID Rate (%)");
+                }
+                if (xtandemUsed) {
+                    idRateDataset.addValue(idRateXTandem, "X!Tandem", "ID Rate (%)");
+                }
+                if (mascotUsed) {
+                    idRateDataset.addValue(idRateMascot, "Mascot", "ID Rate (%)");
+                }
                 idRateDataset.addValue(idRatePeptideShaker, "PeptideShaker", "ID Rate (%)");
 
                 JFreeChart idRateChart = ChartFactory.createBarChart(null, null, null, idRateDataset, PlotOrientation.VERTICAL, false, false, false);
@@ -3744,10 +3789,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 BarRenderer idRateRenderer = new BarRenderer();
                 idRateRenderer.setShadowVisible(false);
                 idRateRenderer.setBarPainter(new StandardBarPainter());
-                idRateRenderer.setSeriesPaint(0, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
-                idRateRenderer.setSeriesPaint(1, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
-                idRateRenderer.setSeriesPaint(2, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
-                idRateRenderer.setSeriesPaint(3, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+                dataSeriesCounter = 0;
+                if (omssaUsed) {
+                    idRateRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+                }
+                if (xtandemUsed) {
+                    idRateRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+                }
+                if (mascotUsed) {
+                    idRateRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
+                }
+                idRateRenderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
                 idRateRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
                 idRateRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, new DecimalFormat("0.0")));
                 idRateRenderer.setBaseItemLabelsVisible(true);
