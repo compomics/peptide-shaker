@@ -198,6 +198,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true));
+
+        // add scrolling listeners
+        SelfUpdatingTableModel.addScrollListeners(proteinTable, proteinScrollPane, proteinScrollPane.getVerticalScrollBar());
+
         peptideTable.setAutoCreateRowSorter(true);
 
         setTableProperties();
@@ -280,14 +284,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     private void setProteinTableProperties() {
 
         Integer maxProteinKeyLength = null;
-        
+
         if (peptideShakerGUI.getMetrics() != null) {
             maxProteinKeyLength = peptideShakerGUI.getMetrics().getMaxProteinKeyLength();
-            
+
         }
-        
+
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
-                    peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
@@ -3356,7 +3360,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             int proteinRow = getProteinRow(proteinKey);
-            if (proteinRow != -1) {
+            if (proteinRow != -1 && proteinRow < proteinTable.getRowCount()) {
                 proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             }
         }

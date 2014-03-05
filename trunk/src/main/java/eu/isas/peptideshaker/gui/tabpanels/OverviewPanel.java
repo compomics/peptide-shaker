@@ -224,6 +224,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ionTableCorner.setBackground(proteinTable.getTableHeader().getBackground());
         fragmentIonsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ionTableCorner);
 
+        // add table sorting listeners
         SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -236,6 +237,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true));
+
+        // add table scrolling listeners
+        SelfUpdatingTableModel.addScrollListeners(proteinTable, proteinScrollPane, proteinScrollPane.getVerticalScrollBar());
+        SelfUpdatingTableModel.addScrollListeners(peptideTable, peptideScrollPane, peptideScrollPane.getVerticalScrollBar());
 
         // make sure that the scroll panes are see-through
         proteinScrollPane.getViewport().setOpaque(false);
@@ -457,7 +462,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 -peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), // @TODO: how to handle negative values..?
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor())); 
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
@@ -717,14 +722,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
+            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinTableMouseReleased(evt);
             }
         });
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -986,14 +991,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageOptionsJButton.setContentAreaFilled(false);
         sequenceCoverageOptionsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_black.png"))); // NOI18N
         sequenceCoverageOptionsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sequenceCoverageOptionsJButtonMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 sequenceCoverageOptionsJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 sequenceCoverageOptionsJButtonMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                sequenceCoverageOptionsJButtonMouseReleased(evt);
             }
         });
         sequenceCoverageLayeredPane.add(sequenceCoverageOptionsJButton);
@@ -1050,29 +1055,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         peptideScrollPane.setOpaque(false);
 
-        peptideTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "  ", "PI", "Sequence", "Start", "#Spectra", "Confidence", ""
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        peptideTable.setModel(new PeptideTableModel());
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -2035,8 +2018,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 try {
-                    MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), 
-                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key, 
+                    MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
+                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key,
                             peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
@@ -2094,9 +2077,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
-                    PSParameter psParameter = new PSParameter();
                     try {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
+                        PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
                         if (!psParameter.isStarred()) {
                             peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
@@ -3641,7 +3623,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Updates the PSM panel title with the number of validated/confident
      * proteins.
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
@@ -4453,19 +4435,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
                             // get the spectrum annotations
-                            int peptideIndex, peptideRow = peptideTable.getSelectedRow();
-                            if (peptideRow != -1) {
-                                tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
-                                peptideIndex = tableModel.getViewIndex(peptideRow);
-                            } else {
-                                peptideIndex = 0;
-                            }
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                             Peptide currentPeptide = peptideAssumption.getPeptide();
                             PeptideSpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnotator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                            annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), 
+                            annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey),
                                     PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
