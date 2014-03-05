@@ -4227,7 +4227,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param table the table
      * @param colIndex the colum index
      * @param margin the margin to add
-     * @return the prefereed width of the column
+     * @return the preferred width of the column
      */
     public int getPreferredColumnWidth(JTable table, int colIndex, int margin) {
 

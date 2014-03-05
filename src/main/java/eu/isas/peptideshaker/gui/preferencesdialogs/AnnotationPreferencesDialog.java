@@ -179,6 +179,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationLevelPercentLabel = new javax.swing.JLabel();
         annotationLevelLabel = new javax.swing.JLabel();
         accuracySpinner = new javax.swing.JSpinner();
+        peakMatchingCheckBoxPanel = new javax.swing.JPanel();
         adaptNeutralLossesBox = new javax.swing.JCheckBox();
         automaticAnnotationCheck = new javax.swing.JCheckBox();
         highResolutionBox = new javax.swing.JCheckBox();
@@ -287,7 +288,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(reporterBox)
                     .addComponent(immoniumBox)
                     .addComponent(precursorBox))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         ionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aBox, bBox, cBox, immoniumBox, precursorBox, xBox, yBox, zBox});
@@ -380,6 +381,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.001d));
         accuracySpinner.setToolTipText("Fragment ion annotation accuracy.");
 
+        peakMatchingCheckBoxPanel.setOpaque(false);
+
         adaptNeutralLossesBox.setSelected(true);
         adaptNeutralLossesBox.setText("Adapt Neutral Losses");
         adaptNeutralLossesBox.setIconTextGap(10);
@@ -405,11 +408,37 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         highResolutionBox.setIconTextGap(10);
         highResolutionBox.setOpaque(false);
 
+        javax.swing.GroupLayout peakMatchingCheckBoxPanelLayout = new javax.swing.GroupLayout(peakMatchingCheckBoxPanel);
+        peakMatchingCheckBoxPanel.setLayout(peakMatchingCheckBoxPanelLayout);
+        peakMatchingCheckBoxPanelLayout.setHorizontalGroup(
+            peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peakMatchingCheckBoxPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(automaticAnnotationCheck)
+                    .addComponent(adaptNeutralLossesBox)
+                    .addComponent(highResolutionBox))
+                .addContainerGap())
+        );
+        peakMatchingCheckBoxPanelLayout.setVerticalGroup(
+            peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peakMatchingCheckBoxPanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(adaptNeutralLossesBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(automaticAnnotationCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(highResolutionBox)
+                .addContainerGap())
+        );
+
+        peakMatchingCheckBoxPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {adaptNeutralLossesBox, automaticAnnotationCheck, highResolutionBox});
+
         javax.swing.GroupLayout peakMatchingPanelLayout = new javax.swing.GroupLayout(peakMatchingPanel);
         peakMatchingPanel.setLayout(peakMatchingPanelLayout);
         peakMatchingPanelLayout.setHorizontalGroup(
             peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peakMatchingPanelLayout.createSequentialGroup()
+            .addGroup(peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fragmentIonAccuracyLabel)
@@ -422,12 +451,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fragmentIonAccuracyTypeLabel)
                     .addComponent(annotationLevelPercentLabel, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(highResolutionBox)
-                    .addComponent(automaticAnnotationCheck)
-                    .addComponent(adaptNeutralLossesBox))
-                .addGap(31, 31, 31))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(peakMatchingCheckBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
 
         peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {annotationLevelPercentLabel, fragmentIonAccuracyTypeLabel});
@@ -436,23 +462,20 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(annotationLevelLabel)
-                    .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(annotationLevelPercentLabel)
-                    .addComponent(adaptNeutralLossesBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(fragmentIonAccuracyLabel)
-                    .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fragmentIonAccuracyTypeLabel)
-                    .addComponent(automaticAnnotationCheck))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(highResolutionBox)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(peakMatchingPanelLayout.createSequentialGroup()
+                        .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(annotationLevelLabel)
+                            .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(annotationLevelPercentLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(fragmentIonAccuracyLabel)
+                            .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fragmentIonAccuracyTypeLabel)))
+                    .addComponent(peakMatchingCheckBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {adaptNeutralLossesBox, automaticAnnotationCheck, highResolutionBox});
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -461,7 +484,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ionsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(annotationPreferencesHelpJButton)
@@ -671,6 +694,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane neutralLossScrollPane;
     private javax.swing.JTable neutralLossesTable;
     private javax.swing.JButton okButton;
+    private javax.swing.JPanel peakMatchingCheckBoxPanel;
     private javax.swing.JPanel peakMatchingPanel;
     private javax.swing.JCheckBox precursorBox;
     private javax.swing.JCheckBox reporterBox;
