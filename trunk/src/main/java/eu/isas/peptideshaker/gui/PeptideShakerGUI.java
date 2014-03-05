@@ -680,6 +680,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         splitterMenu9 = new javax.swing.JMenu();
         settingsMenu = new javax.swing.JMenu();
         allCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        highResAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         barsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         bubbleScaleJMenuItem = new javax.swing.JMenuItem();
         intensityIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -975,6 +976,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         });
         settingsMenu.add(allCheckBoxMenuItem);
+
+        highResAnnotationCheckBoxMenuItem.setSelected(true);
+        highResAnnotationCheckBoxMenuItem.setText("High Resolution");
+        highResAnnotationCheckBoxMenuItem.setToolTipText("Use high resolution annotation");
+        highResAnnotationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                highResAnnotationCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(highResAnnotationCheckBoxMenuItem);
 
         barsCheckBoxMenuItem.setText("Show Bars");
         barsCheckBoxMenuItem.setToolTipText("Add bars highlighting the fragment ion types");
@@ -2980,6 +2991,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }//GEN-LAST:event_openExampleMenuItemActionPerformed
 
     /**
+     * @see #updateAnnotationPreferences()
+     */ 
+    private void highResAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highResAnnotationCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_highResAnnotationCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -3140,6 +3158,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
+    private javax.swing.JCheckBoxMenuItem highResAnnotationCheckBoxMenuItem;
     private javax.swing.JMenuItem identificationFeaturesMenuItem;
     private javax.swing.JCheckBoxMenuItem immoniumIonsCheckMenu;
     private javax.swing.JMenuItem importFilterMenu;
@@ -4771,6 +4790,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         automaticAnnotationCheckBoxMenuItem.setSelected(getAnnotationPreferences().useAutomaticAnnotation());
         adaptCheckBoxMenuItem.setSelected(getAnnotationPreferences().areNeutralLossesSequenceDependant());
+        highResAnnotationCheckBoxMenuItem.setSelected(getAnnotationPreferences().isHighResolutionAnnotation());
 
         // disable/enable the neutral loss options
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
@@ -4837,6 +4857,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         getAnnotationPreferences().useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
         getAnnotationPreferences().setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
+        getAnnotationPreferences().setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
 
         getAnnotationPreferences().setShowAllPeaks(allCheckBoxMenuItem.isSelected());
         getAnnotationPreferences().setShowBars(barsCheckBoxMenuItem.isSelected());
@@ -4880,6 +4901,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumMenu.setVisible(showSpectrumOptions);
+        highResAnnotationCheckBoxMenuItem.setVisible(showSpectrumOptions || showBubblePlotOptions);
 
         // @TODO: remove this when the other tabs also use the extended spectrum panel!
         exportSpectrumAndPlotsGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
