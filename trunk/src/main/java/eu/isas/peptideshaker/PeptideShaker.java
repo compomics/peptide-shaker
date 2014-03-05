@@ -1476,7 +1476,8 @@ public class PeptideShaker {
                                     PeptideAssumption tempAssumption = assumptions.get(0);
                                     Peptide peptide = tempAssumption.getPeptide();
                                     int precursorCharge = tempAssumption.getIdentificationCharge().value;
-                                    double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, spectrum, peptide, 0, mzTolerance, isPpm).keySet().size();
+                                    double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, 
+                                            spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                     double coverage = nIons / peptide.getSequence().length();
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).put(coverage, new HashMap<Double, ArrayList<PeptideAssumption>>());
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(-1.0, assumptions);
@@ -1484,7 +1485,8 @@ public class PeptideShaker {
                                 }
                                 Peptide peptide = peptideAssumption1.getPeptide();
                                 int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
-                                double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, spectrum, peptide, 0, mzTolerance, isPpm).keySet().size();
+                                double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, 
+                                        spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                 double coverage = nIons / peptide.getSequence().length();
                                 if (!peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(coverage)) {
                                     ArrayList<PeptideAssumption> assumptions = new ArrayList<PeptideAssumption>();

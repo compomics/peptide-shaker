@@ -381,7 +381,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="fragmentIonAccuracyLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -399,8 +399,9 @@
                       </Group>
                       <EmptySpace pref="35" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="adaptNeutralLossesBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="highResolutionBox" min="-2" max="-2" attributes="0"/>
                           <Component id="automaticAnnotationCheck" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="adaptNeutralLossesBox" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                   </Group>
@@ -414,15 +415,17 @@
                           <Component id="annotationLevelLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="intensitySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="annotationLevelPercentLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="adaptNeutralLossesBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="adaptNeutralLossesBox" linkSize="9" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="fragmentIonAccuracyLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="accuracySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="fragmentIonAccuracyTypeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="automaticAnnotationCheck" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="automaticAnnotationCheck" linkSize="9" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="highResolutionBox" linkSize="9" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -488,6 +491,14 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticAnnotationCheckActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="highResolutionBox">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="High Resolution"/>
+                <Property name="iconTextGap" type="int" value="10"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

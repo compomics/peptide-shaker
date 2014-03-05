@@ -536,9 +536,10 @@ public class AssumptionFilter extends MatchFilter {
                 spectrumAnnotator = new PeptideSpectrumAnnotator();
                 assumptionFilter.setSpectrumAnnotator(spectrumAnnotator);
             }
-            HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+            HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), 
+                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                     peptideAssumption.getIdentificationCharge().value, spectrum, peptide, annotationPreferences.getAnnotationIntensityLimit(),
-                    searchParameters.getFragmentIonAccuracy(), false);
+                    searchParameters.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
 
             double nCovered = 0;
             int nAA = peptide.getSequence().length();

@@ -181,6 +181,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         accuracySpinner = new javax.swing.JSpinner();
         adaptNeutralLossesBox = new javax.swing.JCheckBox();
         automaticAnnotationCheck = new javax.swing.JCheckBox();
+        highResolutionBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Spectrum Annotation");
@@ -399,11 +400,16 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        highResolutionBox.setSelected(true);
+        highResolutionBox.setText("High Resolution");
+        highResolutionBox.setIconTextGap(10);
+        highResolutionBox.setOpaque(false);
+
         javax.swing.GroupLayout peakMatchingPanelLayout = new javax.swing.GroupLayout(peakMatchingPanel);
         peakMatchingPanel.setLayout(peakMatchingPanelLayout);
         peakMatchingPanelLayout.setHorizontalGroup(
             peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peakMatchingPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fragmentIonAccuracyLabel)
@@ -418,8 +424,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(annotationLevelPercentLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(adaptNeutralLossesBox)
-                    .addComponent(automaticAnnotationCheck))
+                    .addComponent(highResolutionBox)
+                    .addComponent(automaticAnnotationCheck)
+                    .addComponent(adaptNeutralLossesBox))
                 .addGap(31, 31, 31))
         );
 
@@ -440,8 +447,12 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fragmentIonAccuracyTypeLabel)
                     .addComponent(automaticAnnotationCheck))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(highResolutionBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {adaptNeutralLossesBox, automaticAnnotationCheck, highResolutionBox});
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -541,6 +552,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
         annotationPreferences.setFragmentIonAccuracy((Double) accuracySpinner.getValue());
+        annotationPreferences.setHighResolutionAnnotation(highResolutionBox.isSelected());
 
         annotationPreferences.clearNeutralLosses();
 
@@ -633,6 +645,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
         }
     }//GEN-LAST:event_adaptNeutralLossesBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
@@ -650,6 +663,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTable chargesTable;
     private javax.swing.JLabel fragmentIonAccuracyLabel;
     private javax.swing.JLabel fragmentIonAccuracyTypeLabel;
+    private javax.swing.JCheckBox highResolutionBox;
     private javax.swing.JCheckBox immoniumBox;
     private javax.swing.JSpinner intensitySpinner;
     private javax.swing.JPanel ionsPanel;
@@ -669,9 +683,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      * Refresh the selection.
      */
     private void updateGUI() {
+
         intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         ((SpinnerNumberModel) accuracySpinner.getModel()).setMaximum(peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
         accuracySpinner.setValue(new Double(annotationPreferences.getFragmentIonAccuracy()));
+
         aBox.setSelected(false);
         bBox.setSelected(false);
         cBox.setSelected(false);
@@ -681,6 +697,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         precursorBox.setSelected(false);
         immoniumBox.setSelected(false);
         reporterBox.setSelected(false);
+
         for (IonType ionType : annotationPreferences.getIonTypes().keySet()) {
             if (ionType == IonType.IMMONIUM_ION) {
                 immoniumBox.setSelected(true);
@@ -709,6 +726,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         automaticAnnotationCheck.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptNeutralLossesBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        highResolutionBox.setSelected(annotationPreferences.isHighResolutionAnnotation());
     }
 
     /**
