@@ -3872,7 +3872,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         identificationCharge,
                         currentSpectrum, peptide,
                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                        annotationPreferences.getFragmentIonAccuracy(), false);
+                        annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
                 currentSpectrumKey = spectrumMatch.getKey();
 
                 // add the spectrum annotations

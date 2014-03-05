@@ -481,6 +481,8 @@
                 <Property name="text" type="java.lang.String" value="Open Recent Project"/>
               </Properties>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator20">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openExampleMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="69"/>

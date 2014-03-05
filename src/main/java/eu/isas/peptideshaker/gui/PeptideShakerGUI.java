@@ -727,6 +727,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
+        jSeparator20 = new javax.swing.JPopupMenu.Separator();
         openExampleMenuItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         reshakeMenuItem = new javax.swing.JMenuItem();
@@ -1312,6 +1313,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         openRecentJMenu.setMnemonic('R');
         openRecentJMenu.setText("Open Recent Project");
         fileJMenu.add(openRecentJMenu);
+        fileJMenu.add(jSeparator20);
 
         openExampleMenuItem.setMnemonic('E');
         openExampleMenuItem.setText("Open Example");
@@ -3055,6 +3057,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             quantifyMenuItem.setEnabled(true);
             speciesJMenuItem.setEnabled(true);
 
+            // show/hide the sliders
+            spectrumSlidersCheckBoxMenuItem.setSelected(getUserPreferences().showSliders());
+
             projectExportMenu.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
             //exportMzIdentMLMenuItem.setEnabled(true);
@@ -3153,6 +3158,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator20;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;

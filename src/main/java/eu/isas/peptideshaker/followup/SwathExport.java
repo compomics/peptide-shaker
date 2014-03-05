@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.Ion;
@@ -40,9 +35,9 @@ import java.util.ArrayList;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class exports a text file to create a swath library
+ * This class exports a text file to create a swath library.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class SwathExport {
 
@@ -52,21 +47,25 @@ public class SwathExport {
     public static final String SEPARATOR = "\t";
 
     /**
-     * Writes a text export containing the information for a swath library. Note: ions with neutral losses are skipped.
-     * 
-     * @param destinationFile the destination file where to write the information
-     * @param identification the identification containing the identification results
+     * Writes a text export containing the information for a swath library.
+     * Note: ions with neutral losses are skipped.
+     *
+     * @param destinationFile the destination file where to write the
+     * information
+     * @param identification the identification containing the identification
+     * results
      * @param exportType the type of export
-     * @param waitingHandler a waiting handler to display progress and cancel the process
+     * @param waitingHandler a waiting handler to display progress and cancel
+     * the process
      * @param targetedPTMs the targeted PTMs in case of a PTM export
      * @param searchParameters the parameters used for the identification
      * @param annotationPreferences the spectrum annotation preferences
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
-     * @throws MzMLUnmarshallerException 
+     * @throws MzMLUnmarshallerException
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SearchParameters searchParameters, AnnotationPreferences annotationPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -100,6 +99,7 @@ public class SwathExport {
         FileWriter f = new FileWriter(destinationFile);
         try {
             BufferedWriter writer = new BufferedWriter(f);
+
             try {
                 writer.write("Q1" + SEPARATOR);
                 writer.write("Q3" + SEPARATOR);
@@ -269,7 +269,6 @@ public class SwathExport {
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-        PSParameter psParameter = new PSParameter();
         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
         Peptide peptide = bestAssumption.getPeptide();
         MSnSpectrum spectrum = (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey);
@@ -299,7 +298,8 @@ public class SwathExport {
                     spectrum,
                     spectrumMatch.getBestPeptideAssumption().getPeptide(),
                     spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    annotationPreferences.getFragmentIonAccuracy(), false);
+                    annotationPreferences.getFragmentIonAccuracy(), false, 
+                    annotationPreferences.isHighResolutionAnnotation());
 
             for (IonMatch ionMatch : annotations) {
 
@@ -341,7 +341,7 @@ public class SwathExport {
                         for (int aa = 0; aa < sequence.length(); aa++) {
                             modifiedSequence += sequence.charAt(aa);
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getModificationSite() == aa+1) {
+                                if (modificationMatch.getModificationSite() == aa + 1) {
                                     String ptmName = modificationMatch.getTheoreticPtm();
                                     PTM ptm = ptmFactory.getPTM(ptmName);
                                     CvTerm cvTerm = null;
@@ -380,7 +380,6 @@ public class SwathExport {
                         writer.write(peptideFragmentIon.getNumber() + SEPARATOR);
 
                         writer.newLine();
-
                     }
                 }
             }
@@ -478,5 +477,4 @@ public class SwathExport {
                     + confident_ptms.index + ":" + confident_ptms.description + ".";
         }
     }
-
 }

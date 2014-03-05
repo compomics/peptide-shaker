@@ -2962,7 +2962,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             currentPeptideAssumption.getIdentificationCharge().value,
                                             currentSpectrum, currentPeptideAssumption.getPeptide(),
                                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                            annotationPreferences.getFragmentIonAccuracy(), false);
+                                            annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
                                     currentSpectrumKey = spectrumMatch.getKey();
 
                                     // add the spectrum annotations

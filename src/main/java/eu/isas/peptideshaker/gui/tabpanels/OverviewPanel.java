@@ -3906,7 +3906,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 currentSpectrum,
                                 selectedPeptideMatch.getTheoreticPeptide(),
                                 currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                annotationPreferences.getFragmentIonAccuracy(), false);
+                                annotationPreferences.getFragmentIonAccuracy(), false,
+                                annotationPreferences.isHighResolutionAnnotation());
                         allAnnotations.add(annotations);
                         allSpectra.add(currentSpectrum);
 
@@ -4448,7 +4449,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     identificationCharge,
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getFragmentIonAccuracy(), false);
+                                    annotationPreferences.getFragmentIonAccuracy(), false,
+                                    annotationPreferences.isHighResolutionAnnotation());
                             spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
 
@@ -4923,7 +4925,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             currentSpectrum, peptideAssumption.getPeptide(),
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getFragmentIonAccuracy(), false);
+                            annotationPreferences.getFragmentIonAccuracy(), false, 
+                            annotationPreferences.isHighResolutionAnnotation());
                     allAnnotations.add(annotations);
                     currentSpectrumKey = spectrumKey;
                 }

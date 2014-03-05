@@ -110,7 +110,7 @@ public class FragmentSection {
                 spectrum,
                 spectrumMatch.getBestPeptideAssumption().getPeptide(),
                 spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                annotationPreferences.getFragmentIonAccuracy(), false);
+                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
 
         HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>();
         for (IonMatch ionMatch : annotations) {
