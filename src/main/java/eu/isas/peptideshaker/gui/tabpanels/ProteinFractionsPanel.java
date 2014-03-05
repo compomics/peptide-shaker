@@ -144,6 +144,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true));
 
+        // add scrolling listeners
+        SelfUpdatingTableModel.addScrollListeners(proteinTable, proteinTableScrollPane, proteinTableScrollPane.getVerticalScrollBar());
+
         // make sure that the scroll panes are see-through
         proteinTableScrollPane.getViewport().setOpaque(false);
         coverageTableScrollPane.getViewport().setOpaque(false);
