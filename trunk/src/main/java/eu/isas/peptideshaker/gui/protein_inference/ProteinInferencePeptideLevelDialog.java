@@ -75,7 +75,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         this.peptideMatchKey = peptideMatchKey;
         this.peptideShakerGUI = aPeptideShakerGUI;
-        
+
         PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
 
         initComponents();
@@ -133,6 +133,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             try {
                 description = sequenceFactory.getHeader(protein).getSimpleProteinDescription();
+
+                // if description is not set, return the accession instead - fix for home made fasta headers
+                if (description == null || description.trim().isEmpty()) {
+                    description = protein;
+                }
+
                 geneName = sequenceFactory.getHeader(protein).getGeneName();
                 proteinEvidenceLevel = sequenceFactory.getHeader(protein).getProteinEvidence();
 

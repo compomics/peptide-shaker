@@ -260,9 +260,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 dataMissingAtRow(row);
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
-                            String description = "";
+                            String description = null;
                             try {
                                 description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
+
+                                // if description is not set, return the accession instead - fix for home made fasta headers
+                                if (description == null || description.trim().isEmpty()) {
+                                    description = proteinMatch.getMainMatch();
+                                }
                             } catch (Exception e) {
                                 exceptionHandler.catchException(e);
                             }

@@ -625,7 +625,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Processes the identifications if a change occured in the psm map.
+     * Processes the identifications if a change occurred in the PSM map.
      *
      * @param waitingHandler the waiting handler
      * @param processingPreferences the processing preferences
@@ -779,21 +779,21 @@ public class PeptideShaker {
                     }
                 }
                 // @TODO: debug
-    //            if (needSecondPass) {
-    //                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-    //
-    //                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-    //
-    //                    if (waitingHandler != null) {
-    //                        waitingHandler.increaseSecondaryProgressCounter();
-    //                        if (waitingHandler.isRunCanceled()) {
-    //                            return;
-    //                        }
-    //                    }
-    //                }
-    //            } else if (waitingHandler != null) {
-    //                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
-    //            }
+                //            if (needSecondPass) {
+                //                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+                //
+                //                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+                //
+                //                    if (waitingHandler != null) {
+                //                        waitingHandler.increaseSecondaryProgressCounter();
+                //                        if (waitingHandler.isRunCanceled()) {
+                //                            return;
+                //                        }
+                //                    }
+                //                }
+                //            } else if (waitingHandler != null) {
+                //                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
+                //            }
             }
         }
 
@@ -1476,7 +1476,7 @@ public class PeptideShaker {
                                     PeptideAssumption tempAssumption = assumptions.get(0);
                                     Peptide peptide = tempAssumption.getPeptide();
                                     int precursorCharge = tempAssumption.getIdentificationCharge().value;
-                                    double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, 
+                                    double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
                                             spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                     double coverage = nIons / peptide.getSequence().length();
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).put(coverage, new HashMap<Double, ArrayList<PeptideAssumption>>());
@@ -1485,7 +1485,7 @@ public class PeptideShaker {
                                 }
                                 Peptide peptide = peptideAssumption1.getPeptide();
                                 int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
-                                double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, 
+                                double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
                                         spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                 double coverage = nIons / peptide.getSequence().length();
                                 if (!peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(coverage)) {
@@ -1734,7 +1734,7 @@ public class PeptideShaker {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, null);
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                
+
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (sequenceFactory.concatenatedTargetDecoy()) {
                     psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
@@ -3627,15 +3627,14 @@ public class PeptideShaker {
      * evidence level (if available), if not there then checks the protein
      * description and peptide enzymaticity.
      *
-     *
      * @param oldProteinMatch the protein match of oldAccession
      * @param oldAccession the accession of the old protein
      * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
      * @param searchParameters the parameters used for the identification
      *
-     * @return the product of the comparison: 1 better enzymaticity 2: better
-     * evidence 3: better characterization 0: equal or not better
+     * @return the product of the comparison: 1: better enzymaticity, 2: better
+     * evidence, 3: better characterization, 0: equal or not better
      *
      * @throws IOException
      * @throws InterruptedException
@@ -3660,9 +3659,8 @@ public class PeptideShaker {
         String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
         String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();
 
+        // compare protein evidence levels
         if (evidenceLevelOld != null && evidenceLevelNew != null) {
-
-            // compare protein evidence levels
             try {
                 Integer levelOld = new Integer(evidenceLevelOld);
                 Integer levelNew = new Integer(evidenceLevelNew);
@@ -3676,17 +3674,29 @@ public class PeptideShaker {
             }
         }
 
+        // only the new match has evidence information
+        if (evidenceLevelOld == null && evidenceLevelNew != null) {
+            return 2;
+        }
+
+        // only the old match has evidence information
+        if (evidenceLevelOld != null && evidenceLevelNew == null) {
+            return 0;
+        }
+
         // protein evidence level missing, compare descriptions instead
         String oldDescription = sequenceFactory.getHeader(oldAccession).getSimpleProteinDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getSimpleProteinDescription();
 
-        // note: this most likely means that we have a problem with the parsing of the db, but better than a null pointer...
-        if (oldDescription == null) {
-            return 0;
+        // if the description are not set, return the accessions instead - fix for home made fasta headers
+        if (oldDescription == null || oldDescription.trim().isEmpty()) {
+            oldDescription = oldAccession;
+        }
+        if (newDescription == null || newDescription.trim().isEmpty()) {
+            newDescription = newAccession;
         }
 
-        boolean oldUncharacterized = false,
-                newUncharacterized = false;
+        boolean oldUncharacterized = false, newUncharacterized = false;
         String[] keyWords = {"Uncharacterized", "putative"};
         for (String keyWord : keyWords) {
             if (newDescription.toLowerCase().contains(keyWord)) {
