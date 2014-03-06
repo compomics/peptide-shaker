@@ -1782,14 +1782,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                new NewDialog(null, this, true);
+                new NewDialog(this, true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
-                new NewDialog(null, this, true);
+                new NewDialog(this, true);
             }
         } else {
-            new NewDialog(null, this, true);
+            new NewDialog(this, true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
 
