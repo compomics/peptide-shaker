@@ -3,6 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.26.1  (March 6. 2014):*
+
+ * FEATURE IMPROVEMENT: Added a high resolution option for the spectrum annotation.
+ * FEATURE IMPROVEMENT: Added more advanced scrolling support for the tables.
+
+ * BUG FIX: Fixed a bug in the parsing of FASTA files with unknown headers.
+ * BUG FIX: Fixed errors with the TMT 10-plex reporter ion masses.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.23.18.
+
+----
+
 *Changes in PeptideShaker 0.26.0  (March 3. 2014):*
 
  * FEATURE IMPROVEMENT: The loading of search results is now a lot quicker!
