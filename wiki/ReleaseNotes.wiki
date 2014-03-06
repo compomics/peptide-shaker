@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.26.2  (March 6. 2014):*
+
+ * BUG FIX: Fixed a icon image bug that occurred if one used the New Project option in the main frame.
+
+----
+
 *Changes in PeptideShaker 0.26.1  (March 6. 2014):*
 
  * FEATURE IMPROVEMENT: Added a high resolution option for the spectrum annotation.
