@@ -904,7 +904,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(accessions.get(row));
                 case 3:
                     try {
-                        return sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
+                        String description = sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
+
+                        // if description is not set, return the accession instead - fix for home made fasta headers
+                        if (description == null || description.trim().isEmpty()) {
+                            description = inspectedMatch.getMainMatch();
+                        }
+
+                        return description;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
@@ -945,9 +952,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), 
-                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                PeptideShaker.MATCHING_TYPE, 
+                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row),
+                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                PeptideShaker.MATCHING_TYPE,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
