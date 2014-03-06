@@ -132,6 +132,24 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     /**
      * Creates a new open dialog.
      *
+     * @param peptideShaker a reference to the main frame
+     * @param modal boolean indicating whether the dialog is modal
+     */
+    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
+        super(peptideShaker, modal);
+        this.peptideShakerGUI = peptideShaker;
+        this.welcomeDialog = null;
+        this.genePreferences = peptideShaker.getGenePreferences();
+        currentFastaFile = sequenceFactory.getCurrentFastaFile();
+        setUpGui();
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+        this.setLocationRelativeTo(peptideShaker);
+        setVisible(true);
+    }
+
+    /**
+     * Creates a new open dialog.
+     *
      * @param welcomeDialog the welcome dialog parent frame
      * @param peptideShaker a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
@@ -143,6 +161,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         this.genePreferences = peptideShaker.getGenePreferences();
         currentFastaFile = sequenceFactory.getCurrentFastaFile();
         setUpGui();
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(welcomeDialog);
         setVisible(true);
     }
@@ -1808,6 +1827,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     @Override
     public void setIconImage(Image image) {
         super.setIconImage(image);
-        welcomeDialog.setIconImage(image);
+        if (welcomeDialog != null) {
+            welcomeDialog.setIconImage(image);
+        }
     }
 }
