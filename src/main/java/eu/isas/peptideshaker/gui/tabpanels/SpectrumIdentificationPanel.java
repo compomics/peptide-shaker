@@ -26,7 +26,6 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
-import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -54,12 +53,10 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.sections.PeptideSection;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
-import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
@@ -89,6 +86,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         BarRenderer.setDefaultBarPainter(new StandardBarPainter());
     }
     /**
+     * The Venn diagram advocate colors.
+     */
+    private HashMap<Advocate, Color> advocateVennColors;
+    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
@@ -102,7 +103,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private enum TableIndex {
 
-        ID_SOFTWARE_PERFORMANCE, SPECTRUM_FILES, PSM_TABLES
+        SPECTRUM_FILES, PSM_TABLES
     };
     /**
      * Static index for the ID software agreement: no psm found.
@@ -200,7 +201,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         initComponents();
         formComponentResized(null);
 
-        idSoftwareTableJScrollPane.getViewport().setOpaque(false);
         spectrumTableJScrollPane.getViewport().setOpaque(false);
         peptideShakerJScrollPane.getViewport().setOpaque(false);
         idResultsTableJScrollPane.getViewport().setOpaque(false);
@@ -230,6 +230,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.OMSSA.getIndex(), new java.awt.Color(153, 153, 255));
         searchEnginesColorMap.put(Advocate.Mascot.getIndex(), new java.awt.Color(255, 153, 255));
         searchEnginesColorMap.put(Advocate.MSGF.getIndex(), new java.awt.Color(205, 92, 92));
+
+        // the venn diagram colors
+        advocateVennColors = new HashMap<Advocate, Color>();
+        advocateVennColors.put(Advocate.XTandem, Color.PALETURQUOISE);
+        advocateVennColors.put(Advocate.OMSSA, Color.MEDIUMSLATEBLUE);
+        advocateVennColors.put(Advocate.Mascot, Color.PINK);
+        advocateVennColors.put(Advocate.MSGF, Color.INDIANRED);
     }
 
     /**
@@ -248,13 +255,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
         searchResultsTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
 
-        idSoftwareTable.getTableHeader().setReorderingAllowed(false);
         peptideShakerJTable.getTableHeader().setReorderingAllowed(false);
         spectrumTable.getTableHeader().setReorderingAllowed(false);
         searchResultsTable.getTableHeader().setReorderingAllowed(false);
 
         spectrumTable.setAutoCreateRowSorter(true);
-        idSoftwareTable.setAutoCreateRowSorter(true);
 
         // make sure that the user is made aware that the tool is doing something during sorting of the spectrum table
         spectrumTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
@@ -282,8 +287,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.getColumn(" ").setMaxWidth(30);
         peptideShakerJTable.getColumn("  ").setMinWidth(30);
         peptideShakerJTable.getColumn("  ").setMaxWidth(30);
-        idSoftwareTable.getColumn(" ").setMinWidth(30);
-        idSoftwareTable.getColumn(" ").setMaxWidth(30);
         spectrumTable.getColumn(" ").setMinWidth(50);
         spectrumTable.getColumn(" ").setMaxWidth(50);
         spectrumTable.getColumn("  ").setMinWidth(30);
@@ -346,15 +349,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         searchResultsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-
-        idSoftwareTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        idSoftwareTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        idSoftwareTable.getColumn("Unassigned").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        idSoftwareTable.getColumn("ID Rate (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("ID Rate (%)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> idSoftwareSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
@@ -437,10 +431,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("ID Rate (%)").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
@@ -451,9 +441,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-
-        idSoftwareTable.revalidate();
-        idSoftwareTable.repaint();
 
         spectrumTable.revalidate();
         spectrumTable.repaint();
@@ -477,20 +464,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionDialog = new javax.swing.JDialog();
         backgroundPanel = new javax.swing.JPanel();
         fileNamesCmb = new javax.swing.JComboBox();
-        idSoftwareTableJScrollPane = new javax.swing.JScrollPane();
-        idSoftwareTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) idSoftwareTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
         spectrumSelectionPsmSplitPane = new javax.swing.JSplitPane();
         spectrumSelectionJPanel = new javax.swing.JPanel();
         spectrumSelectionLayeredPane = new javax.swing.JLayeredPane();
@@ -614,34 +587,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        idSoftwareTableJScrollPane.setOpaque(false);
-
-        idSoftwareTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "ID Software", "Validated PSMs", "Unique PSMs", "Unassigned", "ID Rate (%)"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        idSoftwareTable.setOpaque(false);
-        idSoftwareTableJScrollPane.setViewportView(idSoftwareTable);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1538,7 +1483,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formComponentResized
 
     /**
-     * Update the id results psm selection.
+     * Update the id results PSM selection.
      *
      * @param evt
      */
@@ -1553,7 +1498,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_searchResultsTableMouseClicked
 
     /**
-     * Update the id results psm selection.
+     * Update the id results PSM selection.
      *
      * @param evt
      */
@@ -2199,6 +2144,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_spectrumSelectionPanelMouseReleased
 
+    /**
+     * Shows a tooltip when the mouse is over the spectrum selection link.
+     * 
+     * @param evt 
+     */
     private void spectrumSelectionPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionPanelMouseMoved
         if (evt.getX() > 180 && evt.getX() < 400 && evt.getY() < 25) {
             spectrumSelectionPanel.setToolTipText("Select Spectrum File");
@@ -2227,8 +2177,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JLayeredPane idSoftwareJLayeredPane;
     private javax.swing.JPanel idSoftwareJPanel;
     private javax.swing.JPanel idSoftwarePanel;
-    private javax.swing.JTable idSoftwareTable;
-    private javax.swing.JScrollPane idSoftwareTableJScrollPane;
     private javax.swing.JSlider intensitySlider;
     private javax.swing.JPanel overviewPlotsPanel;
     private javax.swing.JScrollPane peptideShakerJScrollPane;
@@ -2312,9 +2260,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                     progressDialog.setValue(0);
 
-                    // @TODO: this should be moved to when the files are loaded and done only once...?
                     // get the list of id software used
-                    IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+                    IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance(); // @TODO: this should be done when the files are loaded?
                     ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
                     advocatesUsed = new ArrayList<Advocate>();
 
@@ -2337,11 +2284,26 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                         }
                     }
-                    
-                    // @TODO: order the advocates to have the same order is in the overview plots
 
-                    Integer m = 0, o = 0, x = 0, mascot = 0, mo = 0, mx = 0, ox = 0, omx = 0;
+                    // order the advocates to have the same order is in the overview plots
+                    Collections.sort(advocatesUsed);
+
+                    HashMap<Advocate, Double> totalAdvocateId = new HashMap<Advocate, Double>();
+                    HashMap<Advocate, Double> uniqueAdvocateId = new HashMap<Advocate, Double>();
+
+                    for (Advocate tempAdvocate : advocatesUsed) {
+                        totalAdvocateId.put(tempAdvocate, 0.0);
+                        uniqueAdvocateId.put(tempAdvocate, 0.0);
+                    }
+
+                    int dataA = 0, dataB = 0, dataC = 0, dataAB = 0, dataAC = 0, dataBC = 0, dataABC = 0;
                     int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
+
+                    // venn diagram data
+                    ArrayList<Advocate> vennDiagramAdvocates = new ArrayList<Advocate>(); // @TODO: should be possible to change by the user...
+                    for (int i = 0; i < advocatesUsed.size() && i < 3; i++) {
+                        vennDiagramAdvocates.add(advocatesUsed.get(i));
+                    }
 
                     int fileCounter = 1;
                     PSParameter probabilities = new PSParameter();
@@ -2380,30 +2342,52 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 }
                             }
 
-                            // @TODO: this should be made more generic!!!
-                            if (currentAdvocates.contains(Advocate.MSGF) && currentAdvocates.contains(Advocate.OMSSA) && currentAdvocates.contains(Advocate.XTandem)) {
-                                omx++;
+                            // get the venn diagram data
+                            if (vennDiagramAdvocates.size() == 3) {
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0))
+                                        && currentAdvocates.contains(vennDiagramAdvocates.get(1))
+                                        && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                                    dataABC++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                                    dataAB++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                                    dataAC++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(1)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                                    dataBC++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
+                                    dataA++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                                    dataB++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                                    dataC++;
+                                }
+                            } else if (vennDiagramAdvocates.size() == 2) {
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                                    dataAB++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
+                                    dataA++;
+                                }
+                                if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                                    dataB++;
+                                }
                             }
-                            if (currentAdvocates.contains(Advocate.MSGF) && currentAdvocates.contains(Advocate.OMSSA)) {
-                                mo++;
-                            }
-                            if (currentAdvocates.contains(Advocate.OMSSA) && currentAdvocates.contains(Advocate.XTandem)) {
-                                ox++;
-                            }
-                            if (currentAdvocates.contains(Advocate.MSGF) && currentAdvocates.contains(Advocate.XTandem)) {
-                                mx++;
-                            }
-                            if (currentAdvocates.contains(Advocate.MSGF)) {
-                                m++;
-                            }
-                            if (currentAdvocates.contains(Advocate.OMSSA)) {
-                                o++;
-                            }
-                            if (currentAdvocates.contains(Advocate.XTandem)) {
-                                x++;
-                            }
-                            if (currentAdvocates.contains(Advocate.Mascot)) {
-                                mascot++;
+
+                            // overview plot data
+                            for (Advocate tempAdvocate : advocatesUsed) {
+                                if (currentAdvocates.contains(tempAdvocate)) {
+                                    totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
+
+                                    if (currentAdvocates.size() == 1) {
+                                        uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
+                                    }
+                                }
                             }
 
                             progressDialog.increasePrimaryProgressCounter();
@@ -2415,91 +2399,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
                         progressDialog.setTitle("Updating Tables. Please Wait...");
 
-                        int nMsgf = m;
-                        int nOMSSA = o;
-                        int nXTandem = x;
-                        int nMascot = mascot;
-
-                        int no_m = totalNumberOfSpectra - nMsgf;
-                        int no_x = totalNumberOfSpectra - nXTandem;
-                        int no_o = totalNumberOfSpectra - nOMSSA;
-
-                        double biggestValue = Math.max(Math.max(nMsgf, nOMSSA), nXTandem);
-                        biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
-
-                        int uniqueOmssa = nOMSSA - ox - mo + omx;
-                        int uniqueXTandem = nXTandem - ox - mx + omx;
-                        int uniqueMsgf = nMsgf - mo - mx + omx;
-
-                        // hide comparison values if empty
-                        if (ox == 0) {
-                            ox = null;
-                        }
-                        if (mo == 0) {
-                            mo = null;
-                        }
-                        if (omx == 0) {
-                            omx = null;
-                        }
-                        if (mx == 0) {
-                            mx = null;
-                        }
-
-                        // update the id software performance plots
-                        updateOverviewPlots(nOMSSA, nXTandem, nMsgf, totalPeptideShakerIds,
-                                ox, mo, mx, omx,
-                                uniqueOmssa, uniqueXTandem, uniqueMsgf,
-                                no_o, no_x, no_m, totalNumberOfSpectra - totalPeptideShakerIds,
-                                (((double) nOMSSA) / (nOMSSA + no_o)) * 100,
-                                (((double) nXTandem) / (nXTandem + no_x)) * 100,
-                                (((double) nMsgf) / (nMsgf + no_m)) * 100,
-                                (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100);
-
-                        int idSoftwareRowCounter = 0;
-
-                        if (advocatesUsed.contains(Advocate.OMSSA)) {
-                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
-                                ++idSoftwareRowCounter, "OMSSA",
-                                nOMSSA, uniqueOmssa, no_o, (((double) nOMSSA) / (nOMSSA + no_o)) * 100
-                            });
-                        }
-                        if (advocatesUsed.contains(Advocate.XTandem)) {
-                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
-                                ++idSoftwareRowCounter, "X!Tandem",
-                                nXTandem, uniqueXTandem, no_x, (((double) nXTandem) / (nXTandem + no_x)) * 100
-                            });
-                        }
-                        if (advocatesUsed.contains(Advocate.Mascot)) {
-                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
-                                ++idSoftwareRowCounter, "Mascot",
-                                nMsgf, uniqueMsgf, no_m, (((double) nMsgf) / (nMsgf + no_m)) * 100
-                            });
-                        }
-                        if (advocatesUsed.contains(Advocate.MSGF)) {
-                            ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
-                                ++idSoftwareRowCounter, "MS-GF+",
-                                nMsgf, uniqueMsgf, no_m, (((double) nMsgf) / (nMsgf + no_m)) * 100
-                            });
-                        }
+                        // update the venn diagram
+                        updateVennDiagram(dataA, dataB, dataC,
+                                dataAB, dataAC, dataBC, dataABC,
+                                vennDiagramAdvocates);
 
                         // add the peptide shaker results
-                        ((DefaultTableModel) idSoftwareTable.getModel()).addRow(new Object[]{
-                            ++idSoftwareRowCounter, "PeptideShaker",
-                            totalPeptideShakerIds, null,
-                            totalNumberOfSpectra - totalPeptideShakerIds, (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100
-                        });
+                        totalAdvocateId.put(Advocate.PeptideShaker, (double) totalPeptideShakerIds);
+                        uniqueAdvocateId.put(Advocate.PeptideShaker, 0.0);
 
-                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) idSoftwareTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
+                        // update the id software performance plots
+                        updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
 
                         showSparkLines(peptideShakerGUI.showSparklines());
-
-                        idSoftwareTable.revalidate();
-                        idSoftwareTable.repaint();
-
                         progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-
                         fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
                         // update the slider tooltips
@@ -3048,11 +2961,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Update the PTM color coding.
      */
     public void updatePtmColors() {
-
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
         spectrumSelectionChanged();
-
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -3065,9 +2975,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         final TableIndex tableIndex = index;
 
-        if (tableIndex == TableIndex.ID_SOFTWARE_PERFORMANCE
-                || tableIndex == TableIndex.SPECTRUM_FILES
-                || tableIndex == TableIndex.PSM_TABLES) {
+        if (tableIndex == TableIndex.SPECTRUM_FILES || tableIndex == TableIndex.PSM_TABLES) {
 
             // get the file to send the output to
             final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
@@ -3096,72 +3004,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     new Thread("ExportThread") {
                         @Override
                         public void run() {
-
                             try {
-
-                                if (tableIndex == TableIndex.ID_SOFTWARE_PERFORMANCE) {
-                                    Util.tableToFile(idSoftwareTable, "\t", progressDialog, true, writer);
-                                } else if (tableIndex == TableIndex.SPECTRUM_FILES) {
+                                if (tableIndex == TableIndex.SPECTRUM_FILES) {
                                     Util.tableToFile(spectrumTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
-
-                                    // @TODO: re-implement me!!!
-                                    
-                                    JOptionPane.showMessageDialog(null, "Not currently supported...");
-
-//                                    writer.write("PeptideShaker" + System.getProperty("line.separator") + System.getProperty("line.separator"));
-//                                    writer.write("\tProtein(s)\tSequence\tFixed Modifications\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated" + System.getProperty("line.separator"));
-//
-//                                    try {
-//                                        ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
-//                                        // the PeptideShaker PSM table
-//                                        String key = getSelectedSpectrumKey();
-//                                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
-//                                        PSParameter probabilities = new PSParameter();
-//                                        probabilities = (PSParameter) identification.getSpectrumMatchParameter(key, probabilities);
-//
-//                                        writer.write("1\t");
-//
-//                                        ArrayList<String> parentProteins = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-//
-//                                        writer.write(parentProteins.get(0));
-//
-//                                        for (int i = 1; i < parentProteins.size(); i++) {
-//                                            writer.write(", " + parentProteins.get(i));
-//                                        }
-//
-//                                        writer.write("\t");
-//
-//                                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-//                                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-//
-//                                        writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptide, false, false, true) + "\t");
-//                                        writer.write(OutputGenerator.getPeptideModificationsAsString(peptide, false) + "\t");
-//                                        writer.write(OutputGenerator.getPeptideModificationsAsString(peptide, true) + "\t");
-//                                        writer.write(PeptideSection.getPeptideModificationLocations(peptide,
-//                                                identification.getPeptideMatch(peptideKey), modificationProfile) + "\t");
-//                                        writer.write(probabilities.getPsmScore() + "\t");
-//                                        writer.write(probabilities.getPsmConfidence() + "\t");
-//                                        writer.write(probabilities.getMatchValidationLevel() + System.getProperty("line.separator"));
-//                                        if (!probabilities.getReasonDoubtful().equals("")) {
-//                                            writer.write(" (" + probabilities.getReasonDoubtful() + ")");
-//                                        }
-//
-//                                        // the search engine tables
-//                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "OMSSA" + System.getProperty("line.separator") + System.getProperty("line.separator"));
-//                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-//                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.OMSSA.getIndex()));
-//
-//                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "X!Tandem" + System.getProperty("line.separator") + System.getProperty("line.separator"));
-//                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-//                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.XTandem.getIndex()));
-//
-//                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "Mascot" + System.getProperty("line.separator") + System.getProperty("line.separator"));
-//                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
-//                                        writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.Mascot.getIndex()));
-//                                    } catch (Exception e) {
-//                                        peptideShakerGUI.catchException(e);
-//                                    }
+                                    Util.tableToFile(searchResultsTable, "\t", progressDialog, true, writer);
                                 }
 
                                 writer.close();
@@ -3189,71 +3036,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
         }
-    }
-
-    /**
-     * Returns the contents of the given search engine PSM table as a string.
-     *
-     * @param spectrumMatch the current spectrum match
-     * @param probabilities the current probabilities
-     * @param advocate the type, OMSSA, XTandem or Mascot, as coded in the
-     * Advocate class
-     * @return the contents of the given search engine PSM table as a string
-     */
-    private String getSearchEnginePsmTableAsString(SpectrumMatch spectrumMatch, PSParameter probabilities, int advocate) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-
-        StringBuilder result = new StringBuilder();
-
-        if (spectrumMatch.getAllAssumptions(advocate) != null) {
-
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocate).keySet());
-            SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
-            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-            Collections.sort(eValues);
-            int rank = 0;
-            for (double eValue : eValues) {
-                for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(advocate).get(eValue)) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
-                    probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-
-                    result.append(++rank);
-                    result.append("\t");
-
-                    ArrayList<String> parentProteins = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                    result.append(parentProteins.get(0));
-
-                    for (int i = 1; i < parentProteins.size(); i++) {
-                        result.append(", ");
-                        result.append(parentProteins.get(i));
-                    }
-
-                    result.append("\t");
-                    result.append(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), false, false, true));
-                    result.append("\t");
-                    result.append(OutputGenerator.getPeptideModificationsAsString(peptideAssumption.getPeptide(), false));
-                    result.append("\t");
-                    result.append(OutputGenerator.getPeptideModificationsAsString(peptideAssumption.getPeptide(), true));
-                    result.append("\t");
-                    try {
-                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                        result.append(PeptideSection.getPeptideModificationLocations(peptideAssumption.getPeptide(),
-                                identification.getPeptideMatch(peptideKey), modificationProfile));
-                        result.append("\t");
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        result.append("error\t");
-                    }
-
-                    result.append(currentAssumption.getScore());
-                    result.append("\t");
-                    result.append(probabilities.getSearchEngineConfidence());
-                    result.append("\t");
-                }
-            }
-        }
-
-        return result.toString();
     }
 
     /**
@@ -3536,44 +3318,71 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the ID software Venn diagram.
+     * Update the Venn diagram.
+     * 
+     * @param dataA the data in group A
+     * @param dataB the data in group B
+     * @param dataC the data in group C
+     * @param dataAB the data in group AB
+     * @param dataAC the data in group AC
+     * @param dataBC the data in group BC
+     * @param dataABC the data in group ABC
+     * @param vennDiagramAdvocates the advocates
      */
-    private void updateOverviewPlots(final Integer nOMSSA, final Integer nXTandem, final Integer nMsgf, final Integer nPeptideShaker,
-            final Integer ox, final Integer mo, final Integer mx, final Integer omx,
-            final Integer uniqueOmssa, final Integer uniqueXTandem, final Integer uniqueMsgf,
-            final Integer nUnassignedOMSSA, final Integer nUnassignedXTandem, final Integer nUnassignedMsgf, final Integer nUnassignedPeptideShaker,
-            final Double idRateOmssa, final Double idRateXTandem, final Double idRateMsgf, final Double idRatePeptideShaker) {
+    private void updateVennDiagram(int dataA, int dataB, int dataC, int dataAB, int dataAC, int dataBC, int dataABC, ArrayList<Advocate> vennDiagramAdvocates) {
+        if (vennDiagramAdvocates.size() == 3) {
+            updateThreeWayVennDiagram(vennDiagramButton, dataA, dataB, dataC,
+                    dataAB, dataAC, dataBC, dataABC, vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(), vennDiagramAdvocates.get(2).getName(),
+                    advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)), advocateVennColors.get(vennDiagramAdvocates.get(2)));
+        } else if (vennDiagramAdvocates.size() == 2) {
+            updateTwoWayVennDiagram(vennDiagramButton, dataA, dataB, dataAB, 
+                    vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(), 
+                    advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)));
+        } else {
+            vennDiagramButton.setText(null);
+            vennDiagramButton.setToolTipText(null);
+            vennDiagramButton.setIcon(null);
+        }
+    }
 
-        // @TODO: this method should be made more generic!!!
+    /**
+     * Updates the ID software overview plots.
+     */
+    private void updateOverviewPlots(final HashMap<Advocate, Double> totalAdvocateId, final HashMap<Advocate, Double> uniqueAdvocateId, final int totalNumberOfSpectra) {
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 
                 overviewPlotsPanel.removeAll();
 
-                createPlot(nOMSSA, nXTandem, nMsgf, 0, nPeptideShaker, "#PSMs"); // @TODO: add nMascot
-                createPlot(uniqueOmssa, uniqueXTandem, uniqueMsgf, 0, 0, "#Unique PSMs"); // @TODO: add uniqueMascot
-                createPlot(nUnassignedOMSSA, nUnassignedXTandem, nUnassignedMsgf, 0, nUnassignedPeptideShaker, "#Unassigned"); // @TODO: add nUnassignedMascot
-                createPlot(idRateOmssa, idRateXTandem, idRateMsgf, 0, idRatePeptideShaker, "ID Rate (%)"); // @TODO: add idRateMascot
+                // create the number of psms plot
+                createPlot(totalAdvocateId, "#PSMs", false);
+
+                // create the number of unique psms plot
+                createPlot(uniqueAdvocateId, "#Unique PSMs", false);
+
+                // create the number of unassigned plot
+                HashMap<Advocate, Double> unassignedAdvocate = new HashMap<Advocate, Double>();
+                for (Advocate tempAdvocate : advocatesUsed) {
+                    if (totalAdvocateId.containsKey(tempAdvocate)) {
+                        unassignedAdvocate.put(tempAdvocate, totalNumberOfSpectra - totalAdvocateId.get(tempAdvocate));
+                    }
+                }
+                unassignedAdvocate.put(Advocate.PeptideShaker, totalNumberOfSpectra - totalAdvocateId.get(Advocate.PeptideShaker));
+                createPlot(unassignedAdvocate, "#Unassigned", false);
+
+                // create the id rate plot
+                HashMap<Advocate, Double> idRateAdvocate = new HashMap<Advocate, Double>();
+                for (Advocate tempAdvocate : advocatesUsed) {
+                    if (totalAdvocateId.containsKey(tempAdvocate)) {
+                        idRateAdvocate.put(tempAdvocate, ((double) totalAdvocateId.get(tempAdvocate) / totalNumberOfSpectra) * 100);
+                    }
+                }
+                idRateAdvocate.put(Advocate.PeptideShaker, ((double) totalAdvocateId.get(Advocate.PeptideShaker) / totalNumberOfSpectra) * 100);
+                createPlot(idRateAdvocate, "ID Rate (%)", true);
 
                 overviewPlotsPanel.revalidate();
                 overviewPlotsPanel.repaint();
-
-                // create the venn diagram
-                if (advocatesUsed.contains(Advocate.OMSSA) && advocatesUsed.contains(Advocate.XTandem) && advocatesUsed.contains(Advocate.MSGF)) {
-                    updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMsgf,
-                            ox, mo, mx, omx, "OMSSA", "X!Tandem", "MS-GF+",
-                            Color.MEDIUMSLATEBLUE, Color.PALETURQUOISE, Color.INDIANRED);
-                } else if (advocatesUsed.contains(Advocate.OMSSA) && advocatesUsed.contains(Advocate.XTandem)) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem", Color.MEDIUMSLATEBLUE, Color.PALETURQUOISE);
-                } else if (advocatesUsed.contains(Advocate.XTandem) && advocatesUsed.contains(Advocate.MSGF)) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMsgf, mx, "X!Tandem", "MS-GF+", Color.PALETURQUOISE, Color.INDIANRED);
-                } else if (advocatesUsed.contains(Advocate.OMSSA) && advocatesUsed.contains(Advocate.MSGF)) {
-                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMsgf, mo, "OMSSA", "MS-GF+", Color.MEDIUMSLATEBLUE, Color.INDIANRED);
-                } else {
-                    vennDiagramButton.setText(null);
-                    vennDiagramButton.setToolTipText(null);
-                    vennDiagramButton.setIcon(null);
-                }
             }
         });
     }
@@ -3637,59 +3446,51 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param nMascot the Mascot value
      * @param nPeptideShaker the PeptideShaker value
      * @param xAxisLabel the xAxis label
+     * @param roundDecimals if true, the decimals in the labels are rounded to
+     * one decimal
      */
-    private void createPlot(double nOMSSA, double nXTandem, double nMsgf, double nMascot, double nPeptideShaker, String xAxisLabel) {
+    private void createPlot(HashMap<Advocate, Double> data, String xAxisLabel, boolean roundDecimals) {
 
         DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
-        if (advocatesUsed.contains(Advocate.OMSSA)) {
-            psmDataset.addValue(nOMSSA, Advocate.OMSSA, xAxisLabel);
+        for (Advocate tempAdvocate : advocatesUsed) {
+            if (advocatesUsed.contains(tempAdvocate)) {
+                psmDataset.addValue(data.get(tempAdvocate), tempAdvocate, xAxisLabel);
+            }
         }
-        if (advocatesUsed.contains(Advocate.XTandem)) {
-            psmDataset.addValue(nXTandem, Advocate.XTandem, xAxisLabel);
-        }
-        if (advocatesUsed.contains(Advocate.MSGF)) {
-            psmDataset.addValue(nMsgf, Advocate.MSGF, xAxisLabel);
-        }
-        if (advocatesUsed.contains(Advocate.Mascot)) {
-            psmDataset.addValue(nMascot, Advocate.Mascot, xAxisLabel);
-        }
-        psmDataset.addValue(nPeptideShaker, Advocate.PeptideShaker, xAxisLabel);
+        psmDataset.addValue(data.get(Advocate.PeptideShaker), Advocate.PeptideShaker, xAxisLabel);
 
-        JFreeChart psmChart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
-        CategoryPlot psmPlot = psmChart.getCategoryPlot();
-        ChartPanel psmChartPanel = new ChartPanel(psmChart);
-        psmChartPanel.setBackground(java.awt.Color.WHITE);
-        psmPlot.setBackgroundPaint(java.awt.Color.WHITE);
-        psmChart.setBackgroundPaint(java.awt.Color.WHITE);
-        psmPlot.setDomainGridlinesVisible(false);
-        psmPlot.setRangeGridlinesVisible(false);
-        ValueAxis psmRangeAxis = psmPlot.getRangeAxis();
-        psmRangeAxis.setLowerMargin(0.15);
-        psmRangeAxis.setUpperMargin(0.15);
-        psmPlot.setOutlineVisible(false);
-        BarRenderer psmRenderer = new BarRenderer();
-        psmRenderer.setShadowVisible(false);
-        psmRenderer.setBarPainter(new StandardBarPainter());
+        JFreeChart chart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
+        CategoryPlot plot = chart.getCategoryPlot();
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setBackground(java.awt.Color.WHITE);
+        plot.setBackgroundPaint(java.awt.Color.WHITE);
+        chart.setBackgroundPaint(java.awt.Color.WHITE);
+        plot.setDomainGridlinesVisible(false);
+        plot.setRangeGridlinesVisible(false);
+        ValueAxis rangeAxis = plot.getRangeAxis();
+        rangeAxis.setLowerMargin(0.15);
+        rangeAxis.setUpperMargin(0.15);
+        plot.setOutlineVisible(false);
+        BarRenderer renderer = new BarRenderer();
+        renderer.setShadowVisible(false);
+        renderer.setBarPainter(new StandardBarPainter());
         int dataSeriesCounter = 0;
-        if (advocatesUsed.contains(Advocate.OMSSA)) {
-            psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.OMSSA.getIndex()));
+        for (Advocate tempAdvocate : advocatesUsed) {
+            if (advocatesUsed.contains(tempAdvocate)) {
+                renderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(tempAdvocate.getIndex()));
+            }
         }
-        if (advocatesUsed.contains(Advocate.XTandem)) {
-            psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.XTandem.getIndex()));
+        renderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
+        if (roundDecimals) {
+            renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, new DecimalFormat("0.0")));
+        } else {
+            renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         }
-        if (advocatesUsed.contains(Advocate.MSGF)) {
-            psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.MSGF.getIndex()));
-        }
-        if (advocatesUsed.contains(Advocate.Mascot)) {
-            psmRenderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(Advocate.Mascot.getIndex()));
-        }
-        psmRenderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
-        psmRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-        psmRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
-        psmRenderer.setBaseItemLabelsVisible(true);
-        psmPlot.setRenderer(psmRenderer);
+        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        renderer.setBaseItemLabelsVisible(true);
+        plot.setRenderer(renderer);
 
         // add the plot to the chart
-        overviewPlotsPanel.add(psmChartPanel);
+        overviewPlotsPanel.add(chartPanel);
     }
 }
