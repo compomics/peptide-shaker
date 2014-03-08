@@ -1,9 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import com.compomics.util.waiting.WaitingHandler;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

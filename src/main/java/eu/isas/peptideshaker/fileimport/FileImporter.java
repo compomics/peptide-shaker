@@ -595,7 +595,7 @@ public class FileImporter {
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception, OutOfMemoryError {
 
             boolean idReport;
-            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
             ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
@@ -780,10 +780,17 @@ public class FileImporter {
                                                             + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                 }
                                                 tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
+                                            } else if (searchEngine == Advocate.MSGF.getIndex()) {
+                                                
+                                                // is ptm mapping needed..?
+                                                
+                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptmFactory.getPTM(sePTM).getMass(), ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
+                                                
                                             } else {
                                                 Advocate advocate = Advocate.getAdvocate(searchEngine);
                                                 throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
                                             }
+
                                             ArrayList<String> allNames = new ArrayList<String>();
                                             for (ArrayList<String> namesAtAA : tempNames.values()) {
                                                 for (String name : namesAtAA) {

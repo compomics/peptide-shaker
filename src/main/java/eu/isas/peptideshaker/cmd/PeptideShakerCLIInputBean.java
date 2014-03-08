@@ -788,6 +788,7 @@ public class PeptideShakerCLIInputBean {
         extentions.add(".dat");
         extentions.add(".omx");
         extentions.add(".t.xml");
+        extentions.add(".mzid");
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
 
