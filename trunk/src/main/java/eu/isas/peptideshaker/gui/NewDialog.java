@@ -935,12 +935,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 return myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("t.xml")
                         || myFile.getName().toLowerCase().endsWith("dat")
+                        || myFile.getName().toLowerCase().endsWith("mzid")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: OMSSA (.omx), X!Tandem (.xml) and Mascot (.dat)";
+                return "Supported formats: MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml) and Mascot (.dat)";
             }
         };
 
@@ -956,7 +957,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     for (File file : tempFiles) {
                         if (file.getName().toLowerCase().endsWith("dat")
                                 || file.getName().toLowerCase().endsWith("omx")
-                                || file.getName().toLowerCase().endsWith("xml")) {
+                                || file.getName().toLowerCase().endsWith("xml")
+                                || file.getName().toLowerCase().endsWith("mzid")) {
                             if (!file.getName().equals("mods.xml")
                                     && !file.getName().equals("usermods.xml")) {
                                 idFiles.add(file);
