@@ -94,7 +94,7 @@ public class FileImporter {
      */
     public static final double ptmMassTolerance = 0.01;
     /**
-     * The protein tree used to map peptides on protein sequences
+     * The protein tree used to map peptides on protein sequences.
      */
     public ProteinTree proteinTree;
 
