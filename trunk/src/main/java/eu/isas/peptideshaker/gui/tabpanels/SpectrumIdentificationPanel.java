@@ -3078,8 +3078,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public static int isBestPsmEqualForAllIdSoftwares(SpectrumMatch spectrumMatch, SearchParameters searchParameters) {
 
-        // @TODO: this method should be sped up
-        // @TODO: the values should be stored and resued!!!
+        // @TODO: the values should be stored and resued?
         HashMap<Advocate, Peptide> peptides = new HashMap<Advocate, Peptide>();
         HashMap<Advocate, Integer> charges = new HashMap<Advocate, Integer>();
         ArrayList<Advocate> tempUsedAdvocates = new ArrayList<Advocate>();
