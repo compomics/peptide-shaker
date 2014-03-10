@@ -4,7 +4,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.RowFilter;
 
 /**
  * This map will store target decoy informations about the psms grouped
@@ -37,8 +35,13 @@ public class PsmSpecificMap implements Serializable {
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
     /**
      * The filters to use to flag doubtful matches.
+     * @deprecated use the specific map instead
      */
-    private ArrayList<PsmFilter> doubtfulMatchesFilters = getDefaultPsmFilters();
+    private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
+    /**
+     * The filters to use to flag doubtful matches in a map: charge -> file name -> list of filters
+     */
+    private HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
 
     /**
      * Constructor.
@@ -47,33 +50,58 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the filters used to flag doubtful matches.
+     * Returns the filters used to flag doubtful matches in a map.
      * 
      * @return the filters used to flag doubtful matches
      */
-    public ArrayList<PsmFilter> getDoubtfulMatchesFilters() {
-        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFilters = new ArrayList<PsmFilter>();
+    public HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> getDoubtfulMatchesFilters() {
+        if (doubtfulMatchesFiltersSpecificMap == null) { // Backward compatibility check for projects without filters
+            doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
         }
-        return doubtfulMatchesFilters;
+        return doubtfulMatchesFiltersSpecificMap;
     }
 
     /**
-     * Sets the filters used to flag doubtful matches.
+     * Returns the filters used to flag doubtful matches corresponding to the given charge and file. An empty list if none found.
      * 
-     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
+     * @param charge the charge of the psm
+     * @param fileName the name of the spectrum file
+     * @return the filters used to flag doubtful matches
      */
-    public void setDoubtfulMatchesFilters(ArrayList<PsmFilter> doubtfulMatchesFilters) {
-        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
+    public ArrayList<PsmFilter> getDoubtfulMatchesFilters(Integer charge, String fileName) {
+        if (doubtfulMatchesFiltersSpecificMap == null) { // Backward compatibility check for projects without filters
+            doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
+        }
+        HashMap< String, ArrayList<PsmFilter>> chargeFilters = doubtfulMatchesFiltersSpecificMap.get(charge);
+        if (chargeFilters == null) {
+            return new ArrayList<PsmFilter>();
+        }
+        ArrayList<PsmFilter> fileFilters = chargeFilters.get(fileName);
+        if (fileFilters == null) {
+            return new ArrayList<PsmFilter>();
+        }
+        return fileFilters;
     }
     
     /**
      * Adds a PSM filter to the list of doubtful matches filters.
      * 
+     * @param charge the charge of the psm
+     * @param fileName the name of the spectrum file
      * @param psmFilter the new filter to add
      */
-    public void addDoubtfulMatchesFilter(PsmFilter psmFilter) {
-        this.doubtfulMatchesFilters.add(psmFilter);
+    public void addDoubtfulMatchesFilter(Integer charge, String fileName, PsmFilter psmFilter) {
+        HashMap< String, ArrayList<PsmFilter>> chargeFilters = doubtfulMatchesFiltersSpecificMap.get(charge);
+        if (chargeFilters == null) {
+            chargeFilters = new HashMap<String, ArrayList<PsmFilter>>();
+            doubtfulMatchesFiltersSpecificMap.put(charge, chargeFilters);
+        }
+        ArrayList<PsmFilter> fileFilters = chargeFilters.get(fileName);
+        if (fileFilters == null) {
+            fileFilters = new ArrayList<PsmFilter>();
+            chargeFilters.put(fileName, fileFilters);
+        }
+        fileFilters.add(psmFilter);
     }
 
     /**
@@ -300,22 +328,5 @@ public class PsmSpecificMap implements Serializable {
             }
         }
         return maxCharge;
-    }
-    
-    /**
-     * Returns the default filters for setting a match as doubtful.
-     * 
-     * @return the default filters for setting a match as doubtful
-     */
-    public static ArrayList<PsmFilter> getDefaultPsmFilters() {
-        ArrayList<PsmFilter> filters = new ArrayList<PsmFilter>();
-        
-        PsmFilter psmFilter = new PsmFilter(">40% Fragment Ion Sequence Coverage");
-        psmFilter.setDescription(">40% sequence coverage by fragment ions");
-        psmFilter.setSequenceCoverage(40.0);
-        psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
-//        filters.add(psmFilter);
-        
-        return filters;
     }
 }

@@ -479,7 +479,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMinPrecursorMzError() != null) {
-                double error = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                double error = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                 if (assumptionFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMinPrecursorMzError()) {
                         return false;
@@ -500,7 +500,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMaxPrecursorMzError() != null) {
-                double error = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                double error = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                 if (assumptionFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMaxPrecursorMzError()) {
                         return false;
@@ -538,12 +538,12 @@ public class AssumptionFilter extends MatchFilter {
             }
             HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), 
                     annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                    peptideAssumption.getIdentificationCharge().value, spectrum, peptide, annotationPreferences.getAnnotationIntensityLimit(),
+                    peptideAssumption.getIdentificationCharge().value, spectrum, peptide, spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                     searchParameters.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
 
             double nCovered = 0;
             int nAA = peptide.getSequence().length();
-            for (int i = 0; i < nAA; i++) {
+            for (int i = 0; i <= nAA; i++) {
                 ArrayList<IonMatch> matchesAtAa = ionMatches.get(i);
                 if (matchesAtAa != null && !matchesAtAa.isEmpty()) {
                     nCovered++;

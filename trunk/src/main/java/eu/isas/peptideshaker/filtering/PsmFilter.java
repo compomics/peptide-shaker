@@ -445,7 +445,7 @@ public class PsmFilter extends MatchFilter {
      */
     public void setPrecursorMinMzErrorComparison(RowFilter.ComparisonType precursorMinMzErrorComparison) {
         compatibilityCheck();
-        assumptionFilter.setMinPrecursorMzError(minPrecursorMzError);
+        assumptionFilter.setPrecursorMinMzErrorComparison(precursorMinMzErrorComparison);
     }
 
     /**

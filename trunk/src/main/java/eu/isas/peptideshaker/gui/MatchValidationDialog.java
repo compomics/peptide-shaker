@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -251,8 +252,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.annotationPreferences = annotationPreferences;
         type = Type.PSM;
 
+        String fileName = Spectrum.getSpectrumFile(psmMatchKey);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmMatchKey);
+        Integer charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
-        for (PsmFilter psmFilter : psmSpecificMap.getDoubtfulMatchesFilters()) {
+        for (PsmFilter psmFilter : psmSpecificMap.getDoubtfulMatchesFilters(charge, fileName)) {
             filters.add(psmFilter);
         }
 
