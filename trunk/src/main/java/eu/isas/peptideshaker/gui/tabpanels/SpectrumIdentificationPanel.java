@@ -520,6 +520,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 };
             }
         };
+        colorLegendLabel = new javax.swing.JLabel();
         psmsHelpJButton = new javax.swing.JButton();
         exportPsmsJButton = new javax.swing.JButton();
         contextMenuPsmsBackgroundPanel = new javax.swing.JPanel();
@@ -878,28 +879,35 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idResultsPanel.setLayout(idResultsPanelLayout);
         idResultsPanelLayout.setHorizontalGroup(
             idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
             .addGroup(idResultsPanelLayout.createSequentialGroup()
                 .addComponent(spectrumIdResultsLabel)
-                .addContainerGap())
-            .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         idResultsPanelLayout.setVerticalGroup(
             idResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idResultsPanelLayout.createSequentialGroup()
                 .addComponent(spectrumIdResultsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))
+                .addComponent(idResultsTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
         );
+
+        colorLegendLabel.setText(" ");
 
         javax.swing.GroupLayout psmsPanelLayout = new javax.swing.GroupLayout(psmsPanel);
         psmsPanel.setLayout(psmsPanelLayout);
         psmsPanelLayout.setHorizontalGroup(
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmsPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE))
+                    .addGroup(psmsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(peptideShakerJScrollPane)))
+                    .addGroup(psmsPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(colorLegendLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         psmsPanelLayout.setVerticalGroup(
@@ -909,11 +917,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(idResultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(colorLegendLabel)
+                .addGap(6, 6, 6))
         );
 
         psmsLayeredPane.add(psmsPanel);
-        psmsPanel.setBounds(0, 0, 650, 410);
+        psmsPanel.setBounds(0, 0, 650, 400);
 
         psmsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         psmsHelpJButton.setToolTipText("Help");
@@ -2162,6 +2172,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JLabel colorLegendLabel;
     private javax.swing.JPanel contextMenuIdSoftwareBackgroundPanel;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;
     private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
@@ -2287,6 +2298,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     // order the advocates to have the same order is in the overview plots
                     Collections.sort(advocatesUsed);
+                    
+                    // update the advocates color legend
+                    ArrayList<Advocate> usedAdvocatedAndPeptideShaker = new ArrayList<Advocate>();
+                    usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
+                    usedAdvocatedAndPeptideShaker.add(Advocate.PeptideShaker);
+                    String colorLegend = "<html>";
+                    for (Advocate tempAdvocate : usedAdvocatedAndPeptideShaker) {
+                        colorLegend += "<font color=\"rgb(" + searchEnginesColorMap.get(tempAdvocate.getIndex()).getRed() + ","
+                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getGreen()+ ","
+                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getBlue()+ ")\">&#9632;</font> " 
+                                + tempAdvocate.getName() + " &nbsp;";
+                    }
+                    colorLegend += "</html>";
+                    colorLegendLabel.setText(colorLegend);
 
                     HashMap<Advocate, Double> totalAdvocateId = new HashMap<Advocate, Double>();
                     HashMap<Advocate, Double> uniqueAdvocateId = new HashMap<Advocate, Double>();
@@ -2420,7 +2445,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
                         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
-                        formComponentResized(null);
+                        //formComponentResized(null);
 
                         // enable the contextual export options
                         exportIdPerformancePerformanceJButton.setEnabled(true);
@@ -3234,7 +3259,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
                         Integer charge = null;
                         if (precursor != null && !precursor.getPossibleCharges().isEmpty()) {
-                            charge = precursor.getPossibleCharges().get(0).value;
+                            charge = precursor.getPossibleCharges().get(0).value; // @TODO: find a way of displaying multiple charges!!!
                         }
                         return charge;
                     case 5:
