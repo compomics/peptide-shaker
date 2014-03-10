@@ -715,6 +715,7 @@ public class PeptideShaker {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
+            ArrayList<Integer> charges = new ArrayList<Integer>();
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
@@ -725,6 +726,15 @@ public class PeptideShaker {
                     Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                     double precursorMzError = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                     precursorMzDeviations.add(precursorMzError);
+                    Integer charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                    if (!charges.contains(charge)) {
+                        charges.add(charge);
+                        PsmFilter psmFilter = new PsmFilter("> 30% Fragment Ion Sequence Coverage");
+                        psmFilter.setDescription("< 30% sequence coverage by fragment ions");
+                        psmFilter.setSequenceCoverage(30.0);
+                        psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
+                        psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
+                    }
                 }
 
                 // Go through the peptide assumptions
@@ -767,7 +777,9 @@ public class PeptideShaker {
                         psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
                         psmFilter.setMinPrecursorMzError(minDeviation);
                         psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
-//                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+                        for (int charge : charges) {
+                            psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
+                        }
                     }
                     if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
                         needSecondPass = true;
@@ -775,25 +787,27 @@ public class PeptideShaker {
                         psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                         psmFilter.setMaxPrecursorMzError(maxDeviation);
                         psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
-//                        psmMap.addDoubtfulMatchesFilter(psmFilter);
+                        for (int charge : charges) {
+                            psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
+                        }
                     }
                 }
-                // @TODO: debug
-                //            if (needSecondPass) {
-                //                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                //
-                //                    updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-                //
-                //                    if (waitingHandler != null) {
-                //                        waitingHandler.increaseSecondaryProgressCounter();
-                //                        if (waitingHandler.isRunCanceled()) {
-                //                            return;
-                //                        }
-                //                    }
-                //                }
-                //            } else if (waitingHandler != null) {
-                //                waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
-                //            }
+
+                if (needSecondPass) {
+                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+
+                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
+
+                        if (waitingHandler != null) {
+                            waitingHandler.increaseSecondaryProgressCounter();
+                            if (waitingHandler.isRunCanceled()) {
+                                return;
+                            }
+                        }
+                    }
+                } else if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
+                }
             }
         }
 
@@ -1231,10 +1245,18 @@ public class PeptideShaker {
             }
             boolean noValidated = targetDecoyResults.noValidated();
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+                String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
-                for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters()) {
+                for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
                     if (!filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences)) {
+                        if (filter.getName().toLowerCase().contains("deviation")) {
+                        filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                        } else if (filter.getName().toLowerCase().contains("coverage")) {
+                        filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                        }
                         filterPassed = false;
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
