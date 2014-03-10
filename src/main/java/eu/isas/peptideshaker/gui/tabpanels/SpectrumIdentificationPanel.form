@@ -448,7 +448,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="0" y="0" width="650" height="410"/>
+                          <AbsoluteConstraints x="0" y="0" width="650" height="400"/>
                         </Constraint>
                       </Constraints>
 
@@ -456,10 +456,18 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="idResultsPanel" max="32767" attributes="0"/>
-                                      <Component id="peptideShakerJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="idResultsPanel" max="32767" attributes="0"/>
+                                              <Component id="peptideShakerJScrollPane" alignment="0" max="32767" attributes="2"/>
+                                          </Group>
+                                      </Group>
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                                          <Component id="colorLegendLabel" max="32767" attributes="0"/>
+                                      </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -473,6 +481,8 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="idResultsPanel" max="32767" attributes="2"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="colorLegendLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -564,11 +574,11 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="idResultsTableJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
                                   <Group type="102" attributes="0">
                                       <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="idResultsTableJScrollPane" alignment="0" pref="618" max="32767" attributes="2"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
@@ -576,7 +586,7 @@
                                   <Group type="102" attributes="0">
                                       <Component id="spectrumIdResultsLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="idResultsTableJScrollPane" pref="282" max="32767" attributes="2"/>
+                                      <Component id="idResultsTableJScrollPane" pref="257" max="32767" attributes="2"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -670,6 +680,11 @@
                             </Container>
                           </SubComponents>
                         </Container>
+                        <Component class="javax.swing.JLabel" name="colorLegendLabel">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" value=" "/>
+                          </Properties>
+                        </Component>
                       </SubComponents>
                     </Container>
                     <Component class="javax.swing.JButton" name="psmsHelpJButton">
