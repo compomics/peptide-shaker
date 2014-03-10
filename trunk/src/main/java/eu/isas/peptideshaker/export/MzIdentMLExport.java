@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.BinaryArrayImpl;
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Ion.IonType;
@@ -18,7 +16,6 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -29,16 +26,9 @@ import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.protein.Header;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
-import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
-import eu.isas.peptideshaker.scoring.ProteinMap;
-import eu.isas.peptideshaker.scoring.PsmSpecificMap;
-import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
 import java.net.URLDecoder;
@@ -46,6 +36,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -509,57 +500,70 @@ public class MzIdentMLExport {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
-//            HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
-//                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-//            
-            String before = "";
-            String after = "";
-//
-//            if (aaSurrounding.size() == 1) {
-//                for (int index : aaSurrounding.keySet()) {
-//                    before = aaSurrounding.get(index)[0];
-//                    after = aaSurrounding.get(index)[1];
-//                }
-//            } else {
-//                boolean first = true;
-//                ArrayList<Integer> indexes = new ArrayList<Integer>(aaSurrounding.keySet());
-//                Collections.sort(indexes);
-//                for (int index : indexes) {
-//                    if (first) {
-//                        first = false;
-//                    } else {
-//                        before += "|";
-//                        after += "|";
-//                    }
-//                    before += aaSurrounding.get(index)[0];
-//                    after += aaSurrounding.get(index)[1];
-//                }
-//            }
-//            
-//            if (!before.equals("")) {
-//                before = "-";
-//            }
-//            if (!after.equals("")) {
-//                after = "-";
-//            }
-//
-//            ArrayList<Integer> indexes;
-//
-//            Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
-//            String peptideSequence = Peptide.getSequence(peptideKey);
-//            indexes = currentProtein.getPeptideStart(peptideSequence,
-//                    PeptideShaker.MATCHING_TYPE,
-//                    searchParameters.getFragmentIonAccuracy());
+            // get all the possible parent proteins
+            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
-            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
-                    //+ "pre=\"" + before + "\" " // @TODO: get aa before
-                    //+ "post=\"" + after + "\" " // @TODO: get aa after
-                    //+ "start=\"" + startIndex + "\" " // @TODO: add start index
-                    //+ "end=\"" + endIndex + "\" " // @TODO: add end index
-                    + "peptide_ref=\"" + peptideKey + "\" "
-                    + "dBSequence_ref=\"" + "DBSeq_1_temp" + "\" " // @TODO: add protein sequence ref, example: DBSeq_1_JAK1_HUMAN
-                    + "id=\"" + peptideEvidenceId++ + "\" " // @TODO: create a better id?
-                    + "/>" + System.getProperty("line.separator"));
+            // @TODO: only use the retained proteins??
+//            List<String> retainedProteins = new ArrayList<String>();
+//            for (String proteinKey : identification.getProteinIdentification()) {
+//                for (String protein : possibleProteins) {
+//                    if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
+//                        retainedProteins.add(protein);
+//                        if (retainedProteins.size() == possibleProteins.size()) {
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+            // iterate all the possible protein parents for each peptide
+            for (String tempProtein : possibleProteins) {
+
+                // get the start indexes and the surrounding 
+                HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
+                        Peptide.getSequence(peptideKey), 1, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+
+                ArrayList<Integer> indexes = new ArrayList<Integer>();
+                ArrayList<String> before = new ArrayList<String>();
+                ArrayList<String> after = new ArrayList<String>();
+
+                if (aaSurrounding.size() == 1) {
+                    for (int index : aaSurrounding.keySet()) {
+                        indexes.add(index);
+                        before.add(aaSurrounding.get(index)[0]);
+                        after.add(aaSurrounding.get(index)[1]);
+                    }
+                } else {
+                    ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
+                    Collections.sort(tempIndexes);
+                    for (int index : tempIndexes) {
+                        indexes.add(index);
+                        before.add(aaSurrounding.get(index)[0]);
+                        after.add(aaSurrounding.get(index)[1]);
+                    }
+                }
+
+                for (int i = 0; i < indexes.size(); i++) {
+                    String aaBefore = "-";
+                    String aaAfter = "-";
+
+                    if (!before.get(i).isEmpty()) {
+                        aaBefore = before.get(i);
+                    }
+                    if (!after.get(i).isEmpty()) {
+                        aaAfter = after.get(i);
+                    }
+
+                    br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
+                            + "pre=\"" + aaBefore + "\" "
+                            + "post=\"" + aaAfter + "\" "
+                            + "start=\"" + indexes.get(i) + "\" "
+                            + "end=\"" + (indexes.get(i) + peptide.getSequence().length() - 1) + "\" "
+                            + "peptide_ref=\"" + peptideKey + "\" "
+                            + "dBSequence_ref=\"" + "DBSeq_1_" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
+                            + "id=\"PepEv_" + peptideEvidenceId++ + "\" " // @TODO: create a better id!!!
+                            + "/>" + System.getProperty("line.separator"));
+                }
+            }
         }
 
         tabCounter--;
@@ -631,6 +635,8 @@ public class MzIdentMLExport {
                 + "cvRef=\"PSI-MS\" "
                 + "name=\"fragment mass type mono\" />"
                 + System.getProperty("line.separator"));
+
+        // @TODO: add more search parameters??
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AdditionalSearchParams>" + System.getProperty("line.separator"));
 
@@ -678,6 +684,7 @@ public class MzIdentMLExport {
 
         Enzyme enzyme = searchParameters.getEnzyme();
         br.write(getCurrentTabSpace() + "<Enzyme "
+                + "missedCleavages=\"" + searchParameters.getnMissedCleavages() + "\" "
                 + "semiSpecific=\"" + enzyme.isSemiSpecific() + "\" "
                 //+ "cTermGain=\"OH\" " // Element formula gained at CTerm
                 //+ "nTermGain=\"H\" " // Element formula gained at NTerm
@@ -799,7 +806,12 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</AnalysisProtocolCollection>" + System.getProperty("line.separator"));
     }
 
-    private void writeDataCollection() throws IOException {
+    /**
+     * Write the data collection.
+     *
+     * @throws IOException
+     */
+    private void writeDataCollection() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -817,7 +829,7 @@ public class MzIdentMLExport {
      *
      * @throws IOException
      */
-    private void writeDataAnalysis() throws IOException {
+    private void writeDataAnalysis() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         br.write(getCurrentTabSpace() + "<AnalysisData>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -827,10 +839,17 @@ public class MzIdentMLExport {
 
         writeFragmentationTable();
 
-        // iterate the psms
-        //for (all psms) {
-        writeSpectrumIdentificationResult();
-        //}
+        // iterate the spectrum files
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+
+            identification.loadSpectrumMatches(spectrumFileName, null); // @TODO: add waiting handler
+            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null); // @TODO: add waiting handler
+
+            // iterate the psms
+            for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
+                writeSpectrumIdentificationResult(spectrumFileName, psmKey);
+            }
+        }
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
@@ -841,6 +860,11 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</AnalysisData>" + System.getProperty("line.separator"));
     }
 
+    /**
+     * Write the protein groups.
+     *
+     * @throws IOException
+     */
     private void writeProteinDetectionList() throws IOException {
 
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
@@ -878,60 +902,114 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));
     }
 
-    private void writeSpectrumIdentificationResult() throws IOException {
+    /**
+     * Write a spectrum identification result.
+     *
+     * @throws IOException
+     */
+    private void writeSpectrumIdentificationResult(String spectrumFileName, String psmKey) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult spectraData_ref=\"SID_1\" spectrumID=\"index=12\" id=\"SIR_1\">" + System.getProperty("line.separator"));
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+        String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
+        String spectrumTitleHtml = StringEscapeUtils.escapeHtml4(spectrumTitle);
+
+        br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult spectraData_ref=\"" + spectrumFileName
+                + "\" spectrumID=\"" + spectrumTitleHtml + "\" id=\"" + spectrumTitleHtml + "\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        // @TODO: add the psm data
-//        <SpectrumIdentificationItem passThreshold="true" rank="1"
-//                        peptide_ref="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_"
-//                        experimentalMassToCharge="2709.148" chargeState="3" id="SII_1_1">
-//                        <PeptideEvidenceRef peptideEvidence_ref="PE1_2_0"/>
-//                        <Fragmentation>
-//                            <IonType charge="3" index="7 21">
-//                                <FragmentArray measure_ref="Measure_MZ" values="274.303 802.321"/>
-//                                <FragmentArray measure_ref="Measure_Int" values="2.0 6.0"/>
-//                                <FragmentArray measure_ref="Measure_Error"
-//                                    values="-0.176605 -0.035175"/>
-//                                <cvParam accession="MS:1001229" cvRef="PSI-MS" name="frag: a ion"/>
-//                            </IonType>
-//                            ...
-//                                
-//                        </Fragmentation>
-//                        <cvParam accession="MS:1001330" cvRef="PSI-MS" value="1.7E-4" name="xtandem:expect"/>
-//                        <cvParam accession="MS:1001331" cvRef="PSI-MS" value="79.6" name="xtandem:hyperscore"/>
-//                    </SpectrumIdentificationItem>
-//                    <cvParam accession="MS:1000796" cvRef="PSI-MS" value="55.1074.1074.3.dta" name="spectrum title"/>
+        // @TODO: iterate all assumptions and not just the best one!
+        PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
+        PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
+
+        br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem " + System.getProperty("line.separator")
+                + getCurrentTabSpace() + "\t\tpassThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" " + System.getProperty("line.separator") // @TODO: is this correct??
+                + getCurrentTabSpace() + "\t\trank=\"" + "1" + "\" " + System.getProperty("line.separator") // @TODO: should not be hardcoded?
+                + getCurrentTabSpace() + "\t\tpeptide_ref=\"" + bestPeptideAssumption.getPeptide().getKey() + "\" " + System.getProperty("line.separator")
+                + getCurrentTabSpace() + "\t\tcalculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" " + System.getProperty("line.separator")
+                + getCurrentTabSpace() + "\t\texperimentalMassToCharge=\"" + spectrumFactory.getPrecursor(psmKey).getMz() + "\" " + System.getProperty("line.separator")
+                + getCurrentTabSpace() + "\t\tchargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" " + System.getProperty("line.separator")
+                + getCurrentTabSpace() + "\t\tid=\"" + StringEscapeUtils.escapeHtml4(psmKey) + "\">" + System.getProperty("line.separator"));
+        tabCounter++;
+
+        // add the peptide evidence reference
+        br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + "PepEv_X" + "\"/>" + System.getProperty("line.separator")); // @TODO: create a better id!!!
+
+        // add the fragment ion annotation
+//          br.write(getCurrentTabSpace() + "<Fragmentation>" + System.getProperty("line.separator")); // @TODO: add the fragment ion annotation
+//          tabCounter++;
+//          <IonType charge="3" index="7 21">
+//              <FragmentArray measure_ref="Measure_MZ" values="274.303 802.321"/>
+//              <FragmentArray measure_ref="Measure_Int" values="2.0 6.0"/>
+//              <FragmentArray measure_ref="Measure_Error" values="-0.176605 -0.035175"/>
+//              <cvParam accession="MS:1001229" cvRef="PSI-MS" name="frag: a ion"/>
+//          </IonType>
+//          ...
+//          tabCounter--;
+//          br.write(getCurrentTabSpace() + "</Fragmentation>" + System.getProperty("line.separator"));
+        // add cv and user params // @TODO: add cv and user params
+        // example:
+        // <cvParam accession="MS:1001330" cvRef="PSI-MS" value="1.7E-4" name="xtandem:expect"/>
+        // <cvParam accession="MS:1001331" cvRef="PSI-MS" value="79.6" name="xtandem:hyperscore"/>
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</SpectrumIdentificationItem>" + System.getProperty("line.separator"));
+
+        // add the spectrum title
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitleHtml));
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationResult>" + System.getProperty("line.separator"));
     }
 
-    private void writeFragmentationTable() {
-        // @TODO: add the fragment ion table
-//                <FragmentationTable>
-//                    <Measure id="Measure_MZ">
-//                        <cvParam accession="MS:1001225" cvRef="PSI-MS" unitCvRef="PSI-MS"
-//                            unitName="m/z" unitAccession="MS:1000040" name="product ion m/z"/>
-//                    </Measure>
-//                    <Measure id="Measure_Int">
-//                        <cvParam accession="MS:1001226" cvRef="PSI-MS" name="product ion intensity"
-//                        />
-//                    </Measure>
-//                    <Measure id="Measure_Error">
-//                        <cvParam accession="MS:1001227" cvRef="PSI-MS" unitCvRef="PSI-MS"
-//                            unitName="m/z" unitAccession="MS:1000040" name="product ion m/z error"/>
-//                    </Measure>
-//                </FragmentationTable>
+    /**
+     * Write the fragmentation table. (Note: all hard coded.)
+     *
+     * @throws IOException
+     */
+    private void writeFragmentationTable() throws IOException {
+
+        br.write(getCurrentTabSpace() + "<FragmentationTable>" + System.getProperty("line.separator"));
+        tabCounter++;
+
+        // mz
+        br.write(getCurrentTabSpace() + "<Measure id=\"Measure_MZ\">" + System.getProperty("line.separator"));
+        tabCounter++;
+        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001225\" cvRef=\"PSI-MS\" unitCvRef=\"PSI-MS\" unitName=\"m/z\" "
+                + "unitAccession=\"MS:1000040\" name=\"product ion m/z\"/>" + System.getProperty("line.separator"));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</Measure>" + System.getProperty("line.separator"));
+
+        // intensity
+        br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Int\">" + System.getProperty("line.separator"));
+        tabCounter++;
+        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001226\" cvRef=\"PSI-MS\" "
+                + "name=\"product ion intensity\"/>" + System.getProperty("line.separator"));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</Measure>" + System.getProperty("line.separator"));
+
+        // mass error
+        br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Error\">" + System.getProperty("line.separator"));
+        tabCounter++;
+        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001227\" cvRef=\"PSI-MS\" unitCvRef=\"PSI-MS\" "
+                + "unitName=\"m/z\" unitAccession=\"MS:1000040\" name=\"product ion m/z error\"/>" + System.getProperty("line.separator"));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</Measure>" + System.getProperty("line.separator"));
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</FragmentationTable>" + System.getProperty("line.separator"));
     }
 
+    /**
+     * Write the input file details.
+     *
+     * @throws IOException
+     */
     private void writeInputFileDetails() throws IOException {
 
         br.write(getCurrentTabSpace() + "<Inputs xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        int sourceFileCounter = 1; 
-        
+        int sourceFileCounter = 1;
+
         // add the search result files
         for (File idFile : projectDetails.getIdentificationFiles()) {
 
@@ -952,6 +1030,9 @@ public class MzIdentMLExport {
                     break;
                 case XTandem:
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
+                    break;
+                case MSGF:
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
                     break;
                 default:
                     br.write(getCurrentTabSpace() + "<userParam name=\"Unknown\"/>"); // @TODO: add cv term
@@ -982,10 +1063,11 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</SearchDatabase>" + System.getProperty("line.separator"));
 
         // add the spectra location
-        for (String mgfFileNames : spectrumFactory.getMgfFileNames()) {
-            File mgfFile = projectDetails.getSpectrumFile(mgfFileNames);
+        for (String mgfFileName : spectrumFactory.getMgfFileNames()) {
+            File mgfFile = projectDetails.getSpectrumFile(mgfFileName);
 
-            br.write(getCurrentTabSpace() + "<SpectraData location=\"" + mgfFile.getAbsolutePath() + "\" id=\"" + mgfFileNames + "\">" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<SpectraData location=\"" + mgfFile.getAbsolutePath() + "\" id=\"" + mgfFileName
+                    + "\" name=\"" + mgfFile.getName() + "\">" + System.getProperty("line.separator"));
             tabCounter++;
 
             br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
@@ -1006,966 +1088,6 @@ public class MzIdentMLExport {
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Inputs>" + System.getProperty("line.separator"));
-    }
-
-    /////////////////////////////////////////////
-    // the code below this point is pride code
-    /////////////////////////////////////////////
-    /**
-     * Writes all PSMs.
-     *
-     * @param progressDialog a progress dialog to display progress to the user
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
-     */
-    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
-
-        try {
-            SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-            PSParameter proteinProbabilities = new PSParameter();
-            PSParameter peptideProbabilities = new PSParameter();
-            PSParameter psmProbabilities = new PSParameter();
-
-            progressDialog.setTitle("Creating mzIdentML File. Please Wait...  (Part 2 of 2: Exporting IDs)");
-            long increment = totalProgress / (2 * identification.getProteinIdentification().size());
-
-            PSMaps pSMaps = new PSMaps();
-            pSMaps = (PSMaps) identification.getUrParam(pSMaps);
-            ProteinMap proteinTargetDecoyMap = pSMaps.getProteinMap();
-            PsmSpecificMap psmTargetDecoyMap = pSMaps.getPsmSpecificMap();
-            PeptideSpecificMap peptideTargetDecoyMap = pSMaps.getPeptideSpecificMap();
-
-            // get the list of search engines used
-            IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-            ArrayList<File> idFiles = projectDetails.getIdentificationFiles();
-
-            ArrayList<Integer> seList = new ArrayList<Integer>();
-
-            for (File file : idFiles) {
-                int currentSE = idFileReaderFactory.getSearchEngine(file);
-                if (!seList.contains(currentSE)) {
-                    seList.add(currentSE);
-                }
-            }
-
-            Collections.sort(seList);
-            String searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
-
-            for (int i = 1; i < seList.size(); i++) {
-
-                if (i == seList.size() - 1) {
-                    searchEngineReport += " and ";
-                } else {
-                    searchEngineReport += ", ";
-                }
-
-                searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
-            }
-
-            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
-
-            for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatches(spectrumFile, null);
-            }
-            identification.loadPeptideMatches(null);
-            identification.loadProteinMatches(null);
-            for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatchParameters(spectrumFile, psmProbabilities, null);
-            }
-            identification.loadPeptideMatchParameters(peptideProbabilities, null);
-            identification.loadProteinMatchParameters(proteinProbabilities, null);
-
-            for (String proteinKey : identification.getProteinIdentification()) {
-
-                if (waitingHandler.isRunCanceled()) {
-                    break;
-                }
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
-                double confidenceThreshold;
-
-                br.write(getCurrentTabSpace() + "<GelFreeIdentification>" + System.getProperty("line.separator"));
-                tabCounter++;
-
-                // protein accession and database
-                br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
-
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
-
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
-
-                    if (waitingHandler.isRunCanceled()) {
-                        break;
-                    }
-
-                    PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
-                    peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
-
-                    identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
-                    identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, null);
-
-                    for (String spectrumKey : currentMatch.getSpectrumMatches()) {
-
-                        if (waitingHandler.isRunCanceled()) {
-                            break;
-                        }
-
-                        psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
-                        Peptide tempPeptide = bestAssumption.getPeptide();
-
-                        // the peptide
-                        br.write(getCurrentTabSpace() + "<PeptideItem>" + System.getProperty("line.separator"));
-                        tabCounter++;
-
-                        // peptide sequence
-                        br.write(getCurrentTabSpace() + "<Sequence>" + tempPeptide.getSequence() + "</Sequence>" + System.getProperty("line.separator"));
-
-                        // peptide start and end
-                        String proteinAccession = proteinMatch.getMainMatch();
-                        String proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
-                        int peptideStart = proteinSequence.lastIndexOf(tempPeptide.getSequence()) + 1; // @TODO: lastIndexOf should be avoided!!
-                        br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<End>" + (peptideStart + tempPeptide.getSequence().length() - 1) + "</End>" + System.getProperty("line.separator"));
-
-                        // spectrum index reference
-                        br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>" + System.getProperty("line.separator"));
-
-                        // modifications
-                        writePtms(tempPeptide);
-
-                        // fragment ions
-                        writeFragmentIons(spectrumMatch);
-
-                        // Get scores
-                        HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
-                        Double mascotScore = null;
-                        for (int se : spectrumMatch.getAdvocates()) {
-                            for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
-                                for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                                        if (!scores.containsKey(se) || scores.get(se) > eValue) {
-                                            scores.put(se, eValue);
-                                            if (se == Advocate.Mascot.getIndex()) {
-                                                mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // PTM scores
-                        ArrayList<String> modifications = new ArrayList<String>();
-
-                        for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                            if (modificationMatch.isVariable()) {
-                                if (!modifications.contains(modificationMatch.getTheoreticPtm())) {
-                                    modifications.add(modificationMatch.getTheoreticPtm());
-                                }
-                            }
-                        }
-
-                        StringBuilder dScore = new StringBuilder();
-                        Collections.sort(modifications);
-                        PSPtmScores ptmScores = new PSPtmScores();
-
-                        for (String mod : modifications) {
-
-                            if (spectrumMatch.getUrParam(ptmScores) != null) {
-
-                                if (dScore.length() > 0) {
-                                    dScore.append(", ");
-                                }
-
-                                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                dScore.append(mod).append(" (");
-
-                                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                    boolean firstSite = true;
-                                    ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
-                                    Collections.sort(sites);
-                                    for (int site : sites) {
-                                        if (firstSite) {
-                                            firstSite = false;
-                                        } else {
-                                            dScore.append(", ");
-                                        }
-                                        dScore.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
-                                    }
-                                } else {
-                                    dScore.append("Not Scored");
-                                }
-
-                                dScore.append(")");
-                            }
-                        }
-
-                        StringBuilder probabilisticScore = new StringBuilder();
-
-                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-
-                            for (String mod : modifications) {
-
-                                if (spectrumMatch.getUrParam(ptmScores) != null) {
-
-                                    if (probabilisticScore.length() > 0) {
-                                        probabilisticScore.append(", ");
-                                    }
-
-                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    probabilisticScore.append(mod).append(" (");
-
-                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                        boolean firstSite = true;
-                                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
-                                        Collections.sort(sites);
-                                        for (int site : sites) {
-                                            if (firstSite) {
-                                                firstSite = false;
-                                            } else {
-                                                probabilisticScore.append(", ");
-                                            }
-                                            probabilisticScore.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
-                                        }
-                                    } else {
-                                        probabilisticScore.append("Not Scored");
-                                    }
-
-                                    probabilisticScore.append(")");
-                                }
-                            }
-                        }
-
-                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                        String peptideProteins = "";
-                        for (String accession : peptideParentProteins) {
-                            if (!peptideProteins.equals("")) {
-                                peptideProteins += ", ";
-                            }
-                            peptideProteins += accession;
-                        }
-
-                        // additional peptide id parameters
-                        br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-                        tabCounter++;
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + Spectrum.getSpectrumTitle(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Protein inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (peptideProbabilities.getMatchValidationLevel() == MatchValidationLevel.doubtful && !peptideProbabilities.getReasonDoubtful().equals("")) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + peptideProbabilities.getMatchValidationLevel() + " (" + peptideProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + peptideProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
-                        }
-                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
-                        br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        if (psmProbabilities.getMatchValidationLevel() == MatchValidationLevel.doubtful && !psmProbabilities.getReasonDoubtful().equals("")) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + psmProbabilities.getMatchValidationLevel() + " (" + psmProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
-                        } else {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + psmProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
-                        }
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().toString() + "\" />" + System.getProperty("line.separator"));
-
-                        // search engine specific parameters
-                        ArrayList<Integer> searchEngines = new ArrayList<Integer>(scores.keySet());
-                        Collections.sort(searchEngines);
-                        Advocate advocate;
-                        for (int se : searchEngines) {
-                            advocate = Advocate.getAdvocate(se);
-                            br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + scores.get(se) + "\" />" + System.getProperty("line.separator"));
-                        }
-                        if (mascotScore != null) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"Mascot score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
-                        }
-
-                        // PTM scoring
-                        if (dScore.length() > 0) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
-                        }
-                        if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && probabilisticScore.length() > 0) {
-                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM " + ptmScoringPreferences.getSelectedProbabilisticScore().getName() + "\" value=\"" + probabilisticScore + "\" />" + System.getProperty("line.separator"));
-                        }
-                        tabCounter--;
-                        br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-                        tabCounter--;
-                        br.write(getCurrentTabSpace() + "</PeptideItem>" + System.getProperty("line.separator"));
-                    }
-                }
-
-                // additional protein id parameters
-                br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-                tabCounter++;
-                if (ProteinMatch.isDecoy(proteinKey)) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />" + System.getProperty("line.separator"));
-                } else {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + System.getProperty("line.separator"));
-                }
-                try {
-                    if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\""
-                                + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
-                    } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
-                                + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace(); // @TODO: better error handling
-                }
-                if (proteinProbabilities.getMatchValidationLevel() == MatchValidationLevel.doubtful && !proteinProbabilities.getReasonDoubtful().equals("")) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + proteinProbabilities.getMatchValidationLevel() + " (" + proteinProbabilities.getReasonDoubtful() + ")" + "\" />" + System.getProperty("line.separator"));
-                } else {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"" + proteinProbabilities.getMatchValidationLevel() + "\" />" + System.getProperty("line.separator"));
-                }
-                String otherProteins = "";
-                boolean first = true;
-                for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
-                    if (!otherAccession.equals(proteinMatch.getMainMatch())) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            otherAccession += ", ";
-                        }
-                        otherProteins += otherAccession;
-                    }
-                }
-                if (!otherProteins.equals("")) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Secondary proteins\" value=\"" + otherProteins + "\" />" + System.getProperty("line.separator"));
-                }
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-
-                // protein score
-                br.write(getCurrentTabSpace() + "<Score>" + Util.roundDouble(proteinProbabilities.getProteinConfidence(), CONFIDENCE_DECIMALS) + "</Score>" + System.getProperty("line.separator"));
-
-                // protein threshold
-                confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
-                br.write(getCurrentTabSpace() + "<Threshold>" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "</Threshold>" + System.getProperty("line.separator"));
-
-                // the search engines used
-                br.write(getCurrentTabSpace() + "<SearchEngine>" + searchEngineReport + "</SearchEngine>" + System.getProperty("line.separator"));
-
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</GelFreeIdentification>" + System.getProperty("line.separator"));
-
-                progress += increment;
-                progressDialog.setValue((int) ((100 * progress) / totalProgress));
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // @TODO: better error handling
-        }
-    }
-
-    /**
-     * Writes the fragment ions for a given spectrum match.
-     *
-     * @param spectrumMatch the spectrum match considered
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
-     */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
-
-        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-        MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
-
-        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                annotationPreferences.getNeutralLosses(),
-                annotationPreferences.getValidatedCharges(),
-                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                tempSpectrum, peptide,
-                tempSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
-
-        for (int i = 0; i < annotations.size(); i++) {
-            writeFragmentIon(annotations.get(i));
-        }
-    }
-
-    /**
-     * Writes the line corresponding to an ion match.
-     *
-     * @param ionMatch the ion match considered
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeFragmentIon(IonMatch ionMatch) throws IOException {
-
-        // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
-        // @TODO: to add phospho neutral losses we need to create new CV terms!!
-        CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: should be renamed!!!
-
-        if (fragmentIonTerm != null) {
-            if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
-                    || ionMatch.ion.getType() == IonType.IMMONIUM_ION
-                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
-                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
-                br.write(getCurrentTabSpace() + "<FragmentIon>" + System.getProperty("line.separator"));
-                tabCounter++;
-                writeCvTerm(fragmentIonTerm);
-                writeCvTerm(ionMatch.getMZPrideCvTerm()); // @TODO: should be renamed!!!
-                writeCvTerm(ionMatch.getIntensityPrideCvTerm()); // @TODO: should be renamed!!!
-                writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm()); // @TODO: should be renamed!!!
-                writeCvTerm(ionMatch.getChargePrideCvTerm()); // @TODO: should be renamed!!!
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</FragmentIon>" + System.getProperty("line.separator"));
-            }
-        }
-    }
-
-    /**
-     * Writes the PTMs detected in a peptide.
-     *
-     * @param peptide the peptide of interest
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writePtms(Peptide peptide) throws IOException {
-
-        for (int i = 0; i < peptide.getModificationMatches().size(); i++) {
-
-            br.write(getCurrentTabSpace() + "<ModificationItem>" + System.getProperty("line.separator"));
-            tabCounter++;
-
-            ModificationMatch modMatch = peptide.getModificationMatches().get(i);
-            String modName = modMatch.getTheoreticPtm();
-            PTM ptm = ptmFactory.getPTM(modName);
-
-            CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
-            String cvTermName;
-            String ptmMass;
-
-            if (cvTerm == null) {
-                cvTermName = modName;
-                ptmMass = "" + ptm.getMass();
-            } else {
-                cvTermName = cvTerm.getName();
-                ptmMass = cvTerm.getValue();
-
-                // two extra tests to guard against problems with the cv terms, better to have a valid ptm than no ptm at all...
-                if (cvTermName == null) {
-                    cvTermName = modName;
-                }
-                if (ptmMass == null) {
-                    ptmMass = "" + ptm.getMass();
-                }
-            }
-
-            br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>" + System.getProperty("line.separator"));
-
-            if (cvTerm == null) {
-                // @TODO: perhaps this should be handled differently? as there is no real mapping...
-                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>" + System.getProperty("line.separator"));
-            } else {
-                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>" + System.getProperty("line.separator"));
-            }
-
-            br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>" + System.getProperty("line.separator"));
-
-            br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-            tabCounter++;
-            if (cvTerm == null) {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + "unknown" + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
-            } else {
-                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />" + System.getProperty("line.separator"));
-            }
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</ModificationItem>" + System.getProperty("line.separator"));
-        }
-    }
-
-    /**
-     * Writes the spectra in the mzData format.
-     *
-     * @param progressDialog a progress dialog to display progress to the user
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
-     */
-    private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
-
-        br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // include the ontologies used, only MS is included by default
-        br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" "
-                + "address=\"http://psidev.sourceforge.net/ontology\" />" + System.getProperty("line.separator"));
-
-        // write the mzData description (project description, sample details, contact details, instrument details and software details)
-        writeMzDataDescription();
-
-        // write the spectra
-        writeSpectra(progressDialog);
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</mzData>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes all spectra in the mzData format.
-     *
-     * @param progressDialog a progress dialog to display progress to the user
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
-     */
-    private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
-
-        progressDialog.setTitle("Creating mzIdentML File. Please Wait...  (Part 1 of 2: Exporting Spectra)");
-
-        spectrumIndexes = new HashMap<String, Long>();
-
-        long spectrumCounter = 0;
-
-        br.write(getCurrentTabSpace() + "<spectrumList count=\"" + spectrumCounter + "\">" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        progressDialog.setPrimaryProgressCounterIndeterminate(false);
-
-        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-
-            if (waitingHandler.isRunCanceled()) {
-                break;
-            }
-
-            for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-
-                if (waitingHandler.isRunCanceled()) {
-                    break;
-                }
-
-                String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey));
-                if (!tempSpectrum.getPeakList().isEmpty()) {
-                    boolean identified = identification.matchExists(spectrumKey);
-                    writeSpectrum(tempSpectrum, identified, spectrumCounter);
-                    if (identified) {
-                        spectrumIndexes.put(spectrumKey, spectrumCounter);
-                    }
-                    spectrumCounter++;
-                }
-                progress++;
-                progressDialog.setValue((int) ((100 * progress) / totalProgress));
-            }
-        }
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumList>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes a spectrum.
-     *
-     * @param spectrum The spectrum
-     * @param matchExists boolean indicating whether the match exists
-     * @param spectrumCounter index of the spectrum
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException {
-
-        br.write(getCurrentTabSpace() + "<spectrum id=\"" + spectrumCounter + "\">" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        br.write(getCurrentTabSpace() + "<spectrumDesc>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        br.write(getCurrentTabSpace() + "<spectrumSettings>" + System.getProperty("line.separator"));
-        tabCounter++;
-        br.write(getCurrentTabSpace() + "<spectrumInstrument mzRangeStop=\"" + spectrum.getMaxMz()
-                + " \" mzRangeStart=\"" + spectrum.getMinMz()
-                + "\" msLevel=\"" + spectrum.getLevel() + "\" />" + System.getProperty("line.separator"));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumSettings>" + System.getProperty("line.separator"));
-
-        br.write(getCurrentTabSpace() + "<precursorList count=\"1\">" + System.getProperty("line.separator")); // note that precursor count is hardcoded to 1
-        tabCounter++;
-        br.write(getCurrentTabSpace() + "<precursor msLevel=\"1\" spectrumRef=\"0\">" + System.getProperty("line.separator")); // note that precursor ms level is hardcoded to 1 with no corresponding spectrum
-        tabCounter++;
-        br.write(getCurrentTabSpace() + "<ionSelection>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // precursor charge states
-        for (int i = 0; i < spectrum.getPrecursor().getPossibleCharges().size(); i++) {
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"ChargeState\" value=\""
-                    + spectrum.getPrecursor().getPossibleCharges().get(i).value + "\" />" + System.getProperty("line.separator")); // note that charge is assumed to be positive...
-        }
-
-        // precursor m/z value
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000744\" name=\"selected ion m/z\" value=\""
-                + spectrum.getPrecursor().getMz() + "\" />" + System.getProperty("line.separator"));
-
-        // precursor intensity
-        if (spectrum.getPrecursor().getIntensity() > 0) {
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000042\" name=\"peak intensity\" value=\""
-                    + spectrum.getPrecursor().getIntensity() + "\" />" + System.getProperty("line.separator"));
-        }
-
-        // precursor retention time
-        if (spectrum.getPrecursor().hasRTWindow()) {
-
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
-                    + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + System.getProperty("line.separator"));
-
-            // @TODO: figure out how to annotate retention time windows properly...
-            //spectrum.getPrecursor().getRtWindow()[0] + "-" + spectrum.getPrecursor().getRtWindow()[1]
-        } else if (spectrum.getPrecursor().getRt() != -1) {
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
-                    + spectrum.getPrecursor().getRt() + "\" />" + System.getProperty("line.separator"));
-        }
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</ionSelection>" + System.getProperty("line.separator"));
-
-        // activation
-        br.write(getCurrentTabSpace() + "<activation />" + System.getProperty("line.separator")); // @TODO: always empty, but i think it's a required field?
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</precursor>" + System.getProperty("line.separator"));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</precursorList>" + System.getProperty("line.separator"));
-
-        if (matchExists) {
-            br.write(getCurrentTabSpace() + "<comments>Identified</comments>" + System.getProperty("line.separator"));
-        } else {
-            br.write(getCurrentTabSpace() + "<comments>Not identified</comments>" + System.getProperty("line.separator"));
-        }
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrumDesc>" + System.getProperty("line.separator"));
-
-        // get the m/z and intensity arrays
-        double[][] arrays = spectrum.getMzAndIntensityAsArray();
-
-        // write the m/z values
-        br.write(getCurrentTabSpace() + "<mzArrayBinary>" + System.getProperty("line.separator"));
-        tabCounter++;
-        BinaryArrayImpl mzValues = new BinaryArrayImpl(arrays[0], BinaryArrayImpl.LITTLE_ENDIAN_LABEL);
-        br.write(getCurrentTabSpace() + "<data precision=\"" + mzValues.getDataPrecision() + "\" endian=\"" + mzValues.getDataEndian()
-                + "\" length=\"" + mzValues.getDataLength() + "\">" + mzValues.getBase64String() + "</data>" + System.getProperty("line.separator"));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</mzArrayBinary>" + System.getProperty("line.separator"));
-
-        // write the intensity values
-        br.write(getCurrentTabSpace() + "<intenArrayBinary>" + System.getProperty("line.separator"));
-        tabCounter++;
-        BinaryArrayImpl intValues = new BinaryArrayImpl(arrays[1], BinaryArrayImpl.LITTLE_ENDIAN_LABEL);
-        br.write(getCurrentTabSpace() + "<data precision=\"" + intValues.getDataPrecision() + "\" endian=\"" + intValues.getDataEndian()
-                + "\" length=\"" + intValues.getDataLength() + "\">" + intValues.getBase64String() + "</data>" + System.getProperty("line.separator"));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</intenArrayBinary>" + System.getProperty("line.separator"));
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</spectrum>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the mzData description.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeMzDataDescription() throws IOException {
-
-        // write the project description
-        br.write(getCurrentTabSpace() + "<description>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        br.write(getCurrentTabSpace() + "<admin>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // write the sample details
-        writeSample();
-
-        // write the contact details
-        writeContacts();
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</admin>" + System.getProperty("line.separator"));
-
-        // write the instrument details
-        writeInstrument();
-
-        // write the software details
-        writeSoftware();
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</description>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the software information.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeSoftware() throws IOException {
-
-        br.write(getCurrentTabSpace() + "<dataProcessing>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // write the software details
-        br.write(getCurrentTabSpace() + "<software>" + System.getProperty("line.separator"));
-        tabCounter++;
-        br.write(getCurrentTabSpace() + "<name>" + "PeptideShaker" + "</name>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<version>" + peptideShakerVersion + "</version>" + System.getProperty("line.separator"));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</software>" + System.getProperty("line.separator"));
-
-        // write the processing details
-        br.write(getCurrentTabSpace() + "<processingMethod>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // fragment mass accuracy
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000161\" name=\"Fragment mass tolerance setting\" value=\""
-                + searchParameters.getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));
-
-        // precursor mass accuracy
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000078\" name=\"Peptide mass tolerance setting\" value=\""
-                + searchParameters.getPrecursorAccuracy() + "\" />" + System.getProperty("line.separator"));
-
-        // allowed missed cleavages
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000162\" name=\"Allowed missed cleavages\" value=\""
-                + searchParameters.getnMissedCleavages() + "\" />" + System.getProperty("line.separator"));
-
-        // @TODO: add more settings??
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</processingMethod>" + System.getProperty("line.separator"));
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</dataProcessing>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the instrument description.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeInstrument() throws IOException {
-
-        br.write(getCurrentTabSpace() + "<instrument>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // write the instrument name
-        br.write(getCurrentTabSpace() + "<instrumentName>" + instrument.getName() + "</instrumentName>" + System.getProperty("line.separator"));
-
-        // write the source
-        br.write(getCurrentTabSpace() + "<source>" + System.getProperty("line.separator"));
-        tabCounter++;
-        writeCvTerm(instrument.getSource());
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</source>" + System.getProperty("line.separator"));
-
-        // write the analyzers
-        br.write(getCurrentTabSpace() + "<analyzerList count=\"" + instrument.getCvTerms().size() + "\">" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        for (int i = 0; i < instrument.getCvTerms().size(); i++) {
-            br.write(getCurrentTabSpace() + "<analyzer>" + System.getProperty("line.separator"));
-            tabCounter++;
-            writeCvTerm(instrument.getCvTerms().get(i));
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</analyzer>" + System.getProperty("line.separator"));
-        }
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</analyzerList>" + System.getProperty("line.separator"));
-
-        // write the detector
-        br.write(getCurrentTabSpace() + "<detector>" + System.getProperty("line.separator"));
-        tabCounter++;
-        writeCvTerm(instrument.getDetector());
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</detector>" + System.getProperty("line.separator"));
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</instrument>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the contact descriptions.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeContacts() throws IOException {
-        for (int i = 0; i < contactGroup.getContacts().size(); i++) {
-            br.write(getCurrentTabSpace() + "<contact>" + System.getProperty("line.separator"));
-            tabCounter++;
-
-            br.write(getCurrentTabSpace() + "<name>" + contactGroup.getContacts().get(i).getName() + "</name>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<institution>" + contactGroup.getContacts().get(i).getInstitution() + "</institution>" + System.getProperty("line.separator"));
-            br.write(getCurrentTabSpace() + "<contactInfo>" + contactGroup.getContacts().get(i).getEMail() + "</contactInfo>" + System.getProperty("line.separator"));
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</contact>" + System.getProperty("line.separator"));
-        }
-    }
-
-    /**
-     * Writes the sample description.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeSample() throws IOException {
-
-        br.write(getCurrentTabSpace() + "<sampleName>" + sample.getName() + "</sampleName>" + System.getProperty("line.separator"));
-
-        br.write(getCurrentTabSpace() + "<sampleDescription>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        for (int i = 0; i < sample.getCvTerms().size(); i++) {
-            writeCvTerm(sample.getCvTerms().get(i));
-        }
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</sampleDescription>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the additional tags.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeAdditionalTags() throws IOException {
-        br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        // XML generation software
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" "
-                + "value=\"PeptideShaker v" + peptideShakerVersion + "\" />" + System.getProperty("line.separator"));
-
-        // Project
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "
-                + "value=\"" + experimentProject + "\" />" + System.getProperty("line.separator"));
-
-        // Experiment description
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" "
-                + "value=\"" + experimentDescription + "\" />" + System.getProperty("line.separator"));
-
-        // Global peptide FDR
-        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
-        // @TODO: add global protein FDR??
-        // search type
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + System.getProperty("line.separator"));
-
-        // @TODO: add more??
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the title.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeTitle() throws IOException {
-        br.write(getCurrentTabSpace() + "<Title>" + experimentTitle + "</Title>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the short label.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeShortLabel() throws IOException {
-        br.write(getCurrentTabSpace() + "<ShortLabel>" + experimentLabel + "</ShortLabel>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the protocol description.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeProtocol() throws IOException {
-        br.write(getCurrentTabSpace() + "<Protocol>" + System.getProperty("line.separator"));
-        tabCounter++;
-
-        br.write(getCurrentTabSpace() + "<ProtocolName>" + protocol.getName() + "</ProtocolName>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<ProtocolSteps>" + System.getProperty("line.separator"));
-
-        for (int i = 0; i < protocol.getCvTerms().size(); i++) {
-
-            tabCounter++;
-
-            br.write(getCurrentTabSpace() + "<StepDescription>" + System.getProperty("line.separator"));
-            tabCounter++;
-            writeCvTerm(protocol.getCvTerms().get(i));
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</StepDescription>" + System.getProperty("line.separator"));
-
-            tabCounter--;
-        }
-
-        br.write(getCurrentTabSpace() + "</ProtocolSteps>" + System.getProperty("line.separator"));
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</Protocol>" + System.getProperty("line.separator"));
-    }
-
-    /**
-     * Writes the references.
-     *
-     * @throws IOException exception thrown whenever a problem occurred while
-     * reading/writing a file
-     */
-    private void writeReferences() throws IOException {
-        for (int i = 0; i < referenceGroup.getReferences().size(); i++) {
-
-            Reference tempReference = referenceGroup.getReferences().get(i);
-
-            br.write(getCurrentTabSpace() + "<Reference>" + System.getProperty("line.separator"));
-            tabCounter++;
-
-            br.write(getCurrentTabSpace() + "<RefLine>" + tempReference.getReference() + "</RefLine>" + System.getProperty("line.separator"));
-
-            if (tempReference.getPmid() != null || tempReference.getDoi() != null) {
-                br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
-                tabCounter++;
-
-                if (tempReference.getPmid() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\""
-                            + tempReference.getPmid() + "\" />" + System.getProperty("line.separator"));
-                }
-
-                if (tempReference.getDoi() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\""
-                            + tempReference.getDoi() + "\" />" + System.getProperty("line.separator"));
-                }
-
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
-            }
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</Reference>" + System.getProperty("line.separator"));
-        }
     }
 
     /**
@@ -2179,5 +1301,100 @@ public class MzIdentMLExport {
         } else {
             br.write(" />" + System.getProperty("line.separator"));
         }
+    }
+
+    /////////////////////////////////////////////
+    // the code below this point is old pride code
+    /////////////////////////////////////////////
+    /**
+     * Writes the fragment ions for a given spectrum match.
+     *
+     * @param spectrumMatch the spectrum match considered
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
+
+        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+        MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
+
+        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                annotationPreferences.getNeutralLosses(),
+                annotationPreferences.getValidatedCharges(),
+                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
+                tempSpectrum, peptide,
+                tempSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+
+        for (int i = 0; i < annotations.size(); i++) {
+            writeFragmentIon(annotations.get(i));
+        }
+    }
+
+    /**
+     * Writes the line corresponding to an ion match.
+     *
+     * @param ionMatch the ion match considered
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeFragmentIon(IonMatch ionMatch) throws IOException {
+
+        // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
+        // @TODO: to add phospho neutral losses we need to create new CV terms!!
+        CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: should be renamed!!!
+
+        if (fragmentIonTerm != null) {
+            if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
+                    || ionMatch.ion.getType() == IonType.IMMONIUM_ION
+                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
+                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
+                br.write(getCurrentTabSpace() + "<FragmentIon>" + System.getProperty("line.separator"));
+                tabCounter++;
+                writeCvTerm(fragmentIonTerm);
+                writeCvTerm(ionMatch.getMZPrideCvTerm()); // @TODO: should be renamed!!!
+                writeCvTerm(ionMatch.getIntensityPrideCvTerm()); // @TODO: should be renamed!!!
+                writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm()); // @TODO: should be renamed!!!
+                writeCvTerm(ionMatch.getChargePrideCvTerm()); // @TODO: should be renamed!!!
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</FragmentIon>" + System.getProperty("line.separator"));
+            }
+        }
+    }
+
+    /**
+     * Writes the additional tags.
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeAdditionalTags() throws IOException {
+        br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
+        tabCounter++;
+
+        // XML generation software
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" "
+                + "value=\"PeptideShaker v" + peptideShakerVersion + "\" />" + System.getProperty("line.separator"));
+
+        // Project
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "
+                + "value=\"" + experimentProject + "\" />" + System.getProperty("line.separator"));
+
+        // Experiment description
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" "
+                + "value=\"" + experimentDescription + "\" />" + System.getProperty("line.separator"));
+
+        // Global peptide FDR
+        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
+        // @TODO: add global protein FDR??
+        // search type
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001083\" name=\"ms/ms search\" />" + System.getProperty("line.separator"));
+
+        // @TODO: add more??
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));
     }
 }
