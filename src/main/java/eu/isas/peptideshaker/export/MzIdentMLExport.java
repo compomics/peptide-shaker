@@ -176,6 +176,10 @@ public class MzIdentMLExport {
      * The waiting handler.
      */
     private WaitingHandler waitingHandler;
+    /**
+     * The peptide evidence keys.
+     */
+    private ArrayList<String> pepEvidenceKeys = new ArrayList<String>();
 
     /**
      * Constructor.
@@ -523,6 +527,7 @@ public class MzIdentMLExport {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
+            String realPeptideKey = peptide.getKey(); // @TODO: not really sure why this is neeed..?
 
             // get all the possible parent proteins
             ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
@@ -580,14 +585,16 @@ public class MzIdentMLExport {
                     int peptideStart = indexes.get(i);
                     int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
 
-                    String key = "PepEv_" + tempProtein + "_" + peptideStart + "_" + peptideEnd + "_" + peptideKey;
+                    String key = "PepEv_" + tempProtein + "_" + peptideStart + "_" + peptideEnd + "_" + realPeptideKey;
+
+                    pepEvidenceKeys.add(key);
 
                     br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
                             + "pre=\"" + aaBefore + "\" "
                             + "post=\"" + aaAfter + "\" "
                             + "start=\"" + peptideStart + "\" "
                             + "end=\"" + peptideEnd + "\" "
-                            + "peptide_ref=\"" + peptideKey + "\" "
+                            + "peptide_ref=\"" + realPeptideKey + "\" "
                             + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
                             + "id=\"" + key + "\" "
                             + "/>" + System.getProperty("line.separator"));
@@ -946,7 +953,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult "
                 + "spectraData_ref=\"" + spectrumFileName
-                + "\" spectrumID=\"" + "index=" + psmIndex // @TODO: find a better (and correct) ID!
+                + "\" spectrumID=\"" + "index=" + spectrumFactory.getSpectrumIndex(spectrumTitle, spectrumFileName)
                 + "\" id=\"" + spectrumIdentificationResultItemKey + "\">" + System.getProperty("line.separator"));
         tabCounter++;
 
@@ -982,6 +989,8 @@ public class MzIdentMLExport {
 //                    }
 //                }
 //            }
+//        boolean evidenceAdded = false;
+
         // iterate all the possible protein parents for each peptide
         for (String tempProtein : possibleProteins) {
 
@@ -992,9 +1001,19 @@ public class MzIdentMLExport {
             for (int start : peptideStarts) {
                 String pepEvidenceKey = "PepEv_" + tempProtein + "_" + start + "_" + (start + bestPeptideAssumption.getPeptide().getSequence().length() - 1)
                         + "_" + bestPeptideAssumption.getPeptide().getKey();
-                br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + pepEvidenceKey + "\"/>" + System.getProperty("line.separator"));
+
+//                if (!pepEvidenceKeys.contains(pepEvidenceKey)) {
+//                    //System.out.println(pepEvidenceKey);  
+//                } else {
+//                    evidenceAdded = true;
+                    br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + pepEvidenceKey + "\"/>" + System.getProperty("line.separator"));
+//                }
             }
         }
+
+//        if (!evidenceAdded) {
+//            System.out.println("problem: unknown peptide evidence key!!! " + spectrumIdentificationResultItemKey);
+//        }
 
         // add the fragment ion annotation
 //          br.write(getCurrentTabSpace() + "<Fragmentation>" + System.getProperty("line.separator")); // @TODO: add the fragment ion annotation
