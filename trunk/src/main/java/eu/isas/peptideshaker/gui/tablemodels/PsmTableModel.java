@@ -126,70 +126,76 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
         try {
             int viewIndex = getViewIndex(row);
-            String psmKey = psmKeys.get(viewIndex); // @TODO: can result in an IndexOutOfBoundsException...
-            boolean useDB = !isSelfUpdating();
 
-            switch (column) {
-                case 0:
-                    return viewIndex + 1;
-                case 1:
-                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
-                    if (!useDB && pSParameter == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return pSParameter.isStarred();
-                case 2:
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                    if (!useDB && spectrumMatch == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters());
-                case 3:
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                    if (!useDB && spectrumMatch == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
-                case 4:
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                    if (!useDB && spectrumMatch == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                case 5:
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                    if (!useDB && spectrumMatch == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    bestAssumption = spectrumMatch.getBestPeptideAssumption();
-                    Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
-                    return bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
-                case 6:
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
-                    if (!useDB && pSParameter == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        return pSParameter.getPsmScore();
-                    } else {
-                        return pSParameter.getPsmConfidence();
-                    }
-                case 7:
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
-                    if (!useDB && pSParameter == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return pSParameter.getMatchValidationLevel().getIndex();
-                default:
-                    return "";
+            if (viewIndex < psmKeys.size()) { // escape possible null pointer
+
+                String psmKey = psmKeys.get(viewIndex);
+                boolean useDB = !isSelfUpdating();
+
+                switch (column) {
+                    case 0:
+                        return viewIndex + 1;
+                    case 1:
+                        PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                        if (!useDB && pSParameter == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        return pSParameter.isStarred();
+                    case 2:
+                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                        if (!useDB && spectrumMatch == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                    case 3:
+                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                        if (!useDB && spectrumMatch == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
+                    case 4:
+                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                        if (!useDB && spectrumMatch == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                    case 5:
+                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                        if (!useDB && spectrumMatch == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        bestAssumption = spectrumMatch.getBestPeptideAssumption();
+                        Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
+                        return bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
+                    case 6:
+                        pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                        if (!useDB && pSParameter == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                            return pSParameter.getPsmScore();
+                        } else {
+                            return pSParameter.getPsmConfidence();
+                        }
+                    case 7:
+                        pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                        if (!useDB && pSParameter == null) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                        return pSParameter.getMatchValidationLevel().getIndex();
+                    default:
+                        return null;
+                }
+            } else {
+                return null;
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
