@@ -404,7 +404,8 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications.", true, true);
         }
-        fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(), processingPreferences.getProteinFDR(), searchParameters, annotationPreferences, identificationFeaturesGenerator, inputMap);
+        fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(),
+                processingPreferences.getProteinFDR(), searchParameters, annotationPreferences, identificationFeaturesGenerator, inputMap);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -1229,33 +1230,45 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PsmSpecificMap psmMap,
-            String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PsmSpecificMap psmMap, String spectrumKey) throws SQLException,
+            IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
         if (sequenceFactory.concatenatedTargetDecoy()) {
+
             TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey()));
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
             double psmThreshold = targetDecoyResults.getScoreLimit();
             double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
             }
+
             boolean noValidated = targetDecoyResults.noValidated();
+
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+
                 String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+
+                // update the annotation preferences for the new psm, mainly the charge
+                annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
+
                 for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
                     if (!filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences)) {
                         if (filter.getName().toLowerCase().contains("deviation")) {
-                        filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
                         } else if (filter.getName().toLowerCase().contains("coverage")) {
-                        filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
                         }
                         filterPassed = false;
                         if (reasonDoubtful == null) {
@@ -1266,7 +1279,9 @@ public class PeptideShaker {
                         reasonDoubtful += filter.getDescription();
                     }
                 }
+
                 boolean confidenceThresholdPassed = psParameter.getPsmConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
+
                 if (!confidenceThresholdPassed) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -1275,7 +1290,9 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Low confidence";
                 }
+
                 boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -1284,6 +1301,7 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Low number of hits";
                 }
+
                 if (!sequenceFactory.hasEnoughSequences()) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -1292,6 +1310,7 @@ public class PeptideShaker {
                     }
                     reasonDoubtful += "Database too small";
                 }
+
                 if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                 } else {
