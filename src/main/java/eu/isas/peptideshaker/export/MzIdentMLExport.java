@@ -177,9 +177,13 @@ public class MzIdentMLExport {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The peptide evidence keys.
+     * The peptide evidence IDs.
      */
-    private ArrayList<String> pepEvidenceKeys = new ArrayList<String>();
+    private HashMap<String, String> pepEvidenceIds = new HashMap<String, String>();
+    /**
+     * The peptide IDs.
+     */
+    private HashMap<String, String> peptideIds = new HashMap<String, String>();
 
     /**
      * Constructor.
@@ -458,7 +462,7 @@ public class MzIdentMLExport {
         // get the sequence database
         ProteinIterator iterator = sequenceFactory.getProteinIterator(false);
 
-//        String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown);
+//        String dbType = Header.getDatabaseTypeAsString(Header.DatabaseType.Unknown); // @TODO: add database type as user or cv param?
 //        FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
 //        if (fastaIndex != null) {
 //            dbType = Header.getDatabaseTypeAsString(fastaIndex.getDatabaseType());
@@ -466,73 +470,87 @@ public class MzIdentMLExport {
         // iterate all the protein sequences
         while (iterator.hasNext()) {
             Protein currentProtein = iterator.getNextProtein();
-
             br.write(getCurrentTabSpace() + "<DBSequence id=\"" + currentProtein.getAccession() + "\" "
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
-
             br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8")));
-
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
         }
 
         iterator.close();
 
-        identification.loadPeptideMatches(null); // @TODO: use waiting handler?
+        int peptideCounter = 0;
 
         // iterate all the peptides
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+            identification.loadSpectrumMatches(spectrumFileName, null); // @TODO: add waiting handler
+            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null); // @TODO: add waiting handler
 
-            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\" >" + System.getProperty("line.separator"));
-            tabCounter++;
+            // iterate the psms
+            for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
-            br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                Peptide peptide = bestPeptideAssumption.getPeptide();
+                String peptideSequence = peptide.getSequence();
+                peptideIds.put(peptide.getKey(), "Pep_" + ++peptideCounter);
 
-            for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                br.write(getCurrentTabSpace() + "<Peptide id=\"Pep_" + peptideCounter + "\" >" + System.getProperty("line.separator"));
+                tabCounter++;
+                br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
 
-                PTM currentPtm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
-                int ptmLocation = modMatch.getModificationSite();
+                for (ModificationMatch modMatch : peptide.getModificationMatches()) {
 
-                if (currentPtm.isNTerm()) {
-                    ptmLocation = 0;
-                } else if (currentPtm.isCTerm()) {
-                    ptmLocation = peptideSequence.length() + 1;
+                    PTM currentPtm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+                    int ptmLocation = modMatch.getModificationSite();
+
+                    if (currentPtm.isNTerm()) {
+                        ptmLocation = 0;
+                    } else if (currentPtm.isCTerm()) {
+                        ptmLocation = peptideSequence.length() + 1;
+                    }
+
+                    br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getMass() + "\" "
+                            + "residues=\"" + peptideSequence.charAt(modMatch.getModificationSite() - 1) + "\" "
+                            + "location=\"" + ptmLocation + "\" >" + System.getProperty("line.separator"));
+
+                    CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+                    if (ptmCvTerm != null) {
+                        tabCounter++;
+                        writeCvTerm(ptmCvTerm);
+                        tabCounter--;
+                    }
+
+                    br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
                 }
 
-                br.write(getCurrentTabSpace() + "<Modification monoisotopicMassDelta=\"" + currentPtm.getMass() + "\" "
-                        + "residues=\"" + peptideSequence.charAt(modMatch.getModificationSite() - 1) + "\" "
-                        + "location=\"" + ptmLocation + "\" >" + System.getProperty("line.separator"));
-
-                CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
-                if (ptmCvTerm != null) {
-                    tabCounter++;
-                    writeCvTerm(ptmCvTerm);
-                    tabCounter--;
-                }
-
-                br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</Peptide>" + System.getProperty("line.separator"));
             }
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</Peptide>" + System.getProperty("line.separator"));
         }
 
-        // iterate the peptide evidence
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        int peptideEvidenceCounter = 0;
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            Peptide peptide = peptideMatch.getTheoreticPeptide();
-            String realPeptideKey = peptide.getKey(); // @TODO: not really sure why this is neeed..?
+        // iterate the spectrum files
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            // get all the possible parent proteins
-            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            identification.loadSpectrumMatches(spectrumFileName, null); // @TODO: add waiting handler
+            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null); // @TODO: add waiting handler
 
-            // @TODO: only use the retained proteins??
+            // iterate the psms
+            for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
+
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                Peptide peptide = bestPeptideAssumption.getPeptide();
+
+                // get all the possible parent proteins
+                ArrayList<String> possibleProteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+
+                // @TODO: only use the retained proteins??
 //            List<String> retainedProteins = new ArrayList<String>();
 //            for (String proteinKey : identification.getProteinIdentification()) {
 //                for (String protein : possibleProteins) {
@@ -544,60 +562,60 @@ public class MzIdentMLExport {
 //                    }
 //                }
 //            }
-            // iterate all the possible protein parents for each peptide
-            for (String tempProtein : possibleProteins) {
+                // iterate all the possible protein parents for each peptide
+                for (String tempProtein : possibleProteins) {
 
-                // get the start indexes and the surrounding 
-                HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
-                        peptide.getSequence(), 1, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    // get the start indexes and the surrounding 
+                    HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
+                            peptide.getSequence(), 1, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
-                ArrayList<Integer> indexes = new ArrayList<Integer>();
-                ArrayList<String> before = new ArrayList<String>();
-                ArrayList<String> after = new ArrayList<String>();
+                    ArrayList<Integer> indexes = new ArrayList<Integer>();
+                    ArrayList<String> before = new ArrayList<String>();
+                    ArrayList<String> after = new ArrayList<String>();
 
-                if (aaSurrounding.size() == 1) {
-                    for (int index : aaSurrounding.keySet()) {
-                        indexes.add(index);
-                        before.add(aaSurrounding.get(index)[0]);
-                        after.add(aaSurrounding.get(index)[1]);
-                    }
-                } else {
-                    ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
-                    Collections.sort(tempIndexes);
-                    for (int index : tempIndexes) {
-                        indexes.add(index);
-                        before.add(aaSurrounding.get(index)[0]);
-                        after.add(aaSurrounding.get(index)[1]);
-                    }
-                }
-
-                for (int i = 0; i < indexes.size(); i++) {
-                    String aaBefore = "-";
-                    String aaAfter = "-";
-
-                    if (!before.get(i).isEmpty()) {
-                        aaBefore = before.get(i);
-                    }
-                    if (!after.get(i).isEmpty()) {
-                        aaAfter = after.get(i);
+                    if (aaSurrounding.size() == 1) {
+                        for (int index : aaSurrounding.keySet()) {
+                            indexes.add(index);
+                            before.add(aaSurrounding.get(index)[0]);
+                            after.add(aaSurrounding.get(index)[1]);
+                        }
+                    } else {
+                        ArrayList<Integer> tempIndexes = new ArrayList<Integer>(aaSurrounding.keySet());
+                        Collections.sort(tempIndexes);
+                        for (int index : tempIndexes) {
+                            indexes.add(index);
+                            before.add(aaSurrounding.get(index)[0]);
+                            after.add(aaSurrounding.get(index)[1]);
+                        }
                     }
 
-                    int peptideStart = indexes.get(i);
-                    int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
+                    for (int i = 0; i < indexes.size(); i++) {
+                        String aaBefore = "-";
+                        String aaAfter = "-";
 
-                    String key = "PepEv_" + tempProtein + "_" + peptideStart + "_" + peptideEnd + "_" + realPeptideKey;
+                        if (!before.get(i).isEmpty()) {
+                            aaBefore = before.get(i);
+                        }
+                        if (!after.get(i).isEmpty()) {
+                            aaAfter = after.get(i);
+                        }
 
-                    pepEvidenceKeys.add(key);
+                        int peptideStart = indexes.get(i);
+                        int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
 
-                    br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
-                            + "pre=\"" + aaBefore + "\" "
-                            + "post=\"" + aaAfter + "\" "
-                            + "start=\"" + peptideStart + "\" "
-                            + "end=\"" + peptideEnd + "\" "
-                            + "peptide_ref=\"" + realPeptideKey + "\" "
-                            + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
-                            + "id=\"" + key + "\" "
-                            + "/>" + System.getProperty("line.separator"));
+                        String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideEnd + "_" + peptide.getKey();
+                        pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
+
+                        br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
+                                + "pre=\"" + aaBefore + "\" "
+                                + "post=\"" + aaAfter + "\" "
+                                + "start=\"" + peptideStart + "\" "
+                                + "end=\"" + peptideEnd + "\" "
+                                + "peptide_ref=\"" + peptideIds.get(peptide.getKey()) + "\" "
+                                + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
+                                + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
+                                + "/>" + System.getProperty("line.separator"));
+                    }
                 }
             }
         }
@@ -963,14 +981,14 @@ public class MzIdentMLExport {
         int rank = 1; // @TODO: should not be hardcoded?
         String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
 
-        br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\tpassThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" " + System.getProperty("line.separator") // @TODO: is this correct??
-                + getCurrentTabSpace() + "\t\trank=\"" + rank + "\" " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\tpeptide_ref=\"" + bestPeptideAssumption.getPeptide().getKey() + "\" " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\tcalculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\texperimentalMassToCharge=\"" + spectrumFactory.getPrecursor(psmKey).getMz() + "\" " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\tchargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" " + System.getProperty("line.separator")
-                + getCurrentTabSpace() + "\t\tid=\"" + spectrumIdentificationItemKey + "\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
+                + "passThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" " // @TODO: is this correct??
+                + "rank=\"" + rank + "\" " 
+                + "peptide_ref=\"" + peptideIds.get(bestPeptideAssumption.getPeptide().getKey()) + "\" " 
+                + "calculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" "
+                + "experimentalMassToCharge=\"" + spectrumFactory.getPrecursor(psmKey).getMz() + "\" "
+                + "chargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" "
+                + "id=\"" + spectrumIdentificationItemKey + "\">" + System.getProperty("line.separator"));
         tabCounter++;
 
         // add the peptide evidence references
@@ -989,7 +1007,6 @@ public class MzIdentMLExport {
 //                    }
 //                }
 //            }
-//        boolean evidenceAdded = false;
 
         // iterate all the possible protein parents for each peptide
         for (String tempProtein : possibleProteins) {
@@ -999,21 +1016,12 @@ public class MzIdentMLExport {
                     bestPeptideAssumption.getPeptide().getSequence(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
             for (int start : peptideStarts) {
-                String pepEvidenceKey = "PepEv_" + tempProtein + "_" + start + "_" + (start + bestPeptideAssumption.getPeptide().getSequence().length() - 1)
+                String pepEvidenceKey = tempProtein + "_" + start + "_" + (start + bestPeptideAssumption.getPeptide().getSequence().length() - 1)
                         + "_" + bestPeptideAssumption.getPeptide().getKey();
-
-//                if (!pepEvidenceKeys.contains(pepEvidenceKey)) {
-//                    //System.out.println(pepEvidenceKey);  
-//                } else {
-//                    evidenceAdded = true;
-                    br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + pepEvidenceKey + "\"/>" + System.getProperty("line.separator"));
-//                }
+                String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey);
+                br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + peptideEvidenceId + "\"/>" + System.getProperty("line.separator"));
             }
         }
-
-//        if (!evidenceAdded) {
-//            System.out.println("problem: unknown peptide evidence key!!! " + spectrumIdentificationResultItemKey);
-//        }
 
         // add the fragment ion annotation
 //          br.write(getCurrentTabSpace() + "<Fragmentation>" + System.getProperty("line.separator")); // @TODO: add the fragment ion annotation
