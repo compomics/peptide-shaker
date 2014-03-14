@@ -870,7 +870,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             @Override
             public String getDescription() {
-                return "Supported formats: Mascot Generic Format (.mgf)";
+                return "Mascot Generic Format (.mgf)";
             }
         };
 
@@ -923,7 +923,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         fileChooser.setMultiSelectionEnabled(true);
         ArrayList<File> folders = new ArrayList<File>();
 
-        FileFilter filter = new FileFilter() {
+        // filter for all search engines
+        FileFilter allFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
 
@@ -941,11 +942,76 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             @Override
             public String getDescription() {
-                return "Supported formats: MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml) and Mascot (.dat)";
+                return "MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml) and Mascot (.dat)";
             }
         };
 
-        fileChooser.setFileFilter(filter);
+        // filter for omssa only
+        FileFilter omssaFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("omx")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "OMSSA (.omx)";
+            }
+        };
+
+        // filter for x!tandem only
+        FileFilter tandemFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("t.xml")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "X!Tandem (.xml)";
+            }
+        };
+
+        // filter for ms-gf+ only
+        FileFilter msgfFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("mzid")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "MS-GF+ (.mzid)";
+            }
+        };
+
+        // filter for mascot only
+        FileFilter mascotFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("dat")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Mascot (.dat)";
+            }
+        };
+
+        fileChooser.setFileFilter(allFilter);
+        fileChooser.addChoosableFileFilter(msgfFilter);
+        fileChooser.addChoosableFileFilter(omssaFilter);
+        fileChooser.addChoosableFileFilter(tandemFilter);
+        fileChooser.addChoosableFileFilter(mascotFilter);
+
         int returnVal = fileChooser.showDialog(this, "Add");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
