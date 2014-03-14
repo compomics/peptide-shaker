@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring;
 
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -25,10 +24,6 @@ public class PsmPTMMap implements Serializable {
      * relevance.
      */
     private HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<Double, HashMap<Integer, Integer>>();
-    /**
-     * The compomics PTM factory.
-     */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
      * Constructor.
@@ -37,11 +32,12 @@ public class PsmPTMMap implements Serializable {
     }
 
     /**
-     * Estimate the posterior error probabilities of the psm ptms.
+     * Estimate the posterior error probabilities of the PSM PTMs.
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
+
         int max = getMapsSize();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
@@ -55,6 +51,7 @@ public class PsmPTMMap implements Serializable {
                 }
             }
         }
+
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
@@ -134,14 +131,17 @@ public class PsmPTMMap implements Serializable {
     }
 
     /**
-     * This method groups the statistically non significant psms with the ones
+     * This method groups the statistically non significant PSMs with the ones
      * having a charge directly smaller.
      */
     public void clean() {
+
         for (double ptmMass : psmMaps.keySet()) {
+
             ArrayList<Integer> charges = new ArrayList(psmMaps.get(ptmMass).keySet());
             Collections.sort(charges);
             int ref = 0;
+
             for (int charge : charges) {
                 if (psmMaps.get(ptmMass).get(charge).getnMax() >= 100 && psmMaps.get(ptmMass).get(charge).getnTargetOnly() >= 100) {
                     ref = charge;
@@ -154,6 +154,7 @@ public class PsmPTMMap implements Serializable {
                     grouping.get(ptmMass).put(charge, ref);
                 }
             }
+
             if (grouping.containsKey(ptmMass)) {
                 for (int charge : grouping.get(ptmMass).keySet()) {
                     ref = grouping.get(ptmMass).get(charge);

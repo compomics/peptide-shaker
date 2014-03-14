@@ -216,9 +216,9 @@ public class InputMap implements Serializable {
     public static ArrayList<AssumptionFilter> getDefaultAssumptionFilters() {
         ArrayList<AssumptionFilter> filters = new ArrayList<AssumptionFilter>();
 
-        AssumptionFilter psmFilter = new AssumptionFilter(">40% Fragment Ion Sequence Coverage");
-        psmFilter.setDescription(">40% sequence coverage by fragment ions");
-        psmFilter.setSequenceCoverage(40.0);
+        AssumptionFilter psmFilter = new AssumptionFilter(">30% Fragment Ion Sequence Coverage");
+        psmFilter.setDescription(">30% sequence coverage by fragment ions");
+        psmFilter.setSequenceCoverage(30.0);
         psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
         filters.add(psmFilter);
 
