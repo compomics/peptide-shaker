@@ -193,7 +193,7 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * This method groups the statistically non significant psms with the ones
+     * This method groups the statistically non significant PSMs with the ones
      * having a charge directly smaller.
      */
     public void clean() {
