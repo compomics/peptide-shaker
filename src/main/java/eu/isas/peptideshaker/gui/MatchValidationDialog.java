@@ -842,12 +842,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
         String newValue = validationLevelJComboBox.getSelectedItem().toString();
+
         if (!newValue.equals(psParameter.getMatchValidationLevel().getName())) {
+
             MatchValidationLevel matchValidationLevel = MatchValidationLevel.getMatchValidationLevel(newValue);
             psParameter.setMatchValidationLevel(matchValidationLevel);
             psParameter.setManualValidation(true);
+
             try {
                 Metrics metrics = identificationFeaturesGenerator.getMetrics();
+
                 if (type == Type.PROTEIN) {
                     identification.updateProteinMatchParameter(matchKey, psParameter);
                     if (matchValidationLevel == MatchValidationLevel.confident) {
@@ -856,23 +860,33 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                         metrics.setnConfidentProteins(metrics.getnConfidentProteins() - 1);
                     }
                 } else if (type == Type.PEPTIDE) {
+
                     identification.updatePeptideMatchParameter(matchKey, psParameter);
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     ProteinMap proteinMap = pSMaps.getProteinMap();
                     PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+
                     for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+
                         ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
+
                         if (proteinMatches != null) {
+
                             identification.loadProteinMatchParameters(proteinMatches, psParameter, null);
+
                             for (String proteinMatchKey : proteinMatches) {
+
                                 identificationFeaturesGenerator.updateNConfidentPeptides(proteinMatchKey);
                                 PSParameter proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
                                 MatchValidationLevel proteinValidation = proteinPSParameter.getMatchValidationLevel();
+
                                 if (proteinValidation.isValidated()) {
+
                                     PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
                                     proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                     MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
+
                                     if (newValidation == MatchValidationLevel.confident && proteinValidation == MatchValidationLevel.doubtful) {
                                         metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
                                     } else if (newValidation == MatchValidationLevel.doubtful && proteinValidation == MatchValidationLevel.confident) {
@@ -883,6 +897,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                         }
                     }
                 } else if (type == Type.PSM) {
+
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     PeptideSpecificMap peptideMap = pSMaps.getPeptideSpecificMap();
@@ -892,22 +907,35 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                     identificationFeaturesGenerator.updateNConfidentSpectraForPeptide(peptideKey);
                     PSParameter peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+
                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
+
                         PeptideShaker.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
                         identification.updateSpectrumMatchParameter(matchKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+
                         for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+
                             ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
+
                             if (proteinMatches != null) {
+
                                 identification.loadProteinMatchParameters(proteinMatches, psParameter, null);
+
                                 for (String proteinMatchKey : proteinMatches) {
+
                                     identificationFeaturesGenerator.updateNConfidentPeptides(proteinMatchKey);
+                                    identificationFeaturesGenerator.updateNConfidentSpectra(proteinMatchKey);
                                     PSParameter proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
                                     MatchValidationLevel proteinValidation = proteinPSParameter.getMatchValidationLevel();
+
                                     if (proteinValidation.isValidated()) {
-                                        PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
+
+                                        PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, 
+                                                searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
                                         proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                         MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
+
                                         if (newValidation == MatchValidationLevel.confident && proteinValidation == MatchValidationLevel.doubtful) {
                                             metrics.setnConfidentProteins(metrics.getnConfidentProteins() + 1);
                                         } else if (newValidation == MatchValidationLevel.doubtful && proteinValidation == MatchValidationLevel.confident) {
@@ -919,7 +947,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                         }
                     }
                 }
+
                 validationChanged = true;
+
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
             }

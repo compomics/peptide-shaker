@@ -874,7 +874,7 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -884,6 +884,22 @@ public class IdentificationFeaturesGenerator {
     public void updateNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey, result);
+    }
+
+    /**
+     * Updates the number of confident spectra for a given protein match.
+     *
+     * @param proteinMatchKey the key of the protein match
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void updateNConfidentSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Integer result = estimateNConfidentSpectra(proteinMatchKey);
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey, result);
     }
 
     /**

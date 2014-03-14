@@ -1213,39 +1213,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         spectraScrollPane.setOpaque(false);
 
-        psmTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "  ", "ID", "Sequence", "Charge", "Mass Error", "Confidence", ""
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        psmTable.setModel(new PsmTableModel());
         psmTable.setOpaque(false);
         psmTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                psmTableMouseReleased(evt);
+            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 psmTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 psmTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                psmTableMouseReleased(evt);
             }
         });
         psmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -2023,6 +2001,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
+                        peptidesPanel.repaint();
+                        proteinsLayeredPanel.repaint();
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3601,7 +3581,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         try {
             SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
             IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
+            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow())); // @TODO: possible null pointer!!!
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
             int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
             int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
