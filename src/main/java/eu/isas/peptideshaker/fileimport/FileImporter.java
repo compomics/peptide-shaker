@@ -607,7 +607,7 @@ public class FileImporter {
                 if (searchEngine == Advocate.Mascot.getIndex() && idFile.length() > mascotMaxSize * 1048576) {
                     fileReader = new MascotIdfileReader(idFile, true);
                 } else {
-                    fileReader = readerFactory.getFileReader(idFile, null);
+                    fileReader = readerFactory.getFileReader(idFile);
                 }
             } catch (OutOfMemoryError error) {
                 waitingHandler.appendReport("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.", true, true);
