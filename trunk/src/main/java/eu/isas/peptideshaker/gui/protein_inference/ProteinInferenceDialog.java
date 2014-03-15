@@ -23,6 +23,7 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.Chromosome;
@@ -152,6 +153,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         // set up the table column properties
         setColumnProperies();
 
+        // update the panel border with the nubmer of rows in the table
+        ((TitledBorder) proteinMatchJPanel.getBorder()).setTitle("Candidate Proteins (" + accessions.size() + ")");
+        ((TitledBorder) uniqueHitsJPanel.getBorder()).setTitle("Unique Hits (" + uniqueMatches.size() + ")");
+        ((TitledBorder) relatedHitsJPanel.getBorder()).setTitle("Related Hits (" + associatedMatches.size() + ")");
+
         // The index should be set in the design according to the PSParameter class static fields!
         groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceClass());
 
@@ -168,8 +174,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTable.getTableHeader().setReorderingAllowed(false);
         relatedHitsTable.getTableHeader().setReorderingAllowed(false);
 
-        proteinMatchTable.getColumn("  ").setMinWidth(30);
-        proteinMatchTable.getColumn("  ").setMaxWidth(30);
+        proteinMatchTable.getColumn("  ").setMinWidth(50);
+        proteinMatchTable.getColumn("  ").setMaxWidth(50);
         proteinMatchTable.getColumn("Gene").setMinWidth(90);
         proteinMatchTable.getColumn("Gene").setMaxWidth(90);
         proteinMatchTable.getColumn("Chr").setMinWidth(50);
@@ -195,12 +201,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTable.getColumn(" ").setMinWidth(30);
         relatedHitsTable.getColumn(" ").setMinWidth(30);
 
-        proteinMatchTable.getColumn("").setMaxWidth(30);
-        uniqueHitsTable.getColumn("").setMaxWidth(30);
-        relatedHitsTable.getColumn("").setMaxWidth(30);
-        proteinMatchTable.getColumn("").setMinWidth(30);
-        uniqueHitsTable.getColumn("").setMinWidth(30);
-        relatedHitsTable.getColumn("").setMinWidth(30);
+        proteinMatchTable.getColumn("").setMaxWidth(50);
+        uniqueHitsTable.getColumn("").setMaxWidth(50);
+        relatedHitsTable.getColumn("").setMaxWidth(50);
+        proteinMatchTable.getColumn("").setMinWidth(50);
+        uniqueHitsTable.getColumn("").setMinWidth(50);
+        relatedHitsTable.getColumn("").setMinWidth(50);
 
         // the score and confidence columns
         uniqueHitsTable.getColumn("Confidence").setMaxWidth(90);
