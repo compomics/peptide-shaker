@@ -318,7 +318,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void setProteinTableProperties() {
 
-        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), 
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
