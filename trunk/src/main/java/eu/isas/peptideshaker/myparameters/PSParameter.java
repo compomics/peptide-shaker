@@ -149,7 +149,7 @@ public class PSParameter implements UrParameter {
      */
     private HashMap<String, Double> precursorIntensitySummedPerFraction = new HashMap<String, Double>();
     /**
-     * The results of the validation quality filters
+     * The results of the validation quality filters.
      */
     private HashMap<String, Boolean> qcFilters = new HashMap<String, Boolean>();
 
