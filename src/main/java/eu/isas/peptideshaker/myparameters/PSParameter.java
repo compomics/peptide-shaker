@@ -4,6 +4,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -147,6 +148,10 @@ public class PSParameter implements UrParameter {
      * The summed precursor intensity per fraction.
      */
     private HashMap<String, Double> precursorIntensitySummedPerFraction = new HashMap<String, Double>();
+    /**
+     * The results of the validation quality filters
+     */
+    private HashMap<String, Boolean> qcFilters = new HashMap<String, Boolean>();
 
     /**
      * Constructor.
@@ -776,6 +781,54 @@ public class PSParameter implements UrParameter {
      */
     public void setManualValidation(Boolean manualValidation) {
         this.manualValidation = manualValidation;
+    }
+    
+    /**
+     * Sets whether the match passed a quality control check.
+     * 
+     * @param criterion the QC criterion
+     * @param validated boolean indicating whether the test was passed
+     */
+    public void setQcResult(String criterion, boolean validated) {
+        if (qcFilters == null) {
+            qcFilters = new HashMap<String, Boolean>();
+        }
+        qcFilters.put(criterion, validated);
+    }
+    
+    /**
+     * Indicates whether the given QC check was passed.
+     * 
+     * @param criterion the QC criterion
+     * 
+     * @return a boolean indicating whether the test was passed
+     */
+    public Boolean isQcPassed(String criterion) {
+        if (qcFilters == null) {
+            return null;
+        }
+       return  qcFilters.get(criterion);
+    }
+    
+    /**
+     * Returns the list of qc checks made for this match.
+     * 
+     * @return the list of qc checks made for this match in a set
+     */
+    public Set<String> getQcCriteria() {
+        if (qcFilters == null) {
+            return new HashSet<String>();
+        }
+        return qcFilters.keySet();
+    }
+    
+    /**
+     * Indicates whether QC filters were implemented for this match.
+     * 
+     * @return a boolean indicating whether QC filters were implemented for this match
+     */
+    public boolean hasQcFilters() {
+        return qcFilters != null;
     }
 
     @Override

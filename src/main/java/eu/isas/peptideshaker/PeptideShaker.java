@@ -1088,7 +1088,9 @@ public class PeptideShaker {
                     String reasonDoubtful = null;
                     boolean filterPassed = true;
                     for (ProteinFilter filter : doubtfulMatchFilters) {
-                        if (!filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences)) {
+                        boolean validation = filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
+                        psParameter.setQcResult(filter.getName(), noValidated);
+                        if (!validation) {
                             filterPassed = false;
                             if (reasonDoubtful == null) {
                                 reasonDoubtful = "";
@@ -1179,7 +1181,9 @@ public class PeptideShaker {
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
                 for (PeptideFilter filter : peptideMap.getDoubtfulMatchesFilters()) {
-                    if (!filter.isValidated(peptideKey, identification, identificationFeaturesGenerator)) {
+                    boolean validation = filter.isValidated(peptideKey, identification, identificationFeaturesGenerator);
+                    psParameter.setQcResult(filter.getName(), validation);
+                    if (!validation) {
                         filterPassed = false;
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
@@ -1285,7 +1289,9 @@ public class PeptideShaker {
                 boolean filterPassed = true;
 
                 for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
-                    if (!filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences)) {
+                    boolean validated = filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                    psParameter.setQcResult(filter.getName(), validated);
+                    if (!validated) {
                         if (filter.getName().toLowerCase().contains("deviation")) {
                             filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
                         } else if (filter.getName().toLowerCase().contains("coverage")) {
@@ -1393,7 +1399,9 @@ public class PeptideShaker {
                 boolean filterPassed = true;
 
                 for (AssumptionFilter filter : inputMap.getDoubtfulMatchesFilters()) {
-                    if (!filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences)) {
+                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences);
+                    psParameter.setQcResult(filter.getName(), validated);
+                    if (!validated) {
                         filterPassed = false;
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
