@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -62,10 +63,6 @@ public class AssumptionFilter extends MatchFilter {
      * The type of comparison to be used for the PSM confidence.
      */
     private RowFilter.ComparisonType sequenceCoverageComparison = RowFilter.ComparisonType.EQUAL;
-    /**
-     * A spectrum annotator to annotate spectra.
-     */
-    private PeptideSpectrumAnnotator spectrumAnnotator = null;
     /**
      * Score limit.
      */
@@ -340,24 +337,6 @@ public class AssumptionFilter extends MatchFilter {
     }
 
     /**
-     * Returns the spectrum annotator of this filter.
-     *
-     * @return the spectrum annotator of this filter
-     */
-    public PeptideSpectrumAnnotator getSpectrumAnnotator() {
-        return spectrumAnnotator;
-    }
-
-    /**
-     * Sets the spectrum annotator of this filter
-     *
-     * @param spectrumAnnotator the spectrum annotator of this filter
-     */
-    public void setSpectrumAnnotator(PeptideSpectrumAnnotator spectrumAnnotator) {
-        this.spectrumAnnotator = spectrumAnnotator;
-    }
-
-    /**
      * Tests whether a spectrum match is validated by this filter.
      *
      * @param spectrumKey the key of the spectrum match
@@ -531,12 +510,8 @@ public class AssumptionFilter extends MatchFilter {
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
             Peptide peptide = peptideAssumption.getPeptide();
-            PeptideSpectrumAnnotator spectrumAnnotator = assumptionFilter.getSpectrumAnnotator();
-            if (spectrumAnnotator == null) {
-                spectrumAnnotator = new PeptideSpectrumAnnotator();
-                assumptionFilter.setSpectrumAnnotator(spectrumAnnotator);
-            }
-            HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), 
+            PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+            HashMap<Integer, ArrayList<IonMatch>> ionMatches = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
                     annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                     peptideAssumption.getIdentificationCharge().value, spectrum, peptide, spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                     searchParameters.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());

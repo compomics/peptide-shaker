@@ -495,16 +495,6 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the spectrum annotator of this filter
-     *
-     * @param spectrumAnnotator the spectrum annotator of this filter
-     */
-    public void setSpectrumAnnotator(PeptideSpectrumAnnotator spectrumAnnotator) {
-        compatibilityCheck();
-        assumptionFilter.setSpectrumAnnotator(spectrumAnnotator);
-    }
-
-    /**
      * Tests whether a spectrum match is validated by this filter.
      *
      * @param spectrumKey the key of the spectrum match

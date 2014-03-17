@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -291,8 +292,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         // set up the table header tooltips
         validationTableToolTips = new ArrayList<String>();
         validationTableToolTips.add(null);
-        validationTableToolTips.add("Filter Name");
-        validationTableToolTips.add("Filter Passed");
+        validationTableToolTips.add("Quality Test");
+        validationTableToolTips.add("Passed");
     }
 
     /**
@@ -392,8 +393,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             confidenceLbl.setForeground(Color.gray);
         }
 
+        // Backward compatibility check
+        if (!psParameter.hasQcFilters()) {
+            for (MatchFilter filter : filters) {
+                boolean validated = filter.isValidated(matchKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
+                psParameter.setQcResult(filter.getName(), validated);
+            }
+        }
+
         // Quality filters
-        final DefaultTableModel tableModel = new FiltersTableModel(identification, identificationFeaturesGenerator, filters, searchParameters);
+        final DefaultTableModel tableModel = new FiltersTableModel();
         qualityFiltersTable.setModel(tableModel);
         qualityFiltersTable.getColumn("").setMaxWidth(50);
         qualityFiltersTable.getColumn(" ").setMaxWidth(50);
@@ -403,12 +412,12 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 "Yes", "No"));
 
         int valid = 0;
-        for (MatchFilter matchFilter : filters) {
-            if (matchFilter.isValidated(matchKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences)) {
+        for (String qcCheck : psParameter.getQcCriteria()) {
+            if (psParameter.isQcPassed(qcCheck)) {
                 valid++;
             }
         }
-        ((TitledBorder) qualityFiltersPanel.getBorder()).setTitle("Quality Filters (" + valid + "/" + filters.size() + ")");
+        ((TitledBorder) qualityFiltersPanel.getBorder()).setTitle("Quality Filters (" + valid + "/" + psParameter.getQcCriteria().size() + ")");
     }
 
     /**
@@ -417,45 +426,26 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private class FiltersTableModel extends DefaultTableModel {
 
         /**
-         * List of filters.
+         * The ordered QC criteria
          */
-        private ArrayList<MatchFilter> filters;
-        /**
-         * The identification.
-         */
-        private Identification identification;
-        /**
-         * The identification features generator.
-         */
-        private IdentificationFeaturesGenerator identificationFeaturesGenerator;
-        /**
-         * The identification parameters used for the search.
-         */
-        private SearchParameters searchParameters;
+        private ArrayList<String> qcCriteria;
 
         /**
          * Constructor.
          *
-         * @param identification the identification
-         * @param identificationFeaturesGenerator the identification features
-         * generator
-         * @param filters the filters used to assess the quality of the match
-         * @param searchParameters the identification parameters used for the
-         * search
+         * @param psParameter the PSParameter of the match
          */
-        public FiltersTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ArrayList<MatchFilter> filters, SearchParameters searchParameters) {
-            this.identification = identification;
-            this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-            this.filters = filters;
-            this.searchParameters = searchParameters;
+        public FiltersTableModel() {
+            qcCriteria = new ArrayList<String>(psParameter.getQcCriteria());
+            Collections.sort(qcCriteria);
         }
 
         @Override
         public int getRowCount() {
-            if (filters == null) {
+            if (qcCriteria == null) {
                 return 0;
             }
-            return filters.size();
+            return qcCriteria.size();
         }
 
         @Override
@@ -485,16 +475,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    MatchFilter filter = filters.get(row);
-                    return filter.getName();
+                    return qcCriteria.get(row);
                 case 2:
-                    filter = filters.get(row);
-                    try {
-                        return filter.isValidated(matchKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
-                    } catch (Exception e) {
-                        exceptionHandler.catchException(e);
-                        return "";
-                    }
+                    String criterion = qcCriteria.get(row);
+                    return psParameter.isQcPassed(criterion);
                 default:
                     return "";
             }
@@ -931,7 +915,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                     if (proteinValidation.isValidated()) {
 
-                                        PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, 
+                                        PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator,
                                                 searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
                                         proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                         MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
