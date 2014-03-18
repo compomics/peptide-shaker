@@ -751,8 +751,8 @@ public class PeptideShaker {
                     Integer charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     if (!charges.contains(charge)) {
                         charges.add(charge);
-                        PsmFilter psmFilter = new PsmFilter("> 30% Fragment Ion Sequence Coverage");
-                        psmFilter.setDescription("< 30% sequence coverage by fragment ions");
+                        PsmFilter psmFilter = new PsmFilter(">30% Fragment Ion Sequence Coverage");
+                        psmFilter.setDescription("<30% sequence coverage by fragment ions");
                         psmFilter.setSequenceCoverage(30.0);
                         psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
                         psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
