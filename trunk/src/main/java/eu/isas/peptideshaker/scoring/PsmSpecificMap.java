@@ -64,7 +64,7 @@ public class PsmSpecificMap implements Serializable {
     /**
      * Returns the filters used to flag doubtful matches corresponding to the given charge and file. An empty list if none found.
      * 
-     * @param charge the charge of the psm
+     * @param charge the charge of the PSM
      * @param fileName the name of the spectrum file
      * @return the filters used to flag doubtful matches
      */
@@ -86,7 +86,7 @@ public class PsmSpecificMap implements Serializable {
     /**
      * Adds a PSM filter to the list of doubtful matches filters.
      * 
-     * @param charge the charge of the psm
+     * @param charge the charge of the PSM
      * @param fileName the name of the spectrum file
      * @param psmFilter the new filter to add
      */
