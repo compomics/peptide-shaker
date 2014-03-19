@@ -233,7 +233,7 @@ public class TargetDecoyMap implements Serializable {
                         break;
                     }
                 }
-                point.p = Math.min(nDecoy / (nTargetInf + nTargetSup), 1);
+                point.p = Math.max(Math.min(nDecoy / (nTargetInf + nTargetSup), 1), 0);
                 if (point.p >= 0.98) {
                     oneReached = true;
                 }
