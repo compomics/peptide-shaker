@@ -3,6 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.26.3  (coming soon...):*
+
+ * NEW FEATURE: Added PSM quality filters.
+
+ * FEATURE IMPROVEMENT: Added an ID software color legend below the Spectrum Identification Results table in the Spectrum IDs tab.
+ * FEATURE IMPROVEMENT: Added search engine specific file filters to the New Project dialog.
+ * FEATURE IMPROVEMENT: Minor GUI fixes to the protein inference dialogs, also added the number of rows to the table border titles.
+
+ * BUG FIX: Fixed a problem with parsing FASTA files containing headers with empty sequences.
+ * BUG FIX: Fixed a bug in the settings dialog that closed the dialog if the user canceled the save as dialog.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.25.8.
+
+----
+
 *Changes in PeptideShaker 0.26.2  (March 6. 2014):*
 
  * BUG FIX: Fixed a icon image bug that occurred if one used the New Project option in the main frame.
