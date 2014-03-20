@@ -718,6 +718,11 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<SearchModification residues=\"" + aminoAcidsAtTarget + "\" massDelta=\"" + currentPtm.getMass()
                     + "\" fixedMod= \"" + searchParameters.getModificationProfile().getFixedModifications().contains(ptm) + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
+            
+            // @TODO: add specificity rules?
+//            <SpecificityRules>
+//                    <cvParam accession="MS:1001189" cvRef="PSI-MS" name="modification specificity N-term"/>
+//                </SpecificityRules
 
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(ptm);
             if (cvTerm != null) {
