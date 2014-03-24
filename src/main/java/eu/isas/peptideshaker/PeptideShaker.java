@@ -570,7 +570,7 @@ public class PeptideShaker {
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
      */
-    public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, 
+    public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
 
         waitingHandler.setWaitingText("Validating Identifications. Please Wait...");
@@ -1486,8 +1486,8 @@ public class PeptideShaker {
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 // map of the first hits for this spectrum: score -> max protein count -> max search engine votes -> sequence coverage annotated -> min mass deviation (unless you have a better idea?)
-                HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>> peptideAssumptions = 
-                        new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>>();
+                HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>> peptideAssumptions
+                        = new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>>();
                 PSParameter psParameter = new PSParameter();
                 ArrayList<String> identifications = new ArrayList<String>();
 
@@ -2141,6 +2141,8 @@ public class PeptideShaker {
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
+                                    PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                    psmScores.addSecondaryModificationSite(modification, newLocalization);
                                 }
                             }
                         }
@@ -2224,7 +2226,6 @@ public class PeptideShaker {
                                 int key = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                                 TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
                                 if (currentMap == null) {
-                                    currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
                                     throw new IllegalArgumentException("No FLR map found for " + modName + " in PSMs of charge " + key + ".");
                                 }
                                 double threshold;
@@ -2234,35 +2235,43 @@ public class PeptideShaker {
                                     threshold = ptmScoringPreferences.getProbabilisticScoreThreshold();
                                 }
                                 for (ModificationMatch modMatch : modMatches.get(modName)) {
-                                    int site = modMatch.getModificationSite();
-                                    double score = ptmScoring.getProbabilisticScore(site);
-                                    if (score == 0) {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
-                                        modMatch.setConfident(false);
-                                    } else if (score >= threshold) {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.VERY_CONFIDENT);
-                                        modMatch.setConfident(true);
-                                    } else {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
-                                        modMatch.setConfident(true);
+                                    for (int site : ptmScoring.getProbabilisticSites()) {
+                                        double score = ptmScoring.getProbabilisticScore(site);
+                                        if (score == 0) {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
+                                            modMatch.setConfident(false);
+                                        } else if (score >= threshold) {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.VERY_CONFIDENT);
+                                            modMatch.setConfident(true);
+                                        } else {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
+                                            modMatch.setConfident(true);
+                                        }
                                     }
                                 }
                             } else {
                                 for (ModificationMatch modMatch : modMatches.get(modName)) {
-                                    int site = modMatch.getModificationSite();
-                                    double score = ptmScoring.getDeltaScore(site);
-                                    if (score == 0) {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
-                                        modMatch.setConfident(false);
-                                    } else if (score >= 95) {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.CONFIDENT);
-                                        modMatch.setConfident(true);
-                                    } else {
-                                        ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
-                                        modMatch.setConfident(true);
+                                    for (int site : ptmScoring.getDSites()) {
+                                        double score = ptmScoring.getDeltaScore(site);
+                                        if (score == 0) {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
+                                            modMatch.setConfident(false);
+                                        } else if (score >= 95) {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.CONFIDENT);
+                                            modMatch.setConfident(true);
+                                        } else {
+                                            ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
+                                            modMatch.setConfident(false);
+                                        }
                                     }
                                 }
                             }
+                        }
+                        for (int mainLocation : ptmScoring.getConfidentPtmLocations()) {
+                            ptmScores.addMainModificationSite(modName, mainLocation);
+                        }
+                        for (int secondaryLocation : ptmScoring.getSecondaryPtmLocations()) {
+                            ptmScores.addSecondaryModificationSite(modName, secondaryLocation);
                         }
                     } else {
                         throw new IllegalArgumentException("PTM scoring null for modification " + modName + "in spectrum " + spectrumMatch.getKey() + ".");
@@ -2320,7 +2329,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, 
+    public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
@@ -2367,9 +2376,8 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param idFilter the identification filter, needed only to get max values
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated for the metrics, can be null when rescoring PTMs
      * @param spectrumCountingPreferences the spectrum counting preferences. If
      * not null, the maximum spectrum counting value will be stored in the
      * Metrics.
@@ -2793,13 +2801,9 @@ public class PeptideShaker {
         String mainSequence = psPeptide.getSequence();
         ArrayList<String> modifications = new ArrayList<String>();
 
-        int nace = 0;
         for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 String modificationName = modificationMatch.getTheoreticPtm();
-                if (modificationName.contains("ace")) {
-                    nace++;
-                }
                 if (!modifications.contains(modificationName)) {
                     modifications.add(modificationName);
                     modificationProfiles.put(modificationName, new ArrayList<Integer>());

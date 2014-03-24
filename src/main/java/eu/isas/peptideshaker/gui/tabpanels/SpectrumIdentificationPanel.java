@@ -2756,7 +2756,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
                         isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters()),
-                        displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), true, true, true),
+                        displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true),
                         proteins,
                         probabilities.getPsmConfidence(),
                         probabilities.getMatchValidationLevel().getIndex()

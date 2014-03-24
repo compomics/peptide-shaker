@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -359,6 +360,18 @@ public class PsmSection {
                     result.append(accession);
                 }
                 return result.toString();
+            case protein_description:
+                SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                StringBuilder descriptions = new StringBuilder();
+                accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                for (String accession : accessions) {
+                    if (descriptions.length() > 0) {
+                        descriptions.append("; ");
+                    }
+                    descriptions.append(sequenceFactory.getHeader(accession).getDescription());
+                }
+                return descriptions.toString();
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case decoy:

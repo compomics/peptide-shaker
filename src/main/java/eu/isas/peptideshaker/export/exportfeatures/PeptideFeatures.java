@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public enum PeptideFeatures implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which this peptide can be attached."),
+    protein_description("Description(s)", "Description of the Protein(s) to which this peptide can be attached."),
     unique("Unique", "Indicates whether the peptide is found uniquely in the protein match of interest."),
     pi("PI", "The protein inference status of this peptide."),
     sequence("Sequence", "Sequence of the peptide."),
@@ -60,6 +61,7 @@ public enum PeptideFeatures implements ExportFeature {
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
+        result.add(protein_description);
         result.add(sequence);
         result.add(missed_cleavages);
         result.add(modified_sequence);
