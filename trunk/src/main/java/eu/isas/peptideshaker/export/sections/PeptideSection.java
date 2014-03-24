@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -10,7 +9,6 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
@@ -218,16 +216,28 @@ public class PeptideSection {
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:
-                String proteins = "";
+                StringBuilder proteins = new StringBuilder();
                 ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                 Collections.sort(accessions);
                 for (String accession : accessions) {
-                    if (!proteins.equals("")) {
-                        proteins += "; ";
+                    if (proteins.length() > 0) {
+                        proteins.append("; ");
                     }
-                    proteins += accession;
+                    proteins.append(accession);
                 }
-                return proteins;
+                return proteins.toString();
+            case protein_description:
+                SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                StringBuilder descriptions = new StringBuilder();
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Collections.sort(accessions);
+                for (String accession : accessions) {
+                    if (descriptions.length() > 0) {
+                        descriptions.append("; ");
+                    }
+                    descriptions.append(sequenceFactory.getHeader(accession).getDescription());
+                }
+                return descriptions.toString();
             case confidence:
                 return psParameter.getPeptideConfidence() + "";
             case decoy:

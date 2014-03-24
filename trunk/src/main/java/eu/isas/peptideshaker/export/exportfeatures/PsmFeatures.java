@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public enum PsmFeatures implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached."),
+    protein_description("Description(s)", "Description of the Protein(s) to which this peptide can be attached."),
     sequence("Sequence", "Sequence of the peptide."),
     missed_cleavages("Missed Cleavages", "The number of missed cleavages."),
     modified_sequence("Modified Sequence", "The peptide sequence annotated with variable modifications."),
@@ -65,6 +66,7 @@ public enum PsmFeatures implements ExportFeature {
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
+        result.add(protein_description);
         result.add(sequence);
         result.add(missed_cleavages);
         result.add(modified_sequence);

@@ -4,15 +4,18 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -270,10 +273,9 @@ public class DisplayFeaturesGenerator {
     /**
      * Returns the peptide with modification sites tagged (color coded or with
      * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
-     * inference results. Shall be used for peptides, not PSMs, for PSM use the
-     * one taking in a Peptide object instead.
+     * inference results for the given peptide match.
      *
-     * @param peptideMatch the peptide match
+     * @param peptideMatch the peptide match of interest
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
      * PTM tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
@@ -291,6 +293,41 @@ public class DisplayFeaturesGenerator {
 
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            if (ptmScores != null) {
+                mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayedPTMs);
+                secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayedPTMs);
+            }
+            return Peptide.getTaggedModifiedSequence(modificationProfile,
+                    peptide, mainLocations, secondaryLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+        } catch (Exception e) {
+            exceptionHandler.catchException(e);
+            return "Error";
+        }
+    }
+
+    /**
+     * Returns the peptide with modification sites tagged (color coded or with
+     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
+     * inference results for the best assumption of the given spectrum match.
+     *
+     * @param spectrumMatch the spectrum match of interest
+     * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
+     * PTM tags, e.g, &lt;mox&gt;, are used
+     * @param includeHtmlStartEndTags if true, HTML start and end tags are added
+     * @param useShortName if true the short names are used in the tags
+     * @return the tagged peptide sequence
+     */
+    public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+        try {
+            
+            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+
+            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+            HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
+            HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
+
+            PSPtmScores ptmScores = new PSPtmScores();
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
             if (ptmScores != null) {
                 mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayedPTMs);
                 secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayedPTMs);

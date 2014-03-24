@@ -278,10 +278,11 @@ public class PtmScoring implements Serializable {
         }
         HashMap<Integer, Integer> map = anotherScore.getPtmLocationAtAA();
         for (int otherSite : map.keySet()) {
-            if (!ptmLocationAtAA.containsKey(otherSite)) {
+            Integer currentSiteConfidence = ptmLocationAtAA.get(otherSite);
+            if (currentSiteConfidence == null) {
                 ptmLocationAtAA.put(otherSite, map.get(otherSite));
             } else {
-                ptmLocationAtAA.put(otherSite, Math.max(ptmLocationAtAA.get(otherSite), map.get(otherSite)));
+                ptmLocationAtAA.put(otherSite, Math.max(currentSiteConfidence, map.get(otherSite)));
             }
         }
     }
