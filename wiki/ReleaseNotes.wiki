@@ -17,7 +17,7 @@
  * BUG FIX: Fixed a problem with parsing FASTA files containing headers with empty sequences.
  * BUG FIX: Fixed a bug in the settings dialog that closed the dialog if the user canceled the save as dialog.
 
- * LIBRARY UPDATE: Updated utilities to version 3.25.8.
+ * LIBRARY UPDATE: Updated utilities to version 3.25.11.
 
 ----
 
