@@ -55,7 +55,6 @@ public class ProteinFractionTableModel extends DefaultTableModel {
 
     /**
      * Constructor which sets a new empty table.
-     *
      */
     public ProteinFractionTableModel() {
     }

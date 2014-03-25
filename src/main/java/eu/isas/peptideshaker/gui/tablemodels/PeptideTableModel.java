@@ -151,97 +151,112 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 return null;
             }
 
-            if (isScrolling()) {
-                if (column == 0) {
+            String peptideKey = peptideKeys.get(viewIndex);
+
+            switch (column) {
+                case 0:
                     return viewIndex + 1;
-                } else {
-                    return null;
-                }
-            } else {
-
-                String peptideKey = peptideKeys.get(viewIndex);
-
-                switch (column) {
-                    case 0:
-                        return viewIndex + 1;
-                    case 1:
-                        PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                        if (!useDB && pSParameter == null) {
+                case 1:
+                    PSParameter psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    if (psParameter == null) {
+                        if (isScrolling()) {
+                            return null;
+                        } else if (!useDB) {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        return pSParameter.isStarred();
-                    case 2:
-                        pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                        if (!useDB && pSParameter == null) {
+                    }
+                    return psParameter.isStarred();
+                case 2:
+                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    if (psParameter == null) {
+                        if (isScrolling()) {
+                            return null;
+                        } else if (!useDB) {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        return pSParameter.getProteinInferenceClass();
-                    case 3:
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
-                        if (!useDB && peptideMatch == null) {
+                    }
+                    return psParameter.getProteinInferenceClass();
+                case 3:
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB && !isScrolling);
+                    if (peptideMatch == null) {
+                        if (isScrolling()) {
+                            return null;
+                        } else if (!useDB) {
                             dataMissingAtRow(row);
                             return Peptide.getSequence(peptideKey);
                         }
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
-                    case 4:
-                        ArrayList<Integer> indexes;
-                        if (sequenceFactory == null) {
-                            return null;
-                        }
-                        try {
-                            Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
-                            String peptideSequence = Peptide.getSequence(peptideKey);
-                            indexes = currentProtein.getPeptideStart(peptideSequence,
-                                    PeptideShaker.MATCHING_TYPE,
-                                    peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                        } catch (IOException e) {
-                            peptideShakerGUI.catchException(e);
-                            return "IO Exception";
-                        }
-                        Collections.sort(indexes);
-                        return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to resetSorting on the first index if multiple indexes
-                    case 5:
-                        peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
-                        if (!useDB
-                                && (peptideMatch == null || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey))
-                                && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
-                        }
+                    }
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
+                case 4:
+                    if (isScrolling) {
+                        return null;
+                    }
+                    ArrayList<Integer> indexes;
+                    if (sequenceFactory == null) {
+                        return null;
+                    }
+                    try {
+                        Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
+                        String peptideSequence = Peptide.getSequence(peptideKey);
+                        indexes = currentProtein.getPeptideStart(peptideSequence,
+                                PeptideShaker.MATCHING_TYPE,
+                                peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    } catch (IOException e) {
+                        peptideShakerGUI.catchException(e);
+                        return "IO Exception";
+                    }
+                    Collections.sort(indexes);
+                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to resetSorting on the first index if multiple indexes
+                case 5:
+                    if (isScrolling) {
+                        return null;
+                    }
+                    peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
+                    if (!useDB
+                            && (peptideMatch == null || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey))
+                            && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
+                        dataMissingAtRow(row);
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
 
-                        double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectraForPeptide(peptideKey);
-                        double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
-                        int nSpectra = peptideMatch.getSpectrumMatches().size();
+                    double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectraForPeptide(peptideKey);
+                    double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
+                    int nSpectra = peptideMatch.getSpectrumMatches().size();
 
-                        ArrayList<Double> doubleValues = new ArrayList<Double>();
-                        doubleValues.add(nConfidentSpectra);
-                        doubleValues.add(nDoubtfulSpectra);
-                        doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
-                        return arrrayListDataPoints;
-                    case 6:
-                        pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                        if (!useDB && pSParameter == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
-                        }
-                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                            return pSParameter.getPeptideScore();
-                        } else {
-                            return pSParameter.getPeptideConfidence();
-                        }
-                    case 7:
-                        pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                        if (!useDB && pSParameter == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
-                        }
-                        return pSParameter.getMatchValidationLevel().getIndex();
-                    default:
-                        return "";
-                }
+                    ArrayList<Double> doubleValues = new ArrayList<Double>();
+                    doubleValues.add(nConfidentSpectra);
+                    doubleValues.add(nDoubtfulSpectra);
+                    doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
+                    ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                    return arrrayListDataPoints;
+                case 6:
+                    if (isScrolling) {
+                        return null;
+                    }
+                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && psParameter == null) {
+                        dataMissingAtRow(row);
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
+                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                        return psParameter.getPeptideScore();
+                    } else {
+                        return psParameter.getPeptideConfidence();
+                    }
+                case 7:
+                    if (isScrolling) {
+                        return null;
+                    }
+                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && psParameter == null) {
+                        dataMissingAtRow(row);
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
+                    return psParameter.getMatchValidationLevel().getIndex();
+                default:
+                    return null;
             }
         } catch (SQLNonTransientConnectionException e) {
             // this one can be ignored i think?
