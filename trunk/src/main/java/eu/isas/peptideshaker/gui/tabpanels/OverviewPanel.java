@@ -241,6 +241,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         // add table scrolling listeners
         SelfUpdatingTableModel.addScrollListeners(proteinTable, proteinScrollPane, proteinScrollPane.getVerticalScrollBar());
         SelfUpdatingTableModel.addScrollListeners(peptideTable, peptideScrollPane, peptideScrollPane.getVerticalScrollBar());
+        SelfUpdatingTableModel.addScrollListeners(psmTable, spectraScrollPane, spectraScrollPane.getVerticalScrollBar());
 
         // make sure that the scroll panes are see-through
         proteinScrollPane.getViewport().setOpaque(false);
