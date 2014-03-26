@@ -227,8 +227,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     case 0:
                         return viewIndex + 1;
                     case 1:
-                        PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
-                        if (pSParameter == null) {
+                        PSParameter psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
                             } else if (!useDB) {
@@ -236,10 +236,10 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return pSParameter.isStarred();
+                        return psParameter.isStarred();
                     case 2:
-                        pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
-                        if (pSParameter == null) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
                             } else if (!useDB) {
@@ -247,7 +247,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return pSParameter.getProteinInferenceClass();
+                        return psParameter.getProteinInferenceClass();
                     case 3:
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
                         if (proteinMatch == null) {
@@ -286,17 +286,17 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         return description;
                     case 5:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        proteinMatch = identification.getProteinMatch(proteinKey, useDB);
-                        if (!useDB && proteinMatch == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                        proteinMatch = identification.getProteinMatch(proteinKey, useDB && !isScrolling);
+                        if (proteinMatch == null) {
+                            if (isScrolling) {
+                                return null;
+                            } else if (!useDB) {
+                                dataMissingAtRow(row);
+                                return DisplayPreferences.LOADING_MESSAGE;
+                            }
                         }
                         String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
                         String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
-
                         return new Chromosome(chromosomeNumber);
                     case 6:
                         if (isScrolling) {
@@ -393,8 +393,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             return null;
                         }
                     case 11:
-                        pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
-                        if (pSParameter == null) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
                             } else if (!useDB) {
@@ -402,18 +402,18 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        if (pSParameter != null) {
+                        if (psParameter != null) {
                             if (showScores) {
-                                return pSParameter.getProteinScore();
+                                return psParameter.getProteinScore();
                             } else {
-                                return pSParameter.getProteinConfidence();
+                                return psParameter.getProteinConfidence();
                             }
                         } else {
                             return null;
                         }
                     case 12:
-                        pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
-                        if (pSParameter == null) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
                             if (isScrolling) {
                                 return null;
                             } else if (!useDB) {
@@ -421,8 +421,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        if (pSParameter != null) {
-                            return pSParameter.getMatchValidationLevel().getIndex();
+                        if (psParameter != null) {
+                            return psParameter.getMatchValidationLevel().getIndex();
                         } else {
                             return null;
                         }
