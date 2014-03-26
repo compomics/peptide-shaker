@@ -3,8 +3,9 @@
 
 ----
 
-*Changes in PeptideShaker 0.26.3 (coming soon...):*
+*Changes in PeptideShaker 0.27.0 (March 26. 2014):*
 
+ * NEW FEATURE: Added support for MS-GF+.
  * NEW FEATURE: Added PSM quality filters.
 
  * FEATURE IMPROVEMENT: Added an ID software color legend below the Spectrum Identification Results table in the Spectrum IDs tab.
@@ -17,7 +18,7 @@
  * BUG FIX: Fixed a problem with parsing FASTA files containing headers with empty sequences.
  * BUG FIX: Fixed a bug in the settings dialog that closed the dialog if the user canceled the save as dialog.
 
- * LIBRARY UPDATE: Updated utilities to version 3.25.11.
+ * LIBRARY UPDATE: Updated utilities to version 3.25.12.
 
 ----
 
