@@ -42,8 +42,9 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            Example: "file1.mgf, file2.mgf".
 
 -identification_files      The identification files (X!Tandem .t.xml,
-                           OMSSA .omx and Mascot .dat formats) in
-                           a comma separated list or an entire folder.
+                           MS-GF+ .mzid files, OMSSA .omx and Mascot 
+                           .dat formats) in a comma separated list or
+                           an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
 -out                       PeptideShaker output file. If the file 
