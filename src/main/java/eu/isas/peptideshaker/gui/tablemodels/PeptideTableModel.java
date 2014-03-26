@@ -232,29 +232,39 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
                     return arrrayListDataPoints;
                 case 6:
-                    if (isScrolling) {
-                        return null;
+                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    if (psParameter == null) {
+                        if (isScrolling) {
+                            return null;
+                        } else if (!useDB) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
                     }
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                    if (!useDB && psParameter == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        return psParameter.getPeptideScore();
+                    if (psParameter != null) {
+                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                            return psParameter.getPeptideScore();
+                        } else {
+                            return psParameter.getPeptideConfidence();
+                        }
                     } else {
-                        return psParameter.getPeptideConfidence();
+                        return null;
                     }
                 case 7:
-                    if (isScrolling) {
+                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
+                    if (psParameter == null) {
+                        if (isScrolling) {
+                            return null;
+                        } else if (!useDB) {
+                            dataMissingAtRow(row);
+                            return DisplayPreferences.LOADING_MESSAGE;
+                        }
+                    }
+                    if (psParameter != null) {
+                        return psParameter.getMatchValidationLevel().getIndex();
+                    } else {
                         return null;
                     }
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
-                    if (!useDB && psParameter == null) {
-                        dataMissingAtRow(row);
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return psParameter.getMatchValidationLevel().getIndex();
                 default:
                     return null;
             }

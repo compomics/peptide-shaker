@@ -169,51 +169,63 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, true, true, true);
                     case 4:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                        if (!useDB && spectrumMatch == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
+                        if (spectrumMatch == null) {
+                            if (isScrolling()) {
+                                return null;
+                            } else if (!useDB) {
+                                dataMissingAtRow(row);
+                                return DisplayPreferences.LOADING_MESSAGE;
+                            }
                         }
                         return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     case 5:
-                        if (isScrolling) {
-                            return null;
-                        }
-                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
-                        if (!useDB && spectrumMatch == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
+                        spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
+                        if (spectrumMatch == null) {
+                            if (isScrolling()) {
+                                return null;
+                            } else if (!useDB) {
+                                dataMissingAtRow(row);
+                                return DisplayPreferences.LOADING_MESSAGE;
+                            }
                         }
                         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                         Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                         return bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
                     case 6:
-                        if (isScrolling) {
-                            return null;
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
+                            if (isScrolling) {
+                                return null;
+                            } else if (!useDB) {
+                                dataMissingAtRow(row);
+                                return DisplayPreferences.LOADING_MESSAGE;
+                            }
                         }
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
-                        if (!useDB && psParameter == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
-                        }
-                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                            return psParameter.getPsmScore();
+                        if (psParameter != null) {
+                            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                                return psParameter.getPsmScore();
+                            } else {
+                                return psParameter.getPsmConfidence();
+                            }
                         } else {
-                            return psParameter.getPsmConfidence();
+                            return null;
                         }
                     case 7:
-                        if (isScrolling) {
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
+                        if (psParameter == null) {
+                            if (isScrolling) {
+                                return null;
+                            } else if (!useDB) {
+                                dataMissingAtRow(row);
+                                return DisplayPreferences.LOADING_MESSAGE;
+                            }
+                        }
+                        if (psParameter != null) {
+                            return psParameter.getMatchValidationLevel().getIndex();
+                        } else {
                             return null;
                         }
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
-                        if (!useDB && psParameter == null) {
-                            dataMissingAtRow(row);
-                            return DisplayPreferences.LOADING_MESSAGE;
-                        }
-                        return psParameter.getMatchValidationLevel().getIndex();
                     default:
                         return null;
                 }
