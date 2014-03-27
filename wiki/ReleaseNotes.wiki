@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.27.1 (March 27. 2014):*
+
+ * BUG FIX: Fixed a bug in the method for getting all non fixed modifications.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.25.14.
+
+----
+
 *Changes in PeptideShaker 0.27.0 (March 26. 2014):*
 
  * NEW FEATURE: Added support for MS-GF+.
