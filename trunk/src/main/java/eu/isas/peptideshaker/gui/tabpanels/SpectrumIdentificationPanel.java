@@ -2909,6 +2909,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                         }
                     }
+                } else {
+                    // update the spectrum title
+                    ((TitledBorder) spectrumPanel.getBorder()).setTitle(
+                            PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                            + "Spectrum & Fragment Ions ("
+                            + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 2) + " m/z)"
+                            + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                    spectrumPanel.repaint();
                 }
 
                 if (tempSpectrumPanel != null) {
