@@ -2631,6 +2631,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
+                    // @TODO: show the number of validated psms in the file instead of the number of ids in the file
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("<html>" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "Spectrum Selection ("
                             + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
                             + "<a href=\"dummy\">" + fileSelected + "</a>)"
