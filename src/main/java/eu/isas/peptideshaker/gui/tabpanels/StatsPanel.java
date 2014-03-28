@@ -1817,6 +1817,7 @@ public class StatsPanel extends javax.swing.JPanel {
             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
             peptideShakerGUI.setDataSaved(false);
 
             applyButton.setEnabled(false);
@@ -2006,6 +2007,7 @@ public class StatsPanel extends javax.swing.JPanel {
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
                             dataValidated = true;
                             validateButton.setEnabled(false);
                             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
