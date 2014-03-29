@@ -292,7 +292,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Total TP:"/>
+            <Property name="text" type="java.lang.String" value="Total TP"/>
             <Property name="toolTipText" type="java.lang.String" value="Total number of true positives"/>
           </Properties>
         </Component>
@@ -308,7 +308,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="# Validated Hits:"/>
+            <Property name="text" type="java.lang.String" value="# Validated Hits"/>
             <Property name="toolTipText" type="java.lang.String" value="Number of validated hits"/>
           </Properties>
         </Component>
@@ -324,13 +324,13 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="# FP:"/>
+            <Property name="text" type="java.lang.String" value="# FP"/>
             <Property name="toolTipText" type="java.lang.String" value="Number of false positives"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
-            <Property name="text" type="java.lang.String" value="# TP:"/>
+            <Property name="text" type="java.lang.String" value="# TP"/>
             <Property name="toolTipText" type="java.lang.String" value="Number of true positives"/>
           </Properties>
         </Component>
@@ -356,13 +356,13 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel13">
           <Properties>
-            <Property name="text" type="java.lang.String" value="FDR:"/>
+            <Property name="text" type="java.lang.String" value="FDR"/>
             <Property name="toolTipText" type="java.lang.String" value="False Discovery Rate"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel36">
           <Properties>
-            <Property name="text" type="java.lang.String" value="FNR:"/>
+            <Property name="text" type="java.lang.String" value="FNR"/>
             <Property name="toolTipText" type="java.lang.String" value="False Negative Rate"/>
           </Properties>
         </Component>
@@ -392,7 +392,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel20">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Resolution:"/>
+            <Property name="text" type="java.lang.String" value="Resolution"/>
             <Property name="toolTipText" type="java.lang.String" value="Confidence estimation resolution"/>
           </Properties>
         </Component>
@@ -418,7 +418,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel23">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Confidence:"/>
+            <Property name="text" type="java.lang.String" value="Confidence"/>
             <Property name="toolTipText" type="java.lang.String" value="Minimum Confidence"/>
           </Properties>
         </Component>
@@ -1672,7 +1672,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel22">
           <Properties>
-            <Property name="text" type="java.lang.String" value="PEP bin size:"/>
+            <Property name="text" type="java.lang.String" value="PEP bin size"/>
             <Property name="toolTipText" type="java.lang.String" value="Posterior Error Probability window"/>
           </Properties>
         </Component>
@@ -1733,7 +1733,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Threshold (%):"/>
+            <Property name="text" type="java.lang.String" value="Threshold (%)"/>
             <Property name="toolTipText" type="java.lang.String" value="Threshold in percent"/>
           </Properties>
         </Component>
@@ -1760,12 +1760,12 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel9">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Type:"/>
+            <Property name="text" type="java.lang.String" value="Type"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel11">
           <Properties>
-            <Property name="text" type="java.lang.String" value="FDR Type:"/>
+            <Property name="text" type="java.lang.String" value="FDR Type"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="estimatorHelpJButton">

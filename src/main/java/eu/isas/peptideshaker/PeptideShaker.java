@@ -1089,7 +1089,7 @@ public class PeptideShaker {
                     boolean filterPassed = true;
                     for (ProteinFilter filter : doubtfulMatchFilters) {
                         boolean validation = filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
-                        psParameter.setQcResult(filter.getName(), noValidated);
+                        psParameter.setQcResult(filter.getName(), validation);
                         if (!validation) {
                             filterPassed = false;
                             if (reasonDoubtful == null) {
