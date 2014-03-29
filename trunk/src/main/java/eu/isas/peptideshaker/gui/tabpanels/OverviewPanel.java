@@ -4712,8 +4712,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 showSparkLines(peptideShakerGUI.showSparklines());
                 ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
 
-                updatePeptidePanelTitle();
-
                 int maxPeptideSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxNSpectra();
                 ((JSparklinesArrayListBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxPeptideSpectra);
 
@@ -4727,8 +4725,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
-                    public void run() {
+                    public void run() {                        
                         updateSelection(true);
+                        updatePeptidePanelTitle();
                     }
                 });
 

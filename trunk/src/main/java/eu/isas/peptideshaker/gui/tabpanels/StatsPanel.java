@@ -455,7 +455,7 @@ public class StatsPanel extends javax.swing.JPanel {
         idSummaryJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Identification Summary"));
         idSummaryJPanel.setOpaque(false);
 
-        jLabel2.setText("Total TP:");
+        jLabel2.setText("Total TP");
         jLabel2.setToolTipText("Total number of true positives");
 
         nTotalTxt.setEditable(false);
@@ -463,7 +463,7 @@ public class StatsPanel extends javax.swing.JPanel {
         nTotalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTotalTxt.setToolTipText("Total number of true positives");
 
-        jLabel1.setText("# Validated Hits:");
+        jLabel1.setText("# Validated Hits");
         jLabel1.setToolTipText("Number of validated hits");
 
         nValidatedTxt.setEditable(false);
@@ -471,10 +471,10 @@ public class StatsPanel extends javax.swing.JPanel {
         nValidatedTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nValidatedTxt.setToolTipText("Number of validated hits");
 
-        jLabel3.setText("# FP:");
+        jLabel3.setText("# FP");
         jLabel3.setToolTipText("Number of false positives");
 
-        jLabel10.setText("# TP:");
+        jLabel10.setText("# TP");
         jLabel10.setToolTipText("Number of true positives");
 
         nTPlTxt.setEditable(false);
@@ -487,10 +487,10 @@ public class StatsPanel extends javax.swing.JPanel {
         nFPTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nFPTxt.setToolTipText("Number of false positives");
 
-        jLabel13.setText("FDR:");
+        jLabel13.setText("FDR");
         jLabel13.setToolTipText("False Discovery Rate");
 
-        jLabel36.setText("FNR:");
+        jLabel36.setText("FNR");
         jLabel36.setToolTipText("False Negative Rate");
 
         fdrTxt.setEditable(false);
@@ -504,7 +504,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel6.setFont(jLabel6.getFont().deriveFont((jLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel6.setText("Dataset Properties");
 
-        jLabel20.setText("Resolution:");
+        jLabel20.setText("Resolution");
         jLabel20.setToolTipText("Confidence estimation resolution");
 
         nMaxTxt.setEditable(false);
@@ -515,7 +515,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel7.setFont(jLabel7.getFont().deriveFont((jLabel7.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel7.setText("Validation Results");
 
-        jLabel23.setText("Confidence:");
+        jLabel23.setText("Confidence");
         jLabel23.setToolTipText("Minimum Confidence");
 
         confidenceTxt.setEditable(false);
@@ -1410,7 +1410,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel5.setFont(jLabel5.getFont().deriveFont((jLabel5.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel5.setText("Estimator Optimization");
 
-        jLabel22.setText("PEP bin size:");
+        jLabel22.setText("PEP bin size");
         jLabel22.setToolTipText("Posterior Error Probability window");
 
         windowTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -1453,7 +1453,7 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel8.setText("Threshold (%):");
+        jLabel8.setText("Threshold (%)");
         jLabel8.setToolTipText("Threshold in percent");
 
         thresholdHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
@@ -1476,9 +1476,9 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel9.setText("Type:");
+        jLabel9.setText("Type");
 
-        jLabel11.setText("FDR Type:");
+        jLabel11.setText("FDR Type");
 
         estimatorHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         estimatorHelpJButton.setToolTipText("Help");

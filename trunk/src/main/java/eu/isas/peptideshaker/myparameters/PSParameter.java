@@ -52,6 +52,7 @@ public class PSParameter implements UrParameter {
     /**
      * Boolean indicating whether a match is validated or not at the selected
      * threshold.
+     *
      * @deprecated use matchValidationLevel instead
      */
     private boolean validated = false;
@@ -60,7 +61,8 @@ public class PSParameter implements UrParameter {
      */
     private MatchValidationLevel matchValidationLevel;
     /**
-     * Boolean indicating whether the validation confidence was manually updated.
+     * Boolean indicating whether the validation confidence was manually
+     * updated.
      */
     private Boolean manualValidation = false;
     /**
@@ -95,9 +97,9 @@ public class PSParameter implements UrParameter {
      */
     public static final int RELATED = 1;
     /**
-     * Static index for a protein group: 2 - related and a unrelated
-     * proteins or peptide shared by related and unrelated proteins
-     * (not necessarily unique to the group).
+     * Static index for a protein group: 2 - related and a unrelated proteins or
+     * peptide shared by related and unrelated proteins (not necessarily unique
+     * to the group).
      */
     public static final int RELATED_AND_UNRELATED = 2;
     /**
@@ -108,7 +110,7 @@ public class PSParameter implements UrParameter {
     /**
      * Static index for a protein group: 1 - isoforms or peptide of isoform
      * groups (not necessarily unique to the group).
-     * 
+     *
      * @deprecated use RELATED instead
      */
     public static final int ISOFORMS = 1;
@@ -116,7 +118,7 @@ public class PSParameter implements UrParameter {
      * Static index for a protein group: 2 - isoforms and a few unrelated
      * proteins (less than 50%) or peptide shared by isoforms and non isoforms
      * (not necessarily unique to the group).
-     * 
+     *
      * @deprecated use RELATED_AND_UNRELATED instead
      */
     public static final int ISOFORMS_UNRELATED = 2;
@@ -305,7 +307,8 @@ public class PSParameter implements UrParameter {
     /**
      * Set the search engine posterior error probability.
      *
-     * @param searchEngineProbability the new search engine posterior error probability
+     * @param searchEngineProbability the new search engine posterior error
+     * probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
         this.searchEngineProbability = searchEngineProbability;
@@ -403,7 +406,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns whether a match is validated or not.
-     * 
+     *
      * @deprecated use getMatchValidationLevel instead
      * @return boolean indicating whether a match is validated or not
      */
@@ -413,7 +416,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the validation level of the match.
-     * 
+     *
      * @return the validation level of the match
      */
     public MatchValidationLevel getMatchValidationLevel() {
@@ -429,7 +432,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Sets the validation level of the match.
-     * 
+     *
      * @param matchValidationLevel the validation level of the match
      */
     public void setMatchValidationLevel(MatchValidationLevel matchValidationLevel) {
@@ -742,8 +745,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the reason why a match is set as doubtful. An empty string if none set.
-     * 
+     * Returns the reason why a match is set as doubtful. An empty string if
+     * none set.
+     *
      * @return the reason why a match is set as doubtful
      */
     public String getReasonDoubtful() {
@@ -755,7 +759,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Sets the reason why a match is set as doubtful.
-     * 
+     *
      * @param reasonDoubtful the reason why a match is set as doubtful
      */
     public void setReasonDoubtful(String reasonDoubtful) {
@@ -764,8 +768,9 @@ public class PSParameter implements UrParameter {
 
     /**
      * Indicates whether the match validation was manually inspected.
-     * 
-     * @return a boolean indicating whether the match validation was manually inspected
+     *
+     * @return a boolean indicating whether the match validation was manually
+     * inspected
      */
     public Boolean isManualValidation() {
         if (manualValidation == null) {
@@ -776,16 +781,17 @@ public class PSParameter implements UrParameter {
 
     /**
      * Sets whether the match validation was manually inspected.
-     * 
-     * @param manualValidation a boolean indicating whether the match validation was manually inspected
+     *
+     * @param manualValidation a boolean indicating whether the match validation
+     * was manually inspected
      */
     public void setManualValidation(Boolean manualValidation) {
         this.manualValidation = manualValidation;
     }
-    
+
     /**
      * Sets whether the match passed a quality control check.
-     * 
+     *
      * @param criterion the QC criterion
      * @param validated boolean indicating whether the test was passed
      */
@@ -795,24 +801,24 @@ public class PSParameter implements UrParameter {
         }
         qcFilters.put(criterion, validated);
     }
-    
+
     /**
      * Indicates whether the given QC check was passed.
-     * 
+     *
      * @param criterion the QC criterion
-     * 
+     *
      * @return a boolean indicating whether the test was passed
      */
     public Boolean isQcPassed(String criterion) {
         if (qcFilters == null) {
             return null;
         }
-       return  qcFilters.get(criterion);
+        return qcFilters.get(criterion);
     }
-    
+
     /**
      * Returns the list of qc checks made for this match.
-     * 
+     *
      * @return the list of qc checks made for this match in a set
      */
     public Set<String> getQcCriteria() {
@@ -821,11 +827,12 @@ public class PSParameter implements UrParameter {
         }
         return qcFilters.keySet();
     }
-    
+
     /**
      * Indicates whether QC filters were implemented for this match.
-     * 
-     * @return a boolean indicating whether QC filters were implemented for this match
+     *
+     * @return a boolean indicating whether QC filters were implemented for this
+     * match
      */
     public boolean hasQcFilters() {
         return qcFilters != null;
