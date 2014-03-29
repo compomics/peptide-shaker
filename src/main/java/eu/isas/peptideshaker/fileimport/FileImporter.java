@@ -782,6 +782,8 @@ public class FileImporter {
                                                             + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                 }
                                                 tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
+                                            } else if (searchEngine == Advocate.msAmanda.getIndex()) {
+                                                    // @TODO: no mapping required..?
                                             } else {
                                                 Advocate advocate = Advocate.getAdvocate(searchEngine);
                                                 throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");

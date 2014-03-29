@@ -235,6 +235,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.OMSSA.getIndex(), new java.awt.Color(153, 153, 255));
         searchEnginesColorMap.put(Advocate.Mascot.getIndex(), new java.awt.Color(255, 153, 255));
         searchEnginesColorMap.put(Advocate.MSGF.getIndex(), new java.awt.Color(205, 92, 92));
+        searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(205, 92, 92)); // @TODO: find a color for MS Amanda!!
 
         // the venn diagram colors
         advocateVennColors = new HashMap<Advocate, Color>();
@@ -242,6 +243,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         advocateVennColors.put(Advocate.OMSSA, Color.MEDIUMSLATEBLUE);
         advocateVennColors.put(Advocate.Mascot, Color.PINK);
         advocateVennColors.put(Advocate.MSGF, Color.INDIANRED);
+        advocateVennColors.put(Advocate.msAmanda, Color.INDIANRED); // @TODO: find a color for MS Amanda!!
     }
 
     /**
@@ -346,6 +348,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesTooltipMap.put(Advocate.OMSSA.getIndex(), Advocate.OMSSA.getName());
         searchEnginesTooltipMap.put(Advocate.Mascot.getIndex(), Advocate.Mascot.getName());
         searchEnginesTooltipMap.put(Advocate.MSGF.getIndex(), Advocate.MSGF.getName());
+        searchEnginesTooltipMap.put(Advocate.msAmanda.getIndex(), Advocate.msAmanda.getName());
 
         searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), searchEnginesColorMap, searchEnginesTooltipMap));
 
@@ -2298,6 +2301,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             if (!advocatesUsed.contains(Advocate.MSGF)) {
                                 advocatesUsed.add(Advocate.MSGF);
                             }
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.msAmanda.getIndex()) {
+                            if (!advocatesUsed.contains(Advocate.msAmanda)) {
+                                advocatesUsed.add(Advocate.msAmanda);
+                            }
                         }
                     }
 
@@ -3482,11 +3489,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Create an overview plot.
      *
-     * @param nOMSSA the OMSSA value
-     * @param nXTandem the X!Tandem value
-     * @param nMsgf the MS-GF+ value
-     * @param nMascot the Mascot value
-     * @param nPeptideShaker the PeptideShaker value
+     * @param data the data to plot
      * @param xAxisLabel the xAxis label
      * @param roundDecimals if true, the decimals in the labels are rounded to
      * one decimal
