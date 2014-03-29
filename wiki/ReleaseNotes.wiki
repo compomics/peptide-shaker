@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.27.2 (March 29. 2014):*
+
+ * FEATURE IMPROVEMENT: The first number in the Spectrum IDs tab border title is now the number of validated PSMs.
+ * FEATURE IMPROVEMENT: Updated the getting started slides to include MS-GF+.
+
+ * BUG FIX: Fixed a bug in the protein filters that resulted in all protein filters returning false.
+ * BUG FIX: The Spectrum IDs tab is now updated if the validation changes in the Validation tab.
+ * BUG FIX: Fixed a bug in the SpectrumIDs tab where the spectrum panel border was not reset when selecting a spectrum without a PSM.
+ * BUG FIX: Tried to fix a possible null pointer in the peptide border title.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.25.15.
+
+----
+
 *Changes in PeptideShaker 0.27.1 (March 27. 2014):*
 
  * BUG FIX: Fixed a bug in the method for getting all non fixed modifications.
