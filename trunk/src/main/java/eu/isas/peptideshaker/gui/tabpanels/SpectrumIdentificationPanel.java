@@ -190,6 +190,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The search engine color map.
      */
     private HashMap<Integer, java.awt.Color> searchEnginesColorMap;
+    /**
+     * The number of validated PSMs per mgf file. // @TODO: create this map when
+     * loading the data...
+     */
+    private HashMap<String, Integer> numberOfValidatedPsmsMap;
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -2156,8 +2161,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Shows a tooltip when the mouse is over the spectrum selection link.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void spectrumSelectionPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionPanelMouseMoved
         if (evt.getX() > 180 && evt.getX() < 400 && evt.getY() < 25) {
@@ -2298,7 +2303,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     // order the advocates to have the same order is in the overview plots
                     Collections.sort(advocatesUsed);
-                    
+
                     // update the advocates color legend
                     ArrayList<Advocate> usedAdvocatedAndPeptideShaker = new ArrayList<Advocate>();
                     usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
@@ -2306,8 +2311,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     String colorLegend = "<html>";
                     for (Advocate tempAdvocate : usedAdvocatedAndPeptideShaker) {
                         colorLegend += "<font color=\"rgb(" + searchEnginesColorMap.get(tempAdvocate.getIndex()).getRed() + ","
-                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getGreen()+ ","
-                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getBlue()+ ")\">&#9632;</font> " 
+                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getGreen() + ","
+                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getBlue() + ")\">&#9632;</font> "
                                 + tempAdvocate.getName() + " &nbsp;";
                     }
                     colorLegend += "</html>";
@@ -2333,8 +2338,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     int fileCounter = 1;
                     PSParameter probabilities = new PSParameter();
 
+                    numberOfValidatedPsmsMap = new HashMap<String, Integer>();
+
                     for (String fileName : filesArray) {
 
+                        int numberOfValidatedPsms = 0;
                         totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
 
                         progressDialog.setTitle("Loading Spectrum Information. Please Wait... (" + fileCounter + "/" + filesArray.length + ")");
@@ -2355,6 +2363,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             if (probabilities.getMatchValidationLevel().isValidated()) {
 
                                 totalPeptideShakerIds++;
+                                numberOfValidatedPsms++;
 
                                 for (Advocate tempAdvocate : advocatesUsed) {
                                     if (spectrumMatch.getFirstHit(tempAdvocate.getIndex()) != null) {
@@ -2417,6 +2426,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                             progressDialog.increasePrimaryProgressCounter();
                         }
+
+                        numberOfValidatedPsmsMap.put(fileName, numberOfValidatedPsms);
                     }
 
                     if (!progressDialog.isRunCanceled()) {
@@ -2446,7 +2457,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
                         //formComponentResized(null);
-
                         // enable the contextual export options
                         exportIdPerformancePerformanceJButton.setEnabled(true);
                         exportSpectrumSelectionJButton.setEnabled(true);
@@ -2631,9 +2641,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
                 progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
-                    // @TODO: show the number of validated psms in the file instead of the number of ids in the file
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("<html>" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "Spectrum Selection ("
-                            + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
+                            + numberOfValidatedPsmsMap.get(fileSelected) + "/" + spectrumFactory.getNSpectra(fileSelected) + " - "
                             + "<a href=\"dummy\">" + fileSelected + "</a>)"
                             + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING_HTML + "</html>");
                     spectrumSelectionPanel.repaint();
@@ -3352,7 +3361,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Update the Venn diagram.
-     * 
+     *
      * @param dataA the data in group A
      * @param dataB the data in group B
      * @param dataC the data in group C
@@ -3368,8 +3377,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     dataAB, dataAC, dataBC, dataABC, vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(), vennDiagramAdvocates.get(2).getName(),
                     advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)), advocateVennColors.get(vennDiagramAdvocates.get(2)));
         } else if (vennDiagramAdvocates.size() == 2) {
-            updateTwoWayVennDiagram(vennDiagramButton, dataA, dataB, dataAB, 
-                    vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(), 
+            updateTwoWayVennDiagram(vennDiagramButton, dataA, dataB, dataAB,
+                    vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(),
                     advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)));
         } else {
             vennDiagramButton.setText(null);
