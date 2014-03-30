@@ -770,7 +770,7 @@ public class FileImporter {
                                                     }
                                                     tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, PeptideShaker.MATCHING_TYPE, ptmMassTolerance, searchParameters.getFragmentIonAccuracy());
                                                 }
-                                            } else if (searchEngine == Advocate.Mascot.getIndex() 
+                                            } else if (searchEngine == Advocate.Mascot.getIndex()
                                                     || searchEngine == Advocate.XTandem.getIndex()
                                                     || searchEngine == Advocate.MSGF.getIndex()) {
                                                 String[] parsedName = sePTM.split("@");
@@ -783,7 +783,8 @@ public class FileImporter {
                                                 }
                                                 tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
                                             } else if (searchEngine == Advocate.msAmanda.getIndex()) {
-                                                    // @TODO: no mapping required..?
+                                                // @TODO: check ptm mapping!!!
+                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, sePTM, PeptideShaker.MATCHING_TYPE, ptmMassTolerance, searchParameters.getFragmentIonAccuracy());
                                             } else {
                                                 Advocate advocate = Advocate.getAdvocate(searchEngine);
                                                 throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
@@ -903,9 +904,11 @@ public class FileImporter {
                         }
 
                         if (match.hasAssumption(searchEngine)) {
+
                             PeptideAssumption firstHit = null;
                             ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
                             Collections.sort(eValues);
+
                             for (Double eValue : eValues) {
                                 for (SpectrumIdentificationAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
