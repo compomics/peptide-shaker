@@ -235,7 +235,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.OMSSA.getIndex(), new java.awt.Color(153, 153, 255));
         searchEnginesColorMap.put(Advocate.Mascot.getIndex(), new java.awt.Color(255, 153, 255));
         searchEnginesColorMap.put(Advocate.MSGF.getIndex(), new java.awt.Color(205, 92, 92));
-        searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(205, 92, 92)); // @TODO: find a color for MS Amanda!!
+        searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(216, 191, 216));
 
         // the venn diagram colors
         advocateVennColors = new HashMap<Advocate, Color>();
@@ -243,7 +243,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         advocateVennColors.put(Advocate.OMSSA, Color.MEDIUMSLATEBLUE);
         advocateVennColors.put(Advocate.Mascot, Color.PINK);
         advocateVennColors.put(Advocate.MSGF, Color.INDIANRED);
-        advocateVennColors.put(Advocate.msAmanda, Color.INDIANRED); // @TODO: find a color for MS Amanda!!
+        advocateVennColors.put(Advocate.msAmanda, Color.THISTLE);
     }
 
     /**
