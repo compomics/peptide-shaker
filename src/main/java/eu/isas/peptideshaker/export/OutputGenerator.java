@@ -2261,105 +2261,105 @@ public class OutputGenerator {
                                         for (double eValue : eValues) {
                                             for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                                 if (assumption instanceof PeptideAssumption) {
-                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                                writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);
-                                                writer.write(rank + SEPARATOR);
-                                                if (accession || proteinDescription) {
+                                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                                    writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);
+                                                    writer.write(rank + SEPARATOR);
+                                                    if (accession || proteinDescription) {
 
-                                                    String proteinAccessions = "";
-                                                    String proteinDescriptions = "";
+                                                        String proteinAccessions = "";
+                                                        String proteinDescriptions = "";
 
-                                                    boolean first = true;
-                                                    for (String protein : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
-                                                        if (first) {
-                                                            first = false;
-                                                        } else {
-                                                            if (accession) {
-                                                                proteinAccessions += ", ";
-                                                            }
-                                                            if (proteinDescription) {
-                                                                proteinDescriptions += "; ";
-                                                            }
-                                                        }
-                                                        if (accession) {
-                                                            proteinAccessions += protein;
-                                                        }
-                                                        if (proteinDescription) {
-                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
-                                                        }
-                                                    }
-                                                    if (accession) {
-                                                        writer.write(proteinAccessions + SEPARATOR);
-                                                    }
-                                                    if (proteinDescription) {
-                                                        writer.write(proteinDescriptions + SEPARATOR);
-                                                    }
-                                                }
-                                                if (sequence) {
-                                                    writer.write(peptideAssumption.getPeptide().getSequence() + SEPARATOR);
-                                                }
-                                                if (modifications) {
-                                                    boolean first = true;
-                                                    for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
-                                                        if (modificationMatch.isVariable()) {
+                                                        boolean first = true;
+                                                        for (String protein : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
-                                                                writer.write(", ");
+                                                                if (accession) {
+                                                                    proteinAccessions += ", ";
+                                                                }
+                                                                if (proteinDescription) {
+                                                                    proteinDescriptions += "; ";
+                                                                }
                                                             }
-                                                            String modName = modificationMatch.getTheoreticPtm();
-                                                            writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
+                                                            if (accession) {
+                                                                proteinAccessions += protein;
+                                                            }
+                                                            if (proteinDescription) {
+                                                                proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
+                                                            }
+                                                        }
+                                                        if (accession) {
+                                                            writer.write(proteinAccessions + SEPARATOR);
+                                                        }
+                                                        if (proteinDescription) {
+                                                            writer.write(proteinDescriptions + SEPARATOR);
                                                         }
                                                     }
-                                                    writer.write(SEPARATOR);
-                                                }
-                                                if (file) {
-                                                    writer.write(Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR);
-                                                }
-                                                if (title) {
-                                                    writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
-                                                }
-                                                if (precursor) {
-                                                    Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
-                                                    writer.write(prec.getMz() + SEPARATOR);
-                                                    writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
-                                                    writer.write(prec.getRt() + SEPARATOR);
-                                                    writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
-                                                    writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
-                                                            peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
-                                                    writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
-                                                }
-                                                if (scores) {
-                                                    if (se == Advocate.Mascot.getIndex()) {
-                                                        writer.write("" + eValue);
+                                                    if (sequence) {
+                                                        writer.write(peptideAssumption.getPeptide().getSequence() + SEPARATOR);
                                                     }
-                                                    writer.write(SEPARATOR);
-                                                    if (se == Advocate.OMSSA.getIndex()) {
-                                                        writer.write("" + eValue);
+                                                    if (modifications) {
+                                                        boolean first = true;
+                                                        for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
+                                                            if (modificationMatch.isVariable()) {
+                                                                if (first) {
+                                                                    first = false;
+                                                                } else {
+                                                                    writer.write(", ");
+                                                                }
+                                                                String modName = modificationMatch.getTheoreticPtm();
+                                                                writer.write(modName + "(" + modificationMatch.getModificationSite() + ")");
+                                                            }
+                                                        }
+                                                        writer.write(SEPARATOR);
                                                     }
-                                                    writer.write(SEPARATOR);
-                                                    if (se == Advocate.XTandem.getIndex()) {
-                                                        writer.write("" + eValue);
+                                                    if (file) {
+                                                        writer.write(Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR);
                                                     }
-                                                    writer.write(SEPARATOR);
+                                                    if (title) {
+                                                        writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
+                                                    }
+                                                    if (precursor) {
+                                                        Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                                        writer.write(prec.getMz() + SEPARATOR);
+                                                        writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
+                                                        writer.write(prec.getRt() + SEPARATOR);
+                                                        writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
+                                                        writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
+                                                                peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                                        writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
+                                                    }
+                                                    if (scores) {
+                                                        if (se == Advocate.Mascot.getIndex()) {
+                                                            writer.write("" + eValue);
+                                                        }
+                                                        writer.write(SEPARATOR);
+                                                        if (se == Advocate.OMSSA.getIndex()) {
+                                                            writer.write("" + eValue);
+                                                        }
+                                                        writer.write(SEPARATOR);
+                                                        if (se == Advocate.XTandem.getIndex()) {
+                                                            writer.write("" + eValue);
+                                                        }
+                                                        writer.write(SEPARATOR);
+                                                    }
+                                                    if (confidence) {
+                                                        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                                        writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
+                                                    }
+                                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                                        writer.write(1 + SEPARATOR);
+                                                    } else {
+                                                        writer.write(0 + SEPARATOR);
+                                                    }
+                                                    if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                                        writer.write(1 + SEPARATOR);
+                                                    } else {
+                                                        writer.write(0 + SEPARATOR);
+                                                    }
+                                                    writer.write(System.getProperty("line.separator"));
+                                                    rank++;
                                                 }
-                                                if (confidence) {
-                                                    psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                                                    writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
-                                                }
-                                                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
-                                                    writer.write(1 + SEPARATOR);
-                                                } else {
-                                                    writer.write(0 + SEPARATOR);
-                                                }
-                                                if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
-                                                    writer.write(1 + SEPARATOR);
-                                                } else {
-                                                    writer.write(0 + SEPARATOR);
-                                                }
-                                                writer.write(System.getProperty("line.separator"));
-                                                rank++;
-                                            }
                                             }
                                         }
                                     }

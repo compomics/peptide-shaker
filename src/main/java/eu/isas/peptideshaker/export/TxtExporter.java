@@ -353,11 +353,11 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-            line.append(probabilities.getMatchValidationLevel());
-            if (!probabilities.getReasonDoubtful().equals("")) {
-                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
-            }
-            line.append(SEPARATOR);
+        line.append(probabilities.getMatchValidationLevel());
+        if (!probabilities.getReasonDoubtful().equals("")) {
+            line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+        }
+        line.append(SEPARATOR);
 
         try {
             line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription());
@@ -486,10 +486,10 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-            line.append(probabilities.getMatchValidationLevel());
-            if (!probabilities.getReasonDoubtful().equals("")) {
-                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
-            }
+        line.append(probabilities.getMatchValidationLevel());
+        if (!probabilities.getReasonDoubtful().equals("")) {
+            line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+        }
 
         line.append(System.getProperty("line.separator"));
 
@@ -648,27 +648,27 @@ public class TxtExporter {
                 line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                boolean firstSite = true;
-                for (int site : ptmScoring.getOrderedPtmLocations()) {
-                    if (firstSite) {
-                        firstSite = false;
-                    } else {
-                        line.append(", ");
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                    boolean firstSite = true;
+                    for (int site : ptmScoring.getOrderedPtmLocations()) {
+                        if (firstSite) {
+                            firstSite = false;
+                        } else {
+                            line.append(", ");
+                        }
+                        int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                            line.append(site).append(": Not Scored"); // Well this should not happen
+                        } else if (ptmConfidence == PtmScoring.RANDOM) {
+                            line.append(site).append(": Random");
+                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                            line.append(site).append(": Doubtfull");
+                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                            line.append(site).append(": Confident");
+                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                            line.append(site).append(": Very Confident");
+                        }
                     }
-                    int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
-                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                        line.append(site).append(": Not Scored"); // Well this should not happen
-                    } else if (ptmConfidence == PtmScoring.RANDOM) {
-                        line.append(site).append(": Random");
-                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                        line.append(site).append(": Doubtfull");
-                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                        line.append(site).append(": Confident");
-                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                        line.append(site).append(": Very Confident");
-                    }
-                }
                 } else {
                     line.append("Not Scored");
                 }
@@ -690,12 +690,12 @@ public class TxtExporter {
 
         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
             if (assumption instanceof PeptideAssumption) {
-            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                if (!fileNames.contains(assumption.getIdentificationFile())) {
-                    fileNames.add(assumption.getIdentificationFile());
+                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                    if (!fileNames.contains(assumption.getIdentificationFile())) {
+                        fileNames.add(assumption.getIdentificationFile());
+                    }
                 }
-            }
             }
         }
 
@@ -718,24 +718,24 @@ public class TxtExporter {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                     if (assumption instanceof PeptideAssumption) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                        if (se == Advocate.Mascot.getIndex()) {
-                            if (mascotEValue == null || mascotEValue > eValue) {
-                                mascotEValue = eValue;
-                                mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
-                            }
-                        } else if (se == Advocate.OMSSA.getIndex()) {
-                            if (omssaEValue == null || omssaEValue > eValue) {
-                                omssaEValue = eValue;
-                            }
-                        } else if (se == Advocate.XTandem.getIndex()) {
-                            if (xtandemEValue == null || xtandemEValue > eValue) {
-                                xtandemEValue = eValue;
+                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                        if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                            if (se == Advocate.Mascot.getIndex()) {
+                                if (mascotEValue == null || mascotEValue > eValue) {
+                                    mascotEValue = eValue;
+                                    mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                                }
+                            } else if (se == Advocate.OMSSA.getIndex()) {
+                                if (omssaEValue == null || omssaEValue > eValue) {
+                                    omssaEValue = eValue;
+                                }
+                            } else if (se == Advocate.XTandem.getIndex()) {
+                                if (xtandemEValue == null || xtandemEValue > eValue) {
+                                    xtandemEValue = eValue;
+                                }
                             }
                         }
                     }
-                }
                 }
             }
         }
@@ -774,10 +774,10 @@ public class TxtExporter {
             line.append("0").append(SEPARATOR);
         }
 
-            line.append(probabilities.getMatchValidationLevel());
-            if (!probabilities.getReasonDoubtful().equals("")) {
-                line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
-            }
+        line.append(probabilities.getMatchValidationLevel());
+        if (!probabilities.getReasonDoubtful().equals("")) {
+            line.append(" (").append(probabilities.getReasonDoubtful()).append(")");
+        }
 
         line.append(System.getProperty("line.separator"));
 
@@ -813,90 +813,90 @@ public class TxtExporter {
 
             for (double eValue : eValues) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-if (assumption instanceof PeptideAssumption) {
-                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                    if (assumption instanceof PeptideAssumption) {
+                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
-                    if (se == Advocate.Mascot.getIndex()) {
-                        line += "M" + SEPARATOR;
-                    } else if (se == Advocate.OMSSA.getIndex()) {
-                        line += "O" + SEPARATOR;
-                    } else if (se == Advocate.XTandem.getIndex()) {
-                        line += "X" + SEPARATOR;
-                    }
-
-                    line += rank + SEPARATOR;
-
-                    ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                    for (String protein : accessions) {
-                        line += protein + " ";
-                    }
-
-                    line += SEPARATOR;
-                    line += peptideAssumption.getPeptide().getSequence() + SEPARATOR;
-
-                    for (ModificationMatch mod : peptideAssumption.getPeptide().getModificationMatches()) {
-                        if (mod.isVariable()) {
-                            line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
+                        if (se == Advocate.Mascot.getIndex()) {
+                            line += "M" + SEPARATOR;
+                        } else if (se == Advocate.OMSSA.getIndex()) {
+                            line += "O" + SEPARATOR;
+                        } else if (se == Advocate.XTandem.getIndex()) {
+                            line += "X" + SEPARATOR;
                         }
-                    }
 
-                    line += SEPARATOR;
-                    line += assumption.getIdentificationCharge().value + SEPARATOR;
-                    line += spectrumTitle + SEPARATOR;
-                    line += fileName + SEPARATOR;
-                    line += assumption.getIdentificationFile() + SEPARATOR;
-                    line += spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + SEPARATOR;
-                    line += spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + SEPARATOR;
-                    line += spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + SEPARATOR;
+                        line += rank + SEPARATOR;
 
-                    if (se == Advocate.Mascot.getIndex()) {
-                        MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
-                        line += score.getScore() + SEPARATOR;
-                        line += assumption.getScore() + SEPARATOR;
-                    } else {
-                        line += SEPARATOR + SEPARATOR;
-                    }
+                        ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        for (String protein : accessions) {
+                            line += protein + " ";
+                        }
 
-                    if (se == Advocate.OMSSA.getIndex()) {
-                        line += assumption.getScore() + "";
-                    }
+                        line += SEPARATOR;
+                        line += peptideAssumption.getPeptide().getSequence() + SEPARATOR;
 
-                    line += SEPARATOR;
+                        for (ModificationMatch mod : peptideAssumption.getPeptide().getModificationMatches()) {
+                            if (mod.isVariable()) {
+                                line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
+                            }
+                        }
 
-                    if (se == Advocate.XTandem.getIndex()) {
-                        line += assumption.getScore() + "";
-                    }
+                        line += SEPARATOR;
+                        line += assumption.getIdentificationCharge().value + SEPARATOR;
+                        line += spectrumTitle + SEPARATOR;
+                        line += fileName + SEPARATOR;
+                        line += assumption.getIdentificationFile() + SEPARATOR;
+                        line += spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + SEPARATOR;
+                        line += spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + SEPARATOR;
+                        line += spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + SEPARATOR;
 
-                    line += SEPARATOR;
+                        if (se == Advocate.Mascot.getIndex()) {
+                            MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
+                            line += score.getScore() + SEPARATOR;
+                            line += assumption.getScore() + SEPARATOR;
+                        } else {
+                            line += SEPARATOR + SEPARATOR;
+                        }
 
-                    PSParameter probabilities = new PSParameter();
-                    probabilities = (PSParameter) assumption.getUrParam(probabilities);
+                        if (se == Advocate.OMSSA.getIndex()) {
+                            line += assumption.getScore() + "";
+                        }
 
-                    try {
-                        line += assumption.getScore() + SEPARATOR
-                                + probabilities.getSearchEngineProbability() + SEPARATOR;
-                    } catch (Exception e) {
-                        line += SEPARATOR + SEPARATOR;
-                    }
+                        line += SEPARATOR;
 
-                    if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                        line += "1" + SEPARATOR;
-                    } else {
-                        line += "0" + SEPARATOR;
-                    }
+                        if (se == Advocate.XTandem.getIndex()) {
+                            line += assumption.getScore() + "";
+                        }
 
-                    try {
+                        line += SEPARATOR;
+
+                        PSParameter probabilities = new PSParameter();
+                        probabilities = (PSParameter) assumption.getUrParam(probabilities);
+
+                        try {
+                            line += assumption.getScore() + SEPARATOR
+                                    + probabilities.getSearchEngineProbability() + SEPARATOR;
+                        } catch (Exception e) {
+                            line += SEPARATOR + SEPARATOR;
+                        }
+
+                        if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                            line += "1" + SEPARATOR;
+                        } else {
+                            line += "0" + SEPARATOR;
+                        }
+
+                        try {
                             line += probabilities.getMatchValidationLevel();
                             if (!probabilities.getReasonDoubtful().equals("")) {
                                 line += " (" + probabilities.getReasonDoubtful() + ")";
                             }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                    line += System.getProperty("line.separator");
-                    rank++;
-                }
+                        line += System.getProperty("line.separator");
+                        rank++;
+                    }
                 }
             }
         }

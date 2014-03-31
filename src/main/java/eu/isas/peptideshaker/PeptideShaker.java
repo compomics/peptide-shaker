@@ -1698,32 +1698,32 @@ public class PeptideShaker {
 
                             for (double eValue : eValues2) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
-                                    
+
                                     if (assumption instanceof PeptideAssumption) {
 
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
-                                    if (peptideAssumption.getPeptide().getKey().equals(bestAssumptionKey)) {
+                                        if (peptideAssumption.getPeptide().getKey().equals(bestAssumptionKey)) {
 
-                                        found = true;
-                                        boolean found2 = false;
+                                            found = true;
+                                            boolean found2 = false;
 
-                                        for (PeptideAssumption assumption1 : assumptions.keySet()) {
-                                            if (assumption1.getPeptide().sameModificationsAs(peptideAssumption.getPeptide())) {
-                                                found2 = true;
+                                            for (PeptideAssumption assumption1 : assumptions.keySet()) {
+                                                if (assumption1.getPeptide().sameModificationsAs(peptideAssumption.getPeptide())) {
+                                                    found2 = true;
+                                                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                                                    assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!found2) {
+                                                assumptions.put(peptideAssumption, new ArrayList<Double>());
                                                 psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                                assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
-                                                break;
+                                                assumptions.get(peptideAssumption).add(psParameter.getSearchEngineProbability());
                                             }
                                         }
-
-                                        if (!found2) {
-                                            assumptions.put(peptideAssumption, new ArrayList<Double>());
-                                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                            assumptions.get(peptideAssumption).add(psParameter.getSearchEngineProbability());
-                                        }
                                     }
-                                }
                                 }
 
                                 if (found) {
@@ -1774,7 +1774,7 @@ public class PeptideShaker {
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
-                    
+
                 } else {
                     // @TODO: find the best tag assumption
                     throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
@@ -1822,29 +1822,29 @@ public class PeptideShaker {
                     for (double eValue : eValues) {
 
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
-                            
+
                             if (assumption instanceof PeptideAssumption) {
 
-                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                            PSParameter psParameter = new PSParameter();
+                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                PSParameter psParameter = new PSParameter();
 
-                            if (sequenceFactory.concatenatedTargetDecoy()) {
+                                if (sequenceFactory.concatenatedTargetDecoy()) {
 
-                                double newP = inputMap.getProbability(searchEngine, eValue);
+                                    double newP = inputMap.getProbability(searchEngine, eValue);
 
-                                if (newP > previousP) {
-                                    psParameter.setSearchEngineProbability(newP);
-                                    previousP = newP;
+                                    if (newP > previousP) {
+                                        psParameter.setSearchEngineProbability(newP);
+                                        previousP = newP;
+                                    } else {
+                                        psParameter.setSearchEngineProbability(previousP);
+                                    }
+
                                 } else {
-                                    psParameter.setSearchEngineProbability(previousP);
+                                    psParameter.setSearchEngineProbability(1.0);
                                 }
 
-                            } else {
-                                psParameter.setSearchEngineProbability(1.0);
+                                peptideAssumption.addUrParam(psParameter);
                             }
-
-                            peptideAssumption.addUrParam(psParameter);
-                        }
                         }
                     }
                 }
