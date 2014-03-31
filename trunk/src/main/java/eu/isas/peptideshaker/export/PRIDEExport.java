@@ -452,15 +452,15 @@ public class PRIDEExport {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                     if (assumption instanceof PeptideAssumption) {
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                                        if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
-                                            eValues.put(se, eValue);
-                                            if (se == Advocate.Mascot.getIndex()) {
-                                                mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                                        PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                        if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                            if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
+                                                eValues.put(se, eValue);
+                                                if (se == Advocate.Mascot.getIndex()) {
+                                                    mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                                                }
                                             }
                                         }
-                                    }
                                     }
                                 }
                             }
@@ -618,7 +618,6 @@ public class PRIDEExport {
                         // "MS:1001329", "OMSSA:pvalue"
                         // "PRIDE:0000182","X|Tandem Z score"
                         // "MS:1001331", "X!Tandem:hyperscore"
-
                         // PTM scoring
                         if (dScore.length() > 0) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
