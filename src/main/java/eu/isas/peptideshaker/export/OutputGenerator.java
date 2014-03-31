@@ -2260,6 +2260,7 @@ public class OutputGenerator {
                                         rank = 1;
                                         for (double eValue : eValues) {
                                             for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                                if (assumption instanceof PeptideAssumption) {
                                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                                 writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);
                                                 writer.write(rank + SEPARATOR);
@@ -2358,6 +2359,7 @@ public class OutputGenerator {
                                                 }
                                                 writer.write(System.getProperty("line.separator"));
                                                 rank++;
+                                            }
                                             }
                                         }
                                     }

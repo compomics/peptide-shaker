@@ -689,11 +689,13 @@ public class TxtExporter {
         ArrayList<String> fileNames = new ArrayList<String>();
 
         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
+            if (assumption instanceof PeptideAssumption) {
             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
             if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                 if (!fileNames.contains(assumption.getIdentificationFile())) {
                     fileNames.add(assumption.getIdentificationFile());
                 }
+            }
             }
         }
 
@@ -715,6 +717,7 @@ public class TxtExporter {
         for (int se : spectrumMatch.getAdvocates()) {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                    if (assumption instanceof PeptideAssumption) {
                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                         if (se == Advocate.Mascot.getIndex()) {
@@ -732,6 +735,7 @@ public class TxtExporter {
                             }
                         }
                     }
+                }
                 }
             }
         }
@@ -809,7 +813,7 @@ public class TxtExporter {
 
             for (double eValue : eValues) {
                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-
+if (assumption instanceof PeptideAssumption) {
                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
                     if (se == Advocate.Mascot.getIndex()) {
@@ -892,6 +896,7 @@ public class TxtExporter {
 
                     line += System.getProperty("line.separator");
                     rank++;
+                }
                 }
             }
         }
