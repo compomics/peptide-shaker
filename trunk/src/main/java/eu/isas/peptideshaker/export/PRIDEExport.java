@@ -451,6 +451,7 @@ public class PRIDEExport {
                         for (int se : spectrumMatch.getAdvocates()) {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                    if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                         if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
@@ -459,6 +460,7 @@ public class PRIDEExport {
                                                 mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                                             }
                                         }
+                                    }
                                     }
                                 }
                             }

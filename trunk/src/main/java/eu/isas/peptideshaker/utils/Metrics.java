@@ -19,15 +19,25 @@ public class Metrics implements Serializable {
      */
     static final long serialVersionUID = 5905881057533649517L;
     /**
-     * The maximal precursor error in Da in all PSMs (only the best hit per
+     * The maximal peptide precursor error in Da in all PSMs (only the best peptide hit per
      * spectrum).
      */
     private double maxPrecursorErrorDa = 0;
     /**
-     * The maximal precursor error in ppm in all PSMs (only the best hit per
+     * The maximal peptide precursor error in ppm in all PSMs (only the best peptide hit per
      * spectrum).
      */
     private double maxPrecursorErrorPpm = 0;
+    /**
+     * The maximal tag precursor error in Da in all PSMs (only the best tag hit per
+     * spectrum when no peptide is found).
+     */
+    private double maxTagPrecursorErrorDa = 0;
+    /**
+     * The maximal tag precursor error in ppm in all PSMs (only the best tag hit per
+     * spectrum when no peptide is found).
+     */
+    private double maxTagPrecursorErrorPpm = 0;
     /**
      * The charges found in all PSMs (only the best hit per spectrum).
      */
@@ -144,39 +154,75 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Return the max precursor mass error in Dalton.
+     * Return the max peptide precursor mass error in Dalton.
      *
-     * @return the max precursor mass error in Dalton
+     * @return the max peptide precursor mass error in Dalton
      */
-    public double getMaxPrecursorErrorDa() {
+    public double getMaxPeptidePrecursorErrorDa() {
         return maxPrecursorErrorDa;
     }
 
     /**
-     * Set the max precursor mass error in Dalton.
+     * Set the max peptide precursor mass error in Dalton.
      *
-     * @param maxPrecursorErrorDa the mass error to set
+     * @param maxPeptidePrecursorErrorDa the mass error to set
      */
-    public void setMaxPrecursorErrorDa(double maxPrecursorErrorDa) {
-        this.maxPrecursorErrorDa = maxPrecursorErrorDa;
+    public void setMaxPeptidePrecursorErrorDa(double maxPeptidePrecursorErrorDa) {
+        this.maxPrecursorErrorDa = maxPeptidePrecursorErrorDa;
     }
 
     /**
-     * Returns the max precursor mass error in ppm.
+     * Returns the max peptide precursor mass error in ppm.
      *
-     * @return the max precursor mass error in ppm
+     * @return the max peptide precursor mass error in ppm
      */
-    public double getMaxPrecursorErrorPpm() {
+    public double getMaxPeptidePrecursorErrorPpm() {
         return maxPrecursorErrorPpm;
     }
 
     /**
-     * Set the max precursor mass error in ppm.
+     * Set the max peptide precursor mass error in ppm.
      *
-     * @param maxPrecursorErrorPpm the max precursor mass error in ppm
+     * @param maxPeptidePrecursorErrorPpm the max peptide precursor mass error in ppm
      */
-    public void setMaxPrecursorErrorPpm(double maxPrecursorErrorPpm) {
-        this.maxPrecursorErrorPpm = maxPrecursorErrorPpm;
+    public void setMaxPeptidePrecursorErrorPpm(double maxPeptidePrecursorErrorPpm) {
+        this.maxPrecursorErrorPpm = maxPeptidePrecursorErrorPpm;
+    }
+
+    /**
+     * Return the max tag precursor mass error in Dalton.
+     *
+     * @return the max tag precursor mass error in Dalton
+     */
+    public double getMaxTagPrecursorErrorDa() {
+        return maxTagPrecursorErrorDa;
+    }
+
+    /**
+     * Set the max tag precursor mass error in Dalton.
+     *
+     * @param maxTagPrecursorErrorDa the mass error to set
+     */
+    public void setMaxTagPrecursorErrorDa(double maxTagPrecursorErrorDa) {
+        this.maxTagPrecursorErrorDa = maxTagPrecursorErrorDa;
+    }
+
+    /**
+     * Returns the max tag precursor mass error in ppm.
+     *
+     * @return the max tag precursor mass error in ppm
+     */
+    public double getMaxTagPrecursorErrorPpm() {
+        return maxTagPrecursorErrorPpm;
+    }
+
+    /**
+     * Set the max tag precursor mass error in ppm.
+     *
+     * @param maxTagPrecursorErrorPpm the max tag precursor mass error in ppm
+     */
+    public void setMaxTagPrecursorErrorPpm(double maxTagPrecursorErrorPpm) {
+        this.maxTagPrecursorErrorPpm = maxTagPrecursorErrorPpm;
     }
 
     /**
