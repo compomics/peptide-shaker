@@ -869,7 +869,8 @@ public class FileImporter {
                                                     }
                                                 } else if (advocateId == Advocate.Mascot.getIndex()
                                                         || advocateId == Advocate.XTandem.getIndex()
-                                                        || advocateId == Advocate.MSGF.getIndex()) {
+                                                        || advocateId == Advocate.MSGF.getIndex()
+                                                        || advocateId == Advocate.msAmanda.getIndex()) {
                                                     String[] parsedName = sePTM.split("@");
                                                     double seMass = 0;
                                                     try {
@@ -879,9 +880,6 @@ public class FileImporter {
                                                                 + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                     }
                                                     tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
-                                                } else if (advocateId == Advocate.msAmanda.getIndex()) {
-                                                    // @TODO: check ptm mapping!!!
-                                                    tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, sePTM, PeptideShaker.MATCHING_TYPE, ptmMassTolerance, searchParameters.getFragmentIonAccuracy());
                                                 } else if (advocateId != Advocate.DirecTag.getIndex() && advocateId != Advocate.pepnovo.getIndex()) {
                                                     Advocate advocate = Advocate.getAdvocate(advocateId);
                                                     throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
