@@ -3,6 +3,13 @@
 
 ----
 
+*Changes in PeptideShaker 0.27.4 (April 1. 2014):*
+
+ * BUG FIX: Fixed a bug in the PRIDE export where the PRIDE XML validation failed.
+ * BUG FIX: Fixed a bug in the export of accession numbers in the Annotation panel where also the validation status was included.
+
+----
+
 *Changes in PeptideShaker 0.27.3 (April 1. 2014):*
  
  * BUG FIX: Fixed a bug in the peptide to protein mapping where the final protein was not included.
