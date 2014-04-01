@@ -498,12 +498,14 @@ public class OutputGenerator {
                                             if (confidence) {
                                                 writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                                             }
-                                            MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
-                                            writer.write(matchValidationLevel.toString());
-                                            if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
-                                                writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                            if (!onlyValidated) {
+                                                MatchValidationLevel matchValidationLevel = proteinPSParameter.getMatchValidationLevel();
+                                                writer.write(matchValidationLevel.toString());
+                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !proteinPSParameter.getReasonDoubtful().equals("")) {
+                                                    writer.write(" (" + proteinPSParameter.getReasonDoubtful() + ")");
+                                                }
+                                                writer.write(SEPARATOR);
                                             }
-                                            writer.write(SEPARATOR);
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
@@ -512,7 +514,6 @@ public class OutputGenerator {
                                             }
                                             writer.write(System.getProperty("line.separator"));
                                         }
-
                                     }
                                 }
                             }
@@ -715,8 +716,8 @@ public class OutputGenerator {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
-                            writer.write("Validation" + SEPARATOR);
                             if (!onlyValidated) {
+                                writer.write("Validation" + SEPARATOR);
                                 writer.write("Decoy" + SEPARATOR);
                             }
                             if (includeHidden) {
@@ -1010,13 +1011,13 @@ public class OutputGenerator {
                                                 if (confidence) {
                                                     writer.write(peptidePSParameter.getPeptideConfidence() + SEPARATOR);
                                                 }
-                                                MatchValidationLevel matchValidationLevel = peptidePSParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !peptidePSParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + peptidePSParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
+                                                    MatchValidationLevel matchValidationLevel = peptidePSParameter.getMatchValidationLevel();
+                                                    writer.write(matchValidationLevel.toString());
+                                                    if (matchValidationLevel == MatchValidationLevel.doubtful && !peptidePSParameter.getReasonDoubtful().equals("")) {
+                                                        writer.write(" (" + peptidePSParameter.getReasonDoubtful() + ")");
+                                                    }
+                                                    writer.write(SEPARATOR);
                                                     if (peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
@@ -1479,13 +1480,14 @@ public class OutputGenerator {
                                                 if (confidence) {
                                                     writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                                 }
-                                                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
-                                                writer.write(matchValidationLevel.toString());
-                                                if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
-                                                    writer.write(" (" + psParameter.getReasonDoubtful() + ")");
-                                                }
-                                                writer.write(SEPARATOR);
                                                 if (!onlyValidated) {
+                                                    MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                                                    writer.write(matchValidationLevel.toString());
+                                                    if (matchValidationLevel == MatchValidationLevel.doubtful && !psParameter.getReasonDoubtful().equals("")) {
+                                                        writer.write(" (" + psParameter.getReasonDoubtful() + ")");
+                                                    }
+                                                    writer.write(SEPARATOR);
+
                                                     if (bestAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
