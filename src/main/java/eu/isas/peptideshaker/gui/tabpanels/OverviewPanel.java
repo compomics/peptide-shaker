@@ -319,7 +319,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void setProteinTableProperties() {
 
-        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), 
+        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
                 peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
@@ -4725,7 +4725,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
-                    public void run() {                        
+                    public void run() {
                         updateSelection(true);
                         updatePeptidePanelTitle();
                     }
@@ -4906,7 +4906,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             currentSpectrum, peptideAssumption.getPeptide(),
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getFragmentIonAccuracy(), false, 
+                            annotationPreferences.getFragmentIonAccuracy(), false,
                             annotationPreferences.isHighResolutionAnnotation());
                     allAnnotations.add(annotations);
                     currentSpectrumKey = spectrumKey;
@@ -5418,8 +5418,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                        peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;

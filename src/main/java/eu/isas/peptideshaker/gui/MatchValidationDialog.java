@@ -255,7 +255,14 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         String fileName = Spectrum.getSpectrumFile(psmMatchKey);
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmMatchKey);
-        Integer charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+        Integer charge;
+        if (spectrumMatch.getBestPeptideAssumption() != null) {
+            charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+        } else if (spectrumMatch.getBestTagAssumption() != null) {
+            charge = spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
+        } else {
+            throw new IllegalArgumentException("No best match found for spectrum " + psmMatchKey + ".");
+        }
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
         for (PsmFilter psmFilter : psmSpecificMap.getDoubtfulMatchesFilters(charge, fileName)) {
             filters.add(psmFilter);
@@ -887,6 +894,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     PeptideSpecificMap peptideMap = pSMaps.getPeptideSpecificMap();
                     ProteinMap proteinMap = pSMaps.getProteinMap();
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
+                    if (spectrumMatch.getBestPeptideAssumption() != null) {
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                     identificationFeaturesGenerator.updateNConfidentSpectraForPeptide(peptideKey);
@@ -931,7 +939,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                         }
                     }
                 }
-
+                }
                 validationChanged = true;
 
             } catch (Exception e) {

@@ -1697,11 +1697,23 @@ public class FindDialog extends javax.swing.JDialog {
                         return precursor.getMz();
                     case 7:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        } else if (spectrumMatch.getBestTagAssumption() != null) {
+                            return spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
+                        } else {
+                            throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
+                        }
                     case 8:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
                         return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        } else if (spectrumMatch.getBestTagAssumption() != null) {
+                        return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        } else {
+                            throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
+                        }
                     case 9:
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                         return psParameter.getPsmConfidence();

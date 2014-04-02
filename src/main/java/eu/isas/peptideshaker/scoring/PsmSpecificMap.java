@@ -35,11 +35,13 @@ public class PsmSpecificMap implements Serializable {
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
     /**
      * The filters to use to flag doubtful matches.
+     *
      * @deprecated use the specific map instead
      */
     private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
     /**
-     * The filters to use to flag doubtful matches in a map: charge -> file name -> list of filters
+     * The filters to use to flag doubtful matches in a map: charge -> file name
+     * -> list of filters
      */
     private HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
 
@@ -51,7 +53,7 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * Returns the filters used to flag doubtful matches in a map.
-     * 
+     *
      * @return the filters used to flag doubtful matches
      */
     public HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> getDoubtfulMatchesFilters() {
@@ -62,8 +64,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the filters used to flag doubtful matches corresponding to the given charge and file. An empty list if none found.
-     * 
+     * Returns the filters used to flag doubtful matches corresponding to the
+     * given charge and file. An empty list if none found.
+     *
      * @param charge the charge of the PSM
      * @param fileName the name of the spectrum file
      * @return the filters used to flag doubtful matches
@@ -82,10 +85,10 @@ public class PsmSpecificMap implements Serializable {
         }
         return fileFilters;
     }
-    
+
     /**
      * Adds a PSM filter to the list of doubtful matches filters.
-     * 
+     *
      * @param charge the charge of the PSM
      * @param fileName the name of the spectrum file
      * @param psmFilter the new filter to add
@@ -163,7 +166,7 @@ public class PsmSpecificMap implements Serializable {
      * @param probabilityScore the estimated score
      * @param spectrumMatch the spectrum match of interest
      * @param mzTolerance The ms2 m/z tolerance
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
@@ -285,10 +288,12 @@ public class PsmSpecificMap implements Serializable {
      * @return the corresponding key
      */
     public Integer getKey(SpectrumMatch spectrumMatch) {
-        try {
+        if (spectrumMatch.getBestPeptideAssumption() != null) {
             return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-        } catch (Exception e) {
-            return 0;
+        } else if (spectrumMatch.getBestTagAssumption() != null) {
+            return spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
+        } else {
+            throw new IllegalArgumentException("No best hit found for spectrum match " + spectrumMatch.getKey() + ".");
         }
     }
 
