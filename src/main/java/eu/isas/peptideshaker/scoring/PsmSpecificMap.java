@@ -139,7 +139,11 @@ public class PsmSpecificMap implements Serializable {
      */
     public double getProbability(int specificKey, double score) {
         int key = getCorrectedKey(specificKey);
-        return psmsMaps.get(key).getProbability(score);
+        TargetDecoyMap targetDecoyMap = psmsMaps.get(key);
+        if (targetDecoyMap == null) {
+            return 1;
+        }
+        return targetDecoyMap.getProbability(score);
     }
 
     /**
