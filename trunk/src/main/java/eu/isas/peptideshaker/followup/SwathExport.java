@@ -145,6 +145,7 @@ public class SwathExport {
                             if (psParameter.getMatchValidationLevel().isValidated()) {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                                if (spectrumMatch.getBestPeptideAssumption() != null) {
                                 Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
                                 if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
@@ -190,6 +191,7 @@ public class SwathExport {
                                         }
                                     }
                                 }
+                            }
                             }
                             if (waitingHandler != null) {
                                 if (waitingHandler.isRunCanceled()) {

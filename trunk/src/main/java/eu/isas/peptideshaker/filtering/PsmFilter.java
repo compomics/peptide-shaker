@@ -645,7 +645,14 @@ public class PsmFilter extends MatchFilter {
         }
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-        return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), searchParameters, annotationPreferences);
+        if (spectrumMatch.getBestPeptideAssumption() != null) {
+            return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), searchParameters, annotationPreferences);
+        } else if (spectrumMatch.getBestTagAssumption() != null) {
+            //TODO: implement a tag assumption filter
+            return true;
+        } else {
+            return true;
+        }
     }
 
     @Override

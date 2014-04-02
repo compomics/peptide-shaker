@@ -1877,14 +1877,14 @@ public class IdentificationFeaturesGenerator {
             identification.loadSpectrumMatches(currentPeptideMatch.getSpectrumMatches(), null);
             for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
 
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter); // @TODO: could be replaced by batch selection?
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (!psParameter.isHidden()) {
                     if (psParameter.getMatchValidationLevel().isValidated()) {
                         nValidatedPsms++;
                     }
 
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey); // @TODO: could be replaced by batch selection?
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     if (!orderingMap.containsKey(charge)) {
                         orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());

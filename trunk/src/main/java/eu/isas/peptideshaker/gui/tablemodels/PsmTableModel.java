@@ -156,7 +156,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftwares(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSearchParameters());
                     case 3:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
@@ -178,7 +178,13 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        } else if (spectrumMatch.getBestTagAssumption() != null) {
+                            return spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
+                        } else {
+                            throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
+                        }
                     case 5:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
@@ -189,9 +195,14 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                         Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
-                        return bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
+                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        } else if (spectrumMatch.getBestTagAssumption() != null) {
+                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        } else {
+                            throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
+                        }
                     case 6:
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB && !isScrolling);
                         if (psParameter == null) {

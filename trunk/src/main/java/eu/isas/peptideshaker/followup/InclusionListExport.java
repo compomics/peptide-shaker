@@ -32,16 +32,20 @@ public class InclusionListExport {
      * peptides of the validated proteins.
      *
      * @param destinationFile the file where to write the inclusion list
-     * @param identification the identification object containing all matches and match parameters
-     * @param identificationFeaturesGenerator the identification features generator calculating identification metrics on the fly
+     * @param identification the identification object containing all matches
+     * and match parameters
+     * @param identificationFeaturesGenerator the identification features
+     * generator calculating identification metrics on the fly
      * @param proteinFilters the inclusion list protein filters
      * @param peptideFilters the inclusion list peptide filters
      * @param exportFormat the export format
      * @param searchParameters the identification parameters
      * @param rtWindow the window to use for retention time
-     * @param waitingHandler waiting handler displaying progress to the user (can be null)
-     * @param filterPreferences the general filtering preferences of this project
-     * 
+     * @param waitingHandler waiting handler displaying progress to the user
+     * (can be null)
+     * @param filterPreferences the general filtering preferences of this
+     * project
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -147,9 +151,11 @@ public class InclusionListExport {
                                     }
                                     for (String spectrumKey : validatedPsms) {
                                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                        String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
-                                        b.write(line);
-                                        b.newLine();
+                                        if (spectrumMatch.getBestPeptideAssumption() != null) {
+                                            String line = getInclusionListLine(spectrumMatch, retentionTimes, rtWindow, exportFormat, searchParameters);
+                                            b.write(line);
+                                            b.newLine();
+                                        }
                                     }
                                 }
                             }

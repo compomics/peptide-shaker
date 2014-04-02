@@ -1891,7 +1891,7 @@ public class QCPanel extends javax.swing.JPanel {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         psmParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmParameter);
 
-                        if (!psmParameter.isHidden()) {
+                        if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
                             Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                             double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
@@ -1943,7 +1943,7 @@ public class QCPanel extends javax.swing.JPanel {
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         psmParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psmParameter);
 
-                        if (!psmParameter.isHidden()) {
+                        if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
                             double value = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                             if (value > maxValue) {

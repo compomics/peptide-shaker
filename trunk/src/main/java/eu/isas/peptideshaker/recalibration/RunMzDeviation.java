@@ -301,6 +301,9 @@ public class RunMzDeviation {
                     }
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    
+                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    
                     double error = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursorMz, false);
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
@@ -349,6 +352,7 @@ public class RunMzDeviation {
 
                         fragmentRawMap.get(precursorRT).get(key).add(BasicMathFunctions.median(spectrumFragmentMap.get(key)));
                     }
+                }
                 }
             }
 

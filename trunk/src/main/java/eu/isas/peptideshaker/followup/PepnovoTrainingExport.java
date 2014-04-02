@@ -98,7 +98,7 @@ public class PepnovoTrainingExport {
         PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
         HashMap<Integer, Double> highConfidenceThresholds = new HashMap<Integer, Double>();
         HashMap<Integer, Double> lowConfidenceThresholds = new HashMap<Integer, Double>();
-        
+
         for (Integer key : psmTargetDecoyMap.getKeys().keySet()) {
             double fdrThreshold, fnrThreshold;
             TargetDecoyResults currentResults = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults();
@@ -229,10 +229,12 @@ public class PepnovoTrainingExport {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                             }
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                            HashMap<String, String> tags = new HashMap<String, String>();
-                            tags.put("SEQ", sequence);
-                            spectrum.writeMgf(writerGood, tags);
+                            if (spectrumMatch.getBestPeptideAssumption() != null) {
+                                String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                                HashMap<String, String> tags = new HashMap<String, String>();
+                                tags.put("SEQ", sequence);
+                                spectrum.writeMgf(writerGood, tags);
+                            }
                         }
                         confidenceLevel = lowConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
                         if (psParameter.getPsmConfidence() <= confidenceLevel) {

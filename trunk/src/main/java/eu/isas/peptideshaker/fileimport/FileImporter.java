@@ -738,27 +738,16 @@ public class FileImporter {
                     nSecondary += match.getAllAssumptions().size() - 1;
 
                     String spectrumKey = match.getKey();
-                    String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                     String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                    String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
+                    // remap wrong spectrum file names
                     if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                         fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
                         match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
                         spectrumKey = match.getKey();
                     }
-
-                    if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                        String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
-                        spectrumTitle = match.getSpectrumNumber() + "";
-                        spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                        match.setKey(spectrumKey);
-                        if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                            waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
-                            waitingHandler.setRunCanceled();
-                            return;
-                        }
-                    }
-
+                    // import the mgf file needed if not done already
                     if (!mgfUsed.contains(fileName)) {
                         File spectrumFile = spectrumFiles.get(fileName);
                         if (spectrumFile != null && spectrumFile.exists()) {
@@ -777,6 +766,29 @@ public class FileImporter {
                     if (!idReport) {
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
                         idReport = true;
+                    }
+                    // remap missing spectrum titles
+                    if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                        String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
+                        Integer spectrumNumber = match.getSpectrumNumber();
+                        if (spectrumNumber == null) {
+                            waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' not found in file " + fileName + ".", true, true);
+                            waitingHandler.setRunCanceled();
+                            return;
+                        }
+                        spectrumTitle = spectrumFactory.getSpectrumTitle(fileName, spectrumNumber);
+                        spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+                        match.setKey(spectrumKey);
+                        if (!spectrumFactory.spectrumLoaded(spectrumKey)) {
+                            spectrumTitle = spectrumNumber + "";
+                            spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+                            match.setKey(spectrumKey);
+                            if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                                waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
+                                waitingHandler.setRunCanceled();
+                                return;
+                            }
+                        }
                     }
 
                     // Map de novo matches on protein sequences
@@ -1086,7 +1098,7 @@ public class FileImporter {
                                             break;
                                         }
                                     }
-                                    if (firstPeptideHit != null) {
+                                    if (firstTagHit != null) {
                                         break;
                                     }
                                 }

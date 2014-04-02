@@ -828,8 +828,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                        peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;

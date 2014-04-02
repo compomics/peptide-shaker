@@ -938,6 +938,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         || myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("mzid")
                         || myFile.getName().toLowerCase().endsWith("csv")
+                        || myFile.getName().toLowerCase().endsWith("tags")
                         || myFile.isDirectory();
             }
 
@@ -1007,6 +1008,21 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         };
 
+        // filter for DirecTag only
+        FileFilter direcTagFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("tags")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "DirecTag (.tags)";
+            }
+        };
+
         // filter for mascot only
         FileFilter mascotFilter = new FileFilter() {
             @Override
@@ -1028,6 +1044,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         fileChooser.addChoosableFileFilter(tandemFilter);
         fileChooser.addChoosableFileFilter(msAmandaFilter);
         fileChooser.addChoosableFileFilter(mascotFilter);
+        fileChooser.addChoosableFileFilter(direcTagFilter);
 
         int returnVal = fileChooser.showDialog(this, "Add");
 
@@ -1042,7 +1059,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                                 || file.getName().toLowerCase().endsWith("omx")
                                 || file.getName().toLowerCase().endsWith("xml")
                                 || file.getName().toLowerCase().endsWith("mzid")
-                                || file.getName().toLowerCase().endsWith("csv")) {
+                                || file.getName().toLowerCase().endsWith("csv")
+                                || file.getName().toLowerCase().endsWith("tags")) {
                             if (!file.getName().equals("mods.xml")
                                     && !file.getName().equals("usermods.xml")) {
                                 idFiles.add(file);
