@@ -1423,7 +1423,6 @@ public class PeptideShaker {
 //                        reasonDoubtful += filter.getDescription();
 //                    }
 //                }
-
                 boolean confidenceThresholdPassed = psParameter.getSearchEngineConfidence() >= confidenceThreshold; //@TODO: not sure whether we should include all 100% confidence hits by default?
 
                 if (!confidenceThresholdPassed) {

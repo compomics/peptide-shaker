@@ -747,6 +747,7 @@ public class FileImporter {
                         match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
                         spectrumKey = match.getKey();
                     }
+
                     // import the mgf file needed if not done already
                     if (!mgfUsed.contains(fileName)) {
                         File spectrumFile = spectrumFiles.get(fileName);
@@ -767,6 +768,7 @@ public class FileImporter {
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
                         idReport = true;
                     }
+
                     // remap missing spectrum titles
                     if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                         String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);

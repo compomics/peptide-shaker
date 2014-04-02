@@ -1708,9 +1708,9 @@ public class FindDialog extends javax.swing.JDialog {
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                        return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                        return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
                         }

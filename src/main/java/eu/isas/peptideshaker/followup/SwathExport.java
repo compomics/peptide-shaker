@@ -146,52 +146,52 @@ public class SwathExport {
 
                                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
-                                if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
+                                    if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
 
-                                    boolean decoy = false;
-                                    for (String protein : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                                        if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
-                                            decoy = true;
-                                            break;
+                                        boolean decoy = false;
+                                        for (String protein : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                            if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
+                                                decoy = true;
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if (!decoy) {
-                                        if (exportType == ExportType.validated_psms) {
-                                            writePsm(writer, spectrumKey, identification, searchParameters, annotationPreferences);
-                                        } else {
-                                            String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                                            if (psParameter.getMatchValidationLevel().isValidated()) {
-                                                if (exportType == ExportType.validated_psms_peptides) {
-                                                    writePsm(writer, spectrumKey, identification, searchParameters, annotationPreferences);
-                                                } else {
-                                                    ArrayList<String> accessions = new ArrayList<String>();
-                                                    for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                                                        ArrayList<String> groups = identification.getProteinMap().get(accession);
-                                                        if (groups != null) {
-                                                            for (String group : groups) {
-                                                                psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
-                                                                if (psParameter.getMatchValidationLevel().isValidated()) {
-                                                                    for (String groupAccession : ProteinMatch.getAccessions(group)) {
-                                                                        if (!accessions.contains(groupAccession)) {
-                                                                            accessions.add(groupAccession);
+                                        if (!decoy) {
+                                            if (exportType == ExportType.validated_psms) {
+                                                writePsm(writer, spectrumKey, identification, searchParameters, annotationPreferences);
+                                            } else {
+                                                String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                                                if (psParameter.getMatchValidationLevel().isValidated()) {
+                                                    if (exportType == ExportType.validated_psms_peptides) {
+                                                        writePsm(writer, spectrumKey, identification, searchParameters, annotationPreferences);
+                                                    } else {
+                                                        ArrayList<String> accessions = new ArrayList<String>();
+                                                        for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                                            ArrayList<String> groups = identification.getProteinMap().get(accession);
+                                                            if (groups != null) {
+                                                                for (String group : groups) {
+                                                                    psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
+                                                                    if (psParameter.getMatchValidationLevel().isValidated()) {
+                                                                        for (String groupAccession : ProteinMatch.getAccessions(group)) {
+                                                                            if (!accessions.contains(groupAccession)) {
+                                                                                accessions.add(groupAccession);
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    }
-                                                    if (!accessions.isEmpty()) {
-                                                        writePsm(writer, spectrumKey, accessions, identification, searchParameters, annotationPreferences);
+                                                        if (!accessions.isEmpty()) {
+                                                            writePsm(writer, spectrumKey, accessions, identification, searchParameters, annotationPreferences);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
                             }
                             if (waitingHandler != null) {
                                 if (waitingHandler.isRunCanceled()) {
@@ -300,7 +300,7 @@ public class SwathExport {
                     spectrum,
                     spectrumMatch.getBestPeptideAssumption().getPeptide(),
                     spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    annotationPreferences.getFragmentIonAccuracy(), false, 
+                    annotationPreferences.getFragmentIonAccuracy(), false,
                     annotationPreferences.isHighResolutionAnnotation());
 
             for (IonMatch ionMatch : annotations) {
