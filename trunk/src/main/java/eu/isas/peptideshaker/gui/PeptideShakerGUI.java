@@ -4634,10 +4634,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * Update the annotation menu bar with the current annotation preferences.
      *
-     * @param precursorCharge
-     * @param peptide
+     * @param precursorCharge the precursor charges
+     * @param modificationMatches the modifications
      */
-    public void updateAnnotationMenus(int precursorCharge, Peptide peptide) {
+    public void updateAnnotationMenus(int precursorCharge, ArrayList<ModificationMatch> modificationMatches) {
 
         aIonCheckBoxMenuItem.setSelected(false);
         bIonCheckBoxMenuItem.setSelected(false);
@@ -4700,7 +4700,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         }
 
         // add the sequence specific neutral losses
-        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+        for (ModificationMatch modMatch : modificationMatches) {
             PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
             for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
                 neutralLosses.put(neutralLoss.name, neutralLoss);

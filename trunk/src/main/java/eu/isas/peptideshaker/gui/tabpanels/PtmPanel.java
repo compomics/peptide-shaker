@@ -3328,8 +3328,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                    selectedKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+                        selectedKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3909,7 +3909,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         annotationPreferences.showRewindIonDeNovoTags());
 
                 spectrumChartJPanel.add(spectrum);
-                peptideShakerGUI.updateAnnotationMenus(identificationCharge, peptide);
+                peptideShakerGUI.updateAnnotationMenus(identificationCharge, peptide.getModificationMatches());
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING

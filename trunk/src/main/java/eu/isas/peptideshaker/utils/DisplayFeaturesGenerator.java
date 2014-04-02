@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -9,6 +10,8 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.tags.Tag;
+import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
@@ -54,8 +57,9 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Constructor
-     * 
-     * @param modificationProfile the modification profile containing the colors of the ptms
+     *
+     * @param modificationProfile the modification profile containing the colors
+     * of the ptms
      * @param exceptionHandler an exception handler to catch exceptions
      */
     public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
@@ -85,7 +89,6 @@ public class DisplayFeaturesGenerator {
                 if (databaseType != null) {
 
                     // @TODO: support more databases
-
                     if (databaseType == Header.DatabaseType.IPI || databaseType == Header.DatabaseType.UniProt) {
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
@@ -137,7 +140,6 @@ public class DisplayFeaturesGenerator {
                     if (database != null) {
 
                         // @TODO: support more databases
-
                         if (database == DatabaseType.IPI || database == DatabaseType.UniProt) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
@@ -231,9 +233,8 @@ public class DisplayFeaturesGenerator {
      * @return a String with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
-        
-        // @TODO: should be merged with the same method on DeNovoGUI - ResultsPanel -  and moved to utilities
 
+        // @TODO: merge with getTagModificationTooltipAsHtml below (and in DeNovoGUI) -  and moved to utilities?
         String tooltip = "<html>";
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
@@ -271,6 +272,44 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
+     * Returns a String with the HTML tooltip for the tag indicating the
+     * modification details.
+     *
+     * @param tag the tag
+     * @return a String with the HTML tooltip for the tag
+     */
+    public String getTagModificationTooltipAsHtml(Tag tag) {
+
+        // @TODO: merge with getTagModificationTooltipAsHtml in DeNovoGUI and move to utilities
+        String tooltip = "<html>";
+
+        for (TagComponent tagComponent : tag.getContent()) {
+            if (tagComponent instanceof AminoAcidPattern) {
+                AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
+                for (int site = 1; site <= aminoAcidPattern.length(); site++) {
+                    for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(site)) {
+                        String affectedResidue = aminoAcidPattern.asSequence(site - 1);
+                        String modName = modificationMatch.getTheoreticPtm();
+                        Color ptmColor = modificationProfile.getColor(modName);
+                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                                + affectedResidue
+                                + "</span>"
+                                + ": " + modName + "<br>";
+                    }
+                }
+            }
+        }
+
+        if (!tooltip.equalsIgnoreCase("<html>")) {
+            tooltip += "</html>";
+        } else {
+            tooltip = null;
+        }
+
+        return tooltip;
+    }
+
+    /**
      * Returns the peptide with modification sites tagged (color coded or with
      * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
      * inference results for the given peptide match.
@@ -284,7 +323,7 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-            
+
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
             HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
@@ -319,7 +358,7 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-            
+
             Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
             HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
@@ -400,7 +439,7 @@ public class DisplayFeaturesGenerator {
      * @param modificationMap the map of modifications to filter (amino acid ->
      * list of modifications, 1 is the first amino acid)
      * @param displayedPtms list of PTMs to display
-     * 
+     *
      * @return a map of filtered modifications based on the user display
      * preferences
      */
@@ -446,7 +485,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Sets the PTMs to display.
-     * 
+     *
      * @param displayedPTMs the names of the PTMs to display in a list
      */
     public void setDisplayedPTMs(ArrayList<String> displayedPTMs) {

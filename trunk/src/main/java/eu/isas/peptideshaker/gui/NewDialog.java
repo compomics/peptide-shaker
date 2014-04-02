@@ -944,7 +944,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             @Override
             public String getDescription() {
-                return "MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)";
+                return "MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
             }
         };
 

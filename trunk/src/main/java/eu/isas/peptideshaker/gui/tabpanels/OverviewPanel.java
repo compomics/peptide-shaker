@@ -4442,7 +4442,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 }
                             }
 
-                            peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
+                            peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide.getModificationMatches());
 
                             currentSpectrumKey = spectrumKey;
 

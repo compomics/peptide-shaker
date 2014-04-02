@@ -2,8 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.ions.TagFragmentIon;
+import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -12,10 +11,11 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
-import com.compomics.util.experiment.identification.tags.Tag;
+import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -240,7 +240,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.Mascot.getIndex(), new java.awt.Color(255, 153, 255));
         searchEnginesColorMap.put(Advocate.MSGF.getIndex(), new java.awt.Color(205, 92, 92));
         searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(216, 191, 216));
-        searchEnginesColorMap.put(Advocate.DirecTag.getIndex(), new java.awt.Color(0, 0, 255));
+        searchEnginesColorMap.put(Advocate.DirecTag.getIndex(), new java.awt.Color(0, 0, 255)); // @TODO: find DirecTag color
 
         // the venn diagram colors
         advocateVennColors = new HashMap<Advocate, Color>();
@@ -249,7 +249,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         advocateVennColors.put(Advocate.Mascot, Color.PINK);
         advocateVennColors.put(Advocate.MSGF, Color.INDIANRED);
         advocateVennColors.put(Advocate.msAmanda, Color.THISTLE);
-        advocateVennColors.put(Advocate.DirecTag, Color.BLUE);
+        advocateVennColors.put(Advocate.DirecTag, Color.BLUE); // @TODO: find DirecTag color
     }
 
     /**
@@ -2048,7 +2048,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             String tooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
                             spectrumTable.setToolTipText(tooltip);
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            //TODO: add tooltip for tags
+                            TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
+                            spectrumTable.setToolTipText(peptideShakerGUI.getDisplayFeaturesGenerator().getTagModificationTooltipAsHtml(tagAssumption.getTag()));
                         }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2794,6 +2795,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
                         sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), true, true, true, false, false);
+                        peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
                     } else {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
                     }
@@ -2945,7 +2947,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 annotationPreferences.showForwardIonDeNovoTags(),
                                                 annotationPreferences.showRewindIonDeNovoTags());
 
-                                        peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
+                                        peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide().getModificationMatches());
 
                                         // update the spectrum title
                                         String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptideAssumption.getPeptide(), false, false, true);
@@ -2959,7 +2961,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         TagAssumption tagAssumption = (TagAssumption) currentAssumption;
 
                                         // add the annotations
-                                       // annotationPreferences.setCurrentSettings(tagAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), DeNovoGUI.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                        annotationPreferences.setCurrentSettings(tagAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
+                                                PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
@@ -2971,6 +2974,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                                 annotationPreferences.getFragmentIonAccuracy(),
                                                 false, annotationPreferences.isHighResolutionAnnotation());
+
                                         // add the spectrum annotations
                                         tempSpectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                         tempSpectrumPanel.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
@@ -2982,8 +2986,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 annotationPreferences.showForwardIonDeNovoTags(),
                                                 annotationPreferences.showRewindIonDeNovoTags());
 
-                                       // peptideShakerGUI.updateAnnotationMenus(tagAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide());
-                                        
+                                        // get the modifications for the tag // @TODO: is there an easier way to do this??
+                                        ArrayList<ModificationMatch> modificationMatches = new ArrayList<ModificationMatch>();
+
+                                        for (TagComponent tagComponent : tagAssumption.getTag().getContent()) {
+                                            if (tagComponent instanceof AminoAcidPattern) {
+                                                AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
+                                                for (int site = 1; site <= aminoAcidPattern.length(); site++) {
+                                                    for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(site)) {
+                                                        modificationMatches.add(modificationMatch);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        peptideShakerGUI.updateAnnotationMenus(tagAssumption.getIdentificationCharge().value, modificationMatches);
+
                                         // update the spectrum title
                                         String modifiedSequence = tagAssumption.getTag().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false);
                                         ((TitledBorder) spectrumPanel.getBorder()).setTitle(
@@ -2993,7 +3011,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 2) + " m/z)"
                                                 + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                                     }
-                                        spectrumPanel.repaint();
+
+                                    spectrumPanel.repaint();
                                 }
                             }
                         }
@@ -3567,9 +3586,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             TagAssumption tagAssumption = (TagAssumption) currentAssumption;
             sequence = tagAssumption.getTag().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), true, true, true, false, false);
             if (addRowAtBottom) {
-                searchResultsTablePeptideTooltips.add(sequence);
+                searchResultsTablePeptideTooltips.add(peptideShakerGUI.getDisplayFeaturesGenerator().getTagModificationTooltipAsHtml(tagAssumption.getTag()));
             } else {
-                searchResultsTablePeptideTooltips.add(sequence);
+                searchResultsTablePeptideTooltips.add(currentRowNumber, peptideShakerGUI.getDisplayFeaturesGenerator().getTagModificationTooltipAsHtml(tagAssumption.getTag()));
             }
         } else {
             throw new UnsupportedOperationException("Sequence display not implemented for assumption " + currentAssumption.getClass() + ".");
