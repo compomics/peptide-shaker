@@ -4811,21 +4811,27 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         getAnnotationPreferences().clearIonTypes();
         if (aIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
         }
         if (bIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
         }
         if (cIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
         }
         if (xIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
         }
         if (yIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
         }
         if (zIonCheckBoxMenuItem.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
         }
         if (precursorCheckMenu.isSelected()) {
             getAnnotationPreferences().addIonType(IonType.PRECURSOR_ION);
