@@ -545,21 +545,27 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationPreferences.clearIonTypes();
         if (aBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
         }
         if (bBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
         }
         if (cBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
         }
         if (xBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
         }
         if (yBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
         }
         if (zBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
         }
         if (precursorBox.isSelected()) {
             annotationPreferences.addIonType(IonType.PRECURSOR_ION);
