@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -229,9 +230,10 @@ public class PsmSection {
      * @param psParameter the PeptideShaker parameter of the match
      * @param psmFeature the feature to export
      * @param waitingHandler the waiting handler
-     * 
-     * @return the content corresponding to the given feature of the current section
-     * 
+     *
+     * @return the content corresponding to the given feature of the current
+     * section
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -245,57 +247,70 @@ public class PsmSection {
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (psmFeature) {
             case variable_ptms:
-                HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true);
-                ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
-                Collections.sort(modList);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true);
+                    ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
+                    Collections.sort(modList);
 
-                StringBuilder result = new StringBuilder();
-                for (String mod : modList) {
-                    if (result.length() > 0) {
-                        result.append(", ");
-                    }
-                    boolean firstAa = true;
-                    result.append(mod).append("(");
-                    for (int aa : modMap.get(mod)) {
-                        if (firstAa) {
-                            firstAa = false;
-                        } else {
+                    StringBuilder result = new StringBuilder();
+                    for (String mod : modList) {
+                        if (result.length() > 0) {
                             result.append(", ");
                         }
-                        result.append(aa).append("");
+                        boolean firstAa = true;
+                        result.append(mod).append("(");
+                        for (int aa : modMap.get(mod)) {
+                            if (firstAa) {
+                                firstAa = false;
+                            } else {
+                                result.append(", ");
+                            }
+                            result.append(aa).append("");
+                        }
+                        result.append(")");
                     }
-                    result.append(")");
+                    return result.toString();
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return Tag.getTagModificationsAsString(spectrumMatch.getBestTagAssumption().getTag());
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                 }
-                return result.toString();
             case fixed_ptms:
-                modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), false);
-                modList = new ArrayList<String>(modMap.keySet());
-                Collections.sort(modList);
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), false);
+                    ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
+                    Collections.sort(modList);
 
-                result = new StringBuilder();
-                for (String mod : modList) {
-                    if (result.length() > 0) {
-                        result.append(", ");
-                    }
-                    boolean first2 = true;
-                    result.append(mod).append("(");
-                    for (int aa : modMap.get(mod)) {
-                        if (first2) {
-                            first2 = false;
-                        } else {
+                    StringBuilder result = new StringBuilder();
+                    for (String mod : modList) {
+                        if (result.length() > 0) {
                             result.append(", ");
                         }
-                        result.append(aa).append("");
+                        boolean first2 = true;
+                        result.append(mod).append("(");
+                        for (int aa : modMap.get(mod)) {
+                            if (first2) {
+                                first2 = false;
+                            } else {
+                                result.append(", ");
+                            }
+                            result.append(aa).append("");
+                        }
+                        result.append(")");
                     }
-                    result.append(")");
+                    return result.toString();
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    //@TODO: implement something there?
+                    return "";
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                 }
-                return result.toString();
             case probabilistic_score:
-                result = new StringBuilder();
+                StringBuilder result = new StringBuilder();
                 PSPtmScores ptmScores = new PSPtmScores();
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
-                    modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
@@ -325,7 +340,7 @@ public class PsmSection {
                 ptmScores = new PSPtmScores();
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
                 if (ptmScores != null) {
-                    modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
                     Collections.sort(modList);
                     for (String mod : modList) {
                         PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
@@ -352,34 +367,41 @@ public class PsmSection {
                 return result.toString();
             case accessions:
                 result = new StringBuilder();
-                ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                for (String accession : accessions) {
-                    if (result.length() > 0) {
-                        result.append(", ");
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    for (String accession : accessions) {
+                        if (result.length() > 0) {
+                            result.append(", ");
+                        }
+                        result.append(accession);
                     }
-                    result.append(accession);
                 }
                 return result.toString();
             case protein_description:
                 SequenceFactory sequenceFactory = SequenceFactory.getInstance();
                 StringBuilder descriptions = new StringBuilder();
-                accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                Collections.sort(accessions);
-                for (String accession : accessions) {
-                    if (descriptions.length() > 0) {
-                        descriptions.append("; ");
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    ArrayList<String> accessions = spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    Collections.sort(accessions);
+                    for (String accession : accessions) {
+                        if (descriptions.length() > 0) {
+                            descriptions.append("; ");
+                        }
+                        descriptions.append(sequenceFactory.getHeader(accession).getDescription());
                     }
-                    descriptions.append(sequenceFactory.getHeader(accession).getDescription());
                 }
                 return descriptions.toString();
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case decoy:
-                if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                    return "1";
-                } else {
-                    return "0";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    if (spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                        return "1";
+                    } else {
+                        return "0";
+                    }
                 }
+                return "";
             case hidden:
                 if (psParameter.isHidden()) {
                     return "1";
@@ -387,72 +409,87 @@ public class PsmSection {
                     return "0";
                 }
             case identification_charge:
-                return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString();
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString();
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getIdentificationCharge().toString();
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
+                }
             case isotope:
                 String spectrumKey = spectrumMatch.getKey();
                 Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + "";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + "";
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getIsotopeNumber(precursor.getMz()) + "";
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
+                }
             case localization_confidence:
-                modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
-                Collections.sort(modList);
-                ptmScores = new PSPtmScores();
-                result = new StringBuilder();
-                for (String mod : modList) {
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    ArrayList<String> modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
+                    Collections.sort(modList);
+                    ptmScores = new PSPtmScores();
+                    result = new StringBuilder();
+                    for (String mod : modList) {
 
-                    PTM ptm = PTMFactory.getInstance().getPTM(mod);
+                        PTM ptm = PTMFactory.getInstance().getPTM(mod);
 
-                    if (ptm.getType() == PTM.MODAA) {
+                        if (ptm.getType() == PTM.MODAA) {
 
-                        if (result.length() > 0) {
-                            result.append(", ");
-                        }
-                        result.append(mod);
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(mod);
 
-                        result.append(" (");
-                        if (spectrumMatch.getUrParam(ptmScores) != null) {
-                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                            result.append(" (");
+                            if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
-                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                boolean firstSite = true;
+                                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                    boolean firstSite = true;
 
-                                ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
-                                if (sites.isEmpty()) {
-                                    result.append("Not Scored");
-                                } else {
-                                    for (int site : ptmScoring.getOrderedPtmLocations()) {
+                                    ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
+                                    if (sites.isEmpty()) {
+                                        result.append("Not Scored");
+                                    } else {
+                                        for (int site : ptmScoring.getOrderedPtmLocations()) {
 
-                                        if (firstSite) {
-                                            firstSite = false;
-                                        } else {
-                                            result.append(", ");
-                                        }
-                                        int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
+                                            if (firstSite) {
+                                                firstSite = false;
+                                            } else {
+                                                result.append(", ");
+                                            }
+                                            int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
 
-                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                            result.append(site).append(": Not Scored");
-                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                            result.append(site).append(": Random");
-                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                            result.append(site).append(": Doubtfull");
-                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                            result.append(site).append(": Confident");
-                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                            result.append(site).append(": Very Confident");
+                                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                                result.append(site).append(": Not Scored");
+                                            } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                                result.append(site).append(": Random");
+                                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                                result.append(site).append(": Doubtfull");
+                                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                                result.append(site).append(": Confident");
+                                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                                result.append(site).append(": Very Confident");
+                                            }
                                         }
                                     }
+                                } else {
+                                    result.append("Not Scored");
                                 }
+
                             } else {
                                 result.append("Not Scored");
                             }
-
-                        } else {
-                            result.append("Not Scored");
+                            result.append(")");
                         }
-                        result.append(")");
                     }
+                    return result.toString();
                 }
-                return result.toString();
+                return "";
             case mz:
                 spectrumKey = spectrumMatch.getKey();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
@@ -468,20 +505,41 @@ public class PsmSection {
             case mz_error:
                 spectrumKey = spectrumMatch.getKey();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
-                return spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + "";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + "";
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), true) + "";
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumKey + ".");
+                }
             case rt:
                 spectrumKey = spectrumMatch.getKey();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";
             case score:
-                return psParameter.getPsmScore()+ "";
+                return psParameter.getPsmScore() + "";
             case sequence:
-                return spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getTag().asSequence();
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
+                }
             case missed_cleavages:
-                String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                return Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + "";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                    return Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + "";
+                }
+                return "";
             case modified_sequence:
-                return spectrumMatch.getBestPeptideAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + "";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + "";
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true, false);
+                } else {
+                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
+                }
             case spectrum_charge:
                 spectrumKey = spectrumMatch.getKey();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
@@ -503,7 +561,13 @@ public class PsmSection {
                     return "0";
                 }
             case theoretical_mass:
-                return spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + "";
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    return spectrumMatch.getBestPeptideAssumption().getPeptide().getMass() + "";
+                } else if (spectrumMatch.getBestTagAssumption() != null) {
+                    return spectrumMatch.getBestTagAssumption().getTag().getMass() + "";
+                } else {
+                    throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumMatch.getKey());
+                }
             case validated:
                 return psParameter.getMatchValidationLevel().toString();
             default:
@@ -548,11 +612,11 @@ public class PsmSection {
         boolean firstColumn = true;
         for (ExportFeature exportFeature : psmFeatures) {
             for (String title : exportFeature.getTitles()) {
-            if (firstColumn) {
-                firstColumn = false;
-            } else {
-                writer.write(separator);
-            }
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
                 writer.write(title);
             }
         }

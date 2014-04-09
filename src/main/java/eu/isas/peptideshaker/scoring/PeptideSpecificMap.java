@@ -284,7 +284,7 @@ public class PeptideSpecificMap implements Serializable {
                     for (String ptmName : modificationProfile.getAllNotFixedModifications()) {
                         PTM ptm = ptmFactory.getPTM(ptmName);
                         if (mass == ptm.getMass()) {
-                            if (shortNames) {
+                            if (shortNames && ptm.getShortName() != null) {
                                 result += ptm.getShortName();
                             } else {
                                 result += ptm.getName();

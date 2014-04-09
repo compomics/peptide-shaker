@@ -29,7 +29,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public class PepnovoTrainingExport {
+public class TrainingExport {
 
     /**
      * Suffix for the mgf file containing annotated spectra making the "good
@@ -96,41 +96,6 @@ public class PepnovoTrainingExport {
         PSMaps psMaps = new PSMaps();
         psMaps = (PSMaps) identification.getUrParam(psMaps);
         PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-        HashMap<Integer, Double> highConfidenceThresholds = new HashMap<Integer, Double>();
-        HashMap<Integer, Double> lowConfidenceThresholds = new HashMap<Integer, Double>();
-
-        for (Integer key : psmTargetDecoyMap.getKeys().keySet()) {
-            double fdrThreshold, fnrThreshold;
-            TargetDecoyResults currentResults = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults();
-            if (fdr == null) {
-                if (currentResults.getInputType() == 1) {
-                    fdrThreshold = currentResults.getUserInput();
-                } else {
-                    fdrThreshold = currentResults.getFdrLimit();
-                }
-            } else {
-                fdrThreshold = fdr;
-                currentResults = new TargetDecoyResults();
-                currentResults.setClassicalEstimators(true);
-                currentResults.setClassicalValidation(true);
-                currentResults.setFdrLimit(fdrThreshold);
-                TargetDecoySeries currentSeries = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoySeries();
-                currentSeries.getFDRResults(currentResults);
-            }
-            highConfidenceThresholds.put(key, currentResults.getConfidenceLimit());
-            if (fnr == null) {
-                fnrThreshold = fdrThreshold;
-            } else {
-                fnrThreshold = fnr;
-            }
-            currentResults = new TargetDecoyResults();
-            currentResults.setClassicalEstimators(true);
-            currentResults.setClassicalValidation(true);
-            currentResults.setFnrLimit(fnrThreshold);
-            TargetDecoySeries currentSeries = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoySeries();
-            currentSeries.getFNRResults(currentResults);
-            lowConfidenceThresholds.put(key, currentResults.getConfidenceLimit());
-        }
 
         int progress = 1;
 
@@ -170,7 +135,10 @@ public class PepnovoTrainingExport {
                 String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                 if (identification.matchExists(spectrumKey)) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                    double confidenceLevel = highConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+                    Integer charge = new Integer(psParameter.getSpecificMapKey());
+                    String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+                    Double fdrThreshold = getFdrThreshold(psmTargetDecoyMap, charge, spectrumTitle, fdr);
+                    double confidenceLevel = getHighConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fdrThreshold);
                     if (psParameter.getPsmConfidence() >= confidenceLevel) {
                         keys.add(spectrumKey);
                     }
@@ -223,7 +191,10 @@ public class PepnovoTrainingExport {
                     }
                     if (identification.matchExists(spectrumKey)) {
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                        double confidenceLevel = highConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+                        Integer charge = new Integer(psParameter.getSpecificMapKey());
+                        String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+                        Double fdrThreshold = getFdrThreshold(psmTargetDecoyMap, charge, spectrumTitle, fdr);
+                        double confidenceLevel = getHighConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fdrThreshold);
                         if (psParameter.getPsmConfidence() >= confidenceLevel) {
                             if (spectrum == null) {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -236,7 +207,7 @@ public class PepnovoTrainingExport {
                                 spectrum.writeMgf(writerGood, tags);
                             }
                         }
-                        confidenceLevel = lowConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+                        confidenceLevel = getLowConfidenceThreshold(psmTargetDecoyMap, charge, spectrumFile, fnr, fdrThreshold);
                         if (psParameter.getPsmConfidence() <= confidenceLevel) {
                             if (spectrum == null) {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -263,6 +234,80 @@ public class PepnovoTrainingExport {
             spectrumRecalibrator.clearErrors(fileName);
             progress++;
         }
+    }
+
+    /**
+     * Returns the fdr threshold to be used
+     *
+     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param charge the charge of the inspected PSM
+     * @param spectrumFileName the spectrum file name
+     * @param fdr a user defined FDR, can be null
+     *
+     * @return the fdr threshold to be used
+     */
+    private static double getFdrThreshold(PsmSpecificMap psmSpecificMap, int charge, String spectrumFileName, Double fdr) {
+        double fdrThreshold;
+        TargetDecoyResults currentResults = psmSpecificMap.getTargetDecoyMap(charge, spectrumFileName).getTargetDecoyResults();
+        if (fdr == null) {
+            if (currentResults.getInputType() == 1) {
+                fdrThreshold = currentResults.getUserInput();
+            } else {
+                fdrThreshold = currentResults.getFdrLimit();
+            }
+        } else {
+            fdrThreshold = fdr;
+        }
+        return fdrThreshold;
+    }
+
+    /**
+     * Returns the high confidence threshold
+     *
+     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param charge the charge of the inspected PSM
+     * @param spectrumFileName the spectrum file name
+     * @param fdrThreshold the fdr threshold to be used
+     *
+     * @return the confidence threshold corresponding to this match at the
+     * desired FDR
+     */
+    private static double getHighConfidenceThreshold(PsmSpecificMap psmSpecificMap, int charge, String spectrumFileName, Double fdrThreshold) {
+        TargetDecoyResults trainingResults = new TargetDecoyResults();
+        trainingResults.setClassicalEstimators(true);
+        trainingResults.setClassicalValidation(true);
+        trainingResults.setFdrLimit(fdrThreshold);
+        TargetDecoySeries currentSeries = psmSpecificMap.getTargetDecoyMap(charge, spectrumFileName).getTargetDecoySeries();
+        currentSeries.getFDRResults(trainingResults);
+        return trainingResults.getConfidenceLimit();
+    }
+
+    /**
+     * Returns the low confidence threshold
+     *
+     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param charge the charge of the inspected PSM
+     * @param spectrumFileName the spectrum file name
+     * @param fnr a user defined FNR threshold, can be null
+     * @param fdrThreshold the fdr threshold used
+     *
+     * @return the confidence threshold corresponding to this match at the
+     * desired FNR
+     */
+    private static double getLowConfidenceThreshold(PsmSpecificMap psmSpecificMap, int charge, String spectrumFileName, Double fnr, double fdrThreshold) {
+        double fnrThreshold;
+        if (fnr == null) {
+            fnrThreshold = fdrThreshold;
+        } else {
+            fnrThreshold = fnr;
+        }
+        TargetDecoyResults trainingResults = new TargetDecoyResults();
+        trainingResults.setClassicalEstimators(true);
+        trainingResults.setClassicalValidation(true);
+        trainingResults.setFnrLimit(fnrThreshold);
+        TargetDecoySeries currentSeries = psmSpecificMap.getTargetDecoyMap(charge, spectrumFileName).getTargetDecoySeries();
+        currentSeries.getFNRResults(trainingResults);
+        return trainingResults.getConfidenceLimit();
     }
 
     /**

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -13,12 +14,14 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -83,7 +86,7 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * The PSMs map: # in the list -> map key.
      */
-    private HashMap<Integer, Integer> psmMap = new HashMap<Integer, Integer>();
+    private HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<Integer, HashMap<Integer, String>>();
     /**
      * The peptide map: # in the list -> map key.
      */
@@ -2936,7 +2939,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                 ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
-                HashMap<Integer, String> psmKeys = pSMaps.getPsmSpecificMap().getKeys();
 
                 int cpt = 0;
 
@@ -2962,22 +2964,91 @@ public class StatsPanel extends javax.swing.JPanel {
                     }
                 }
 
-                for (Integer psmKey : psmKeys.keySet()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
+                PsmSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
+                ArrayList<Integer> foundCharges = new ArrayList<Integer>();
+                HashMap<Integer, ArrayList<Integer>> groupedCharges = new HashMap<Integer, ArrayList<Integer>>();
+                for (Integer charge : psmSpecificMap.getPossibleCharges()) {
+                    for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
+                        if (!psmSpecificMap.isFileGrouped(charge, file)) {
+                            foundCharges.add(charge);
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+                            HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
+                            psmKey.put(charge, file);
+                            psmMap.put(cpt, psmKey);
+                            modifiedMaps.put(cpt, false);
+                            cpt++;
+                        }
                     }
-
-                    psmMap.put(cpt, psmKey);
-                    modifiedMaps.put(cpt, false);
-                    if (psmKeys.size() > 1) {
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Charge " + psmKeys.get(psmKey) + " PSMs"});
+                }
+                for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
+                    int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
+                    if (correctedCharge == charge) {
+                        HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
+                        psmKey.put(charge, null);
+                        psmMap.put(cpt, psmKey);
+                        modifiedMaps.put(cpt, false);
+                        cpt++;
                     } else {
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "PSMs"});
+                        ArrayList<Integer> charges = groupedCharges.get(correctedCharge);
+                        if (charges == null) {
+                            charges = new ArrayList<Integer>();
+                            groupedCharges.put(correctedCharge, charges);
+                        }
+                        charges.add(charge);
                     }
                 }
 
-                if (groupSelectionTable.getRowCount() > 0) {
+                if (psmMap.size() > 1) {
+                    for (int index : psmMap.keySet()) {
+                        for (int charge : psmMap.get(index).keySet()) {
+                            String file = psmMap.get(index).get(charge);
+                            if (file != null) {
+                                if (peptideShakerGUI.getIdentification().getSpectrumFiles().size() > 1) {
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + charge + " PSMs of file " + file});
+                                } else {
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + charge + " PSMs"});
+                                }
+                            } else if (foundCharges.contains(charge)) {
+                                if (groupedCharges.containsKey(charge)) {
+                                    ArrayList<Integer> groupCharges = groupedCharges.get(charge);
+                                    Collections.sort(groupCharges);
+                                    String chargeTxt = "Other Charge " + charge + " and Charge ";
+                                    for (int subCharge : groupCharges) {
+                                        if (!chargeTxt.equals("")) {
+                                            chargeTxt += ", ";
+                                        }
+                                        chargeTxt += subCharge;
+                                    }
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, chargeTxt + " PSMs"});
+                                } else {
+                                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Other Charge " + charge + " PSMs"});
+                                }
+                            } else {
+                                ArrayList<Integer> groupCharges = new ArrayList<Integer>();
+                                groupCharges.add(charge);
+                                if (groupedCharges.containsKey(charge)) {
+                                    groupCharges.addAll(groupedCharges.get(charge));
+                                }
+                                Collections.sort(groupCharges);
+                                String chargeTxt = "";
+                                for (int subCharge : groupCharges) {
+                                    if (!chargeTxt.equals("")) {
+                                        chargeTxt += ", ";
+                                    }
+                                    chargeTxt += subCharge;
+                                }
+                                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{index + 1, "Charge " + chargeTxt + " PSMs"});
+                            }
+                        }
+                    }
+                } else {
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "PSMs"});
+                }
+
+                if (groupSelectionTable.getRowCount()
+                        > 0) {
                     groupSelectionTable.setRowSelectionInterval(0, 0);
                 }
 
@@ -2996,7 +3067,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
                 progressDialog.setRunFinished();
             }
-        }.start();
+        }
+                .start();
     }
 
     /**
@@ -3062,7 +3134,10 @@ public class StatsPanel extends javax.swing.JPanel {
                 }
             }
         } else if (psmMap.containsKey(selectedGroup)) {
-            currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(psmMap.get(selectedGroup));
+            HashMap<Integer, String> psmKey = psmMap.get(selectedGroup);
+            for (int charge : psmKey.keySet()) {
+                currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, psmKey.get(charge));
+            }
         } else {
             // This should not happen
             clearScreen();

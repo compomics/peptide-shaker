@@ -806,7 +806,6 @@ public class FileImporter {
                                     try {
                                         HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(tagAssumption.getTag(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), true, true);
                                         for (Peptide peptide : proteinMapping.keySet()) {
-                                            peptide.setParentProteins(new ArrayList<String>(proteinMapping.get(peptide).keySet()));
                                             PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, tagAssumption.getRank(), advocateId, assumption.getIdentificationCharge(), score, assumption.getIdentificationFile());
                                             peptideAssumption.addUrParam(tagAssumption);
                                             match.addHit(advocateId, peptideAssumption, true);

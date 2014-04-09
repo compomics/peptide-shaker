@@ -268,11 +268,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             filters.add(psmFilter);
         }
 
-        int psmGroupKey = psmSpecificMap.getCorrectedKey(psParameter.getSpecificMapKey());
-        TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(psmGroupKey);
-        String groupName = "";
-        if (psmSpecificMap.getKeys().size() > 1) {
-            groupName = "Charge " + psmSpecificMap.getKeys().get(psmGroupKey);
+        TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, fileName);
+        String groupName = "Charge ";
+        if (!psmSpecificMap.isFileGrouped(charge, fileName)) {
+            groupName += charge + " in file " + fileName;
+        } else {
+            int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
+            groupName += correctedCharge;
         }
         groupName += " PSMs";
         populateGUI(identificationFeaturesGenerator, targetDecoyMap, filters, groupName);
