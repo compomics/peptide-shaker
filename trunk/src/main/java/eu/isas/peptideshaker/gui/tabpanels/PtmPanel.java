@@ -4336,7 +4336,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             return null;
                         }
                     case 6:
-                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(relatedTable)).getSpectrumMatches().get(row);
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
                         return probabilities.getMatchValidationLevel().getIndex();
                     default:
