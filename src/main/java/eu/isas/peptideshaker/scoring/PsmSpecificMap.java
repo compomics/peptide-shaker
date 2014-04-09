@@ -35,12 +35,12 @@ public class PsmSpecificMap implements Serializable {
     private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
     /**
      * Map used to group charges together in order to ensure statistical.
-     * relevance
+     * relevance.
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
     /**
      * Map used to group charges together in order to ensure statistical.
-     * relevance grouped per file
+     * relevance grouped per file.
      */
     private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<Integer, ArrayList<String>>();
     /**
@@ -51,7 +51,7 @@ public class PsmSpecificMap implements Serializable {
     private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
     /**
      * The filters to use to flag doubtful matches in a map: charge -> file name
-     * -> list of filters
+     * -> list of filters.
      */
     private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>>();
 
@@ -129,14 +129,14 @@ public class PsmSpecificMap implements Serializable {
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         if (fileSpecificPsmsMaps != null) {
-        for (Integer charge : fileSpecificPsmsMaps.keySet()) {
-            ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
-            for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
-                if (groupedFiles == null || !groupedFiles.contains(file)) {
-                    fileSpecificPsmsMaps.get(charge).get(file).estimateProbabilities(waitingHandler);
+            for (Integer charge : fileSpecificPsmsMaps.keySet()) {
+                ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
+                for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
+                    if (groupedFiles == null || !groupedFiles.contains(file)) {
+                        fileSpecificPsmsMaps.get(charge).get(file).estimateProbabilities(waitingHandler);
+                    }
                 }
             }
-        }
         }
 
         for (Integer charge : psmsMaps.keySet()) {

@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -3067,12 +3066,11 @@ public class StatsPanel extends javax.swing.JPanel {
 
                 progressDialog.setRunFinished();
             }
-        }
-                .start();
+        }.start();
     }
 
     /**
-     * Method called whenever a new group selection occurred
+     * Method called whenever a new group selection occurred.
      */
     private void groupSelectionChanged() {
         PSMaps pSMaps = new PSMaps();
