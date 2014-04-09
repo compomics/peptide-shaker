@@ -575,7 +575,9 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
                         }
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+                        Integer charge = new Integer(psmProbabilities.getSpecificMapKey());
+                        String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(charge, spectrumKey).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         matchValidationLevel = psmProbabilities.getMatchValidationLevel();
                         if (matchValidationLevel == MatchValidationLevel.doubtful && !psmProbabilities.getReasonDoubtful().equals("")) {

@@ -3080,8 +3080,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             projectExportMenu.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
-            //exportMzIdentMLMenuItem.setEnabled(true);
-            exportMzIdentMLMenuItem.setVisible(false);
+            exportMzIdentMLMenuItem.setEnabled(true);
+//            exportMzIdentMLMenuItem.setVisible(false);
             exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file

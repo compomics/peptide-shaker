@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.scoring;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -29,10 +30,19 @@ public class PsmSpecificMap implements Serializable {
      */
     private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<Integer, TargetDecoyMap>();
     /**
+     * The map of the psm target/decoy maps indexed by the psm file and charge.
+     */
+    private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
+    /**
      * Map used to group charges together in order to ensure statistical.
      * relevance
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
+    /**
+     * Map used to group charges together in order to ensure statistical.
+     * relevance grouped per file
+     */
+    private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<Integer, ArrayList<String>>();
     /**
      * The filters to use to flag doubtful matches.
      *
@@ -43,7 +53,7 @@ public class PsmSpecificMap implements Serializable {
      * The filters to use to flag doubtful matches in a map: charge -> file name
      * -> list of filters
      */
-    private HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
+    private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>>();
 
     /**
      * Constructor.
@@ -118,6 +128,17 @@ public class PsmSpecificMap implements Serializable {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
+        if (fileSpecificPsmsMaps != null) {
+        for (Integer charge : fileSpecificPsmsMaps.keySet()) {
+            ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
+            for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
+                if (groupedFiles == null || !groupedFiles.contains(file)) {
+                    fileSpecificPsmsMaps.get(charge).get(file).estimateProbabilities(waitingHandler);
+                }
+            }
+        }
+        }
+
         for (Integer charge : psmsMaps.keySet()) {
 
             waitingHandler.increaseSecondaryProgressCounter();
@@ -133,34 +154,42 @@ public class PsmSpecificMap implements Serializable {
     /**
      * Returns the probability of the given spectrum match at the given score.
      *
-     * @param specificKey the charge of the match of interest
+     * @param file the file scored
+     * @param charge the charge scored
      * @param score the corresponding score
+     *
      * @return the probability of the given spectrum match at the given score
      */
-    public double getProbability(int specificKey, double score) {
-        int key = getCorrectedKey(specificKey);
-        TargetDecoyMap targetDecoyMap = psmsMaps.get(key);
+    public double getProbability(String file, int charge, double score) {
+        boolean groupedFile = false;
+        if (fileSpecificGrouping != null) {
+            ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
+            if (groupedFiles != null && groupedFiles.contains(file)) {
+                groupedFile = true;
+            }
+        } else {
+            groupedFile = true;
+        }
+        if (groupedFile) {
+            Integer key = grouping.get(charge);
+            if (key == null) {
+                key = charge;
+            }
+            TargetDecoyMap targetDecoyMap = psmsMaps.get(key);
+            if (targetDecoyMap == null) {
+                return 1;
+            }
+            return targetDecoyMap.getProbability(score);
+        }
+        HashMap<String, TargetDecoyMap> specificMap = fileSpecificPsmsMaps.get(charge);
+        if (specificMap == null) {
+            return 1;
+        }
+        TargetDecoyMap targetDecoyMap = specificMap.get(file);
         if (targetDecoyMap == null) {
             return 1;
         }
         return targetDecoyMap.getProbability(score);
-    }
-
-    /**
-     * Returns the probability of the given spectrum match at the given score.
-     *
-     * @param specificKey the charge of the match
-     * @param score the corresponding score
-     * @return the probability of the given spectrum match at the given score
-     */
-    public double getProbability(String specificKey, double score) {
-        Integer keeyAsInteger;
-        try {
-            keeyAsInteger = new Integer(specificKey);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
-        }
-        return getProbability(keeyAsInteger, score);
     }
 
     /**
@@ -177,138 +206,185 @@ public class PsmSpecificMap implements Serializable {
      * @throws java.lang.ClassNotFoundException
      */
     public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch, double mzTolerance) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
-        int key = getKey(spectrumMatch);
-        if (!psmsMaps.containsKey(key)) {
-            psmsMaps.put(key, new TargetDecoyMap());
+        int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+        HashMap<String, TargetDecoyMap> fileMapping = fileSpecificPsmsMaps.get(charge);
+        if (fileMapping == null) {
+            fileMapping = new HashMap<String, TargetDecoyMap>();
+            fileSpecificPsmsMaps.put(charge, fileMapping);
         }
-        psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, mzTolerance));
+        String file = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+        TargetDecoyMap targetDecoyMap = fileMapping.get(file);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = new TargetDecoyMap();
+            fileMapping.put(file, targetDecoyMap);
+        }
+        targetDecoyMap.put(probabilityScore, spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, mzTolerance));
     }
 
     /**
-     * Returns a list of keys from maps presenting a suspicious input.
-     *
-     * @return a list of keys from maps presenting a suspicious input
-     */
-    public ArrayList<String> suspiciousInput() {
-        ArrayList<String> result = new ArrayList<String>();
-        for (Integer key : psmsMaps.keySet()) {
-            if (!grouping.containsKey(key) && psmsMaps.get(key).suspiciousInput() && !grouping.containsKey(key)) {
-                result.add(getGroupKey(key));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * This method groups the statistically non significant PSMs with the ones
-     * having a charge directly smaller.
+     * This method groups the statistically non significant PSMs between files
+     * and with the ones having a charge directly smaller until statistical
+     * significance is reached.
      */
     public void clean() {
-        ArrayList<Integer> charges = new ArrayList(psmsMaps.keySet());
+        ArrayList<Integer> charges = new ArrayList(fileSpecificPsmsMaps.keySet());
         Collections.sort(charges);
         int ref = 0;
-        for (int charge : charges) {
-            if (psmsMaps.get(charge).getnMax() >= 100 && psmsMaps.get(charge).getnTargetOnly() >= 100) {
-                ref = charge;
-            } else if (ref == 0) {
-                ref = charge;
-            } else {
-                grouping.put(charge, ref);
+        for (Integer charge : charges) {
+            ArrayList<String> nonSignificantFiles = new ArrayList<String>();
+            TargetDecoyMap tempMap = new TargetDecoyMap();
+            for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
+                TargetDecoyMap targetDecoyMap = fileSpecificPsmsMaps.get(charge).get(file);
+                if (targetDecoyMap.getnMax() < 100 || targetDecoyMap.getnTargetOnly() < 100) {
+                    nonSignificantFiles.add(file);
+                    tempMap.addAll(targetDecoyMap);
+                }
             }
-        }
-        for (int charge : grouping.keySet()) {
-            ref = grouping.get(charge);
-            psmsMaps.get(ref).addAll(psmsMaps.get(charge));
+            if (nonSignificantFiles.isEmpty()) {
+                ref = 0;
+            } else {
+                // The following code groups all files in case statistical significance is not achieved
+//                if (nonSignificantFiles.size() < fileSpecificPsmsMaps.get(charge).size() && (tempMap.getnMax() < 100 || tempMap.getnTargetOnly() < 100)) {
+//                    for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
+//                        if (!nonSignificantFiles.contains(file)) {
+//                            TargetDecoyMap targetDecoyMap = fileSpecificPsmsMaps.get(charge).get(file);
+//                            nonSignificantFiles.add(file);
+//                            tempMap.addAll(targetDecoyMap);
+//                        }
+//                    }
+//                }
+                psmsMaps.put(charge, tempMap);
+                fileSpecificGrouping.put(charge, nonSignificantFiles);
+                if (tempMap.getnMax() < 100 || tempMap.getnTargetOnly() < 100) {
+                    if (ref > 0) {
+                        psmsMaps.get(ref).addAll(tempMap);
+                        grouping.put(charge, ref);
+                    } else {
+                        ref = charge;
+                    }
+                } else {
+                    ref = 0;
+                }
+            }
         }
     }
 
     /**
-     * Returns a map of the keys: charge -> group name.
+     * Returns the desired target decoy map. Null if not found.
      *
-     * @return a map of the keys: charge -> group name
+     * @param charge the identified charge of the PSM
+     * @param spectrumFile the name of the spectrum file
+     *
+     * @return the corresponding target decoy map
      */
-    public HashMap<Integer, String> getKeys() {
-        HashMap<Integer, String> result = new HashMap<Integer, String>();
-        for (int key : psmsMaps.keySet()) {
-            if (!grouping.containsKey(key)) {
-                result.put(key, getGroupKey(key));
+    public TargetDecoyMap getTargetDecoyMap(int charge, String spectrumFile) {
+        if (fileSpecificGrouping != null && spectrumFile != null) {
+            ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
+            if (nonSignificantFiles == null || !nonSignificantFiles.contains(spectrumFile)) {
+                HashMap<String, TargetDecoyMap> chargeMapping = fileSpecificPsmsMaps.get(charge);
+                if (chargeMapping == null) {
+                    return null;
+                } else {
+                    return chargeMapping.get(spectrumFile);
+                }
+            }
+        }
+        Integer correctedCharge = grouping.get(charge);
+        if (correctedCharge == null) {
+            correctedCharge = charge;
+        }
+        return psmsMaps.get(correctedCharge);
+    }
+
+    /**
+     * Indicates whether the given file was grouped for the given charge.
+     *
+     * @param charge the charge of interest
+     * @param fileName the name of the file
+     *
+     * @return a boolean indicating whether the given file was grouped for the
+     * given charge
+     */
+    public boolean isFileGrouped(int charge, String fileName) {
+        if (fileSpecificPsmsMaps == null) {
+            return true;
+        }
+        ArrayList<String> groupedFiles = fileSpecificGrouping.get(charge);
+        return groupedFiles != null && groupedFiles.contains(fileName);
+    }
+
+    /**
+     * For grouped files, returns the reference charge of the group.
+     *
+     * @param charge the charge of the match
+     *
+     * @return the charge of the group for grouped files, the original charge if
+     * not found
+     */
+    public Integer getCorrectedCharge(int charge) {
+        Integer correctedCharge = grouping.get(charge);
+        if (correctedCharge == null) {
+            return charge;
+        }
+        return correctedCharge;
+    }
+
+    /**
+     * Returns the charges found in the map
+     *
+     * @return the charges found in the map
+     */
+    public ArrayList<Integer> getPossibleCharges() {
+        if (fileSpecificPsmsMaps != null) {
+            return new ArrayList<Integer>(fileSpecificPsmsMaps.keySet());
+        } else {
+            return new ArrayList<Integer>(grouping.keySet());
+        }
+    }
+
+    /**
+     * Returns a list of charges from grouped files.
+     *
+     * @return a list of charges from grouped files
+     */
+    public ArrayList<Integer> getChargesFromGroupedFiles() {
+        return new ArrayList<Integer>(psmsMaps.keySet());
+    }
+
+    /**
+     * Returns a list of grouped charges from grouped files.
+     *
+     * @return a list of grouped charges from grouped files
+     */
+    public ArrayList<Integer> getGroupedCharges() {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (int charge : psmsMaps.keySet()) {
+            Integer correctedCharge = grouping.get(charge);
+            if (correctedCharge == null) {
+                correctedCharge = charge;
+            }
+            if (!result.contains(correctedCharge)) {
+                result.add(correctedCharge);
             }
         }
         return result;
     }
 
     /**
-     * Return a key of the selected charge group indexed by the main charge.
+     * Returns the files at the given charge charge, an empty list if not found.
      *
-     * @param mainCharge the selected charge
-     * @return key of the corresponding charge group
+     * @param charge the charge of interest
+     *
+     * @return the files at the given charge
      */
-    private String getGroupKey(Integer mainCharge) {
-        String tempKey = mainCharge + "";
-        for (int mergedKey : grouping.keySet()) {
-            if (grouping.get(mergedKey) == mainCharge) {
-                tempKey += ", " + mergedKey;
+    public ArrayList<String> getFilesAtCharge(int charge) {
+        if (fileSpecificPsmsMaps != null) {
+            HashMap<String, TargetDecoyMap> chargeMap = fileSpecificPsmsMaps.get(charge);
+            if (chargeMap != null) {
+                return new ArrayList<String>(chargeMap.keySet());
             }
         }
-        return tempKey;
-    }
-
-    /**
-     * Returns the key (here the charge) associated to the corresponding
-     * spectrum match after curation.
-     *
-     * @param specificKey the spectrum match of interest
-     * @return the corresponding key
-     */
-    public Integer getCorrectedKey(int specificKey) {
-        if (grouping.containsKey(specificKey)) {
-            return grouping.get(specificKey);
-        }
-        return specificKey;
-    }
-
-    /**
-     * Returns the key (here the charge) associated to the corresponding
-     * spectrum match after curation.
-     *
-     * @param specificKey the spectrum match of interest
-     * @return the corresponding key
-     */
-    public Integer getCorrectedKey(String specificKey) {
-        Integer keeyAsInteger;
-        try {
-            keeyAsInteger = new Integer(specificKey);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
-        }
-        return getCorrectedKey(keeyAsInteger);
-    }
-
-    /**
-     * Returns the key (here the charge) associated to the corresponding
-     * spectrum match.
-     *
-     * @param spectrumMatch the spectrum match of interest
-     * @return the corresponding key
-     */
-    public Integer getKey(SpectrumMatch spectrumMatch) {
-        if (spectrumMatch.getBestPeptideAssumption() != null) {
-            return spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-        } else if (spectrumMatch.getBestTagAssumption() != null) {
-            return spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
-        } else {
-            throw new IllegalArgumentException("No best hit found for spectrum match " + spectrumMatch.getKey() + ".");
-        }
-    }
-
-    /**
-     * Returns the desired target decoy map.
-     *
-     * @param key the key of the desired map
-     * @return the corresponding target decoy map
-     */
-    public TargetDecoyMap getTargetDecoyMap(int key) {
-        return psmsMaps.get(key);
+        return new ArrayList<String>();
     }
 
     /**
@@ -321,6 +397,33 @@ public class PsmSpecificMap implements Serializable {
         for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
             result += targetDecoyMap.getMapSize();
         }
+        for (HashMap<String, TargetDecoyMap> mapping : fileSpecificPsmsMaps.values()) {
+            for (TargetDecoyMap targetDecoyMap : mapping.values()) {
+                result += targetDecoyMap.getMapSize();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a list of the target decoy maps used for scoring.
+     *
+     * @return a list of the target decoy maps used for scoring
+     */
+    public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
+        ArrayList<TargetDecoyMap> result = new ArrayList<TargetDecoyMap>();
+        for (int charge : fileSpecificPsmsMaps.keySet()) {
+            ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
+            for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
+                if (nonSignificantFiles == null || !nonSignificantFiles.contains(file)) {
+                    result.add(fileSpecificPsmsMaps.get(charge).get(file));
+                }
+            }
+        }
+        for (int charge : getGroupedCharges()) {
+            TargetDecoyMap map = psmsMaps.get(charge);
+            result.add(map);
+        }
         return result;
     }
 
@@ -331,9 +434,17 @@ public class PsmSpecificMap implements Serializable {
      */
     public int getMaxCharge() {
         int maxCharge = 0;
-        for (int charge : psmsMaps.keySet()) {
-            if (charge > maxCharge) {
-                maxCharge = charge;
+        if (fileSpecificPsmsMaps != null) {
+            for (int charge : fileSpecificPsmsMaps.keySet()) {
+                if (charge > maxCharge) {
+                    maxCharge = charge;
+                }
+            }
+        } else {
+            for (int charge : psmsMaps.keySet()) {
+                if (charge > maxCharge) {
+                    maxCharge = charge;
+                }
             }
         }
         return maxCharge;

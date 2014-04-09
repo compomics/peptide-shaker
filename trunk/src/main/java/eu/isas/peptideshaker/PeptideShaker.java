@@ -445,80 +445,79 @@ public class PeptideShaker {
         report = "Identification processing completed.";
 
         // get the detailed report
-        ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
-        ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
-        ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
-        boolean suspiciousProteins = proteinMap.suspicousInput();
-
-        if (suspiciousInput.size() > 0
-                || suspiciousPsms.size() > 0
-                || suspiciousPeptides.size() > 0
-                || suspiciousProteins) {
-
-            String detailedReport = "";
-
-            boolean firstLine = true;
-
-            for (int searchEngine : suspiciousInput) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    detailedReport += ", ";
-                }
-                detailedReport += Advocate.getAdvocate(searchEngine).getName();
-            }
-
-            if (suspiciousInput.size() > 0) {
-                detailedReport += " identifications.<br>";
-            }
-
-            firstLine = true;
-
-            if (psmMap.getKeys().size() == 1) {
-                detailedReport += "PSMs.<br>";
-            } else {
-                for (String fraction : suspiciousPsms) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        detailedReport += ", ";
-                    }
-                    detailedReport += fraction;
-                }
-                if (suspiciousPsms.size() > 0) {
-                    detailedReport += " charged PSMs.<br>";
-                }
-            }
-
-            if (peptideMap.getKeys().size() == 1) {
-                detailedReport += "Peptides.<br>";
-            } else {
-                firstLine = true;
-                for (String fraction : suspiciousPeptides) {
-                    if (firstLine) {
-                        firstLine = false;
-                    } else {
-                        detailedReport += "<br>";
-                    }
-                    detailedReport += PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), fraction);
-                    if (suspiciousPeptides.size() > 0) {
-                        detailedReport += " peptides.<br>";
-                    }
-                }
-            }
-
-            if (suspiciousProteins) {
-                detailedReport += "Proteins.<br>";
-            }
-
-            if (detailedReport.length() > 0) {
-                detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
-                        + detailedReport
-                        + "<br>You can inspect this in the <i>Validation</i> tab.";
-                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
-            }
-        }
-
+//        ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
+//        ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
+//        ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
+//        boolean suspiciousProteins = proteinMap.suspicousInput();
+//
+//        if (suspiciousInput.size() > 0
+//                || suspiciousPsms.size() > 0
+//                || suspiciousPeptides.size() > 0
+//                || suspiciousProteins) {
+//
+//            String detailedReport = "";
+//
+//            boolean firstLine = true;
+//
+//            for (int searchEngine : suspiciousInput) {
+//                if (firstLine) {
+//                    firstLine = false;
+//                } else {
+//                    detailedReport += ", ";
+//                }
+//                detailedReport += Advocate.getAdvocate(searchEngine).getName();
+//            }
+//
+//            if (suspiciousInput.size() > 0) {
+//                detailedReport += " identifications.<br>";
+//            }
+//
+//            firstLine = true;
+//
+//            if (psmMap.getKeys().size() == 1) {
+//                detailedReport += "PSMs.<br>";
+//            } else {
+//                for (String fraction : suspiciousPsms) {
+//                    if (firstLine) {
+//                        firstLine = false;
+//                    } else {
+//                        detailedReport += ", ";
+//                    }
+//                    detailedReport += fraction;
+//                }
+//                if (suspiciousPsms.size() > 0) {
+//                    detailedReport += " charged PSMs.<br>";
+//                }
+//            }
+//
+//            if (peptideMap.getKeys().size() == 1) {
+//                detailedReport += "Peptides.<br>";
+//            } else {
+//                firstLine = true;
+//                for (String fraction : suspiciousPeptides) {
+//                    if (firstLine) {
+//                        firstLine = false;
+//                    } else {
+//                        detailedReport += "<br>";
+//                    }
+//                    detailedReport += PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), fraction);
+//                    if (suspiciousPeptides.size() > 0) {
+//                        detailedReport += " peptides.<br>";
+//                    }
+//                }
+//            }
+//
+//            if (suspiciousProteins) {
+//                detailedReport += "Proteins.<br>";
+//            }
+//
+//            if (detailedReport.length() > 0) {
+//                detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
+//                        + detailedReport
+//                        + "<br>You can inspect this in the <i>Validation</i> tab.";
+//                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
+//            }
+//        }
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
@@ -584,7 +583,9 @@ public class PeptideShaker {
         currentResults.setFdrLimit(aProteinFDR);
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
-        int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size() + inputMap.getNalgorithms();
+        ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps();
+
+        int max = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
@@ -603,13 +604,12 @@ public class PeptideShaker {
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
-        for (int mapKey : psmMap.getKeys().keySet()) {
+        for (TargetDecoyMap targetDecoyMap : psmMaps) {
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
             waitingHandler.increaseSecondaryProgressCounter();
-            currentMap = psmMap.getTargetDecoyMap(mapKey);
-            currentResults = currentMap.getTargetDecoyResults();
+            currentResults = targetDecoyMap.getTargetDecoyResults();
             currentResults.setInputType(1);
             currentResults.setUserInput(aPSMFDR);
             currentResults.setClassicalEstimators(true);
@@ -1270,24 +1270,27 @@ public class PeptideShaker {
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 
-            TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey()));
-            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-            double psmThreshold = targetDecoyResults.getScoreLimit();
-            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
-
-            if (confidenceThreshold > 100) {
-                confidenceThreshold = 100;
+            Integer charge = new Integer(psParameter.getSpecificMapKey());
+            String fileName = Spectrum.getSpectrumFile(spectrumKey);
+            TargetDecoyMap targetDecoyMap = psmMap.getTargetDecoyMap(charge, fileName);
+            double psmThreshold = 0;
+            double confidenceThreshold = 100;
+            boolean noValidated = true;
+            if (targetDecoyMap != null) {
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                psmThreshold = targetDecoyResults.getScoreLimit();
+                confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+                if (confidenceThreshold > 100) {
+                    confidenceThreshold = 100;
+                }
+                noValidated = targetDecoyResults.noValidated();
             }
-
-            boolean noValidated = targetDecoyResults.noValidated();
 
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
 
                 String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                int charge;
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     // update the annotation preferences for the new psm, mainly the charge
                     annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                 } else if (spectrumMatch.getBestTagAssumption() != null) {
@@ -1894,7 +1897,7 @@ public class PeptideShaker {
                         psParameter = new PSParameter();
                         psParameter.setSpectrumProbabilityScore(retainedP);
                         psmMap.addPoint(retainedP, spectrumMatch, searchParameters.getFragmentIonAccuracy());
-                        psParameter.setSpecificMapKey(psmMap.getKey(spectrumMatch) + "");
+                        psParameter.setSpecificMapKey(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value + "");
                         identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                         identification.updateSpectrumMatch(spectrumMatch);
 
@@ -1908,16 +1911,18 @@ public class PeptideShaker {
                     Double bestEvalue = Collections.min(evalues);
                     TagAssumption bestAssumption = tagAssumptions.get(bestEvalue).get(0);
                     spectrumMatch.setBestTagAssumption(bestAssumption);
-                    psParameter = new PSParameter();
-                    if (multiSE) {
-                        PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psParameter);
-                        psParameter.setSearchEngineProbability(matchParameter.getSearchEngineProbability());
-                    } else {
-                        psParameter.setSpectrumProbabilityScore(bestEvalue);
-                    }
-                    psParameter.setSpecificMapKey(psmMap.getKey(spectrumMatch) + "");
-                    identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                     identification.updateSpectrumMatch(spectrumMatch);
+                    if (spectrumMatch.getBestPeptideAssumption() == null) {
+                        psParameter = new PSParameter();
+                        if (multiSE) {
+                            PSParameter matchParameter = (PSParameter) bestAssumption.getUrParam(psParameter);
+                            psParameter.setSearchEngineProbability(matchParameter.getSearchEngineProbability());
+                        } else {
+                            psParameter.setSpectrumProbabilityScore(bestEvalue);
+                        }
+                        psParameter.setSpecificMapKey(spectrumMatch.getBestTagAssumption().getIdentificationCharge().value + "");
+                        identification.addSpectrumMatchParameter(spectrumKey, psParameter);
+                    }
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
                 if (waitingHandler.isRunCanceled()) {
@@ -2022,7 +2027,9 @@ public class PeptideShaker {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (sequenceFactory.concatenatedTargetDecoy()) {
-                    psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
+                    Integer charge = new Integer(psParameter.getSpecificMapKey());
+                    String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                    psParameter.setPsmProbability(psmMap.getProbability(fileName, charge, psParameter.getPsmProbabilityScore()));
                 } else {
                     psParameter.setPsmProbability(1.0);
                 }
@@ -2069,7 +2076,9 @@ public class PeptideShaker {
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+                Integer charge = new Integer(psParameter.getSpecificMapKey());
+                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                double confidenceThreshold = psmMap.getTargetDecoyMap(charge, fileName).getTargetDecoyResults().getConfidenceLimit();
                 scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, confidenceThreshold);
             }
         }
