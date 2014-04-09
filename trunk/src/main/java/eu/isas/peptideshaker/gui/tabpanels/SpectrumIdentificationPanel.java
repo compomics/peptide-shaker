@@ -2051,7 +2051,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
                             spectrumTable.setToolTipText(peptideShakerGUI.getDisplayFeaturesGenerator().getTagModificationTooltipAsHtml(tagAssumption.getTag()));
                         } else {
-                    throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
+                            throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                         }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
