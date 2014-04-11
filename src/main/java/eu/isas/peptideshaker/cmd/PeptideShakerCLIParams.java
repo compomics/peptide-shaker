@@ -19,7 +19,7 @@ public enum PeptideShakerCLIParams {
     SAMPLE("sample", "Specifies the sample name.", true),
     REPLICATE("replicate", "The replicate number.", true),
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", true),
-    IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .omx or .dat), comma separated list or an entire folder.", true),
+    IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx or .dat), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
     PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms, soon deprecated).", false),
     //PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
