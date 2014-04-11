@@ -3582,18 +3582,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
             double nTP = 0;
             double totalTP = 0;
-            for (int charge : psmSpecificMap.getPossibleCharges()) {
-                for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
-                    if (!psmSpecificMap.isFileGrouped(charge, file)) {
-                        TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, file);
-                        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                        nTP += targetDecoyResults.getnTP();
-                        totalTP += targetDecoyResults.getnTPTotal();
-                    }
-                }
-            }
-            for (int charge : psmSpecificMap.getGroupedCharges()) {
-                TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, null);
+            for (TargetDecoyMap targetDecoyMap : psmSpecificMap.getTargetDecoyMaps()) {
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 nTP += targetDecoyResults.getnTP();
                 totalTP += targetDecoyResults.getnTPTotal();
