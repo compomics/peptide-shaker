@@ -41,8 +41,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            separated list or an entire folder.
                            Example: "file1.mgf, file2.mgf".
 
--identification_files      The identification files (X!Tandem .t.xml,
-                           MS-GF+ .mzid, OMSSA .omx and Mascot .dat files) 
+-identification_files      The identification files (X!Tandem .t.xml, MS-GF+ .mzid, 
+                           MS Amanda .cvs, OMSSA .omx and Mascot .dat files) 
                            in a comma separated list or an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
