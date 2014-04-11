@@ -7,6 +7,8 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.ions.ImmoniumIon;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.*;
 import static com.compomics.util.experiment.identification.Advocate.OMSSA;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -275,6 +278,10 @@ public class MzIdentMLExport {
         // write the AuditCollection details
         writeAuditCollection();
 
+        waitingHandler.setPrimaryProgressCounterIndeterminate(false);
+        waitingHandler.resetPrimaryProgressCounter();
+        waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences() + identification.getSpectrumIdentificationSize() * 3);
+
         // write the sequence collection
         writeSequenceCollection();
 
@@ -361,7 +368,7 @@ public class MzIdentMLExport {
         tabCounter++;
         br.write(getCurrentTabSpace() + "<Role>" + System.getProperty("line.separator"));
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001267", "software vendor", null));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001267", "software vendor", "CompOmics"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Role>" + System.getProperty("line.separator"));
         tabCounter--;
@@ -389,7 +396,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace() + "<Role>" + System.getProperty("line.separator"));
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001271", "researcher", null));// @TODO: add the provider role here!!
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001271", "researcher", null)); // @TODO: add the provider role here!!
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Role>" + System.getProperty("line.separator"));
 
@@ -434,10 +441,10 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace() + "<Organization name=\"PeptideShaker developers\" id=\"PS_DEV\">" + System.getProperty("line.separator")); // @TODO: add from user input
         tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "my_contact_name")); // @TODO: add ps details?
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "my_contact_address")); // @TODO: add ps details?
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", "my_contact_url")); // @TODO: add ps details?
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "my_contact_email")); // @TODO: add ps details?
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000586", "contact name", "PeptideShaker developers"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", "Proteomics Unit, Building for Basic Biology, University of Bergen, Jonas Liesvei 91, N-5009 Bergen, Norway"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", "http://peptide-shaker.googlecode.com"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", "peptide-shaker@googlegroups.com"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Organization>" + System.getProperty("line.separator"));
 
@@ -477,6 +484,12 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8")));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
+
+            waitingHandler.increasePrimaryProgressCounter();
+            
+            if (waitingHandler.isRunCanceled()) {
+                break;
+            }
         }
 
         iterator.close();
@@ -524,11 +537,24 @@ public class MzIdentMLExport {
                         tabCounter--;
                     }
 
+                    // add cv/user params
+                    // @TODO: ptm validation
+                    // @TODO: ptm localization scores across possible sites: PhosphoRS, A-score, d-score, ms-score
                     br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
                 }
 
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</Peptide>" + System.getProperty("line.separator"));
+
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    break;
+                }
+            }
+
+            if (waitingHandler.isRunCanceled()) {
+                break;
             }
         }
 
@@ -550,18 +576,6 @@ public class MzIdentMLExport {
                 // get all the possible parent proteins
                 ArrayList<String> possibleProteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
-                // @TODO: only use the retained proteins??
-//            List<String> retainedProteins = new ArrayList<String>();
-//            for (String proteinKey : identification.getProteinIdentification()) {
-//                for (String protein : possibleProteins) {
-//                    if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
-//                        retainedProteins.add(protein);
-//                        if (retainedProteins.size() == possibleProteins.size()) {
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
                 // iterate all the possible protein parents for each peptide
                 for (String tempProtein : possibleProteins) {
 
@@ -617,6 +631,16 @@ public class MzIdentMLExport {
                                 + "/>" + System.getProperty("line.separator"));
                     }
                 }
+
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    break;
+                }
+            }
+
+            if (waitingHandler.isRunCanceled()) {
+                break;
             }
         }
 
@@ -690,6 +714,7 @@ public class MzIdentMLExport {
                 + "name=\"fragment mass type mono\" />"
                 + System.getProperty("line.separator"));
 
+        // @TODO: list all search parameters from the SearchParameter object
         // @TODO: add more search parameters??
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AdditionalSearchParams>" + System.getProperty("line.separator"));
@@ -718,12 +743,11 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<SearchModification residues=\"" + aminoAcidsAtTarget + "\" massDelta=\"" + currentPtm.getMass()
                     + "\" fixedMod= \"" + searchParameters.getModificationProfile().getFixedModifications().contains(ptm) + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
-            
+
             // @TODO: add specificity rules?
 //            <SpecificityRules>
 //                    <cvParam accession="MS:1001189" cvRef="PSI-MS" name="modification specificity N-term"/>
 //                </SpecificityRules
-
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(ptm);
             if (cvTerm != null) {
                 writeCvTerm(cvTerm);
@@ -754,7 +778,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<EnzymeName>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001251\" " // @TODO: set the enzyme cv term!!
+                + "accession=\"MS:1001251\" " // @TODO: set the enzyme cv term!! // @TODO: map all enzymes...
                 + "cvRef=\"PSI-MS\" "
                 + "name=\"" + enzyme.getName() + "\" />"
                 + System.getProperty("line.separator"));
@@ -846,9 +870,15 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001494\" "
                 + "cvRef=\"PSI-MS\" "
-                + "name=\"no threshold\" />" // @TODO: set from the search results!!
+                + "name=\"no threshold\" />" // @TODO: set from the search results!! // @Marc...
                 + System.getProperty("line.separator"));
 
+        // @TODO: add one for protein (MS:1002369)
+        // one for peptide (MS:1001364) // add one for each ptm group
+        // one for psms (MS:1002350) // add one for each charge and file
+        // one for ptm scores, one per ptm per charge state per file
+        // same for confidence and fnr
+        // match quality thresholds?? some are per file
 //        br.write(getCurrentTabSpace() + "<cvParam "
 //                + "accession=\"MS:1002369\" "
 //                + "cvRef=\"PSI-MS\" "
@@ -908,6 +938,15 @@ public class MzIdentMLExport {
             // iterate the psms
             for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 writeSpectrumIdentificationResult(spectrumFileName, psmKey, ++psmCount);
+                waitingHandler.increasePrimaryProgressCounter();
+
+                if (waitingHandler.isRunCanceled()) {
+                    break;
+                }
+            }
+
+            if (waitingHandler.isRunCanceled()) {
+                break;
             }
         }
 
@@ -930,7 +969,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        // @TODO: annotate the protein groups
+        // @TODO: annotate the protein groups!!!
 //        <ProteinAmbiguityGroup id="PAG_hit_4" > # not always ambiguity in these groups...
 //            
 //            <ProteinDetectionHypothesis id="protein 1" passThreshold="true"> 
@@ -987,9 +1026,9 @@ public class MzIdentMLExport {
         String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
-                + "passThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" " // @TODO: is this correct??
-                + "rank=\"" + rank + "\" " 
-                + "peptide_ref=\"" + peptideIds.get(bestPeptideAssumption.getPeptide().getKey()) + "\" " 
+                + "passThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" "
+                + "rank=\"" + rank + "\" "
+                + "peptide_ref=\"" + peptideIds.get(bestPeptideAssumption.getPeptide().getKey()) + "\" "
                 + "calculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" "
                 + "experimentalMassToCharge=\"" + spectrumFactory.getPrecursor(psmKey).getMz() + "\" "
                 + "chargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" "
@@ -999,51 +1038,136 @@ public class MzIdentMLExport {
         // add the peptide evidence references
         // get all the possible parent proteins
         ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-
-        // @TODO: only use the retained proteins??
-//            List<String> retainedProteins = new ArrayList<String>();
-//            for (String proteinKey : identification.getProteinIdentification()) {
-//                for (String protein : possibleProteins) {
-//                    if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
-//                        retainedProteins.add(protein);
-//                        if (retainedProteins.size() == possibleProteins.size()) {
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
+        String peptideSequence = bestPeptideAssumption.getPeptide().getSequence();
 
         // iterate all the possible protein parents for each peptide
         for (String tempProtein : possibleProteins) {
 
             // get the start indexes and the surrounding 
             ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(tempProtein).getPeptideStart(
-                    bestPeptideAssumption.getPeptide().getSequence(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
             for (int start : peptideStarts) {
-                String pepEvidenceKey = tempProtein + "_" + start + "_" + (start + bestPeptideAssumption.getPeptide().getSequence().length() - 1)
-                        + "_" + bestPeptideAssumption.getPeptide().getKey();
+                String pepEvidenceKey = tempProtein + "_" + start + "_" + (start + peptideSequence.length() - 1) + "_" + bestPeptideAssumption.getPeptide().getKey();
                 String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey);
                 br.write(getCurrentTabSpace() + "<PeptideEvidenceRef peptideEvidence_ref=\"" + peptideEvidenceId + "\"/>" + System.getProperty("line.separator"));
             }
         }
 
         // add the fragment ion annotation
-//          br.write(getCurrentTabSpace() + "<Fragmentation>" + System.getProperty("line.separator")); // @TODO: add the fragment ion annotation
-//          tabCounter++;
-//          <IonType charge="3" index="7 21">
-//              <FragmentArray measure_ref="Measure_MZ" values="274.303 802.321"/>
-//              <FragmentArray measure_ref="Measure_Int" values="2.0 6.0"/>
-//              <FragmentArray measure_ref="Measure_Error" values="-0.176605 -0.035175"/>
-//              <cvParam accession="MS:1001229" cvRef="PSI-MS" name="frag: a ion"/>
-//          </IonType>
-//          ...
-//          tabCounter--;
-//          br.write(getCurrentTabSpace() + "</Fragmentation>" + System.getProperty("line.separator"));
-        // add cv and user params // @TODO: add cv and user params
-        // example:
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002356", "PSM-level combined FDRScore", String.valueOf(pSParameter.getPeptideConfidence()))); // @TODO: MS:1001143 (search engine specific score for peptides
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: MS:1001105 (peptide result details
+        int identificationCharge = bestPeptideAssumption.getIdentificationCharge().value;
+        annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
+
+        // get all the fragment ion annotations
+        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                annotationPreferences.getNeutralLosses(),
+                annotationPreferences.getValidatedCharges(),
+                identificationCharge,
+                spectrum, bestPeptideAssumption.getPeptide(),
+                spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                annotationPreferences.getFragmentIonAccuracy(), false,
+                annotationPreferences.isHighResolutionAnnotation());
+
+        // organize the fragment ions by ion type
+        HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
+
+        for (IonMatch ionMatch : annotations) {
+
+            if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
+                    || ionMatch.ion.getType() == IonType.IMMONIUM_ION) { // @TODO: add PRECURSOR_ION and REPORTER_ION
+//                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
+//                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
+
+                CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: replace by PSI-MS mappings...
+                Integer charge = ionMatch.charge.value;
+
+                if (fragmentIonTerm != null) {
+                    if (!allFragmentIons.containsKey(fragmentIonTerm.getName())) {
+                        allFragmentIons.put(fragmentIonTerm.getName(), new HashMap<Integer, ArrayList<IonMatch>>());
+                    }
+                    if (!allFragmentIons.get(fragmentIonTerm.getName()).containsKey(charge)) {
+                        allFragmentIons.get(fragmentIonTerm.getName()).put(charge, new ArrayList<IonMatch>());
+                    }
+                    allFragmentIons.get(fragmentIonTerm.getName()).get(charge).add(ionMatch);
+                }
+            }
+        }
+
+        if (!allFragmentIons.isEmpty()) {
+
+            br.write(getCurrentTabSpace() + "<Fragmentation>" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            // add the fragment ions
+            Iterator<String> fragmentTypeIterator = allFragmentIons.keySet().iterator();
+
+            while (fragmentTypeIterator.hasNext()) {
+
+                String fragmentType = fragmentTypeIterator.next();
+                Iterator<Integer> chargeTypeIterator = allFragmentIons.get(fragmentType).keySet().iterator();
+
+                while (chargeTypeIterator.hasNext()) {
+
+                    Integer fragmentCharge = chargeTypeIterator.next();
+                    ArrayList<IonMatch> ionMatches = allFragmentIons.get(fragmentType).get(fragmentCharge);
+                    CvTerm fragmentIonTerm = ionMatches.get(0).ion.getPrideCvTerm();
+
+                    String indexes = "";
+                    String mzValues = "";
+                    String intensityValues = "";
+                    String errorValues = "";
+
+                    // get the fragment ion details
+                    for (IonMatch ionMatch : ionMatches) {
+
+                        if (ionMatch.ion instanceof PeptideFragmentIon) {
+                            indexes += ((PeptideFragmentIon) ionMatch.ion).getNumber() + " ";
+                        } else if (ionMatch.ion instanceof ImmoniumIon) {
+                            char residue = ImmoniumIon.getResidue(((ImmoniumIon) ionMatch.ion).getSubType());
+                            char[] peptideAsArray = peptideSequence.toCharArray();
+                            for (int i = 0; i < peptideAsArray.length; i++) {
+                                if (peptideAsArray[i] == residue) {
+                                    indexes += (i + 1) + " ";
+                                }
+                            }
+                        } else {
+                            // not yet implemented...
+                        }
+
+                        mzValues += ionMatch.peak.mz + " ";
+                        intensityValues += ionMatch.peak.intensity + " ";
+                        errorValues += ionMatch.getAbsoluteError() + " ";
+                    }
+
+                    br.write(getCurrentTabSpace() + "<IonType charge=\"" + fragmentCharge + "\" index=\"" + indexes.trim() + "\">" + System.getProperty("line.separator"));
+                    tabCounter++;
+
+                    br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues + "\"/>" + System.getProperty("line.separator"));
+
+                    writeCvTerm(new CvTerm(fragmentIonTerm.getOntology(), fragmentIonTerm.getAccession(), fragmentIonTerm.getName(), null));
+
+                    tabCounter--;
+                    br.write(getCurrentTabSpace() + "</IonType>" + System.getProperty("line.separator"));
+                }
+            }
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</Fragmentation>" + System.getProperty("line.separator"));
+        }
+
+        // add cv and user params
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: MS:1001105 - peptide result details
+
+        // @TODO: 
+        // add cv params for:
+        // for combined results: add: PS score and confidence //@TODO: MS:1001143
+        // for individual results: SE score and PS confidence for the given search engine //@TODO: MS:1001143
+        // @TODO: 
+        // add user params:
+        // validation level information
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationItem>" + System.getProperty("line.separator"));
 
@@ -1129,7 +1253,7 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
                     break;
                 default:
-                    br.write(getCurrentTabSpace() + "<userParam name=\"Unknown\"/>"); // @TODO: add cv term
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Unknown\"/>"); // @TODO: add cv term?
                     break;
             }
 
@@ -1173,7 +1297,7 @@ public class MzIdentMLExport {
 
             br.write(getCurrentTabSpace() + "<SpectrumIDFormat>" + System.getProperty("line.separator"));
             tabCounter++;
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1000774", "multiple peak list nativeID format", null)); // @TODO: not sure about this one...
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1000774", "multiple peak list nativeID format", null));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SpectrumIDFormat>" + System.getProperty("line.separator"));
 

@@ -37,12 +37,12 @@ public class InputMap implements Serializable {
     private ArrayList<AssumptionFilter> doubtfulMatchesFilters = getDefaultAssumptionFilters();
     /**
      * Map of the search engine contribution. Advocate Id -> Spectrum file name
-     * -> number of validated hits
+     * -> number of validated hits.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateContribution;
     /**
      * Map of the search engine contribution. Advocate Id -> Spectrum file name
-     * -> number of validated hits found by this advocate only
+     * -> number of validated hits found by this advocate only.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateUniqueContribution;
 
@@ -281,7 +281,7 @@ public class InputMap implements Serializable {
     }
 
     /**
-     * resets the advocate contribution mappings for the given file
+     * Resets the advocate contribution mappings for the given file.
      *
      * @param fileName the file of interest
      */
@@ -303,7 +303,7 @@ public class InputMap implements Serializable {
     }
 
     /**
-     * resets the advocate contribution mappings
+     * Resets the advocate contribution mappings.
      */
     public void resetAdvocateContributions() {
         if (advocateContribution == null) {
@@ -319,7 +319,7 @@ public class InputMap implements Serializable {
     }
 
     /**
-     * Adds an advocate contribution
+     * Adds an advocate contribution.
      *
      * @param advocateId the index of the advocate
      * @param fileName the name of the spectrum file of interest
@@ -432,10 +432,10 @@ public class InputMap implements Serializable {
         }
         return 0;
     }
-    
+
     /**
      * Returns a list of all target decoy maps contained in this mapping.
-     * 
+     *
      * @return all target decoy maps contained in this mapping
      */
     public ArrayList<TargetDecoyMap> getTargetDecoyMaps() {
@@ -445,11 +445,12 @@ public class InputMap implements Serializable {
         }
         return result;
     }
-    
+
     /**
      * Indicates whether the advocate contributions are present in this map.
-     * 
-     * @return a boolean indicating whether the advocate contributions are present in this map
+     *
+     * @return a boolean indicating whether the advocate contributions are
+     * present in this map
      */
     public boolean hasAdvocateContribution() {
         return advocateContribution != null;

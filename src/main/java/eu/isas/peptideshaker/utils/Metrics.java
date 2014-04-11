@@ -14,29 +14,28 @@ import java.util.HashMap;
 public class Metrics implements Serializable {
 
     // @TODO Merge with the IdentificationFeaturesCache.
-    
     /**
      * Serial number for versions compatibility.
      */
     static final long serialVersionUID = 5905881057533649517L;
     /**
-     * The maximal peptide precursor error in Da in all PSMs (only the best peptide hit per
-     * spectrum).
+     * The maximal peptide precursor error in Da in all PSMs (only the best
+     * peptide hit per spectrum).
      */
     private double maxPrecursorErrorDa = 0;
     /**
-     * The maximal peptide precursor error in ppm in all PSMs (only the best peptide hit per
-     * spectrum).
+     * The maximal peptide precursor error in ppm in all PSMs (only the best
+     * peptide hit per spectrum).
      */
     private double maxPrecursorErrorPpm = 0;
     /**
-     * The maximal tag precursor error in Da in all PSMs (only the best tag hit per
-     * spectrum when no peptide is found).
+     * The maximal tag precursor error in Da in all PSMs (only the best tag hit
+     * per spectrum when no peptide is found).
      */
     private double maxTagPrecursorErrorDa = 0;
     /**
-     * The maximal tag precursor error in ppm in all PSMs (only the best tag hit per
-     * spectrum when no peptide is found).
+     * The maximal tag precursor error in ppm in all PSMs (only the best tag hit
+     * per spectrum when no peptide is found).
      */
     private double maxTagPrecursorErrorPpm = 0;
     /**
@@ -113,7 +112,7 @@ public class Metrics implements Serializable {
      */
     private Double maxProteinSummedPrecursorIntensity = null;
     /**
-     * The distribution of peptide validated lengths
+     * The distribution of peptide validated lengths.
      */
     private NonSymmetricalNormalDistribution peptideLengthDistribution = null;
 
@@ -188,7 +187,8 @@ public class Metrics implements Serializable {
     /**
      * Set the max peptide precursor mass error in ppm.
      *
-     * @param maxPeptidePrecursorErrorPpm the max peptide precursor mass error in ppm
+     * @param maxPeptidePrecursorErrorPpm the max peptide precursor mass error
+     * in ppm
      */
     public void setMaxPeptidePrecursorErrorPpm(double maxPeptidePrecursorErrorPpm) {
         this.maxPrecursorErrorPpm = maxPeptidePrecursorErrorPpm;
@@ -575,7 +575,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the distribution of validated peptide lengths. Null if not set.
-     * 
+     *
      * @return the distribution of validated peptide lengths
      */
     public NonSymmetricalNormalDistribution getPeptideLengthDistribution() {
@@ -584,11 +584,11 @@ public class Metrics implements Serializable {
 
     /**
      * Sets the distribution of validated peptide lengths.
-     * @param peptideLengthDistribution the distribution of validated peptide lengths
+     *
+     * @param peptideLengthDistribution the distribution of validated peptide
+     * lengths
      */
     public void setPeptideLengthDistribution(NonSymmetricalNormalDistribution peptideLengthDistribution) {
         this.peptideLengthDistribution = peptideLengthDistribution;
     }
-    
-    
 }

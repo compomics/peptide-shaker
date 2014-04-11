@@ -2287,7 +2287,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     eu.isas.peptideshaker.scoring.InputMap inputMap = pSMaps.getInputMap();
- //                   if (inputMap == null || !inputMap.hasAdvocateContribution()) { Enable this to use preloaded data
+                    //                   if (inputMap == null || !inputMap.hasAdvocateContribution()) { Enable this to use preloaded data
                     if (true) {
                         // Backward compatibility
                         loadDataFromIdentification();
@@ -2357,7 +2357,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Loads the tab content from the identification
+     * Loads the tab content from the identification.
      *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
@@ -2538,7 +2538,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             // update the id software performance plots
             updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
-
         }
     }
 
