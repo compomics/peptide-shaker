@@ -187,6 +187,10 @@ public class MzIdentMLExport {
      * The peptide IDs.
      */
     private HashMap<String, String> peptideIds = new HashMap<String, String>();
+    /**
+     * The spectrum IDs.
+     */
+    private HashMap<String, String> spectrumIds = new HashMap<String, String>();
 
     /**
      * Constructor.
@@ -280,7 +284,7 @@ public class MzIdentMLExport {
 
         waitingHandler.setPrimaryProgressCounterIndeterminate(false);
         waitingHandler.resetPrimaryProgressCounter();
-        waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences() + identification.getSpectrumIdentificationSize() * 3);
+        waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences() + identification.getSpectrumIdentificationSize() * 3 + identification.getProteinIdentification().size());
 
         // write the sequence collection
         writeSequenceCollection();
@@ -486,7 +490,7 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
 
             waitingHandler.increasePrimaryProgressCounter();
-            
+
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
@@ -964,39 +968,83 @@ public class MzIdentMLExport {
      *
      * @throws IOException
      */
-    private void writeProteinDetectionList() throws IOException {
+    private void writeProteinDetectionList() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        // @TODO: annotate the protein groups!!!
-//        <ProteinAmbiguityGroup id="PAG_hit_4" > # not always ambiguity in these groups...
-//            
-//            <ProteinDetectionHypothesis id="protein 1" passThreshold="true"> 
-//                
-//                <PeptideHypothesis peptideEvidence_ref="peptide a(1)"> #maps to protein 1
-//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_1" />
-//                </PeptideHypothesis>
-//
-//            </ProteinDetectionHypothesis>
-//            
-//            <ProteinDetectionHypothesis id="protein 2" passThreshold="true"> 
-//
-//                <PeptideHypothesis peptideEvidence_ref="peptide a(2)"> #maps to protein 2
-//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_2" />
-//                </PeptideHypothesis>
-//
-//            </ProteinDetectionHypothesis>
-//            
-//            <ProteinDetectionHypothesis id="protein 3" passThreshold="true"> ?
-//
-//                <PeptideHypothesis peptideEvidence_ref="peptide a(3)"> #maps to protein 3
-//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_3" />
-//                </PeptideHypothesis>
-//                
-//            </ProteinDetectionHypothesis>
-//            
-//        </ProteinAmbiguityGroup>
+        identification.loadPeptideMatches(null);
+
+        for (int i = 0; i < identification.getProteinIdentification().size(); i++) {
+
+            String proteinGroupKey = identification.getProteinIdentification().get(i);
+            String proteinGroupId = "PAG_" + (i + 1);
+
+            br.write(getCurrentTabSpace() + "<ProteinAmbiguityGroup id=\"" + proteinGroupId + "\">" + System.getProperty("line.separator"));
+            tabCounter++;
+
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinGroupKey);
+            PSParameter psParameter = (PSParameter) identification.getProteinMatchParameter(proteinGroupKey, new PSParameter());
+
+            for (int j = 0; j < proteinMatch.getTheoreticProteinsAccessions().size(); j++) {
+
+                String accession = proteinMatch.getTheoreticProteinsAccessions().get(j);
+
+                if (identification.matchExists(accession)) { // @TODO: how can this happen..? // @TODO: can result in empty protein groups...
+
+                    br.write(getCurrentTabSpace() + "<ProteinDetectionHypothesis id=\"" + proteinGroupId + "_" + (j + 1) + "\" dBSequence_ref=\"" + accession
+                            + "\" passThreshold=\"" + psParameter.getMatchValidationLevel().isValidated() + "\">" + System.getProperty("line.separator")); // @TODO: what does validated mean here?
+                    tabCounter++;
+
+                    ArrayList<String> peptideMatches = identification.getProteinMatch(accession).getPeptideMatches();
+                    //identification.loadPeptideMatches(peptideMatches, null);
+
+                    for (String peptideKey : peptideMatches) {
+
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+
+                        ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
+                                peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+
+                        for (int start : peptideStarts) {
+                            String pepEvidenceKey = accession + "_" + start + "_" + (start + peptideSequence.length() - 1) + "_" + peptideKey;
+                            String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey); // @TODO: how can this be null???
+
+                            if (peptideEvidenceId != null) {
+
+                                br.write(getCurrentTabSpace() + "<PeptideHypothesis peptideEvidence_ref=\"" + peptideEvidenceId + "\">" + System.getProperty("line.separator"));
+                                tabCounter++;
+
+                                for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                    br.write(getCurrentTabSpace() + "<SpectrumIdentificationItemRef spectrumIdentificationItem_ref=\"" + spectrumIds.get(spectrumKey) + "\"/>" + System.getProperty("line.separator"));
+                                }
+
+                                tabCounter--;
+                                br.write(getCurrentTabSpace() + "</PeptideHypothesis>" + System.getProperty("line.separator"));
+                            }
+                        }
+                    }
+
+                    // add cv terms
+//                          <cvParam accession="MS:1001171" name="Mascot:score" cvRef="PSI-MS" value="104.854382332144"/>
+//                          <cvParam accession="MS:1001093" name="sequence coverage" cvRef="PSI-MS" value="4"/> // The percent coverage for the protein based upon the matched peptide sequences (can be calculated).
+//                          <cvParam accession="MS:1001097" name="distinct peptide sequences" cvRef="PSI-MS" value="2"/> // This counts distinct sequences hitting the protein without regard to a minimal confidence threshold.
+                    tabCounter--;
+                    br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
+                }
+            }
+
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</ProteinAmbiguityGroup>" + System.getProperty("line.separator"));
+
+            waitingHandler.increasePrimaryProgressCounter();
+
+            if (waitingHandler.isRunCanceled()) {
+                break;
+            }
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));
     }
@@ -1024,6 +1072,7 @@ public class MzIdentMLExport {
         PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
         int rank = 1; // @TODO: should not be hardcoded?
         String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
+        spectrumIds.put(psmKey, spectrumIdentificationItemKey);
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
                 + "passThreshold=\"" + pSParameter.getMatchValidationLevel().isValidated() + "\" "
@@ -1043,7 +1092,7 @@ public class MzIdentMLExport {
         // iterate all the possible protein parents for each peptide
         for (String tempProtein : possibleProteins) {
 
-            // get the start indexes and the surrounding 
+            // get the start indexes and the surrounding amino acids
             ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(tempProtein).getPeptideStart(
                     peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
@@ -1145,7 +1194,7 @@ public class MzIdentMLExport {
 
                     br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_MZ\" values=\"" + mzValues.trim() + "\"/>" + System.getProperty("line.separator"));
                     br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Int\" values=\"" + intensityValues.trim() + "\"/>" + System.getProperty("line.separator"));
-                    br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues + "\"/>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<FragmentArray measure_ref=\"Measure_Error\" values=\"" + errorValues.trim() + "\"/>" + System.getProperty("line.separator"));
 
                     writeCvTerm(new CvTerm(fragmentIonTerm.getOntology(), fragmentIonTerm.getAccession(), fragmentIonTerm.getName(), null));
 
