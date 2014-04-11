@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.28.0 (April 11. 2014):*
+
+ * NEW FEATURE: Added support for MS Amanda (beta). 
+
+ * FEATURE IMPROVEMENT: The PSM scoring now adapts to the different fractions when possible.
+
+ * BUG FIX: Fixed problems with creating terminal PTMs with empty modification patterns.
+ * BUG FIX: Fixed a bug in the table model in the Modifications tab.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.26.14.
+
+----
+
 *Changes in PeptideShaker 0.27.4 (April 1. 2014):*
 
  * BUG FIX: Fixed a bug in the PRIDE export where the PRIDE XML validation failed.
