@@ -3043,7 +3043,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         }
                     }
                 } else {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "PSMs"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt, "PSMs"});
                 }
 
                 if (groupSelectionTable.getRowCount()

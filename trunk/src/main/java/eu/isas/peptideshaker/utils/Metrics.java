@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,6 +112,10 @@ public class Metrics implements Serializable {
      * The maximum protein summed precursor intensity.
      */
     private Double maxProteinSummedPrecursorIntensity = null;
+    /**
+     * The distribution of peptide validated lengths
+     */
+    private NonSymmetricalNormalDistribution peptideLengthDistribution = null;
 
     /**
      * Constructor.
@@ -567,4 +572,23 @@ public class Metrics implements Serializable {
     public void setMaxProteinSummedPrecursorIntensity(Double maxProteinSummedPrecursorIntensity) {
         this.maxProteinSummedPrecursorIntensity = maxProteinSummedPrecursorIntensity;
     }
+
+    /**
+     * Returns the distribution of validated peptide lengths. Null if not set.
+     * 
+     * @return the distribution of validated peptide lengths
+     */
+    public NonSymmetricalNormalDistribution getPeptideLengthDistribution() {
+        return peptideLengthDistribution;
+    }
+
+    /**
+     * Sets the distribution of validated peptide lengths.
+     * @param peptideLengthDistribution the distribution of validated peptide lengths
+     */
+    public void setPeptideLengthDistribution(NonSymmetricalNormalDistribution peptideLengthDistribution) {
+        this.peptideLengthDistribution = peptideLengthDistribution;
+    }
+    
+    
 }

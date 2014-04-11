@@ -417,9 +417,9 @@ public class PeptideShaker {
         if (processingPreferences.getPsmFDR() == 1
                 && processingPreferences.getPeptideFDR() == 1
                 && processingPreferences.getProteinFDR() == 1) {
-            waitingHandler.appendReport("Validating identifications at 1% FDR.", true, true);
+            waitingHandler.appendReport("Validating identifications at 1% FDR, quality control of matches.", true, true);
         } else {
-            waitingHandler.appendReport("Validating identifications.", true, true);
+            waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
         }
         fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(),
                 processingPreferences.getProteinFDR(), searchParameters, annotationPreferences, identificationFeaturesGenerator, inputMap);
@@ -583,7 +583,8 @@ public class PeptideShaker {
         currentResults.setFdrLimit(aProteinFDR);
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
-        ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps();
+        ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps(),
+                inputMaps = inputMap.getTargetDecoyMaps();
 
         int max = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -615,22 +616,21 @@ public class PeptideShaker {
             currentResults.setClassicalEstimators(true);
             currentResults.setClassicalValidation(true);
             currentResults.setFdrLimit(aPSMFDR);
-            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+            targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
-        for (int mapKey : inputMap.getInputAlgorithms()) {
+        for (TargetDecoyMap targetDecoyMap : inputMaps) {
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
             waitingHandler.increaseSecondaryProgressCounter();
-            currentMap = inputMap.getTargetDecoyMap(mapKey);
-            currentResults = currentMap.getTargetDecoyResults();
+            currentResults = targetDecoyMap.getTargetDecoyResults();
             currentResults.setInputType(1);
             currentResults.setUserInput(aPSMFDR);
             currentResults.setClassicalEstimators(true);
             currentResults.setClassicalValidation(true);
             currentResults.setFdrLimit(aPSMFDR);
-            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+            targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -733,6 +733,9 @@ public class PeptideShaker {
         }
 
         // validate the spectrum matches
+        if (inputMap != null) {
+            inputMap.resetAdvocateContributions();
+        }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
@@ -745,11 +748,12 @@ public class PeptideShaker {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.getMatchValidationLevel().isValidated()) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                    if (peptideAssumption != null) {
                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                        double precursorMzError = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                        double precursorMzError = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                         precursorMzDeviations.add(precursorMzError);
-                        Integer charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        Integer charge = peptideAssumption.getIdentificationCharge().value;
                         if (!charges.contains(charge)) {
                             charges.add(charge);
                             PsmFilter psmFilter = new PsmFilter(">30% Fragment Ion Sequence Coverage");
@@ -757,6 +761,26 @@ public class PeptideShaker {
                             psmFilter.setSequenceCoverage(30.0);
                             psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
                             psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
+                        }
+                        if (inputMap != null) {
+                            Peptide bestPeptide = peptideAssumption.getPeptide();
+                            ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+                            for (int advocateId : spectrumMatch.getAdvocates()) {
+                                for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
+                                    if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                                        Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
+                                        if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                            agreementAdvocates.add(advocateId);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            boolean unique = agreementAdvocates.size() == 1;
+                            for (int advocateId : agreementAdvocates) {
+                                inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
+                            }
+                            inputMap.addAdvocateContribution(Advocate.PeptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                         }
                     }
                 }
@@ -821,10 +845,42 @@ public class PeptideShaker {
                 }
 
                 if (needSecondPass) {
+
+                    if (inputMap != null) {
+                        inputMap.resetAdvocateContributions(spectrumFileName);
+                    }
+
                     for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
 
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                            if (peptideAssumption != null) {
+                                if (inputMap != null) {
+                                    Peptide bestPeptide = peptideAssumption.getPeptide();
+                                    ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+                                    for (int advocateId : spectrumMatch.getAdvocates()) {
+                                        for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
+                                            if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                                                Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
+                                                if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                                    agreementAdvocates.add(advocateId);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    boolean unique = agreementAdvocates.size() == 1;
+                                    for (int advocateId : agreementAdvocates) {
+                                        inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
+                                    }
+                                    inputMap.addAdvocateContribution(Advocate.PeptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                                }
+                            }
+                        }
                         if (waitingHandler != null) {
                             waitingHandler.increaseSecondaryProgressCounter();
                             if (waitingHandler.isRunCanceled()) {
@@ -842,6 +898,7 @@ public class PeptideShaker {
 
         identification.loadPeptideMatches(null);
         identification.loadPeptideMatchParameters(new PSParameter(), null);
+        ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
 
@@ -849,6 +906,12 @@ public class PeptideShaker {
 
             // set the fraction details
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+
+            if (psParameter.getMatchValidationLevel().isValidated()) {
+                double length = Peptide.getSequence(peptideKey).length();
+                validatedPeptideLengths.add(length);
+            }
+
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>();
@@ -909,6 +972,10 @@ public class PeptideShaker {
                     return;
                 }
             }
+        }
+        if (validatedPeptideLengths.size() >= 100) {
+            NonSymmetricalNormalDistribution lengthDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(validatedPeptideLengths);
+            metrics.setPeptideLengthDistribution(lengthDistribution);
         }
 
         // validate the proteins
