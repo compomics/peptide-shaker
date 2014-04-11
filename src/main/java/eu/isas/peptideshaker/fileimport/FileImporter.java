@@ -1062,7 +1062,7 @@ public class FileImporter {
                                                 }
                                             }
                                         }
-                                        inputMap.addEntry(advocateId, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
+                                        inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
                                         identification.addSpectrumMatch(match, false); //@TODO: adapt to the different scores
                                         nRetained++;
                                         break;

@@ -59,7 +59,11 @@ import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -92,7 +96,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * The Venn diagram advocate colors.
      */
-    private HashMap<Advocate, Color> advocateVennColors;
+    private HashMap<Integer, Color> advocateVennColors;
     /**
      * The progress dialog.
      */
@@ -189,7 +193,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * The advocates used.
      */
-    private ArrayList<Advocate> advocatesUsed;
+    private ArrayList<Integer> advocatesUsed;
     /**
      * The search engine color map.
      */
@@ -243,13 +247,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.DirecTag.getIndex(), new java.awt.Color(189, 183, 107));
 
         // the venn diagram colors
-        advocateVennColors = new HashMap<Advocate, Color>();
-        advocateVennColors.put(Advocate.XTandem, Color.PALETURQUOISE);
-        advocateVennColors.put(Advocate.OMSSA, Color.MEDIUMSLATEBLUE);
-        advocateVennColors.put(Advocate.Mascot, Color.PINK);
-        advocateVennColors.put(Advocate.MSGF, Color.INDIANRED);
-        advocateVennColors.put(Advocate.msAmanda, Color.THISTLE);
-        advocateVennColors.put(Advocate.DirecTag, Color.DARKKHAKI);
+        advocateVennColors = new HashMap<Integer, Color>();
+        advocateVennColors.put(Advocate.XTandem.getIndex(), Color.PALETURQUOISE);
+        advocateVennColors.put(Advocate.OMSSA.getIndex(), Color.MEDIUMSLATEBLUE);
+        advocateVennColors.put(Advocate.Mascot.getIndex(), Color.PINK);
+        advocateVennColors.put(Advocate.MSGF.getIndex(), Color.INDIANRED);
+        advocateVennColors.put(Advocate.msAmanda.getIndex(), Color.THISTLE);
+        advocateVennColors.put(Advocate.DirecTag.getIndex(), Color.DARKKHAKI);
     }
 
     /**
@@ -2268,7 +2272,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 try {
                     identification = peptideShakerGUI.getIdentification();
 
-                    // now we have data and can update the jsparklines depending on this
                     spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                             (double) ((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
                     spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
@@ -2281,6 +2284,39 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
                     ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
+                    PSMaps pSMaps = new PSMaps();
+                    pSMaps = (PSMaps) identification.getUrParam(pSMaps);
+                    eu.isas.peptideshaker.scoring.InputMap inputMap = pSMaps.getInputMap();
+ //                   if (inputMap == null || !inputMap.hasAdvocateContribution()) { Enable this to use preloaded data
+                    if (true) {
+                        // Backward compatibility
+                        loadDataFromIdentification();
+                    } else {
+                        advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithms());
+                        ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
+                        numberOfValidatedPsmsMap = new HashMap<String, Integer>();
+                        for (String fileName : spectrumFileNames) {
+                            numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.PeptideShaker.getIndex(), fileName));
+                        }
+                        updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
+                    }
+
+                    // update the advocates color legend
+                    ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<Integer>();
+                    usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
+                    usedAdvocatedAndPeptideShaker.add(Advocate.PeptideShaker.getIndex());
+                    String colorLegend = "<html>";
+                    for (int tempAdvocate : usedAdvocatedAndPeptideShaker) {
+                        colorLegend += "<font color=\"rgb(" + searchEnginesColorMap.get(tempAdvocate).getRed() + ","
+                                + searchEnginesColorMap.get(tempAdvocate).getGreen() + ","
+                                + searchEnginesColorMap.get(tempAdvocate).getBlue() + ")\">&#9632;</font> "
+                                + Advocate.getAdvocate(tempAdvocate).getName() + " &nbsp;";
+                    }
+                    colorLegend += "</html>";
+                    colorLegendLabel.setText(colorLegend);
+
+                    showSparkLines(peptideShakerGUI.showSparklines());
+                    progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
                     ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                     String[] filesArray = new String[spectrumFileNames.size()];
                     int cpt = 0;
@@ -2288,211 +2324,21 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     for (String tempName : spectrumFileNames) {
                         filesArray[cpt++] = tempName;
                     }
+                    fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
-                    progressDialog.setValue(0);
+                    // update the slider tooltips
+                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
-                    // get the list of id software used
-                    IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance(); // @TODO: this should be done when the files are loaded?
-                    ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
-                    advocatesUsed = new ArrayList<Advocate>();
+                    //formComponentResized(null);
+                    // enable the contextual export options
+                    exportIdPerformancePerformanceJButton.setEnabled(true);
+                    exportSpectrumSelectionJButton.setEnabled(true);
+                    exportSpectrumJButton.setEnabled(true);
+                    exportPsmsJButton.setEnabled(true);
 
-                    for (int i = 0; i < idFiles.size(); i++) {
-                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.OMSSA.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.OMSSA)) {
-                                advocatesUsed.add(Advocate.OMSSA);
-                            }
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.XTandem.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.XTandem)) {
-                                advocatesUsed.add(Advocate.XTandem);
-                            }
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.Mascot.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.Mascot)) {
-                                advocatesUsed.add(Advocate.Mascot);
-                            }
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.MSGF.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.MSGF)) {
-                                advocatesUsed.add(Advocate.MSGF);
-                            }
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.msAmanda.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.msAmanda)) {
-                                advocatesUsed.add(Advocate.msAmanda);
-                            }
-                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.DirecTag.getIndex()) {
-                            if (!advocatesUsed.contains(Advocate.DirecTag)) {
-                                advocatesUsed.add(Advocate.DirecTag);
-                            }
-                        }
-                    }
-
-                    // order the advocates to have the same order is in the overview plots
-                    Collections.sort(advocatesUsed);
-
-                    // update the advocates color legend
-                    ArrayList<Advocate> usedAdvocatedAndPeptideShaker = new ArrayList<Advocate>();
-                    usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
-                    usedAdvocatedAndPeptideShaker.add(Advocate.PeptideShaker);
-                    String colorLegend = "<html>";
-                    for (Advocate tempAdvocate : usedAdvocatedAndPeptideShaker) {
-                        colorLegend += "<font color=\"rgb(" + searchEnginesColorMap.get(tempAdvocate.getIndex()).getRed() + ","
-                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getGreen() + ","
-                                + searchEnginesColorMap.get(tempAdvocate.getIndex()).getBlue() + ")\">&#9632;</font> "
-                                + tempAdvocate.getName() + " &nbsp;";
-                    }
-                    colorLegend += "</html>";
-                    colorLegendLabel.setText(colorLegend);
-
-                    HashMap<Advocate, Double> totalAdvocateId = new HashMap<Advocate, Double>();
-                    HashMap<Advocate, Double> uniqueAdvocateId = new HashMap<Advocate, Double>();
-
-                    for (Advocate tempAdvocate : advocatesUsed) {
-                        totalAdvocateId.put(tempAdvocate, 0.0);
-                        uniqueAdvocateId.put(tempAdvocate, 0.0);
-                    }
-
-                    int dataA = 0, dataB = 0, dataC = 0, dataAB = 0, dataAC = 0, dataBC = 0, dataABC = 0;
-                    int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
-
-                    // venn diagram data
-                    ArrayList<Advocate> vennDiagramAdvocates = new ArrayList<Advocate>(); // @TODO: should be possible to change by the user...
-                    for (int i = 0; i < advocatesUsed.size() && i < 3; i++) {
-                        vennDiagramAdvocates.add(advocatesUsed.get(i));
-                    }
-
-                    int fileCounter = 1;
-                    PSParameter probabilities = new PSParameter();
-
-                    numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-
-                    for (String fileName : filesArray) {
-
-                        int numberOfValidatedPsms = 0;
-                        totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
-
-                        progressDialog.setTitle("Loading Spectrum Information. Please Wait... (" + fileCounter + "/" + filesArray.length + ")");
-                        identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
-                        progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + fileCounter + "/" + filesArray.length + ")");
-                        identification.loadSpectrumMatches(fileName, progressDialog);
-                        progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + filesArray.length + ") ");
-
-                        for (String spectrumKey : identification.getSpectrumIdentification(fileName)) {
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-
-                            if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                ArrayList<Advocate> currentAdvocates = new ArrayList<Advocate>();
-                                probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
-
-                                if (probabilities.getMatchValidationLevel().isValidated()) {
-
-                                    totalPeptideShakerIds++;
-                                    numberOfValidatedPsms++;
-
-                                    for (Advocate tempAdvocate : advocatesUsed) {
-                                        if (spectrumMatch.getFirstHit(tempAdvocate.getIndex()) != null) {
-                                            SpectrumIdentificationAssumption firstHit = spectrumMatch.getFirstHit(tempAdvocate.getIndex());
-                                            if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                                    PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
-                                                currentAdvocates.add(tempAdvocate);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // get the venn diagram data
-                                if (vennDiagramAdvocates.size() == 3) {
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0))
-                                            && currentAdvocates.contains(vennDiagramAdvocates.get(1))
-                                            && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                                        dataABC++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                                        dataAB++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                                        dataAC++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(1)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                                        dataBC++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
-                                        dataA++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                                        dataB++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                                        dataC++;
-                                    }
-                                } else if (vennDiagramAdvocates.size() == 2) {
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                                        dataAB++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
-                                        dataA++;
-                                    }
-                                    if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                                        dataB++;
-                                    }
-                                }
-
-                                // overview plot data
-                                for (Advocate tempAdvocate : advocatesUsed) {
-                                    if (currentAdvocates.contains(tempAdvocate)) {
-                                        totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
-
-                                        if (currentAdvocates.size() == 1) {
-                                            uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
-                                        }
-                                    }
-                                }
-
-                                progressDialog.increasePrimaryProgressCounter();
-                            }
-                        }
-
-                        numberOfValidatedPsmsMap.put(fileName, numberOfValidatedPsms);
-                    }
-
-                    if (!progressDialog.isRunCanceled()) {
-
-                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                        progressDialog.setTitle("Updating Tables. Please Wait...");
-
-                        // update the venn diagram
-                        updateVennDiagram(dataA, dataB, dataC,
-                                dataAB, dataAC, dataBC, dataABC,
-                                vennDiagramAdvocates);
-
-                        // add the peptide shaker results
-                        totalAdvocateId.put(Advocate.PeptideShaker, (double) totalPeptideShakerIds);
-                        uniqueAdvocateId.put(Advocate.PeptideShaker, 0.0);
-
-                        // update the id software performance plots
-                        updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
-
-                        showSparkLines(peptideShakerGUI.showSparklines());
-                        progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-                        fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
-
-                        // update the slider tooltips
-                        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-                        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
-                        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-
-                        //formComponentResized(null);
-                        // enable the contextual export options
-                        exportIdPerformancePerformanceJButton.setEnabled(true);
-                        exportSpectrumSelectionJButton.setEnabled(true);
-                        exportSpectrumJButton.setEnabled(true);
-                        exportPsmsJButton.setEnabled(true);
-
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, true);
-                    }
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, true);
 
                     boolean processCancelled = progressDialog.isRunCanceled();
 
@@ -2508,6 +2354,192 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
         }.start();
+    }
+
+    /**
+     * Loads the tab content from the identification
+     *
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
+     */
+    public void loadDataFromIdentification() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
+        progressDialog.setValue(0);
+
+        // get the list of id software used
+        IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+        ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
+        advocatesUsed = new ArrayList<Integer>();
+
+        for (int i = 0; i < idFiles.size(); i++) {
+            if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.OMSSA.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.OMSSA.getIndex())) {
+                    advocatesUsed.add(Advocate.OMSSA.getIndex());
+                }
+            } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.XTandem.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.XTandem.getIndex())) {
+                    advocatesUsed.add(Advocate.XTandem.getIndex());
+                }
+            } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.Mascot.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.Mascot.getIndex())) {
+                    advocatesUsed.add(Advocate.Mascot.getIndex());
+                }
+            } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.MSGF.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.MSGF.getIndex())) {
+                    advocatesUsed.add(Advocate.MSGF.getIndex());
+                }
+            } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.msAmanda.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.msAmanda.getIndex())) {
+                    advocatesUsed.add(Advocate.msAmanda.getIndex());
+                }
+            } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == Advocate.DirecTag.getIndex()) {
+                if (!advocatesUsed.contains(Advocate.DirecTag.getIndex())) {
+                    advocatesUsed.add(Advocate.DirecTag.getIndex());
+                }
+            }
+        }
+
+        // order the advocates to have the same order is in the overview plots
+        Collections.sort(advocatesUsed);
+
+        HashMap<Integer, Double> totalAdvocateId = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> uniqueAdvocateId = new HashMap<Integer, Double>();
+
+        for (int tempAdvocate : advocatesUsed) {
+            totalAdvocateId.put(tempAdvocate, 0.0);
+            uniqueAdvocateId.put(tempAdvocate, 0.0);
+        }
+
+        int dataA = 0, dataB = 0, dataC = 0, dataAB = 0, dataAC = 0, dataBC = 0, dataABC = 0;
+        int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
+
+        // venn diagram data
+        ArrayList<Integer> vennDiagramAdvocates = new ArrayList<Integer>();
+        for (int i = 0; i < advocatesUsed.size() && i < 3; i++) {
+            vennDiagramAdvocates.add(advocatesUsed.get(i));
+        }
+
+        int fileCounter = 1;
+        PSParameter probabilities = new PSParameter();
+
+        numberOfValidatedPsmsMap = new HashMap<String, Integer>();
+
+        ArrayList<String> spectrumFiles = identification.getSpectrumFiles();
+        for (String fileName : spectrumFiles) {
+
+            int numberOfValidatedPsms = 0;
+            totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
+
+            progressDialog.setTitle("Loading Spectrum Information. Please Wait... (" + fileCounter + "/" + spectrumFiles.size() + ")");
+            identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
+            progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + fileCounter + "/" + spectrumFiles.size() + ")");
+            identification.loadSpectrumMatches(fileName, progressDialog);
+            progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + spectrumFiles.size() + ") ");
+
+            for (String spectrumKey : identification.getSpectrumIdentification(fileName)) {
+                if (progressDialog.isRunCanceled()) {
+                    break;
+                }
+
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    ArrayList<Integer> currentAdvocates = new ArrayList<Integer>();
+                    probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
+
+                    if (probabilities.getMatchValidationLevel().isValidated()) {
+
+                        totalPeptideShakerIds++;
+                        numberOfValidatedPsms++;
+
+                        for (Integer tempAdvocate : advocatesUsed) {
+                            if (spectrumMatch.getFirstHit(tempAdvocate) != null) {
+                                SpectrumIdentificationAssumption firstHit = spectrumMatch.getFirstHit(tempAdvocate);
+                                if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                                        PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                    currentAdvocates.add(tempAdvocate);
+                                }
+                            }
+                        }
+                    }
+
+                    // get the venn diagram data
+                    if (vennDiagramAdvocates.size() == 3) {
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))
+                                && currentAdvocates.contains(vennDiagramAdvocates.get(1))
+                                && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                            dataABC++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                            dataAB++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                            dataAC++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                            dataBC++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
+                            dataA++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                            dataB++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
+                            dataC++;
+                        }
+                    } else if (vennDiagramAdvocates.size() == 2) {
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                            dataAB++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
+                            dataA++;
+                        }
+                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
+                            dataB++;
+                        }
+                    }
+
+                    // overview plot data
+                    for (Integer tempAdvocate : advocatesUsed) {
+                        if (currentAdvocates.contains(tempAdvocate)) {
+                            totalAdvocateId.put(tempAdvocate, totalAdvocateId.get(tempAdvocate) + 1);
+
+                            if (currentAdvocates.size() == 1) {
+                                uniqueAdvocateId.put(tempAdvocate, uniqueAdvocateId.get(tempAdvocate) + 1);
+                            }
+                        }
+                    }
+
+                    progressDialog.increasePrimaryProgressCounter();
+                }
+            }
+
+            numberOfValidatedPsmsMap.put(fileName, numberOfValidatedPsms);
+        }
+
+        if (!progressDialog.isRunCanceled()) {
+
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Updating Tables. Please Wait...");
+
+            // update the venn diagram
+            updateVennDiagram(dataA, dataB, dataC,
+                    dataAB, dataAC, dataBC, dataABC,
+                    vennDiagramAdvocates);
+
+            // add the peptide shaker results
+            totalAdvocateId.put(Advocate.PeptideShaker.getIndex(), (double) totalPeptideShakerIds);
+            uniqueAdvocateId.put(Advocate.PeptideShaker.getIndex(), 0.0);
+
+            // update the id software performance plots
+            updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
+
+        }
     }
 
     /**
@@ -2813,12 +2845,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     currentAssumptionsList = new ArrayList<SpectrumIdentificationAssumption>();
 
                     // add the search results
-                    for (Advocate tempAdvocate : advocatesUsed) {
-                        if (spectrumMatch.getAllAssumptions(tempAdvocate.getIndex()) != null) {
-                            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate.getIndex()).keySet());
+                    for (Integer tempAdvocate : advocatesUsed) {
+                        if (spectrumMatch.getAllAssumptions(tempAdvocate) != null) {
+                            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate).keySet());
                             Collections.sort(eValues);
                             for (double eValue : eValues) {
-                                for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(tempAdvocate.getIndex()).get(eValue)) {
+                                for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(tempAdvocate).get(eValue)) {
                                     addIdResultsToTable(currentAssumption, probabilities, tempAdvocate);
                                 }
                             }
@@ -3490,14 +3522,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param dataABC the data in group ABC
      * @param vennDiagramAdvocates the advocates
      */
-    private void updateVennDiagram(int dataA, int dataB, int dataC, int dataAB, int dataAC, int dataBC, int dataABC, ArrayList<Advocate> vennDiagramAdvocates) {
+    private void updateVennDiagram(int dataA, int dataB, int dataC, int dataAB, int dataAC, int dataBC, int dataABC, ArrayList<Integer> vennDiagramAdvocates) {
         if (vennDiagramAdvocates.size() == 3) {
             updateThreeWayVennDiagram(vennDiagramButton, dataA, dataB, dataC,
-                    dataAB, dataAC, dataBC, dataABC, vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(), vennDiagramAdvocates.get(2).getName(),
+                    dataAB, dataAC, dataBC, dataABC, Advocate.getAdvocate(vennDiagramAdvocates.get(0)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(1)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(2)).getName(),
                     advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)), advocateVennColors.get(vennDiagramAdvocates.get(2)));
         } else if (vennDiagramAdvocates.size() == 2) {
             updateTwoWayVennDiagram(vennDiagramButton, dataA, dataB, dataAB,
-                    vennDiagramAdvocates.get(0).getName(), vennDiagramAdvocates.get(1).getName(),
+                    Advocate.getAdvocate(vennDiagramAdvocates.get(0)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(1)).getName(),
                     advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)));
         } else {
             vennDiagramButton.setText(null);
@@ -3507,9 +3539,102 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
+     * Updates the overview plots based on the information loaded when creating
+     * the project.
+     *
+     * @param inputMap the input map
+     */
+    private void updateOverviewPlots(eu.isas.peptideshaker.scoring.InputMap inputMap, PsmSpecificMap psmSpecificMap) {
+
+        // The selected file, null for the entire dataset
+        String selectedFileName = null; //@TODO: let the user choose the file
+
+        HashMap<Integer, Double> searchEngineTP = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> searchEngineFN = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> searchEngineContribution = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> searchEngineUniqueContribution = new HashMap<Integer, Double>();
+        int totalNumberOfSpectra = 0;
+
+        if (selectedFileName == null) {
+            for (String spectrumFile : identification.getSpectrumFiles()) {
+                totalNumberOfSpectra += spectrumFactory.getNSpectra(spectrumFile);
+            }
+            for (int advocateId : inputMap.getInputAlgorithms()) {
+                TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId);
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                double nTP;
+                if (targetDecoyResults == null) {
+                    nTP = 0;
+                } else {
+                    nTP = targetDecoyResults.getnTP();
+                }
+                searchEngineTP.put(advocateId, nTP);
+                double nFN;
+                if (targetDecoyResults == null) {
+                    nFN = 0;
+                } else {
+                    nFN = targetDecoyResults.getnTPTotal() - nTP;
+                }
+                searchEngineFN.put(advocateId, nFN);
+                double contribution = inputMap.getAdvocateContribution(advocateId);
+                searchEngineContribution.put(advocateId, contribution);
+                double uniqueContribution = inputMap.getAdvocateUniqueContribution(advocateId);
+                searchEngineUniqueContribution.put(advocateId, uniqueContribution);
+            }
+            double nTP = 0;
+            double totalTP = 0;
+            for (int charge : psmSpecificMap.getPossibleCharges()) {
+                for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
+                    if (!psmSpecificMap.isFileGrouped(charge, file)) {
+                        TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, file);
+                        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                        nTP += targetDecoyResults.getnTP();
+                        totalTP += targetDecoyResults.getnTPTotal();
+                    }
+                }
+            }
+            for (int charge : psmSpecificMap.getGroupedCharges()) {
+                TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, null);
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                nTP += targetDecoyResults.getnTP();
+                totalTP += targetDecoyResults.getnTPTotal();
+            }
+            searchEngineTP.put(Advocate.PeptideShaker.getIndex(), nTP);
+            double nFN = totalTP - nTP;
+            searchEngineFN.put(Advocate.PeptideShaker.getIndex(), nFN);
+        } else {
+            totalNumberOfSpectra = spectrumFactory.getNSpectra(selectedFileName);
+            for (int advocateId : inputMap.getInputAlgorithms()) {
+                TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId, selectedFileName);
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                double nTP;
+                if (targetDecoyResults == null) {
+                    nTP = 0;
+                } else {
+                    nTP = targetDecoyResults.getnTP();
+                }
+                searchEngineTP.put(advocateId, nTP);
+                double nFN;
+                if (targetDecoyResults == null) {
+                    nFN = 0;
+                } else {
+                    nFN = targetDecoyResults.getnTPTotal() - nTP;
+                }
+                searchEngineFN.put(advocateId, nFN);
+                double contribution = inputMap.getAdvocateContribution(advocateId, selectedFileName);
+                searchEngineContribution.put(advocateId, contribution);
+                double uniqueContribution = inputMap.getAdvocateUniqueContribution(advocateId, selectedFileName);
+                searchEngineUniqueContribution.put(advocateId, uniqueContribution);
+            }
+            //@TODO: any value for PeptideShaker here?
+        }
+        updateOverviewPlots(searchEngineTP, searchEngineUniqueContribution, totalNumberOfSpectra); //@TODO: make new plots
+    }
+
+    /**
      * Updates the ID software overview plots.
      */
-    private void updateOverviewPlots(final HashMap<Advocate, Double> totalAdvocateId, final HashMap<Advocate, Double> uniqueAdvocateId, final int totalNumberOfSpectra) {
+    private void updateOverviewPlots(final HashMap<Integer, Double> totalAdvocateId, final HashMap<Integer, Double> uniqueAdvocateId, final int totalNumberOfSpectra) {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -3523,23 +3648,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 createPlot(uniqueAdvocateId, "#Unique PSMs", false);
 
                 // create the number of unassigned plot
-                HashMap<Advocate, Double> unassignedAdvocate = new HashMap<Advocate, Double>();
-                for (Advocate tempAdvocate : advocatesUsed) {
+                HashMap<Integer, Double> unassignedAdvocate = new HashMap<Integer, Double>();
+                for (Integer tempAdvocate : advocatesUsed) {
                     if (totalAdvocateId.containsKey(tempAdvocate)) {
                         unassignedAdvocate.put(tempAdvocate, totalNumberOfSpectra - totalAdvocateId.get(tempAdvocate));
                     }
                 }
-                unassignedAdvocate.put(Advocate.PeptideShaker, totalNumberOfSpectra - totalAdvocateId.get(Advocate.PeptideShaker));
+                unassignedAdvocate.put(Advocate.PeptideShaker.getIndex(), totalNumberOfSpectra - totalAdvocateId.get(Advocate.PeptideShaker.getIndex()));
                 createPlot(unassignedAdvocate, "#Unassigned", false);
 
                 // create the id rate plot
-                HashMap<Advocate, Double> idRateAdvocate = new HashMap<Advocate, Double>();
-                for (Advocate tempAdvocate : advocatesUsed) {
+                HashMap<Integer, Double> idRateAdvocate = new HashMap<Integer, Double>();
+                for (Integer tempAdvocate : advocatesUsed) {
                     if (totalAdvocateId.containsKey(tempAdvocate)) {
                         idRateAdvocate.put(tempAdvocate, ((double) totalAdvocateId.get(tempAdvocate) / totalNumberOfSpectra) * 100);
                     }
                 }
-                idRateAdvocate.put(Advocate.PeptideShaker, ((double) totalAdvocateId.get(Advocate.PeptideShaker) / totalNumberOfSpectra) * 100);
+                idRateAdvocate.put(Advocate.PeptideShaker.getIndex(), ((double) totalAdvocateId.get(Advocate.PeptideShaker.getIndex()) / totalNumberOfSpectra) * 100);
                 createPlot(idRateAdvocate, "ID Rate (%)", true);
 
                 overviewPlotsPanel.revalidate();
@@ -3551,11 +3676,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Add the given assumption to the table.
      *
-     * @param currentAssumption
-     * @param aProbabilities
-     * @param software
+     * @param currentAssumption the currently selected assumption
+     * @param aProbabilities the PS parameter associated to this assumption
+     * @param software the identification software as indexed in the Advocate
+     * class
      */
-    private void addIdResultsToTable(SpectrumIdentificationAssumption currentAssumption, PSParameter aProbabilities, Advocate software) {
+    private void addIdResultsToTable(SpectrumIdentificationAssumption currentAssumption, PSParameter aProbabilities, Integer software) {
 
         PSParameter probabilities = (PSParameter) currentAssumption.getUrParam(aProbabilities);
         Double confidence = probabilities.getSearchEngineConfidence();
@@ -3603,7 +3729,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         Object[] rowData = new Object[]{
             currentRowNumber,
-            software.getIndex(),
+            software,
             currentAssumption.getRank(),
             sequence,
             currentAssumption.getIdentificationCharge().value,
@@ -3625,15 +3751,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param roundDecimals if true, the decimals in the labels are rounded to
      * one decimal
      */
-    private void createPlot(HashMap<Advocate, Double> data, String xAxisLabel, boolean roundDecimals) {
+    private void createPlot(HashMap<Integer, Double> data, String xAxisLabel, boolean roundDecimals) {
 
         DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
-        for (Advocate tempAdvocate : advocatesUsed) {
+        for (Integer tempAdvocate : advocatesUsed) {
             if (advocatesUsed.contains(tempAdvocate)) {
                 psmDataset.addValue(data.get(tempAdvocate), tempAdvocate, xAxisLabel);
             }
         }
-        psmDataset.addValue(data.get(Advocate.PeptideShaker), Advocate.PeptideShaker, xAxisLabel);
+        psmDataset.addValue(data.get(Advocate.PeptideShaker.getIndex()), Advocate.PeptideShaker, xAxisLabel);
 
         JFreeChart chart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
         CategoryPlot plot = chart.getCategoryPlot();
@@ -3651,9 +3777,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         renderer.setShadowVisible(false);
         renderer.setBarPainter(new StandardBarPainter());
         int dataSeriesCounter = 0;
-        for (Advocate tempAdvocate : advocatesUsed) {
+        for (Integer tempAdvocate : advocatesUsed) {
             if (advocatesUsed.contains(tempAdvocate)) {
-                renderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(tempAdvocate.getIndex()));
+                renderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(tempAdvocate));
             }
         }
         renderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.PeptideShaker.getIndex()));
