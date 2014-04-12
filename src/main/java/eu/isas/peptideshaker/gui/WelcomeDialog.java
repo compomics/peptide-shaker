@@ -281,11 +281,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         reshakeJButton.setFont(reshakeJButton.getFont().deriveFont(reshakeJButton.getFont().getStyle() | java.awt.Font.BOLD, reshakeJButton.getFont().getSize()+3));
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
-        reshakeJButton.setText("Reshake!");
+        reshakeJButton.setText("PRIDE Reshake");
         reshakeJButton.setToolTipText("<html>\nReanalyze a PRIDE experiment<br>\n</html>");
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        reshakeJButton.setIconTextGap(23);
+        reshakeJButton.setIconTextGap(19);
         reshakeJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reshakeJButtonActionPerformed(evt);
@@ -311,7 +311,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         openExampleDatasetJButton.setToolTipText("Opens a PeptideShaker example dataset");
         openExampleDatasetJButton.setFocusPainted(false);
         openExampleDatasetJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        openExampleDatasetJButton.setIconTextGap(20);
+        openExampleDatasetJButton.setIconTextGap(19);
         openExampleDatasetJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openExampleDatasetJButtonActionPerformed(evt);
