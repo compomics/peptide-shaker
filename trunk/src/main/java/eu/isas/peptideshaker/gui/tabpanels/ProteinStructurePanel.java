@@ -1641,14 +1641,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 // add the chain information to the table
                 for (int j = 0; j < chains.length; j++) {
 
-                    XYDataPoint temp = new XYDataPoint(chains[j].getStart_protein(), chains[j].getEnd_protein());
+                    XYDataPoint temp = new XYDataPoint(chains[j].getStartProtein(), chains[j].getEndProtein());
 
-                    if (chains[j].getStart_protein() != chains[j].getEnd_protein()) {
+                    if (chains[j].getStartProtein() != chains[j].getEndProtein()) {
                         ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
                             (j + 1),
                             chains[j].getBlock(),
                             temp,
-                            (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
+                            (((double) chains[j].getEndProtein() - chains[j].getStartProtein()) / proteinSequenceLength) * 100
                         });
                     }
                 }

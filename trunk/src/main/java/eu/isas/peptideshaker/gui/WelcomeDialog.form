@@ -374,11 +374,11 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/relims_logo.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Reshake!"/>
+            <Property name="text" type="java.lang.String" value="PRIDE Reshake"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze a PRIDE experiment&lt;br&gt;&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="23"/>
+            <Property name="iconTextGap" type="int" value="19"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reshakeJButtonActionPerformed"/>
@@ -418,7 +418,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Opens a PeptideShaker example dataset"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="20"/>
+            <Property name="iconTextGap" type="int" value="19"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openExampleDatasetJButtonActionPerformed"/>
