@@ -358,7 +358,7 @@ public class MzIdentMLExport {
 
         br.write(getCurrentTabSpace() + "<Person "
                 + "firstName=\"" + projectDetails.getContactFirstName() + "\" "
-                + "lastName=\"" + projectDetails.getContactLastName() + "\" " 
+                + "lastName=\"" + projectDetails.getContactLastName() + "\" "
                 + "id=\"PROVIDER\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
@@ -911,49 +911,47 @@ public class MzIdentMLExport {
 
                 String accession = proteinMatch.getTheoreticProteinsAccessions().get(j);
 
-                if (identification.matchExists(accession)) { // @TODO: how can this happen..? // @TODO: can result in empty protein groups...
+                br.write(getCurrentTabSpace() + "<ProteinDetectionHypothesis id=\"" + proteinGroupId + "_" + (j + 1) + "\" dBSequence_ref=\"" + accession
+                        + "\" passThreshold=\"" + psParameter.getMatchValidationLevel().isValidated() + "\">" + System.getProperty("line.separator")); // @TODO: what does validated mean here?
+                tabCounter++;
 
-                    br.write(getCurrentTabSpace() + "<ProteinDetectionHypothesis id=\"" + proteinGroupId + "_" + (j + 1) + "\" dBSequence_ref=\"" + accession
-                            + "\" passThreshold=\"" + psParameter.getMatchValidationLevel().isValidated() + "\">" + System.getProperty("line.separator")); // @TODO: what does validated mean here?
-                    tabCounter++;
+                ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatches();
+                //identification.loadPeptideMatches(peptideMatches, null);
 
-                    ArrayList<String> peptideMatches = identification.getProteinMatch(accession).getPeptideMatches();
-                    //identification.loadPeptideMatches(peptideMatches, null);
+                for (String peptideKey : peptideMatches) {
 
-                    for (String peptideKey : peptideMatches) {
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                    ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
+                            peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
 
-                        ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
-                                peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    for (int start : peptideStarts) {
+                        String pepEvidenceKey = accession + "_" + start + "_" + (start + peptideSequence.length() - 1) + "_" + peptideKey;
+                        String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey); // @TODO: how can this be null???
 
-                        for (int start : peptideStarts) {
-                            String pepEvidenceKey = accession + "_" + start + "_" + (start + peptideSequence.length() - 1) + "_" + peptideKey;
-                            String peptideEvidenceId = pepEvidenceIds.get(pepEvidenceKey); // @TODO: how can this be null???
+                        if (peptideEvidenceId != null) {
 
-                            if (peptideEvidenceId != null) {
+                            br.write(getCurrentTabSpace() + "<PeptideHypothesis peptideEvidence_ref=\"" + peptideEvidenceId + "\">" + System.getProperty("line.separator"));
+                            tabCounter++;
 
-                                br.write(getCurrentTabSpace() + "<PeptideHypothesis peptideEvidence_ref=\"" + peptideEvidenceId + "\">" + System.getProperty("line.separator"));
-                                tabCounter++;
-
-                                for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                                    br.write(getCurrentTabSpace() + "<SpectrumIdentificationItemRef spectrumIdentificationItem_ref=\"" + spectrumIds.get(spectrumKey) + "\"/>" + System.getProperty("line.separator"));
-                                }
-
-                                tabCounter--;
-                                br.write(getCurrentTabSpace() + "</PeptideHypothesis>" + System.getProperty("line.separator"));
+                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                br.write(getCurrentTabSpace() + "<SpectrumIdentificationItemRef spectrumIdentificationItem_ref=\"" + spectrumIds.get(spectrumKey) + "\"/>" + System.getProperty("line.separator"));
                             }
+
+                            tabCounter--;
+                            br.write(getCurrentTabSpace() + "</PeptideHypothesis>" + System.getProperty("line.separator"));
                         }
                     }
+                }
 
-                    // add cv terms
+                // add cv terms
 //                          <cvParam accession="MS:1001171" name="Mascot:score" cvRef="PSI-MS" value="104.854382332144"/>
 //                          <cvParam accession="MS:1001093" name="sequence coverage" cvRef="PSI-MS" value="4"/> // The percent coverage for the protein based upon the matched peptide sequences (can be calculated).
 //                          <cvParam accession="MS:1001097" name="distinct peptide sequences" cvRef="PSI-MS" value="2"/> // This counts distinct sequences hitting the protein without regard to a minimal confidence threshold.
-                    tabCounter--;
-                    br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
-                }
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
+
             }
 
             tabCounter--;
@@ -1223,7 +1221,7 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
                     break;
                 case msAmanda:
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null)); // @TODO: add ms amanda!!!
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null)); // @TODO: add ms amanda cv term!!!
                     break;
                 default:
                     writeUserParam("Unknown"); // @TODO: add cv term?
@@ -1370,7 +1368,7 @@ public class MzIdentMLExport {
             br.write("/>" + System.getProperty("line.separator"));
         }
     }
-    
+
     /**
      * Convenience method writing a user parameter.
      *
