@@ -3,89 +3,97 @@ package eu.isas.peptideshaker.scoring.targetdecoy;
 import java.io.Serializable;
 
 /**
- * This class will compile Target/decoy results of a certain target/decoy map according to user's validation criteria
+ * This class will compile Target/decoy results of a certain target/decoy map
+ * according to user's validation criteria
  *
  * @author Marc Vaudel
  */
 public class TargetDecoyResults implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -8387463582045627644L;
     /**
-     * Boolean indicating whether a classical validation was used or an a posteriori probabilistic validation
+     * Boolean indicating whether a classical validation was used or an a
+     * posteriori probabilistic validation.
      */
     private boolean classicalValidation;
     /**
-     * Boolean indicating whether classical or probabilistic estimators are used
+     * Boolean indicating whether classical or probabilistic estimators are used.
      */
     private boolean classicalEstimators;
     /**
-     * The confidence limit
+     * The confidence limit.
      */
     private double confidenceLimit = -1;
     /**
-     * The FDR limit
+     * The FDR limit.
      */
     private double fdrLimit;
     /**
-     * The FNR limit
+     * The FNR limit.
      */
     private double fnrLimit;
     /**
-     * The estimated number of false positives
+     * The estimated number of false positives.
      */
     private double nFP;
     /**
-     * The estimated number of true positives
+     * The estimated number of true positives.
      */
     private double n;
     /**
-     * The estimated number of true positives reachable
+     * The estimated number of true positives reachable.
      */
     private double nTPTotal;
     /**
-     * The corresponding score limit
+     * The corresponding score limit.
      */
     private double scoreLimit;
     /**
-     * A boolean indicating that everything was validated
+     * A boolean indicating that everything was validated.
      */
     private Boolean noValidated = false;
     /**
-     * The user input which gave the displayed results
+     * The user input which gave the displayed results.
      */
     private Double userInput;
     /**
-     * The type of input 0 -> confidence 1 -> FDR 2 -> FNR
+     * The type of input 0 -> confidence 1 -> FDR 2 -> FNR.
      */
     private Integer inputType;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public TargetDecoyResults() {
     }
 
     /**
-     * Returns a boolean indicating whether classical or probabilistic estimators were used
-     * @return  a boolean indicating whether classical or probabilistic estimators were used
+     * Returns a boolean indicating whether classical or probabilistic
+     * estimators were used.
+     *
+     * @return a boolean indicating whether classical or probabilistic
+     * estimators were used
      */
     public boolean isClassicalEstimators() {
         return classicalEstimators;
     }
 
     /**
-     * sets whether classical or probabilistic estimators should be used
-     * @param classicalEstimators a boolean indicating whether classical or probabilistic estimators should be used
+     * sets whether classical or probabilistic estimators should be used.
+     *
+     * @param classicalEstimators a boolean indicating whether classical or
+     * probabilistic estimators should be used
      */
     public void setClassicalEstimators(boolean classicalEstimators) {
         this.classicalEstimators = classicalEstimators;
     }
 
     /**
-     * Returns a boolean indicating whether a classical validation was used
+     * Returns a boolean indicating whether a classical validation was used.
+     *
      * @return a boolean indicating whether a classical validation was used
      */
     public boolean isClassicalValidation() {
@@ -93,15 +101,18 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets a boolean indicating whether a classical validation was used
-     * @param classicalValidation  a boolean indicating whether a classical validation was used
+     * Sets a boolean indicating whether a classical validation was used.
+     *
+     * @param classicalValidation a boolean indicating whether a classical
+     * validation was used
      */
     public void setClassicalValidation(boolean classicalValidation) {
         this.classicalValidation = classicalValidation;
     }
 
     /**
-     * Returns the confidence limit
+     * Returns the confidence limit.
+     *
      * @return the confidence limit
      */
     public Double getConfidenceLimit() {
@@ -109,7 +120,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the confidence limit
+     * Sets the confidence limit.
+     *
      * @param confidenceLimit the confidence limit
      */
     public void setConfidenceLimit(double confidenceLimit) {
@@ -117,7 +129,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the FDR limit
+     * Returns the FDR limit.
+     *
      * @return the FDR limit
      */
     public Double getFdrLimit() {
@@ -125,7 +138,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the FDR limit
+     * Sets the FDR limit.
+     *
      * @param fdrLimit the FDR limit
      */
     public void setFdrLimit(double fdrLimit) {
@@ -133,7 +147,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the FNR limit
+     * Returns the FNR limit.
+     *
      * @return the FNR limit
      */
     public double getFnrLimit() {
@@ -141,7 +156,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the FNR limit
+     * Sets the FNR limit.
+     *
      * @param fnrLimit the FNR limit
      */
     public void setFnrLimit(double fnrLimit) {
@@ -149,7 +165,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the estimated number of false positives
+     * Returns the estimated number of false positives.
+     *
      * @return the estimated number of false positives
      */
     public double getnFP() {
@@ -157,7 +174,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the estimated number of false positives
+     * Sets the estimated number of false positives.
+     *
      * @param nFP the estimated number of false positives
      */
     public void setnFP(double nFP) {
@@ -165,7 +183,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the estimated number of retained True positives
+     * Returns the estimated number of retained True positives.
+     *
      * @return the estimated number of retained True positives
      */
     public double getnTP() {
@@ -173,7 +192,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the  number of retained hits
+     * Sets the number of retained hits.
+     *
      * @param n the estimated number of retained True positives
      */
     public void setn(double n) {
@@ -181,7 +201,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the estimated total number of True positives
+     * Returns the estimated total number of True positives.
+     *
      * @return the estimated total number of True positives
      */
     public double getnTPTotal() {
@@ -189,7 +210,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the estimated total number of True positives
+     * Sets the estimated total number of True positives.
+     *
      * @param nTPTotal the estimated total number of True positives
      */
     public void setnTPTotal(double nTPTotal) {
@@ -197,7 +219,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the number of retained hits
+     * Returns the number of retained hits.
+     *
      * @return the number of retained hits
      */
     public double getN() {
@@ -205,7 +228,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the score limit obtained with the current validation settings
+     * Returns the score limit obtained with the current validation settings.
+     *
      * @return the score limit obtained with the current validation settings
      */
     public double getScoreLimit() {
@@ -213,30 +237,37 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the score limit obtained with the current validation settings
-     * @param scoreLimit the score limit obtained with the current validation settings
+     * Sets the score limit obtained with the current validation settings.
+     *
+     * @param scoreLimit the score limit obtained with the current validation
+     * settings
      */
     public void setScoreLimit(double scoreLimit) {
         this.scoreLimit = scoreLimit;
     }
-    
+
     /**
-     * Returns a boolean indicating that everything was validated
+     * Returns a boolean indicating that everything was validated.
+     * 
+     * @return a boolean indicating that everything was validated
      */
     public boolean noValidated() {
         return (noValidated != null) && noValidated;
     }
-    
+
     /**
-     * Sets whether everything was validated
-     * @param validateAll a boolean indicating whether everything should be validated
+     * Sets whether everything was validated.
+     *
+     * @param validateAll a boolean indicating whether everything should be
+     * validated
      */
     public void setNoValidated(boolean validateAll) {
         this.noValidated = validateAll;
     }
 
     /**
-     * Returns the type of input
+     * Returns the type of input.
+     *
      * @return the type of input
      */
     public Integer getInputType() {
@@ -247,16 +278,18 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets the type of input
-     * @param inputType 
+     * Sets the type of input.
+     *
+     * @param inputType
      */
     public void setInputType(Integer inputType) {
         this.inputType = inputType;
     }
 
     /**
-     * Returns the user input
-     * @return the user input 
+     * Returns the user input.
+     *
+     * @return the user input
      */
     public Double getUserInput() {
         if (userInput == null) {
@@ -266,8 +299,9 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Sets  the user input
-     * @param userInput  the user input
+     * Sets the user input.
+     *
+     * @param userInput the user input
      */
     public void setUserInput(Double userInput) {
         this.userInput = userInput;
