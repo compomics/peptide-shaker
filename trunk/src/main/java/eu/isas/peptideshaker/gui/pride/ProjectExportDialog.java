@@ -25,7 +25,6 @@ import com.compomics.util.gui.renderers.ToolTipComboBoxRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.pride.validation.PrideXmlValidator;
-import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -39,7 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 /**
- * A dialog where the user can export the project to PRIDE XML or mzIdentML.
+ * A dialog where the user can export the project to PRIDE XML.
  *
  * @author Harald Barsnes
  */
@@ -66,22 +65,16 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
      * schema.
      */
     private boolean validatePrideXml = true;
-    /**
-     * True of PRIDE XML export, false if mzIdentML export.
-     */
-    private boolean prideExport;
 
     /**
      * Create a new PrideExportDialog.
      *
      * @param peptideShakerGUI a reference to the main GUI frame
-     * @param prideExport true of PRIDE XML export, false if mzIdentML export
      * @param modal
      */
-    public ProjectExportDialog(PeptideShakerGUI peptideShakerGUI, boolean prideExport, boolean modal) {
+    public ProjectExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
-        this.prideExport = prideExport;
 
         // reset the pride object factory
         resetPrideObjectFactory();
@@ -90,14 +83,6 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         updatePtmMap();
 
         initComponents();
-
-        if (prideExport) {
-            setTitle("PeptideShaker - PRIDE Export");
-            helpLabel.setText("Insert the required information (*) and click Convert to export the project to PRIDE XML.");
-        } else {
-            setTitle("PeptideShaker - mzIdentML Export");
-            helpLabel.setText("Insert the required information (*) and click Convert to export the project to mzIdentML.");
-        }
 
         // set gui properties
         setGuiProperties();
@@ -804,17 +789,10 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        if (prideExport) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PrideExportDialog.html"),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
-        } else {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/mzIdentMLExportDialog.html"),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    "PeptideShaker - Help");
-        }
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PrideExportDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
@@ -1016,7 +994,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     }//GEN-LAST:event_editInstrumentJButtonActionPerformed
 
     /**
-     * Convert the project to an mzIdentML or PRIDE XML file.
+     * Convert the project to a PRIDE XML file.
      *
      * @param evt
      */
@@ -1024,14 +1002,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
 
         // check if the xml file already exists
         String fileName = titleJTextField.getText().trim().replaceAll(" ", "_"); // @TODO: not sure why this is needed?
-
-        File outputFile;
-
-        if (prideExport) {
-            outputFile = new File(outputFolderJTextField.getText(), fileName + ".xml");
-        } else {
-            outputFile = new File(outputFolderJTextField.getText(), fileName + ".mzid");
-        }
+        File outputFile = new File(outputFolderJTextField.getText(), fileName + ".xml");
 
         if (outputFile.exists()) {
             int selection = JOptionPane.showConfirmDialog(this, "The file \'"
@@ -1052,12 +1023,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
-        if (prideExport) {
-            progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
-        } else {
-            progressDialog.setTitle("Exporting mzIdentML. Please Wait...");
-        }
+        progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
 
         new Thread(new Runnable() {
             public void run() {
@@ -1109,43 +1075,28 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                 boolean conversionCompleted = false;
 
                 try {
-                    if (prideExport) {
-                        PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                                peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
-                                selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,
-                                new File(outputFolderJTextField.getText()), outputFileName, progressDialog);
-                        
-                        prideExport.createPrideXmlFile(progressDialog);
+                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
+                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
+                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
+                            selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,
+                            new File(outputFolderJTextField.getText()), outputFileName, progressDialog);
 
-                        // validate the pride xml file
-                        if (validatePrideXml && !projectExportDialog.progressCancelled()) {
-                            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                            progressDialog.setTitle("Validating PRIDE XML. Please Wait...");
-                            PrideXmlValidator validator = new PrideXmlValidator();
-                            conversionCompleted = validator.validate(new File(outputFolderJTextField.getText(), outputFileName + ".xml"));
+                    prideExport.createPrideXmlFile(progressDialog);
 
-                            // see if any errors were found, and display them to the user
-                            if (!conversionCompleted) {
-                                JOptionPane.showMessageDialog(null, validator.getErrorsAsString(), "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
-                            }
-                        } else {
-                            conversionCompleted = true;
+                    // validate the pride xml file
+                    if (validatePrideXml && !projectExportDialog.progressCancelled()) {
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        progressDialog.setTitle("Validating PRIDE XML. Please Wait...");
+                        PrideXmlValidator validator = new PrideXmlValidator();
+                        conversionCompleted = validator.validate(new File(outputFolderJTextField.getText(), outputFileName + ".xml"));
+
+                        // see if any errors were found, and display them to the user
+                        if (!conversionCompleted) {
+                            JOptionPane.showMessageDialog(null, validator.getErrorsAsString(), "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-
-                        MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                                peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
-                                selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,
-                                new File(outputFolderJTextField.getText()), outputFileName, progressDialog);
-                        mzIdentMLExport.createMzIdentMLFile(progressDialog);
-
-                        // @TODO: validate mzIdentML file...
                         conversionCompleted = true;
-
                     }
-
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     progressDialog.setRunCanceled();
@@ -1160,48 +1111,36 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                 // display a conversion complete message to the user
                 if (conversionCompleted && !processCancelled) {
 
-                    if (prideExport) {
+                    // create an empty label to put the message in
+                    JLabel label = new JLabel();
 
-                        // create an empty label to put the message in
-                        JLabel label = new JLabel();
+                    // html content 
+                    JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                            + "PRIDE XML file \'"
+                            + new File(outputFolderJTextField.getText(), outputFileName + ".xml").getAbsolutePath() + "\' created.<br><br>"
+                            + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE.<br><br>"
+                            + "We recommend checking the file in <a href=\"http://code.google.com/p/pride-toolsuite/wiki/PRIDEInspector\">PRIDE Inspector</a> before uploading."
+                            + "</body></html>");
 
-                        // html content 
-                        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                                + "PRIDE XML file \'"
-                                + new File(outputFolderJTextField.getText(), outputFileName + ".xml").getAbsolutePath() + "\' created.<br><br>"
-                                + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE.<br><br>"
-                                + "We recommend checking the file in <a href=\"http://code.google.com/p/pride-toolsuite/wiki/PRIDEInspector\">PRIDE Inspector</a> before uploading."
-                                + "</body></html>");
-
-                        // handle link events 
-                        ep.addHyperlinkListener(new HyperlinkListener() {
-                            @Override
-                            public void hyperlinkUpdate(HyperlinkEvent e) {
-                                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                                }
+                    // handle link events 
+                    ep.addHyperlinkListener(new HyperlinkListener() {
+                        @Override
+                        public void hyperlinkUpdate(HyperlinkEvent e) {
+                            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                                BareBonesBrowserLaunch.openURL(e.getURL().toString());
                             }
-                        });
+                        }
+                    });
 
-                        ep.setBorder(null);
-                        ep.setEditable(false);
+                    ep.setBorder(null);
+                    ep.setEditable(false);
 
-                        JOptionPane.showMessageDialog(projectExportDialog, ep, "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(projectExportDialog, "mzIdentML file \'"
-                                + new File(outputFolderJTextField.getText(), outputFileName + ".mzid").getAbsolutePath() + "\' created.", 
-                                "mzIdentML File Created", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();
-                    }
+                    JOptionPane.showMessageDialog(projectExportDialog, ep, "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
                 }
 
                 if (processCancelled) {
-                    if (prideExport) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "mzIdentML conversion cancelled by the user.", "mzIdentML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
-                    }
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }.start();

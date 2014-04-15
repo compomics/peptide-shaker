@@ -87,6 +87,42 @@ public class ProjectDetails implements Serializable {
      * The PeptideShaker version used to create the project.
      */
     private String peptideShakerVersion;
+    /**
+     * The first name of the contact for the mzIdentML dataset.
+     */
+    private String contactFirstName;
+    /**
+     * The last name of the contact for the mzIdentML dataset.
+     */
+    private String contactLastName;
+    /**
+     * The e-mail of the contact for the mzIdentML dataset.
+     */
+    private String contactEmail;
+    /**
+     * The URL of the contact for the mzIdentML dataset.
+     */
+    private String contactUrl;
+    /**
+     * The address of the contact for the mzIdentML dataset.
+     */
+    private String contactAddress;
+    /**
+     * The name of the organization for the mzIdentML dataset.
+     */
+    private String organizationName;
+    /**
+     * The e-mail of the organization for the mzIdentML dataset.
+     */
+    private String organizationEmail;
+    /**
+     * The URL of the organization for the mzIdentML dataset.
+     */
+    private String organizationUrl;
+    /**
+     * The address of the organization for the mzIdentML dataset.
+     */
+    private String organizationAddress;
 
     /**
      * Constructor.
@@ -443,5 +479,167 @@ public class ProjectDetails implements Serializable {
      */
     public void setIdentificationFileSearchEngineVersion(HashMap<String, String> identificationFileSearchEngineVersion) {
         this.identificationFileSearchEngineVersion = identificationFileSearchEngineVersion;
+    }
+
+    /**
+     * Returns the first name of the contact for the mzIdentML dataset.
+     * 
+     * @return the contactFirstName
+     */
+    public String getContactFirstName() {
+        return contactFirstName;
+    }
+
+    /**
+     * Set the first name of the contact for the mzIdentML dataset.
+     * 
+     * @param contactFirstName the contactFirstName to set
+     */
+    public void setContactFirstName(String contactFirstName) {
+        this.contactFirstName = contactFirstName;
+    }
+
+    /**
+     * Returns the last name of the contact for the mzIdentML dataset.
+     * 
+     * @return the contactLastName
+     */
+    public String getContactLastName() {
+        return contactLastName;
+    }
+
+    /**
+     * Set the last name of the contact for the mzIdentML dataset.
+     * 
+     * @param contactLastName the contactLastName to set
+     */
+    public void setContactLastName(String contactLastName) {
+        this.contactLastName = contactLastName;
+    }
+
+    /**
+     * Returns the e-mail of the contact for the mzIdentML dataset.
+     * 
+     * @return the contactEmailName
+     */
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    /**
+     * Set the e-mail of the contact for the mzIdentML dataset.
+     * 
+     * @param contactEmail the contactEmailName to set
+     */
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    /**
+     * Returns the URL of the contact for the mzIdentML dataset.
+     * 
+     * @return the contactUrl
+     */
+    public String getContactUrl() {
+        return contactUrl;
+    }
+
+    /**
+     * Set the first URL of the contact for the mzIdentML dataset.
+     * 
+     * @param contactUrl the contactUrl to set
+     */
+    public void setContactUrl(String contactUrl) {
+        this.contactUrl = contactUrl;
+    }
+
+    /**
+     * Returns the address of the contact for the mzIdentML dataset.
+     * 
+     * @return the contactAddress
+     */
+    public String getContactAddress() {
+        return contactAddress;
+    }
+
+    /**
+     * SEt the address of the contact for the mzIdentML dataset.
+     * 
+     * @param contactAddress the contactAddress to set
+     */
+    public void setContactAddress(String contactAddress) {
+        this.contactAddress = contactAddress;
+    }
+
+    /**
+     * Returns the name of the organization for the mzIdentML dataset.
+     * 
+     * @return the organizationName
+     */
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    /**
+     * Set the name of the organization for the mzIdentML dataset.
+     * 
+     * @param organizationName the organizationName to set
+     */
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    /**
+     * Returns the e-mail of the organization for the mzIdentML dataset.
+     * 
+     * @return the organizationEmail
+     */
+    public String getOrganizationEmail() {
+        return organizationEmail;
+    }
+
+    /**
+     * Set the name of the organization for the mzIdentML dataset.
+     * 
+     * @param organizationEmail the organizationEmail to set
+     */
+    public void setOrganizationEmail(String organizationEmail) {
+        this.organizationEmail = organizationEmail;
+    }
+
+    /**
+     * Returns the URL of the organization for the mzIdentML dataset.
+     * 
+     * @return the organizationUrl
+     */
+    public String getOrganizationUrl() {
+        return organizationUrl;
+    }
+
+    /**
+     * Set the URL of the organization for the mzIdentML dataset.
+     * 
+     * @param organizationUrl the organizationUrl to set
+     */
+    public void setOrganizationUrl(String organizationUrl) {
+        this.organizationUrl = organizationUrl;
+    }
+
+    /**
+     * Returns the address of the organization for the mzIdentML dataset.
+     * 
+     * @return the organizationAddress
+     */
+    public String getOrganizationAddress() {
+        return organizationAddress;
+    }
+
+    /**
+     * Set the address of the organization for the mzIdentML dataset.
+     * 
+     * @param organizationAddress the organizationAddress to set
+     */
+    public void setOrganizationAddress(String organizationAddress) {
+        this.organizationAddress = organizationAddress;
     }
 }

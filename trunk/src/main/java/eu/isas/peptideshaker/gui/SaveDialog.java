@@ -201,7 +201,7 @@ public class SaveDialog extends javax.swing.JDialog {
      */
     private void exportPrideJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideJButtonActionPerformed
         dispose();
-        new ProjectExportDialog(peptideShakerGUI, true, true);
+        new ProjectExportDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_exportPrideJButtonActionPerformed
 
     /**

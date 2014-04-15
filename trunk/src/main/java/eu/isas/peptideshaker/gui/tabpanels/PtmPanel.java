@@ -1960,55 +1960,15 @@ public class PtmPanel extends javax.swing.JPanel {
         new Thread("DisplayThread") {
             public void run() {
 
-                if (finalEvt != null) {
-
-                    int row = peptidesTable.rowAtPoint(finalEvt.getPoint());
-                    int column = peptidesTable.columnAtPoint(finalEvt.getPoint());
-
-                    relatedSelected = false;
-
-                    if (!progressDialog.isRunCanceled()) {
-                        updateRelatedPeptidesTable(progressDialog);
-                    }
-                    if (!progressDialog.isRunCanceled()) {
-                        updateSelectedPsmTable(progressDialog, true);
-                    }
-                    if (!progressDialog.isRunCanceled()) {
-                        updateRelatedPsmTable(progressDialog, false);
-                    }
-
-                    if (row != -1 && !progressDialog.isRunCanceled()) {
-
-                        peptidesTable.setRowSelectionInterval(row, row);
-
-                        // open the protein inference at the petide level dialog
-                        if (column == peptidesTable.getColumn("PI").getModelIndex()) {
-                            progressDialog.setVisible(false);
-                            try {
-                                String peptideKey = getSelectedPeptide(false);
-                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
-                            } catch (Exception e) {
-                                peptideShakerGUI.catchException(e);
-                            }
-                        } else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
-                            if (peptidesTable.getValueAt(row, column) != null
-                                    && ((Integer) peptidesTable.getValueAt(row, column)).intValue() != -1) {
-                                progressDialog.setVisible(false);
-                                new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
-                            }
-                        }
-                    }
-                } else {
-                    relatedSelected = false;
-                    if (!progressDialog.isRunCanceled()) {
-                        updateRelatedPeptidesTable(progressDialog);
-                    }
-                    if (!progressDialog.isRunCanceled()) {
-                        updateSelectedPsmTable(progressDialog, true);
-                    }
-                    if (!progressDialog.isRunCanceled()) {
-                        updateRelatedPsmTable(progressDialog, false);
-                    }
+                relatedSelected = false;
+                if (!progressDialog.isRunCanceled()) {
+                    updateRelatedPeptidesTable(progressDialog);
+                }
+                if (!progressDialog.isRunCanceled()) {
+                    updateSelectedPsmTable(progressDialog, true);
+                }
+                if (!progressDialog.isRunCanceled()) {
+                    updateRelatedPsmTable(progressDialog, false);
                 }
 
                 if (!progressDialog.isRunCanceled()) {
@@ -2020,6 +1980,34 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 if (!progressDialog.isRunCanceled()) {
                     newItemSelection();
+                }
+
+                if (finalEvt != null) {
+
+                    int row = peptidesTable.rowAtPoint(finalEvt.getPoint());
+                    int column = peptidesTable.columnAtPoint(finalEvt.getPoint());
+
+                    if (row != -1 && !progressDialog.isRunCanceled()) {
+
+                        peptidesTable.setRowSelectionInterval(row, row);
+
+                        // open the protein inference at the petide level dialog
+                        if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+                            progressDialog.setRunFinished();
+                            try {
+                                String peptideKey = getSelectedPeptide(false);
+                                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
+                        } else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
+                            if (peptidesTable.getValueAt(row, column) != null
+                                    && ((Integer) peptidesTable.getValueAt(row, column)).intValue() != -1) {
+                                progressDialog.setRunFinished();
+                                new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
+                            }
+                        }
+                    }
                 }
 
                 progressDialog.setRunFinished();
@@ -2064,6 +2052,16 @@ public class PtmPanel extends javax.swing.JPanel {
                     updateRelatedPsmTable(progressDialog, true);
                 }
 
+                if (!progressDialog.isRunCanceled()) {
+                    updateModificationProfiles(progressDialog);
+                }
+                if (!progressDialog.isRunCanceled()) {
+                    updateModificationProfilesTable(progressDialog);
+                }
+                if (!progressDialog.isRunCanceled()) {
+                    newItemSelection();
+                }
+
                 if (finalEvt != null && !progressDialog.isRunCanceled()) {
 
                     int row = relatedPeptidesTable.rowAtPoint(finalEvt.getPoint());
@@ -2075,9 +2073,9 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         // open the protein inference at the petide level dialog
                         if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
-                            progressDialog.setVisible(false);
                             try {
                                 String peptideKey = getSelectedPeptide(true);
+                                progressDialog.setRunFinished();
                                 new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
@@ -2085,21 +2083,11 @@ public class PtmPanel extends javax.swing.JPanel {
                         } else if (column == relatedPeptidesTable.getColumn("PTM").getModelIndex()) {
                             if (relatedPeptidesTable.getValueAt(row, column) != null
                                     && ((Integer) relatedPeptidesTable.getValueAt(row, column)).intValue() != -1) {
-                                progressDialog.setVisible(false);
+                                progressDialog.setRunFinished();
                                 new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                             }
                         }
                     }
-                }
-
-                if (!progressDialog.isRunCanceled()) {
-                    updateModificationProfiles(progressDialog);
-                }
-                if (!progressDialog.isRunCanceled()) {
-                    updateModificationProfilesTable(progressDialog);
-                }
-                if (!progressDialog.isRunCanceled()) {
-                    newItemSelection();
                 }
 
                 progressDialog.setRunFinished();
