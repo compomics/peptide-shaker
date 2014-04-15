@@ -71,6 +71,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -438,6 +439,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             // check for 64 bit java and for at least 4 gb memory 
             boolean java64bit = CompomicsWrapper.is64BitJava();
             boolean memoryOk = (utilitiesUserPreferences.getMemoryPreference() >= 4000);
+            String javaVersion = System.getProperty("java.version");
+            boolean javaVersionWarning = javaVersion.startsWith("1.5") || javaVersion.startsWith("1.6");
 
             // add desktop shortcut?
             if (!getJarFilePath().equalsIgnoreCase(".")
@@ -529,7 +532,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             if (cpsFile == null) {
                 if (showWelcomeDialog) {
                     // open the welcome dialog
-                    new WelcomeDialog(this, !java64bit || !memoryOk, true);
+                    new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
                 }
             } else {
                 setVisible(true);
@@ -764,8 +767,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         projectExportMenu = new javax.swing.JMenu();
         exportProjectMenuItem = new javax.swing.JMenuItem();
-        exportPrideMenuItem = new javax.swing.JMenuItem();
         exportMzIdentMLMenuItem = new javax.swing.JMenuItem();
+        exportPrideMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1568,17 +1571,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         });
         projectExportMenu.add(exportProjectMenuItem);
 
-        exportPrideMenuItem.setMnemonic('P');
-        exportPrideMenuItem.setText("PRIDE XML");
-        exportPrideMenuItem.setToolTipText("Export the project as PRIDE XML");
-        exportPrideMenuItem.setEnabled(false);
-        exportPrideMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportPrideMenuItemActionPerformed(evt);
-            }
-        });
-        projectExportMenu.add(exportPrideMenuItem);
-
         exportMzIdentMLMenuItem.setMnemonic('M');
         exportMzIdentMLMenuItem.setText("mzIdentML");
         exportMzIdentMLMenuItem.setToolTipText("Export the project as mzIdentML");
@@ -1589,6 +1581,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         });
         projectExportMenu.add(exportMzIdentMLMenuItem);
+
+        exportPrideMenuItem.setMnemonic('P');
+        exportPrideMenuItem.setText("PRIDE XML");
+        exportPrideMenuItem.setToolTipText("Export the project as PRIDE XML");
+        exportPrideMenuItem.setEnabled(false);
+        exportPrideMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPrideMenuItemActionPerformed(evt);
+            }
+        });
+        projectExportMenu.add(exportPrideMenuItem);
 
         exportJMenu.add(projectExportMenu);
 
@@ -2900,7 +2903,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void exportPrideMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideMenuItemActionPerformed
-        new ProjectExportDialog(this, true, true);
+        new ProjectExportDialog(this, true);
     }//GEN-LAST:event_exportPrideMenuItemActionPerformed
 
     /**
@@ -2978,7 +2981,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void exportMzIdentMLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMzIdentMLMenuItemActionPerformed
-        new ProjectExportDialog(this, false, true);
+        new MzIdentMLExportDialog(this, true);
     }//GEN-LAST:event_exportMzIdentMLMenuItemActionPerformed
 
     /**
@@ -3081,7 +3084,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             projectExportMenu.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
             exportMzIdentMLMenuItem.setEnabled(true);
-//            exportMzIdentMLMenuItem.setVisible(false);
             exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file

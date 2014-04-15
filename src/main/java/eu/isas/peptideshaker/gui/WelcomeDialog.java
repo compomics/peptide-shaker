@@ -39,15 +39,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI the dialog parent
      * @param showLowMemoryWarning show or hide the low memory warning
+     * @param showJavaVersionWarning show or hide the java version warning
      * @param modal modal or not modal
      */
-    public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean showLowMemoryWarning, boolean modal) {
+    public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean showLowMemoryWarning, boolean showJavaVersionWarning, boolean modal) {
         super(dummyParentFrame.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
-        if (!showLowMemoryWarning) {
+        if (!showLowMemoryWarning && !showJavaVersionWarning) {
             lowMemoryWarningLabel.setVisible(false);
+        }
+        if (showJavaVersionWarning) {
+            lowMemoryWarningLabel.setText("<html><u>Java Version Warning!</u>");
         }
 
         setLocationRelativeTo(null);

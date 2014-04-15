@@ -80,6 +80,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGUI;
         this.ptm = ptm;
         this.peptideKey = peptideKey;
+
         try {
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
