@@ -52,6 +52,8 @@ public class CpsExporter {
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
      * @param idFilter the identifications filter
+     * @param jarFilePath the path to the jar file
+     * 
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
@@ -60,9 +62,9 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
                 saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
-                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter);
+                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, jarFilePath);
     }
 
     /**
@@ -87,6 +89,8 @@ public class CpsExporter {
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
      * @param idFilter the identifications filter
+     * @param jarFilePath the path to the jar file
+     * 
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
@@ -95,7 +99,7 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter) 
+            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, String jarFilePath) 
             throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         // set the experiment parameters
@@ -105,20 +109,21 @@ public class CpsExporter {
 
         objectsCache.saveCache(waitingHandler, emptyCache);
         identification.close();
+        
+        File matchesFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
 
         // transfer all files in the match directory
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             waitingHandler.setPrimaryProgressCounterIndeterminate(true);
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-            File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
+            File experimentFile = new File(matchesFolder, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }
 
-        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
+        identification.establishConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
 
-        // tar everything in the current cps file file
+        // tar everything in the current cps file
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            File matchesFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
             TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
         }
     }

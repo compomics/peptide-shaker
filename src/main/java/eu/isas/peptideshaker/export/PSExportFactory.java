@@ -63,7 +63,7 @@ public class PSExportFactory implements ExportFactory {
     /**
      * User defined factory containing the user schemes.
      */
-    private static final String SERIALIZATION_FILE = System.getProperty("user.home") + "/.peptideshaker/exportFactory.cus";
+    private static String SERIALIZATION_FILE = System.getProperty("user.home") + "/.peptideshaker/exportFactory.cus";
     /**
      * The user export schemes.
      */
@@ -720,4 +720,33 @@ public class PSExportFactory implements ExportFactory {
         defaultSchemes.put(coa.getName(), coa);
         return defaultSchemes;
     }
+
+    /**
+     * Returns the file where to save the implemented export schemes.
+     * 
+     * @return the file where to save the implemented export schemes
+     */
+    public static String getSerializationFile() {
+        return SERIALIZATION_FILE;
+    }
+
+    /**
+     * Returns the folder where to save the implemented export schemes.
+     * 
+     * @return the folder where to save the implemented export schemes
+     */
+    public static String getSerializationFolder() {
+        File tempFile = new File(getSerializationFile());
+        return tempFile.getParent();
+    }
+
+    /**
+     * Sets the file where to save the implemented export schemes.
+     * 
+     * @param serializationFolder the folder where to save the implemented export schemes
+     */
+    public static void setSerializationFolder(String serializationFolder) {
+        PSExportFactory.SERIALIZATION_FILE = serializationFolder + "/exportFactory.cus";
+    }
+    
 }

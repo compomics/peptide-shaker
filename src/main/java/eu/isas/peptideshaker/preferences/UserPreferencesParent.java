@@ -22,7 +22,7 @@ public abstract class UserPreferencesParent {
     public void loadUserPreferences() {
 
         try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            File file = new File(PeptideShaker.getUserPreferencesFile());
             if (!file.exists()) {
                 userPreferences = new UserPreferences();
                 saveUserPreferences();
@@ -30,7 +30,7 @@ public abstract class UserPreferencesParent {
                 userPreferences = (UserPreferences) SerializationUtils.readObject(file);
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while loading " + PeptideShaker.USER_PREFERENCES_FILE + " (see below). User preferences set back to default.");
+            System.err.println("An error occurred while loading " + PeptideShaker.getUserPreferencesFile() + " (see below). User preferences set back to default.");
             e.printStackTrace();
             userPreferences = new UserPreferences();
         }
@@ -42,7 +42,7 @@ public abstract class UserPreferencesParent {
     public void saveUserPreferences() {
 
         try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            File file = new File(PeptideShaker.getUserPreferencesFile());
             boolean parentExists = true;
 
             if (!file.getParentFile().exists()) {

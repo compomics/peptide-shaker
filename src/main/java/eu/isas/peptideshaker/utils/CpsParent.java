@@ -211,7 +211,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         }
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
-        String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
+        String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
         identification.establishConnection(dbFolder, false, objectsCache);
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -233,7 +233,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, searchParameters,
                 annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter);
+                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, getJarFilePath());
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
@@ -120,11 +121,15 @@ public class PeptideShaker {
     /**
      * User preferences file.
      */
-    public static final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
+    private static String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
      * The location of the folder used for serialization of matches.
      */
-    public final static String SERIALIZATION_DIRECTORY = "resources/matches";
+    private static String SERIALIZATION_DIRECTORY = "matches";
+    /**
+     * The parent directory of the serialization directory. An empty string if not set.
+     */
+    private static String SERIALIZATION_PARENT_DIRECTORY = "resources";
     /**
      * The name of the serialized experiment
      */
@@ -4297,7 +4302,98 @@ public class PeptideShaker {
      *
      * @return the default experiment file
      */
-    public static File getDefaultExperimentFile() {
-        return new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
+    public static String getDefaultExperimentFileName() {
+        return PeptideShaker.experimentObjectName;
     }
+
+    /**
+     * Returns the file used for user preferences storage.
+     * 
+     * @return the file used for user preferences storage
+     */
+    public static String getUserPreferencesFile() {
+        return USER_PREFERENCES_FILE;
+    }
+
+    /**
+     * Returns the folder used for user preferences storage.
+     * 
+     * @return the folder used for user preferences storage
+     */
+    public static String getUserPreferencesFolder() {
+        File tempFile = new File(getUserPreferencesFile());
+        return tempFile.getParent();
+    }
+
+    /**
+     * Sets the file used for user preferences storage.
+     * 
+     * @param userPreferencesFolder the folder used for user preferences storage
+     */
+    public static void setUserPreferencesFolder(String userPreferencesFolder) {
+        File tempFile = new File(userPreferencesFolder, "userpreferences.cpf");
+        PeptideShaker.USER_PREFERENCES_FILE = tempFile.getAbsolutePath();
+    }
+
+    /**
+     * Returns the directory used to store the identification matches.
+     * 
+     * @return the directory used to store the identification matches
+     */
+    public static String getMatchesDirectorySubPath() {
+        return SERIALIZATION_DIRECTORY;
+    }
+
+    /**
+     * Returns the matches directory parent. An empty string if not set. Can be a relative path.
+     * 
+     * @return the matches directory parent
+     */
+    public static String getMatchesDirectoryParent() {
+        return SERIALIZATION_PARENT_DIRECTORY;
+    }
+
+    /**
+     * Returns the matches directory parent. An empty string if not set.
+     * 
+     * @param jarFilePath the path to the jar file
+     * 
+     * @return the matches directory parent
+     */
+    public static File getMatchesDirectoryParent(String jarFilePath) {
+        String matchesParentDirectory = PeptideShaker.getMatchesDirectoryParent();
+        if (matchesParentDirectory.equals("resources")) {
+            return new File(jarFilePath, matchesParentDirectory);
+        } else {
+            return new File(matchesParentDirectory);
+        }
+    }
+
+    /**
+     * Sets the matches directory parent.
+     * 
+     * @param matchesDirectoryParent the matches directory parent
+     */
+    public static void setMatchesDirectoryParent(String matchesDirectoryParent) throws IOException {
+        PeptideShaker.SERIALIZATION_PARENT_DIRECTORY = matchesDirectoryParent;
+        File serializationFolder = new File(matchesDirectoryParent, PeptideShaker.getMatchesDirectorySubPath());
+        if (!serializationFolder.exists()) {
+            serializationFolder.mkdirs();
+            if (!serializationFolder.exists()) {
+                throw new IOException("Impossible to create folder " + serializationFolder.getAbsolutePath() + ".");
+            }
+        }
+    }
+    
+    /**
+     * Returns the path to the match folder according to the user path settings.
+     * 
+     * @param jarFilePath the path to the jar file
+     * 
+     * @return the path to the match folder according to the user path settings
+     */
+    public static File getSerializationDirectory(String jarFilePath) {
+        return new File(getMatchesDirectoryParent(jarFilePath), PeptideShaker.getMatchesDirectorySubPath());
+    }
+    
 }
