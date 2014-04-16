@@ -53,6 +53,9 @@ public enum ReportCLIParams {
         aOptions.addOption(EXPORT_FOLDER.id, true, EXPORT_FOLDER.description);
         aOptions.addOption(REPORT_TYPE.id, true, REPORT_TYPE.description);
         aOptions.addOption(DOCUMENTATION_TYPE.id, true, DOCUMENTATION_TYPE.description);
+        
+        // Path setup
+        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -73,6 +76,9 @@ public enum ReportCLIParams {
 
         output += "\n\nOptional output parameters:\n";
         output += getOutputOptionsAsString();
+
+        output += "\n\nOptional temporary folder:\n\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;
     }

@@ -9,6 +9,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,19 @@ public class FollowUpCLI extends CpsParent {
      * Calling this method will run the configured PeptideShaker process.
      */
     public Object call() {
+
+        PathSettingsCLIInputBean pathSettingsCLIInputBean = followUpCLIInputBean.getPathSettingsCLIInputBean();
+        if (pathSettingsCLIInputBean.hasInput()) {
+            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
+            pathSettingsCLI.setPathSettings();
+        } else {
+            try {
+                setPathConfiguration();
+            } catch (Exception e) {
+                System.out.println("An error occured when setting path configuration. Default will be used.");
+                e.printStackTrace();
+            }
+        }
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
@@ -201,6 +215,16 @@ public class FollowUpCLI extends CpsParent {
     }
 
     /**
+     * Sets the path configuration
+     */
+    private void setPathConfiguration() throws IOException {
+        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        if (pathConfigurationFile.exists()) {
+            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+        }
+    }
+
+    /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
      * @throws IOException
@@ -212,7 +236,7 @@ public class FollowUpCLI extends CpsParent {
         SequenceFactory.getInstance().closeFile();
         identification.close();
 
-        File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
+        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {

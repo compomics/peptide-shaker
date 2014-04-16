@@ -22,7 +22,6 @@ public enum PeptideShakerCLIParams {
     IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx or .dat), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
     PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms, soon deprecated).", false),
-    //PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
     //PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented)", false),
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
@@ -112,6 +111,9 @@ public enum PeptideShakerCLIParams {
 
         // Report options
         ReportCLIParams.createOptionsCLI(aOptions);
+        
+        // Path setup
+        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -160,11 +162,14 @@ public enum PeptideShakerCLIParams {
 
         output += "\n\nOptional output parameters:\n\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
-        //output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
         //output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
+
+        output += "\n\nOptional temporary folder:\n\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
 
         output += "\n\n\nFor follow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
         output += "\nFor report export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
+        output += "\nFor path setting options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.PathSettingsCLI\n";
 
         return output;
     }

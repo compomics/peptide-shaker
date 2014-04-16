@@ -28,6 +28,7 @@ import com.compomics.util.messages.FeedBack;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -88,6 +89,19 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Calling this method will run the configured PeptideShaker process.
      */
     public Object call() {
+
+        PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
+        if (pathSettingsCLIInputBean.hasInput()) {
+            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
+            pathSettingsCLI.setPathSettings();
+        } else {
+            try {
+                setPathConfiguration();
+            } catch (Exception e) {
+                System.out.println("An error occured when setting path configuration. Default will be used.");
+                e.printStackTrace();
+            }
+        }
 
         // Set up the waiting handler
         if (cliInputBean.isGUI()) {
@@ -284,18 +298,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReportEndLine();
         }
 
-        // text summary output - format 2
-        if (cliInputBean.getTextFormat2Directory() != null) {
-            waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
-
-            // @TODO: implement text summary export format 2
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator, searchParameters);
-            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
-
-            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
-        }
-
         waitingHandler.setWaitingText("PeptideShaker Import Completed.");
         waitingHandler.appendReportEndLine();
 
@@ -453,7 +455,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             identification.close();
         }
 
-        File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
+        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {
@@ -501,6 +503,16 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     @Override
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
+    }
+
+    /**
+     * Sets the path configuration
+     */
+    private void setPathConfiguration() throws IOException {
+        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        if (pathConfigurationFile.exists()) {
+            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+        }
     }
 
     /**

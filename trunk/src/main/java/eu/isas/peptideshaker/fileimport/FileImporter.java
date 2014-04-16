@@ -636,7 +636,7 @@ public class FileImporter {
          */
         private void connectToIdDb(Identification identification) {
             try {
-                String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
+                String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
                 identification.establishConnection(dbFolder, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();

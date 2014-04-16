@@ -30,6 +30,10 @@ public class ReportCLIInputBean {
      * The documentation types required by the user.
      */
     private ArrayList<String> documentationTypes = new ArrayList<String>();
+    /**
+     * The path settings
+     */
+    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -58,6 +62,7 @@ public class ReportCLIInputBean {
                 documentationTypes.add(exportFactory.getExportTypeFromCommandLineOption(option));
             }
         }
+        pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
 
     /**
@@ -130,5 +135,14 @@ public class ReportCLIInputBean {
      */
     public boolean documentationExportNeeded() {
         return reportOutputFolder != null && !documentationTypes.isEmpty();
+    }
+    
+    /**
+     * Returns the path settings provided by the user.
+     * 
+     * @return the path settings provided by the user
+     */
+    public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
+        return pathSettingsCLIInputBean;
     }
 }

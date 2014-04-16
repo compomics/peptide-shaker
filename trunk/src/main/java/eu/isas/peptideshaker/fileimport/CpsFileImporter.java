@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Sample;
@@ -36,13 +37,15 @@ public class CpsFileImporter {
      * 
      * @param cpsFile the cps file
      * @param waitingHandler the waiting handler
+     * 
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException 
      */
     public CpsFileImporter(File cpsFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+        File matchFolderParent = PeptideShaker.getMatchesDirectoryParent(getJarFilePath());
+        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
 
         // empty the existing files in the matches folder
         if (matchFolder.exists()) {
@@ -63,7 +66,7 @@ public class CpsFileImporter {
             }
         }
 
-        File experimentFile = PeptideShaker.getDefaultExperimentFile();
+        File experimentFile = new File(matchFolder, PeptideShaker.getDefaultExperimentFileName());
 
         if (waitingHandler != null) {
             waitingHandler.resetSecondaryProgressCounter();
@@ -71,7 +74,7 @@ public class CpsFileImporter {
         }
 
         try {
-            TarUtils.extractFile(cpsFile, waitingHandler);
+            TarUtils.extractFile(cpsFile, matchFolderParent, "resources", waitingHandler);
         } catch (ArchiveException e) {
             //Most likely an old project
             experimentFile = cpsFile;
@@ -147,5 +150,14 @@ public class CpsFileImporter {
      */
     public MsExperiment getExperiment() {
         return experiment;
+    }
+
+    /**
+     * Returns the path to the jar file.
+     * 
+     * @return the path to the jar file
+     */
+    public String getJarFilePath() {
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("CpsFileImporter.class").getPath(), "PeptideShaker");
     }
 }

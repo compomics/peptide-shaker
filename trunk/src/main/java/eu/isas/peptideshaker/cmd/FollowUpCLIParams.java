@@ -91,6 +91,9 @@ public enum FollowUpCLIParams {
         aOptions.addOption(INCLUSION_LIST_PEPTIDE_FILTERS.id, true, INCLUSION_LIST_PEPTIDE_FILTERS.description);
         aOptions.addOption(INCLUSION_LIST_PROTEIN_FILTERS.id, true, INCLUSION_LIST_PROTEIN_FILTERS.description);
         aOptions.addOption(INCLUSION_LIST_RT_WINDOW.id, true, INCLUSION_LIST_RT_WINDOW.description);
+        
+        // Path setup
+        aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -110,6 +113,9 @@ public enum FollowUpCLIParams {
 
         output += "\n\nOptional output parameters:\n";
         output += getOutputOptionsAsString();
+
+        output += "\n\nOptional temporary folder:\n\n";
+        output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;
     }

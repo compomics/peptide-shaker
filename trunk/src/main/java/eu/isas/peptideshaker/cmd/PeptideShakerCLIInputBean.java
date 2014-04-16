@@ -55,10 +55,6 @@ public class PeptideShakerCLIInputBean {
      */
     private File textSummaryDirectoryFormat1 = null;
     /**
-     * Text summary format 2 output directory. One file: proteins and peptides.
-     */
-    private File textSummaryDirectoryFormat2 = null;
-    /**
      * PeptideShaker pride output file.
      */
     private File prideFile = null;
@@ -150,6 +146,10 @@ public class PeptideShakerCLIInputBean {
      * The report export options chosen.
      */
     private ReportCLIInputBean reportCLIInputBean;
+    /**
+     * The path settings
+     */
+    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -185,16 +185,6 @@ public class PeptideShakerCLIInputBean {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
         }
-
-//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
-//            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
-//            File testFile = new File(filesTxt);
-//            if (testFile.exists()) {
-//                textSummaryDirectoryFormat2 = testFile;
-//            } else {
-//                throw new FileNotFoundException(filesTxt + " not found.");
-//            }
-//        }
 //
 //        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
 //            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
@@ -326,6 +316,7 @@ public class PeptideShakerCLIInputBean {
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
+        pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
 
     /**
@@ -350,24 +341,6 @@ public class PeptideShakerCLIInputBean {
      */
     public void setTextFormat1Directory(File csvDirectory) {
         this.textSummaryDirectoryFormat1 = csvDirectory;
-    }
-
-    /**
-     * Returns the directory for text summary output format 2. Null if not set.
-     *
-     * @return the directory for text summary output format 2
-     */
-    public File getTextFormat2Directory() {
-        return textSummaryDirectoryFormat2;
-    }
-
-    /**
-     * Sets the directory for text summary output format 2.
-     *
-     * @param csvDirectory the directory for text summary output format 2
-     */
-    public void setTextFormat2Directory(File csvDirectory) {
-        this.textSummaryDirectoryFormat2 = csvDirectory;
     }
 
     /**
@@ -839,6 +812,24 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
+     * Returns the ptm score to use.
+     *
+     * @return the ptm score to use
+     */
+    public PtmScore getPtmScore() {
+        return ptmScore;
+    }
+
+    /**
+     * Returns the PTM score threshold.
+     *
+     * @return the PTM score threshold
+     */
+    public Double getPtmScoreThreshold() {
+        return ptmScoreThreshold;
+    }
+
+    /**
      * Returns the follow-up options required.
      *
      * @return the follow-up options required
@@ -855,22 +846,13 @@ public class PeptideShakerCLIInputBean {
     public ReportCLIInputBean getReportCLIInputBean() {
         return reportCLIInputBean;
     }
-
+    
     /**
-     * Returns the ptm score to use.
-     *
-     * @return the ptm score to use
+     * Returns the path settings provided by the user.
+     * 
+     * @return the path settings provided by the user
      */
-    public PtmScore getPtmScore() {
-        return ptmScore;
-    }
-
-    /**
-     * Returns the PTM score threshold.
-     *
-     * @return the PTM score threshold
-     */
-    public Double getPtmScoreThreshold() {
-        return ptmScoreThreshold;
+    public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
+        return pathSettingsCLIInputBean;
     }
 }

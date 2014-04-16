@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
 
@@ -30,22 +31,37 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
 
         // get the version number set in the pom file
         String jarFileName = "PeptideShaker-" + new Properties().getVersion() + ".jar";
-        String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
-        // remove starting 'file:' tag if there
-        if (path.startsWith("file:")) {
-            path = path.substring("file:".length(), path.indexOf(jarFileName));
-        } else {
-            path = path.substring(0, path.indexOf(jarFileName));
-        }
-        path = path.replace("%20", " ");
-        path = path.replace("%5b", "[");
-        path = path.replace("%5d", "]");
+        String path = getJarFilePath();
         File jarFile = new File(path, jarFileName);
         // get the splash 
         String splash = "peptide-shaker-splash.png";
         String mainClass = "eu.isas.peptideshaker.gui.PeptideShakerGUI";
-
+        // Set path for utilities preferences
+        try {
+        setPathConfiguration();
+        } catch (Exception e) {
+            System.out.println("Impossible to load path configuration, default will be used.");
+        }
         launchTool("PeptideShaker", jarFile, splash, mainClass, args);
+    }
+    
+    /**
+     * Sets the path configuration
+     */
+    private void setPathConfiguration() throws IOException {
+        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        if (pathConfigurationFile.exists()) {
+            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+        }
+    }
+
+    /**
+     * Returns the path to the jar file.
+     *
+     * @return the path to the jar file
+     */
+    public String getJarFilePath() {
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerWrapper.class").getPath(), "PeptideShaker");
     }
 
     /**

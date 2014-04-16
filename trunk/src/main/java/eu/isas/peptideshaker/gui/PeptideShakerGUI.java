@@ -72,6 +72,7 @@ import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
+import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -212,7 +213,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The compomics PTM factory.
      */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private PTMFactory ptmFactory;
     /**
      * The compomics enzyme factory.
      */
@@ -220,11 +221,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The gene factory.
      */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
+    private GeneFactory geneFactory;
     /**
      * The GO factory.
      */
-    private GOFactory goFactory = GOFactory.getInstance();
+    private GOFactory goFactory;
     /**
      * The utilities user preferences.
      */
@@ -362,7 +363,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param args
      */
     public static void main(String[] args) {
-
+        
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
         try {
@@ -400,6 +401,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         new PeptideShakerGUI(cpsFile, true);
     }
+    
+    /**
+     * Sets the path configuration
+     */
+    private void setPathConfiguration() throws IOException {
+        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        if (pathConfigurationFile.exists()) {
+            PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
+        }
+    }
 
     /**
      * Creates a new PeptideShaker frame.
@@ -418,6 +429,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // set up the ErrorLog
         setUpLogFile(true);
+        
+        // set path configuration
+        try {
+        setPathConfiguration();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed loading user path configuration, default will be used.\n", "Look and Feel",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+        
+        
+        ptmFactory = PTMFactory.getInstance();
+        geneFactory = GeneFactory.getInstance();
+        goFactory = GOFactory.getInstance();
 
         // check for new version
         boolean newVersion = false;
@@ -4026,7 +4051,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // empty the matches folder
         if (databaseClosed) {
-            File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
+            
+            File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
 
             if (matchFolder.exists()) {
 

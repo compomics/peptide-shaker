@@ -101,6 +101,10 @@ public class FollowUpCLIInputBean {
      * The Progenesis targeted PTMs.
      */
     private ArrayList<String> progenesisTargetedPTMs = new ArrayList<String>();
+    /**
+     * The path settings
+     */
+    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -175,6 +179,7 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
+        pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
 
     /**
@@ -480,5 +485,14 @@ public class FollowUpCLIInputBean {
      */
     public boolean inclusionListNeeded() {
         return inclusionFile != null;
+    }
+    
+    /**
+     * Returns the path settings provided by the user.
+     * 
+     * @return the path settings provided by the user
+     */
+    public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
+        return pathSettingsCLIInputBean;
     }
 }
