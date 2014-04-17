@@ -175,7 +175,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns a list of sites where the probabilistic score was used
+     * Returns a list of sites where the probabilistic score was used.
      *
      * @return a list of sites where the probabilistic score was used
      */
@@ -217,7 +217,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns a list of sites where the D-score was used
+     * Returns a list of sites where the D-score was used.
      *
      * @return a list of sites where the D-score was used
      */
@@ -288,7 +288,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Backward compatibility check
+     * Backward compatibility check.
      */
     private void compatibilityCheck() {
         if (deltaScoresAtAA == null) {
@@ -336,7 +336,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Sets the confidence level of a modificatoin site. 1 is the first amino
+     * Sets the confidence level of a modification site. 1 is the first amino
      * acid.
      *
      * @param site the modification site
@@ -402,7 +402,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the sites of all localized PTMs
+     * Returns the sites of all localized PTMs.
      *
      * @return the sites of all localized PTMs
      */
@@ -423,7 +423,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the confidence of the ptm localization
+     * Returns the confidence of the PTM localization.
      *
      * @param site the modification site
      *
@@ -436,7 +436,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the minimal confidence among the PTM sites of this scoring
+     * Returns the minimal confidence among the PTM sites of this scoring.
      *
      * @return the minimal confidence among the PTM sites of this scoring
      */
@@ -455,7 +455,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the confidently and very confidently localized PTMs
+     * Returns the confidently and very confidently localized PTMs.
      *
      * @return the confidently and very confidently localized PTMs
      */
@@ -467,7 +467,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the not found, randomly or doubtfully localized PTMs
+     * Returns the not found, randomly or doubtfully localized PTMs.
      *
      * @return the not found, randomly or doubtfully localized PTMs
      */
