@@ -54,7 +54,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
     /**
-     * Main ptm site selection
+     * Main ptm site selection.
      */
     private boolean[] mainSelection;
     /**
@@ -158,15 +158,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             ptmSiteTable.getColumn(ptmSiteTable.getColumnName(i)).setCellRenderer(new NimbusCheckBoxRenderer());
         }
 
-
         ptmsTable.getColumn("").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-
 
         ptmSiteTable.getColumn("").setMinWidth(35);
         ptmSiteTable.getColumn("").setMaxWidth(35);
         ptmsTable.getColumn("").setMinWidth(35);
         ptmsTable.getColumn("").setMaxWidth(35);
-
 
         // set up the PTM confidence color map
         HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
@@ -320,7 +317,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the ptm table.
+     * Table model for the PTM table.
      */
     private class PtmTable extends DefaultTableModel {
 
@@ -355,7 +352,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     if (psmScores != null) {
                         PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
                         if (psmScoring != null) {
-                            int site = column + 1;
+                            int site = column;
                             if (psmScoring.getConfidentPtmLocations().contains(site)) {
                                 return psmScoring.getLocalizationConfidence(site);
                             } else {
