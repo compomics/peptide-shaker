@@ -5,24 +5,25 @@ import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import org.apache.commons.cli.Options;
 
 /**
- * Enum of the command line parameters for path setting
+ * Enum of the command line parameters for path setting.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum PathSettingsCLIParams {
 
     ALL("temp_folder", "A folder for temporary file storage. Use only if you encounter problems with the default configuration.");
     /**
-     * The id of the command line option
+     * The id of the command line option.
      */
     public String id;
     /**
-     * The description of the command line option
+     * The description of the command line option.
      */
     public String description;
+
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param id the id of the command line option
      * @param description the description of the command line option
      */
@@ -48,7 +49,6 @@ public enum PathSettingsCLIParams {
             aOptions.addOption(utilitiesPathKey.getId(), true, utilitiesPathKey.getDescription());
         }
     }
-    
 
     /**
      * Returns the options as a string.
@@ -65,10 +65,10 @@ public enum PathSettingsCLIParams {
 
         output += "\n\nSpecific path setting:\n\n";
         for (PeptideShakerPathPreferences.PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathPreferences.PeptideShakerPathKey.values()) {
-        output += "-" + String.format(formatter, peptideShakerPathKey.getId()) + peptideShakerPathKey.getDescription() + System.getProperty("line.separator");
+            output += "-" + String.format(formatter, peptideShakerPathKey.getId()) + peptideShakerPathKey.getDescription() + System.getProperty("line.separator");
         }
         for (UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey : UtilitiesPathPreferences.UtilitiesPathKey.values()) {
-        output += "-" + String.format(formatter, utilitiesPathKey.getId()) + utilitiesPathKey.getDescription() + System.getProperty("line.separator");
+            output += "-" + String.format(formatter, utilitiesPathKey.getId()) + utilitiesPathKey.getDescription() + System.getProperty("line.separator");
         }
 
         return output;

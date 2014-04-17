@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.preferences.UtilitiesPathPreferences;
-import com.compomics.util.preferences.UtilitiesPathPreferences.UtilitiesPathKey;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import java.io.BufferedReader;
@@ -13,41 +12,41 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This class sets the path preferences for the files to read/write
+ * This class sets the path preferences for the files to read/write.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PeptideShakerPathPreferences {
 
     /**
-     * Default name for the path configuration file
+     * Default name for the path configuration file.
      */
     public static final String configurationFileName = "resources/conf/paths.txt";
 
     /**
-     * Enum of the paths which can be set in PeptideShaker
+     * Enum of the paths which can be set in PeptideShaker.
      */
     public enum PeptideShakerPathKey {
 
         /**
          * Directory where identification matches are temporarily saved to
-         * reduce the memory footprint
+         * reduce the memory footprint.
          */
         matchesDirectory("peptideshaker_matches_directory", "Directory where identification matches are temporarily saved to reduce the memory footprint.", "", true),
         /**
-         * Folder containing the PeptideShaker user preferences file
+         * Folder containing the PeptideShaker user preferences file.
          */
         peptideShakerPreferences("peptideshaker_user_preferences", "Folder containing the PeptideShaker user preferences file.", "", true),
         /**
-         * Folder containing the user custom exports file
+         * Folder containing the user custom exports file.
          */
         peptideShakerExports("peptideshaker_exports", "Folder containing the user custom exports file.", "", true);
         /**
-         * The key used to refer to this path
+         * The key used to refer to this path.
          */
         private String id;
         /**
-         * The description of the path usage
+         * The description of the path usage.
          */
         private String description;
         /**
@@ -56,12 +55,12 @@ public class PeptideShakerPathPreferences {
          */
         private String defaultSubDirectory;
         /**
-         * Indicates whether the path should be a folder
+         * Indicates whether the path should be a folder.
          */
         private boolean isDirectory;
 
         /**
-         * Constructor
+         * Constructor.
          *
          * @param id the id used to refer to this path key
          * @param description the description of the path usage
@@ -109,7 +108,6 @@ public class PeptideShakerPathPreferences {
             }
             return null;
         }
-
     }
 
     /**
@@ -136,7 +134,7 @@ public class PeptideShakerPathPreferences {
     }
 
     /**
-     * Loads a path to be set from a line
+     * Loads a path to be set from a line.
      *
      * @param line the line where to read the path from
      * @throws java.io.FileNotFoundException
@@ -163,10 +161,11 @@ public class PeptideShakerPathPreferences {
     }
 
     /**
-     * Sets the path according to the given key and path
+     * Sets the path according to the given key and path.
      *
      * @param peptideShakerPathKey the key of the path
      * @param path the path to be set
+     * @throws java.io.IOException
      */
     public static void setPathPreference(PeptideShakerPathKey peptideShakerPathKey, String path) throws IOException {
         switch (peptideShakerPathKey) {
@@ -223,8 +222,9 @@ public class PeptideShakerPathPreferences {
     }
 
     /**
+     * Writes the configuration file using the provided buffered writer.
      *
-     * @param bw the writer to use for writing
+     * @param bw the writer to use for writing.
      *
      * @throws IOException
      */
@@ -244,7 +244,9 @@ public class PeptideShakerPathPreferences {
      * @throws IOException
      */
     public static void writePathToFile(BufferedWriter bw, PeptideShakerPathKey pathKey) throws IOException {
+
         bw.write(pathKey.id + UtilitiesPathPreferences.separator);
+
         switch (pathKey) {
             case matchesDirectory:
                 bw.write(PeptideShaker.getMatchesDirectoryParent());
@@ -258,7 +260,7 @@ public class PeptideShakerPathPreferences {
             default:
                 throw new UnsupportedOperationException("Path " + pathKey.id + " not implemented.");
         }
+
         bw.newLine();
     }
-
 }

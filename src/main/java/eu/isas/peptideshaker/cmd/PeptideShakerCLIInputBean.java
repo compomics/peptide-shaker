@@ -147,7 +147,7 @@ public class PeptideShakerCLIInputBean {
      */
     private ReportCLIInputBean reportCLIInputBean;
     /**
-     * The path settings
+     * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 

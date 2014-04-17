@@ -363,7 +363,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param args
      */
     public static void main(String[] args) {
-        
+
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
         try {
@@ -401,9 +401,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         new PeptideShakerGUI(cpsFile, true);
     }
-    
+
     /**
-     * Sets the path configuration
+     * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
@@ -429,17 +429,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // set up the ErrorLog
         setUpLogFile(true);
-        
+
         // set path configuration
         try {
-        setPathConfiguration();
+            setPathConfiguration();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "Failed loading user path configuration, default will be used.\n", "Look and Feel",
+                    "Failed loading user path configuration, default will be used.\n", "Path Error",
                     JOptionPane.WARNING_MESSAGE);
         }
-        
-        
+
         ptmFactory = PTMFactory.getInstance();
         geneFactory = GeneFactory.getInstance();
         goFactory = GOFactory.getInstance();
@@ -3020,7 +3019,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * @see #updateAnnotationPreferences()
-     */ 
+     */
     private void highResAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highResAnnotationCheckBoxMenuItemActionPerformed
         updateAnnotationPreferences();
     }//GEN-LAST:event_highResAnnotationCheckBoxMenuItemActionPerformed
@@ -4051,7 +4050,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // empty the matches folder
         if (databaseClosed) {
-            
+
             File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
 
             if (matchFolder.exists()) {

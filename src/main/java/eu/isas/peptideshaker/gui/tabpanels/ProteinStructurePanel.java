@@ -2863,7 +2863,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     String tempAccession = proteinMatch.getMainMatch();
 
                     // find the pdb matches
-                    uniProtPdb = new FindPdbForUniprotAccessions(tempAccession);
+                    uniProtPdb = new FindPdbForUniprotAccessions(tempAccession, progressDialog); // @TODO: make it possible to cancel this process...
 
                     // delete the previous matches
                     DefaultTableModel dm = (DefaultTableModel) pdbMatchesJTable.getModel();
