@@ -747,7 +747,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 || organizationNameJTextField.getText().length() == 0
                 || organizationEmailJTextField.getText().length() == 0
                 || organizationAddressJTextArea.getText().length() == 0
-                || organizationUrlJTextField.getText().length() == 0) {
+                || organizationUrlJTextField.getText().length() == 0
+                || outputFolderJTextField.getText().length() == 0) {
             inputValid = false;
         }
 

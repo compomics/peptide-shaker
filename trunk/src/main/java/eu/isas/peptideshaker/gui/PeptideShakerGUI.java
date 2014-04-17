@@ -435,8 +435,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             setPathConfiguration();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "Failed loading user path configuration, default will be used.\n", "Path Error",
+                    "Failed to load user path configurations. Defaults will be used.", "Path Error",
                     JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
         }
 
         ptmFactory = PTMFactory.getInstance();
