@@ -31,7 +31,7 @@ public class ReportCLIInputBean {
      */
     private ArrayList<String> documentationTypes = new ArrayList<String>();
     /**
-     * The path settings
+     * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 

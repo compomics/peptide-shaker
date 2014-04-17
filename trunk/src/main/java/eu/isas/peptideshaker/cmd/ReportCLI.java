@@ -162,7 +162,7 @@ public class ReportCLI extends CpsParent {
     }
 
     /**
-     * Sets the path configuration
+     * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);

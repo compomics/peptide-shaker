@@ -6,18 +6,18 @@ import java.util.HashMap;
 import org.apache.commons.cli.CommandLine;
 
 /**
- * Parses the command line and retrieves the user input
+ * Parses the command line and retrieves the user input.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PathSettingsCLIInputBean {
 
     /**
-     * The path set to the temp folder
+     * The path set to the temp folder.
      */
     private String tempFolder = "";
     /**
-     * The specific paths sets for every option
+     * The specific paths sets for every option.
      */
     private HashMap<String, String> paths = new HashMap<String, String>();
 
@@ -48,7 +48,7 @@ public class PathSettingsCLIInputBean {
 
     /**
      * Returns the temp folder, an empty string if not set.
-     * 
+     *
      * @return the temp folder
      */
     public String getTempFolder() {
@@ -56,21 +56,22 @@ public class PathSettingsCLIInputBean {
     }
 
     /**
-     * Returns the specific paths provided by the user in a map: Path id -> path.
-     * 
+     * Returns the specific paths provided by the user in a map: Path id ->
+     * path.
+     *
      * @return the specific paths provided by the user
      */
     public HashMap<String, String> getPaths() {
         return paths;
     }
-    
+
     /**
      * Indicates whether the user gave some path configuration input.
-     * 
-     * @return a boolean indicating whether the user gave some path configuration input.
+     *
+     * @return a boolean indicating whether the user gave some path
+     * configuration input.
      */
     public boolean hasInput() {
         return !tempFolder.equals("") || !paths.isEmpty();
     }
-
 }

@@ -38,15 +38,15 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
         String mainClass = "eu.isas.peptideshaker.gui.PeptideShakerGUI";
         // Set path for utilities preferences
         try {
-        setPathConfiguration();
+            setPathConfiguration();
         } catch (Exception e) {
             System.out.println("Impossible to load path configuration, default will be used.");
         }
         launchTool("PeptideShaker", jarFile, splash, mainClass, args);
     }
-    
+
     /**
-     * Sets the path configuration
+     * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);

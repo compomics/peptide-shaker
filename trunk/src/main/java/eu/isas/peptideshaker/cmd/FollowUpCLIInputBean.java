@@ -102,7 +102,7 @@ public class FollowUpCLIInputBean {
      */
     private ArrayList<String> progenesisTargetedPTMs = new ArrayList<String>();
     /**
-     * The path settings
+     * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 

@@ -11,19 +11,19 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /**
- * Allows the user to set the path settings in command line
+ * Allows the user to set the path settings in command line.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PathSettingsCLI {
 
     /**
-     * The input bean containing the user parameters
+     * The input bean containing the user parameters.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param pathSettingsCLIInputBean an input bean containing the user
      * parameters
@@ -33,17 +33,15 @@ public class PathSettingsCLI {
     }
 
     public Object call() {
-
         setPathSettings();
-        
         return null;
     }
-    
+
     /**
      * Sets the path settings according to the pathSettingsCLIInputBean.
      */
     public void setPathSettings() {
-        
+
         String path = pathSettingsCLIInputBean.getTempFolder();
         if (!path.equals("")) {
             try {
@@ -82,21 +80,21 @@ public class PathSettingsCLI {
             System.out.println("An error occurred when saving the path preference to " + destinationFile.getAbsolutePath() + ".");
             e.printStackTrace();
         }
-        
-                System.out.println("Path configuration completed.");
-        
+
+        System.out.println("Path configuration completed.");
     }
 
     /**
-     * Returns the path to the jar file
-     * @return 
+     * Returns the path to the jar file.
+     *
+     * @return the path to the jar file
      */
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PathSettingsCLI.class").getPath(), "PeptideShaker");
     }
 
     /**
-     * PeptideShaker patj settings CLI header message when printing the usage.
+     * PeptideShaker path settings CLI header message when printing the usage.
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
