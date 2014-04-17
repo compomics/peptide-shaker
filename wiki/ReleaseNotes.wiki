@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.28.1 (Coming soon...):*
+
+ * NEW FEATURE: Added new command line options for path configuration.
+
+ * FEATURE IMPROVEMENT: Renamed the Reshake button in the WelcomeDialog to PRIDE Reshake.
+
+ * BUG FIX: Fixed a bug in the PtmSiteInferenceDialog where the PTM localization in the two tables were not the same.
+ * BUG FIX: Fixed a bug in the PTM panel where the orange icon got stuck.
+ * BUG FIX: Added .mzid and .cvs to PeptideShaker command line option description.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.26.18.
+
+----
+
 *Changes in PeptideShaker 0.28.0 (April 11. 2014):*
 
  * NEW FEATURE: Added support for MS Amanda (beta). 
