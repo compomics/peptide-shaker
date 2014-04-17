@@ -7,6 +7,7 @@
 
  * NEW FEATURE: Added new command line options for path configuration.
 
+ * FEATURE IMPROVEMENT: Added a check and warning if using Java 1.5 or 1.6.
  * FEATURE IMPROVEMENT: Renamed the Reshake button in the WelcomeDialog to PRIDE Reshake.
 
  * BUG FIX: Fixed a bug in the PtmSiteInferenceDialog where the PTM localization in the two tables were not the same.
