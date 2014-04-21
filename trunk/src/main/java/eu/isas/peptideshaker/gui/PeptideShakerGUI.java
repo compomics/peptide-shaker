@@ -71,6 +71,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -789,6 +790,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenuItem = new javax.swing.JMenuItem();
         followUpAnalysisMenuItem = new javax.swing.JMenuItem();
+        methodsSectionMenuItem = new javax.swing.JMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         projectExportMenu = new javax.swing.JMenu();
         exportProjectMenuItem = new javax.swing.JMenuItem();
@@ -1581,6 +1583,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         });
         exportJMenu.add(followUpAnalysisMenuItem);
+
+        methodsSectionMenuItem.setText("Methods Section");
+        methodsSectionMenuItem.setToolTipText("<html>\nExport a draft of the method<br>\nsection for your manuscript\n</html>");
+        methodsSectionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                methodsSectionMenuItemActionPerformed(evt);
+            }
+        });
+        exportJMenu.add(methodsSectionMenuItem);
         exportJMenu.add(jSeparator10);
 
         projectExportMenu.setText("PeptideShaker Project As");
@@ -3026,6 +3037,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }//GEN-LAST:event_highResAnnotationCheckBoxMenuItemActionPerformed
 
     /**
+     * Opens the method section draft dialog.
+     * 
+     * @param evt 
+     */
+    private void methodsSectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodsSectionMenuItemActionPerformed
+        new MethodsSectionDialog(this, true);
+    }//GEN-LAST:event_methodsSectionMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -3217,6 +3237,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenu lossSplitter;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem methodsSectionMenuItem;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JButton newsButton;
