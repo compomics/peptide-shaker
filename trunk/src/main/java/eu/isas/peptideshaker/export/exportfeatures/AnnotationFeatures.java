@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the annotation export features.
@@ -44,13 +46,7 @@ public enum AnnotationFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(intensity_limit);
-        result.add(automatic_annotation);
-        result.add(selected_ions);
-        result.add(neutral_losses);
-        result.add(neutral_losses_sequence_dependence);
-        result.add(selected_charges);
-        result.add(fragment_ion_accuracy);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

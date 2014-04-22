@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -13,10 +14,13 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.math.statistics.Distribution;
+import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
+import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -28,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.math.MathException;
 
 /**
  * This class provides identification features and stores them in cache.
@@ -95,23 +100,50 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of booleans indicating whether the amino acids of given
-     * peptides can generate peptides.
+     * Returns an array of the likelihood to find identify a given amino acid in
+     * the protein sequence. 0 is the first amino acid.
      *
      * @param proteinMatchKey the key of the protein of interest
+     *
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
+     *
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public boolean[] getCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        boolean[] result = (boolean[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey);
+    public double[] getCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        double[] result = (double[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey);
         if (result == null) {
             result = estimateCoverableAA(proteinMatchKey);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey, result);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Indicates the validation level of every amino acid in the given protein.
+     *
+     * @param proteinMatchKey the key of the protein of interest
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     *
+     * @return an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    public int[] getAACoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        int[] result = (int[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.AA_coverage, proteinMatchKey);
+        if (result == null) {
+            result = estimateAACoverage(proteinMatchKey, matchingType, massTolerance);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.AA_coverage, proteinMatchKey, result);
         }
         return result;
     }
@@ -129,8 +161,8 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public void updateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        boolean[] result = estimateCoverableAA(proteinMatchKey);
-        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey, result);
+        double[] result = estimateCoverableAA(proteinMatchKey);
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey, result);
     }
 
     /**
@@ -158,47 +190,236 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of boolean indicating whether the amino acids of given
-     * peptides can generate peptides.
+     * Estimates the sequence coverage for the given protein match according to
+     * the validation level: validation level -> share of the sequence uniquely
+     * covered by this validation level.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     *
+     * @return the sequence coverage
+     */
+    private HashMap<Integer, Double> estimateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        int[] aaCoverage = getAACoverage(proteinMatchKey, matchingType, massTolerance);
+        HashMap<Integer, Double> result = new HashMap<Integer, Double>();
+        for (int validationLevel : MatchValidationLevel.getValidationLevelIndexes()) {
+            result.put(validationLevel, 0.0);
+        }
+        for (int validationLevel : aaCoverage) {
+            result.put(validationLevel, result.get(validationLevel) + 1);
+        }
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+        for (int validationLevel : MatchValidationLevel.getValidationLevelIndexes()) {
+            result.put(validationLevel, result.get(validationLevel) / sequence.length());
+        }
+        return result;
+    }
+
+    /**
+     * Returns amino acid coverage of this protein by enzymatic or non-enzymatic
+     * peptides only in an array where the index of the best validation level of
+     * every peptide covering a given amino acid is given. 0 is the first amino
+     * acid.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     * @param enzymatic if not all peptides are considered, if true only enzymatic peptides will be considered, if
+     * false only non enzymatic
+     *
+     * @return the identification coverage of the protein sequence
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    public int[] estimateAACoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance, boolean enzymatic)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return estimateAACoverage(proteinMatchKey, matchingType, massTolerance, false, enzymatic);
+    }
+
+    /**
+     * Returns amino acid coverage of this protein by all peptides or by enzymatic or non-enzymatic
+     * peptides only in an array where the index of the best validation level of
+     * every peptide covering a given amino acid is given. 0 is the first amino
+     * acid.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     * @param allPeptides indicates whether all peptides should be taken into account
+     * @param enzymatic if not all peptides are considered, if true only enzymatic peptides will be considered, if
+     * false only non enzymatic
+     *
+     * @return the identification coverage of the protein sequence
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    private int[] estimateAACoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance, boolean allPeptides, boolean enzymatic)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+        String sequence = currentProtein.getSequence();
+
+        HashMap<Integer, ArrayList<Integer>> aminoAcids = new HashMap<Integer, ArrayList<Integer>>();
+        HashMap<Integer, boolean[]> coverage = new HashMap<Integer, boolean[]>();
+        PSParameter pSParameter = new PSParameter();
+
+        // batch load the required data
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
+
+        // iterate the peptides and store the coverage for each peptide validation level
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            String peptideSequence = Peptide.getSequence(peptideKey);
+            boolean enzymaticPeptide = true;
+            if (!allPeptides) {
+                enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, searchParameters.getEnzyme(),
+                        PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            }
+            if (allPeptides || enzymatic && enzymaticPeptide || !enzymatic && !enzymaticPeptide) {
+                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
+                int validationLevel = pSParameter.getMatchValidationLevel().getIndex();
+                boolean[] validationLevelCoverage = coverage.get(validationLevel);
+                ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
+                if (validationLevelCoverage == null) {
+                    validationLevelCoverage = new boolean[sequence.length() + 1];
+                    coverage.put(validationLevel, validationLevelCoverage);
+                    levelAminoAcids = new ArrayList<Integer>();
+                    aminoAcids.put(validationLevel, levelAminoAcids);
+                }
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                for (int index : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
+                    int peptideTempStart = index -1;
+                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                    for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                        boolean found = validationLevelCoverage[j];
+                        if (!found) {
+                            validationLevelCoverage[j] = true;
+                            levelAminoAcids.add(j);
+                        }
+                    }
+                }
+            }
+        }
+
+        int[] result = new int[sequence.length()];
+        for (int i = 0; i < sequence.length(); i++) {
+            result[i] = MatchValidationLevel.none.getIndex();
+        }
+        ArrayList<Integer> validationLevels = new ArrayList<Integer>(coverage.keySet());
+        Collections.sort(validationLevels);
+        for (int validationLevel : validationLevels) {
+            boolean[] validationLevelCoverage = coverage.get(validationLevel);
+            if (validationLevelCoverage != null) {
+                ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
+                for (int aa : levelAminoAcids) {
+                    if (aa >= result.length) {
+                        int debug = 1;
+                    }
+                    int previousLevel = result[aa];
+                    if (previousLevel == MatchValidationLevel.none.getIndex()) {
+                        result[aa] = validationLevel;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns amino acid coverage of this protein in an array where the index
+     * of the best validation level of every peptide covering a given amino acid
+     * is given. 0 is the first amino acid.
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @param matchingType the sequence matching type to use
+     * @param massTolerance the mass tolerance to use
+     *
+     * @return the identification coverage of the protein sequence
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    private int[] estimateAACoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return estimateAACoverage(proteinMatchKey, matchingType, massTolerance, true, true);
+    }
+
+    /**
+     * Returns an array of the probability to cover the sequence of the given
+     * protein. aa index -> probability, 0 is the first amino acid
      *
      * @param proteinMatchKey the key of the protein of interest
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
      */
-    private boolean[] estimateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private double[] estimateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-        boolean[] result = new boolean[sequence.length() + 1];
+        double[] result = new double[sequence.length()];
+        Distribution peptideLengthDistribution = metrics.getPeptideLengthDistribution();
+        Enzyme enzyme = searchParameters.getEnzyme();
 
-        if (!searchParameters.getEnzyme().isSemiSpecific()) {
-            int pepMax = idFilter.getMaxPepLength();
-            Enzyme enzyme = searchParameters.getEnzyme();
-            int cleavageAA = 0;
-            int lastCleavage = 0;
-            while (++cleavageAA < sequence.length() - 2) {
-
-                // @TODO: how to handle this for semi-specific enzymes??
-                if ((enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA)))
-                        || (enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1)))) {
-                    if (cleavageAA - lastCleavage <= pepMax) {
-                        for (int i = lastCleavage + 1; i <= cleavageAA; i++) {
-                            result[i] = true;
+        int lastCleavage = 0;
+        char previousChar = sequence.charAt(0), nextChar;
+        for (int i = 0; i < sequence.length() - 1; i++) {
+            double p = 1;
+            if (!enzyme.isSemiSpecific()) {
+                nextChar = sequence.charAt(i + 1);
+                if (enzyme.isCleavageSite(previousChar, nextChar)) {
+                    int length = i - lastCleavage + 1;
+                    if (peptideLengthDistribution == null) { //backward compatibility check
+                        int pepMax = idFilter.getMaxPepLength();
+                        if (length > pepMax) {
+                            p = 0;
                         }
+                    } else {
+                        p = peptideLengthDistribution.getProbabilityAt(length);
                     }
-                    lastCleavage = cleavageAA;
+                    for (int j = lastCleavage; j <= i; j++) {
+                        result[j] = p;
+                    }
+                    lastCleavage = i;
                 }
-            }
-
-            // add the last peptide if short enough
-            if (sequence.length() - lastCleavage < pepMax) {
-                for (int i = lastCleavage; i < sequence.length(); i++) {
-                    result[i] = true;
-                }
+                previousChar = nextChar;
+            } else {
+                result[i] = p;
             }
         }
-
-        result[sequence.length() - 1] = result[sequence.length() - 2];
+        double p = 1;
+        if (!enzyme.isSemiSpecific()) {
+            int length = sequence.length() - lastCleavage + 1;
+            if (peptideLengthDistribution == null) { //backward compatibility check
+                int pepMax = idFilter.getMaxPepLength();
+                if (length > pepMax) {
+                    p = 0;
+                }
+            } else {
+                p = peptideLengthDistribution.getProbabilityAt(length);
+            }
+            for (int j = lastCleavage; j < sequence.length(); j++) {
+                result[j] = p;
+            }
+        } else {
+            result[sequence.length()] = p;
+        }
         return result;
     }
 
@@ -217,11 +438,11 @@ public class IdentificationFeaturesGenerator {
      * @throws InterruptedException
      */
     public HashMap<Integer, Double> getSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        HashMap<Integer, Double> result = (HashMap<Integer, Double>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
+        HashMap<Integer, Double> result = (HashMap<Integer, Double>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey);
 
         if (result == null) {
             result = estimateSequenceCoverage(proteinMatchKey, matchingType, massTolerance);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
         }
         return result;
     }
@@ -233,7 +454,7 @@ public class IdentificationFeaturesGenerator {
      * @return true if the sequence coverage is in cache
      */
     public boolean sequenceCoverageInCache(String proteinMatchKey) {
-        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey) != null;
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey) != null;
     }
 
     /**
@@ -324,90 +545,7 @@ public class IdentificationFeaturesGenerator {
     public void updateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         HashMap<Integer, Double> result = estimateSequenceCoverage(proteinMatchKey, matchingType, massTolerance);
-        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
-    }
-
-    /**
-     * Estimates the sequence coverage for the given protein match according to
-     * the validation level: validation level -> share of the sequence uniquely
-     * covered by this validation level.
-     *
-     * @param proteinMatchKey the key of the protein match
-     * @param matchingType the sequence matching type to use
-     * @param massTolerance the mass tolerance to use
-     *
-     * @return the sequence coverage
-     */
-    private HashMap<Integer, Double> estimateSequenceCoverage(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance)
-            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-
-        HashMap<Integer, ArrayList<Integer>> aminoAcids = new HashMap<Integer, ArrayList<Integer>>();
-        HashMap<Integer, boolean[]> coverage = new HashMap<Integer, boolean[]>();
-        PSParameter pSParameter = new PSParameter();
-
-        // batch load the required data
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
-
-        // iterate the peptides and store the coverage for each peptide validation level
-        for (String peptideKey : proteinMatch.getPeptideMatches()) {
-            pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-            int validationLevel = pSParameter.getMatchValidationLevel().getIndex();
-            boolean[] validationLevelCoverage = coverage.get(validationLevel);
-            ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
-            if (validationLevelCoverage == null) {
-                validationLevelCoverage = new boolean[sequence.length() + 1];
-                coverage.put(validationLevel, validationLevelCoverage);
-                levelAminoAcids = new ArrayList<Integer>();
-                aminoAcids.put(validationLevel, levelAminoAcids);
-            }
-            String peptideSequence = Peptide.getSequence(peptideKey);
-            AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
-                int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                    boolean found = validationLevelCoverage[j];
-                    if (!found) {
-                        validationLevelCoverage[j] = true;
-                        levelAminoAcids.add(j);
-                    }
-                }
-            }
-        }
-
-        HashMap<Integer, Double> result = new HashMap<Integer, Double>();
-        int[] validationLevels = MatchValidationLevel.getValidationLevelIndexes();
-        for (int i = 0; i < validationLevels.length; i++) {
-            int validationLevel = validationLevels[i];
-            double nAA = 0.0;
-            boolean[] validationLevelCoverage = coverage.get(validationLevel);
-            if (validationLevelCoverage != null) {
-                ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
-                for (int aa : levelAminoAcids) {
-                    boolean betterValidationLevel = false;
-                    for (int j = i + 1; j < validationLevels.length; j++) {
-                        int tempValidationLevel = validationLevels[j];
-                        boolean[] tempValidationLevelCoverage = coverage.get(tempValidationLevel);
-                        if (tempValidationLevelCoverage != null) {
-                            if (tempValidationLevelCoverage[aa]) {
-                                betterValidationLevel = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!betterValidationLevel) {
-                        nAA++;
-                    }
-                }
-            }
-            double levelCoverage = nAA / sequence.length();
-            result.put(validationLevel, levelCoverage);
-        }
-
-        return result;
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey, result);
     }
 
     /**
@@ -612,7 +750,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public Double getObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public Double getObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
 
         if (result == null) {
@@ -643,7 +781,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void updateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void updateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = estimateObservableCoverage(proteinMatchKey);
         identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey, result);
     }
@@ -656,7 +794,7 @@ public class IdentificationFeaturesGenerator {
      * @return the best protein coverage possible according to the given
      * cleavage settings
      */
-    private Double estimateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private Double estimateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Enzyme enyzme = searchParameters.getEnzyme();
         String mainMatch;
         if (ProteinMatch.getNProteins(proteinMatchKey) == 1) {
@@ -666,7 +804,11 @@ public class IdentificationFeaturesGenerator {
             mainMatch = proteinMatch.getMainMatch();
         }
         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
-        return ((double) currentProtein.getObservableLength(enyzme, idFilter.getMaxPepLength())) / currentProtein.getLength();
+        double lengthMax = idFilter.getMaxPepLength();
+        if (metrics.getPeptideLengthDistribution() != null) {
+            lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99));
+        }
+        return ((double) currentProtein.getObservableLength(enyzme, lengthMax)) / currentProtein.getLength();
     }
 
     /**

@@ -1,8 +1,10 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the PSM identification features.
@@ -44,12 +46,7 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(peptide_shaker);
-        result.add(date);
-        result.add(experiment);
-        result.add(sample);
-        result.add(replicate);
-        result.add(search_engines);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

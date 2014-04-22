@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import org.jfree.chart.*;
@@ -191,5 +192,41 @@ public class ProteinSequencePanel {
         chartPanel.setBackground(Color.WHITE);
 
         return chartPanel;
+    }
+    
+    
+    public static ArrayList<JSparklinesDataSeries> getSparkLineDataSeriesCoverage(double[] aaHeight, int[] aaColor, HashMap<Integer, Color> colors) {
+        
+        if (aaHeight.length == 0) {
+            throw new IllegalArgumentException("Empty height given to protein coverage panel.");
+        }
+        if (aaHeight.length != aaColor.length) {
+            throw new IllegalArgumentException("Height and length size given to protein coverage panel differ.");
+        }
+        
+        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
+        
+        int previousIndex = 0;
+        int previousColor = aaColor[0];
+        double previousHeight = aaHeight[0];
+        
+        for (int i = 1 ; i < aaHeight.length ; i++) {
+            
+            int newColor = aaColor[i];
+            double newHeght = aaHeight[i];
+            
+            if (newColor != previousColor || newHeght != previousHeight) {
+                double length = i - previousIndex;
+                ArrayList<Double> series = new ArrayList<Double>(1);
+                series.add(length);
+                Color color = colors.get(newColor);
+                if (color == null) {
+                    throw new IllegalArgumentException("Color not set for index " + newColor + ".");
+                }
+        // @TODO: take heght into account
+                sparkLineDataSeriesCoverage.add(new JSparklinesDataSeries(series, color, null));
+            }
+        }
+        return sparkLineDataSeriesCoverage;
     }
 }

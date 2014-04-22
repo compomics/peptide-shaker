@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This enum groups the export features related to PTM scoring.
@@ -40,9 +42,7 @@ public enum PtmScoringFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(aScore);
-        result.add(neutral_losses);
-        result.add(flr);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

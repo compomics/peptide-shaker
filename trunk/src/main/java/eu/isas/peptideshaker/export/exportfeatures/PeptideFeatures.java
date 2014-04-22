@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the peptide identification features.
@@ -60,27 +62,7 @@ public enum PeptideFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(accessions);
-        result.add(protein_description);
-        result.add(sequence);
-        result.add(missed_cleavages);
-        result.add(modified_sequence);
-        result.add(position);
-        result.add(aaBefore);
-        result.add(aaAfter);
-        result.add(variable_ptms);
-        result.add(fixed_ptms);
-        result.add(localization_confidence);
-        result.add(confident_phosphosites);
-        result.add(other_phosphosites);
-        result.add(validated_psms);
-        result.add(psms);
-        result.add(score);
-        result.add(confidence);
-        result.add(decoy);
-        result.add(validated);
-        result.add(starred);
-        result.add(hidden);
+        result.addAll(Arrays.asList(values()));
         result.addAll(PsmFeatures.values()[0].getExportFeatures());
         return result;
     }

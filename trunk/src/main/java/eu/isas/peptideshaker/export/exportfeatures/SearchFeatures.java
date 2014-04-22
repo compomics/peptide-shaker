@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the export features linked to the spectrum identification.
@@ -49,18 +51,7 @@ public enum SearchFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(precursor_accuracy_unit);
-        result.add(precursor_tolerance);
-        result.add(fragment_tolerance);
-        result.add(enzyme);
-        result.add(mc);
-        result.add(database);
-        result.add(forward_ion);
-        result.add(rewind_ion);
-        result.add(fixed_modifications);
-        result.add(variable_modifications);
-        result.add(refinement_variable_modifications);
-        result.add(refinement_fixed_modifications);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

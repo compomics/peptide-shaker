@@ -629,7 +629,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
         sparklineColors.add(sparklineColor);
-        sparklineColors.add(new Color(255, 204, 0));
+        sparklineColors.add(Color.pink); // @TODO: remove the hard coding of the doubtful color below
+//        sparklineColors.add(new Color(255, 204, 0));
         sparklineColors.add(nonValidatedColor);
         sparklineColors.add(sparklineColorNotFound);
 

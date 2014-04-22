@@ -24,12 +24,27 @@ public class IdentificationFeaturesCache implements Serializable {
 
         /**
          * The coverable amino acids stored as big object.
+         * @deprecated replaced by coverable_AA_p
          */
         coverable_AA,
         /**
+         * The likelihood to cover amino acids stored as big object.
+         */
+        coverable_AA_p,
+        /**
+         * The amino acid coverage of a given protein.
+         */
+        AA_coverage,
+        /**
          * The sequence coverage of a given protein stored as small object.
+         *
+         * @deprecated replaced by sequence_validation_coverage
          */
         sequence_coverage,
+        /**
+         * The sequence coverage of a given protein stored as small object.
+         */
+        sequence_validation_coverage,
         /**
          * The expected sequence coverage of a given protein stored as small
          * object.
@@ -74,18 +89,19 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         tryptic_protein,
         /**
-         * The number of unique peptides. Stored as a small object. @TODO: do we need the list of them?
+         * The number of unique peptides. Stored as a small object. @TODO: do we
+         * need the list of them?
          */
         unique_peptides
     }
     /**
      * The number of values kept in memory for small objects.
      */
-    private final int smallObjectsCacheSize = 100000; 
+    private final int smallObjectsCacheSize = 1000000;
     /**
      * The number of values kept in memory for big objects.
      */
-    private final int bigObjectsCacheSize = 100;
+    private final int bigObjectsCacheSize = 1000;
     /**
      * Separator used to concatenate strings.
      */
@@ -161,6 +177,8 @@ public class IdentificationFeaturesCache implements Serializable {
 
         switch (type) {
             case coverable_AA:
+            case coverable_AA_p:
+            case AA_coverage:
             case tryptic_protein:
                 bigObjectsCache.remove(type);
                 for (String key : bigObjectsInCache) {
@@ -173,6 +191,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 }
                 break;
             case sequence_coverage:
+            case sequence_validation_coverage:
             case expected_coverage:
             case spectrum_counting:
             case number_of_spectra:
@@ -205,6 +224,8 @@ public class IdentificationFeaturesCache implements Serializable {
     public void addObject(ObjectType type, String objectKey, Object object) {
         switch (type) {
             case coverable_AA:
+            case coverable_AA_p:
+            case AA_coverage:
             case tryptic_protein:
                 if (!bigObjectsCache.containsKey(type)) {
                     bigObjectsCache.put(type, new HashMap<String, Object>());
@@ -232,6 +253,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 }
                 break;
             case sequence_coverage:
+            case sequence_validation_coverage:
             case expected_coverage:
             case spectrum_counting:
             case number_of_spectra:
@@ -280,6 +302,8 @@ public class IdentificationFeaturesCache implements Serializable {
         Object result = null;
         switch (type) {
             case coverable_AA:
+            case coverable_AA_p:
+            case AA_coverage:
             case tryptic_protein:
                 if (bigObjectsCache.containsKey(type)) {
                     result = bigObjectsCache.get(type).get(objectKey);
@@ -296,6 +320,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 }
                 return result;
             case sequence_coverage:
+            case sequence_validation_coverage:
             case expected_coverage:
             case spectrum_counting:
             case number_of_spectra:
@@ -531,8 +556,14 @@ public class IdentificationFeaturesCache implements Serializable {
         switch (type) {
             case coverable_AA:
                 return "coverable_AA";
+            case coverable_AA_p:
+                return "coverable_AA_p";
+            case AA_coverage:
+                return "AA_coverage";
             case sequence_coverage:
                 return "sequence_coverage";
+            case sequence_validation_coverage:
+                return "sequence_validation_coverage";
             case expected_coverage:
                 return "expected_coverage";
             case spectrum_counting:
@@ -569,12 +600,18 @@ public class IdentificationFeaturesCache implements Serializable {
         String objectTypeAsString = cacheKey.split(cacheSeparator)[0];
         if (objectTypeAsString.equals("coverable_AA")) {
             return ObjectType.coverable_AA;
+        } else if (objectTypeAsString.equals("coverable_AA_p")) {
+            return ObjectType.coverable_AA_p;
+        } else if (objectTypeAsString.equals("AA_coverage")) {
+            return ObjectType.AA_coverage;
         } else if (objectTypeAsString.equals("sequence_coverage")) {
             return ObjectType.sequence_coverage;
+        } else if (objectTypeAsString.equals("sequence_validation_coverage")) {
+            return ObjectType.sequence_validation_coverage;
         } else if (objectTypeAsString.equals("expected_coverage")) {
             return ObjectType.expected_coverage;
         } else if (objectTypeAsString.equals("spectrum_counting")) {
-            return ObjectType.sequence_coverage;
+            return ObjectType.spectrum_counting;
         } else if (objectTypeAsString.equals("#spectra")) {
             return ObjectType.number_of_spectra;
         } else if (objectTypeAsString.equals("#validated_spectra")) {

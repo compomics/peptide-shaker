@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the PSM identification features.
@@ -65,34 +67,7 @@ public enum PsmFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(accessions);
-        result.add(protein_description);
-        result.add(sequence);
-        result.add(missed_cleavages);
-        result.add(modified_sequence);
-        result.add(variable_ptms);
-        result.add(fixed_ptms);
-        result.add(localization_confidence);
-        result.add(probabilistic_score);
-        result.add(d_score);
-        result.add(spectrum_file);
-        result.add(spectrum_title);
-        result.add(spectrum_scan_number);
-        result.add(rt);
-        result.add(mz);
-        result.add(total_spectrum_intensity);
-        result.add(max_intensity);
-        result.add(spectrum_charge);
-        result.add(identification_charge);
-        result.add(theoretical_mass);
-        result.add(isotope);
-        result.add(mz_error);
-        result.add(score);
-        result.add(confidence);
-        result.add(decoy);
-        result.add(validated);
-        result.add(starred);
-        result.add(hidden);
+        result.addAll(Arrays.asList(values()));
         result.addAll(FragmentFeatures.values()[0].getExportFeatures());
         return result;
     }

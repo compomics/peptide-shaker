@@ -5,10 +5,14 @@ import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
@@ -17,9 +21,14 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Color;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -490,5 +499,92 @@ public class DisplayFeaturesGenerator {
      */
     public void setDisplayedPTMs(ArrayList<String> displayedPTMs) {
         this.displayedPTMs = displayedPTMs;
+    }
+
+    /**
+     * Returns the residue annotation for a given protein in a map for enzymatic
+     * or not enzymatic peptides only. Residue number -> annotations. 0 is the
+     * first amino acid
+     *
+     * @param proteinMatchKey the key of the match of interest
+     * @param matchingType the type of sequence matching to use
+     * @param massTolerance the MS2 mass tolerance
+     * @param identificationFeaturesGenerator the identification feature
+     * generator
+     * @param metrics the metrics
+     * @param identification the identification
+     * @param searchParameters the search parameters
+     * @param enzymatic whether enzymatic only or not enzymatic only peptides
+     * should be considered
+     *
+     * @return the residue annotation for a given protein
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification, boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+        String sequence = currentProtein.getSequence();
+
+        HashMap<Integer, ArrayList<ResidueAnnotation>> residueAnnotation = new HashMap<Integer, ArrayList<ResidueAnnotation>>(sequence.length());
+
+        double[] coverage = identificationFeaturesGenerator.getCoverableAA(proteinMatchKey);
+        double lastP = coverage[0];
+        int lastIndex = 0;
+        for (int i = 1; i < coverage.length; i++) {
+            double p = coverage[i];
+            if (p != lastP) {
+                String annotation = "Possible to cover (" + (lastIndex + 1) + "-" + i;
+                if (metrics.getPeptideLengthDistribution() != null) {
+                    annotation += ", " + Util.roundDouble(100 * p, 1) + "% likeliness";
+                }
+                annotation += ")";
+                ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                annotations.add(new ResidueAnnotation(annotation, null, false));
+                for (int j = lastIndex; j < i; j++) {
+                    residueAnnotation.put(j, annotations);
+                }
+                lastP = p;
+                lastIndex = i;
+            }
+        }
+
+        // batch load the required data
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+            boolean enzymaticPeptide = true;
+            if (!allPeptides) {
+                enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, searchParameters.getEnzyme(),
+                        PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            }
+            if (allPeptides || enzymatic && enzymaticPeptide || !enzymatic && !enzymatic) {
+                AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
+                for (int index : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
+                    int peptideTempStart = index - 1;
+                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                    String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
+                    ResidueAnnotation newAnnotation = new ResidueAnnotation(peptideTempStart + " - " + modifiedSequence + " - " + peptideTempEnd, peptideKey, true);
+                    for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                        ArrayList<ResidueAnnotation> annotations = residueAnnotation.get(j);
+                        if (annotations == null) {
+                            annotations = new ArrayList<ResidueAnnotation>();
+                            residueAnnotation.put(j, annotations);
+                        }
+                        annotations.add(newAnnotation);
+                    }
+                }
+            }
+        }
+
+        return residueAnnotation;
     }
 }
