@@ -7,7 +7,6 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -23,9 +22,7 @@ import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -504,7 +501,7 @@ public class DisplayFeaturesGenerator {
     /**
      * Returns the residue annotation for a given protein in a map for enzymatic
      * or not enzymatic peptides only. Residue number -> annotations. 0 is the
-     * first amino acid
+     * first amino acid.
      *
      * @param proteinMatchKey the key of the match of interest
      * @param matchingType the type of sequence matching to use
@@ -513,6 +510,7 @@ public class DisplayFeaturesGenerator {
      * generator
      * @param metrics the metrics
      * @param identification the identification
+     * @param allPeptides if true, all peptides are considered
      * @param searchParameters the search parameters
      * @param enzymatic whether enzymatic only or not enzymatic only peptides
      * should be considered
@@ -525,7 +523,9 @@ public class DisplayFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification, boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, 
+            Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification, 
+            boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
