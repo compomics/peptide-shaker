@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the protein identification features.
@@ -68,33 +70,7 @@ public enum ProteinFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(accession);
-        result.add(protein_description);
-        result.add(ensembl_gene_id);
-        result.add(gene_name);
-        result.add(chromosome);
-        result.add(go_accession);
-        result.add(go_description);
-        result.add(mw);
-        result.add(coverage);
-        result.add(possible_coverage);
-        result.add(spectrum_counting_nsaf);
-        result.add(spectrum_counting_empai);
-        result.add(confident_PTMs);
-        result.add(other_PTMs);
-        result.add(confident_phosphosites);
-        result.add(other_phosphosites);
-        result.add(pi);
-        result.add(other_proteins);
-        result.add(protein_group);
-        result.add(validated_peptides);
-        result.add(peptides);
-        result.add(validated_psms);
-        result.add(psms);
-        result.add(score);
-        result.add(confidence);
-        result.add(decoy);
-        result.add(validated);
+        result.addAll(Arrays.asList(values()));
         result.addAll(PeptideFeatures.values()[0].getExportFeatures());
         return result;
     }

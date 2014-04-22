@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This enum lists the export features linked to the validation process.
@@ -58,6 +59,7 @@ public enum ValidationFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

@@ -500,8 +500,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                                         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                                         for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
-                                            int peptideTempEnd = startIndex + peptideSequence.length();
-                                            for (int k = startIndex; k < peptideTempEnd; k++) {
+                                            int peptideTempStart = startIndex -1;
+                                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                                            for (int k = peptideTempStart; k < peptideTempEnd; k++) {
                                                 coverage[i][k]++;
                                             }
                                         }

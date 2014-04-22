@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists the fragment identification features.
@@ -49,18 +51,7 @@ public enum FragmentFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(annotation);
-        result.add(fragment_type);
-        result.add(fragment_subType);
-        result.add(fragment_number);
-        result.add(fragment_losses);
-        result.add(fragment_name);
-        result.add(fragment_charge);
-        result.add(theoretic_mz);
-        result.add(mz);
-        result.add(intensity);
-        result.add(error_Da);
-        result.add(error_ppm);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

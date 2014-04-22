@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class lists all the export features related to the spectrum counting.
@@ -39,8 +41,7 @@ public enum SpectrumCountingFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(method);
-        result.add(validated);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 

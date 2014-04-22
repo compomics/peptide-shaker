@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -117,7 +118,7 @@ public class ProteinSection {
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -223,7 +224,7 @@ public class ProteinSection {
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, ProteinFeatures tempProteinFeatures, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {
             case accession:

@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This enum lists the export features related to the import features.
@@ -45,14 +47,7 @@ public enum InputFilterFeatures implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures() {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.add(min_peptide_length);
-        result.add(max_peptide_length);
-        result.add(mascot_max_evalue);
-        result.add(omssa_max_evalue);
-        result.add(xtandem_max_evalue);
-        result.add(max_mz_deviation);
-        result.add(max_mz_deviation_unit);
-        result.add(unknown_PTM);
+        result.addAll(Arrays.asList(values()));
         return result;
     }
 
