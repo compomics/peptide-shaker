@@ -7,9 +7,11 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import javax.swing.RowFilter.ComparisonType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -793,21 +795,24 @@ public class ProteinFilter extends MatchFilter {
             }
 
             if (proteinFilter.getProteinCoverage() != null) {
-                double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinMatchKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinMatchKey, PeptideShaker.MATCHING_TYPE,  searchParameters.getFragmentIonAccuracy());
+                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                        double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
                 if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
-                    if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
+                    if (validatedCoverage <= proteinFilter.getProteinCoverage()) {
                         return false;
                     }
                 } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BEFORE) {
-                    if (sequenceCoverage >= proteinFilter.getProteinCoverage()) {
+                    if (validatedCoverage >= proteinFilter.getProteinCoverage()) {
                         return false;
                     }
                 } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
-                    if (sequenceCoverage != proteinFilter.getProteinCoverage()) {
+                    if (validatedCoverage != proteinFilter.getProteinCoverage()) {
                         return false;
                     }
                 } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.NOT_EQUAL) {
-                    if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
+                    if (validatedCoverage == proteinFilter.getProteinCoverage()) {
                         return false;
                     }
                 }

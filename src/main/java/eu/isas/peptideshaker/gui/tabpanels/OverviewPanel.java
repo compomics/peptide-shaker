@@ -62,6 +62,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
+import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.*;
 import org.jfree.chart.*;
@@ -3639,7 +3640,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
@@ -3946,24 +3947,39 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
-            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
+            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage - ";
             try {
-                double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                title += Util.roundDouble(sequenceCoverage, 2);
+                HashMap<Integer, Double> sequenceCoverage;
+                try {
+                    sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    sequenceCoverage = new HashMap<Integer, Double>();
+                }
+                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                Double sequenceCoveragenotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
+                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                Double totalCoverage = validatedCoverage + sequenceCoveragenotValidated;
+                if (validatedCoverage > 0) {
+                    title += Util.roundDouble(validatedCoverage, 2) + "% validated (" + Util.roundDouble(sequenceCoverageDoubtful, 2) + "% doubtful) in " + Util.roundDouble(totalCoverage, 2) + "% total coverage";
+                } else {
+                    title += Util.roundDouble(sequenceCoveragenotValidated, 2) + "%";
+                }
+                title += " (";
                 try {
                     double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                    title += "% of exp " + Util.roundDouble(possibleCoverarge, 2) + "%";
+                    title += Util.roundDouble(possibleCoverarge, 2) + "% possible of ";
                 } catch (Exception ePossibleCoverage) {
                     // skip the possible coverage
                     peptideShakerGUI.catchException(ePossibleCoverage);
                 }
-                title += "   ";
                 title += currentProteinSequence.length() + " AA)";
                 title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
             } catch (Exception eCoverage) {
                 peptideShakerGUI.catchException(eCoverage);
                 // Worst case, we did not even manage to get the coverage.
-                title += currentProteinSequence.length() + " AA)";
+                title += currentProteinSequence.length() + " AA";
                 title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
             }
 
@@ -4199,7 +4215,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             } else {
                 ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
-                        + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2)
+                        + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2) //@TODO: do not take this from the GUI
                         + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display..." + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 sequenceCoverageTitledPanel.repaint();
             }

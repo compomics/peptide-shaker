@@ -410,7 +410,17 @@ public class OutputGenerator {
 
                                             if (sequenceCoverage) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
+                                                    HashMap<Integer, Double> sequenceCoverage;
+                                                    try {
+                                                        sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                    } catch (Exception e) {
+                                                        peptideShakerGUI.catchException(e);
+                                                        sequenceCoverage = new HashMap<Integer, Double>();
+                                                    }
+                                                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                                                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                                                    Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                                                    writer.write(validatedCoverage + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
@@ -1929,7 +1939,17 @@ public class OutputGenerator {
                             }
 
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
+                                HashMap<Integer, Double> sequenceCoverage;
+                                try {
+                                    sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                } catch (Exception e) {
+                                    peptideShakerGUI.catchException(e);
+                                    sequenceCoverage = new HashMap<Integer, Double>();
+                                }
+                                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                                writer.write(validatedCoverage + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
@@ -2668,7 +2688,17 @@ public class OutputGenerator {
                                             }
                                             if (sequenceCoverage) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()) * 100 + SEPARATOR);
+                                                    HashMap<Integer, Double> sequenceCoverage;
+                                                    try {
+                                                        sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                    } catch (Exception e) {
+                                                        peptideShakerGUI.catchException(e);
+                                                        sequenceCoverage = new HashMap<Integer, Double>();
+                                                    }
+                                                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                                                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                                                    Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                                                    writer.write(validatedCoverage + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);

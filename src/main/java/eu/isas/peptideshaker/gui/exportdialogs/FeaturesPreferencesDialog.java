@@ -95,6 +95,13 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         featuresPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
+        customReportsPanel = new javax.swing.JPanel();
+        reportsTableScrollPane = new javax.swing.JScrollPane();
+        reportsTable = new javax.swing.JTable();
+        exportReportButton = new javax.swing.JButton();
+        selectReportTypeLabel = new javax.swing.JLabel();
+        helpLabel = new javax.swing.JLabel();
+        addReportLabel = new javax.swing.JLabel();
         proteinsPanel = new javax.swing.JPanel();
         proteinAccession = new javax.swing.JCheckBox();
         proteinPI = new javax.swing.JCheckBox();
@@ -184,17 +191,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         fractionMwRange = new javax.swing.JCheckBox();
         nonEnzymaticPeptidesFractionTab = new javax.swing.JCheckBox();
         projectPanel = new javax.swing.JPanel();
-        exportAll = new javax.swing.JButton();
-        exportAllLabel = new javax.swing.JLabel();
         exportPhospoJButton = new javax.swing.JButton();
         exportPhosphLabel = new javax.swing.JLabel();
-        customReportsPanel = new javax.swing.JPanel();
-        reportsTableScrollPane = new javax.swing.JScrollPane();
-        reportsTable = new javax.swing.JTable();
-        exportReportButton = new javax.swing.JButton();
-        selectReportTypeLabel = new javax.swing.JLabel();
-        helpLabel = new javax.swing.JLabel();
-        addReportLabel = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -241,6 +239,87 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         featuresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
         featuresPanel.setOpaque(false);
+
+        tabbedPane.setToolTipText("");
+
+        customReportsPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        reportsTable.setModel(new ReportsTableModel());
+        reportsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        reportsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                reportsTableMouseClicked(evt);
+            }
+        });
+        reportsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                reportsTableKeyReleased(evt);
+            }
+        });
+        reportsTableScrollPane.setViewportView(reportsTable);
+
+        exportReportButton.setText("Export");
+        exportReportButton.setEnabled(false);
+        exportReportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportReportButtonActionPerformed(evt);
+            }
+        });
+
+        selectReportTypeLabel.setText("Select a Report Type");
+
+        helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        helpLabel.setText("Right click on a row in the table for additional options.");
+
+        addReportLabel.setText("<html> <a href>Add new report type.</a> </html>");
+        addReportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addReportLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                addReportLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                addReportLabelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout customReportsPanelLayout = new javax.swing.GroupLayout(customReportsPanel);
+        customReportsPanel.setLayout(customReportsPanelLayout);
+        customReportsPanelLayout.setHorizontalGroup(
+            customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(customReportsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(reportsTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, customReportsPanelLayout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(addReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(helpLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
+                        .addComponent(exportReportButton))
+                    .addGroup(customReportsPanelLayout.createSequentialGroup()
+                        .addComponent(selectReportTypeLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        customReportsPanelLayout.setVerticalGroup(
+            customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(customReportsPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(selectReportTypeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(reportsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportReportButton)
+                    .addComponent(helpLabel)
+                    .addComponent(addReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab("Reports", customReportsPanel);
 
         proteinsPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -1132,18 +1211,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         projectPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        exportAll.setText("Export All Identification Result");
-        exportAll.setToolTipText("Export all the identification results as four tab separated text files.");
-        exportAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportAllActionPerformed(evt);
-            }
-        });
-
-        exportAllLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        exportAllLabel.setText("Advanced export. For expert use only.");
-        exportAllLabel.setToolTipText("Export all the identification results as four tab separated text files.");
-
         exportPhospoJButton.setText("Export Phosphorylation Summary");
         exportPhospoJButton.setToolTipText("Export phosphorylation summary to a text file");
         exportPhospoJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1162,109 +1229,22 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(exportPhospoJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(exportPhospoJButton)
                 .addGap(18, 18, 18)
-                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportAllLabel)
-                    .addComponent(exportPhosphLabel))
+                .addComponent(exportPhosphLabel)
                 .addContainerGap(77, Short.MAX_VALUE))
         );
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectPanelLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportAll)
-                    .addComponent(exportAllLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap()
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportPhospoJButton)
                     .addComponent(exportPhosphLabel))
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addContainerGap(268, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Advanced", projectPanel);
-
-        customReportsPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        reportsTable.setModel(new ReportsTableModel());
-        reportsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        reportsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                reportsTableMouseClicked(evt);
-            }
-        });
-        reportsTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                reportsTableKeyReleased(evt);
-            }
-        });
-        reportsTableScrollPane.setViewportView(reportsTable);
-
-        exportReportButton.setText("Export");
-        exportReportButton.setEnabled(false);
-        exportReportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportReportButtonActionPerformed(evt);
-            }
-        });
-
-        selectReportTypeLabel.setText("Select a Report Type");
-
-        helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        helpLabel.setText("Right click on a row in the table for additional options.");
-
-        addReportLabel.setText("<html> <a href>Add new report type.</a> </html>");
-        addReportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addReportLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                addReportLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                addReportLabelMouseExited(evt);
-            }
-        });
-
-        javax.swing.GroupLayout customReportsPanelLayout = new javax.swing.GroupLayout(customReportsPanel);
-        customReportsPanel.setLayout(customReportsPanelLayout);
-        customReportsPanelLayout.setHorizontalGroup(
-            customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(customReportsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(reportsTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, customReportsPanelLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(addReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(helpLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
-                        .addComponent(exportReportButton))
-                    .addGroup(customReportsPanelLayout.createSequentialGroup()
-                        .addComponent(selectReportTypeLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        customReportsPanelLayout.setVerticalGroup(
-            customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(customReportsPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(selectReportTypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(reportsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(customReportsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportReportButton)
-                    .addComponent(helpLabel)
-                    .addComponent(addReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        tabbedPane.addTab("Custom", customReportsPanel);
 
         javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
         featuresPanel.setLayout(featuresPanelLayout);
@@ -1394,63 +1374,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
                 assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
     }//GEN-LAST:event_assumptionExportActionPerformed
-
-    /**
-     * Export all features to file.
-     *
-     * @param evt
-     */
-    private void exportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllActionPerformed
-
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Text File Folder", "Save", false);
-
-        if (selectedFolder != null) {
-
-            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
-
-            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("SaveThread") {
-                @Override
-                public void run() {
-
-                    TxtExporter exporter = new TxtExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
-                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters());
-                    boolean exported = exporter.exportResults(progressDialog, selectedFolder);
-
-                    boolean processCancelled = progressDialog.isRunCanceled();
-                    progressDialog.setRunFinished();
-
-                    if (!processCancelled) {
-
-                        if (exported) {
-                            JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + selectedFolder.getName() + "\'.",
-                                    "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See resources/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_exportAllActionPerformed
 
     /**
      * Open the help dialog.
@@ -2035,8 +1958,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JMenuItem editReportMenuItem;
     private javax.swing.JCheckBox enzymaticPeptide;
     private javax.swing.JButton exitButton;
-    private javax.swing.JButton exportAll;
-    private javax.swing.JLabel exportAllLabel;
     private javax.swing.JLabel exportPhosphLabel;
     private javax.swing.JButton exportPhospoJButton;
     private javax.swing.JButton exportReportButton;
