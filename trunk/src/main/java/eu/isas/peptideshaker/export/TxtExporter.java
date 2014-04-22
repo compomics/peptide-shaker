@@ -335,7 +335,7 @@ public class TxtExporter {
         try {
             line.append(sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch())).append(SEPARATOR);
             line.append(identificationFeaturesGenerator.getSpectrumCounting(proteinKey)).append(SEPARATOR);
-            line.append(identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) * 100).append(SEPARATOR);
+            line.append("Not supported").append(SEPARATOR); // This export is not maintained anymore, use the default export instead
             line.append(identificationFeaturesGenerator.getObservableCoverage(proteinKey)).append(SEPARATOR);
         } catch (Exception e) {
             line.append("protein not found ").append(SEPARATOR).append(SEPARATOR);

@@ -6,7 +6,9 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.XYDataPoint;
@@ -146,20 +148,24 @@ public class ProteinGoTableModel extends DefaultTableModel {
                         }
                         return description;
                     case 3:
-                        double sequenceCoverage;
+                        HashMap<Integer, Double> sequenceCoverage;
                         try {
-                            sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             return Double.NaN;
                         }
+                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
                         double possibleCoverage = 100;
                         try {
                             possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }
-                        return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
+                        Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                        return new XYDataPoint(validatedCoverage, possibleCoverage - validatedCoverage, true);
                     case 4:
                         try {
                             proteinMatch = identification.getProteinMatch(proteinKey);

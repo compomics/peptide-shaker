@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -1110,7 +1111,16 @@ public class FindDialog extends javax.swing.JDialog {
                     case 7:
                         Double coverage;
                         try {
-                            coverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        HashMap<Integer, Double> sequenceCoverage;
+                        try {
+                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE,  peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    sequenceCoverage = new HashMap<Integer, Double>();
+                        }
+                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                        coverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             coverage = Double.NaN;

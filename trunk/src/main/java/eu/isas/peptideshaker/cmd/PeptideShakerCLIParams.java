@@ -21,8 +21,6 @@ public enum PeptideShakerCLIParams {
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", true),
     IDENTIFICATION_FILES("identification_files", "Identification files (.t.xml, .mzid, .cvs, .omx or .dat), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
-    PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms, soon deprecated).", false),
-    //PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented)", false),
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1').", false),
@@ -84,9 +82,6 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(SPECTRUM_FILES.id, true, SPECTRUM_FILES.description);
         aOptions.addOption(IDENTIFICATION_FILES.id, true, IDENTIFICATION_FILES.description);
         aOptions.addOption(PEPTIDESHAKER_OUTPUT.id, true, PEPTIDESHAKER_OUTPUT.description);
-        aOptions.addOption(PEPTIDESHAKER_TXT_1.id, true, PEPTIDESHAKER_TXT_1.description);
-        //aOptions.addOption(PEPTIDESHAKER_TXT_2.id, true, PEPTIDESHAKER_TXT_2.description);
-        //aOptions.addOption(PEPTIDESHAKER_PRIDE.id, true, PEPTIDESHAKER_PRIDE.description);
         aOptions.addOption(PSM_FDR.id, true, PSM_FDR.description);
         aOptions.addOption(PEPTIDE_FDR.id, true, PEPTIDE_FDR.description);
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
@@ -159,10 +154,6 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";
-
-        output += "\n\nOptional output parameters:\n\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
-        //output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
 
         output += "\n\nOptional temporary folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";

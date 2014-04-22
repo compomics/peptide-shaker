@@ -97,6 +97,18 @@ public enum MatchValidationLevel {
         result[3] = MatchValidationLevel.none;
         return result;
     }
+    
+    /**
+     * Returns an array of the validation level indexes in ascending order of confidence.
+     */
+    public static int[] getValidationLevelIndexes() {
+        int[] indexes = new int[4];
+        indexes[0] = MatchValidationLevel.none.getIndex();
+        indexes[1] = MatchValidationLevel.not_validated.getIndex();
+        indexes[2] = MatchValidationLevel.doubtful.getIndex();
+        indexes[3] = MatchValidationLevel.confident.getIndex();
+        return indexes;
+    }
 
     /**
      * Returns the default map of icons for the validation levels.

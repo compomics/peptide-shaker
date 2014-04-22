@@ -309,20 +309,29 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        double sequenceCoverage;
+                        HashMap<Integer, Double> sequenceCoverage;
                         try {
-                            sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         } catch (Exception e) {
                             exceptionHandler.catchException(e);
                             return Double.NaN;
                         }
+                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
                         double possibleCoverage = 100;
                         try {
                             possibleCoverage = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
                         } catch (Exception e) {
                             exceptionHandler.catchException(e);
                         }
-                        return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
+                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        doubleValues.add(sequenceCoverageConfident);
+                        doubleValues.add(sequenceCoverageDoubtful);
+                        doubleValues.add(sequenceCoverageNotValidated);
+                        doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
+                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        return arrrayListDataPoints;
                     case 7:
                         if (isScrolling) {
                             return null;
@@ -337,11 +346,11 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         double nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
                         double nDoubtfulPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        doubleValues = new ArrayList<Double>();
                         doubleValues.add(nConfidentPeptides);
                         doubleValues.add(nDoubtfulPeptides);
                         doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
                         return arrrayListDataPoints;
                     case 8:
                         if (isScrolling) {
@@ -622,15 +631,27 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         sparklineColors.add(sparklineColor);
         sparklineColors.add(new Color(255, 204, 0));
         sparklineColors.add(nonValidatedColor);
+        sparklineColors.add(sparklineColorNotFound);
 
-        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false);
+        coverageCellRendered.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("Coverage").setCellRenderer(coverageCellRendered);
+        
+        JSparklinesArrayListBarChartTableCellRenderer peptidesCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false);
+        peptidesCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Peptides").setCellRenderer(peptidesCellRenderer);
+        
+        JSparklinesArrayListBarChartTableCellRenderer spectraCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false);
+        spectraCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Spectra").setCellRenderer(spectraCellRenderer);
+        
+        JSparklinesBarChartTableCellRenderer spectrumCountingCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
+        spectrumCountingCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
+        proteinTable.getColumn("MS2 Quant.").setCellRenderer(spectrumCountingCellRenderer);
+        
+        JSparklinesBarChartTableCellRenderer mwCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
+        mwCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
+        proteinTable.getColumn("MW").setCellRenderer(mwCellRenderer);
 
         proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
 
@@ -644,9 +665,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     true, TableProperties.getLabelWidth() - 20, scoreAndConfidenceDecimalFormat);
         }
 
-        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                sparklineColor, sparklineColorNotFound, true));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
         proteinTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(parentClass), MatchValidationLevel.getTooltipMap()));
         proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(parentClass.getResource("/icons/star_yellow.png")),

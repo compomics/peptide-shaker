@@ -577,34 +577,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 return false;
             }
         }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id)) {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id).trim();
-            File testFile = new File(filesTxt);
-            if (!testFile.exists()) {
-                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
-                return false;
-            }
-        }
-
-//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
-//            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
-//            File testFile = new File(filesTxt);
-//            if (!testFile.exists()) {
-//                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
-//                return false;
-//            }
-//        }
-//
-//        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
-//            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
-//            File testFile = new File(filesTxt.trim());
-//            File parentFolder = testFile.getParentFile();
-//            if (!parentFolder.exists()) {
-//                System.out.println("\nDestination folder for PRIDE file \'" + parentFolder.getPath() + "\' not found.\n");
-//                return false;
-//            }
-//        }
+        
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id).trim();
             try {

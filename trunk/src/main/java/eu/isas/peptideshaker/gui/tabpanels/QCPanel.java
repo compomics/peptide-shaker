@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -1647,7 +1648,16 @@ public class QCPanel extends javax.swing.JPanel {
                 } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
                     value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                 } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
-                    value = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        HashMap<Integer, Double> sequenceCoverage;
+                        try {
+                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE,  peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    sequenceCoverage = new HashMap<Integer, Double>();
+                        }
+                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                        value = sequenceCoverageConfident + sequenceCoverageDoubtful;
                 } else if (proteinSequenceLengthJRadioButton.isSelected()) {
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                     Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());

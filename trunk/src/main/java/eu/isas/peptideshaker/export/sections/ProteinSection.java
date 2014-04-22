@@ -11,12 +11,14 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.OutputGenerator.SEPARATOR;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -338,7 +341,11 @@ public class ProteinSection {
                 }
                 return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
             case coverage:
-                Double value = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                Double value = 100 * validatedCoverage;
                 return Util.roundDouble(value, 2) + "";
             case possible_coverage:
                 value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
