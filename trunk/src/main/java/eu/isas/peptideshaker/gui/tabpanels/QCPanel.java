@@ -1652,8 +1652,8 @@ public class QCPanel extends javax.swing.JPanel {
                         try {
                             sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE,  peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    sequenceCoverage = new HashMap<Integer, Double>();
+                            peptideShakerGUI.catchException(e);
+                            sequenceCoverage = new HashMap<Integer, Double>();
                         }
                         Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                         Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());

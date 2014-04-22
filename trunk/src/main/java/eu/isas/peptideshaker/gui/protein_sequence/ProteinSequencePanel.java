@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import org.jfree.chart.*;
@@ -194,7 +193,14 @@ public class ProteinSequencePanel {
         return chartPanel;
     }
     
-    
+    /**
+     * Returns an array list with the coverage.
+     * 
+     * @param aaHeight the heights
+     * @param aaColor the colors
+     * @param colors the color map
+     * @return an array list with the coverage
+     */
     public static ArrayList<JSparklinesDataSeries> getSparkLineDataSeriesCoverage(double[] aaHeight, int[] aaColor, HashMap<Integer, Color> colors) {
         
         if (aaHeight.length == 0) {

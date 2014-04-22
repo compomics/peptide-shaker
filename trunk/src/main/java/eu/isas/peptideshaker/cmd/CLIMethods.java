@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -231,13 +232,14 @@ public class CLIMethods {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
+     * @throws org.apache.commons.math.MathException
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, int nSurroundingAA, IdFilter idFilter,
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
-            InterruptedException, MzMLUnmarshallerException {
+            InterruptedException, MzMLUnmarshallerException, MathException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));

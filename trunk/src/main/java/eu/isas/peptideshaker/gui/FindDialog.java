@@ -1111,16 +1111,16 @@ public class FindDialog extends javax.swing.JDialog {
                     case 7:
                         Double coverage;
                         try {
-                        HashMap<Integer, Double> sequenceCoverage;
-                        try {
-                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE,  peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                        } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    sequenceCoverage = new HashMap<Integer, Double>();
-                        }
-                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                        coverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                            HashMap<Integer, Double> sequenceCoverage;
+                            try {
+                                sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                                sequenceCoverage = new HashMap<Integer, Double>();
+                            }
+                            Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                            Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                            coverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             coverage = Double.NaN;

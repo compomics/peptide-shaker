@@ -1,12 +1,10 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.gui.export.export.ReportEditor;
-import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
-import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
@@ -1237,11 +1235,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportPhospoJButton)
                     .addComponent(exportPhosphLabel))
-                .addContainerGap(268, Short.MAX_VALUE))
+                .addContainerGap(259, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Advanced", projectPanel);
