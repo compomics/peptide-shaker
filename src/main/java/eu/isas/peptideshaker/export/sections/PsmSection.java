@@ -3,9 +3,12 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.tags.Tag;
@@ -516,6 +519,33 @@ public class PsmSection {
                 spectrumKey = spectrumMatch.getKey();
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";
+            case algorithm_score:
+                HashMap<Integer, Double> scoreMap = new HashMap<Integer, Double>();
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getAllAssumptions()) {
+                        if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                            PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
+                            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                int id = peptideAssumption.getAdvocate();
+                                double score = peptideAssumption.getScore();
+                                Double currentScore = scoreMap.get(id);
+                                if (currentScore == null || score < currentScore) {
+                                    scoreMap.put(id, score);
+                                }
+                            }
+                        }
+                    }
+                }
+                ArrayList<Integer> ids = new ArrayList<Integer>(scoreMap.keySet());
+                Collections.sort(ids);
+                result = new StringBuilder();
+                for (int id : ids) {
+                    if (result.length() != 0) {
+                        result.append(", ");
+                    }
+                    result.append(Advocate.getAdvocate(id).getName()).append(" (").append(scoreMap.get(id)).append(")");
+                }
+                return result.toString();
             case score:
                 return psParameter.getPsmScore() + "";
             case sequence:
