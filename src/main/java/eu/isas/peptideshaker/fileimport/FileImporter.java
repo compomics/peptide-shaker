@@ -21,6 +21,7 @@ import com.compomics.util.experiment.identification.protein_inference.proteintre
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.general.ExceptionHandler;
@@ -37,12 +38,14 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
+import java.io.BufferedWriter;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
@@ -157,12 +160,10 @@ public class FileImporter {
      * Imports sequences from a FASTA file.
      *
      * @param waitingHandler the handler displaying feedback to the user
-     * @param proteomicAnalysis The proteomic analysis to attach the database to
      * @param fastaFile FASTA file to process
-     * @param idFilter the identification filter
      * @param searchParameters the search parameters
      */
-    public void importSequences(WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
+    public void importSequences(WaitingHandler waitingHandler, File fastaFile, SearchParameters searchParameters) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -465,7 +466,7 @@ public class FileImporter {
         public synchronized int importFiles() {
 
             try {
-                importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+                importSequences(waitingHandler, fastaFile, searchParameters);
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
@@ -1151,10 +1152,42 @@ public class FileImporter {
                 }
                 projectDetails.addIdentificationFiles(idFile);
 
+                double total = proteinIssue + peptideIssue + precursorIssue + ptmIssue;
+                double proteinIssueShare = 100.0 * proteinIssue / total;
+                double peptideIssueShare = 100.0 * peptideIssue / total;
+                double precursorIssueShare = 100.0 * precursorIssue / total;
+                double ptmIssueShare = 100.0 * ptmIssue / total;
+                double share = 100.0 * rejected / numberOfMatches;
+                if (rejected > 0) {
+                    String filterReport = rejected + " matches, " + Util.roundDouble(share, 1) + "% of total, excluded by the import filter (";
+                    if (proteinIssueShare > 0) {
+                        filterReport += Util.roundDouble(proteinIssueShare, 1) + "% mapped in target and decoy";
+                    }
+                    if (peptideIssueShare > 0) {
+                        if (proteinIssueShare > 0) {
+                            filterReport += ", ";
+                        }
+                        filterReport += Util.roundDouble(peptideIssueShare, 1) + "% size or e-value out of boundary";
+                    }
+                    if (precursorIssueShare > 0) {
+                        if (proteinIssueShare > 0 || peptideIssueShare > 0) {
+                            filterReport += ", ";
+                        }
+                        filterReport += Util.roundDouble(precursorIssueShare, 1) + "% high precursor deviation";
+                    }
+                    if (precursorIssueShare > 0) {
+                        if (proteinIssueShare > 0 || peptideIssueShare > 0 || precursorIssueShare > 0) {
+                            filterReport += ", ";
+                        }
+                        filterReport += Util.roundDouble(ptmIssueShare, 1) + "% unrecognized modifications";
+                    }
+                    filterReport += ")";
+                    waitingHandler.appendReport(filterReport, true, true);
+                }
                 // inform the user in case more than 75% of the hits were rejected by the filters
-                if (100 * rejected > 75 * numberOfMatches) {
-                    String report = "Warning: More than 75% of the matches were rejected by the loading filters when importing the matches.";
-                    double meanRejected = (proteinIssue + peptideIssue + ptmIssue + precursorIssue) / 4;
+                if (share > 75) {
+                    String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
+                    double meanRejected = total / 4;
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
                         if (advocateId == Advocate.Mascot.getIndex()) {
@@ -1236,5 +1269,31 @@ public class FileImporter {
      */
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FileImporter.class").getPath(), "PeptideShaker");
+    }
+
+    private void writeFilter(BufferedWriter bw, String fileName, String spectrumTitle, PeptideAssumption peptideAssumption) throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+        bw.write(fileName + "\t" + spectrumTitle + "\t");
+        boolean first = true;
+        for (String accession : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, 0.5)) {
+            if (first) {
+                first = false;
+            } else {
+                bw.write(", ");
+            }
+            bw.write(accession);
+        }
+        bw.write("\t" + peptideAssumption.getPeptide().getSequence() + "\t");
+        first = true;
+        for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
+            if (first) {
+                first = false;
+            } else {
+                bw.write(", ");
+            }
+            bw.write(modificationMatch.getTheoreticPtm());
+        }
+        bw.write("\t" + peptideAssumption.getScore());
+        Precursor prec = spectrumFactory.getPrecursor(fileName, spectrumTitle);
+        bw.write("\t" + peptideAssumption.getDeltaMass(prec.getMz(), true, true) + "\t");
     }
 }

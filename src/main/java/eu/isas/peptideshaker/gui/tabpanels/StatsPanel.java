@@ -119,6 +119,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<Integer, Integer>();
     /**
+     * The original threshold input.
+     */
+    private HashMap<Integer, Double> originalThresholds = new HashMap<Integer, Double>();
+    /**
+     * The original threshold type 0 -> confidence 1 -> FDR 2 -> FNR
+     */
+    private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<Integer, Integer>();
+    /**
      * The confidence threshold marker.
      */
     private ValueMarker confidenceMarker = new ValueMarker(1);
@@ -1614,21 +1622,11 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void thresholdInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdInputActionPerformed
         try {
+            int selectedGroup = groupSelectionTable.getSelectedRow();
+            int thresholdType = thresholdTypeCmb.getSelectedIndex();
             double lastThreshold = new Double(thresholdInput.getText());
-
-            if (lastThreshold < 0 || lastThreshold > 100) {
-                JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
-            } else {
-                int selectedGroup = groupSelectionTable.getSelectedRow();
-                lastThresholds.put(selectedGroup, lastThreshold);
-                lastThresholdTypes.put(selectedGroup, thresholdTypeCmb.getSelectedIndex());
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                updateResults();
-                updateDisplayedComponents();
-                validateButton.setEnabled(true);
-                dataValidated = false;
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            }
+            applyThreshold(selectedGroup, lastThreshold, thresholdType);
+            updateDisplayedComponents();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Threshold Error", JOptionPane.WARNING_MESSAGE);
         }
@@ -1652,7 +1650,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
             applyButton.setEnabled(true);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            updateResults();
+            int thresholdType = thresholdTypeCmb.getSelectedIndex();
+            double lastThreshold = new Double(thresholdInput.getText());
+            updateResults(thresholdType, lastThreshold);
             updateDisplayedComponents();
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1668,7 +1668,9 @@ public class StatsPanel extends javax.swing.JPanel {
         lastThresholds.put(selectedGroup, new Double(confidenceSlider.getValue()));
         lastThresholdTypes.put(selectedGroup, 0);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        updateResults();
+        int thresholdType = thresholdTypeCmb.getSelectedIndex();
+        double lastThreshold = new Double(thresholdInput.getText());
+        updateResults(thresholdType, lastThreshold);
         updateDisplayedComponents();
         validateButton.setEnabled(true);
         dataValidated = false;
@@ -1705,7 +1707,9 @@ public class StatsPanel extends javax.swing.JPanel {
         lastThresholds.put(selectedGroup, new Double(fdrSlider1.getValue()));
         lastThresholdTypes.put(selectedGroup, 1);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        updateResults();
+        int thresholdType = thresholdTypeCmb.getSelectedIndex();
+        double lastThreshold = new Double(thresholdInput.getText());
+        updateResults(thresholdType, lastThreshold);
         updateDisplayedComponents();
         validateButton.setEnabled(true);
         dataValidated = false;
@@ -1751,7 +1755,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
                         if (!progressDialog.isRunCanceled()) {
                             targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
-                            updateResults();
+                            int thresholdType = thresholdTypeCmb.getSelectedIndex();
+                            double lastThreshold = new Double(thresholdInput.getText());
+                            updateResults(thresholdType, lastThreshold);
                             updateDisplayedComponents();
                             modifiedMaps.put(groupSelectionTable.getSelectedRow(), true);
                             applyButton.setEnabled(true);
@@ -1798,35 +1804,38 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
 
-        Integer newWindow = new Integer(windowTxt.getText());
-
-        if (newWindow < 0) {
-            JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
-        } else {
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-            if (groupSelectionTable.getSelectedRow() == 0) {
-                applyProteins();
-            } else if (peptideMap.keySet().contains(groupSelectionTable.getSelectedRow())) {
-                recalculateProteins();
-            } else {
-                recalculatePeptidesAndProteins();
-            }
-
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
-            peptideShakerGUI.setDataSaved(false);
-
-            applyButton.setEnabled(false);
-            pepWindowApplied = true;
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
+        resetAllThresholds();
+        
+//        
+//        Integer newWindow = new Integer(windowTxt.getText());
+//
+//        if (newWindow < 0) {
+//            JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
+//        } else {
+//
+//            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+//
+//            if (groupSelectionTable.getSelectedRow() == 0) {
+//                applyProteins();
+//            } else if (peptideMap.keySet().contains(groupSelectionTable.getSelectedRow())) {
+//                recalculateProteins();
+//            } else {
+//                recalculatePeptidesAndProteins();
+//            }
+//
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+//            peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
+//            peptideShakerGUI.setDataSaved(false);
+//
+//            applyButton.setEnabled(false);
+//            pepWindowApplied = true;
+//
+//            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+//        }
     }//GEN-LAST:event_applyButtonActionPerformed
 
     /**
@@ -2012,9 +2021,14 @@ public class StatsPanel extends javax.swing.JPanel {
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
                             dataValidated = true;
                             validateButton.setEnabled(false);
+                            double input = new Double(thresholdInput.getText());
+                            int inputType = thresholdTypeCmb.getSelectedIndex();
                             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-                            currentResults.setUserInput(new Double(thresholdInput.getText()));
-                            currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
+                            currentResults.setUserInput(input);
+                            currentResults.setInputType(inputType);
+                            int selectedGroup = groupSelectionTable.getSelectedRow();
+                            originalThresholds.put(selectedGroup, input);
+                            originalThresholdTypes.put(selectedGroup, inputType);
                             peptideShakerGUI.setDataSaved(false);
                         } else {
                             // @TODO: ideally the validation settings ought to be reset as well..?
@@ -2937,17 +2951,26 @@ public class StatsPanel extends javax.swing.JPanel {
 
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
 
                 int cpt = 0;
 
                 modifiedMaps.put(cpt, false);
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Proteins"});
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Proteins"});
+                TargetDecoyMap targetDecoyMap = pSMaps.getProteinMap().getTargetDecoyMap();
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                originalThresholds.put(cpt, targetDecoyResults.getUserInput());
 
+                ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
                 if (peptideKeys.size() == 1) {
-                    peptideMap.put(cpt, peptideKeys.get(0));
+                    String key = peptideKeys.get(0);
+                    peptideMap.put(++cpt, key);
                     modifiedMaps.put(cpt, false);
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Peptides"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, "Peptides"});
+                    targetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(key);
+                    targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                    originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                    originalThresholds.put(cpt, targetDecoyResults.getUserInput());
                 } else {
                     for (String peptideKey : peptideKeys) {
 
@@ -2955,11 +2978,11 @@ public class StatsPanel extends javax.swing.JPanel {
                             break;
                         }
 
-                        peptideMap.put(cpt, peptideKey);
+                        peptideMap.put(++cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
                         String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getSearchParameters().getModificationProfile(), peptideKey);
-                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, title + " Peptides"});
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, title + " Peptides"});
                     }
                 }
 
@@ -2975,9 +2998,12 @@ public class StatsPanel extends javax.swing.JPanel {
                             }
                             HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
                             psmKey.put(charge, file);
-                            psmMap.put(cpt, psmKey);
+                            psmMap.put(++cpt, psmKey);
                             modifiedMaps.put(cpt, false);
-                            cpt++;
+                            targetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, file);
+                            targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                            originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                            originalThresholds.put(cpt, targetDecoyResults.getUserInput());
                         }
                     }
                 }
@@ -2986,9 +3012,12 @@ public class StatsPanel extends javax.swing.JPanel {
                     if (correctedCharge == charge) {
                         HashMap<Integer, String> psmKey = new HashMap<Integer, String>();
                         psmKey.put(charge, null);
-                        psmMap.put(cpt, psmKey);
+                        psmMap.put(++cpt, psmKey);
                         modifiedMaps.put(cpt, false);
-                        cpt++;
+                        targetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, null);
+                        targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                        originalThresholdTypes.put(cpt, targetDecoyResults.getInputType());
+                        originalThresholds.put(cpt, targetDecoyResults.getUserInput());
                     } else {
                         ArrayList<Integer> charges = groupedCharges.get(correctedCharge);
                         if (charges == null) {
@@ -3067,6 +3096,32 @@ public class StatsPanel extends javax.swing.JPanel {
                 progressDialog.setRunFinished();
             }
         }.start();
+    }
+
+    /**
+     * Returns the target decoy map corresponding to the given group selection.
+     *
+     * @param selectedGroup the index of the group of interest
+     *
+     * @return the corresponding target/decoy map
+     */
+    private TargetDecoyMap getTargetDecoyMap(int selectedGroup) {
+
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+
+        if (selectedGroup == 0) {
+            return pSMaps.getProteinMap().getTargetDecoyMap();
+        } else if (peptideMap.containsKey(selectedGroup)) {
+
+            return pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideMap.get(selectedGroup));
+        } else if (psmMap.containsKey(selectedGroup)) {
+            HashMap<Integer, String> psmKey = psmMap.get(selectedGroup);
+            for (int charge : psmKey.keySet()) {
+                return pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, psmKey.get(charge));
+            }
+        }
+        throw new IllegalArgumentException("Target decoy map not found for selection " + selectedGroup + ".");
     }
 
     /**
@@ -3157,23 +3212,20 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * Updates the displayed results whenever a new threshold is given.
      */
-    private void updateResults() {
+    private void updateResults(int thresholdType, double threshold) {
 
         if (currentTargetDecoyMap != null) {
 
             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-            int selectedGroup = groupSelectionTable.getSelectedRow();
-            int lastThresholdType = lastThresholdTypes.get(selectedGroup);
-            double lastThreshold = lastThresholds.get(selectedGroup);
 
-            if (lastThresholdType == 0) {
-                currentResults.setConfidenceLimit(lastThreshold);
+            if (thresholdType == 0) {
+                currentResults.setConfidenceLimit(threshold);
                 targetDecoySeries.getConfidenceResults(currentResults);
-            } else if (lastThresholdType == 1) {
-                currentResults.setFdrLimit(lastThreshold);
+            } else if (thresholdType == 1) {
+                currentResults.setFdrLimit(threshold);
                 targetDecoySeries.getFDRResults(currentResults);
-            } else if (lastThresholdType == 2) {
-                currentResults.setFnrLimit(lastThreshold);
+            } else if (thresholdType == 2) {
+                currentResults.setFnrLimit(threshold);
                 targetDecoySeries.getFNRResults(currentResults);
             }
         }
@@ -3821,14 +3873,6 @@ public class StatsPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Sets both the threshold and pep window applied to true.
-     */
-    public void setThresholdAndPepApplied() {
-        dataValidated = true;
-        pepWindowApplied = true;
-    }
-
-    /**
      * Revalidates the data using the currently selected threshold.
      */
     public void revalidateData() {
@@ -3850,4 +3894,53 @@ public class StatsPanel extends javax.swing.JPanel {
     public boolean isInitiated() {
         return tabInitiated;
     }
+
+    /**
+     * Applies the threshold set in thresholdInput to the currently selected
+     * group
+     */
+    private void applyThreshold(int selectedGroup, double threshold, int thresholdType) {
+
+        if (threshold < 0 || threshold > 100) {
+            JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
+        } else {
+            currentTargetDecoyMap = getTargetDecoyMap(selectedGroup);
+            targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
+            lastThresholds.put(selectedGroup, threshold);
+            lastThresholdTypes.put(selectedGroup, thresholdType);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            updateResults(thresholdType, threshold);
+            validateButton.setEnabled(threshold != originalThresholds.get(selectedGroup) || thresholdType != originalThresholdTypes.get(selectedGroup));
+            dataValidated = threshold == originalThresholds.get(selectedGroup) && thresholdType == originalThresholdTypes.get(selectedGroup);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    /**
+     * Resets all thresholds to the last validated value.
+     */
+    public void resetAllThresholds() {
+        for (int i = 0; i < groupSelectionTable.getRowCount(); i++) {
+            resetThreshold(i);
+        }
+        groupSelectionChanged();
+    }
+
+    /**
+     * Resets the threshold of the given group to the last validated value.
+     * 
+     * @param groupSelection the index of the group of interest
+     */
+    public void resetThreshold(int groupSelection) {
+        currentTargetDecoyMap = getTargetDecoyMap(groupSelection);
+        targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
+        double threshold = originalThresholds.get(groupSelection);
+        int thresholdType = originalThresholdTypes.get(groupSelection);
+        if (groupSelection == groupSelectionTable.getSelectedRow()) {
+            thresholdInput.setText(threshold + "");
+            thresholdTypeCmb.setSelectedIndex(thresholdType);
+        }
+        applyThreshold(groupSelection, threshold, thresholdType);
+    }
+
 }
