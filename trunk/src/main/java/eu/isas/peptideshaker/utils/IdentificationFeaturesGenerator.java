@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -15,12 +14,10 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.math.statistics.Distribution;
-import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -319,15 +316,12 @@ public class IdentificationFeaturesGenerator {
             result[i] = MatchValidationLevel.none.getIndex();
         }
         ArrayList<Integer> validationLevels = new ArrayList<Integer>(coverage.keySet());
-        Collections.sort(validationLevels);
+        Collections.sort(validationLevels, Collections.reverseOrder());
         for (int validationLevel : validationLevels) {
             boolean[] validationLevelCoverage = coverage.get(validationLevel);
             if (validationLevelCoverage != null) {
                 ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
                 for (int aa : levelAminoAcids) {
-                    if (aa >= result.length) {
-                        int debug = 1;
-                    }
                     int previousLevel = result[aa];
                     if (previousLevel == MatchValidationLevel.none.getIndex()) {
                         result[aa] = validationLevel;

@@ -2094,8 +2094,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
-                        // do nothing
-                        statsPanel.setThresholdAndPepApplied();
+                        statsPanel.resetAllThresholds();
                         updateNeeded.put(VALIDATION_TAB_INDEX, true);
                     } else {
                         updateNeeded.put(VALIDATION_TAB_INDEX, false);

@@ -3972,13 +3972,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
-            double[] coverageHeight = identificationFeaturesGenerator.getCoverableAA(proteinAccession);
+            double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinAccession);
             int[] validationCoverage;
             if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                 validationCoverage = identificationFeaturesGenerator.getAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
             } else {
                 validationCoverage = identificationFeaturesGenerator.estimateAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
             }
+            int[] coverageColor = validationCoverage.clone();
             
             double minHeight = 0.2;
             double maxHeight = 1;
@@ -3987,8 +3988,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 double medianLength = peptideLengthDistribution.getMean();
                 maxHeight = (1-minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
             }
-            for (int i = 0 ; i < coverageHeight.length ; i++) {
-                double p = coverageHeight[i];
+            double[] coverageHeight = new double[coverageLikelihood.length];
+            for (int i = 0 ; i < coverageLikelihood.length ; i++) {
+                double p = coverageLikelihood[i];
                 coverageHeight[i] = minHeight + p/maxHeight;
             }
 
@@ -4005,12 +4007,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             colors.put(userSelectionIndex, Color.blue); //@TODO: use non hard coded value
             for (int aaStart : selectedPeptideStart) {
                 for (int aa = aaStart; aa < aaStart + selectionLength; aa++) {
-                    validationCoverage[aa] = userSelectionIndex;
+                    coverageColor[aa] = userSelectionIndex;
                 }
             }
 
             // create the coverage plot
-            ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, validationCoverage, colors);
+            ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, coverageColor, colors);
 
             HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = peptideShakerGUI.getDisplayFeaturesGenerator().getResidueAnnotation(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), identificationFeaturesGenerator, peptideShakerGUI.getMetrics(), peptideShakerGUI.getIdentification(), coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(), searchParameters, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
 
