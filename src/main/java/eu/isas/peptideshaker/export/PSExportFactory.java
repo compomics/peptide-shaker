@@ -452,7 +452,7 @@ public class PSExportFactory implements ExportFactory {
     private static HashMap<String, ExportScheme> getDefaultExportSchemes() {
 
         ///////////////////////////
-        // Default top down report
+        // Default hierarchical report
         ///////////////////////////
         HashMap<String, ArrayList<ExportFeature>> exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
         ArrayList<ExportFeature> sectionContent = new ArrayList<ExportFeature>();
@@ -549,7 +549,7 @@ public class PSExportFactory implements ExportFactory {
 
         exportFeatures.put(ProteinFeatures.type, sectionContent);
 
-        ExportScheme topDownReport = new ExportScheme("Default Top Down Report", false, exportFeatures, "\t", true, true, 0, false);
+        ExportScheme topDownReport = new ExportScheme("Default Hierarchical Report", false, exportFeatures, "\t", true, true, 0, false);
 
         ///////////////////////////
         // Default protein report
