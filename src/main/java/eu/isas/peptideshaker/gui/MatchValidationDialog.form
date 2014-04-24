@@ -337,17 +337,18 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="confidenceLbl" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="266" max="-2" attributes="0"/>
-                              <Component id="validationThresoldLbl" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="confidenceLbl" pref="365" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="301" max="-2" attributes="0"/>
                               <Component id="confidenceThresholdLbl" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="validationStatusLbl" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="validationThresholdLbl" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -359,22 +360,25 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="confidenceLbl" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="validationThresoldLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="validationThresholdLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="validationStatusLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="confidenceThresholdLbl" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="11" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="confidenceThresholdLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="confidenceLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="validationThresoldLbl">
+            <Component class="javax.swing.JLabel" name="validationThresholdLbl">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                   <FontInfo relative="true">
-                    <Font component="validationThresoldLbl" italic="true" property="font" relativeSize="true" size="0"/>
+                    <Font component="validationThresholdLbl" italic="true" property="font" relativeSize="true" size="0"/>
                   </FontInfo>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Validation threshold: x%"/>
@@ -393,6 +397,11 @@
                   </FontInfo>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Confidence threshold: x%"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="validationStatusLbl">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Validation Status: Validated"/>
               </Properties>
             </Component>
           </SubComponents>
