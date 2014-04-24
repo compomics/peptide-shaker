@@ -378,10 +378,38 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 confidence = psParameter.getPsmConfidence();
             }
 
-            confidenceLbl.setText("Confidence: " + Util.roundDouble(confidence, 2) + "%");
+            MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+            validationStatusLbl.setText("Validation Status: " + matchValidationLevel.getName());
+            switch (matchValidationLevel) {
+                case confident:
+                    validationStatusLbl.setForeground(green);
+                    break;
+                case doubtful:
+                    validationStatusLbl.setForeground(orange);
+                    break;
+                case not_validated:
+                    validationStatusLbl.setForeground(Color.red);
+                    break;
+                case none:
+                    validationStatusLbl.setForeground(Color.gray);
+            }
+
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            String validationThresholdTxt = "";
+            double threshold = targetDecoyResults.getUserInput();
+            int thresholdType = targetDecoyResults.getInputType();
+            if (thresholdType == 0) {
+                validationThresholdTxt += "Validation Threshold: " + Util.roundDouble(threshold, 2) + "%";
+            } else if (targetDecoyResults.getInputType() == 1) {
+                validationThresholdTxt += "FDR Threshold: " + Util.roundDouble(threshold, 2) + "%";
+            } else if (targetDecoyResults.getInputType() == 2) {
+                validationThresholdTxt += "FNR Threshold: " + Util.roundDouble(threshold, 2) + "%";
+            }
+            validationThresholdLbl.setText(validationThresholdTxt);
+
+            confidenceLbl.setText("Confidence: " + Util.roundDouble(confidence, 2) + "%");
             double validationThreshold = targetDecoyResults.getConfidenceLimit();
-            validationThresoldLbl.setText("Confidence at threshold: " + Util.roundDouble(validationThreshold, 2) + "%");
+            confidenceThresholdLbl.setText("Expected Confidence: " + Util.roundDouble(validationThreshold, 2) + "%");
             double resolution = targetDecoyMap.getResolution();
             double confidenceThreshold = validationThreshold + resolution;
             if (confidenceThreshold > 100) {
@@ -396,9 +424,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 confidenceLbl.setForeground(green);
             }
         } else {
+            validationStatusLbl.setText("Validation Status: " + psParameter.getMatchValidationLevel().getName());
+            validationThresholdLbl.setText("Impossible to estimate validation threshold");
             confidenceLbl.setText("Impossible to estimate confidence");
-            validationThresoldLbl.setText("Impossible to estimate validation threshold");
             confidenceThresholdLbl.setText("Impossible to estimate confidence threshold");
+            validationStatusLbl.setForeground(Color.gray);
             confidenceLbl.setForeground(Color.gray);
         }
 
@@ -539,9 +569,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         bitRecommendationLabel6 = new javax.swing.JLabel();
         confidenceResolutionLbl = new javax.swing.JLabel();
         targetDecoyPanel = new javax.swing.JPanel();
-        validationThresoldLbl = new javax.swing.JLabel();
+        validationThresholdLbl = new javax.swing.JLabel();
         confidenceLbl = new javax.swing.JLabel();
         confidenceThresholdLbl = new javax.swing.JLabel();
+        validationStatusLbl = new javax.swing.JLabel();
         qualityFiltersPanel = new javax.swing.JPanel();
         qualityFiltersTableScrollPane = new javax.swing.JScrollPane();
         qualityFiltersTable = new JTable() {
@@ -694,13 +725,15 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         targetDecoyPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Target/Decoy Results"));
         targetDecoyPanel.setOpaque(false);
 
-        validationThresoldLbl.setFont(validationThresoldLbl.getFont().deriveFont((validationThresoldLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
-        validationThresoldLbl.setText("Validation threshold: x%");
+        validationThresholdLbl.setFont(validationThresholdLbl.getFont().deriveFont((validationThresholdLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
+        validationThresholdLbl.setText("Validation threshold: x%");
 
         confidenceLbl.setText("Confidence: x%");
 
         confidenceThresholdLbl.setFont(confidenceThresholdLbl.getFont().deriveFont((confidenceThresholdLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
         confidenceThresholdLbl.setText("Confidence threshold: x%");
+
+        validationStatusLbl.setText("Validation Status: Validated");
 
         javax.swing.GroupLayout targetDecoyPanelLayout = new javax.swing.GroupLayout(targetDecoyPanel);
         targetDecoyPanel.setLayout(targetDecoyPanelLayout);
@@ -709,13 +742,14 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(targetDecoyPanelLayout.createSequentialGroup()
-                        .addComponent(confidenceLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(266, 266, 266)
-                        .addComponent(validationThresoldLbl))
-                    .addGroup(targetDecoyPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(confidenceThresholdLbl)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, targetDecoyPanelLayout.createSequentialGroup()
+                        .addComponent(confidenceLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                        .addGap(301, 301, 301)
+                        .addComponent(confidenceThresholdLbl))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, targetDecoyPanelLayout.createSequentialGroup()
+                        .addComponent(validationStatusLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(validationThresholdLbl)))
                 .addContainerGap())
         );
         targetDecoyPanelLayout.setVerticalGroup(
@@ -723,11 +757,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             .addGroup(targetDecoyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(confidenceLbl)
-                    .addComponent(validationThresoldLbl))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(confidenceThresholdLbl)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(validationThresholdLbl)
+                    .addComponent(validationStatusLbl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGroup(targetDecoyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(confidenceThresholdLbl)
+                    .addComponent(confidenceLbl))
+                .addContainerGap())
         );
 
         qualityFiltersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Quality Filters"));
@@ -1010,7 +1046,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private javax.swing.JPanel targetDecoyPanel;
     private javax.swing.JComboBox validationLevelJComboBox;
     private javax.swing.JPanel validationLevelPanel;
-    private javax.swing.JLabel validationThresoldLbl;
+    private javax.swing.JLabel validationStatusLbl;
+    private javax.swing.JLabel validationThresholdLbl;
     private javax.swing.JLabel validationTypeLabel;
     // End of variables declaration//GEN-END:variables
 }

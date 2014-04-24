@@ -266,7 +266,7 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the type of input.
+     * Returns the type of input.  0 -> confidence 1 -> FDR 2 -> FNR.
      *
      * @return the type of input
      */
