@@ -119,9 +119,9 @@ public class QCPanel extends javax.swing.JPanel {
         // set the histogram colors
         histogramColors = new Color[5];
         histogramColors[0] = peptideShakerGUI.getSparklineColor(); // Confident True Positives
-        histogramColors[1] = new Color(255, 204, 0); // Doubtful True Positives
-        histogramColors[2] = new Color(255, 51, 51); // False Positives
-        histogramColors[3] = new Color(100, 150, 255); // False Negatives
+        histogramColors[1] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(); // Doubtful True Positives
+        histogramColors[2] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorFalsePositives(); // False Positives
+        histogramColors[3] = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorPossible(); // False Negatives
         histogramColors[4] = Color.lightGray; // True Negatives
 
         // make the tabs in the spectrum tabbed pane go from right to left

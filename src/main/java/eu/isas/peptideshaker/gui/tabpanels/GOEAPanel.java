@@ -261,7 +261,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(new Color(255, 204, 0));
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
 
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, false));

@@ -31,7 +31,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.Chromosome;
-import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -39,7 +38,6 @@ import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRendere
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
@@ -562,7 +560,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * Set up the properties of the protein table. Warning: when changing this
      * method please update reporter as well!
-     *
+     * 
      * @TODO: really did not know where to put this...
      *
      * @param proteinTable the protein table
@@ -571,12 +569,13 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * stuffs
      * @param parentClass the parent class used to get icons
      * @param sparklineColorNotFound the sparkline color for not found stuffs
+     * @param sparklineColorDoubtful the sparkline color for doubtful
      * @param scoreAndConfidenceDecimalFormat the decimal format for score and
      * confidence
      * @param maxProteinKeyLength the longest protein key to display
      */
     public static void setProteinTableProperties(JTable proteinTable, Color sparklineColor, Color sparklineColorNotValidated,
-            Color sparklineColorNotFound, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
+            Color sparklineColorNotFound, Color sparklineColorDoubtful, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
 
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
@@ -629,8 +628,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
         sparklineColors.add(sparklineColor);
-        sparklineColors.add(Color.pink); // @TODO: remove the hard coding of the doubtful color below
-//        sparklineColors.add(new Color(255, 204, 0));
+        sparklineColors.add(sparklineColorDoubtful);
         sparklineColors.add(nonValidatedColor);
         sparklineColors.add(sparklineColorNotFound);
 
