@@ -5,6 +5,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -383,9 +384,52 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // set the gene preferences
-        genePreferences = new GenePreferences();
-        genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
-        genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
+        if (cliInputBean.getSpecies() != null) {
+            try {
+                genePreferences = new GenePreferences();
+                genePreferences.loadSpeciesAndGoDomains();
+                genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
+                genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
+
+                // try to download gene and go information
+                GeneFactory geneFactory = GeneFactory.getInstance();
+
+                String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
+                if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
+                    currentEnsemblSpeciesType = "ensembl";
+                }
+
+                Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
+
+                String selectedSpecies = cliInputBean.getSpecies();
+                String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
+                String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
+
+                // check if newer mappings are available
+                if (currentEnsemblVersionAsString != null) {
+                    currentEnsemblVersionAsString = currentEnsemblVersionAsString.substring(currentEnsemblVersionAsString.indexOf(" ") + 1);
+                    Integer currentEnsemblVersion;
+
+                    try {
+                        currentEnsemblVersion = new Integer(currentEnsemblVersionAsString);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        currentEnsemblVersion = latestEnsemblVersion;
+                    }
+
+                    if (currentEnsemblVersion < latestEnsemblVersion) {
+                        genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
+                        genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+                    }
+                } else {
+                    genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
+                    genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+                }
+            } catch (IOException e) {
+                System.out.println("Failed to load the species and GO domains!");
+                e.printStackTrace();
+            }
+        }
 
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingPreferences();
@@ -577,7 +621,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 return false;
             }
         }
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
             String input = aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id).trim();
             try {
