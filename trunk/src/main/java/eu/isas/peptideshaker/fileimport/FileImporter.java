@@ -1271,7 +1271,22 @@ public class FileImporter {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FileImporter.class").getPath(), "PeptideShaker");
     }
 
-    private void writeFilter(BufferedWriter bw, String fileName, String spectrumTitle, PeptideAssumption peptideAssumption) throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+    /**
+     * Write a filter.
+     * 
+     * @param bw
+     * @param fileName
+     * @param spectrumTitle
+     * @param peptideAssumption
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws MzMLUnmarshallerException 
+     */
+    private void writeFilter(BufferedWriter bw, String fileName, String spectrumTitle, PeptideAssumption peptideAssumption) 
+            throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+        
         bw.write(fileName + "\t" + spectrumTitle + "\t");
         boolean first = true;
         for (String accession : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, 0.5)) {

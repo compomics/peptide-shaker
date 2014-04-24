@@ -123,7 +123,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, Double> originalThresholds = new HashMap<Integer, Double>();
     /**
-     * The original threshold type 0 -> confidence 1 -> FDR 2 -> FNR
+     * The original threshold type 0 -> confidence 1 -> FDR 2 -> FNR.
      */
     private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<Integer, Integer>();
     /**
@@ -3897,7 +3897,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
     /**
      * Applies the threshold set in thresholdInput to the currently selected
-     * group
+     * group.
      */
     private void applyThreshold(int selectedGroup, double threshold, int thresholdType) {
 
