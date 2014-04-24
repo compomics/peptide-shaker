@@ -254,7 +254,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(new Color(255, 204, 0));
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));

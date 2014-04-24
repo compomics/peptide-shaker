@@ -64,7 +64,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
-import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.*;
 import org.jfree.chart.*;
@@ -316,7 +315,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void setProteinTableProperties() {
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
-                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(), 
+                peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
@@ -382,8 +382,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
         ArrayList<Color> sparklineColors = new ArrayList<Color>();
         sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(Color.pink);
-//        sparklineColors.add(new Color(255, 204, 0)); //@TODO: change to something not hard coded
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
         sparklineColors.add(nonValidatedColor);
         peptideTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColors, false));
         ((JSparklinesArrayListBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
@@ -3945,7 +3944,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         try {
             // only need to redo this if the protein changes
             if (updateProtein || !proteinAccession.equalsIgnoreCase(currentProteinAccession) || coverage == null) {
-
                 updateProteinSequenceCoveragePanelTitle(proteinAccession);
                 updatePtmCoveragePlot(proteinAccession);
             }
@@ -3996,7 +3994,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
             colors.put(MatchValidationLevel.confident.getIndex(), peptideShakerGUI.getSparklineColor());
-            colors.put(MatchValidationLevel.doubtful.getIndex(), Color.pink); //@TODO: set the doubtful color
+            colors.put(MatchValidationLevel.doubtful.getIndex(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
             colors.put(MatchValidationLevel.not_validated.getIndex(), peptideShakerGUI.getSparklineColorNonValidated());
             colors.put(MatchValidationLevel.none.getIndex(), peptideShakerGUI.getSparklineColorNotFound());
 
