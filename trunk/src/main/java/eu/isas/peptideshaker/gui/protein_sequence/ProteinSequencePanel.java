@@ -221,7 +221,8 @@ public class ProteinSequencePanel {
             int newColor = aaColor[i];
             double newHeght = aaHeight[i];
             
-            if (newColor != previousColor || newHeght != previousHeight) {
+//            if (newColor != previousColor || newHeght != previousHeight) {
+            if (newColor != previousColor) {
                 double length = i - previousIndex;
                 ArrayList<Double> series = new ArrayList<Double>(1);
                 series.add(length);
@@ -231,6 +232,8 @@ public class ProteinSequencePanel {
                 }
         // @TODO: take heght into account
                 sparkLineDataSeriesCoverage.add(new JSparklinesDataSeries(series, color, null));
+                previousColor = newColor;
+                previousIndex = i;
             }
         }
         return sparkLineDataSeriesCoverage;
