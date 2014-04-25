@@ -265,7 +265,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Chromosome Number");
-        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Protein Sequence Coverage (%) (Confident / Doubtful / Not Validated / Possible)");
         proteinTableToolTips.add("Number of Peptides (Confident / Doubtful / Not Validated)");
         proteinTableToolTips.add("Number of Spectra (Confident / Doubtful / Not Validated)");
         proteinTableToolTips.add("MS2 Quantification");
