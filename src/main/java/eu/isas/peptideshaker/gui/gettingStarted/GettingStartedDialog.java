@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.gettingStarted;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.gui.GuiUtilities;
 import eu.isas.peptideshaker.gui.ImageIconPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -45,6 +46,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         this.welcomeDialog = welcomeDialog;
         initComponents();
         setUpDisplayPanels();
+        GuiUtilities.installEscapeCloseOperation(this);
         displayPanel.add(displayPanels.get(currentDisplayPanelIndex));
         nextButton.setEnabled(currentDisplayPanelIndex < displayPanels.size() - 1);
         backButton.setEnabled(currentDisplayPanelIndex > 0);
