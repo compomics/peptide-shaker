@@ -4008,6 +4008,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     coverageColor[aa] = userSelectionIndex;
                 }
             }
+            // Dirty fix until the width of the sparkline can change
+            int transparentIndex = userSelectionIndex+1;
+            colors.put(userSelectionIndex+1, new Color(0, 0, 0, 0));
+            for (int aa =0 ; aa < coverageHeight.length ; aa++) {
+                if (coverageColor[aa] == MatchValidationLevel.none.getIndex() && coverageLikelihood[aa] < 0.01) {
+                    coverageColor[aa] = transparentIndex;
+                }
+            }
+            
 
             // create the coverage plot
             ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, coverageColor, colors);

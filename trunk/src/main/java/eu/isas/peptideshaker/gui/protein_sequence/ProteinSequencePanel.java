@@ -197,43 +197,45 @@ public class ProteinSequencePanel {
      * Returns an array list with the coverage.
      * 
      * @param aaHeight the heights
-     * @param aaColor the colors
-     * @param colors the color map
+     * @param aaColorIndex the color indexes
+     * @param colors the index to color map
+     * 
      * @return an array list with the coverage
      */
-    public static ArrayList<JSparklinesDataSeries> getSparkLineDataSeriesCoverage(double[] aaHeight, int[] aaColor, HashMap<Integer, Color> colors) {
+    public static ArrayList<JSparklinesDataSeries> getSparkLineDataSeriesCoverage(double[] aaHeight, int[] aaColorIndex, HashMap<Integer, Color> colors) {
         
         if (aaHeight.length == 0) {
             throw new IllegalArgumentException("Empty height given to protein coverage panel.");
         }
-        if (aaHeight.length != aaColor.length) {
+        if (aaHeight.length != aaColorIndex.length) {
             throw new IllegalArgumentException("Height and length size given to protein coverage panel differ.");
         }
         
         ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
         
         int previousIndex = 0;
-        int previousColor = aaColor[0];
+        int previousColorIndex = aaColorIndex[0];
         double previousHeight = aaHeight[0];
         
         for (int i = 1 ; i < aaHeight.length ; i++) {
             
-            int newColor = aaColor[i];
-            double newHeght = aaHeight[i];
+            int newColorIndex = aaColorIndex[i];
+            double newHeight = aaHeight[i];
             
-//            if (newColor != previousColor || newHeght != previousHeight) {
-            if (newColor != previousColor) {
+//            if (newColor != previousColor || newHeight != previousHeight) {
+            if (newColorIndex != previousColorIndex) {
                 double length = i - previousIndex;
                 ArrayList<Double> series = new ArrayList<Double>(1);
                 series.add(length);
-                Color color = colors.get(newColor);
+                Color color = colors.get(previousColorIndex);
                 if (color == null) {
-                    throw new IllegalArgumentException("Color not set for index " + newColor + ".");
+                    throw new IllegalArgumentException("Color not set for index " + newColorIndex + ".");
                 }
-        // @TODO: take heght into account
+        // @TODO: take height into account
                 sparkLineDataSeriesCoverage.add(new JSparklinesDataSeries(series, color, null));
-                previousColor = newColor;
+                previousColorIndex = newColorIndex;
                 previousIndex = i;
+                previousHeight = newHeight;
             }
         }
         return sparkLineDataSeriesCoverage;
