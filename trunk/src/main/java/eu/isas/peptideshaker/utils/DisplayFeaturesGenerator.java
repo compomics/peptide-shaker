@@ -566,7 +566,7 @@ public class DisplayFeaturesGenerator {
                 enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, searchParameters.getEnzyme(),
                         PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
             }
-            if (allPeptides || enzymatic && enzymaticPeptide || !enzymatic && !enzymatic) {
+            if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymatic)) {
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 for (int index : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
                     int peptideTempStart = index - 1;

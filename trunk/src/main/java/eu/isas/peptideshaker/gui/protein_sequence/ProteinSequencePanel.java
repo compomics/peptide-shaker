@@ -20,6 +20,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * This class can be used to create a protein sequence plot.
  *
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class ProteinSequencePanel {
 
@@ -186,7 +187,6 @@ public class ProteinSequencePanel {
             chartPanel.setPopupMenu(null);
             chartPanel.setRangeZoomable(false);
         }
-
 
         chartPanel.setBackground(Color.WHITE);
 

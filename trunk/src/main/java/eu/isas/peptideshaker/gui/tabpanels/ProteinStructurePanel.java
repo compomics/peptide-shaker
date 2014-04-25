@@ -218,7 +218,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Chromosome Number");
-        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Protein Sequence Coverage (%) (Confident / Doubtful / Not Validated / Possible)");
         proteinTableToolTips.add("Number of Peptides (Validated / Doubtful / Not Validated)");
         proteinTableToolTips.add("Number of Spectra (Validated / Doubtful / Not Validated)");
         proteinTableToolTips.add("MS2 Quantification");
