@@ -21,6 +21,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
@@ -180,6 +181,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             speciesTextField.setText("(not selected)");
         }
         validateInput();
+        GuiUtilities.installEscapeCloseOperation(this);
     }
 
     /**
