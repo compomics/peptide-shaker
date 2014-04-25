@@ -548,7 +548,7 @@ public class DisplayFeaturesGenerator {
                 ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
                 annotations.add(new ResidueAnnotation(annotation, null, false));
                 for (int j = lastIndex; j < i; j++) {
-                    residueAnnotation.put(j, annotations);
+                    residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
                 }
                 lastP = p;
                 lastIndex = i;
@@ -567,11 +567,12 @@ public class DisplayFeaturesGenerator {
                         PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
             }
             if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymatic)) {
+                    String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                for (int index : aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance)) {
+                ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance);
+                for (int index : startIndexes) {
                     int peptideTempStart = index - 1;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                    String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                     ResidueAnnotation newAnnotation = new ResidueAnnotation(peptideTempStart + " - " + modifiedSequence + " - " + peptideTempEnd, peptideKey, true);
                     for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                         ArrayList<ResidueAnnotation> annotations = residueAnnotation.get(j);
