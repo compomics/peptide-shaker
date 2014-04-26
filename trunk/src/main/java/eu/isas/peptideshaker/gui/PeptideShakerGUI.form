@@ -746,7 +746,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="methodsSectionMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Methods Section"/>
+                <Property name="text" type="java.lang.String" value="Methods Section (beta)"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Export a draft of the method&lt;br&gt;&#xa;section for your manuscript&#xa;&lt;/html&gt;"/>
               </Properties>
               <Events>
