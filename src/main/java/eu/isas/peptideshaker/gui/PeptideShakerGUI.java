@@ -1584,7 +1584,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         });
         exportJMenu.add(followUpAnalysisMenuItem);
 
-        methodsSectionMenuItem.setText("Methods Section");
+        methodsSectionMenuItem.setText("Methods Section (beta)");
         methodsSectionMenuItem.setToolTipText("<html>\nExport a draft of the method<br>\nsection for your manuscript\n</html>");
         methodsSectionMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

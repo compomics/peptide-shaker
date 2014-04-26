@@ -77,7 +77,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         if (i == searchEngines.size() - 1) {
                             text += " and ";
                         } else {
-                            text += ",";
+                            text += ", ";
                         }
                     }
                     text += searchEngines.get(i);
@@ -520,16 +520,16 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
 
         if (searchEngine.equalsIgnoreCase("OMSSA")) {
             return "PMID:15473683";
-        } else if (searchEngine.equalsIgnoreCase("OMSSA")) {
-            return "PMID:???";
+        } else if (searchEngine.equalsIgnoreCase("MS Amanda")) {
+            return "http://ms.imp.ac.at/?goto=msamanda";
         } else if (searchEngine.equalsIgnoreCase("X!Tandem")) {
-            return "PMID:???";
+            return "PMID:12622365";
         } else if (searchEngine.equalsIgnoreCase("MS-GF+")) {
-            return "PMID:???";
+            return "http://proteomics.ucsd.edu/Software/MSGFPlus";
+        } else if (searchEngine.equalsIgnoreCase("Mascot")) {
+            return "PMID:10612281";
         } else {
-            return "PMID:???";
+            return "add ref";
         }
-
-        // @TODO: add more search engine references 
     }
 }
