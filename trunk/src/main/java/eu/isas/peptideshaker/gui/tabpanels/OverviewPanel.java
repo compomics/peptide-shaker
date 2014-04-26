@@ -315,7 +315,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void setProteinTableProperties() {
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
-                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(), 
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(),
                 peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
@@ -3963,33 +3963,33 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                    selectedPeptideStart.add(startIndex-1);
+                    selectedPeptideStart.add(startIndex - 1);
                 }
                 selectionLength = peptideSequence.length();
             }
 
             IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
-            double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinAccession);
             int[] validationCoverage;
             if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                 validationCoverage = identificationFeaturesGenerator.getAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
             } else {
-                validationCoverage = identificationFeaturesGenerator.estimateAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
+                validationCoverage = identificationFeaturesGenerator.estimateAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE,
+                        searchParameters.getFragmentIonAccuracy(), coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
             }
-            int[] coverageColor = validationCoverage.clone();
-            
-            double minHeight = 0.2;
-            double maxHeight = 1;
+
+            double minHeight = 0.2, maxHeight = 1;
             NonSymmetricalNormalDistribution peptideLengthDistribution = peptideShakerGUI.getMetrics().getPeptideLengthDistribution();
             if (peptideLengthDistribution != null) {
                 double medianLength = peptideLengthDistribution.getMean();
-                maxHeight = (1-minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
+                maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
             }
+
+            double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinAccession);
             double[] coverageHeight = new double[coverageLikelihood.length];
-            for (int i = 0 ; i < coverageLikelihood.length ; i++) {
+            for (int i = 0; i < coverageLikelihood.length; i++) {
                 double p = coverageLikelihood[i];
-                coverageHeight[i] = minHeight + p/maxHeight;
+                coverageHeight[i] = minHeight + p / maxHeight;
             }
 
             HashMap<Integer, Color> colors = new HashMap<Integer, Color>();
@@ -4003,27 +4003,32 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 userSelectionIndex++;
             }
             colors.put(userSelectionIndex, Color.blue); //@TODO: use non hard coded value
+
+            int[] coverageColor = validationCoverage.clone();
             for (int aaStart : selectedPeptideStart) {
                 for (int aa = aaStart; aa < aaStart + selectionLength; aa++) {
                     coverageColor[aa] = userSelectionIndex;
                 }
             }
+
             // Dirty fix until the width of the sparkline can change
-            int transparentIndex = userSelectionIndex+1;
-            colors.put(userSelectionIndex+1, new Color(0, 0, 0, 0));
-            for (int aa =0 ; aa < coverageHeight.length ; aa++) {
-                if (coverageColor[aa] == MatchValidationLevel.none.getIndex() && coverageLikelihood[aa] < 0.01) {
-                    coverageColor[aa] = transparentIndex;
+            int transparentIndex = userSelectionIndex + 1;
+            colors.put(userSelectionIndex + 1, new Color(0, 0, 0, 0));
+            for (int aa = 0; aa < coverageHeight.length; aa++) {
+                if (coverageColor[aa] == MatchValidationLevel.none.getIndex()) {
+                    if(coverageLikelihood[aa] < 0.01
+                        || !coverageShowPossiblePeptidesJCheckBoxMenuItem.isSelected()) { // NOTE: if the fix is removed, make sure that this line is kept!!!
+                        coverageColor[aa] = transparentIndex;
+                    }
                 }
             }
-            
 
             // create the coverage plot
             ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, coverageColor, colors);
 
             HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = peptideShakerGUI.getDisplayFeaturesGenerator().getResidueAnnotation(
-                    proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), identificationFeaturesGenerator, 
-                    peptideShakerGUI.getMetrics(), peptideShakerGUI.getIdentification(), coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(), 
+                    proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), identificationFeaturesGenerator,
+                    peptideShakerGUI.getMetrics(), peptideShakerGUI.getIdentification(), coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(),
                     searchParameters, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
 
             coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips, true, true);
@@ -4076,45 +4081,50 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
-            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage - ";
+            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
             try {
                 HashMap<Integer, Double> sequenceCoverage;
                 try {
-                    sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(
+                            proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     sequenceCoverage = new HashMap<Integer, Double>();
                 }
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                Double sequenceCoveragenotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
+                Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
                 Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
-                Double totalCoverage = validatedCoverage + sequenceCoveragenotValidated;
+                Double totalCoverage = validatedCoverage + sequenceCoverageNotValidated;
                 if (validatedCoverage > 0) {
-                    title += Util.roundDouble(validatedCoverage, 2) + "% validated (" + Util.roundDouble(sequenceCoverageDoubtful, 2) + "% doubtful) in " + Util.roundDouble(totalCoverage, 2) + "% total coverage";
+                    title += Util.roundDouble(totalCoverage, 2) + "%"
+                            + " - "
+                            + Util.roundDouble(sequenceCoverageConfident, 2) + "% confident, "
+                            + Util.roundDouble(sequenceCoverageDoubtful, 2) + "% doubtful, "
+                            + Util.roundDouble(sequenceCoverageNotValidated, 2) + "% not validated";
                 } else {
-                    title += Util.roundDouble(sequenceCoveragenotValidated, 2) + "%";
+                    title += Util.roundDouble(sequenceCoverageNotValidated, 2) + "%";
                 }
-                title += " (";
+                title += " - ";
                 try {
                     double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                    title += Util.roundDouble(possibleCoverarge, 2) + "% possible of ";
+                    title += Util.roundDouble(possibleCoverarge, 2) + "% possible";
                 } catch (Exception ePossibleCoverage) {
                     // skip the possible coverage
                     peptideShakerGUI.catchException(ePossibleCoverage);
                 }
+                title += " - ";
                 title += currentProteinSequence.length() + " AA)";
                 title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
             } catch (Exception eCoverage) {
                 peptideShakerGUI.catchException(eCoverage);
                 // Worst case, we did not even manage to get the coverage.
-                title += currentProteinSequence.length() + " AA";
+                title += currentProteinSequence.length() + " AA)";
                 title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
             }
 
             ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(title);
             sequenceCoverageTitledPanel.repaint();
-
         }
     }
 
