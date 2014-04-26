@@ -221,7 +221,7 @@ public class ProteinSequencePanel {
             int newColorIndex = aaColorIndex[i];
             double newHeight = aaHeight[i];
 
-//            if (newColor != previousColor || newHeight != previousHeight) {
+            //if (newColorIndex != previousColorIndex || newHeight != previousHeight) {
             if (newColorIndex != previousColorIndex) {
                 double length = i - previousIndex;
                 ArrayList<Double> series = new ArrayList<Double>(1);
