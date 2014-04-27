@@ -4004,5 +4004,4 @@ public class StatsPanel extends javax.swing.JPanel {
         }
         applyThreshold(groupSelection, threshold, thresholdType);
     }
-
 }
