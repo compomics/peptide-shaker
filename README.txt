@@ -9,15 +9,16 @@
    From the command line use 'java -jar PeptideShaker-X.Y.Z.jar'. 
    (Replace X.Y.Z with the PeptideShaker version number.)
 
+   For help with runnng PeptideShaker please see:
+   http://code.google.com/p/peptide-shaker/#Troubleshooting
+
 
    ========================
     PeptideShaker Web Page
    ========================
 
    For updated information about PeptideShaker please visit:
-
    http://peptide-shaker.googlecode.com
-
 
 
    =========
