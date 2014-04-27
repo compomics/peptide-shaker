@@ -3349,7 +3349,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed
         if (proteinTable.getSelectedRow() != -1) {
             try {
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
                 String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 updateSequenceCoverage(proteinKey, proteinMatch.getMainMatch(), true);
