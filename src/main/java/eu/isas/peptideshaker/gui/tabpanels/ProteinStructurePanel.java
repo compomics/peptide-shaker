@@ -1518,8 +1518,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         try {
             int row = peptideTable.getSelectedRow();
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-            int proteinIndex = tableModel.getViewIndex(row);
             int column = peptideTable.getSelectedColumn();
 
             if (row != -1) {
@@ -1541,6 +1539,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 // open the protein inference at the petide level dialog
                 if (column == peptideTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                    int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
                     String proteinKey = proteinKeys.get(proteinIndex);
                     String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                     new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
@@ -2999,7 +2999,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);

@@ -3577,9 +3577,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public void updatePeptidePanelTitle() {
         String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (";
         try {
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
             IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow())); // @TODO: possible null pointer!!!
+            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
             int nValidatedPeptides = identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
             int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentPeptides(proteinKey);
@@ -3608,7 +3608,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @throws java.lang.InterruptedException
      */
     public void updatePsmPanelTitle() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
         IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
         int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
         String peptideKey = peptideKeys.get(peptideIndex);
@@ -5123,11 +5123,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 && proteinTable.getSelectedRow() != -1
                 && psmTable.getSelectedRow() != -1) {
             try {
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
-                int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
+                SelfUpdatingTableModel peptideTableModel = (SelfUpdatingTableModel) peptideTable.getModel();
+                int peptideIndex = peptideTableModel.getViewIndex(peptideTable.getSelectedRow());
                 String peptideKey = peptideKeys.get(peptideIndex);
-                tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
+                SelfUpdatingTableModel proteinTableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                String proteinKey = proteinKeys.get(proteinTableModel.getViewIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
@@ -5157,8 +5157,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
-                tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                int psmIndex = tableModel.getViewIndex(psmTable.getSelectedRow());
+                SelfUpdatingTableModel psmTableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                int psmIndex = psmTableModel.getViewIndex(psmTable.getSelectedRow());
                 String spectrumKey = psmKeys.get(psmIndex);
 
                 try {
