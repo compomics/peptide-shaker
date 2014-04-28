@@ -371,14 +371,14 @@ public class IdentificationFeaturesGenerator {
         Distribution peptideLengthDistribution = metrics.getPeptideLengthDistribution();
         Enzyme enzyme = searchParameters.getEnzyme();
 
-        int lastCleavage = 0;
+        int lastCleavage = -1;
         char previousChar = sequence.charAt(0), nextChar;
         for (int i = 0; i < sequence.length() - 1; i++) {
             double p = 1;
             if (!enzyme.isSemiSpecific()) {
                 nextChar = sequence.charAt(i + 1);
                 if (enzyme.isCleavageSite(previousChar, nextChar)) {
-                    int length = i - lastCleavage + 1;
+                    int length = i - lastCleavage;
                     if (peptideLengthDistribution == null) { //backward compatibility check
                         int pepMax = idFilter.getMaxPepLength();
                         if (length > pepMax) {
@@ -387,7 +387,7 @@ public class IdentificationFeaturesGenerator {
                     } else {
                         p = peptideLengthDistribution.getProbabilityAt(length);
                     }
-                    for (int j = lastCleavage; j <= i; j++) {
+                    for (int j = lastCleavage+1; j <= i; j++) {
                         result[j] = p;
                     }
                     lastCleavage = i;

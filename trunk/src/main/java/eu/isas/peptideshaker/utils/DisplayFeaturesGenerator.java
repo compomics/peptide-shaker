@@ -540,7 +540,7 @@ public class DisplayFeaturesGenerator {
         for (int i = 1; i < coverage.length; i++) {
             double p = coverage[i];
             if (p != lastP) {
-                String annotation = (lastIndex + 1) + "-" + i;
+                String annotation = (lastIndex + 1) + "-" + (i+1);
                 if (metrics.getPeptideLengthDistribution() != null) {
                     annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chances of coverage";
                 } else if (lastP > 0.01) {
@@ -572,10 +572,10 @@ public class DisplayFeaturesGenerator {
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance);
                 for (int index : startIndexes) {
-                    int peptideTempStart = index - 1;
+                    int peptideTempStart = index;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     ResidueAnnotation newAnnotation = new ResidueAnnotation(peptideTempStart + " - " + modifiedSequence + " - " + peptideTempEnd, peptideKey, true);
-                    for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                    for (int j = peptideTempStart-1; j < peptideTempEnd-1; j++) {
                         ArrayList<ResidueAnnotation> annotations = residueAnnotation.get(j);
                         if (annotations == null) {
                             annotations = new ArrayList<ResidueAnnotation>();
