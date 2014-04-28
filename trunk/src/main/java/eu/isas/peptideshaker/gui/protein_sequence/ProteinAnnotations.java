@@ -39,14 +39,16 @@ public class ProteinAnnotations implements CategoryToolTipGenerator {
 
             tooltip.append("<html>");
 
-            if (annotation.size() == 1) {
-                tooltip.append(annotation.get(0).getAnnotation());
-            } else {
-                for (int i = 0; i < annotation.size(); i++) {
-                    tooltip.append((i + 1));
-                    tooltip.append(": ");
-                    tooltip.append(annotation.get(i).getAnnotation());
-                    tooltip.append("<br>");
+            if (annotation != null) {
+                if (annotation.size() == 1) {
+                    tooltip.append(annotation.get(0).getAnnotation());
+                } else {
+                    for (int i = 0; i < annotation.size(); i++) {
+                        tooltip.append((i + 1));
+                        tooltip.append(": ");
+                        tooltip.append(annotation.get(i).getAnnotation());
+                        tooltip.append("<br>");
+                    }
                 }
             }
 
