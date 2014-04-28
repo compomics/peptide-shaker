@@ -523,8 +523,8 @@ public class DisplayFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType, 
-            Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification, 
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType,
+            Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -540,7 +540,7 @@ public class DisplayFeaturesGenerator {
         for (int i = 1; i < coverage.length; i++) {
             double p = coverage[i];
             if (p != lastP) {
-                String annotation = (lastIndex + 1) + "-" + (i+1);
+                String annotation = (lastIndex + 1) + "-" + (i + 1);
                 if (metrics.getPeptideLengthDistribution() != null) {
                     annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chances of coverage";
                 } else if (lastP > 0.01) {
@@ -555,6 +555,18 @@ public class DisplayFeaturesGenerator {
                 lastIndex = i;
             }
         }
+        int i = coverage.length;
+        String annotation = (lastIndex + 1) + "-" + (i);
+        if (metrics.getPeptideLengthDistribution() != null) {
+            annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chances of coverage";
+        } else if (lastP > 0.01) {
+            annotation += ", possible to cover";
+        }
+        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+        annotations.add(new ResidueAnnotation(annotation, null, false));
+        for (int j = lastIndex; j < i; j++) {
+            residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
+        }
 
         // batch load the required data
         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
@@ -568,19 +580,19 @@ public class DisplayFeaturesGenerator {
                         PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
             }
             if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymatic)) {
-                    String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
+                String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance);
                 for (int index : startIndexes) {
                     int peptideTempStart = index;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     ResidueAnnotation newAnnotation = new ResidueAnnotation(peptideTempStart + " - " + modifiedSequence + " - " + peptideTempEnd, peptideKey, true);
-                    for (int j = peptideTempStart-1; j < peptideTempEnd-1; j++) {
-                        ArrayList<ResidueAnnotation> annotations = residueAnnotation.get(j);
+                    for (int j = peptideTempStart - 1; j < peptideTempEnd - 1; j++) {
+                        annotations = residueAnnotation.get(j);
                         if (annotations == null) {
                             annotations = new ArrayList<ResidueAnnotation>();
                             residueAnnotation.put(j, annotations);
-                        } else if (metrics.getPeptideLengthDistribution() == null && annotations.size() == 1 && !annotations.get(0).isClickable()) {
+                        } else if (annotations.size() == 1 && !annotations.get(0).isClickable()) {
                             annotations.clear();
                         }
                         annotations.add(newAnnotation);
