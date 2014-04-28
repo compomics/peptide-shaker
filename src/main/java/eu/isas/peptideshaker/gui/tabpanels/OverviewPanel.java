@@ -4034,10 +4034,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // Dirty fix for a bloc-level annotation
             HashMap<Integer, ArrayList<ResidueAnnotation>> blocTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
             int aaCpt = 0, blocCpt = 0;
-            blocTooltips.put(blocCpt, proteinTooltips.get(aaCpt));
             for (JSparklinesDataSeries jSparklinesDataSeries : sparkLineDataSeriesCoverage) {
-                aaCpt += jSparklinesDataSeries.getData().get(0);
-                blocTooltips.put(++blocCpt, proteinTooltips.get(aaCpt));
+                double sparkLineLength = jSparklinesDataSeries.getData().get(0);
+                ArrayList<ResidueAnnotation> blocAnnotation = new ArrayList<ResidueAnnotation>();
+                for (int j = 0; j < sparkLineLength; j++, aaCpt++) {
+                    ArrayList<ResidueAnnotation> aaAnnotation = proteinTooltips.get(aaCpt);
+                    if (aaAnnotation != null) {
+                        for (ResidueAnnotation residueAnnotation : aaAnnotation) {
+                            if (!blocAnnotation.contains(residueAnnotation)) {
+                                blocAnnotation.add(residueAnnotation);
+                            }
+                        }
+                    }
+                }
+                blocTooltips.put(blocCpt, blocAnnotation);
+                blocCpt++;
             }
 
             coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), blocTooltips, true, true);

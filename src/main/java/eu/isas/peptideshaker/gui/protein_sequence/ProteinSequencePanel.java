@@ -157,8 +157,8 @@ public class ProteinSequencePanel {
                     ((CategoryItemEntity) cme.getEntity()).getDataset();
                     Integer blockNumber = new Integer((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
 
-                    if (blockTooltips.containsKey(blockNumber)) {
-                        ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
+                    ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
+                    if (annotation != null) {
                         proteinSequencePanelParent.annotationClicked(annotation, cme);
                     }
                 }
@@ -173,7 +173,8 @@ public class ProteinSequencePanel {
                     ((CategoryItemEntity) cme.getEntity()).getDataset();
                     Integer blockNumber = new Integer((String) ((CategoryItemEntity) cme.getEntity()).getRowKey());
 
-                    if (blockTooltips.containsKey(blockNumber)) {
+                    ArrayList<ResidueAnnotation> annotation = blockTooltips.get(blockNumber);
+                    if (annotation != null && !annotation.isEmpty()) {
                         if (blockTooltips.get(blockNumber).get(0).isClickable()) {
                             cme.getTrigger().getComponent().setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                         }
