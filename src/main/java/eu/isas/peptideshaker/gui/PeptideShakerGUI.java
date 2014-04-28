@@ -1515,6 +1515,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         });
         editMenu.add(javaOptionsJMenuItem);
 
+        privacyMenuItem.setMnemonic('P');
         privacyMenuItem.setText("Privacy Settings");
         privacyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1594,6 +1595,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         });
         exportJMenu.add(followUpAnalysisMenuItem);
 
+        methodsSectionMenuItem.setMnemonic('M');
         methodsSectionMenuItem.setText("Methods Section (beta)");
         methodsSectionMenuItem.setToolTipText("<html>\nExport a draft of the method<br>\nsection for your manuscript\n</html>");
         methodsSectionMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3054,6 +3056,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         new MethodsSectionDialog(this, true);
     }//GEN-LAST:event_methodsSectionMenuItemActionPerformed
 
+    /**
+     * Open the PrivacySettingsDialog.
+     * 
+     * @param evt 
+     */
     private void privacyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_privacyMenuItemActionPerformed
         new PrivacySettingsDialog(this, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }//GEN-LAST:event_privacyMenuItemActionPerformed
