@@ -4016,8 +4016,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             colors.put(userSelectionIndex + 1, new Color(0, 0, 0, 0));
             for (int aa = 0; aa < coverageHeight.length; aa++) {
                 if (coverageColor[aa] == MatchValidationLevel.none.getIndex()) {
-                    if(coverageLikelihood[aa] < 0.01
-                        || !coverageShowPossiblePeptidesJCheckBoxMenuItem.isSelected()) { // NOTE: if the fix is removed, make sure that this line is kept!!!
+                    if (coverageLikelihood[aa] < 0.01
+                            || !coverageShowPossiblePeptidesJCheckBoxMenuItem.isSelected()) { // NOTE: if the fix is removed, make sure that this line is kept!!!
                         coverageColor[aa] = transparentIndex;
                     }
                 }
@@ -4031,7 +4031,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.getMetrics(), peptideShakerGUI.getIdentification(), coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(),
                     searchParameters, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
 
-            coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips, true, true);
+            // Dirty fix for a bloc-level annotation
+            HashMap<Integer, ArrayList<ResidueAnnotation>> blocTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+            int aaCpt = 0, blocCpt = 0;
+            blocTooltips.put(blocCpt, proteinTooltips.get(aaCpt));
+            for (JSparklinesDataSeries jSparklinesDataSeries : sparkLineDataSeriesCoverage) {
+                aaCpt += jSparklinesDataSeries.getData().get(0);
+                blocTooltips.put(++blocCpt, proteinTooltips.get(aaCpt));
+            }
+
+            coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), blocTooltips, true, true);
 
             // make sure that the range is the same for both charts (coverage and ptm)
             coverageChart.getChart().addChangeListener(new ChartChangeListener() {
@@ -4167,15 +4176,24 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 for (String peptideKey : peptideKeys) {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                    for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                        if (!modMatch.isVariable()) {
-                            String ptmName = modMatch.getTheoreticPtm();
-                            if (displayPreferences.isDisplayedPTM(ptmName)) {
-                                ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
-                                        PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-                                for (Integer index : indexes) {
-                                    fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
+                    boolean modified = false;
+                    for (String ptmName : displayPreferences.getDisplayedPtms()) {
+                        if (Peptide.isModified(peptideKey, ptmName)) {
+                            modified = true;
+                            break;
+                        }
+                    }
+                    if (modified) {
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                            if (!modMatch.isVariable()) {
+                                String ptmName = modMatch.getTheoreticPtm();
+                                if (displayPreferences.isDisplayedPTM(ptmName)) {
+                                    ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
+                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                    for (Integer index : indexes) {
+                                        fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
+                                    }
                                 }
                             }
                         }
