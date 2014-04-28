@@ -36,6 +36,7 @@ import com.compomics.util.experiment.identification.spectrum_annotators.PeptideS
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.PrivacySettingsDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialogParent;
@@ -445,16 +446,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         geneFactory = GeneFactory.getInstance();
         goFactory = GOFactory.getInstance();
 
+        // load the user preferences
+        loadUserPreferences();
+
         // check for new version
         boolean newVersion = false;
-        if (!getJarFilePath().equalsIgnoreCase(".")) {
+        if (!getJarFilePath().equalsIgnoreCase(".") && utilitiesUserPreferences.isAutoUpdate()) {
             newVersion = checkForNewVersion();
         }
 
         if (!newVersion) {
-
-            // load the user preferences
-            loadUserPreferences();
 
             // set this version as the default PeptideShaker version
             if (!getJarFilePath().equalsIgnoreCase(".")) {
@@ -780,6 +781,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         speciesJMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
+        privacyMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
@@ -1512,6 +1514,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         });
         editMenu.add(javaOptionsJMenuItem);
+
+        privacyMenuItem.setText("Privacy Settings");
+        privacyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                privacyMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(privacyMenuItem);
         editMenu.add(jSeparator12);
 
         findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
@@ -3037,12 +3047,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Opens the method section draft dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void methodsSectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodsSectionMenuItemActionPerformed
         new MethodsSectionDialog(this, true);
     }//GEN-LAST:event_methodsSectionMenuItemActionPerformed
+
+    private void privacyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_privacyMenuItemActionPerformed
+        new PrivacySettingsDialog(this, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+    }//GEN-LAST:event_privacyMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -3250,6 +3264,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckMenu;
     private javax.swing.JMenuItem preferencesMenuItem;
+    private javax.swing.JMenuItem privacyMenuItem;
     private javax.swing.JMenuItem processingParametersMenuItem;
     private javax.swing.JMenu projectExportMenu;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
