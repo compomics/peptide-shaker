@@ -2654,7 +2654,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
-        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", getVersion(), new File(getJarFilePath() + "/resources/PeptideShaker.log"));
+        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", getVersion(), 
+                "peptide-shaker", "PeptideShaker", new File(getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_logReportMenuActionPerformed
 
     /**

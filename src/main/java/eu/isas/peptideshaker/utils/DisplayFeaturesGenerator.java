@@ -542,7 +542,7 @@ public class DisplayFeaturesGenerator {
             if (p != lastP) {
                 String annotation = (lastIndex + 1) + "-" + (i + 1);
                 if (metrics.getPeptideLengthDistribution() != null) {
-                    annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chances of coverage";
+                    annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chance of coverage";
                 } else if (lastP > 0.01) {
                     annotation += ", possible to cover";
                 }
@@ -558,7 +558,7 @@ public class DisplayFeaturesGenerator {
         int i = coverage.length;
         String annotation = (lastIndex + 1) + "-" + (i);
         if (metrics.getPeptideLengthDistribution() != null) {
-            annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chances of coverage";
+            annotation += ", " + Util.roundDouble(100 * lastP, 1) + "% chance of coverage";
         } else if (lastP > 0.01) {
             annotation += ", possible to cover";
         }
