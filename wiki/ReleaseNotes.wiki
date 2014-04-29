@@ -3,11 +3,12 @@
 
 ----
 
-*Changes in PeptideShaker 0.28.1 (Coming soon...):*
+*Changes in PeptideShaker 0.28.1 (April 29. 2014):*
 
  * NEW FEATURE: Added new command line options for path configuration.
  * NEW FEATURE: Added a first draft of a methods section writing dialog. (beta)
  * NEW FEATURE: Made the species download available from the command line.
+ * NEW FEATURE: Added a reset thresholds button in the Validation tab.
 
  * FEATURE IMPROVEMENT: The sequence coverage now also shows the doubtful and not validated matches.
  * FEATURE IMPROVEMENT: Added a check and warning if using Java 1.5 or 1.6.
@@ -15,14 +16,18 @@
  * FEATURE IMPROVEMENT: Added the algorithm scores in the export.
  * FEATURE IMPROVEMENT: The validation thresholds are now displayed in the match validation dialog.
  * FEATURE IMPROVEMENT: Made it possible to use the escape button to close the New Project and Getting Started dialogs.
+ * FEATURE IMPROVEMENT: Made it possible to cancel the PDB mapping downloads.
+ * FEATURE IMPROVEMENT: Added the possibility for the user to turn on and off the auto update.
 
  * BUG FIX: Fixed a bug in the PtmSiteInferenceDialog where the PTM localization in the two tables were not the same.
  * BUG FIX: Fixed a bug in the PTM panel where the orange icon got stuck.
  * BUG FIX: Added .mzid and .cvs to PeptideShaker command line option description.
  * BUG FIX: Fixed a bug in the MzIdentML Export Dialog where the convert button could be clicked before an output file was selected.
+ * BUG FIX: Fixed some issues with incorrect table references in the Overview and 3D Structures tab.
+ * BUG FIX: Fixed problems with turning the sparklines on/off.
 
  * LIBRARY UPDATE: Updated jsparklines to version 0.6.6.
- * LIBRARY UPDATE: Updated utilities to version 3.26.25.
+ * LIBRARY UPDATE: Updated utilities to version 3.26.28.
 
 ----
 
