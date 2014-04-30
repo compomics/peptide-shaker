@@ -2,19 +2,29 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.software.ToolFactory;
+import static com.compomics.software.autoupdater.DownloadLatestZipFromRepo.downloadLatestZipFromRepo;
+import com.compomics.software.autoupdater.GUIFileDAO;
+import com.compomics.software.autoupdater.MavenJarFile;
+import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.JavaOptionsDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.LowMemoryDialog;
+import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * A simple welcome dialog with the option to open an existing project or create
@@ -33,6 +43,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * A dummy parent frame to be able to show an icon in the task bar.
      */
     static private DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
 
     /**
      * Create a new WelcomeDialog.
@@ -581,7 +595,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ToolFactory.startSearchGUI(peptideShakerGUI, null, null, null, null, null);
+                    ToolFactory.startSearchGUI(dummyParentFrame, null, null, null, null, null);
                     peptideShakerGUI.close();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -646,9 +660,58 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new PrideReshakeGui(peptideShakerGUI, this, dummyParentFrame, true);
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        new Thread(new Runnable() {
+            public void run() {
+                // check if searchgui is installed
+                if (peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() == null
+                        || !(new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).exists())) {
+                    try {
+                        SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(WelcomeDialog.this, true);
+                        boolean canceled = searchGuiSetupDialog.isDialogCanceled();
+
+                        if (!canceled) {
+                            setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                            new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                            setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    // check the searchgui version
+                    boolean newVersion = checkForNewSearchGUIVersion(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath());
+                    boolean openReshake = true;
+
+                    if (newVersion) {
+                        int option = JOptionPane.showConfirmDialog(null,
+                                "A newer version of SearchGUI is available.\n"
+                                + "Do you want to update?",
+                                "Update Available",
+                                JOptionPane.YES_NO_CANCEL_OPTION);
+                        if (option == JOptionPane.YES_OPTION) {
+                            boolean success = downloadSearchGUI();
+
+                            if (success) {
+                                peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+                            } else {
+                                openReshake = false;
+                            }
+                        } else if (option == JOptionPane.CANCEL_OPTION) {
+                            openReshake = false;
+                        }
+                    }
+
+                    if (openReshake) {
+                        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                        new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    }
+                }
+            }
+        }, "Reshake").start();
+
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
@@ -759,7 +822,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
         new BugReport(this, peptideShakerGUI.getLastSelectedFolder(), "PeptideShaker", "peptide-shaker",
-                peptideShakerGUI.getVersion(), "peptide-shaker", "PeptideShaker", 
+                peptideShakerGUI.getVersion(), "peptide-shaker", "PeptideShaker",
                 new File(peptideShakerGUI.getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_bugReportMenuItemActionPerformed
 
@@ -846,5 +909,100 @@ public class WelcomeDialog extends javax.swing.JDialog {
     public void setIconImage(Image image) {
         super.setIconImage(image);
         dummyParentFrame.setIconImage(image);
+    }
+
+    /**
+     * Check for new version.
+     *
+     * @param searchGuiJarPath the path to the SearchGUI jar file
+     * @return true if a new version is available
+     */
+    public boolean checkForNewSearchGUIVersion(String searchGuiJarPath) {
+        try {
+            File jarFile = new File(searchGuiJarPath);
+            MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
+            URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
+            return WebDAO.newVersionReleased(oldMavenJarFile, jarRepository);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Download SearchGUI.
+     *
+     * @return true if not canceled
+     */
+    public boolean downloadSearchGUI() {
+
+        String installPath = "user.home";
+
+        if (peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() != null) {
+            if (new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile() != null
+                    && new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile().getParentFile() != null) {
+                installPath = new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile().getParent();
+            }
+        }
+
+        final File downloadFolder = Util.getUserSelectedFolder(this, "Select SearchGUI Folder", installPath, "SearchGUI Folder", "Select", false);
+
+        if (downloadFolder != null) {
+
+            progressDialog = new ProgressDialogX(dummyParentFrame,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui-orange.gif")),
+                    true);
+
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Downloading SearchGUI. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            Thread thread = new Thread("DownloadThread") {
+                @Override
+                public void run() {
+                    try {
+                        URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
+                        downloadLatestZipFromRepo(downloadFolder, "SearchGUI", "eu.isas.searchgui", "SearchGUI", "searchgui.ico",
+                                null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    } catch (XMLStreamException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            thread.start();
+
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (progressDialog.isRunCanceled()) {
+                progressDialog.setRunFinished();
+                return false;
+            } else {
+                if (!progressDialog.isRunFinished()) {
+                    progressDialog.setRunFinished();
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
