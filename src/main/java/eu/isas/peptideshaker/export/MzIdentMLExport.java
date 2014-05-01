@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
@@ -27,9 +28,13 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
 import java.net.URLDecoder;
@@ -641,8 +646,7 @@ public class MzIdentMLExport {
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001211", "parent mass type mono", null));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
 
-        // @TODO: list all search parameters from the SearchParameter object
-        // @TODO: add more search parameters??
+        // @TODO: list all search parameters from the search engines used?
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AdditionalSearchParams>" + System.getProperty("line.separator"));
 
@@ -792,24 +796,73 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<Threshold>" + System.getProperty("line.separator"));
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<cvParam "
-                + "accession=\"MS:1001494\" "
-                + "cvRef=\"PSI-MS\" "
-                + "name=\"no threshold\" />" // @TODO: set from the search results!!
-                + System.getProperty("line.separator"));
+        boolean targetDecoy = sequenceFactory.concatenatedTargetDecoy();
 
-        // @TODO: add one for protein (MS:1002369)
-        // one for peptide (MS:1001364) // add one for each ptm group
-        // one for psms (MS:1002350) // add one for each charge and file
-        // one for ptm scores, one per ptm per charge state per file
-        // same for confidence and fnr
-        // match quality thresholds?? some are per file
-//        br.write(getCurrentTabSpace() + "<cvParam "
-//                + "accession=\"MS:1002369\" "
-//                + "cvRef=\"PSI-MS\" "
-//                + "name=\"protein group-level global FDR\""
-//                + "value=\"" + protein fdr + "\" />"
-//                + System.getProperty("line.separator"));
+        if (!targetDecoy) {
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001494", "no threshold", null));
+        } else {
+
+            // protein level threshold
+            PSMaps pSMaps = new PSMaps();
+            pSMaps = (PSMaps) identification.getUrParam(pSMaps);
+            ProteinMap proteinMap = pSMaps.getProteinMap();
+            TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
+            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+
+            double threshold = targetDecoyResults.getUserInput();
+            int thresholdType = targetDecoyResults.getInputType();
+
+            if (thresholdType == 0) {
+                // @TODO: find/add cv term
+                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+            } else if (targetDecoyResults.getInputType() == 1) {
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002369", "protein group-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+            } else if (targetDecoyResults.getInputType() == 2) {
+                // @TODO: find/add cv term
+                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+            }
+
+//            
+//            // peptide level threshold
+//            PeptideSpecificMap peptideSpecificMap = pSMaps.getPeptideSpecificMap();
+//            
+//            // @TODO: get the values and add one for each peptide group
+//            
+//            if (thresholdType == 0) {
+//                // @TODO: find/add cv term
+//                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+//            } else if (targetDecoyResults.getInputType() == 1) {
+//                writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+//            } else if (targetDecoyResults.getInputType() == 2) {
+//                // @TODO: find/add cv term
+//                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+//            }
+//            
+//            
+//            // psm level threshold
+//            PsmSpecificMap psmSpecificMap = pSMaps.getPsmSpecificMap();
+//            
+//            // @TODO: get the values and add one for each charge and file
+//            
+//            if (thresholdType == 0) {
+//                // @TODO: find/add cv term
+//                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+//            } else if (targetDecoyResults.getInputType() == 1) {
+//                writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+//            } else if (targetDecoyResults.getInputType() == 2) {
+//                // @TODO: find/add cv term
+//                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+//            }
+//            
+//
+//            // ptm score threshold
+//            // @TODO: one for ptm scores, one per ptm per charge state per file
+//            
+//            
+//            // match quality thresholds 
+//            // @TODO: match quality thresholds?? some are per file...
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Threshold>" + System.getProperty("line.separator"));
 
@@ -941,14 +994,17 @@ public class MzIdentMLExport {
 
                             tabCounter--;
                             br.write(getCurrentTabSpace() + "</PeptideHypothesis>" + System.getProperty("line.separator"));
+                        } else {
+                            System.out.println(pepEvidenceKey + " is null!!!");
                         }
                     }
                 }
 
                 // add cv terms
-//                          <cvParam accession="MS:1001171" name="Mascot:score" cvRef="PSI-MS" value="104.854382332144"/>
-//                          <cvParam accession="MS:1001093" name="sequence coverage" cvRef="PSI-MS" value="4"/> // The percent coverage for the protein based upon the matched peptide sequences (can be calculated).
-//                          <cvParam accession="MS:1001097" name="distinct peptide sequences" cvRef="PSI-MS" value="2"/> // This counts distinct sequences hitting the protein without regard to a minimal confidence threshold.
+                // add PeptideShaker score and confidence for the group
+                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group score", Double.toString(Util.roundDouble(psParameter.getProteinScore(), 2)))); // @TODO: add CV terms!
+                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), 2)))); // @TODO: add CV terms!
+
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
 
@@ -1129,13 +1185,34 @@ public class MzIdentMLExport {
         // add cv and user params
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: MS:1001105 - peptide result details
 
+        // add peptide shaker score and confidence
+        writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(pSParameter.getPsmScore(), 2)))); // @TODO: add CV terms!
+        writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM confidence", Double.toString(Util.roundDouble(pSParameter.getPsmConfidence(), 2)))); // @TODO: add CV terms!
+
+        // @TODO: how to add the search engine scores? which scores to add?
+        // add the individual search engine results
+//        for (Integer tempAdvocate : spectrumMatch.getAdvocates()) {
+//            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate).keySet());
+//            Collections.sort(eValues);
+//            for (double eValue : eValues) {
+//                for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(tempAdvocate).get(eValue)) {
+//                    if (tempAdvocate == Advocate.MSGF.getIndex()) {
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", Double.toString(eValue)));
+//                    } else if (tempAdvocate == Advocate.Mascot.getIndex()) {
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
+//                    } else if (tempAdvocate == Advocate.OMSSA.getIndex()) {
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue))); // @TODO: or OMSSA p-value (MS:1001329)?
+//                    } else if (tempAdvocate == Advocate.XTandem.getIndex()) {
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "The X!Tandem expectation value.", Double.toString(eValue))); // @TODO: is this the one? or is it "X!Tandem:hyperscore" (MS:1001331)?
+//                    } else if (tempAdvocate == Advocate.msAmanda.getIndex()) {
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", Double.toString(eValue)));
+//                    }
+//                }
+//            }
+//        }
         // @TODO: 
-        // add cv params for:
-        // for combined results: add: PS score and confidence //@TODO: MS:1001143
-        // for individual results: SE score and PS confidence for the given search engine //@TODO: MS:1001143
-        // @TODO: 
-        // add user params:
-        // validation level information
+        // add validation level information
+        //writeUserParam(pSParameter.getMatchValidationLevel().getIndex());
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationItem>" + System.getProperty("line.separator"));
 

@@ -219,7 +219,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates a peptide match validation dialog.
+     * Creates a PSM match validation dialog.
      *
      * @param parent the parent frame
      * @param exceptionHandler the handler catches exception happening when
