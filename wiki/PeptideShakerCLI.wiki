@@ -161,18 +161,18 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 {{{
 -reports                   Comma separated list of types of report to export. 
                            0: Certificate of Analysis, 
-                           1: Default PSM Report, 
-                           2: Default Peptide Report, 
-                           3: Default Protein Report, 
-                           4: Default Top Down Report, 
+                           1: Default Hierarchical Report,
+                           2: Default PSM Report, 
+                           3: Default Peptide Report, 
+                           4: Default Protein Report, 
                            5-n: Your own custom reports.
 
 -documentation             Comma separated list of types of report documentation to export. 
                            0: Certificate of Analysis, 
-                           1: Default PSM Report, 
-                           2: Default Peptide Report, 
-                           3: Default Protein Report, 
-                           4: Default Top Down Report, 
+                           1: Default Hierarchical Report,
+                           2: Default PSM Report, 
+                           3: Default Peptide Report, 
+                           4: Default Protein Report,
                            5-n: Your own custom reports.
 }}}
 
