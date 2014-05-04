@@ -3989,7 +3989,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
             }
 
-            double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinAccession);
+            double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinKey);
             double[] coverageHeight = new double[coverageLikelihood.length];
             for (int i = 0; i < coverageLikelihood.length; i++) {
                 double p = coverageLikelihood[i];
@@ -4583,20 +4583,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 newItemSelection();
 
                 // update the sequence coverage map
-                int proteinIndex, selectedProteinRow = proteinTable.getSelectedRow();
-                if (selectedProteinRow != -1) {
-                    tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-                    proteinIndex = tableModel.getViewIndex(selectedProteinRow);
-                } else {
-                    // Let's assume it is the first
-                    proteinIndex = 0;
-                }
-                final String proteinKey = proteinKeys.get(proteinIndex);
-                final ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         try {
+                            int proteinIndex, selectedProteinRow = proteinTable.getSelectedRow();
+                            if (selectedProteinRow != -1) {
+                                SelfUpdatingTableModel proteinTableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                                proteinIndex = proteinTableModel.getViewIndex(selectedProteinRow);
+                            } else {
+                                // Let's assume it is the first
+                                proteinIndex = 0;
+                            }
+                            String proteinKey = proteinKeys.get(proteinIndex);
+                            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                            
                             updateSequenceCoverage(proteinKey, proteinMatch.getMainMatch());
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
