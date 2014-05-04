@@ -4397,5 +4397,4 @@ public class PeptideShaker {
     public static File getSerializationDirectory(String jarFilePath) {
         return new File(getMatchesDirectoryParent(jarFilePath), PeptideShaker.getMatchesDirectorySubPath());
     }
-    
 }
