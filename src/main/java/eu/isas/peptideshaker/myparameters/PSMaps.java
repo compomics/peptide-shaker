@@ -33,7 +33,7 @@ public class PSMaps implements UrParameter {
      */
     private PeptideSpecificMap PeptideSpecificMap;
     /**
-     * The PSM level PTM map
+     * The PSM level PTM map.
      */
     private PsmPTMMap psmPTMMap;
     /**
@@ -41,12 +41,12 @@ public class PSMaps implements UrParameter {
      */
     private InputMap inputMap;
     /**
-     * The fractions map,
+     * The fractions map.
      */
     private FractionsMap fractionsMap; // @TODO: this object should be made serializable
 
     /**
-     * Constructor,
+     * Constructor.
      */
     public PSMaps() {
     }
