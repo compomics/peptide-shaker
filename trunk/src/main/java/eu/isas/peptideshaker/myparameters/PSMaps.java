@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.scoring.FractionsMap;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.scoring.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 
 /**
@@ -32,6 +33,10 @@ public class PSMaps implements UrParameter {
      */
     private PeptideSpecificMap PeptideSpecificMap;
     /**
+     * The PSM level PTM map
+     */
+    private PsmPTMMap psmPTMMap;
+    /**
      * The target decoy map of all search engine scores.
      */
     private InputMap inputMap;
@@ -53,12 +58,14 @@ public class PSMaps implements UrParameter {
      * @param PsmSpecificMap The PSM map
      * @param PeptideSpecificMap The peptide map
      * @param inputMap The target decoy map of all search engine scores
+     * @param psmPTMMap the PSM level PTM scoring map
      */
-    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, InputMap inputMap) {
+    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
         this.inputMap = inputMap;
+        this.psmPTMMap = psmPTMMap;
     }
 
     /**
@@ -95,6 +102,24 @@ public class PSMaps implements UrParameter {
      */
     public InputMap getInputMap() {
         return inputMap;
+    }
+
+    /**
+     * Returns the PSM level PTM scoring map.
+     * 
+     * @return the PSM level PTM scoring map
+     */
+    public PsmPTMMap getPsmPTMMap() {
+        return psmPTMMap;
+    }
+
+    /**
+     * Sets the PSM level PTM scoring map.
+     * 
+     * @param psmPTMMap the PSM level PTM scoring map
+     */
+    public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
+        this.psmPTMMap = psmPTMMap;
     }
 
     /**
