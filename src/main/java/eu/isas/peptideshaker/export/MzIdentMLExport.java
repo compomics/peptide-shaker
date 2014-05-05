@@ -758,8 +758,8 @@ public class MzIdentMLExport {
                     + "accession=\"MS:1001412\" "
                     + "cvRef=\"PSI-MS\" "
                     + "unitCvRef=\"UO\" "
-                    + "unitName=\"dalton\" "
-                    + "unitAccession=\"UO:0000221\" "
+                    + "unitName=\"parts per million\" "
+                    + "unitAccession=\"UO:0000169\" "
                     + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
                     + "name=\"search tolerance plus value\" />"
                     + System.getProperty("line.separator"));
@@ -767,8 +767,8 @@ public class MzIdentMLExport {
                     + "accession=\"MS:1001413\" "
                     + "cvRef=\"PSI-MS\" "
                     + "unitCvRef=\"UO\" "
-                    + "unitName=\"dalton\" "
-                    + "unitAccession=\"UO:0000221\" "
+                    + "unitName=\"parts per million\" "
+                    + "unitAccession=\"UO:0000169\" "
                     + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
                     + "name=\"search tolerance minus value\" />"
                     + System.getProperty("line.separator"));
@@ -777,8 +777,8 @@ public class MzIdentMLExport {
                     + "accession=\"MS:1001412\" "
                     + "cvRef=\"PSI-MS\" "
                     + "unitCvRef=\"UO\" "
-                    + "unitName=\"parts per million\" "
-                    + "unitAccession=\"UO:0000169\" "
+                    + "unitName=\"dalton\" "
+                    + "unitAccession=\"UO:0000221\" "
                     + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
                     + "name=\"search tolerance plus value\" />"
                     + System.getProperty("line.separator"));
@@ -786,8 +786,8 @@ public class MzIdentMLExport {
                     + "accession=\"MS:1001413\" "
                     + "cvRef=\"PSI-MS\" "
                     + "unitCvRef=\"UO\" "
-                    + "unitName=\"parts per million\" "
-                    + "unitAccession=\"UO:0000169\" "
+                    + "unitName=\"dalton\" "
+                    + "unitAccession=\"UO:0000221\" "
                     + "value=\"" + searchParameters.getPrecursorAccuracy() + "\" "
                     + "name=\"search tolerance minus value\" />"
                     + System.getProperty("line.separator"));
