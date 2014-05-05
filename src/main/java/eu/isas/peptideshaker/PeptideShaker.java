@@ -528,7 +528,7 @@ public class PeptideShaker {
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
-        identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap, inputMap));
+        identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap, inputMap, psmPTMMap));
         waitingHandler.setRunFinished();
     }
 
