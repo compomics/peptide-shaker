@@ -447,7 +447,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
             }
         }
         String newFile = (String) fileList.getSelectedValue();
-        String mgfFile = missingFiles.get(idFiles.get(row));
+        String mgfFile = missingFiles.get(idFiles.get(row)); // @TODO: possible null pointer
         if (mgfFile != null && newFile != null) {
             newFiles.put(mgfFile, new File(lastSelectedFolder, newFile));
         }

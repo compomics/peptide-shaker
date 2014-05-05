@@ -12,7 +12,6 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.ImmoniumIon;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.*;
-import static com.compomics.util.experiment.identification.Advocate.OMSSA;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -87,10 +86,10 @@ public class MzIdentMLExport {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The spectrum key to mzIdentML spectrum index map - key: spectrum key,
-     * element: mzIdentML file spectrum index.
+     * The peptide key to mzIdentML peptide index map - key: peptide key,
+     * element: mzIdentML file peptide index.
      */
-    private HashMap<String, Long> spectrumIndexes;
+    private HashMap<String, String> peptideIndexes;
     /**
      * The PTM to mzIdentML map.
      */
@@ -437,7 +436,8 @@ public class MzIdentMLExport {
 
         iterator.close();
 
-        int peptideCounter = 0;
+        // set up the peptide index
+        peptideIndexes = new HashMap<String, String>();
 
         identification.loadPeptideMatches(null);
         identification.loadPeptideMatchParameters(new PSParameter(), null);
@@ -449,7 +449,12 @@ public class MzIdentMLExport {
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
 
-            br.write(getCurrentTabSpace() + "<Peptide id=\"Pep_" + peptideCounter + "\" >" + System.getProperty("line.separator"));
+            // find the peptide index
+            if (!peptideIndexes.containsKey(peptideKey)) {
+                peptideIndexes.put(peptideKey, "Pep_" + (peptideIndexes.size() + 1));
+            }
+
+            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideIndexes.get(peptideKey) + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
             br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
 
@@ -557,12 +562,17 @@ public class MzIdentMLExport {
                             String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
                             pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
 
+                            String matchingPeptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            if (!peptideIndexes.containsKey(matchingPeptideKey)) {
+                                System.out.println("Peptide key " + matchingPeptideKey + " not found!");
+                            }
+
                             br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
                                     + "pre=\"" + aaBefore + "\" "
                                     + "post=\"" + aaAfter + "\" "
                                     + "start=\"" + peptideStart + "\" "
                                     + "end=\"" + peptideEnd + "\" "
-                                    + "peptide_ref=\"" + peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
+                                    + "peptide_ref=\"" + peptideIndexes.get(matchingPeptideKey) + "\" "
                                     + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
                                     + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
                                     + "/>" + System.getProperty("line.separator"));
@@ -850,7 +860,7 @@ public class MzIdentMLExport {
                         targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                         threshold = targetDecoyResults.getUserInput();
                         thresholdType = targetDecoyResults.getInputType();
-                        String psmClass = "Charge " + charge + " of file " + file;
+                        String psmClass = "Charge " + charge + " of file " + file; // @TODO: annotate class?
                         if (thresholdType == 0) {
                             // @TODO: find/add cv term
                             //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
