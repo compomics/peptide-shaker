@@ -3406,12 +3406,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
         }
 
-        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
-                && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                    if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                    if (proteinMatch != null && proteinMatch.getPeptideMatches().contains(peptideKey)) {
                         proteinKey = possibleKey;
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
