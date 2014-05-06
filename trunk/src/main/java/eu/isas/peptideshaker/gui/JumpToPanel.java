@@ -510,7 +510,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 } else {
                                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(spectrumfile)) {
                                         String spectrumKey = Spectrum.getSpectrumKey(spectrumfile, spectrumTitle);
-                                        if (spectrumKey.contains(input)) {
+                                        if (spectrumKey.toLowerCase().contains(input)) {
                                             possibilities.get(jumpType).add(spectrumKey);
                                             types.get(jumpType).add(Type.SPECTRUM);
                                         } else {
