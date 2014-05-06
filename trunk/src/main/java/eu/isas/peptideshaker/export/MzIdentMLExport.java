@@ -86,11 +86,6 @@ public class MzIdentMLExport {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The peptide key to mzIdentML peptide index map - key: peptide key,
-     * element: mzIdentML file peptide index.
-     */
-    private HashMap<String, String> peptideIndexes;
-    /**
      * The PTM to mzIdentML map.
      */
     private PtmToPrideMap ptmToPrideMap; // @TODO: should be renamed!!!
@@ -436,9 +431,6 @@ public class MzIdentMLExport {
 
         iterator.close();
 
-        // set up the peptide index
-        peptideIndexes = new HashMap<String, String>();
-
         identification.loadPeptideMatches(null);
         identification.loadPeptideMatchParameters(new PSParameter(), null);
 
@@ -449,12 +441,7 @@ public class MzIdentMLExport {
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
 
-            // find the peptide index
-            if (!peptideIndexes.containsKey(peptideKey)) {
-                peptideIndexes.put(peptideKey, "Pep_" + (peptideIndexes.size() + 1));
-            }
-
-            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideIndexes.get(peptideKey) + "\" >" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
             br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
 
@@ -561,18 +548,14 @@ public class MzIdentMLExport {
                             String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                             String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
                             pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
-
                             String matchingPeptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
-                            if (!peptideIndexes.containsKey(matchingPeptideKey)) {
-                                System.out.println("Peptide key " + matchingPeptideKey + " not found!");
-                            }
 
                             br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
                                     + "pre=\"" + aaBefore + "\" "
                                     + "post=\"" + aaAfter + "\" "
                                     + "start=\"" + peptideStart + "\" "
                                     + "end=\"" + peptideEnd + "\" "
-                                    + "peptide_ref=\"" + peptideIndexes.get(matchingPeptideKey) + "\" "
+                                    + "peptide_ref=\"" + matchingPeptideKey + "\" "
                                     + "dBSequence_ref=\"" + sequenceFactory.getProtein(tempProtein).getAccession() + "\" "
                                     + "id=\"" + pepEvidenceIds.get(pepEvidenceKey) + "\" "
                                     + "/>" + System.getProperty("line.separator"));
@@ -818,12 +801,12 @@ public class MzIdentMLExport {
 
             if (thresholdType == 0) {
                 // @TODO: find/add cv term
-                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
             } else if (targetDecoyResults.getInputType() == 1) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002369", "protein group-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002369", "protein group-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
             } else if (targetDecoyResults.getInputType() == 2) {
                 // @TODO: find/add cv term
-                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+                //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "protein group-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
             }
 
             // peptide level threshold
@@ -840,12 +823,12 @@ public class MzIdentMLExport {
                 }
                 if (thresholdType == 0) {
                     // @TODO: find/add cv term
-                    //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+                    //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
                 } else if (targetDecoyResults.getInputType() == 1) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
                 } else if (targetDecoyResults.getInputType() == 2) {
                     // @TODO: find/add cv term
-                    //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+                    //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
                 }
             }
 
@@ -863,12 +846,12 @@ public class MzIdentMLExport {
                         String psmClass = "Charge " + charge + " of file " + file; // @TODO: annotate class?
                         if (thresholdType == 0) {
                             // @TODO: find/add cv term
-                            //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+                            //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
                         } else if (targetDecoyResults.getInputType() == 1) {
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
                         } else if (targetDecoyResults.getInputType() == 2) {
                             // @TODO: find/add cv term
-                            //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+                            //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
                         }
                     }
                 }
@@ -883,12 +866,12 @@ public class MzIdentMLExport {
                     thresholdType = targetDecoyResults.getInputType();
                     if (thresholdType == 0) {
                         // @TODO: find/add cv term
-                        //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, 2)))); // confidence
+                        //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
                     } else if (targetDecoyResults.getInputType() == 1) {
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, 2)))); // FDR
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
                     } else if (targetDecoyResults.getInputType() == 2) {
                         // @TODO: find/add cv term
-                        //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, 2)))); // FNR
+                        //writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
                     }
                 }
             }
@@ -1058,8 +1041,8 @@ public class MzIdentMLExport {
 
                 // add cv terms
                 // add PeptideShaker score and confidence for the group
-                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group score", Double.toString(Util.roundDouble(psParameter.getProteinScore(), 2)))); // @TODO: add CV terms!
-                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), 2)))); // @TODO: add CV terms!
+                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group score", Double.toString(Util.roundDouble(psParameter.getProteinScore(), CONFIDENCE_DECIMALS)))); // @TODO: add CV terms!
+                writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), CONFIDENCE_DECIMALS)))); // @TODO: add CV terms!
 
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
@@ -1246,8 +1229,8 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: MS:1001105 - peptide result details
 
             // add peptide shaker score and confidence
-            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(pSParameter.getPsmScore(), 2)))); // @TODO: add CV terms!
-            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM confidence", Double.toString(Util.roundDouble(pSParameter.getPsmConfidence(), 2)))); // @TODO: add CV terms!
+            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(pSParameter.getPsmScore(), CONFIDENCE_DECIMALS)))); // @TODO: add CV terms!
+            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "PeptideShaker: PSM confidence", Double.toString(Util.roundDouble(pSParameter.getPsmConfidence(), CONFIDENCE_DECIMALS)))); // @TODO: add CV terms!
 
             // add the individual search engine results
             HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
