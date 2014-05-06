@@ -1400,6 +1400,7 @@ public class MzIdentMLExport {
         writeUserParam(searchParameters.getFastaFile().getName());
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DatabaseName>" + System.getProperty("line.separator"));
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SearchDatabase>" + System.getProperty("line.separator"));
 
