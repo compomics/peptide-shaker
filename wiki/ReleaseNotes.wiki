@@ -3,6 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.28.2 (May 6. 2014):*
+
+ * FEATURE IMPROVEMENT: Simplified the way SearchGUI can be downloaded and updated from within PeptideShaker.
+ * FEATURE IMPROVEMENT: Made it possible to rely on spectrum indexes if an mzid files does not contain the spectrum titles.
+
+ * BUG FIX: Fixed a bug in the updating of the sequence coverage panel where the protein accession was used instead of the protein group key.
+ * BUG FIX: Added a print out of the stack trace if the estimateSpectrumCounting method finds a non-existing protein key.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.26.33.
+
+----
+
 *Changes in PeptideShaker 0.28.1 (April 29. 2014):*
 
  * NEW FEATURE: Added new command line options for path configuration.
