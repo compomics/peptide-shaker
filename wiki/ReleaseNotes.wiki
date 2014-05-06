@@ -7,6 +7,7 @@
 
  * FEATURE IMPROVEMENT: Simplified the way SearchGUI can be downloaded and updated from within PeptideShaker.
  * FEATURE IMPROVEMENT: Made it possible to rely on spectrum indexes if an mzid files does not contain the spectrum titles.
+ * FEATURE IMPROVEMENT: Updated the example dataset.
 
  * BUG FIX: Fixed a bug in the updating of the sequence coverage panel where the protein accession was used instead of the protein group key.
  * BUG FIX: Added a print out of the stack trace if the estimateSpectrumCounting method finds a non-existing protein key.
