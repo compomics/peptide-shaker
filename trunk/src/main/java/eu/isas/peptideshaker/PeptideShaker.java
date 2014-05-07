@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker;
 
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
@@ -45,11 +44,9 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.BufferedWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -4375,6 +4372,7 @@ public class PeptideShaker {
      * Sets the matches directory parent.
      * 
      * @param matchesDirectoryParent the matches directory parent
+     * @throws java.io.IOException
      */
     public static void setMatchesDirectoryParent(String matchesDirectoryParent) throws IOException {
         PeptideShaker.SERIALIZATION_PARENT_DIRECTORY = matchesDirectoryParent;
