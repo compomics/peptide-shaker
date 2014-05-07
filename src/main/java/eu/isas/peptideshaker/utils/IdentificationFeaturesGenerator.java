@@ -412,7 +412,7 @@ public class IdentificationFeaturesGenerator {
                 result[j] = p;
             }
         } else {
-            result[sequence.length()] = p;
+            result[sequence.length() - 1] = p;
         }
         return result;
     }
