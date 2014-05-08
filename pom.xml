@@ -296,6 +296,14 @@
             <layout>default</layout>
         </repository>
 
+        <!-- EBI nexus snapshot repository -->
+        <repository>
+            <id>nexus-ebi-repo-snapshot</id> 
+            <name>The EBI nexus snapshot repository</name>
+            <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo-snapshots/</url>
+            <layout>default</layout>
+        </repository>
+
     </repositories>
 
 
@@ -472,6 +480,32 @@
             <artifactId>poi</artifactId>
             <version>3.9</version>
         </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.pride.archive</groupId>
+            <artifactId>webservice-model</artifactId>
+            <version>0.1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>4.0.4.RELEASE</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+            <scope>runtime</scope>
+        </dependency>
+
 
     </dependencies>
 
