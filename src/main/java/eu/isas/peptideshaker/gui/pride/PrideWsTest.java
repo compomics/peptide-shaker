@@ -41,7 +41,7 @@ public class PrideWsTest {
         System.out.println("Project count: " + projectCount + "\n");
 
         // get the list of projects
-        ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL + "project/list?show=" + projectCount, ProjectDetailList.class);
+        ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
         HashMap<String, Integer> typeCounter = new HashMap<String, Integer>();
 
         // iterate the project and print some details
@@ -55,7 +55,7 @@ public class PrideWsTest {
             }
             typeCounter.put(submissionType, typeCounter.get(submissionType) + 1);
 
-            System.out.println(++counter + " " + projectDetail.getAccession() + ": " + submissionType + " num assays: " + projectDetail.getNumAssays());
+            System.out.println(++counter + " " + projectDetail.getAccession() + ": " + submissionType + " date: " + projectDetail.getPublicationDate());
         }
 
         System.out.println("\nSubmission types:");
@@ -112,14 +112,13 @@ public class PrideWsTest {
             System.out.println(++counter + " " + fileDetail.getFileName() + ": " + fileDetail.getFileType() + " " + fileDetail.getDownloadLink());
         }
         System.out.println("\n");
-
         // web service links:
         //
         // to get the number of projects
         // http://wwwdev.ebi.ac.uk:80/pride/ws/archive/project/count
         //
         // to get the list of projects
-        // http://wwwdev.ebi.ac.uk:80/pride/ws/archive/project/list?show=1000&page=1&sort=score&order=desc
+        // http://wwwdev.ebi.ac.uk:80/pride/ws/archive/project/list?show=1000&page=1&sort=publication_date&order=desc
         //
         // to get the details for a given project
         // http://wwwdev.ebi.ac.uk:80/pride/ws/archive/project/PXD000375
@@ -135,5 +134,39 @@ public class PrideWsTest {
         //
         // to get all the files for a given assay
         // http://wwwdev.ebi.ac.uk:80/pride/ws/archive/file/list/assay/30323
+        //
+        // to access private data:
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//        String userName = "username"; // has to be an e-mail address, for reviewers add "@ebi.ac.uk"
+//        String passWord = "password";
+//        String authString = userName + ":" + passWord;
+//        byte[] encodedAuthorisation = Base64.encodeBase64(authString.getBytes());
+//        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+//        HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
+//
+//        String projectAccession = "PXD000651";
+//        RestTemplate template = new RestTemplate();
+//        ResponseEntity<ProjectDetail> entity;
+//        entity = template.exchange("http://wwwdev.ebi.ac.uk/pride/ws/archive/project/" + projectAccession, HttpMethod.GET, requestEntity, ProjectDetail.class);
+//
+//        if (entity == null) {
+//            System.out.println("ERROR: null return");
+//            return;
+//        }
+//
+//        if (entity.getHeaders() != null && entity.getHeaders().getLocation() != null) {
+//            String path = entity.getHeaders().getLocation().getPath();
+//            System.out.println("Path: " + path);
+//        }
+//
+//        if (entity.getStatusCode() != null) {
+//            System.out.println("Equals? " + HttpStatus.OK + " = " + entity.getStatusCode());
+//        }
+//        ProjectDetail project = entity.getBody();
+//
+//        System.out.println("The Project acc is: " + project.getAccession());
+//        System.out.println("Project desc: " + project.getProjectDescription());
     }
 }
