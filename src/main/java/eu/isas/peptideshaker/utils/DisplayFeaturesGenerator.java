@@ -232,6 +232,29 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
+     * Returns the project accession number as a web link to the given project
+     * in the PRIDE archive.
+     *
+     * @param projectAccession the project accession number
+     * @return the project accession web link
+     */
+    public static String getPrideProjectArchiveLink(String projectAccession) {
+        return "http://www.ebi.ac.uk/pride/archive/projects/" + projectAccession;
+    }
+
+    /**
+     * Returns the assay accession number as a web link to the given assay in
+     * the PRIDE archive.
+     *
+     * @param projectAccession the project accession number
+     * @param assayAccession the assay accession number
+     * @return the project accession web link
+     */
+    public static String getPrideAssayArchiveLink(String projectAccession, String assayAccession) {
+        return "http://www.ebi.ac.uk/pride/archive/projects/" + projectAccession + "/assays/" + assayAccession;
+    }
+
+    /**
      * Returns a String with the HTML tooltip for the peptide indicating the
      * modification details.
      *
