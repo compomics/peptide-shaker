@@ -17,6 +17,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
+import eu.isas.peptideshaker.gui.pride.PrideReshakeGuiWS;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
@@ -705,7 +706,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                     if (openReshake) {
                         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                        new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                        new PrideReshakeGuiWS(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
                 }
