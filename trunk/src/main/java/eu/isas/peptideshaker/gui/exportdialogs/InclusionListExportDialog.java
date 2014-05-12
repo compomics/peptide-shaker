@@ -396,7 +396,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         try {
             new Double(rtWindow.getText().trim());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Please verify the input for the RT minimal window.", "Wrong input", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please verify the input for the RT minimal window.", "Wrong input", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;

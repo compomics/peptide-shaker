@@ -594,7 +594,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
 
         for (int row = 0; row < modificationTable.getRowCount(); row++) {
-            if (peptideFilter.getModificationStatus().contains(
+            if (peptideFilter.getModificationStatus().contains( // @TODO: null pointer!!!
                     (String) modificationTable.getValueAt(row, 2))) {
                 modificationTable.setValueAt(true, row, 0);
             } else {
@@ -905,7 +905,7 @@ public class FindDialog extends javax.swing.JDialog {
                                 accessionFilters.add(RowFilter.regexFilter(text.toLowerCase(), proteinTable.getColumn("Description").getModelIndex()));
                                 filters.add(RowFilter.orFilter(accessionFilters));
                             } catch (PatternSyntaxException pse) {
-                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.WARNING_MESSAGE);
                             }
                         }
 
@@ -1220,7 +1220,7 @@ public class FindDialog extends javax.swing.JDialog {
                                 accessionFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Descriptions").getModelIndex()));
                                 filters.add(RowFilter.orFilter(accessionFilters));
                             } catch (PatternSyntaxException pse) {
-                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.WARNING_MESSAGE);
                             }
                         }
 
@@ -1277,7 +1277,7 @@ public class FindDialog extends javax.swing.JDialog {
                             try {
                                 filters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Sequence").getModelIndex()));
                             } catch (PatternSyntaxException pse) {
-                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.WARNING_MESSAGE);
                             }
                         }
 

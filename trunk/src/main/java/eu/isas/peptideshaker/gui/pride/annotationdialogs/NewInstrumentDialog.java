@@ -804,7 +804,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in instrument name.",
-                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.WARNING_MESSAGE);
                 nameJTextField.setText(lastNameInput);
                 return;
             }

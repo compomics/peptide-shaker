@@ -482,7 +482,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         if (newFile != null) {
             if (!newFile.getName().toLowerCase().endsWith("cps")) {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Wrong File.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Wrong File.", JOptionPane.WARNING_MESSAGE);
             } else {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);

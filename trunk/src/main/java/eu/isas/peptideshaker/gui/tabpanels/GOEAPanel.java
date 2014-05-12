@@ -485,7 +485,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                             if (!goDomainsFile.exists()) {
                                                 JOptionPane.showMessageDialog(peptideShakerGUI, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
-                                                        + "Continuing without GO domains.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+                                                        + "Continuing without GO domains.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                                             } else {
 
                                                 // read the GO domains

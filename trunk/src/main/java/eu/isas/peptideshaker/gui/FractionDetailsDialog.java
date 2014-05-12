@@ -569,17 +569,17 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "An error occurred when parsing the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Error", JOptionPane.ERROR_MESSAGE);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "One of the values in the file is not a number.\nPlease include tab separated values only.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "One of the values in the file is not a number.\nPlease include tab separated values only.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
 
             if (lowerAndUpper.size() > fractionTable.getRowCount()) {
-                JOptionPane.showMessageDialog(this, "There are more values in the file than there are rows in the table!\nSome rows will be ignored.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "There are more values in the file than there are rows in the table!\nSome rows will be ignored.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
 
             for (int i = 0; i < lowerAndUpper.size(); i++) {
