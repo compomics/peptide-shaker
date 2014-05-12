@@ -852,7 +852,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in sample name.",
-                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.WARNING_MESSAGE);
                 sampleNameJTextField.setText(lastNameInput);
                 return;
             }

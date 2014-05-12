@@ -194,7 +194,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         for (File idFile : missingFiles.keySet()) {
             if (!newFiles.keySet().contains(missingFiles.get(idFile))) {
                 JOptionPane.showMessageDialog(null, "Please select the spectrum file corresponding to " + idFile.getName() + ".",
-                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                        "Input Error", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
         }

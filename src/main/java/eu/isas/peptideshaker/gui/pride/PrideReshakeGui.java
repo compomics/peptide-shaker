@@ -1962,7 +1962,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
 
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Support values for number of spectra are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Support values for number of spectra are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -1984,7 +1984,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
 
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Support values for number of peptides are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Support values for number of peptides are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -2006,7 +2006,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
 
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Support values for number of proteins are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Support values for number of proteins are:\nintegers, >integer or <integer.", "Filter Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -2019,7 +2019,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             try {
                 filters.add(RowFilter.regexFilter(text, projectsTable.getColumn("References").getModelIndex()));
             } catch (PatternSyntaxException pse) {
-                //JOptionPane.showMessageDialog(this, "Bad regex pattern for references!", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                //JOptionPane.showMessageDialog(this, "Bad regex pattern for references!", "Filter Error", JOptionPane.WARNING_MESSAGE);
                 //pse.printStackTrace();
             }
         }

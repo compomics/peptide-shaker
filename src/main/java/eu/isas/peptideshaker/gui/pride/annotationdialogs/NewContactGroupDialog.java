@@ -541,7 +541,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in group names.",
-                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.WARNING_MESSAGE);
                 groupNameTextField.setText(lastNameInput);
                 return;
             }
