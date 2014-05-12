@@ -12,6 +12,7 @@ import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.XYDataPoint;
+import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRenderer;
 
 /**
  * Model for a the GO mappings protein table.
@@ -176,7 +177,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             doubleValues.add(nConfidentPeptides);
                             doubleValues.add(nDoubtfulPeptides);
                             doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                             return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
@@ -192,7 +193,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             doubleValues.add(nConfidentSpectra);
                             doubleValues.add(nDoubtfulSpectra);
                             doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                             return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);

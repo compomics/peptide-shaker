@@ -328,7 +328,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         doubleValues.add(sequenceCoverageDoubtful);
                         doubleValues.add(sequenceCoverageNotValidated);
                         doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
-                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
                         return arrrayListDataPoints;
                     case 7:
                         if (isScrolling) {
@@ -348,7 +348,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         doubleValues.add(nConfidentPeptides);
                         doubleValues.add(nDoubtfulPeptides);
                         doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                         return arrrayListDataPoints;
                     case 8:
                         if (isScrolling) {
@@ -370,7 +370,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         doubleValues.add(nConfidentSpectra);
                         doubleValues.add(nDoubtfulSpectra);
                         doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                        arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                         return arrrayListDataPoints;
                     case 9:
                         if (isScrolling) {

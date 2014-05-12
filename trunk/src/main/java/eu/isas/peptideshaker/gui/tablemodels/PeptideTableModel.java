@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import no.uib.jsparklines.data.ArrrayListDataPoints;
 import no.uib.jsparklines.data.StartIndexes;
+import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRenderer;
 
 /**
  * Table model for a set of peptide matches.
@@ -229,7 +230,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     doubleValues.add(nConfidentSpectra);
                     doubleValues.add(nDoubtfulSpectra);
                     doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                    ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues);
+                    ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                     return arrrayListDataPoints;
                 case 6:
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB && !isScrolling);
