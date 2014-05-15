@@ -1219,12 +1219,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         if (currentFastaFile == null) {
             try {
                 sequenceFactory.clearFactory();
+                genePreferences.setCurrentSpeciesType(null);
+                genePreferences.setCurrentSpecies(null);
             } catch (IOException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to clear the database.", "File Error", JOptionPane.WARNING_MESSAGE);
             } catch (SQLException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to clear the database.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
         } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile()) && currentFastaFile.exists()) {
             loadFastaFile(currentFastaFile, null);

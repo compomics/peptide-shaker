@@ -3150,6 +3150,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             projectExportMenu.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
             exportMzIdentMLMenuItem.setEnabled(true);
+            //exportMzIdentMLMenuItem.setVisible(false);
             exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
@@ -5364,7 +5365,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         JOptionPane.showMessageDialog(this,
                 "Fasta file " + getSearchParameters().getFastaFile() + " was not found."
                 + "\n\nPlease locate it manually.",
-                "File Input Error", JOptionPane.ERROR_MESSAGE);
+                "File Input Error", JOptionPane.WARNING_MESSAGE);
 
         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
         fileChooser.setDialogTitle("Open FASTA File");

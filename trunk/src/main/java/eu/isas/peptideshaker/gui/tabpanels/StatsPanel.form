@@ -1667,7 +1667,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Apply"/>
-            <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current threshold setting"/>
+            <Property name="toolTipText" type="java.lang.String" value="Apply the current thresholds"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -1709,7 +1709,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Apply"/>
-            <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current PEP window"/>
+            <Property name="toolTipText" type="java.lang.String" value="Apply the current PEP window"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -1808,7 +1808,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/reset_gray.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Reset thresholds"/>
+            <Property name="toolTipText" type="java.lang.String" value="Reset to last applied settings"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
