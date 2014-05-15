@@ -1410,7 +1410,7 @@ public class StatsPanel extends javax.swing.JPanel {
         validateButton.setBackground(new java.awt.Color(0, 153, 0));
         validateButton.setForeground(new java.awt.Color(255, 255, 255));
         validateButton.setText("Apply");
-        validateButton.setToolTipText("Reload the data with the current threshold setting");
+        validateButton.setToolTipText("Apply the current thresholds");
         validateButton.setEnabled(false);
         validateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1440,7 +1440,7 @@ public class StatsPanel extends javax.swing.JPanel {
         applyButton.setBackground(new java.awt.Color(0, 153, 0));
         applyButton.setForeground(new java.awt.Color(255, 255, 255));
         applyButton.setText("Apply");
-        applyButton.setToolTipText("Reload the data with the current PEP window");
+        applyButton.setToolTipText("Apply the current PEP window");
         applyButton.setEnabled(false);
         applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1512,7 +1512,7 @@ public class StatsPanel extends javax.swing.JPanel {
         });
 
         thresholdResetJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reset_gray.png"))); // NOI18N
-        thresholdResetJButton.setToolTipText("Reset thresholds");
+        thresholdResetJButton.setToolTipText("Reset to last applied settings");
         thresholdResetJButton.setBorder(null);
         thresholdResetJButton.setBorderPainted(false);
         thresholdResetJButton.setContentAreaFilled(false);
