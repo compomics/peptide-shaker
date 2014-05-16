@@ -1307,26 +1307,25 @@ public class FindDialog extends javax.swing.JDialog {
      */
     public void createPeptideFilter() {
         if (validateInput()) {
-            Integer pi = null;
-            if (peptidePICmb.getSelectedIndex() != 0) {
-                pi = peptidePICmb.getSelectedIndex() - 1;
-            }
+            if (peptideFilter == null) {
+                peptideFilter = new PeptideFilter("find peptide filter");
+            } 
             ArrayList<String> modifications = new ArrayList<String>();
             for (int row = 0; row < modificationTable.getRowCount(); row++) {
                 if ((Boolean) modificationTable.getValueAt(row, 0)) {
                     modifications.add((String) modificationTable.getValueAt(row, 2));
                 }
             }
-            if (peptideFilter == null) {
-                peptideFilter = new PeptideFilter("find peptide filter");
-            } else {
-                peptideFilter.setModificationStatus(modifications);
-            }
+            peptideFilter.setModificationStatus(modifications);
             if (!peptideSequenceTxt.getText().trim().equals("")) {
                 peptideFilter.setSequence(peptideSequenceTxt.getText().trim());
             }
             if (!peptideProteinTxt.getText().trim().equals("")) {
                 peptideFilter.setProtein(peptideProteinTxt.getText().trim());
+            }
+            Integer pi = null;
+            if (peptidePICmb.getSelectedIndex() != 0) {
+                pi = peptidePICmb.getSelectedIndex() - 1;
             }
             if (pi != null) {
                 peptideFilter.setPi(pi);
@@ -3301,11 +3300,9 @@ public class FindDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-
         if (filterDialog != null) {
             filterDialog.updateFilters();
         }
-
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
 
