@@ -10,8 +10,8 @@ import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.autoupdater.MavenJarFile;
-import com.compomics.software.dialogs.JavaOptionsDialog;
-import com.compomics.software.dialogs.JavaOptionsDialogParent;
+import com.compomics.software.dialogs.JavaMemoryDialogParent;
+import com.compomics.software.dialogs.JavaSettingsDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -115,7 +115,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, SearchSettingsDialogParent, NotificationDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaMemoryDialogParent, SearchSettingsDialogParent, NotificationDialogParent {
 
     /**
      * The path to the example dataset.
@@ -2659,21 +2659,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }//GEN-LAST:event_logReportMenuActionPerformed
 
     /**
-     * Open the Java Options menu.
+     * Open the Java Settings dialog.
      *
      * @param evt
      */
     private void javaOptionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsJMenuItemActionPerformed
-
-        // reload the user preferences as these may have been changed by other tools
-        try {
-            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-
-        new JavaOptionsDialog(this, this, null, "PeptideShaker");
+        new JavaSettingsDialog(this, this, null, "PeptideShaker", true);
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
 
     /**
