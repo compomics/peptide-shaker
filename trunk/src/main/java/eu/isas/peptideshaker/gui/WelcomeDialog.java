@@ -6,10 +6,10 @@ import static com.compomics.software.autoupdater.DownloadLatestZipFromRepo.downl
 import com.compomics.software.autoupdater.GUIFileDAO;
 import com.compomics.software.autoupdater.MavenJarFile;
 import com.compomics.software.autoupdater.WebDAO;
-import com.compomics.software.dialogs.JavaOptionsDialog;
+import com.compomics.software.dialogs.JavaMemoryDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.software.dialogs.LowMemoryDialog;
+import com.compomics.software.dialogs.JavaSettingsDialog;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -123,7 +123,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         settingsMenu.setText("Settings");
 
-        javaSettingsMenuItem.setText("Java Memory Settings");
+        javaSettingsMenuItem.setText("Java Settings");
         javaSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 javaSettingsMenuItemActionPerformed(evt);
@@ -790,21 +790,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_searchGUISettingsMenuItemActionPerformed
 
     /**
-     * Open the Java Options menu.
+     * Open the Java Settings dialog.
      *
      * @param evt
      */
     private void javaSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaSettingsMenuItemActionPerformed
-
-        // reload the user preferences as these may have been changed by other tools
-        try {
-            peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-
-        new JavaOptionsDialog(peptideShakerGUI, peptideShakerGUI, this, "PeptideShaker");
+        new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
     /**
@@ -858,12 +849,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_lowMemoryWarningLabelMouseExited
 
     /**
-     * Open the memory warning help dialog.
+     * Open the java settings dialog.
      *
      * @param evt
      */
     private void lowMemoryWarningLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lowMemoryWarningLabelMouseReleased
-        new LowMemoryDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
+        new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

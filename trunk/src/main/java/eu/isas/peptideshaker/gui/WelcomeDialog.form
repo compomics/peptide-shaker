@@ -35,7 +35,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="javaSettingsMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Java Memory Settings"/>
+                <Property name="text" type="java.lang.String" value="Java Settings"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="javaSettingsMenuItemActionPerformed"/>
@@ -458,9 +458,9 @@
             <Property name="iconTextGap" type="int" value="-4"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lowMemoryWarningLabelMouseReleased"/>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lowMemoryWarningLabelMouseEntered"/>
             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lowMemoryWarningLabelMouseExited"/>
-            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lowMemoryWarningLabelMouseReleased"/>
           </Events>
         </Component>
       </SubComponents>
