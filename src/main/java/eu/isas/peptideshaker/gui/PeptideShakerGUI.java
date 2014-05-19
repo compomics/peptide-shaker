@@ -1370,8 +1370,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         fileJMenu.add(jSeparator8);
 
         reshakeMenuItem.setMnemonic('E');
-        reshakeMenuItem.setText("Reshake...");
-        reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n(Coming soon...)\n</html>");
+        reshakeMenuItem.setText("ReShake...");
+        reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n</html>");
         reshakeMenuItem.setEnabled(false);
         reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2771,7 +2771,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }//GEN-LAST:event_fractionDetailsJMenuItemActionPerformed
 
     /**
-     * Start the Reshake dialog.
+     * Start the ReShake dialog.
      *
      * @param evt
      */

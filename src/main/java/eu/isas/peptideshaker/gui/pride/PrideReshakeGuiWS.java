@@ -290,7 +290,7 @@ public class PrideReshakeGuiWS extends javax.swing.JDialog {
         filesTableToolTips.add("File Type");
         filesTableToolTips.add("File Name and Link");
         filesTableToolTips.add("File Size");
-        filesTableToolTips.add("Reshake");
+        filesTableToolTips.add("ReShake");
     }
 
     /**
@@ -700,7 +700,7 @@ public class PrideReshakeGuiWS extends javax.swing.JDialog {
         reshakeButton.setBackground(new java.awt.Color(0, 153, 0));
         reshakeButton.setFont(reshakeButton.getFont().deriveFont(reshakeButton.getFont().getStyle() | java.awt.Font.BOLD));
         reshakeButton.setForeground(new java.awt.Color(255, 255, 255));
-        reshakeButton.setText("Reshake PRIDE Projects");
+        reshakeButton.setText("ReShake PRIDE Projects");
         reshakeButton.setEnabled(false);
         reshakeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

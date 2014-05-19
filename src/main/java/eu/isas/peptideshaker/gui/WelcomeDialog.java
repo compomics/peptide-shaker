@@ -6,7 +6,6 @@ import static com.compomics.software.autoupdater.DownloadLatestZipFromRepo.downl
 import com.compomics.software.autoupdater.GUIFileDAO;
 import com.compomics.software.autoupdater.MavenJarFile;
 import com.compomics.software.autoupdater.WebDAO;
-import com.compomics.software.dialogs.JavaMemoryDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.JavaSettingsDialog;
@@ -300,7 +299,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         reshakeJButton.setFont(reshakeJButton.getFont().deriveFont(reshakeJButton.getFont().getStyle() | java.awt.Font.BOLD, reshakeJButton.getFont().getSize()+3));
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
-        reshakeJButton.setText("PRIDE Reshake");
+        reshakeJButton.setText("PRIDE ReShake");
         reshakeJButton.setToolTipText("<html>\nReanalyze a PRIDE experiment<br>\n</html>");
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -656,7 +655,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_recentProjectsLabelMouseClicked
 
     /**
-     * Open the Reshake dialog.
+     * Open the ReShake dialog.
      *
      * @param evt
      */
