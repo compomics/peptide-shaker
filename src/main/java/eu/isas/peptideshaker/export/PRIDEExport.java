@@ -577,10 +577,7 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         Integer charge = new Integer(psmProbabilities.getSpecificMapKey());
                         String fileName = Spectrum.getSpectrumFile(spectrumKey);
-                        
-                        // @TODO: below line can result in null...
-                        
-                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(charge, spectrumKey).getTargetDecoyResults().getConfidenceLimit();
+                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(charge, fileName).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         matchValidationLevel = psmProbabilities.getMatchValidationLevel();
                         if (matchValidationLevel == MatchValidationLevel.doubtful && !psmProbabilities.getReasonDoubtful().equals("")) {

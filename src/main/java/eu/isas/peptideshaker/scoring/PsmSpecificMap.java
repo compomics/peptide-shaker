@@ -270,7 +270,7 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the desired target decoy map. Null if not found.
+     * Returns the desired target decoy map.
      *
      * @param charge the identified charge of the PSM
      * @param spectrumFile the name of the spectrum file
@@ -282,9 +282,7 @@ public class PsmSpecificMap implements Serializable {
             ArrayList<String> nonSignificantFiles = fileSpecificGrouping.get(charge);
             if (nonSignificantFiles == null || !nonSignificantFiles.contains(spectrumFile)) {
                 HashMap<String, TargetDecoyMap> chargeMapping = fileSpecificPsmsMaps.get(charge);
-                if (chargeMapping == null) {
-                    return null;
-                } else {
+                if (chargeMapping != null) {
                     return chargeMapping.get(spectrumFile);
                 }
             }
