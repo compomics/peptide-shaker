@@ -13,7 +13,7 @@ There are five main sections to this page:
  * [#D)_PathSettingsCLI D) PathSettingsCLI] - set the paths to use
  * [#E)_General E) General] - general command line help
 
-Note that ReportCLI and FollowUpCLI options can also be appended to PeptideShakerCLI command lines.
+Note that ReportCLI, FollowUpCLI and PathSettingsCLI options can also be appended to PeptideShakerCLI command lines.
 
 All command line options have the same overall structure and only differ in the features and parameters available.
 
