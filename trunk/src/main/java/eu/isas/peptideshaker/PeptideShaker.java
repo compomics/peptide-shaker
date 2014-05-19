@@ -1348,6 +1348,7 @@ public class PeptideShaker {
             double psmThreshold = 0;
             double confidenceThreshold = 100;
             boolean noValidated = true;
+
             if (targetDecoyMap != null) {
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 psmThreshold = targetDecoyResults.getScoreLimit();
@@ -1438,6 +1439,7 @@ public class PeptideShaker {
         } else {
             psParameter.setMatchValidationLevel(MatchValidationLevel.none);
         }
+
         identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
     }
 

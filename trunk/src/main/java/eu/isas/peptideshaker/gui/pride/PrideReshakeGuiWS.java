@@ -170,7 +170,7 @@ public class PrideReshakeGuiWS extends javax.swing.JDialog {
         this.welcomeDialog = welcomeDialog;
         this.dummyParentFrame = dummyParentFrame;
         setUpGui();
-        insertData();
+        insertData(); // @TODO: display first?
 
         if (peptideShakerGUI.isVisible()) {
             this.setSize(peptideShakerGUI.getWidth() - 200, peptideShakerGUI.getHeight() - 200);
@@ -309,7 +309,7 @@ public class PrideReshakeGuiWS extends javax.swing.JDialog {
         RestTemplate template = new RestTemplate();
 
         // get the project count
-        ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class);
+        ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // @TODO: catch connection issues
         Integer projectCount = projectCountResult.getBody();
 
         // get the list of projects
@@ -366,7 +366,7 @@ public class PrideReshakeGuiWS extends javax.swing.JDialog {
      * Convert a set of strings to a single string.
      *
      * @param set
-     * @return
+     * @return the set as a single string
      */
     private String setToString(Set<String> set) {
         Object[] elements = set.toArray();

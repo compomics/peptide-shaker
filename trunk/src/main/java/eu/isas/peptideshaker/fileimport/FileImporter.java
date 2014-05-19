@@ -862,8 +862,6 @@ public class FileImporter {
                                         HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
                                         HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
-        int ace0 = 0;
-                                                    String toFind = "42.0105647@" + peptideSequence.charAt(0);
                                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                             HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                             if (modMatch.isVariable()) {
@@ -891,9 +889,6 @@ public class FileImporter {
                                                         || advocateId == Advocate.XTandem.getIndex()
                                                         || advocateId == Advocate.MSGF.getIndex()
                                                         || advocateId == Advocate.msAmanda.getIndex()) {
-                                                    if (sePTM.equals(toFind)) {
-                                                        ace0++;
-                                                    }
                                                     String[] parsedName = sePTM.split("@");
                                                     double seMass = 0;
                                                     try {
