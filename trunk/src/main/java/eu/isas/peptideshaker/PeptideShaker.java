@@ -126,7 +126,8 @@ public class PeptideShaker {
      */
     private static String SERIALIZATION_DIRECTORY = "matches";
     /**
-     * The parent directory of the serialization directory. An empty string if not set.
+     * The parent directory of the serialization directory. An empty string if
+     * not set.
      */
     private static String SERIALIZATION_PARENT_DIRECTORY = "resources";
     /**
@@ -286,7 +287,7 @@ public class PeptideShaker {
     public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             IdFilter idFilter, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences)
             throws IllegalArgumentException, IOException, Exception {
-        
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
@@ -3190,15 +3191,40 @@ public class PeptideShaker {
                 if (scores != null) {
                     // remap to searched PTMs
                     PTM mappedModification = null;
+                    String peptideSequence = peptide.getSequence();
                     for (int site : scores.keySet()) {
-                        for (PTM ptm : modifications.get(ptmMass)) {
-                            if (peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(site)) {
-                                mappedModification = ptm;
-                                break;
+                        if (site == 0) {
+                            // N-term ptm
+                            for (PTM ptm : modifications.get(ptmMass)) {
+                                if (ptm.isNTerm() && peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(1)) {
+                                    mappedModification = ptm;
+                                    break;
+                                }
                             }
-                        }
-                        if (mappedModification == null) {
-                            throw new IllegalArgumentException("Could not map the PTM of mass " + ptmMass + " at site " + site + " in peptide " + peptide.getSequence() + ".");
+                            if (mappedModification == null) {
+                                throw new IllegalArgumentException("Could not map the PTM of mass " + ptmMass + " on the N-terminus of the peptide " + peptideSequence + ".");
+                            }
+                        } else if (site == peptideSequence.length() + 1) {
+                            // C-term ptm
+                            for (PTM ptm : modifications.get(ptmMass)) {
+                                if (ptm.isCTerm() && peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(peptideSequence.length())) {
+                                    mappedModification = ptm;
+                                    break;
+                                }
+                            }
+                            if (mappedModification == null) {
+                                throw new IllegalArgumentException("Could not map the PTM of mass " + ptmMass + " on the C-terminus of the peptide " + peptideSequence + ".");
+                            }
+                        } else {
+                            for (PTM ptm : modifications.get(ptmMass)) {
+                                if (peptide.getPotentialModificationSites(ptm, MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()).contains(site)) {
+                                    mappedModification = ptm;
+                                    break;
+                                }
+                            }
+                            if (mappedModification == null) {
+                                throw new IllegalArgumentException("Could not map the PTM of mass " + ptmMass + " at site " + site + " in peptide " + peptide.getSequence() + ".");
+                            }
                         }
 
                         String ptmName = mappedModification.getName();
@@ -4307,7 +4333,7 @@ public class PeptideShaker {
 
     /**
      * Returns the file used for user preferences storage.
-     * 
+     *
      * @return the file used for user preferences storage
      */
     public static String getUserPreferencesFile() {
@@ -4316,7 +4342,7 @@ public class PeptideShaker {
 
     /**
      * Returns the folder used for user preferences storage.
-     * 
+     *
      * @return the folder used for user preferences storage
      */
     public static String getUserPreferencesFolder() {
@@ -4326,7 +4352,7 @@ public class PeptideShaker {
 
     /**
      * Sets the file used for user preferences storage.
-     * 
+     *
      * @param userPreferencesFolder the folder used for user preferences storage
      */
     public static void setUserPreferencesFolder(String userPreferencesFolder) {
@@ -4336,7 +4362,7 @@ public class PeptideShaker {
 
     /**
      * Returns the directory used to store the identification matches.
-     * 
+     *
      * @return the directory used to store the identification matches
      */
     public static String getMatchesDirectorySubPath() {
@@ -4344,8 +4370,9 @@ public class PeptideShaker {
     }
 
     /**
-     * Returns the matches directory parent. An empty string if not set. Can be a relative path.
-     * 
+     * Returns the matches directory parent. An empty string if not set. Can be
+     * a relative path.
+     *
      * @return the matches directory parent
      */
     public static String getMatchesDirectoryParent() {
@@ -4354,9 +4381,9 @@ public class PeptideShaker {
 
     /**
      * Returns the matches directory parent. An empty string if not set.
-     * 
+     *
      * @param jarFilePath the path to the jar file
-     * 
+     *
      * @return the matches directory parent
      */
     public static File getMatchesDirectoryParent(String jarFilePath) {
@@ -4370,7 +4397,7 @@ public class PeptideShaker {
 
     /**
      * Sets the matches directory parent.
-     * 
+     *
      * @param matchesDirectoryParent the matches directory parent
      * @throws java.io.IOException
      */
@@ -4384,12 +4411,12 @@ public class PeptideShaker {
             }
         }
     }
-    
+
     /**
      * Returns the path to the match folder according to the user path settings.
-     * 
+     *
      * @param jarFilePath the path to the jar file
-     * 
+     *
      * @return the path to the match folder according to the user path settings
      */
     public static File getSerializationDirectory(String jarFilePath) {
