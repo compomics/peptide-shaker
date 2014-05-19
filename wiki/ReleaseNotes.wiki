@@ -11,6 +11,7 @@
  * FEATURE IMPROVEMENT: Updated the Java Settings dialogs.
 
  * BUG FIX: Corrected an error in the PRIDE XML export.
+ * BUG FIX: Fixed a bug in the handling of protein keys that are too long for the database.
  * BUG FIX: Fixed a bug in the peptide filters where the modifications where not set correctly.
  * BUG FIX: Fixed a bug in the sorting in the coverage column.
  * BUG FIX: Fixed a bug in the progress display when downloading gene/GO details.
