@@ -53,18 +53,18 @@ public class CpsExporter {
      * emptied
      * @param idFilter the identifications filter
      * @param jarFilePath the path to the jar file
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
      * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
             GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-                saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
-                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, jarFilePath);
+        saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
+                null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, jarFilePath);
     }
 
     /**
@@ -90,26 +90,27 @@ public class CpsExporter {
      * emptied
      * @param idFilter the identifications filter
      * @param jarFilePath the path to the jar file
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
      * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, String jarFilePath) 
+            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, String jarFilePath)
             throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         // set the experiment parameters
         experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
                 identificationFeaturesCache, ptmScoringPreferences, genePreferences, idFilter));
-
+        // Save the objects in cache
         objectsCache.saveCache(waitingHandler, emptyCache);
+        // close connection
         identification.close();
-        
+
         File matchesFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
 
         // transfer all files in the match directory

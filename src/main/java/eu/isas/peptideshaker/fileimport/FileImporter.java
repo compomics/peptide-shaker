@@ -853,7 +853,7 @@ public class FileImporter {
                                         Peptide peptide = peptideAssumption.getPeptide();
                                         String peptideSequence = peptide.getSequence();
 
-                                        // change the search engine modifications into expected modifications
+                                        // map the algorithm specific modifications on utilities modifications
                                         // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                                         // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                                         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
@@ -862,6 +862,8 @@ public class FileImporter {
                                         HashMap<Integer, ArrayList<String>> expectedNames = new HashMap<Integer, ArrayList<String>>();
                                         HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
+        int ace0 = 0;
+                                                    String toFind = "42.0105647@" + peptideSequence.charAt(0);
                                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                             HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                             if (modMatch.isVariable()) {
@@ -889,6 +891,9 @@ public class FileImporter {
                                                         || advocateId == Advocate.XTandem.getIndex()
                                                         || advocateId == Advocate.MSGF.getIndex()
                                                         || advocateId == Advocate.msAmanda.getIndex()) {
+                                                    if (sePTM.equals(toFind)) {
+                                                        ace0++;
+                                                    }
                                                     String[] parsedName = sePTM.split("@");
                                                     double seMass = 0;
                                                     try {
@@ -926,16 +931,124 @@ public class FileImporter {
                                         HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
                                         HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
 
+                                        // If a terminal modification cannot be elsewhere lock the terminus
+                                        ModificationMatch nTermModification = null;
                                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                                             if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                                 int modSite = modMatch.getModificationSite();
-                                                if (expectedNames.containsKey(modSite)) {
-                                                    for (String modName : expectedNames.get(modSite)) {
-                                                        if (modNames.get(modMatch).contains(modName) && !ptmMappingRegular.containsKey(modSite)) {
-                                                            ptmMappingRegular.put(modSite, modMatch);
-                                                            ptmMappingGoofy.put(modMatch, modSite);
-                                                            modMatch.setTheoreticPtm(modName);
+                                                if (modSite == 1) {
+                                                    ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
+                                                    if (expectedNamesAtSite != null) {
+                                                        for (String modName : expectedNamesAtSite) {
+                                                            PTM ptm = ptmFactory.getPTM(modName);
+                                                            if (ptm.isNTerm()) {
+                                                                boolean otherPossibleMod = false;
+                                                                for (String tempName : modificationProfile.getAllNotFixedModifications()) {
+                                                                    if (!tempName.equals(modName)) {
+                                                                        PTM tempPTM = ptmFactory.getPTM(tempName);
+                                                                        if (tempPTM.getMass() == ptm.getMass() && !tempPTM.isNTerm()) {
+                                                                            otherPossibleMod = true;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if (!otherPossibleMod) {
+                                                                    nTermModification = modMatch;
+                                                                    modMatch.setTheoreticPtm(modName);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        if (nTermModification != null) {
                                                             break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ModificationMatch cTermModification = null;
+                                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                            if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                                int modSite = modMatch.getModificationSite();
+                                                if (modSite == peptideSequence.length()) {
+                                                    ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
+                                                    if (expectedNamesAtSite != null) {
+                                                        for (String modName : expectedNamesAtSite) {
+                                                            PTM ptm = ptmFactory.getPTM(modName);
+                                                            if (ptm.isCTerm()) {
+                                                                boolean otherPossibleMod = false;
+                                                                for (String tempName : modificationProfile.getAllNotFixedModifications()) {
+                                                                    if (!tempName.equals(modName)) {
+                                                                        PTM tempPTM = ptmFactory.getPTM(tempName);
+                                                                        if (tempPTM.getMass() == ptm.getMass() && !tempPTM.isCTerm()) {
+                                                                            otherPossibleMod = true;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if (!otherPossibleMod) {
+                                                                    cTermModification = modMatch;
+                                                                    modMatch.setTheoreticPtm(modName);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        if (cTermModification != null) {
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                            if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                                int modSite = modMatch.getModificationSite();
+                                                boolean terminal = false;
+                                                if (modSite == 1) {
+                                                    ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
+                                                    if (expectedNamesAtSite != null) {
+                                                        for (String modName : expectedNamesAtSite) {
+                                                            PTM ptm = ptmFactory.getPTM(modName);
+                                                            if (ptm.isNTerm() && nTermModification == null) {
+                                                                nTermModification = modMatch;
+                                                                modMatch.setTheoreticPtm(modName);
+                                                                terminal = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                } else if (modSite == peptideSequence.length()) {
+                                                    ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
+                                                    if (expectedNamesAtSite != null) {
+                                                        for (String modName : expectedNamesAtSite) {
+                                                            PTM ptm = ptmFactory.getPTM(modName);
+                                                            if (ptm.isCTerm() && cTermModification == null) {
+                                                                cTermModification = modMatch;
+                                                                modMatch.setTheoreticPtm(modName);
+                                                                terminal = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                if (!terminal) {
+                                                    ArrayList<String> expectedNamesAtSite = expectedNames.get(modSite);
+                                                    if (expectedNamesAtSite != null) {
+                                                        for (String modName : expectedNamesAtSite) {
+                                                            PTM ptm = ptmFactory.getPTM(modName);
+                                                            if (ptm.isNTerm() && nTermModification == null) {
+                                                                nTermModification = modMatch;
+                                                                modMatch.setTheoreticPtm(modName);
+                                                            } else if (ptm.isCTerm() && cTermModification == null) {
+                                                                cTermModification = modMatch;
+                                                                modMatch.setTheoreticPtm(modName);
+                                                            } else if (modNames.get(modMatch).contains(modName) && !ptmMappingRegular.containsKey(modSite)) {
+                                                                ptmMappingRegular.put(modSite, modMatch);
+                                                                ptmMappingGoofy.put(modMatch, modSite);
+                                                                modMatch.setTheoreticPtm(modName);
+                                                                break;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -946,7 +1059,7 @@ public class FileImporter {
                                         HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
 
                                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                            if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                                 int modSite = modMatch.getModificationSite();
                                                 for (int candidateSite : expectedNames.keySet()) {
                                                     if (!ptmMappingRegular.containsKey(candidateSite)) {
@@ -968,13 +1081,12 @@ public class FileImporter {
                                         HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
 
                                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                            if (modMatch.isVariable() && modMatch != nTermModification && modMatch != cTermModification && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                                 Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
                                                 if (modSite != null) {
                                                     if (expectedNames.containsKey(modSite)) {
                                                         for (String modName : expectedNames.get(modSite)) {
                                                             if (modNames.get(modMatch).contains(modName)) {
-                                                                ptmMappingRegular.put(modSite, modMatch); // for the record
                                                                 ptmMappingGoofy.put(modMatch, modSite);
                                                                 modMatch.setTheoreticPtm(modName);
                                                                 modMatch.setModificationSite(modSite);
@@ -983,7 +1095,6 @@ public class FileImporter {
                                                         }
                                                     }
                                                 } else {
-                                                    ptmMappingRegular.put(modSite, modMatch); // for the record
                                                     ptmMappingGoofy.put(modMatch, modSite);
                                                     modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
                                                 }
@@ -1272,7 +1383,7 @@ public class FileImporter {
 
     /**
      * Write a filter.
-     * 
+     *
      * @param bw
      * @param fileName
      * @param spectrumTitle
@@ -1281,11 +1392,11 @@ public class FileImporter {
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException 
+     * @throws MzMLUnmarshallerException
      */
-    private void writeFilter(BufferedWriter bw, String fileName, String spectrumTitle, PeptideAssumption peptideAssumption) 
+    private void writeFilter(BufferedWriter bw, String fileName, String spectrumTitle, PeptideAssumption peptideAssumption)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
-        
+
         bw.write(fileName + "\t" + spectrumTitle + "\t");
         boolean first = true;
         for (String accession : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, 0.5)) {
