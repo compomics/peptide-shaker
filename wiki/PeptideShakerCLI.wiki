@@ -5,12 +5,13 @@
 
 The PeptideShaker command line interface can be used to process identification files and output identification results in various formats.
 
-There are four main sections to this page:
+There are five main sections to this page:
 
  * [#A)_PeptideShakerCLI A) PeptideShakerCLI] - data processing 
  * [#B)_ReportCLI B) ReportCLI] - identification results exports
  * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
- * [#D)_General D) General] - general command line help
+ * [#D)_PathSettingsCLI D) PathSettingsCLI] - set the paths to use
+ * [#E)_General E) General] - general command line help
 
 Note that ReportCLI and FollowUpCLI options can also be appended to PeptideShakerCLI command lines.
 
@@ -307,8 +308,44 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum
 
 ----
 
+==D) PathSettingsCLI==
 
-==D) General==
+*Generic temporary folder:*
+
+{{{
+-temp_folder               A folder for temporary file storage. Use only if 
+                           you encounter problems with the default configuration.
+}}}
+
+*Specific path setting:*
+
+{{{
+-peptideshaker_matches_directory    
+                           Directory where identification matches are temporarily 
+                           saved to reduce the memory footprint.
+
+-peptideshaker_user_preferences     
+                           Folder containing the PeptideShaker user preferences file.
+
+-peptideshaker_exports     Folder containing the user custom exports file.
+
+-utilities_user_preferences         
+                           Folder containing the compomics utilities user preferences file.
+
+-ptm_configuration         Folder containing the PTM user preferences file.
+
+-fasta_indexes             Folder containing the indexes of the protein sequences databases.
+
+-gene_mapping              Folder containing the gene mapping files.
+
+-pride_annotation          Folder containing the PRIDE annotation preferences.
+}}}
+
+[#PeptideShaker_Command_Line_Interface Go to top of page]
+
+----
+
+==E) General==
 
 *Comma Separated Lists*
 
