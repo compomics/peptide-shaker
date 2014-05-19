@@ -508,8 +508,8 @@
             <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="69"/>
-                <Property name="text" type="java.lang.String" value="Reshake..."/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze PRIDE experiments.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="ReShake..."/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze PRIDE experiments.&lt;br&gt;&#xa;&lt;/html&gt;"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
