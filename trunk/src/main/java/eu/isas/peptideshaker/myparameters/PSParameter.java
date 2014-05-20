@@ -829,7 +829,7 @@ public class PSParameter implements UrParameter {
     }
     
     /**
-     * Resets the restults of the QC filters
+     * Resets the results of the QC filters.
      */
     public void resetQcResults() {
         if (qcFilters == null) {

@@ -24,7 +24,7 @@ public class ProteinMap implements Serializable {
      */
     private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
     /**
-     * The filters to use to flag doubtful matches
+     * The filters to use to flag doubtful matches.
      */
     private ArrayList<ProteinFilter> doubtfulMatchesFilters = getDefaultProteinFilters();
 

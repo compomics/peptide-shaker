@@ -79,7 +79,7 @@ public class PeptideSpecificMap implements Serializable {
     }
     
     /**
-     * Resets the doubtful matches filters
+     * Resets the doubtful matches filters.
      */
     public void resetDoubtfulMatchesFilters() {
         doubtfulMatchesFilters = getDefaultPeptideFilters();
