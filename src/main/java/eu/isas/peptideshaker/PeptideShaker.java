@@ -736,6 +736,10 @@ public class PeptideShaker {
                     + identification.getPeptideIdentification().size()
                     + 2 * identification.getSpectrumIdentificationSize());
         }
+        
+        psmMap.resetDoubtfulMatchesFilters();
+        peptideMap.resetDoubtfulMatchesFilters();
+        proteinMap.resetDoubtfulMatchesFilters();
 
         // validate the spectrum matches
         if (inputMap != null) {
@@ -1156,6 +1160,7 @@ public class PeptideShaker {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+        psParameter.resetQcResults();
 
         if (!psParameter.isManualValidation()) {
 
@@ -1245,6 +1250,8 @@ public class PeptideShaker {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+        psParameter.resetQcResults();
+        
         if (sequenceFactory.concatenatedTargetDecoy()) {
             TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
@@ -1339,6 +1346,7 @@ public class PeptideShaker {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+        psParameter.resetQcResults();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 
@@ -1571,6 +1579,7 @@ public class PeptideShaker {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+        psParameter.resetQcResults();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 

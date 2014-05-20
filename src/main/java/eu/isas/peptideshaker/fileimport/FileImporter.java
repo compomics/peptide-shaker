@@ -1266,25 +1266,25 @@ public class FileImporter {
                 if (rejected > 0) {
                     String filterReport = rejected + " matches, " + Util.roundDouble(share, 1) + "% of total, excluded by the import filter (";
                     if (proteinIssueShare > 0) {
-                        filterReport += Util.roundDouble(proteinIssueShare, 1) + "% mapped in target and decoy";
+                        filterReport += proteinIssue + ", " + Util.roundDouble(proteinIssueShare, 1) + "%, mapped in target and decoy";
                     }
                     if (peptideIssueShare > 0) {
                         if (proteinIssueShare > 0) {
-                            filterReport += ", ";
+                            filterReport += "; ";
                         }
-                        filterReport += Util.roundDouble(peptideIssueShare, 1) + "% size or e-value out of boundary";
+                        filterReport += peptideIssue + ", " + Util.roundDouble(peptideIssueShare, 1) + "%, size or e-value out of boundary";
                     }
                     if (precursorIssueShare > 0) {
                         if (proteinIssueShare > 0 || peptideIssueShare > 0) {
-                            filterReport += ", ";
+                            filterReport += "; ";
                         }
-                        filterReport += Util.roundDouble(precursorIssueShare, 1) + "% high precursor deviation";
+                        filterReport += precursorIssue + ", " + Util.roundDouble(precursorIssueShare, 1) + "%, high precursor deviation";
                     }
-                    if (precursorIssueShare > 0) {
+                    if (ptmIssueShare > 0) {
                         if (proteinIssueShare > 0 || peptideIssueShare > 0 || precursorIssueShare > 0) {
-                            filterReport += ", ";
+                            filterReport += "; ";
                         }
-                        filterReport += Util.roundDouble(ptmIssueShare, 1) + "% unrecognized modifications";
+                        filterReport += ptmIssue + ", " + Util.roundDouble(ptmIssueShare, 1) + "%, unrecognized modifications";
                     }
                     filterReport += ")";
                     waitingHandler.appendReport(filterReport, true, true);

@@ -54,6 +54,13 @@ public class ProteinMap implements Serializable {
     public void setDoubtfulMatchesFilters(ArrayList<ProteinFilter> doubtfulMatchesFilters) {
         this.doubtfulMatchesFilters = doubtfulMatchesFilters;
     }
+    
+    /**
+     * Resets the doubtful matches filters
+     */
+    public void resetDoubtfulMatchesFilters() {
+        doubtfulMatchesFilters = getDefaultProteinFilters();
+    }
 
     /**
      * Estimate the posterior error probabilities.
