@@ -1094,7 +1094,7 @@ public class MzIdentMLExport {
                 }
                 
                 // add protein coverage cv term
-                //writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", null)); // @TODO: sequence coverage??
+                //writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", null)); // @TODO: sequence coverage?? (need for MIAPE)
                 
                 // add protein score
                 // @TODO: add protein scores? don't think we have these..?
