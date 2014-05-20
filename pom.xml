@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.29.1-beta</version>
+    <version>0.29.1</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
 
@@ -313,7 +313,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.26.40</version>
+            <version>3.26.41</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
