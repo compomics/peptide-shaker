@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.29.1 (May 20. 2014)*
+
+ * BUG FIX: Fixed a bug with the gene/GO downloads for non-vertebrate species.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.26.41.
+
+----
+
 *Changes in PeptideShaker 0.29.0 (May 20. 2014)*
  
  * FEATURE IMPROVEMENT: Improved the handling of terminal PTMs.
