@@ -118,7 +118,7 @@ public class PsmSpecificMap implements Serializable {
     }
     
     /**
-     * Resets the doubtful matches filters
+     * Resets the doubtful matches filters.
      */
     public void resetDoubtfulMatchesFilters() {
         doubtfulMatchesFiltersSpecificMap.clear();
