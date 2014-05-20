@@ -3,13 +3,15 @@
 
 ----
 
-*Changes in PeptideShaker 0.29.0 (coming soon...)*
+*Changes in PeptideShaker 0.29.0 (May 20. 2014)*
  
  * FEATURE IMPROVEMENT: Improved the handling of terminal PTMs.
  * FEATURE IMPROVEMENT: Improved the canceling of the species and GO downloads.
  * FEATURE IMPROVEMENT: Changed the message given if the FASTA file is not found from an error message to a warning message.
  * FEATURE IMPROVEMENT: Updated the Java Settings dialogs.
+ * FEATURE IMPROVEMENT: Added a longer time out for some of the IO intensive methods, which could result in issues on slower systems.
 
+ * BUG FIX: Corrected a bug where the PSM precursor errors were sometime added twice.
  * BUG FIX: Corrected an error in the PRIDE XML export.
  * BUG FIX: Fixed a bug in the handling of protein keys that are too long for the database.
  * BUG FIX: Fixed a bug in the peptide filters where the modifications where not set correctly.
@@ -17,7 +19,7 @@
  * BUG FIX: Fixed a bug in the progress display when downloading gene/GO details.
 
  * LIBRARY UPDATE: Updated jsparklines to version 0.6.7. 
- * LIBRARY UPDATE: Updated utilities to version 3.26.38.
+ * LIBRARY UPDATE: Updated utilities to version 3.26.39.
 
 ----
 
