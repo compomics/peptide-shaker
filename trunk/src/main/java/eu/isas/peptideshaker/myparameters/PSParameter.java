@@ -827,6 +827,16 @@ public class PSParameter implements UrParameter {
         }
         return qcFilters.keySet();
     }
+    
+    /**
+     * Resets the restults of the QC filters
+     */
+    public void resetQcResults() {
+        if (qcFilters == null) {
+            qcFilters = new HashMap<String, Boolean>();
+        }
+        qcFilters.clear();
+    }
 
     /**
      * Indicates whether QC filters were implemented for this match.

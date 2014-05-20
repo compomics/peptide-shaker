@@ -116,6 +116,13 @@ public class PsmSpecificMap implements Serializable {
         }
         fileFilters.add(psmFilter);
     }
+    
+    /**
+     * Resets the doubtful matches filters
+     */
+    public void resetDoubtfulMatchesFilters() {
+        doubtfulMatchesFiltersSpecificMap.clear();
+    }
 
     /**
      * Estimate the posterior error probabilities of the PSMs.

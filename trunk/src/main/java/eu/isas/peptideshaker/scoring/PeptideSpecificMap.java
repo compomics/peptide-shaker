@@ -77,6 +77,13 @@ public class PeptideSpecificMap implements Serializable {
     public void setDoubtfulMatchesFilters(ArrayList<PeptideFilter> doubtfulMatchesFilters) {
         this.doubtfulMatchesFilters = doubtfulMatchesFilters;
     }
+    
+    /**
+     * Resets the doubtful matches filters
+     */
+    public void resetDoubtfulMatchesFilters() {
+        doubtfulMatchesFilters = getDefaultPeptideFilters();
+    }
 
     /**
      * Estimate the posterior error probabilities.
