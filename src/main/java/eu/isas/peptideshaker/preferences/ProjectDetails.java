@@ -2,13 +2,16 @@ package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import com.compomics.util.pride.prideobjects.*;
+import java.io.IOException;
 import java.util.HashMap;
+import org.xml.sax.SAXException;
 
 /**
  * This class contains the details about a project.
@@ -29,8 +32,22 @@ public class ProjectDetails implements Serializable {
      * Map of the search engine versions used to generate the identification
      * files. Key: identification file name, element: the search engine name and
      * version.
+     *
+     * @deprecated use identificationAlgorithmVersion instead
      */
     private HashMap<String, String> identificationFileSearchEngineVersion = new HashMap<String, String>();
+    /**
+     * Map of the identification algorithms versions used to generate the
+     * identification files. Key: identification file name, element: the
+     * identification algorithm version.
+     */
+    private HashMap<String, String> identificationAlgorithmsVersion = new HashMap<String, String>();
+    /**
+     * Map of the identification algorithms used to generate the identification
+     * files. Key: identification file name, element: the identification
+     * algorithm version index.
+     */
+    private HashMap<String, Integer> identificationAdvocate = new HashMap<String, Integer>();
     /**
      * List of the spectrum files.
      */
@@ -123,6 +140,10 @@ public class ProjectDetails implements Serializable {
      * The address of the organization for the mzIdentML dataset.
      */
     private String organizationAddress;
+    /**
+     * The user advocates mapping of this project
+     */
+    private HashMap<Integer, Advocate> userAdvocateMapping;
 
     /**
      * Constructor.
@@ -417,73 +438,147 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Returns a list of search engines used based on the identification files
-     * of the project.
+     * Returns a list of identification algorithms used based on the
+     * identification files of the project.
      *
-     * @return a list of search engines indexed by the static field of the
-     * SearchEngine class
+     * @return a list of identification algorithms indexed by the static field
+     * of the Advocate class
      */
-    public ArrayList<Integer> getSearchEnginesIndexes() {
-        ArrayList<Integer> searchEngines = new ArrayList<Integer>();
+    public ArrayList<Integer> getIdentificationAlgorithms() {
+        if (identificationAdvocate == null) {
+            backwardCompatibilityFix();
+        }
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (Integer advocate : identificationAdvocate.values()) {
+            if (!result.contains(advocate)) {
+                result.add(advocate);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Loads the identification files advocate and version from the id files.
+     */
+    public void backwardCompatibilityFix() {
+        identificationAdvocate = new HashMap<String, Integer>();
+        identificationAlgorithmsVersion = new HashMap<String, String>();
         IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
         ArrayList<File> idFiles = identificationFiles;
         for (File idFile : idFiles) {
-            Integer searchEngine = idFileReaderFactory.getSearchEngine(idFile);
-            if (!searchEngines.contains(searchEngine)) {
-                searchEngines.add(searchEngine);
+            String idFileName = Util.getFileName(idFile);
+            Advocate advocate = null;
+            try {
+                IdfileReader idFileReader = idFileReaderFactory.getFileReader(idFile);
+                advocate = Advocate.getAdvocate(idFileReader.getSoftware());
+                identificationAlgorithmsVersion.put(idFileName, idFileReader.getSoftwareVersion());
+            } catch (Exception e) {
+                // File was moved, use the extension to map it
+                if (idFileName.toLowerCase().endsWith("dat")) {
+                    advocate = Advocate.mascot;
+                } else if (idFileName.toLowerCase().endsWith("omx")) {
+                    advocate = Advocate.omssa;
+                } else if (idFileName.toLowerCase().endsWith("xml")) {
+                    advocate = Advocate.xtandem;
+                } else if (idFileName.toLowerCase().endsWith("mzid")) {
+                    advocate = Advocate.msgf;
+                } else if (idFileName.toLowerCase().endsWith("csv")) {
+                    advocate = Advocate.msAmanda;
+                }
+            }
+            if (advocate == null) {
+                throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
+            }
+            identificationAdvocate.put(idFileName, advocate.getIndex());
+        }
+    }
+
+    /**
+     * Sets the identification algorithm version for a given identification
+     * file.
+     *
+     * @param identificationFileName the name of the identification file
+     * @param version the version of the algorithm used
+     */
+    public void setIdentificationAlgorithmVersion(String identificationFileName, String version) {
+        if (identificationAlgorithmsVersion == null) {
+            identificationAlgorithmsVersion = new HashMap<String, String>();
+        }
+        identificationAlgorithmsVersion.put(identificationFileName, version);
+    }
+
+    /**
+     * Returns the version of the identification algorithm used for the
+     * identification of the given file. Null if not found.
+     *
+     * @param identificationFileName the identification file name
+     *
+     * @return the version of the algorithm used
+     */
+    public String getIdentificationAlgorithmVersion(String identificationFileName) {
+        if (identificationAdvocate == null) {
+            backwardCompatibilityFix();
+        }
+        return identificationAlgorithmsVersion.get(identificationFileName);
+    }
+
+    /**
+     * Sets the identification algorithm for a given identification file.
+     *
+     * @param identificationFileName the name of the identification file
+     * @param advocateId the index of the advocate used for identification
+     */
+    public void setIdentificationAlgorithm(String identificationFileName, Integer advocateId) {
+        if (identificationAdvocate == null) {
+            identificationAdvocate = new HashMap<String, Integer>();
+        }
+        identificationAdvocate.put(identificationFileName, advocateId);
+    }
+
+    /**
+     * Returns the identification algorithm used for the identification of the
+     * given file. Null if not found.
+     *
+     * @param identificationFileName the identification file name
+     *
+     * @return the index of the algorithm used
+     */
+    public Integer getIdentificationAlgorithm(String identificationFileName) {
+        if (identificationAdvocate == null) {
+            backwardCompatibilityFix();
+        }
+        return identificationAdvocate.get(identificationFileName);
+    }
+
+    /**
+     * Returns the different identification algorithm versions used in a map:
+     * algorithm name -> versions.
+     *
+     * @return the different identification algorithm versions used
+     */
+    public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
+        HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<String, ArrayList<String>>();
+        for (File idFile : identificationFiles) {
+            String idFileName = Util.getFileName(idFile);
+            Integer advocateId = getIdentificationAlgorithm(idFileName);
+            Advocate advocate = Advocate.getAdvocate(advocateId);
+            String name = advocate.getName();
+            String version = getIdentificationAlgorithmVersion(name);
+            ArrayList<String> algorithmVersions = algorithmNameToVersionMap.get(name);
+            if (algorithmVersions == null) {
+                algorithmVersions = new ArrayList<String>();
+                algorithmVersions.add(version);
+                algorithmNameToVersionMap.put(name, algorithmVersions);
+            } else if (!algorithmVersions.contains(version)) {
+                algorithmVersions.add(version);
             }
         }
-        return searchEngines;
-    }
-
-    /**
-     * Returns a list of search engines used based on the identification files
-     * of the project.
-     *
-     * @return a list of search engines indexed by their name
-     */
-    public ArrayList<String> getSearchEnginesNames() {
-        ArrayList<String> searchEngines = new ArrayList<String>();
-        IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-        ArrayList<File> idFiles = identificationFiles;
-        for (File idFile : idFiles) {
-            String searchEngine = Advocate.getAdvocate(idFileReaderFactory.getSearchEngine(idFile)).getName();
-            if (!searchEngines.contains(searchEngine)) {
-                searchEngines.add(searchEngine);
-            }
-        }
-        return searchEngines;
-    }
-
-    /**
-     * Returns the map of the search engine versions used to generate the
-     * identification files. Key: identification file name, element: the search
-     * engine name and version.
-     *
-     * @return the identificationFileSearchEngineVersion
-     */
-    public HashMap<String, String> getIdentificationFileSearchEngineVersions() {
-        if (identificationFileSearchEngineVersion == null) {
-            identificationFileSearchEngineVersion = new HashMap<String, String>();
-        }
-        return identificationFileSearchEngineVersion;
-    }
-
-    /**
-     * Set the map of the search engine versions used to generate the
-     * identification files. Key: identification file name, element: the search
-     * engine name and version.
-     *
-     * @param identificationFileSearchEngineVersion the
-     * identificationFileSearchEngineVersion to set
-     */
-    public void setIdentificationFileSearchEngineVersion(HashMap<String, String> identificationFileSearchEngineVersion) {
-        this.identificationFileSearchEngineVersion = identificationFileSearchEngineVersion;
+        return algorithmNameToVersionMap;
     }
 
     /**
      * Returns the first name of the contact for the mzIdentML dataset.
-     * 
+     *
      * @return the contactFirstName
      */
     public String getContactFirstName() {
@@ -492,7 +587,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the first name of the contact for the mzIdentML dataset.
-     * 
+     *
      * @param contactFirstName the contactFirstName to set
      */
     public void setContactFirstName(String contactFirstName) {
@@ -501,7 +596,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the last name of the contact for the mzIdentML dataset.
-     * 
+     *
      * @return the contactLastName
      */
     public String getContactLastName() {
@@ -510,7 +605,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the last name of the contact for the mzIdentML dataset.
-     * 
+     *
      * @param contactLastName the contactLastName to set
      */
     public void setContactLastName(String contactLastName) {
@@ -519,7 +614,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the e-mail of the contact for the mzIdentML dataset.
-     * 
+     *
      * @return the contactEmailName
      */
     public String getContactEmail() {
@@ -528,7 +623,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the e-mail of the contact for the mzIdentML dataset.
-     * 
+     *
      * @param contactEmail the contactEmailName to set
      */
     public void setContactEmail(String contactEmail) {
@@ -537,7 +632,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the URL of the contact for the mzIdentML dataset.
-     * 
+     *
      * @return the contactUrl
      */
     public String getContactUrl() {
@@ -546,7 +641,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the first URL of the contact for the mzIdentML dataset.
-     * 
+     *
      * @param contactUrl the contactUrl to set
      */
     public void setContactUrl(String contactUrl) {
@@ -555,7 +650,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the address of the contact for the mzIdentML dataset.
-     * 
+     *
      * @return the contactAddress
      */
     public String getContactAddress() {
@@ -564,7 +659,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * SEt the address of the contact for the mzIdentML dataset.
-     * 
+     *
      * @param contactAddress the contactAddress to set
      */
     public void setContactAddress(String contactAddress) {
@@ -573,7 +668,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the name of the organization for the mzIdentML dataset.
-     * 
+     *
      * @return the organizationName
      */
     public String getOrganizationName() {
@@ -582,7 +677,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the name of the organization for the mzIdentML dataset.
-     * 
+     *
      * @param organizationName the organizationName to set
      */
     public void setOrganizationName(String organizationName) {
@@ -591,7 +686,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the e-mail of the organization for the mzIdentML dataset.
-     * 
+     *
      * @return the organizationEmail
      */
     public String getOrganizationEmail() {
@@ -600,7 +695,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the name of the organization for the mzIdentML dataset.
-     * 
+     *
      * @param organizationEmail the organizationEmail to set
      */
     public void setOrganizationEmail(String organizationEmail) {
@@ -609,7 +704,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the URL of the organization for the mzIdentML dataset.
-     * 
+     *
      * @return the organizationUrl
      */
     public String getOrganizationUrl() {
@@ -618,7 +713,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the URL of the organization for the mzIdentML dataset.
-     * 
+     *
      * @param organizationUrl the organizationUrl to set
      */
     public void setOrganizationUrl(String organizationUrl) {
@@ -627,7 +722,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the address of the organization for the mzIdentML dataset.
-     * 
+     *
      * @return the organizationAddress
      */
     public String getOrganizationAddress() {
@@ -636,10 +731,28 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the address of the organization for the mzIdentML dataset.
-     * 
+     *
      * @param organizationAddress the organizationAddress to set
      */
     public void setOrganizationAddress(String organizationAddress) {
         this.organizationAddress = organizationAddress;
+    }
+
+    /**
+     * Returns the user advocates used in this project.
+     * 
+     * @return the user advocates used in this project
+     */
+    public HashMap<Integer, Advocate> getUserAdvocateMapping() {
+        return userAdvocateMapping;
+    }
+
+    /**
+     * Sets the user advocates used in this project.
+     * 
+     * @param userAdvocateMapping  the user advocates used in this project
+     */
+    public void setUserAdvocateMapping(HashMap<Integer, Advocate> userAdvocateMapping) {
+        this.userAdvocateMapping = userAdvocateMapping;
     }
 }

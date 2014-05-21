@@ -4,6 +4,7 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -31,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
@@ -169,6 +171,10 @@ public abstract class CpsParent extends UserPreferencesParent {
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
         ptmScoringPreferences = experimentSettings.getPTMScoringPreferences();
         projectDetails = experimentSettings.getProjectDetails();
+        HashMap<Integer, Advocate> userAdvocateMapping = projectDetails.getUserAdvocateMapping();
+        if (userAdvocateMapping != null) {
+            Advocate.setUserAdvocates(userAdvocateMapping);
+        }
         searchParameters = experimentSettings.getSearchParameters();
         processingPreferences = experimentSettings.getProcessingPreferences();
         metrics = experimentSettings.getMetrics();
@@ -797,10 +803,9 @@ public abstract class CpsParent extends UserPreferencesParent {
             report += "<b>Identification Files</b>:<br>";
             for (File idFile : projectDetails.getIdentificationFiles()) {
                 report += idFile.getAbsolutePath();
-
-                if (projectDetails.getIdentificationFileSearchEngineVersions().containsKey(idFile.getName())
-                        && projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) != null) {
-                    report += " - (" + projectDetails.getIdentificationFileSearchEngineVersions().get(idFile.getName()) + ")";
+                String version = projectDetails.getIdentificationAlgorithmVersion(idFile.getName());
+                if (version != null) {
+                    report += " - (" + version + ")";
                 }
 
                 report += "<br>";

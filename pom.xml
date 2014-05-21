@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.29.1</version>
+    <version>0.30.0</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
 
@@ -313,7 +313,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.26.41</version>
+            <version>3.27.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -341,19 +341,19 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.4</version>
         </dependency>
         
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.8</version>
         </dependency>
         
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.19</version>
+            <version>3.4.20</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>

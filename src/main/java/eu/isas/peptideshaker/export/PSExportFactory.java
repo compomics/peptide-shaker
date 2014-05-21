@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.math.MathException;
+import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -685,7 +686,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(ProjectFeatures.experiment);
         sectionContent.add(ProjectFeatures.sample);
         sectionContent.add(ProjectFeatures.replicate);
-        sectionContent.add(ProjectFeatures.search_engines);
+        sectionContent.add(ProjectFeatures.identification_algorithms);
         exportFeatures.put(ProjectFeatures.type, sectionContent);
 
         // search parameters

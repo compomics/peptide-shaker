@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
@@ -102,6 +103,10 @@ public class CpsExporter {
             GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, String jarFilePath)
             throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
+        
+        // Save the user advocates
+        projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
+        
         // set the experiment parameters
         experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,

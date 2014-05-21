@@ -2,9 +2,18 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportFactory;
+import com.compomics.util.io.export.ExportScheme;
+import eu.isas.peptideshaker.export.PeptideShakerMethods;
+import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.swing.JOptionPane;
 
 /**
  * A dialog for drafting the methods section for a publication based on
@@ -18,6 +27,10 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
      * The main PeptideShaker frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialogX progressDialog;
 
     /**
      * Creates a new MethodsSectionDialog.
@@ -42,101 +55,110 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
 
         String text = "<html>";
 
-        text += "<h2>Methods</h2>";
+        text += "<h2>Protein Identification</h2>";
 
-        if (proteowizardCheckBox.isSelected()) {
-            text += "The raw data was converted to mgf using ProteoWizard v[add version] [PMID:3471674]";
-            if (!searchGuiCheckBox.isSelected()) {
-                text += ". ";
-            }
+        if (algorithmsCheck.isSelected()) {
+            text+= PeptideShakerMethods.getSearchEnginesText(peptideShakerGUI.getProjectDetails());
         }
-        if (searchGuiCheckBox.isSelected()) {
-            if (!proteowizardCheckBox.isSelected()) {
-                text += "The data was ";
-            } else {
-                text += " and ";
-            }
-
-            if (databaseCheckBox.isSelected()) {
-                text += "searched against [add database details]"; // @TODO: add database details
-            } else {
-                text += "searched";
-            }
-
-            text += " using SearchGUI v[add version] [PMID:21337703] ";
-
-            if (searchEnginesCheckBox.isSelected()) {
-
-                text += " (employing ";
-
-                ArrayList<String> searchEngines = peptideShakerGUI.getProjectDetails().getSearchEnginesNames();
-                Collections.sort(searchEngines);
-
-                for (int i = 0; i < searchEngines.size(); i++) {
-                    if (i > 0) {
-                        if (i == searchEngines.size() - 1) {
-                            text += " and ";
-                        } else {
-                            text += ", ";
-                        }
-                    }
-                    text += searchEngines.get(i);
-                    text += " [" + convertSearchEngineToReference(searchEngines.get(i)) + "]";
-                }
-
-                text += ")";
-            }
-
-            if (searchParametersCheckBox.isSelected()) {
-
-                SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
-
-                text += " with the following search parameters: ";
-                text += "enzyme: " + searchParameters.getEnzyme().getName();
-                text += "; max missed cleavages: " + searchParameters.getnMissedCleavages();
-                text += "; precursor accuracy: " + searchParameters.getPrecursorAccuracy();
-                if (searchParameters.getPrecursorAccuracyType() == SearchParameters.MassAccuracyType.PPM) {
-                    text += " ppm";
-                } else {
-                    text += " Da";
-                }
-                text += "; fragment ion accuracy: " + searchParameters.getFragmentIonAccuracy() + " Da";
-
-                ArrayList<String> fixedPtms = searchParameters.getModificationProfile().getFixedModifications();
-                text += getPtmsAsString(fixedPtms, true);
-
-                ArrayList<String> variablePtms = searchParameters.getModificationProfile().getVariableModifications();
-                text += getPtmsAsString(variablePtms, false);
-
-                text += ". ";
-            } else {
-                text += ". ";
-            }
+        if (searchGUICheck.isSelected()) {
+            text+= PeptideShakerMethods.getSearchGUIText();
         }
-
-        text += "The search results were merged and processed in PeptideShaker v" + peptideShakerGUI.getVersion() + " [http://peptide-shaker.googlecode.com]"; // @TODO: add ref
-
-        if (validationCheckBox.isSelected()) {
-            text += " using [add FDR/FNR/Confidence levels] at the protein, peptide and PSM level, respectively.";
-
-            text += "This resulted in ";
-
-            try {
-                text += peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins();
-            } catch (Exception e) {
-                e.printStackTrace();
-                text += "[error]";
-            }
-
-            text += " validated proteins.";
-
-        } else {
-            text += ".";
+        if (proteinDbCkeck.isSelected()) {
+            text+= PeptideShakerMethods.getDatabaseText();
+        }
+        if (decoyCheck.isSelected()) {
+            text+= PeptideShakerMethods.getDecoyType();
+        }
+        if (idParametersCheck.isSelected()) {
+            text+= PeptideShakerMethods.getIdentificationSettings(peptideShakerGUI.getSearchParameters());
+        }
+        if (peptideShakerCheck.isSelected()) {
+            text+= PeptideShakerMethods.getPeptideShaker();
+        }
+        if (validationCheck.isSelected()) {
+            text+= PeptideShakerMethods.getValidation(peptideShakerGUI.getProcessingPreferences());
+        }
+        if (ptmLocalizationCheck.isSelected()) {
+            text+= PeptideShakerMethods.getPtmScoring(peptideShakerGUI.getPtmScoringPreferences());
+        }
+        if (geneAnnotationCheck.isSelected()) {
+            text+= PeptideShakerMethods.getGeneAnnoration();
+        }
+        if (proteinAbundanceIndexesCheck.isSelected()) {
+            text+= PeptideShakerMethods.getSpectrumCounting(peptideShakerGUI.getSpectrumCountingPreferences());
+        }
+        if (pxCheck.isSelected()) {
+            text+= PeptideShakerMethods.getProteomeXchage();
         }
 
         text += "</html>";
 
         methodsSectionEditorPane.setText(text);
+    }
+    
+    /**
+     * Lets the user select a file where to write the coa
+     */
+    private void writeCoa() {
+        
+        // get the file to send the output to
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Text file (.txt)", "Export...", false);
+
+        if (selectedFile != null) {
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setTitle("Exporting Report. Please Wait...");
+
+            final String filePath = selectedFile.getPath();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+
+                    try {
+                        String schemeName = "Certificate of Analysis"; //TODO: get this from the PSExportFactory
+                        ExportScheme exportScheme = PSExportFactory.getInstance().getExportScheme(schemeName);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+                        PSExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
+                                peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
+                                peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
+                                null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getIdFilter(),
+                                peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (FileNotFoundException e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occurred while generating the output. Please make sure "
+                                + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 
     /**
@@ -152,15 +174,29 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         settingsPanel = new javax.swing.JPanel();
-        proteowizardCheckBox = new javax.swing.JCheckBox();
-        searchGuiCheckBox = new javax.swing.JCheckBox();
-        searchEnginesCheckBox = new javax.swing.JCheckBox();
-        searchParametersCheckBox = new javax.swing.JCheckBox();
-        databaseCheckBox = new javax.swing.JCheckBox();
-        validationCheckBox = new javax.swing.JCheckBox();
+        algorithmsCheck = new javax.swing.JCheckBox();
+        searchGUICheck = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        proteinDbCkeck = new javax.swing.JCheckBox();
+        decoyCheck = new javax.swing.JCheckBox();
+        idParametersCheck = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        peptideShakerCheck = new javax.swing.JCheckBox();
+        validationCheck = new javax.swing.JCheckBox();
+        ptmLocalizationCheck = new javax.swing.JCheckBox();
+        geneAnnotationCheck = new javax.swing.JCheckBox();
+        proteinAbundanceIndexesCheck = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        pxCheck = new javax.swing.JCheckBox();
         outputPanel = new javax.swing.JPanel();
         outputScrollPane = new javax.swing.JScrollPane();
         methodsSectionEditorPane = new javax.swing.JEditorPane();
+        exportCoaLbl = new javax.swing.JLabel();
+        introductionPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        introductionTxt = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Methods Section Draft");
@@ -182,73 +218,114 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             }
         });
 
-        settingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Settings"));
+        settingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
         settingsPanel.setOpaque(false);
+        settingsPanel.setPreferredSize(new java.awt.Dimension(500, 523));
 
-        proteowizardCheckBox.setSelected(true);
-        proteowizardCheckBox.setText("ProteoWizard");
-        proteowizardCheckBox.setIconTextGap(15);
-        proteowizardCheckBox.setInheritsPopupMenu(true);
-        proteowizardCheckBox.setOpaque(false);
-        proteowizardCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        algorithmsCheck.setSelected(true);
+        algorithmsCheck.setText("Identification algorithms");
+        algorithmsCheck.setOpaque(false);
+        algorithmsCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteowizardCheckBoxActionPerformed(evt);
+                algorithmsCheckActionPerformed(evt);
             }
         });
 
-        searchGuiCheckBox.setSelected(true);
-        searchGuiCheckBox.setText("SearchGUI");
-        searchGuiCheckBox.setIconTextGap(15);
-        searchGuiCheckBox.setInheritsPopupMenu(true);
-        searchGuiCheckBox.setOpaque(false);
-        searchGuiCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        searchGUICheck.setSelected(true);
+        searchGUICheck.setText("SearchGUI");
+        searchGUICheck.setOpaque(false);
+        searchGUICheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchGuiCheckBoxActionPerformed(evt);
+                searchGUICheckActionPerformed(evt);
             }
         });
 
-        searchEnginesCheckBox.setSelected(true);
-        searchEnginesCheckBox.setText("Search Engines");
-        searchEnginesCheckBox.setIconTextGap(15);
-        searchEnginesCheckBox.setInheritsPopupMenu(true);
-        searchEnginesCheckBox.setOpaque(false);
-        searchEnginesCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Spectrum Identification Algorithms:");
+
+        jLabel2.setText("Spectrum Identification Settings:");
+
+        proteinDbCkeck.setSelected(true);
+        proteinDbCkeck.setText("Protein database");
+        proteinDbCkeck.setOpaque(false);
+        proteinDbCkeck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchEnginesCheckBoxActionPerformed(evt);
+                proteinDbCkeckActionPerformed(evt);
             }
         });
 
-        searchParametersCheckBox.setSelected(true);
-        searchParametersCheckBox.setText("Search Parameters");
-        searchParametersCheckBox.setIconTextGap(15);
-        searchParametersCheckBox.setInheritsPopupMenu(true);
-        searchParametersCheckBox.setMinimumSize(new java.awt.Dimension(300, 400));
-        searchParametersCheckBox.setOpaque(false);
-        searchParametersCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        decoyCheck.setSelected(true);
+        decoyCheck.setText("Decoy sequences generation");
+        decoyCheck.setOpaque(false);
+        decoyCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchParametersCheckBoxActionPerformed(evt);
+                decoyCheckActionPerformed(evt);
             }
         });
 
-        databaseCheckBox.setSelected(true);
-        databaseCheckBox.setText("Database Details");
-        databaseCheckBox.setIconTextGap(15);
-        databaseCheckBox.setInheritsPopupMenu(true);
-        databaseCheckBox.setOpaque(false);
-        databaseCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        idParametersCheck.setSelected(true);
+        idParametersCheck.setText("Identification parameters");
+        idParametersCheck.setOpaque(false);
+        idParametersCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                databaseCheckBoxActionPerformed(evt);
+                idParametersCheckActionPerformed(evt);
             }
         });
 
-        validationCheckBox.setSelected(true);
-        validationCheckBox.setText("Validation Details");
-        validationCheckBox.setIconTextGap(15);
-        validationCheckBox.setInheritsPopupMenu(true);
-        validationCheckBox.setOpaque(false);
-        validationCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        jLabel3.setText("Peptide and Protein Identification:");
+
+        peptideShakerCheck.setSelected(true);
+        peptideShakerCheck.setText("PeptideShaker");
+        peptideShakerCheck.setOpaque(false);
+        peptideShakerCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                validationCheckBoxActionPerformed(evt);
+                peptideShakerCheckActionPerformed(evt);
+            }
+        });
+
+        validationCheck.setSelected(true);
+        validationCheck.setText("Statistical validation");
+        validationCheck.setOpaque(false);
+        validationCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validationCheckActionPerformed(evt);
+            }
+        });
+
+        ptmLocalizationCheck.setSelected(true);
+        ptmLocalizationCheck.setText("PTM localization");
+        ptmLocalizationCheck.setOpaque(false);
+        ptmLocalizationCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ptmLocalizationCheckActionPerformed(evt);
+            }
+        });
+
+        geneAnnotationCheck.setText("Gene annotation");
+        geneAnnotationCheck.setOpaque(false);
+        geneAnnotationCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                geneAnnotationCheckActionPerformed(evt);
+            }
+        });
+
+        proteinAbundanceIndexesCheck.setText("Protein abundance index");
+        proteinAbundanceIndexesCheck.setOpaque(false);
+        proteinAbundanceIndexesCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinAbundanceIndexesCheckActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Additional Features:");
+
+        jLabel5.setText("Identification Repository:");
+
+        pxCheck.setSelected(true);
+        pxCheck.setText("ProteomeXchange");
+        pxCheck.setOpaque(false);
+        pxCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pxCheckActionPerformed(evt);
             }
         });
 
@@ -259,41 +336,72 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteowizardCheckBox)
-                    .addComponent(searchGuiCheckBox)
-                    .addComponent(searchEnginesCheckBox))
-                .addGap(51, 51, 51)
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchParametersCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(databaseCheckBox)
-                    .addComponent(validationCheckBox))
-                .addContainerGap(170, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pxCheck)
+                            .addComponent(peptideShakerCheck)
+                            .addComponent(proteinDbCkeck)
+                            .addComponent(algorithmsCheck)
+                            .addComponent(searchGUICheck)
+                            .addComponent(decoyCheck)
+                            .addComponent(idParametersCheck)
+                            .addComponent(validationCheck)
+                            .addComponent(ptmLocalizationCheck)
+                            .addComponent(geneAnnotationCheck)
+                            .addComponent(proteinAbundanceIndexesCheck))))
+                .addContainerGap(303, Short.MAX_VALUE))
         );
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addComponent(searchParametersCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(databaseCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(validationCheckBox))
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addComponent(proteowizardCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchGuiCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchEnginesCheckBox)))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(algorithmsCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(searchGUICheck)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(proteinDbCkeck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(decoyCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(idParametersCheck)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(peptideShakerCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(validationCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ptmLocalizationCheck)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(geneAnnotationCheck)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(proteinAbundanceIndexesCheck)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pxCheck)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output"));
         outputPanel.setOpaque(false);
+        outputPanel.setPreferredSize(new java.awt.Dimension(500, 93));
 
         methodsSectionEditorPane.setEditable(false);
         methodsSectionEditorPane.setContentType("text/html"); // NOI18N
+        methodsSectionEditorPane.setMaximumSize(new java.awt.Dimension(600, 2147483647));
         methodsSectionEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
             public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
                 methodsSectionEditorPaneHyperlinkUpdate(evt);
@@ -301,20 +409,70 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         });
         outputScrollPane.setViewportView(methodsSectionEditorPane);
 
+        exportCoaLbl.setForeground(new java.awt.Color(0, 0, 204));
+        exportCoaLbl.setText("Export Certificate of Analysis");
+        exportCoaLbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportCoaLblMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportCoaLblMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportCoaLblMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
         outputPanel.setLayout(outputPanelLayout);
         outputPanelLayout.setHorizontalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(outputScrollPane)
+                .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(outputScrollPane)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
+                        .addGap(0, 328, Short.MAX_VALUE)
+                        .addComponent(exportCoaLbl)))
                 .addContainerGap())
         );
         outputPanelLayout.setVerticalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(outputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addComponent(outputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(exportCoaLbl)
+                .addContainerGap())
+        );
+
+        introductionPanel.setOpaque(false);
+
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setEnabled(false);
+        jScrollPane1.setOpaque(false);
+
+        introductionTxt.setEditable(false);
+        introductionTxt.setBackground(new java.awt.Color(240, 240, 240));
+        introductionTxt.setColumns(20);
+        introductionTxt.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        introductionTxt.setLineWrap(true);
+        introductionTxt.setRows(5);
+        introductionTxt.setText("The Method section editor automatically generates a text listing the methods used for protein identification with SearchGUI and PeptideShaker. It can serve as a basis to write the Method section of Manuscripts.\n\n1- Select the relevant sections on the left panel.\n2- Copy the output in a text editor.\n3- Complete the missing sections marked in brackets. References are indicated by their Pubmed ID (PMID), paste it in pubmed to retrieve the original reference.\n4- Export the Certificate of Analysis and add it to the supplementary material of your manuscript and to the files uploaded in ProteomeXchange.\n\nNote: the section editor does not include the raw file to peak list conversion.");
+        introductionTxt.setWrapStyleWord(true);
+        introductionTxt.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        jScrollPane1.setViewportView(introductionTxt);
+
+        javax.swing.GroupLayout introductionPanelLayout = new javax.swing.GroupLayout(introductionPanel);
+        introductionPanel.setLayout(introductionPanelLayout);
+        introductionPanelLayout.setHorizontalGroup(
+            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+        );
+        introductionPanelLayout.setVerticalGroup(
+            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(introductionPanelLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -325,13 +483,19 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(settingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(introductionPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
+                                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -341,14 +505,16 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(introductionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(settingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addContainerGap())
+                .addGap(143, 143, 143))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -359,7 +525,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 793, Short.MAX_VALUE)
         );
 
         pack();
@@ -407,129 +573,90 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_methodsSectionEditorPaneHyperlinkUpdate
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void proteowizardCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteowizardCheckBoxActionPerformed
-        updateMethodsSection();
-    }//GEN-LAST:event_proteowizardCheckBoxActionPerformed
+    private void exportCoaLblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseReleased
+        writeCoa();
+    }//GEN-LAST:event_exportCoaLblMouseReleased
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void searchGuiCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGuiCheckBoxActionPerformed
-        updateMethodsSection();
-    }//GEN-LAST:event_searchGuiCheckBoxActionPerformed
+    private void exportCoaLblMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportCoaLblMouseEntered
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void searchEnginesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchEnginesCheckBoxActionPerformed
-        updateMethodsSection();
-    }//GEN-LAST:event_searchEnginesCheckBoxActionPerformed
+    private void exportCoaLblMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportCoaLblMouseExited
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void searchParametersCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersCheckBoxActionPerformed
+    private void algorithmsCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algorithmsCheckActionPerformed
         updateMethodsSection();
-    }//GEN-LAST:event_searchParametersCheckBoxActionPerformed
+    }//GEN-LAST:event_algorithmsCheckActionPerformed
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void databaseCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_databaseCheckBoxActionPerformed
+    private void searchGUICheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGUICheckActionPerformed
         updateMethodsSection();
-    }//GEN-LAST:event_databaseCheckBoxActionPerformed
+    }//GEN-LAST:event_searchGUICheckActionPerformed
 
-    /**
-     * Update the methods section.
-     *
-     * @param evt
-     */
-    private void validationCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationCheckBoxActionPerformed
+    private void proteinDbCkeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinDbCkeckActionPerformed
         updateMethodsSection();
-    }//GEN-LAST:event_validationCheckBoxActionPerformed
+    }//GEN-LAST:event_proteinDbCkeckActionPerformed
+
+    private void decoyCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decoyCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_decoyCheckActionPerformed
+
+    private void idParametersCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idParametersCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_idParametersCheckActionPerformed
+
+    private void peptideShakerCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideShakerCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_peptideShakerCheckActionPerformed
+
+    private void validationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_validationCheckActionPerformed
+
+    private void ptmLocalizationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmLocalizationCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_ptmLocalizationCheckActionPerformed
+
+    private void geneAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_geneAnnotationCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_geneAnnotationCheckActionPerformed
+
+    private void proteinAbundanceIndexesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinAbundanceIndexesCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_proteinAbundanceIndexesCheckActionPerformed
+
+    private void pxCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pxCheckActionPerformed
+        updateMethodsSection();
+    }//GEN-LAST:event_pxCheckActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox algorithmsCheck;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox databaseCheckBox;
+    private javax.swing.JCheckBox decoyCheck;
+    private javax.swing.JLabel exportCoaLbl;
+    private javax.swing.JCheckBox geneAnnotationCheck;
+    private javax.swing.JCheckBox idParametersCheck;
+    private javax.swing.JPanel introductionPanel;
+    private javax.swing.JTextArea introductionTxt;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JEditorPane methodsSectionEditorPane;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel outputPanel;
     private javax.swing.JScrollPane outputScrollPane;
-    private javax.swing.JCheckBox proteowizardCheckBox;
-    private javax.swing.JCheckBox searchEnginesCheckBox;
-    private javax.swing.JCheckBox searchGuiCheckBox;
-    private javax.swing.JCheckBox searchParametersCheckBox;
+    private javax.swing.JCheckBox peptideShakerCheck;
+    private javax.swing.JCheckBox proteinAbundanceIndexesCheck;
+    private javax.swing.JCheckBox proteinDbCkeck;
+    private javax.swing.JCheckBox ptmLocalizationCheck;
+    private javax.swing.JCheckBox pxCheck;
+    private javax.swing.JCheckBox searchGUICheck;
     private javax.swing.JPanel settingsPanel;
-    private javax.swing.JCheckBox validationCheckBox;
+    private javax.swing.JCheckBox validationCheck;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Returns the PTMs as a string.
-     *
-     * @param ptms the PTM names to return
-     * @param fixed if the PTMs are fixed or variable
-     * @return the PTMs as a string
-     */
-    private String getPtmsAsString(ArrayList<String> ptms, boolean fixed) {
-
-        String text = "";
-
-        if (!ptms.isEmpty()) {
-            if (fixed) {
-                text += "; fixed modifications: ";
-            } else {
-                text += "; variable modifications: ";
-            }
-            for (int i = 0; i < ptms.size(); i++) {
-                if (i == ptms.size() - 1 && ptms.size() > 1) {
-                    text += " and ";
-                }
-                text += ptms.get(i);
-                if (i < ptms.size() - 1) {
-                    text += ", ";
-                }
-            }
-        }
-
-        return text;
-    }
-
-    /**
-     * Returns the reference to be used for the given search engine.
-     *
-     * @param searchEngine
-     * @return the reference for the given search engine
-     */
-    private String convertSearchEngineToReference(String searchEngine) {
-
-        // @TODO: should be moved to the Advocate class?
-
-        if (searchEngine.equalsIgnoreCase("OMSSA")) {
-            return "PMID:15473683";
-        } else if (searchEngine.equalsIgnoreCase("MS Amanda")) {
-            return "http://ms.imp.ac.at/?goto=msamanda";
-        } else if (searchEngine.equalsIgnoreCase("X!Tandem")) {
-            return "PMID:12622365";
-        } else if (searchEngine.equalsIgnoreCase("MS-GF+")) {
-            return "http://proteomics.ucsd.edu/Software/MSGFPlus";
-        } else if (searchEngine.equalsIgnoreCase("Mascot")) {
-            return "PMID:10612281";
-        } else {
-            return "add ref";
-        }
-    }
 }

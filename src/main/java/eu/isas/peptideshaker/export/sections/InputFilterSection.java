@@ -88,16 +88,8 @@ public class InputFilterSection {
             InputFilterFeatures inputFilterFeatures = (InputFilterFeatures) exportFeature;
 
             switch (inputFilterFeatures) {
-                case mascot_max_evalue:
-                    double value = idFilter.getMascotMaxEvalue();
-                    if (value == -1) {
-                        writer.write("none");
-                    } else {
-                        writer.write(value + "");
-                    }
-                    break;
                 case max_mz_deviation:
-                    value = idFilter.getMaxMzDeviation();
+                    double value = idFilter.getMaxMzDeviation();
                     if (value == -1) {
                         writer.write("none");
                     } else {
@@ -117,27 +109,11 @@ public class InputFilterSection {
                 case min_peptide_length:
                     writer.write(idFilter.getMinPepLength() + "");
                     break;
-                case omssa_max_evalue:
-                    value = idFilter.getOmssaMaxEvalue();
-                    if (value == -1) {
-                        writer.write("none");
-                    } else {
-                        writer.write(value + "");
-                    }
-                    break;
                 case unknown_PTM:
                     if (idFilter.removeUnknownPTMs()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
-                    }
-                    break;
-                case xtandem_max_evalue:
-                    value = idFilter.getXtandemMaxEvalue();
-                    if (value == -1) {
-                        writer.write("none");
-                    } else {
-                        writer.write(value + "");
                     }
                     break;
                 default:

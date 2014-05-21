@@ -105,18 +105,6 @@ public class PeptideShakerCLIInputBean {
      */
     private int maxPepLength = 30;
     /**
-     * Mascot maximal e-value allowed.
-     */
-    private double mascotMaxEvalue = 100;
-    /**
-     * OMSSA maximal e-value allowed.
-     */
-    private double omssaMaxEvalue = 100;
-    /**
-     * X!Tandem maximal e-value allowed.
-     */
-    private double xtandemMaxEvalue = 100;
-    /**
      * The maximal m/z deviation allowed.
      */
     private double maxMassDeviation = 10;
@@ -218,18 +206,6 @@ public class PeptideShakerCLIInputBean {
             maxPepLength = Integer.parseInt(aLine.getOptionValue(PeptideShakerCLIParams.MAX_PEPTIDE_LENGTH.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.MASCOT_E_VALUE_MAX.id)) {
-            mascotMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.MASCOT_E_VALUE_MAX.id));
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.OMSSA_E_VALUE_MAX.id)) {
-            omssaMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.OMSSA_E_VALUE_MAX.id));
-        }
-
-        if (aLine.hasOption(PeptideShakerCLIParams.XTANDEM_E_VALUE_MAX.id)) {
-            xtandemMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.XTANDEM_E_VALUE_MAX.id));
-        }
-
         if (aLine.hasOption(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR.id)) {
             maxMassDeviation = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR.id));
         }
@@ -262,7 +238,7 @@ public class PeptideShakerCLIInputBean {
             if (testFile.exists()) {
                 identificationParameters = SearchParameters.getIdentificationParameters(testFile);
                 ModificationProfile modificationProfile = identificationParameters.getModificationProfile();
-                IdentificationAlgorithmParameter algorithmParameter = identificationParameters.getIdentificationAlgorithmParameter(Advocate.XTandem.getIndex());
+                IdentificationAlgorithmParameter algorithmParameter = identificationParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
                 if (algorithmParameter != null) {
                     XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
                     if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
@@ -502,24 +478,6 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the maximal Mascot e-value allowed.
-     *
-     * @return the maximal Mascot e-value allowed
-     */
-    public double getMascotMaxEvalue() {
-        return mascotMaxEvalue;
-    }
-
-    /**
-     * Sets the maximal Mascot e-value allowed.
-     *
-     * @param mascotMaxEvalue the maximal Mascot e-value allowed
-     */
-    public void setMascotMaxEvalue(double mascotMaxEvalue) {
-        this.mascotMaxEvalue = mascotMaxEvalue;
-    }
-
-    /**
      * Returns the maximal m/z deviation allowed.
      *
      * @return the maximal mass deviation allowed
@@ -572,43 +530,6 @@ public class PeptideShakerCLIInputBean {
     public void setMinPepLength(int minPepLength) {
         this.minPepLength = minPepLength;
     }
-
-    /**
-     * Returns the OMSSA maximal e-value allowed.
-     *
-     * @return the OMSSA maximal e-value allowed
-     */
-    public double getOmssaMaxEvalue() {
-        return omssaMaxEvalue;
-    }
-
-    /**
-     * Sets the OMSSA maximal e-value allowed.
-     *
-     * @param omssaMaxEvalue the OMSSA maximal e-value allowed
-     */
-    public void setOmssaMaxEvalue(double omssaMaxEvalue) {
-        this.omssaMaxEvalue = omssaMaxEvalue;
-    }
-
-    /**
-     * Returns the maximal X!Tandem e-value allowed.
-     *
-     * @return the OMSSA maximal e-value allowed
-     */
-    public double getXtandemMaxEvalue() {
-        return xtandemMaxEvalue;
-    }
-
-    /**
-     * Sets the OMSSA maximal e-value allowed.
-     *
-     * @param xtandemMaxEvalue the OMSSA maximal e-value allowed
-     */
-    public void setXtandemMaxEvalue(double xtandemMaxEvalue) {
-        this.xtandemMaxEvalue = xtandemMaxEvalue;
-    }
-
     /**
      * Returns the name of the sample.
      *
