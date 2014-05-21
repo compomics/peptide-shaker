@@ -134,6 +134,7 @@
                             <mainClass>eu.isas.peptideshaker.PeptideShakerWrapper</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
+                            <useUniqueVersions>false</useUniqueVersions>
                         </manifest>
                     </archive>
                     <outputDirectory>${project.build.directory}/${project.name}-${project.version}
