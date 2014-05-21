@@ -16,7 +16,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.TagComponent;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -245,7 +244,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.msgf.getIndex(), new java.awt.Color(205, 92, 92));
         searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(216, 191, 216));
         searchEnginesColorMap.put(Advocate.direcTag.getIndex(), new java.awt.Color(189, 183, 107));
-        //TODO: set colors for the user advocates
+        
+        // @TODO: set colors for the user advocates!!!
 
         // the venn diagram colors
         advocateVennColors = new HashMap<Integer, Color>();
@@ -3715,10 +3715,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
         for (Integer tempAdvocate : advocatesUsed) {
-                psmDataset.addValue(data.get(tempAdvocate), tempAdvocate, xAxisLabel);
+                psmDataset.addValue(data.get(tempAdvocate), Advocate.getAdvocate(tempAdvocate).getName(), xAxisLabel);
         }
-        Integer psIndex = Advocate.peptideShaker.getIndex();
-        psmDataset.addValue(data.get(Advocate.peptideShaker.getIndex()), psIndex, xAxisLabel);
+        psmDataset.addValue(data.get(Advocate.peptideShaker.getIndex()), Advocate.peptideShaker.getName(), xAxisLabel);
 
         JFreeChart chart = ChartFactory.createBarChart(null, null, null, psmDataset, PlotOrientation.VERTICAL, false, false, false);
         CategoryPlot plot = chart.getCategoryPlot();
