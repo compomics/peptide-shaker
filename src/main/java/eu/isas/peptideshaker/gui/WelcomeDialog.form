@@ -375,7 +375,7 @@
               <Image iconType="3" name="/icons/relims_logo.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="PRIDE ReShake"/>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze a PRIDE experiment&lt;br&gt;&#xa;&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze PRIDE projects&lt;br&gt;&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="19"/>

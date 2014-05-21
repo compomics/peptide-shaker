@@ -9,9 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import com.compomics.util.pride.prideobjects.*;
-import java.io.IOException;
 import java.util.HashMap;
-import org.xml.sax.SAXException;
 
 /**
  * This class contains the details about a project.
@@ -141,7 +139,7 @@ public class ProjectDetails implements Serializable {
      */
     private String organizationAddress;
     /**
-     * The user advocates mapping of this project
+     * The user advocates mapping of this project.
      */
     private HashMap<Integer, Advocate> userAdvocateMapping;
 

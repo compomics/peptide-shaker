@@ -14,13 +14,13 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.xml.sax.SAXException;
 
 /**
  * This class generates the text needed to for the identification section of the
  * methods section of a paper.
  *
- * @author Marc
+ * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class PeptideShakerMethods {
 
@@ -364,5 +364,4 @@ public class PeptideShakerMethods {
                 + "- Password: [add password here]\n";
         return text;
     }
-
 }

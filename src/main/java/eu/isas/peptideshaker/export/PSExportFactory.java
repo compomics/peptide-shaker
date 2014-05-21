@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.math.MathException;
-import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**

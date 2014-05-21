@@ -35,10 +35,6 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private String species;
     /**
-     * The current taxonomy, can be null.
-     */
-    private String taxonomy;
-    /**
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
@@ -58,13 +54,11 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * @param searchParameters
      * @param modal
      * @param species the current species
-     * @param taxonomy the current taxonomy
      */
-    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, boolean modal, String species, String taxonomy) {
+    public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, boolean modal, String species) {
         super(peptideShakerGUI, modal);
         initComponents();
         this.species = species;
-        this.taxonomy = taxonomy;
         this.searchParameters = searchParameters;
         this.peptideShakerGUI = peptideShakerGUI;
 
@@ -76,14 +70,6 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         } else {
             speciesJTextField.setText("(unknown)");
             this.species = null;
-        }
-
-        if (taxonomy != null && taxonomy.length() > 0) {
-            taxonomyJTextField.setText(taxonomy);
-            speciesOrTaxonomySet = true;
-        } else {
-            taxonomyJTextField.setText("(unknown)");
-            this.taxonomy = null;
         }
 
         if (!speciesOrTaxonomySet) {
@@ -425,16 +411,12 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
+        
+        // @TODO: for "Mus musculus (Mouse)" get rid of "(Mouse)" before searching
+        
         if (downloadUniProtJLabel.isEnabled()) {
-
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-            if (taxonomy != null) {
-                BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=taxonomy%3A" + taxonomy + "&sort=score");
-            } else {
-                BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
-            }
-
+            BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_downloadUniProtJLabelMouseClicked

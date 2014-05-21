@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
+    <Property name="title" type="java.lang.String" value="Find"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
+  </Events>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="backgroundPanel" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="backgroundPanel" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="backgroundPanel">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="e6" green="e6" red="e6" type="rgb"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="filterPanel" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="20" pref="469" max="32767" attributes="0"/>
+                          <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="filterPanel" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="clearJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="okJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="filterPanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Project Filters"/>
+              </Border>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="accessionLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="tissueLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="ptmsLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="instrumentLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="titleLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="speciesLabel" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="assaysLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                          <Component id="typeLabel" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                              <Component id="assaysComboBox" min="-2" pref="52" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="assaysJTextField" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="tissuesComboBox" alignment="2" max="32767" attributes="0"/>
+                          <Component id="ptmsComboBox" alignment="2" max="32767" attributes="0"/>
+                          <Component id="instrumentsComboBox" alignment="2" max="32767" attributes="0"/>
+                          <Component id="accessionJTextField" max="32767" attributes="0"/>
+                          <Component id="titleJTextField" max="32767" attributes="0"/>
+                          <Component id="speciesComboBox" max="32767" attributes="0"/>
+                          <Component id="typeComboBox" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="accessionJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="accessionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="titleJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="titleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="speciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="speciesComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="tissueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tissuesComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="ptmsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ptmsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="instrumentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentsComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="assaysLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="assaysComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="assaysJTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="typeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="typeComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="accessionLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Accession"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="accessionJTextField">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="test"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Find all proteins containing a given string.&lt;br&gt;&#xa;Regular expressions are supported.&#xa;&lt;/html&gt;"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 10, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="accessionJTextFieldKeyReleased"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="titleLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Title"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="titleJTextField">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Find all proteins containing a given accession number.&lt;br&gt;&#xa;Regular expressions are supported.&#xa;&lt;/html&gt;"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 10, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="titleJTextFieldKeyReleased"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="speciesLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Species"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="tissueLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Tissue"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="assaysLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="#Assays"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="assaysJTextField">
+              <Properties>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 10, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="assaysJTextFieldKeyReleased"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="ptmsLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="PTMs"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="instrumentLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Instrument"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="typeLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Type"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="typeComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="maximumRowCount" type="int" value="20"/>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="4">
+                    <StringItem index="0" value=" "/>
+                    <StringItem index="1" value="COMPLETE"/>
+                    <StringItem index="2" value="PARTIAL"/>
+                    <StringItem index="3" value="PRIDE"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="speciesComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="maximumRowCount" type="int" value="20"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="tissuesComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="maximumRowCount" type="int" value="20"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tissuesComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="ptmsComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="maximumRowCount" type="int" value="20"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ptmsComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="instrumentsComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="maximumRowCount" type="int" value="20"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="instrumentsComboBoxActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="assaysComboBox">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="2">
+                    <StringItem index="0" value="&gt;"/>
+                    <StringItem index="1" value="&lt;"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JButton" name="clearJButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearJButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="okJButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="OK"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okJButtonActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
