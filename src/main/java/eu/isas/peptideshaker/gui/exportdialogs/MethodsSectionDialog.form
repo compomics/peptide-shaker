@@ -40,7 +40,7 @@
     <Container class="javax.swing.JPanel" name="backgroundPanel">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="e6" green="e6" red="e6" type="rgb"/>
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
       </Properties>
 
@@ -74,8 +74,8 @@
                   <Component id="introductionPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="featuresPanel" pref="503" max="32767" attributes="0"/>
-                      <Component id="outputPanel" pref="503" max="32767" attributes="0"/>
+                      <Component id="featuresPanel" pref="495" max="32767" attributes="0"/>
+                      <Component id="outputPanel" pref="495" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -112,8 +112,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="157" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="165" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -136,9 +136,6 @@
                 <Component class="javax.swing.JTextArea" name="introductionTxt">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
-                    </Property>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="13" style="0"/>
@@ -197,7 +194,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace pref="215" max="32767" attributes="0"/>
+                      <EmptySpace pref="203" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -236,7 +233,7 @@
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="pxCheck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="21" max="32767" attributes="0"/>
+                      <EmptySpace pref="13" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -245,7 +242,8 @@
             <Component class="javax.swing.JCheckBox" name="algorithmsCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Identification algorithms"/>
+                <Property name="text" type="java.lang.String" value="Identification Algorithms"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -256,6 +254,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="SearchGUI"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -275,7 +274,8 @@
             <Component class="javax.swing.JCheckBox" name="proteinDbCkeck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Protein database"/>
+                <Property name="text" type="java.lang.String" value="Protein Database"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -285,7 +285,8 @@
             <Component class="javax.swing.JCheckBox" name="decoyCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Decoy sequences generation"/>
+                <Property name="text" type="java.lang.String" value="Decoy Sequences Generation"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -295,7 +296,8 @@
             <Component class="javax.swing.JCheckBox" name="idParametersCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Identification parameters"/>
+                <Property name="text" type="java.lang.String" value="Identification Parameters"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -311,6 +313,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="PeptideShaker"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -320,7 +323,8 @@
             <Component class="javax.swing.JCheckBox" name="validationCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Statistical validation"/>
+                <Property name="text" type="java.lang.String" value="Statistical Validation"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -330,7 +334,8 @@
             <Component class="javax.swing.JCheckBox" name="ptmLocalizationCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="PTM localization"/>
+                <Property name="text" type="java.lang.String" value="PTM Localization"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -339,7 +344,9 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="geneAnnotationCheck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Gene annotation"/>
+                <Property name="text" type="java.lang.String" value="Gene Annotation"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -348,7 +355,8 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="proteinAbundanceIndexesCheck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Protein abundance index"/>
+                <Property name="text" type="java.lang.String" value="Protein Abundance Index"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -369,6 +377,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="ProteomeXchange"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>

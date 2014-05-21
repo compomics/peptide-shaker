@@ -3045,7 +3045,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void methodsSectionMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_methodsSectionMenuItemActionPerformed
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new MethodsSectionDialog(this, true);
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_methodsSectionMenuItemActionPerformed
 
     /**
