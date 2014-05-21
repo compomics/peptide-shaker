@@ -288,7 +288,7 @@ public class FileImporter {
                                     throw new IllegalArgumentException("Pepnovo ptm " + pepnovoPtmName + " not recognized.");
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                            } else if (advocateId == Advocate.DirecTag.getIndex()) {
+                            } else if (advocateId == Advocate.direcTag.getIndex()) {
                                 Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
                                 String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
                                 if (utilitiesPtmName == null) {
@@ -669,28 +669,30 @@ public class FileImporter {
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
             ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
 
-            int advocateId = readerFactory.getSearchEngine(idFile);
             IdfileReader fileReader = null;
-
             try {
-                if (advocateId == Advocate.Mascot.getIndex() && idFile.length() > mascotMaxSize * 1048576) {
-                    fileReader = new MascotIdfileReader(idFile, true);
-                } else {
-                    fileReader = readerFactory.getFileReader(idFile);
-                }
+                fileReader = readerFactory.getFileReader(idFile);
             } catch (OutOfMemoryError error) {
                 waitingHandler.appendReport("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.", true, true);
                 throw new OutOfMemoryError("Ran out of memory when parsing \'" + Util.getFileName(idFile) + "\'.");
             }
 
             if (fileReader == null) {
-                waitingHandler.appendReport("Unknown search result file \'" + Util.getFileName(idFile) + "\'.", true, true);
+                waitingHandler.appendReport("Identification result file \'" + Util.getFileName(idFile) + "\' not recognized.", true, true);
                 waitingHandler.setRunCanceled();
                 return;
             }
+            
+            String softwareName = fileReader.getSoftware();
+            Advocate advocate = Advocate.getAdvocate(softwareName);
+            if (advocate == null) {
+                advocate = Advocate.addUserAdvocate(softwareName);
+            }
+            int advocateId = advocate.getIndex();
 
-            // set the search engine versions
-            projectDetails.getIdentificationFileSearchEngineVersions().put(idFile.getName(), fileReader.getSoftwareVersion());
+            // set the search engine name and version for this file
+            projectDetails.setIdentificationAlgorithm(idFile.getName(), advocateId);
+            projectDetails.setIdentificationAlgorithmVersion(idFile.getName(), fileReader.getSoftwareVersion());
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
@@ -793,7 +795,7 @@ public class FileImporter {
                         }
                     }
 
-                    // Map de novo matches on protein sequences
+                    // Map spectrum sequencing matches on protein sequences
                     HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsMap = match.getAllAssumptions(advocateId);
                     if (assumptionsMap != null) {
                         ArrayList<Double> scores = new ArrayList<Double>(assumptionsMap.keySet());
@@ -866,7 +868,7 @@ public class FileImporter {
                                             HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                             if (modMatch.isVariable()) {
                                                 String sePTM = modMatch.getTheoreticPtm();
-                                                if (advocateId == Advocate.OMSSA.getIndex()) {
+                                                if (advocateId == Advocate.omssa.getIndex()) {
                                                     Integer omssaIndex = null;
                                                     try {
                                                         omssaIndex = new Integer(sePTM);
@@ -885,9 +887,9 @@ public class FileImporter {
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, PeptideShaker.MATCHING_TYPE, ptmMassTolerance, searchParameters.getFragmentIonAccuracy());
                                                     }
-                                                } else if (advocateId == Advocate.Mascot.getIndex()
-                                                        || advocateId == Advocate.XTandem.getIndex()
-                                                        || advocateId == Advocate.MSGF.getIndex()
+                                                } else if (advocateId == Advocate.mascot.getIndex()
+                                                        || advocateId == Advocate.xtandem.getIndex()
+                                                        || advocateId == Advocate.msgf.getIndex()
                                                         || advocateId == Advocate.msAmanda.getIndex()) {
                                                     String[] parsedName = sePTM.split("@");
                                                     double seMass = 0;
@@ -898,8 +900,7 @@ public class FileImporter {
                                                                 + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                     }
                                                     tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
-                                                } else if (advocateId != Advocate.DirecTag.getIndex() && advocateId != Advocate.pepnovo.getIndex()) {
-                                                    Advocate advocate = Advocate.getAdvocate(advocateId);
+                                                } else if (advocateId != Advocate.direcTag.getIndex() && advocateId != Advocate.pepnovo.getIndex()) {
                                                     throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
                                                 }
 
@@ -1295,7 +1296,7 @@ public class FileImporter {
                     double meanRejected = total / 4;
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
-                        if (advocateId == Advocate.Mascot.getIndex()) {
+                        if (advocateId == Advocate.mascot.getIndex()) {
                             report += " and make sure that you use Mascot with the 'decoy' option disabled.";
                         }
                         report += ".";
@@ -1308,7 +1309,7 @@ public class FileImporter {
                     }
                     if (ptmIssue > meanRejected) {
                         report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project.";
-                        if (advocateId == Advocate.Mascot.getIndex()) {
+                        if (advocateId == Advocate.mascot.getIndex()) {
                             report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible.";
                         }
                     }

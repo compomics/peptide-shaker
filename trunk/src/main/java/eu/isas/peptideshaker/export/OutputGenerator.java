@@ -1616,7 +1616,7 @@ public class OutputGenerator {
                         PTMScoringPreferences ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
 
                         ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
-                        ArrayList<Integer> searchEngines = projectDetails.getSearchEnginesIndexes();
+                        ArrayList<Integer> algorithms = projectDetails.getIdentificationAlgorithms();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -1630,7 +1630,7 @@ public class OutputGenerator {
                             writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " localization" + SEPARATOR);
                         }
                         writer.write("D-score localization" + SEPARATOR);
-                        if (searchEngines.size() == 1 && searchEngines.get(0) == Advocate.Mascot.getIndex()) {
+                        if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
                             writer.write("MD-score localization" + SEPARATOR);
                             writer.write("MD-score" + SEPARATOR);
                         }
@@ -1784,11 +1784,11 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
-                                if (searchEngines.size() == 1 && searchEngines.get(0) == Advocate.Mascot.getIndex()) {
-                                    if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.Mascot.getIndex())) {
+                                if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
+                                    if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.mascot.getIndex())) {
                                         PeptideAssumption mascotAssumption = null;
                                         double bestScore = 0;
-                                        for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.Mascot.getIndex()).values()) {
+                                        for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.mascot.getIndex()).values()) {
                                             for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
                                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                                 MascotScore mascotScore = new MascotScore();
@@ -1825,7 +1825,7 @@ public class OutputGenerator {
                                     writer.write(probabilisticLocalizations + SEPARATOR);
                                 }
                                 writer.write(dLocalizations + SEPARATOR);
-                                if (searchEngines.size() == 1 && searchEngines.get(0) == Advocate.Mascot.getIndex()) {
+                                if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
                                     writer.write(mdLocation + SEPARATOR);
                                     writer.write(mdScore + SEPARATOR);
                                 }
@@ -2352,15 +2352,15 @@ public class OutputGenerator {
                                                         writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                     }
                                                     if (scores) {
-                                                        if (se == Advocate.Mascot.getIndex()) {
+                                                        if (se == Advocate.mascot.getIndex()) {
                                                             writer.write("" + eValue);
                                                         }
                                                         writer.write(SEPARATOR);
-                                                        if (se == Advocate.OMSSA.getIndex()) {
+                                                        if (se == Advocate.omssa.getIndex()) {
                                                             writer.write("" + eValue);
                                                         }
                                                         writer.write(SEPARATOR);
-                                                        if (se == Advocate.XTandem.getIndex()) {
+                                                        if (se == Advocate.xtandem.getIndex()) {
                                                             writer.write("" + eValue);
                                                         }
                                                         writer.write(SEPARATOR);

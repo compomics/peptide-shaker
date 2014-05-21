@@ -340,34 +340,24 @@ public class PRIDEExport {
             PsmSpecificMap psmTargetDecoyMap = pSMaps.getPsmSpecificMap();
             PeptideSpecificMap peptideTargetDecoyMap = pSMaps.getPeptideSpecificMap();
 
-            // get the list of search engines used
-            IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-            ArrayList<File> idFiles = projectDetails.getIdentificationFiles();
+            // get the list of algorithms used
+            String searchEngineReport;
+                ArrayList<Integer> seList = projectDetails.getIdentificationAlgorithms();
+                Collections.sort(seList);
+                searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
 
-            ArrayList<Integer> seList = new ArrayList<Integer>();
+                for (int i = 1; i < seList.size(); i++) {
 
-            for (File file : idFiles) {
-                int currentSE = idFileReaderFactory.getSearchEngine(file);
-                if (!seList.contains(currentSE)) {
-                    seList.add(currentSE);
-                }
-            }
+                    if (i == seList.size() - 1) {
+                        searchEngineReport += " and ";
+                    } else {
+                        searchEngineReport += ", ";
+                    }
 
-            Collections.sort(seList);
-            String searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
-
-            for (int i = 1; i < seList.size(); i++) {
-
-                if (i == seList.size() - 1) {
-                    searchEngineReport += " and ";
-                } else {
-                    searchEngineReport += ", ";
+                    searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
                 }
 
-                searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
-            }
-
-            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
+                searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
 
             for (String spectrumFile : identification.getSpectrumFiles()) {
                 identification.loadSpectrumMatches(spectrumFile, null);
@@ -456,7 +446,7 @@ public class PRIDEExport {
                                         if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                             if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
                                                 eValues.put(se, eValue);
-                                                if (se == Advocate.Mascot.getIndex()) {
+                                                if (se == Advocate.mascot.getIndex()) {
                                                     mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                                                 }
                                             }
@@ -595,19 +585,15 @@ public class PRIDEExport {
 
                         // add the search engine e-values
                         for (int se : searchEngines) {
-                            Advocate advocate = Advocate.getAdvocate(se);
-                            switch (advocate) {
-                                case Mascot:
-                                    writeCvTerm(new CvTerm("MS", "MS:1001172", "Mascot:expectation value", "" + eValues.get(se)));
-                                    break;
-                                case OMSSA:
-                                    writeCvTerm(new CvTerm("MS", "MS:1001328", "OMSSA:evalue", "" + eValues.get(se)));
-                                    break;
-                                case XTandem:
-                                    writeCvTerm(new CvTerm("MS", "MS:1001330", "X!Tandem:expect", "" + eValues.get(se)));
-                                    break;
-                                default:
-                                    br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(se) + "\" />" + System.getProperty("line.separator"));
+                            if (se == Advocate.mascot.getIndex()) {
+                                writeCvTerm(new CvTerm("MS", "MS:1001172", "Mascot:expectation value", "" + eValues.get(se)));
+                            } else if (se == Advocate.omssa.getIndex()) {
+                                writeCvTerm(new CvTerm("MS", "MS:1001328", "OMSSA:evalue", "" + eValues.get(se)));
+                            } else if (se == Advocate.xtandem.getIndex()) {
+                                writeCvTerm(new CvTerm("MS", "MS:1001330", "X!Tandem:expect", "" + eValues.get(se)));
+                            } else {
+                                Advocate advocate = Advocate.getAdvocate(fileName);
+                                br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(se) + "\" />" + System.getProperty("line.separator"));
                             }
                         }
 

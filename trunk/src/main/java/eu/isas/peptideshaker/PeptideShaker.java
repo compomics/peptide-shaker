@@ -789,7 +789,7 @@ public class PeptideShaker {
                             for (int advocateId : agreementAdvocates) {
                                 inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
                             }
-                            inputMap.addAdvocateContribution(Advocate.PeptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                            inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                         }
                     }
                 }
@@ -886,7 +886,7 @@ public class PeptideShaker {
                                     for (int advocateId : agreementAdvocates) {
                                         inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
                                     }
-                                    inputMap.addAdvocateContribution(Advocate.PeptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                                    inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                                 }
                             }
                         }
@@ -1975,7 +1975,7 @@ public class PeptideShaker {
 
                         Peptide psPeptide = new Peptide(sePeptide.getSequence(), psModificationMatches);
                         psPeptide.setParentProteins(psProteins);
-                        PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.PeptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
+                        PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.peptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
                         spectrumMatch.setBestPeptideAssumption(psAssumption);
                         psParameter = new PSParameter();
                         psParameter.setSpectrumProbabilityScore(retainedP);

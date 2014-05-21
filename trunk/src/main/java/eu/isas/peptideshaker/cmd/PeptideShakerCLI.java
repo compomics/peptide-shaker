@@ -351,9 +351,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the filtering import settings
         idFilter = new IdFilter();
-        idFilter.setOmssaMaxEvalue(cliInputBean.getOmssaMaxEvalue());
-        idFilter.setXtandemMaxEvalue(cliInputBean.getXtandemMaxEvalue());
-        idFilter.setMascotMaxEvalue(cliInputBean.getMascotMaxEvalue());
         idFilter.setMinPepLength(cliInputBean.getMinPepLength());
         idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
         idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());

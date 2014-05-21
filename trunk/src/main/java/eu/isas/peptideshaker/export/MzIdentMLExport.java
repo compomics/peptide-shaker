@@ -919,7 +919,6 @@ public class MzIdentMLExport {
         // @TODO: add cv terms? (children of MS:1001302)
 //        tabCounter--;
 //        br.write(getCurrentTabSpace() + "</AnalysisParams>" + System.getProperty("line.separator"));
-
         // protein level threshold
         br.write(getCurrentTabSpace() + "<Threshold>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -1092,14 +1091,12 @@ public class MzIdentMLExport {
                 } else {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null)); // @TODO: validate these cv terms!! (children of MS:1001101)
                 }
-                
+
                 // add protein coverage cv term
                 //writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", null)); // @TODO: sequence coverage?? (need for MIAPE)
-                
                 // add protein score
                 // @TODO: add protein scores? don't think we have these..?
                 // children off MS:1001153 or MS:1001116
-
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
             }
@@ -1319,17 +1316,18 @@ public class MzIdentMLExport {
             Collections.sort(algorithms);
             for (int tempAdvocate : algorithms) {
                 double eValue = scores.get(tempAdvocate);
-                if (tempAdvocate == Advocate.MSGF.getIndex()) {
+                if (tempAdvocate == Advocate.msgf.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", Double.toString(eValue)));
-                } else if (tempAdvocate == Advocate.Mascot.getIndex()) {
+                } else if (tempAdvocate == Advocate.mascot.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
-                } else if (tempAdvocate == Advocate.OMSSA.getIndex()) {
+                } else if (tempAdvocate == Advocate.omssa.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue))); // @TODO: or OMSSA p-value (MS:1001329)?
-                } else if (tempAdvocate == Advocate.XTandem.getIndex()) {
+                } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue))); // @TODO: is this the one? or is it "X!Tandem:hyperscore" (MS:1001331)?
                 } else if (tempAdvocate == Advocate.msAmanda.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", Double.toString(eValue)));
                 }
+                //@TODO: generic e-value for user algorithms?
             }
             // @TODO: 
             // add validation level information
@@ -1403,28 +1401,28 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
             tabCounter++;
 
-            int searchEngine = IdfileReaderFactory.getInstance().getSearchEngine(idFile);
-            Advocate advocate = Advocate.getAdvocate(searchEngine);
+            String idFileName = Util.getFileName(idFile);
+            try {
+                int advocateIndex = projectDetails.getIdentificationAlgorithm(idFileName);
 
-            switch (advocate) {
-                case Mascot:
+                if (advocateIndex == Advocate.mascot.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001199", "Mascot DAT format", null));
-                    break;
-                case OMSSA:
+                } else if (advocateIndex == Advocate.xtandem.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "xtandem xml file", null));
-                    break;
-                case XTandem:
+                } else if (advocateIndex == Advocate.omssa.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
-                    break;
-                case MSGF:
+                } else if (advocateIndex == Advocate.msgf.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
-                    break;
-                case msAmanda:
+                } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
-                    break;
-                default:
+                } else {
                     writeUserParam("Unknown"); // @TODO: add cv term?
                     break;
+                }
+            } catch (Exception e) {
+                // A backward compatibility error occurred
+                writeUserParam("Unknown"); // @TODO: add cv term?
+                break;
             }
 
             tabCounter--;

@@ -1675,7 +1675,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         }
 
-        IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.XTandem.getIndex());
+        IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
         if (algorithmParameter != null) {
             XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
             if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {

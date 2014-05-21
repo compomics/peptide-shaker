@@ -18,7 +18,8 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
     experiment("Experiment", "Experiment name."),
     sample("Sample", "Sample name."),
     replicate("Replicate Number", "Replicate number."),
-    search_engines("Search Engines", "The search engines used.");
+    identification_algorithms("Identification Algorithms", "The identification algorithms used."),
+    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.");
     /**
      * The title of the feature which will be used for column heading.
      */

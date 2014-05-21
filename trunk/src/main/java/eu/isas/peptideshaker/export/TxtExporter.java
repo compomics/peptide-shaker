@@ -720,16 +720,16 @@ public class TxtExporter {
                     if (assumption instanceof PeptideAssumption) {
                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                         if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
-                            if (se == Advocate.Mascot.getIndex()) {
+                            if (se == Advocate.mascot.getIndex()) {
                                 if (mascotEValue == null || mascotEValue > eValue) {
                                     mascotEValue = eValue;
                                     mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
                                 }
-                            } else if (se == Advocate.OMSSA.getIndex()) {
+                            } else if (se == Advocate.omssa.getIndex()) {
                                 if (omssaEValue == null || omssaEValue > eValue) {
                                     omssaEValue = eValue;
                                 }
-                            } else if (se == Advocate.XTandem.getIndex()) {
+                            } else if (se == Advocate.xtandem.getIndex()) {
                                 if (xtandemEValue == null || xtandemEValue > eValue) {
                                     xtandemEValue = eValue;
                                 }
@@ -816,11 +816,11 @@ public class TxtExporter {
                     if (assumption instanceof PeptideAssumption) {
                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
-                        if (se == Advocate.Mascot.getIndex()) {
+                        if (se == Advocate.mascot.getIndex()) {
                             line += "M" + SEPARATOR;
-                        } else if (se == Advocate.OMSSA.getIndex()) {
+                        } else if (se == Advocate.omssa.getIndex()) {
                             line += "O" + SEPARATOR;
-                        } else if (se == Advocate.XTandem.getIndex()) {
+                        } else if (se == Advocate.xtandem.getIndex()) {
                             line += "X" + SEPARATOR;
                         }
 
@@ -849,7 +849,7 @@ public class TxtExporter {
                         line += spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true) + SEPARATOR;
                         line += spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()) + SEPARATOR;
 
-                        if (se == Advocate.Mascot.getIndex()) {
+                        if (se == Advocate.mascot.getIndex()) {
                             MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
                             line += score.getScore() + SEPARATOR;
                             line += assumption.getScore() + SEPARATOR;
@@ -857,13 +857,13 @@ public class TxtExporter {
                             line += SEPARATOR + SEPARATOR;
                         }
 
-                        if (se == Advocate.OMSSA.getIndex()) {
+                        if (se == Advocate.omssa.getIndex()) {
                             line += assumption.getScore() + "";
                         }
 
                         line += SEPARATOR;
 
-                        if (se == Advocate.XTandem.getIndex()) {
+                        if (se == Advocate.xtandem.getIndex()) {
                             line += assumption.getScore() + "";
                         }
 

@@ -32,9 +32,6 @@ public enum PeptideShakerCLIParams {
     PROTEIN_FRACTION_MW_CONFIDENCE("protein_fraction_mw_confidence", "Minimum confidence required for a protein in the fraction MW plot (default 95%: '95.0').", false),
     MIN_PEPTIDE_LENGTH("min_peptide_length", "Minimim peptide length filter (default is '6').", false),
     MAX_PEPTIDE_LENGTH("max_peptide_length", "Maximum peptide length filter (default is '30').", false),
-    MASCOT_E_VALUE_MAX("max_mascot_e", "Maximum Mascot E-value filter (default '100').", false),
-    OMSSA_E_VALUE_MAX("max_omssa_e", "Maximum OMSSA E-value filter (default '100').", false),
-    XTANDEM_E_VALUE_MAX("max_xtandem_e", "Maximum X!Tandem E-value filter (default '100').", false),
     MAX_PRECURSOR_ERROR("max_precursor_error", "Maximum precursor error filter (default '10'). See also max_precursor_error_type.", false),
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
@@ -92,9 +89,6 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(PROTEIN_FRACTION_MW_CONFIDENCE.id, true, PROTEIN_FRACTION_MW_CONFIDENCE.description);
         aOptions.addOption(MIN_PEPTIDE_LENGTH.id, true, MIN_PEPTIDE_LENGTH.description);
         aOptions.addOption(MAX_PEPTIDE_LENGTH.id, true, MAX_PEPTIDE_LENGTH.description);
-        aOptions.addOption(MASCOT_E_VALUE_MAX.id, true, MASCOT_E_VALUE_MAX.description);
-        aOptions.addOption(OMSSA_E_VALUE_MAX.id, true, OMSSA_E_VALUE_MAX.description);
-        aOptions.addOption(XTANDEM_E_VALUE_MAX.id, true, XTANDEM_E_VALUE_MAX.description);
         aOptions.addOption(MAX_PRECURSOR_ERROR.id, true, MAX_PRECURSOR_ERROR.description);
         aOptions.addOption(MAX_PRECURSOR_ERROR_TYPE.id, true, MAX_PRECURSOR_ERROR_TYPE.description);
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
@@ -148,9 +142,6 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional filtering parameters:\n\n";
         output += "-" + String.format(formatter, MIN_PEPTIDE_LENGTH.id) + MIN_PEPTIDE_LENGTH.description + "\n";
         output += "-" + String.format(formatter, MAX_PEPTIDE_LENGTH.id) + MAX_PEPTIDE_LENGTH.description + "\n";
-        output += "-" + String.format(formatter, MASCOT_E_VALUE_MAX.id) + MASCOT_E_VALUE_MAX.description + "\n";
-        output += "-" + String.format(formatter, OMSSA_E_VALUE_MAX.id) + OMSSA_E_VALUE_MAX.description + "\n";
-        output += "-" + String.format(formatter, XTANDEM_E_VALUE_MAX.id) + XTANDEM_E_VALUE_MAX.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProjectFeatures;
@@ -8,6 +9,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import org.xml.sax.SAXException;
 
 /**
  * This class outputs the project related export features.
@@ -112,19 +115,60 @@ public class ProjectSection {
                 case sample:
                     writer.write(sample);
                     break;
-                case search_engines:
-                    ArrayList<String> searchEngines = projectDetails.getSearchEnginesNames();
-                    Collections.sort(searchEngines);
-                    for (int i = 0 ; i < searchEngines.size() ; i++) {
-                        if (i>0) {
-                            if (i == searchEngines.size()-1) {
-                                writer.write(" and ");
+                case identification_algorithms:
+                        ArrayList<Integer> advocatesIds = projectDetails.getIdentificationAlgorithms();
+                        Collections.sort(advocatesIds);
+                        for (int i = 0; i < advocatesIds.size(); i++) {
+                            if (i > 0) {
+                                if (i == advocatesIds.size() - 1) {
+                                    writer.write(" and ");
+                                } else {
+                                    writer.write(", ");
+                                }
+                            }
+                            Integer advocateId = advocatesIds.get(i);
+                            Advocate advocate = Advocate.getAdvocate(advocateId);
+                            writer.write(advocate.getName());
+                        }
+                    break;
+                case algorithms_versions:
+                        advocatesIds = projectDetails.getIdentificationAlgorithms();
+                        HashMap<String, ArrayList<String>> versions = projectDetails.getAlgorithmNameToVersionsMap();
+                        Collections.sort(advocatesIds);
+                        for (int i = 0; i < advocatesIds.size(); i++) {
+                            if (i > 0) {
+                                if (i == advocatesIds.size() - 1) {
+                                    writer.write(" and ");
+                                } else {
+                                    writer.write(", ");
+                                }
+                            }
+                            Integer advocateId = advocatesIds.get(i);
+                            Advocate advocate = Advocate.getAdvocate(advocateId);
+                            String advocateName = advocate.getName();
+                            writer.write(advocateName + " (");
+                            ArrayList<String> algorithmVersions = versions.get(advocateName);
+                            if (algorithmVersions == null || algorithmVersions.isEmpty()) {
+                                writer.write("unknown version)");
                             } else {
-                                writer.write(",");
+                                if (algorithmVersions.size() == 1) {
+                                    writer.write("version " + algorithmVersions.get(0) + ")");
+                                } else {
+                                    writer.write("versions ");
+                                    for (int j = 0; j < algorithmVersions.size(); j++) {
+                                        if (j > 0) {
+                                            if (j == algorithmVersions.size() - 1) {
+                                                writer.write(" and ");
+                                            } else {
+                                                writer.write(", ");
+                                            }
+                                        }
+                                        writer.write(algorithmVersions.get(j));
+                                    }
+                                    writer.write(")");
+                                }
                             }
                         }
-                        writer.write(searchEngines.get(i));
-                    }
                     break;
                 default:
                     writer.write("Not implemented");
