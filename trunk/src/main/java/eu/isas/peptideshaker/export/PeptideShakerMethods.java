@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.util.ArrayList;
@@ -52,14 +53,18 @@ public class PeptideShakerMethods {
                 if (ref == null) {
                     ref = "add reference here";
                 }
-                text += advocate.getName() + " [ref PMID " + ref + "] ";
+                text += advocate.getName() + " [PMID " + ref + "] ";
 
                 ArrayList<String> versions = algorithmToVersionMap.get(advocate.getName());
 
                 if (versions == null || versions.isEmpty()) {
                     text += "[add version here]";
                 } else if (versions.size() == 1) {
-                    text += "version " + versions.get(0);
+                    if (versions.get(0) != null) {
+                        text += "version " + versions.get(0);
+                    } else {
+                        text += "version unknown";
+                    }
                 } else {
                     text += "versions ";
                     Collections.sort(versions);
@@ -71,11 +76,16 @@ public class PeptideShakerMethods {
                                 text += ", ";
                             }
                         }
-                        text += versions.get(j);
+                        if (versions.get(0) != null) {
+                            text += versions.get(j);
+                        } else {
+                            text += "unknown";
+                        }
                     }
                 }
-                text += ".";
             }
+            
+            text += ".";
         } catch (Exception e) {
             // A backward compatibility issue occurred
             text += "[add the search eninges used here].";
@@ -89,8 +99,7 @@ public class PeptideShakerMethods {
      * @return the SearchGUI usage details
      */
     public static String getSearchGUIText() {
-        String text = "The search was conducted using SearchGUI [ref PMID  21337703] version [add version here].";
-        return text;
+        return "The search was conducted using SearchGUI [PMID  21337703] version [add version].";
     }
 
     /**
@@ -99,14 +108,22 @@ public class PeptideShakerMethods {
      * @return the database usage details
      */
     public static String getDatabaseText() {
-        String text = "Protein identification was conducted against a concatenated target/decoy [ref PMID 20013364] version of the ";
-
+        
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+        
+        String text = "";
+        
+        if (sequenceFactory.concatenatedTargetDecoy()) {
+            text += "Protein identification was conducted against a concatenated target/decoy [PMID 20013364] version of the ";
+        } else {
+            text += "Protein identification was conducted against a version of the ";
+        }
+        
         FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
 
         ArrayList<String> species = fastaIndex.getSpecies();
         if (species == null || species.isEmpty()) {
-            text += "[add species here]";
+            text += "[add species]";
         } else {
             for (int i = 0; i < species.size(); i++) {
                 if (i > 0) {
@@ -123,17 +140,17 @@ public class PeptideShakerMethods {
 
         String dbType = fastaIndex.getDatabaseType().getFullName();
         if (dbType == null) {
-            dbType = "[add database full name here]";
+            dbType = "[add database full name]";
         }
 
         String dbRef = fastaIndex.getDatabaseType().getPmid();
         if (dbRef == null) {
-            dbRef = "add reference here";
+            dbRef = "add reference";
         } else {
-            dbRef = "ref PMID " + dbRef;
+            dbRef = "PMID " + dbRef;
         }
 
-        text += dbType + " [" + dbRef + " ] (version of [add version here] , " + fastaIndex.getNTarget() + " (target) sequences).";
+        text += dbType + " [" + dbRef + "] (version of [add database version] , " + fastaIndex.getNTarget() + " (target) sequences).";
 
         return text;
     }
@@ -144,8 +161,7 @@ public class PeptideShakerMethods {
      * @return the decoy sequences creation details
      */
     public static String getDecoyType() {
-        String text = "The decoy sequences were created by reversing the target sequences in SearchGUI. ";
-        return text;
+        return "The decoy sequences were created by reversing the target sequences in SearchGUI. ";
     }
 
     /**
@@ -156,7 +172,7 @@ public class PeptideShakerMethods {
      * @return the identification settings details
      */
     public static String getIdentificationSettings(SearchParameters searchParameters) {
-        String text = "Identification settings were as follows:";
+        String text = "The dentification settings were as follows: ";
         text += searchParameters.getEnzyme().getName() + " with a maximum of " + searchParameters.getnMissedCleavages() + " missed cleavages; ";
         String msToleranceUnit;
         if (searchParameters.isPrecursorAccuracyTypePpm()) {
@@ -165,7 +181,7 @@ public class PeptideShakerMethods {
             msToleranceUnit = "Da";
         }
         String msmsToleranceUnit = "Da";
-        text += searchParameters.getPrecursorAccuracy() + " " + msToleranceUnit + " as MS and " + searchParameters.getFragmentIonAccuracy() + " " + msmsToleranceUnit + " as MS/MS tolerances; ";
+        text += searchParameters.getPrecursorAccuracy() + " " + msToleranceUnit + " as MS1 and " + searchParameters.getFragmentIonAccuracy() + " " + msmsToleranceUnit + " as MS2 tolerances; ";
         PTMFactory ptmFactory = PTMFactory.getInstance();
         ArrayList<String> fixedPtmsNames = searchParameters.getModificationProfile().getFixedModifications();
         if (!fixedPtmsNames.isEmpty()) {
@@ -188,10 +204,12 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
+            
+            text += ", ";
         }
         ArrayList<String> variablePtmsNames = searchParameters.getModificationProfile().getVariableModifications();
         if (!variablePtmsNames.isEmpty()) {
-            text += "variable modifications: ";
+            text += " variable modifications: ";
             for (int i = 0; i < variablePtmsNames.size(); i++) {
                 if (i > 0) {
                     if (i == variablePtmsNames.size() - 1) {
@@ -210,6 +228,8 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
+            
+            text += ", ";
         }
         ArrayList<String> refinementFixedPtmsNames = searchParameters.getModificationProfile().getRefinementFixedModifications();
         if (!refinementFixedPtmsNames.isEmpty()) {
@@ -232,6 +252,8 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
+            
+            text += ", ";
         }
         ArrayList<String> refinementVariablePtmsNames = searchParameters.getModificationProfile().getRefinementVariableModifications();
         if (!refinementVariablePtmsNames.isEmpty()) {
@@ -255,18 +277,19 @@ public class PeptideShakerMethods {
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
         }
-        text += ". All algorithms specific settings are listed in the Certificate of Analysis available as supplementary information.";
+        text += ". All algorithms specific settings are listed in the Certificate of Analysis available in the supplementary information.";
         return text;
     }
 
     /**
      * Returns the PeptideShaker usage details.
      *
+     * @param peptideShakerGUI reference to PeptideShaker
      * @return the PeptideShaker usage details
      */
-    public static String getPeptideShaker() {
-        String text = "Peptides and proteins were infered from the spectrum identification results using PeptideShaker version [add PeptideShaker version here] (http://peptide-shaker.googlecode.com).";
-        return text;
+    public static String getPeptideShaker(PeptideShakerGUI peptideShakerGUI) {
+        return "Peptides and proteins were infered from the spectrum identification results using PeptideShaker "
+                + "version " + peptideShakerGUI.getVersion() + " (http://peptide-shaker.googlecode.com). ";
     }
 
     /**
@@ -287,7 +310,7 @@ public class PeptideShakerMethods {
         } else {
             text = "Peptide Spectrum Matches (PSMs), peptides and proteins were validated at a " + psmFDR + "%, " + peptideFDR + "%, and " + proteinFDR + "% False Discovery Rate (FDR) estimated using the decoy hit distribution, respectively. ";
         }
-        text += "All validation thresholds are listed in the Certificate of Analysis available as supplementary information.";
+        text += "All validation thresholds are listed in the Certificate of Analysis available in the supplementary information.";
         return text;
     }
 
@@ -299,12 +322,12 @@ public class PeptideShakerMethods {
      * @return the PTM scoring methods used
      */
     public static String getPtmScoring(PTMScoringPreferences ptmScoringPreferences) {
-        String text = "Post-translational Modification (PTM) localization was scored using the D-score [ref PMID  21337703] ";
+        String text = "Post-translational modification localizations were scored using the D-score [PMID 21337703] ";
         if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
-                text += "and the A-score [ref PMID  16964243] ";
+                text += "and the A-score [PMID 16964243] ";
             } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                text += "and the phosphoRS score [ref PMID  22073976] ";
+                text += "and the phosphoRS score [PMID 22073976] ";
             } else {
                 throw new IllegalArgumentException("Export not implemented for score " + ptmScoringPreferences.getSelectedProbabilisticScore().getName() + ".");
             }
@@ -312,7 +335,7 @@ public class PeptideShakerMethods {
                 text += "with a threshold of " + ptmScoringPreferences.getProbabilisticScoreThreshold() + " ";
             }
         }
-        text += "as implemented in the compomics utilities package [ref PMID 21385435].";
+        text += "as implemented in the compomics-utilities package [PMID 21385435].";
         if (ptmScoringPreferences.isProbabilitsticScoreCalculation() && !ptmScoringPreferences.isEstimateFlr()) {
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
                 text += " An A-score above ";
@@ -323,7 +346,7 @@ public class PeptideShakerMethods {
             }
             text += "was considered as a confident localization.";
         }
-        return text;
+        return text + " ";
     }
 
     /**
@@ -331,7 +354,7 @@ public class PeptideShakerMethods {
      *
      * @return the gene annotation method usage details
      */
-    public static String getGeneAnnoration() {
+    public static String getGeneAnnotation() {
         String text = "TODO!";
         return text;
     }
@@ -346,9 +369,9 @@ public class PeptideShakerMethods {
     public static String getSpectrumCounting(SpectrumCountingPreferences spectrumCountingPreferences) {
         String text = "Spectrum counting abundance indexes were estimated using the ";
         if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-            text += "emPAI index [ref PMID 15958392].";
+            text += "emPAI index [PMID 15958392].";
         } else {
-            text += "Normalized Spectrum Abundance Factor [ref PMID 15282323] adapted for better handling of protein inference issues and peptide detectability.";
+            text += "Normalized Spectrum Abundance Factor [PMID 15282323] adapted for better handling of protein inference issues and peptide detectability.";
         }
         return text;
     }
@@ -358,10 +381,12 @@ public class PeptideShakerMethods {
      *
      * @return the ProteomeXchange upload details
      */
-    public static String getProteomeXchage() {
-        String text = "The mass spectrometry data along with the identification results have been deposited to the ProteomeXchange Consortium [ref PMID 24727771] via the PRIDE partner repository [ref PMID 16041671] with the dataset identifiers [add dataset identifiers here]. Note that during the review process, the data can be accessed with the following credentials upon login to the pride website (http://www.ebi.ac.uk/pride/archive/login):\n"
-                + "- Username: [add username here]\n"
-                + "- Password: [add password here]\n";
+    public static String getProteomeXchange() {
+        String text = "The mass spectrometry data along with the identification results have been deposited to the "
+                + "ProteomeXchange Consortium [PMID 24727771] via the PRIDE partner repository [PMID 16041671] "
+                + "with the dataset identifiers [add dataset identifiers]. During the review process, "
+                + "the data can be accessed with the following credentials upon login to the PRIDE website (http://www.ebi.ac.uk/pride/archive/login): "
+                + "Username: [add username here], Password: [add password here].";
         return text;
     }
 }
