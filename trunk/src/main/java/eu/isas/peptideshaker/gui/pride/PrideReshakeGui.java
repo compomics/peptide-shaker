@@ -1658,7 +1658,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         // help the user get the correct database
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        new DatabaseHelpDialog(peptideShakerGUI, prideSearchParameters, true, speciesForProject.get(prideAccession), taxonomyForProject.get(prideAccession));
+        new DatabaseHelpDialog(peptideShakerGUI, prideSearchParameters, true, speciesForProject.get(prideAccession));
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 

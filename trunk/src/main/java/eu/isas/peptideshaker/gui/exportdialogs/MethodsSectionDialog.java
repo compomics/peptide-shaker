@@ -1,9 +1,7 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.io.export.ExportFactory;
 import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.PeptideShakerMethods;
 import eu.isas.peptideshaker.export.PSExportFactory;
@@ -11,8 +9,6 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,6 +16,7 @@ import javax.swing.JOptionPane;
  * PeptideShaker results.
  *
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class MethodsSectionDialog extends javax.swing.JDialog {
 
@@ -97,7 +94,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     }
     
     /**
-     * Lets the user select a file where to write the coa
+     * Lets the user select a file where to write the certificate of analysis.
      */
     private void writeCoa() {
         
@@ -171,9 +168,10 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
-        okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-        settingsPanel = new javax.swing.JPanel();
+        introductionPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        introductionTxt = new javax.swing.JTextArea();
+        featuresPanel = new javax.swing.JPanel();
         algorithmsCheck = new javax.swing.JCheckBox();
         searchGUICheck = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -194,33 +192,53 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         outputScrollPane = new javax.swing.JScrollPane();
         methodsSectionEditorPane = new javax.swing.JEditorPane();
         exportCoaLbl = new javax.swing.JLabel();
-        introductionPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        introductionTxt = new javax.swing.JTextArea();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Methods Section Draft");
+        setTitle("Methods Section Editor");
         setMinimumSize(new java.awt.Dimension(450, 400));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        introductionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Information"));
+        introductionPanel.setOpaque(false);
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setEnabled(false);
+        jScrollPane1.setOpaque(false);
 
-        settingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
-        settingsPanel.setOpaque(false);
-        settingsPanel.setPreferredSize(new java.awt.Dimension(500, 523));
+        introductionTxt.setEditable(false);
+        introductionTxt.setBackground(new java.awt.Color(230, 230, 230));
+        introductionTxt.setColumns(20);
+        introductionTxt.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+        introductionTxt.setLineWrap(true);
+        introductionTxt.setRows(5);
+        introductionTxt.setText("Method Section Editor automatically drafts a methods section protein identification with SearchGUI and PeptideShaker.\n\n1 - Select the wanted features in the left panel.\n2 - Copy the output to a text editor.\n3 - Complete the sections in brackets. (References are as PubMed IDs, paste into PubMed to retrieve the complete reference.)\n4 - Export the Certificate of Analysis and add it to your supplementary material and to the files uploaded to ProteomeXchange.\n\nNote: the section editor does not include the raw file to peak list conversion.");
+        introductionTxt.setWrapStyleWord(true);
+        introductionTxt.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        jScrollPane1.setViewportView(introductionTxt);
+
+        javax.swing.GroupLayout introductionPanelLayout = new javax.swing.GroupLayout(introductionPanel);
+        introductionPanel.setLayout(introductionPanelLayout);
+        introductionPanelLayout.setHorizontalGroup(
+            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(introductionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        introductionPanelLayout.setVerticalGroup(
+            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(introductionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        featuresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
+        featuresPanel.setOpaque(false);
+        featuresPanel.setPreferredSize(new java.awt.Dimension(500, 523));
 
         algorithmsCheck.setSelected(true);
         algorithmsCheck.setText("Identification algorithms");
@@ -240,9 +258,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setText("Spectrum Identification Algorithms:");
+        jLabel1.setText("Spectrum Identification Algorithms");
 
-        jLabel2.setText("Spectrum Identification Settings:");
+        jLabel2.setText("Spectrum Identification Settings");
 
         proteinDbCkeck.setSelected(true);
         proteinDbCkeck.setText("Protein database");
@@ -271,7 +289,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText("Peptide and Protein Identification:");
+        jLabel3.setText("Peptide and Protein Identification");
 
         peptideShakerCheck.setSelected(true);
         peptideShakerCheck.setText("PeptideShaker");
@@ -316,9 +334,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel4.setText("Additional Features:");
+        jLabel4.setText("Additional Features");
 
-        jLabel5.setText("Identification Repository:");
+        jLabel5.setText("Identification Repository");
 
         pxCheck.setSelected(true);
         pxCheck.setText("ProteomeXchange");
@@ -329,21 +347,21 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
-        settingsPanel.setLayout(settingsPanelLayout);
-        settingsPanelLayout.setHorizontalGroup(
-            settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(settingsPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
+        featuresPanel.setLayout(featuresPanelLayout);
+        featuresPanelLayout.setHorizontalGroup(
+            featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                    .addGroup(featuresPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pxCheck)
                             .addComponent(peptideShakerCheck)
                             .addComponent(proteinDbCkeck)
@@ -355,11 +373,11 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                             .addComponent(ptmLocalizationCheck)
                             .addComponent(geneAnnotationCheck)
                             .addComponent(proteinAbundanceIndexesCheck))))
-                .addContainerGap(303, Short.MAX_VALUE))
+                .addContainerGap(215, Short.MAX_VALUE))
         );
-        settingsPanelLayout.setVerticalGroup(
-            settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(settingsPanelLayout.createSequentialGroup()
+        featuresPanelLayout.setVerticalGroup(
+            featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -392,7 +410,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pxCheck)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output"));
@@ -430,9 +448,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(outputScrollPane)
+                    .addComponent(outputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
-                        .addGap(0, 328, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(exportCoaLbl)))
                 .addContainerGap())
         );
@@ -440,41 +458,25 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(outputScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+                .addComponent(outputScrollPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(exportCoaLbl)
                 .addContainerGap())
         );
 
-        introductionPanel.setOpaque(false);
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setEnabled(false);
-        jScrollPane1.setOpaque(false);
-
-        introductionTxt.setEditable(false);
-        introductionTxt.setBackground(new java.awt.Color(240, 240, 240));
-        introductionTxt.setColumns(20);
-        introductionTxt.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
-        introductionTxt.setLineWrap(true);
-        introductionTxt.setRows(5);
-        introductionTxt.setText("The Method section editor automatically generates a text listing the methods used for protein identification with SearchGUI and PeptideShaker. It can serve as a basis to write the Method section of Manuscripts.\n\n1- Select the relevant sections on the left panel.\n2- Copy the output in a text editor.\n3- Complete the missing sections marked in brackets. References are indicated by their Pubmed ID (PMID), paste it in pubmed to retrieve the original reference.\n4- Export the Certificate of Analysis and add it to the supplementary material of your manuscript and to the files uploaded in ProteomeXchange.\n\nNote: the section editor does not include the raw file to peak list conversion.");
-        introductionTxt.setWrapStyleWord(true);
-        introductionTxt.setMargin(new java.awt.Insets(10, 10, 10, 10));
-        jScrollPane1.setViewportView(introductionTxt);
-
-        javax.swing.GroupLayout introductionPanelLayout = new javax.swing.GroupLayout(introductionPanel);
-        introductionPanel.setLayout(introductionPanelLayout);
-        introductionPanelLayout.setHorizontalGroup(
-            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-        );
-        introductionPanelLayout.setVerticalGroup(
-            introductionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(introductionPanelLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -488,14 +490,11 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
+                    .addComponent(introductionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(introductionPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
-                                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -507,14 +506,14 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(introductionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(settingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(outputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 523, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                    .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addGap(143, 143, 143))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -525,7 +524,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 793, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -573,58 +572,128 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_methodsSectionEditorPaneHyperlinkUpdate
 
+    /**
+     * Write the certificate of analysis.
+     * 
+     * @param evt 
+     */
     private void exportCoaLblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseReleased
         writeCoa();
     }//GEN-LAST:event_exportCoaLblMouseReleased
 
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
     private void exportCoaLblMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportCoaLblMouseEntered
 
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
     private void exportCoaLblMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportCoaLblMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportCoaLblMouseExited
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void algorithmsCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algorithmsCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_algorithmsCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void searchGUICheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGUICheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_searchGUICheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void proteinDbCkeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinDbCkeckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_proteinDbCkeckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void decoyCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_decoyCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_decoyCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void idParametersCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idParametersCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_idParametersCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void peptideShakerCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideShakerCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_peptideShakerCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void validationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_validationCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void ptmLocalizationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmLocalizationCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_ptmLocalizationCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void geneAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_geneAnnotationCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_geneAnnotationCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void proteinAbundanceIndexesCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinAbundanceIndexesCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_proteinAbundanceIndexesCheckActionPerformed
 
+    /**
+     * Update the methods draft.
+     * 
+     * @param evt 
+     */
     private void pxCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pxCheckActionPerformed
         updateMethodsSection();
     }//GEN-LAST:event_pxCheckActionPerformed
@@ -635,6 +704,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox decoyCheck;
     private javax.swing.JLabel exportCoaLbl;
+    private javax.swing.JPanel featuresPanel;
     private javax.swing.JCheckBox geneAnnotationCheck;
     private javax.swing.JCheckBox idParametersCheck;
     private javax.swing.JPanel introductionPanel;
@@ -655,7 +725,6 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox ptmLocalizationCheck;
     private javax.swing.JCheckBox pxCheck;
     private javax.swing.JCheckBox searchGUICheck;
-    private javax.swing.JPanel settingsPanel;
     private javax.swing.JCheckBox validationCheck;
     // End of variables declaration//GEN-END:variables
 

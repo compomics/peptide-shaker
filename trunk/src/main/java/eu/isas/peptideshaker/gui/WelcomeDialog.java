@@ -15,8 +15,8 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
+import eu.isas.peptideshaker.gui.pride.PrideReShakeGUIv2;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
-import eu.isas.peptideshaker.gui.pride.PrideReshakeGuiWS;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
@@ -300,7 +300,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         reshakeJButton.setFont(reshakeJButton.getFont().deriveFont(reshakeJButton.getFont().getStyle() | java.awt.Font.BOLD, reshakeJButton.getFont().getSize()+3));
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
         reshakeJButton.setText("PRIDE ReShake");
-        reshakeJButton.setToolTipText("<html>\nReanalyze a PRIDE experiment<br>\n</html>");
+        reshakeJButton.setToolTipText("<html>\nReanalyze PRIDE projects<br>\n</html>");
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         reshakeJButton.setIconTextGap(19);
@@ -705,7 +705,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                     if (openReshake) {
                         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                        new PrideReshakeGuiWS(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                        WelcomeDialog.this.setVisible(false);
+                        new PrideReShakeGUIv2(peptideShakerGUI);
+                        //new PrideReshakeGuiWS(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                        //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
                 }
