@@ -484,8 +484,8 @@
 
         <dependency>
             <groupId>uk.ac.ebi.pride.archive</groupId>
-            <artifactId>webservice-model</artifactId>
-            <version>0.1.6.1-SNAPSHOT</version>
+            <artifactId>web-service-model</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <dependency>
