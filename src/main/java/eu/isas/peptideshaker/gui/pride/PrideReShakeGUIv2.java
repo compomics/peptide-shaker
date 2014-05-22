@@ -19,9 +19,11 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -173,7 +175,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     /**
      * The web service URL.
      */
-    private static final String projectServiceURL = "http://wwwdev.ebi.ac.uk/pride/ws/archive/";
+    private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/";
 
     /**
      * Creates a new PrideReShakeGUI2 frame.
@@ -212,6 +214,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTable.getColumn(" ").setMinWidth(50);
         filesTable.getColumn("  ").setMaxWidth(30);
         filesTable.getColumn("  ").setMinWidth(30);
+        filesTable.getColumn("Download").setMaxWidth(90);
+        filesTable.getColumn("Download").setMinWidth(90);
         filesTable.getColumn("Type").setMaxWidth(90);
         filesTable.getColumn("Type").setMinWidth(90);
         filesTable.getColumn("Size").setMaxWidth(90);
@@ -246,7 +250,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         projectsTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         assaysTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         filesTable.getColumn("Assay").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-        filesTable.getColumn("File").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
+        filesTable.getColumn("Download").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         filesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
 
@@ -278,7 +282,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTableToolTips.add(null);
         filesTableToolTips.add("Assay Accession Numbers");
         filesTableToolTips.add("File Type");
-        filesTableToolTips.add("File Name and Link");
+        filesTableToolTips.add("File");
+        filesTableToolTips.add("Download File");
         filesTableToolTips.add("File Size");
         filesTableToolTips.add("ReShake");
 
@@ -521,14 +526,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Assay", "Type", "File", "Size", "  "
+                " ", "Assay", "Type", "File", "Download", "Size", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -853,7 +858,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }//GEN-LAST:event_assaysTableKeyReleased
 
     /**
-     * Reshake the selected PRIDE experiments.
+     * ReShake the selected PRIDE experiments.
      *
      * @param evt
      */
@@ -922,15 +927,67 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            } else if (column == filesTable.getColumn("File").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+            } else if (column == filesTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) filesTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
-                String link = (String) filesTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
 
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                String tempLink = (String) filesTable.getValueAt(row, column);
+                tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
+                final String link = tempLink.substring(0, tempLink.indexOf("\""));
+
+                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", peptideShakerGUI.getLastSelectedFolder(), "Download Folder", "Select", false);
+
+                if (downloadFolder != null) {
+
+                    peptideShakerGUI.setLastSelectedFolder(downloadFolder.getAbsolutePath());
+
+                    progressDialog = new ProgressDialogX(this,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                    progressDialog.setTitle("Downloading File. Please Wait...");
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
+                        }
+                    }, "ProgressDialog").start();
+
+                    Thread thread = new Thread("DownloadThread") {
+                        @Override
+                        public void run() {
+                            try {
+                                File downLoadLocation = new File(downloadFolder, new File(link).getName());
+                                saveUrl(downLoadLocation, link, progressDialog);
+
+                                boolean canceled = progressDialog.isRunCanceled();
+                                progressDialog.setRunFinished();
+
+                                if (!canceled) {
+                                    JOptionPane.showMessageDialog(PrideReShakeGUIv2.this, new File(link).getName() + " downloaded to\n"
+                                            + downLoadLocation + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    if (downLoadLocation.exists()) {
+                                        downLoadLocation.delete();
+                                    }
+                                }
+
+                            } catch (MalformedURLException e) {
+                                progressDialog.setRunFinished();
+                                peptideShakerGUI.catchException(e);
+                            } catch (IOException e) {
+                                progressDialog.setRunFinished();
+                                peptideShakerGUI.catchException(e);
+                            }
+                        }
+                    };
+                    thread.start();
+                }
             }
         }
 
@@ -959,7 +1016,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTable.setToolTipText(null);
 
         if (row != -1 && column != -1
-                && (column == filesTable.getColumn("Assay").getModelIndex() || column == filesTable.getColumn("File").getModelIndex())
+                && (column == filesTable.getColumn("Assay").getModelIndex() || column == filesTable.getColumn("Download").getModelIndex())
                 && filesTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) filesTable.getValueAt(row, column);
@@ -1058,9 +1115,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                     + fileDetail.getAssayAccession() + "</font></a><html>",
                     fileDetail.getFileType(),
+                    fileDetail.getFileName(),
                     "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + fileDetail.getFileName() + "</font></a><html>",
+                    + "download" + "</font></a><html>",
                     Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                     false});
             }
@@ -1377,7 +1435,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     boolean mgfConversionOk = true;
 
                     for (int i = 0; i < selectedFiles.size() && mgfConversionOk; i++) {
-                        
+
                         String currentFile = selectedFiles.get(i);
                         String currentFileName = currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz"));
 
@@ -2194,6 +2252,60 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         }
 
         reshakeButton.setEnabled(filesSelected);
+    }
+
+    /**
+     * Save a file from a URL.
+     *
+     * @param saveFile
+     * @param urlString
+     * @param progressDialog
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws java.io.FileNotFoundException
+     */
+    public void saveUrl(final File saveFile, final String urlString, ProgressDialogX progressDialog)
+            throws MalformedURLException, IOException, FileNotFoundException {
+
+        URLConnection conn = new URL(urlString).openConnection();
+        int contentLength = conn.getContentLength();
+
+        if (contentLength != -1) {
+            progressDialog.resetPrimaryProgressCounter();
+            progressDialog.setMaxPrimaryProgressCounter(contentLength);
+        }
+
+        BufferedInputStream in = null;
+        FileOutputStream fout = null;
+        try {
+            in = new BufferedInputStream(new URL(urlString).openStream());
+            fout = new FileOutputStream(saveFile);
+
+            long start = System.currentTimeMillis();
+
+            final byte data[] = new byte[1024];
+            int count;
+            while ((count = in.read(data, 0, 1024)) != -1 && !progressDialog.isRunCanceled()) {
+                fout.write(data, 0, count);
+
+                if (contentLength != -1) {
+
+                    long now = System.currentTimeMillis();
+
+                    if ((now - start) > 100) {
+                        progressDialog.setPrimaryProgressCounter((int) saveFile.length());
+                        start = System.currentTimeMillis();
+                    }
+                }
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+            if (fout != null) {
+                fout.close();
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
