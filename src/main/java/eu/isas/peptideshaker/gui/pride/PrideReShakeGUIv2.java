@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -173,6 +174,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private boolean assaysGreaterThanFiler = true;
     /**
+     * The list of reshakeable file endings.
+     */
+    private ArrayList<String> reshakeableFileEndings;
+    /**
      * The web service URL.
      */
     private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/";
@@ -197,6 +202,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * Set up the GUI.
      */
     private void setUpGui() {
+
+        reshakeableFileEndings = new ArrayList<String>();
+        reshakeableFileEndings.add(".mzid"); // search files
+        reshakeableFileEndings.add(".mzid.gz"); // search files
+        reshakeableFileEndings.add(".xml"); // result    // PRIDE_Exp_Complete_Ac_27277.xml??
+        reshakeableFileEndings.add(".xml.gz"); // result
+        reshakeableFileEndings.add(".mgf"); // peak, other 
+        reshakeableFileEndings.add(".mgf.gz"); // peak, other 
 
         projectsTable.getColumn("Accession").setMaxWidth(90);
         projectsTable.getColumn("Accession").setMinWidth(90);
@@ -334,6 +347,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 };
             }
         };
+        privateDataLabel = new javax.swing.JLabel();
+        projectHelpLabel = new javax.swing.JLabel();
         assaysPanel = new javax.swing.JPanel();
         assayTableScrollPane = new javax.swing.JScrollPane();
         assaysTable = new JTable() {
@@ -348,6 +363,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 };
             }
         };
+        assayHelpLabel = new javax.swing.JLabel();
         reshakeButton = new javax.swing.JButton();
         filesPanel = new javax.swing.JPanel();
         filesTableScrollPane = new javax.swing.JScrollPane();
@@ -363,6 +379,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 };
             }
         };
+        filesHelpLabel = new javax.swing.JLabel();
+        reshakableCheckBox = new javax.swing.JCheckBox();
         aboutButton = new javax.swing.JButton();
         peptideShakerHomePageLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
@@ -425,20 +443,48 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         });
         projectsScrollPane.setViewportView(projectsTable);
 
+        privateDataLabel.setText("<html><a href=\"dummy\">Access Private Data</a></html>\n\n");
+        privateDataLabel.setToolTipText("Open the PeptideShaker web page");
+        privateDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                privateDataLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                privateDataLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                privateDataLabelMouseExited(evt);
+            }
+        });
+
+        projectHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        projectHelpLabel.setText("Select a projects to see the project details. For more details click the Accession links.");
+
         javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
         projectsPanel.setLayout(projectsPanelLayout);
         projectsPanelLayout.setHorizontalGroup(
             projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane)
+                .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1061, Short.MAX_VALUE)
+                    .addGroup(projectsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(projectHelpLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(privateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)))
                 .addContainerGap())
         );
         projectsPanelLayout.setVerticalGroup(
             projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(privateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(projectHelpLabel))
                 .addContainerGap())
         );
 
@@ -490,27 +536,37 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         });
         assayTableScrollPane.setViewportView(assaysTable);
 
+        assayHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        assayHelpLabel.setText("Select an assay to see the corresponding files. For more details click the Assay links.");
+
         javax.swing.GroupLayout assaysPanelLayout = new javax.swing.GroupLayout(assaysPanel);
         assaysPanel.setLayout(assaysPanelLayout);
         assaysPanelLayout.setHorizontalGroup(
             assaysPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(assaysPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(assayTableScrollPane)
+                .addGap(10, 10, 10)
+                .addGroup(assaysPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1061, Short.MAX_VALUE)
+                    .addGroup(assaysPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(assayHelpLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         assaysPanelLayout.setVerticalGroup(
             assaysPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(assaysPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(assayTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(assayHelpLabel)
                 .addContainerGap())
         );
 
         reshakeButton.setBackground(new java.awt.Color(0, 153, 0));
         reshakeButton.setFont(reshakeButton.getFont().deriveFont(reshakeButton.getFont().getStyle() | java.awt.Font.BOLD));
         reshakeButton.setForeground(new java.awt.Color(255, 255, 255));
-        reshakeButton.setText("ReShake PRIDE Projects");
+        reshakeButton.setText("ReShake PRIDE Data");
         reshakeButton.setEnabled(false);
         reshakeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -561,20 +617,40 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         });
         filesTableScrollPane.setViewportView(filesTable);
 
+        filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        filesHelpLabel.setText("Select the files to ReShake and click ReShake PRIDE Data to start re-analyzing the data. ");
+
+        reshakableCheckBox.setText("Show ReShakeable Files Only");
+        reshakableCheckBox.setToolTipText("Show only files that can be re-analyzed with ReShake");
+        reshakableCheckBox.setIconTextGap(10);
+        reshakableCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
         filesPanelLayout.setHorizontalGroup(
             filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filesTableScrollPane)
-                .addContainerGap())
+                .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(filesPanelLayout.createSequentialGroup()
+                        .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1061, Short.MAX_VALUE)
+                        .addGap(10, 10, 10))
+                    .addGroup(filesPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(filesHelpLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(reshakableCheckBox)
+                        .addGap(18, 18, 18))))
         );
         filesPanelLayout.setVerticalGroup(
             filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                .addComponent(filesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filesHelpLabel)
+                    .addComponent(reshakableCheckBox))
                 .addContainerGap())
         );
 
@@ -621,9 +697,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(aboutButton)
-                        .addGap(71, 71, 71)
-                        .addComponent(peptideShakerHomePageLabel)
-                        .addGap(342, 342, 342)
+                        .addGap(48, 48, 48)
+                        .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(reshakeButton)
                         .addGap(14, 14, 14))
                     .addComponent(assaysPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -642,10 +718,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 .addComponent(filesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(reshakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(aboutButton)
-                        .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(reshakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(aboutButton))
                 .addContainerGap())
         );
 
@@ -869,25 +945,66 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (selectedFolder != null) {
             peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
             outputFolder = selectedFolder.getAbsolutePath();
-            ArrayList<String> selectedFiles = new ArrayList<String>();
             currentSpecies = new ArrayList<String>();
 
-            for (int i = 0; i < filesTable.getRowCount(); i++) {
-                if ((Boolean) filesTable.getValueAt(i, filesTable.getColumn("  ").getModelIndex())) {
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-                    String link = (String) filesTable.getValueAt(i, filesTable.getColumn("File").getModelIndex());
-                    link = link.substring(link.indexOf("\"") + 1);
-                    link = link.substring(0, link.indexOf("\""));
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+            progressDialog.setTitle("Checking Files. Please Wait...");
+            isFileBeingDownloaded = true;
 
-                    selectedFiles.add(link);
-                    System.out.println("link: " + link);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
-            }
+            }, "ProgressDialog").start();
 
-            boolean download = true;
+            new Thread("FileExistsThread") {
+                @Override
+                public void run() {
 
-            // check if multiple projects are selected
-            if (selectedFiles.size() > 1) {
+                    ArrayList<String> selectedFiles = new ArrayList<String>();
+
+                    for (int i = 0; i < filesTable.getRowCount(); i++) {
+                        if ((Boolean) filesTable.getValueAt(i, filesTable.getColumn("  ").getModelIndex())) {
+
+                            String link = (String) filesTable.getValueAt(i, filesTable.getColumn("Download").getModelIndex());
+                            link = link.substring(link.indexOf("\"") + 1);
+                            link = link.substring(0, link.indexOf("\""));
+
+                            boolean exists = checkIfURLExists(link);
+
+                            if (!exists) {
+                                if (link.endsWith(".gz")) {
+                                    link = link.substring(0, link.length() - 3);
+                                    exists = checkIfURLExists(link);
+                                }
+                            }
+
+                            if (exists) {
+                                selectedFiles.add(link);
+                            } else {
+                                System.out.println("not found: " + link);
+                            }
+                        }
+                    }
+
+                    boolean download = true;
+
+                    if (selectedFiles.isEmpty()) {
+                        download = false;
+                    }
+
+                    // check if multiple projects are selected
+                    if (selectedFiles.size() > 1) {
 //                int value = JOptionPane.showConfirmDialog(this,
 //                        "Note that if multiple projects are selected the search\n"
 //                        + "parameters from the first project in the list is used.",
@@ -896,12 +1013,15 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 //                if (value == JOptionPane.CANCEL_OPTION) {
 //                    download = false;
 //                }
-            }
+                    }
 
-            if (download) {
-                downloadPrideDatasets(selectedFiles); // @TODO: reimplement me!!!
-                //JOptionPane.showMessageDialog(null, "Not yet reimplemented...");
-            }
+                    progressDialog.setRunFinished();
+
+                    if (download) {
+                        downloadPrideDatasets(selectedFiles);
+                    }
+                }
+            }.start();
         }
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
@@ -1031,30 +1151,60 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_filesTableMouseMoved
 
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
     private void aboutButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_aboutButtonMouseEntered
 
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
     private void aboutButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonMouseExited
 
+    /**
+     * Open the PeptideShaker web page.
+     *
+     * @param evt
+     */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_aboutButtonActionPerformed
 
+    /**
+     * Open the PeptideShaker web page.
+     *
+     * @param evt
+     */
     private void peptideShakerHomePageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseClicked
 
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
     private void peptideShakerHomePageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseEntered
 
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
     private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
@@ -1080,6 +1230,36 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private void findMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuItemActionPerformed
         new ProjectsFilterDialog(this, false, currentFilterValues, assaysGreaterThanFiler, true, speciesAll, tissuesAll, instrumentsAll, ptmsAll);
     }//GEN-LAST:event_findMenuItemActionPerformed
+
+    /**
+     * Open the private data login screen.
+     *
+     * @param evt
+     */
+    private void privateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseClicked
+
+        JOptionPane.showMessageDialog(null, "Not yet implemented...");
+
+        // @TODO: implement me!!
+    }//GEN-LAST:event_privateDataLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void privateDataLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_privateDataLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void privateDataLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_privateDataLabelMouseExited
 
     /**
      * Update the file list based on the selected project.
@@ -1114,7 +1294,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                     + fileDetail.getAssayAccession() + "</font></a><html>",
-                    fileDetail.getFileType(),
+                    fileDetail.getFileType().getName(),
                     fileDetail.getFileName(),
                     "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
@@ -1122,6 +1302,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                     false});
             }
+        }
+
+        if (filesTable.getRowCount() > 0) {
+            filesTable.scrollRectToVisible(filesTable.getCellRect(0, 0, false));
         }
 
         if (projectAccession != null) {
@@ -1169,17 +1353,22 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                     + fileDetail.getAssayAccession() + "</font></a><html>",
-                    fileDetail.getFileType(),
+                    fileDetail.getFileType().getName(),
+                    fileDetail.getFileName(),
                     "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + fileDetail.getFileName() + "</font></a><html>",
+                    + "download" + "</font></a><html>",
                     Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                     false});
             }
         }
 
+        if (filesTable.getRowCount() > 0) {
+            filesTable.scrollRectToVisible(filesTable.getCellRect(0, 0, false));
+        }
+
         if (assayAccession != null) {
-            ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files for " + assayAccession + " (" + filesTable.getRowCount() + ")");
+            ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files for Assay " + assayAccession + " (" + filesTable.getRowCount() + ")");
         } else {
             ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files (" + filesTable.getRowCount() + ")");
         }
@@ -1261,6 +1450,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             ((JSparklinesBarChartTableCellRenderer) assaysTable.getColumn("#Spectra").getCellRenderer()).setMinimumChartValue(2.0);
         }
 
+        if (assaysTable.getRowCount() > 0) {
+            assaysTable.scrollRectToVisible(assaysTable.getCellRect(0, 0, false));
+        }
+        
         if (projectAccession != null) {
             ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays for " + projectAccession + " (" + assaysTable.getRowCount() + ")");
         } else {
@@ -1437,8 +1630,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     for (int i = 0; i < selectedFiles.size() && mgfConversionOk; i++) {
 
                         String currentFile = selectedFiles.get(i);
-                        String currentFileName = currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz"));
+                        String currentFileName = currentFile.substring(currentFile.lastIndexOf("/"));
+                        boolean unzipped = true;
 
+                        if (currentFileName.lastIndexOf(".gz") != -1) {
+                            currentFileName = currentFileName.substring(0, currentFileName.lastIndexOf(".gz"));
+                            unzipped = false;
+                        }
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
                             finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1457,8 +1655,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         try {
                             currentPrideProjectUrl = new URL(currentFile);
                             currentZippedPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                            currentPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                            currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                            if (unzipped) {
+                                currentPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
+                            } else {
+                                currentPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
+                                currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                            }
                             mgfFiles.add(currentMgfFile);
                             URLConnection conn = currentPrideProjectUrl.openConnection();
                             currentUrlContentLength = conn.getContentLength();
@@ -1562,7 +1765,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                         progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
                                     }
                                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                                    unzipProject();
+                                    if (!unzipped) {
+                                        unzipProject();
+                                    }
                                 } else {
                                     isFileBeingDownloaded = false;
                                 }
@@ -2308,8 +2513,30 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Check if a given URL exists.
+     *
+     * @param targetUrl the URL to check
+     * @return true of it exists
+     */
+    public static boolean checkIfURLExists(String targetUrl) {
+
+        try {
+            URLConnection conn = new URL(targetUrl).openConnection();
+            InputStream inputStream = conn.getInputStream();
+            inputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
+    private javax.swing.JLabel assayHelpLabel;
     private javax.swing.JScrollPane assayTableScrollPane;
     private javax.swing.JPanel assaysPanel;
     private javax.swing.JTable assaysTable;
@@ -2317,6 +2544,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JLabel filesHelpLabel;
     private javax.swing.JPanel filesPanel;
     private javax.swing.JTable filesTable;
     private javax.swing.JScrollPane filesTableScrollPane;
@@ -2325,9 +2553,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel peptideShakerHomePageLabel;
+    private javax.swing.JLabel privateDataLabel;
+    private javax.swing.JLabel projectHelpLabel;
     private javax.swing.JPanel projectsPanel;
     private javax.swing.JScrollPane projectsScrollPane;
     private javax.swing.JTable projectsTable;
+    private javax.swing.JCheckBox reshakableCheckBox;
     private javax.swing.JButton reshakeButton;
     // End of variables declaration//GEN-END:variables
 }
