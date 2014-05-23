@@ -183,7 +183,6 @@
             <Component class="javax.swing.JTextField" name="accessionJTextField">
               <Properties>
                 <Property name="text" type="java.lang.String" value="test"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Find all proteins containing a given string.&lt;br&gt;&#xa;Regular expressions are supported.&#xa;&lt;/html&gt;"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 10, 2, 2]"/>
                 </Property>
@@ -199,7 +198,6 @@
             </Component>
             <Component class="javax.swing.JTextField" name="titleJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Find all proteins containing a given accession number.&lt;br&gt;&#xa;Regular expressions are supported.&#xa;&lt;/html&gt;"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 10, 2, 2]"/>
                 </Property>

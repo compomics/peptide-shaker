@@ -224,7 +224,6 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         accessionLabel.setText("Accession");
 
         accessionJTextField.setText("test");
-        accessionJTextField.setToolTipText("<html>\nFind all proteins containing a given string.<br>\nRegular expressions are supported.\n</html>");
         accessionJTextField.setMargin(new java.awt.Insets(2, 10, 2, 2));
         accessionJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -234,7 +233,6 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
 
         titleLabel.setText("Title");
 
-        titleJTextField.setToolTipText("<html>\nFind all proteins containing a given accession number.<br>\nRegular expressions are supported.\n</html>");
         titleJTextField.setMargin(new java.awt.Insets(2, 10, 2, 2));
         titleJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
