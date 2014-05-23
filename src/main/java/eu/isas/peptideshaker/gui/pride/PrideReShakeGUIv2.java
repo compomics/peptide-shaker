@@ -50,6 +50,7 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.pride.archive.web.service.model.assay.AssayDetail;
 import uk.ac.ebi.pride.archive.web.service.model.assay.AssayDetailList;
@@ -1284,23 +1285,29 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
 
             RestTemplate template = new RestTemplate();
-            ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/project/" + projectAccession, FileDetailList.class);
 
-            // @TODO: sort based on assay accession and then on type
-            for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+            try {
+                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/project/" + projectAccession, FileDetailList.class);
 
-                ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
-                    (filesTable.getRowCount() + 1),
-                    "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
-                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + fileDetail.getAssayAccession() + "</font></a><html>",
-                    fileDetail.getFileType().getName(),
-                    fileDetail.getFileName(),
-                    "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
-                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + "download" + "</font></a><html>",
-                    Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
-                    false});
+                // @TODO: sort based on assay accession and then on type
+                for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+
+                    ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
+                        (filesTable.getRowCount() + 1),
+                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + fileDetail.getAssayAccession() + "</font></a><html>",
+                        fileDetail.getFileType().getName(),
+                        fileDetail.getFileName(),
+                        "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + "download" + "</font></a><html>",
+                        Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
+                        false});
+                }
+            } catch (HttpServerErrorException e) {
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -1343,23 +1350,29 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             assayAccession = assayAccession.substring(assayAccession.lastIndexOf("\">") + 2, assayAccession.lastIndexOf("</font"));
 
             RestTemplate template = new RestTemplate();
-            ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/assay/" + assayAccession, FileDetailList.class);
 
-            // @TODO: sort based on assay accession and then on type
-            for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+            try {
+                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/assay/" + assayAccession, FileDetailList.class);
 
-                ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
-                    (filesTable.getRowCount() + 1),
-                    "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
-                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + fileDetail.getAssayAccession() + "</font></a><html>",
-                    fileDetail.getFileType().getName(),
-                    fileDetail.getFileName(),
-                    "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
-                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + "download" + "</font></a><html>",
-                    Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
-                    false});
+                // @TODO: sort based on assay accession and then on type
+                for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+
+                    ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
+                        (filesTable.getRowCount() + 1),
+                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + fileDetail.getAssayAccession() + "</font></a><html>",
+                        fileDetail.getFileType().getName(),
+                        fileDetail.getFileName(),
+                        "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + "download" + "</font></a><html>",
+                        Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
+                        false});
+                }
+            } catch (HttpServerErrorException e) {
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -1400,37 +1413,43 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             projectAccession = (String) projectsTable.getValueAt(selectedRow, 1);
             projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
 
-            RestTemplate template = new RestTemplate();
-            ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(projectServiceURL + "assay/list/project/" + projectAccession, AssayDetailList.class);
-
             double maxNumProteins = 0, maxNumPeptides = 0, maxNumSpectra = 0;
 
-            for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
+            RestTemplate template = new RestTemplate();
 
-                ((DefaultTableModel) assaysTable.getModel()).addRow(new Object[]{
-                    (assaysTable.getRowCount() + 1),
-                    "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(assayDetail.getProjectAccession(), assayDetail.getAssayAccession())
-                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + assayDetail.getAssayAccession() + "</font></a><html>",
-                    assayDetail.getTitle(),
-                    setToString(assayDetail.getSpecies(), ", "),
-                    setToString(assayDetail.getSampleDetails(), ", "),
-                    setToString(assayDetail.getPtmNames(), "; "),
-                    setToString(assayDetail.getDiseases(), ", "),
-                    assayDetail.getProteinCount(),
-                    assayDetail.getPeptideCount(),
-                    assayDetail.getTotalSpectrumCount()
-                });
+            try {
+                ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(projectServiceURL + "assay/list/project/" + projectAccession, AssayDetailList.class);
 
-                if (assayDetail.getProteinCount() > maxNumProteins) {
-                    maxNumProteins = assayDetail.getProteinCount();
+                for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
+
+                    ((DefaultTableModel) assaysTable.getModel()).addRow(new Object[]{
+                        (assaysTable.getRowCount() + 1),
+                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(assayDetail.getProjectAccession(), assayDetail.getAssayAccession())
+                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + assayDetail.getAssayAccession() + "</font></a><html>",
+                        assayDetail.getTitle(),
+                        setToString(assayDetail.getSpecies(), ", "),
+                        setToString(assayDetail.getSampleDetails(), ", "),
+                        setToString(assayDetail.getPtmNames(), "; "),
+                        setToString(assayDetail.getDiseases(), ", "),
+                        assayDetail.getProteinCount(),
+                        assayDetail.getPeptideCount(),
+                        assayDetail.getTotalSpectrumCount()
+                    });
+
+                    if (assayDetail.getProteinCount() > maxNumProteins) {
+                        maxNumProteins = assayDetail.getProteinCount();
+                    }
+                    if (assayDetail.getPeptideCount() > maxNumPeptides) {
+                        maxNumPeptides = assayDetail.getPeptideCount();
+                    }
+                    if (assayDetail.getTotalSpectrumCount() > maxNumSpectra) {
+                        maxNumSpectra = assayDetail.getTotalSpectrumCount();
+                    }
                 }
-                if (assayDetail.getPeptideCount() > maxNumPeptides) {
-                    maxNumPeptides = assayDetail.getPeptideCount();
-                }
-                if (assayDetail.getTotalSpectrumCount() > maxNumSpectra) {
-                    maxNumSpectra = assayDetail.getTotalSpectrumCount();
-                }
+            } catch (HttpServerErrorException e) {
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
 
             // update the sparklines with the max values
@@ -1453,7 +1472,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (assaysTable.getRowCount() > 0) {
             assaysTable.scrollRectToVisible(assaysTable.getCellRect(0, 0, false));
         }
-        
+
         if (projectAccession != null) {
             ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays for " + projectAccession + " (" + assaysTable.getRowCount() + ")");
         } else {
@@ -1479,76 +1498,82 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         projectsTableModel.getDataVector().removeAllElements();
         projectsTableModel.fireTableDataChanged();
 
+        double maxNumAssays = 0;
+
         RestTemplate template = new RestTemplate();
 
         // get the project count
-        ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // @TODO: catch connection issues
-        Integer projectCount = projectCountResult.getBody();
+        try {
+            ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // @TODO: catch connection issues
+            Integer projectCount = projectCountResult.getBody();
 
-        // get the list of projects
-        ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
+            // get the list of projects
+            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
 
-        double maxNumAssays = 0;
-        speciesAll = new ArrayList<String>();
-        instrumentsAll = new ArrayList<String>();
-        ptmsAll = new ArrayList<String>();
-        tissuesAll = new ArrayList<String>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            speciesAll = new ArrayList<String>();
+            instrumentsAll = new ArrayList<String>();
+            ptmsAll = new ArrayList<String>();
+            tissuesAll = new ArrayList<String>();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        // iterate the project and add them to the table
-        for (ProjectDetail projectDetail : projectList.getBody().getList()) {
+            // iterate the project and add them to the table
+            for (ProjectDetail projectDetail : projectList.getBody().getList()) {
 
-            ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
-                (projectsTable.getRowCount() + 1),
-                "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getAccession())
-                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                + projectDetail.getAccession() + "</font></a><html>",
-                projectDetail.getTitle(),
-                setToString(projectDetail.getSpecies(), ", "),
-                setToString(projectDetail.getTissues(), ", "),
-                setToString(projectDetail.getPtmNames(), "; "),
-                setToString(projectDetail.getInstrumentNames(), ", "),
-                projectDetail.getNumAssays(),
-                projectDetail.getSubmissionType(),
-                dateFormat.format(projectDetail.getPublicationDate())
-            });
+                ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                    (projectsTable.getRowCount() + 1),
+                    "<html><a href=\"" + DisplayFeaturesGenerator.getPrideProjectArchiveLink("" + projectDetail.getAccession())
+                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                    + projectDetail.getAccession() + "</font></a><html>",
+                    projectDetail.getTitle(),
+                    setToString(projectDetail.getSpecies(), ", "),
+                    setToString(projectDetail.getTissues(), ", "),
+                    setToString(projectDetail.getPtmNames(), "; "),
+                    setToString(projectDetail.getInstrumentNames(), ", "),
+                    projectDetail.getNumAssays(),
+                    projectDetail.getSubmissionType(),
+                    dateFormat.format(projectDetail.getPublicationDate())
+                });
 
-            if (projectDetail.getNumAssays() > maxNumAssays) {
-                maxNumAssays = projectDetail.getNumAssays();
-            }
+                if (projectDetail.getNumAssays() > maxNumAssays) {
+                    maxNumAssays = projectDetail.getNumAssays();
+                }
 
-            for (String species : projectDetail.getSpecies()) {
-                if (!speciesAll.contains(species)) {
-                    speciesAll.add(species);
+                for (String species : projectDetail.getSpecies()) {
+                    if (!speciesAll.contains(species)) {
+                        speciesAll.add(species);
+                    }
+                }
+                for (String instrument : projectDetail.getInstrumentNames()) {
+                    if (!instrumentsAll.contains(instrument)) {
+                        instrumentsAll.add(instrument);
+                    }
+                }
+                for (String tissue : projectDetail.getTissues()) {
+                    if (!tissuesAll.contains(tissue)) {
+                        tissuesAll.add(tissue);
+                    }
+                }
+                for (String ptm : projectDetail.getPtmNames()) {
+                    if (!ptmsAll.contains(ptm)) {
+                        ptmsAll.add(ptm);
+                    }
                 }
             }
-            for (String instrument : projectDetail.getInstrumentNames()) {
-                if (!instrumentsAll.contains(instrument)) {
-                    instrumentsAll.add(instrument);
-                }
-            }
-            for (String tissue : projectDetail.getTissues()) {
-                if (!tissuesAll.contains(tissue)) {
-                    tissuesAll.add(tissue);
-                }
-            }
-            for (String ptm : projectDetail.getPtmNames()) {
-                if (!ptmsAll.contains(ptm)) {
-                    ptmsAll.add(ptm);
-                }
-            }
+
+            // sort the lists
+            Collections.sort(speciesAll);
+            Collections.sort(instrumentsAll);
+            Collections.sort(tissuesAll);
+            Collections.sort(ptmsAll);
+
+            speciesAll.add(0, "");
+            tissuesAll.add(0, "");
+            instrumentsAll.add(0, "");
+            ptmsAll.add(0, "");
+        } catch (HttpServerErrorException e) {
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
         }
-
-        // sort the lists
-        Collections.sort(speciesAll);
-        Collections.sort(instrumentsAll);
-        Collections.sort(tissuesAll);
-        Collections.sort(ptmsAll);
-
-        speciesAll.add(0, "");
-        tissuesAll.add(0, "");
-        instrumentsAll.add(0, "");
-        ptmsAll.add(0, "");
 
         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
         projectsPanel.repaint();
@@ -2469,7 +2494,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * @throws IOException
      * @throws java.io.FileNotFoundException
      */
-    public void saveUrl(final File saveFile, final String urlString, ProgressDialogX progressDialog)
+    public void saveUrl(final File saveFile, String urlString, ProgressDialogX progressDialog)
             throws MalformedURLException, IOException, FileNotFoundException {
 
         URLConnection conn = new URL(urlString).openConnection();
@@ -2483,7 +2508,16 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {
+            boolean urlExists = checkIfURLExists(urlString);
+
+            if (!urlExists) {
+                if (urlString.endsWith(".gz")) {
+                    urlString = urlString.substring(0, urlString.length() - 3);
+                }
+            }
+
             in = new BufferedInputStream(new URL(urlString).openStream());
+
             fout = new FileOutputStream(saveFile);
 
             long start = System.currentTimeMillis();
