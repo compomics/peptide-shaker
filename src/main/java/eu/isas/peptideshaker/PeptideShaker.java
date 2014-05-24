@@ -20,6 +20,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
@@ -736,7 +737,7 @@ public class PeptideShaker {
                     + identification.getPeptideIdentification().size()
                     + 2 * identification.getSpectrumIdentificationSize());
         }
-        
+
         psmMap.resetDoubtfulMatchesFilters();
         peptideMap.resetDoubtfulMatchesFilters();
         proteinMap.resetDoubtfulMatchesFilters();
@@ -1251,7 +1252,7 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
         psParameter.resetQcResults();
-        
+
         if (sequenceFactory.concatenatedTargetDecoy()) {
             TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
@@ -3581,9 +3582,16 @@ public class PeptideShaker {
                 int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
                 int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
                 waitingHandler.appendReport(toDelete.size() + " unlikely protein mappings found:", true, true);
-                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + enzymaticIssue + " (" + enzymaticPercent + "%) non-enzymatic accessions.", true, true);
-                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + evidenceIssue + " (" + evidencePercent + "%) lower evidence accessions.", true, true);
-                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + uncharacterizedIssue + " (" + uncharacterizedPercent + "%) not characterized accessions.", true, true);
+
+                String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+                if (waitingHandler instanceof WaitingHandlerCLIImpl) {
+                    padding = "    ";
+                }
+
+                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " (" + enzymaticPercent + "%) non-enzymatic accessions.", true, true);
+                waitingHandler.appendReport(padding + "- " + evidenceIssue + " (" + evidencePercent + "%) lower evidence accessions.", true, true);
+                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " (" + uncharacterizedPercent + "%) not characterized accessions.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
