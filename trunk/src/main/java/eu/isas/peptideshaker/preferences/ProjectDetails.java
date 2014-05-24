@@ -495,7 +495,7 @@ public class ProjectDetails implements Serializable {
                     algorithms.put(advocate.getName(), new ArrayList<String>());
                     identificationAlgorithms.put(idFileName, algorithms);
                 } else {
-                throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
+                    throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
                 }
             }
         }
@@ -532,12 +532,13 @@ public class ProjectDetails implements Serializable {
         }
         return algorithmNameToVersionMap;
     }
-    
+
     /**
-     * Returns the identification algorithms used to create the id file in map: algorithm name -> algorithm version
-     * 
+     * Returns the identification algorithms used to create the id file in map:
+     * algorithm name -> algorithm version
+     *
      * @param idFileName the identification file name
-     * 
+     *
      * @return the identification algorithms used
      */
     public HashMap<String, ArrayList<String>> getIdentificationAlgorithmsForFile(String idFileName) {
@@ -549,12 +550,13 @@ public class ProjectDetails implements Serializable {
         }
         return identificationAlgorithms.get(idFileName);
     }
-    
+
     /**
      * Sets the identification algorithms used to create an identification file.
-     * 
+     *
      * @param idFileName the name of the identification file
-     * @param fileIdentificationAlgorithms the identification algorithms used to create this file in a map: algorithm name -> versions
+     * @param fileIdentificationAlgorithms the identification algorithms used to
+     * create this file in a map: algorithm name -> versions
      */
     public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
         if (identificationAlgorithms == null) {
