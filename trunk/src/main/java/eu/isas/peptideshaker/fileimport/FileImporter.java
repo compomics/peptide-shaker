@@ -28,6 +28,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -681,7 +682,7 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
                 return;
             }
-            
+
             String softwareName = fileReader.getSoftware();
             Advocate advocate = Advocate.getAdvocate(softwareName);
             if (advocate == null) {
@@ -1263,22 +1264,30 @@ public class FileImporter {
                 double precursorIssueShare = 100.0 * precursorIssue / total;
                 double ptmIssueShare = 100.0 * ptmIssue / total;
                 double share = 100.0 * rejected / numberOfMatches;
+
                 if (rejected > 0) {
                     waitingHandler.appendReport(rejected + " matches (" + Util.roundDouble(share, 1) + "%) excluded by the import filters:", true, true);
+
+                    String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+                    if (waitingHandler instanceof WaitingHandlerCLIImpl) {
+                        padding = "    ";
+                    }
+
                     if (proteinIssueShare > 0) {
-                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + proteinIssue 
+                        waitingHandler.appendReport(padding + "- " + proteinIssue
                                 + " (" + Util.roundDouble(proteinIssueShare, 1) + "%) mapped in target and decoy.", true, true);
                     }
                     if (peptideIssueShare > 0) {
-                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + peptideIssue 
+                        waitingHandler.appendReport(padding + "- " + peptideIssue
                                 + " (" + Util.roundDouble(peptideIssueShare, 1) + "%) size or e-value out of boundary.", true, true);
                     }
                     if (precursorIssueShare > 0) {
-                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + precursorIssue 
+                        waitingHandler.appendReport(padding + "- " + precursorIssue
                                 + " (" + Util.roundDouble(precursorIssueShare, 1) + "%) high precursor deviation.", true, true);
                     }
                     if (ptmIssueShare > 0) {
-                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + ptmIssue + " (" + Util.roundDouble(ptmIssueShare, 1) + "%) unrecognized modifications.", true, true);
+                        waitingHandler.appendReport(padding + "- " + ptmIssue + " (" + Util.roundDouble(ptmIssueShare, 1) + "%) unrecognized modifications.", true, true);
                     }
                 }
                 // inform the user in case more than 75% of the hits were rejected by the filters
