@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.compress.archivers.ArchiveException;
 
@@ -803,9 +804,31 @@ public abstract class CpsParent extends UserPreferencesParent {
             report += "<b>Identification Files</b>:<br>";
             for (File idFile : projectDetails.getIdentificationFiles()) {
                 report += idFile.getAbsolutePath();
-                String version = projectDetails.getIdentificationAlgorithmVersion(idFile.getName());
-                if (version != null) {
-                    report += " - (" + version + ")";
+                HashMap<String, ArrayList<String>> versions = projectDetails.getIdentificationAlgorithmsForFile(idFile.getName());
+                ArrayList<String> software = new ArrayList<String>(versions.keySet());
+                Collections.sort(software);
+                boolean first = true;
+                for (String softwareName : software) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        report += ", ";
+                    }
+                    report += softwareName;
+                    ArrayList<String> algorithmVersions = versions.get(softwareName);
+                    if (algorithmVersions != null && !algorithmVersions.isEmpty()) {
+                        report += " - (";
+                        boolean firstVersion = true;
+                        for (String version : algorithmVersions) {
+                            if (firstVersion) {
+                                firstVersion = false;
+                            } else {
+                                report += ", ";
+                            }
+                            report += version;
+                        }
+                        report += ")";
+                    }
                 }
 
                 report += "<br>";

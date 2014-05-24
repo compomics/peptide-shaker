@@ -15,13 +15,13 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -109,6 +109,10 @@ public class MzIdentMLExport {
      */
     private ProjectDetails projectDetails;
     /**
+     * The processing preferences
+     */
+    private ProcessingPreferences processingPreferences;
+    /**
      * The search parameters.
      */
     private SearchParameters searchParameters;
@@ -151,6 +155,7 @@ public class MzIdentMLExport {
      * @param peptideShakerVersion
      * @param identification
      * @param projectDetails
+     * @param processingPreferences the processing preferences
      * @param spectrumCountingPreferences
      * @param identificationFeaturesGenerator
      * @param searchParameters
@@ -159,6 +164,7 @@ public class MzIdentMLExport {
      * @param ptmScoringPreferences
      * @param outputFile Output file
      * @param waitingHandler
+     *
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
      * @throws IOException Exception thrown whenever an error occurred while
@@ -166,12 +172,13 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
             AnnotationPreferences annotationPreferences, File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
+        this.processingPreferences = processingPreferences;
         this.searchParameters = searchParameters;
         this.ptmScoringPreferences = ptmScoringPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -815,55 +822,59 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001494", "no threshold", null));
         } else {
 
-            // peptideshaker maps
-            PSMaps psMaps = new PSMaps();
-            psMaps = (PSMaps) identification.getUrParam(psMaps);
+            // Initial global thresholds
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(processingPreferences.getPeptideFDR(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(processingPreferences.getPsmFDR(), CONFIDENCE_DECIMALS))));
 
-            // peptide level threshold
-            PeptideSpecificMap peptideSpecificMap = psMaps.getPeptideSpecificMap();
-            ArrayList<String> peptideGroupsKeys = peptideSpecificMap.getKeys();
-
-            for (String key : peptideGroupsKeys) { // @TODO: find a way of annotating all thresholds..?
-                TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(key);
-                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                double threshold = targetDecoyResults.getUserInput() / 100;
-                int thresholdType = targetDecoyResults.getInputType();
-                if (peptideGroupsKeys.size() > 1) {
-                    String peptideClass = PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), key);
-                    // @TODO: somehow indicate the class of peptide thresholded?
-                }
-                if (thresholdType == 0) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002463", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
-                } else if (targetDecoyResults.getInputType() == 1) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
-                } else if (targetDecoyResults.getInputType() == 2) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002462", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
-                }
-            }
-
-            // psm level threshold
-            ArrayList<Integer> chargesWithFileSpecificity = new ArrayList<Integer>();
-            PsmSpecificMap psmSpecificMap = psMaps.getPsmSpecificMap();
-
-            for (Integer charge : psmSpecificMap.getPossibleCharges()) {
-                for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
-                    if (!psmSpecificMap.isFileGrouped(charge, file)) { // @TODO: find a way of annotating all thresholds..?
-                        chargesWithFileSpecificity.add(charge);
-                        TargetDecoyMap targetDecoyMap = psMaps.getPsmSpecificMap().getTargetDecoyMap(charge, file);
-                        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-                        double threshold = targetDecoyResults.getUserInput() / 100;
-                        int thresholdType = targetDecoyResults.getInputType();
-                        String psmClass = "Charge " + charge + " of file " + file; // @TODO: annotate class?
-                        if (thresholdType == 0) {
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002465", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
-                        } else if (targetDecoyResults.getInputType() == 1) {
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
-                        } else if (targetDecoyResults.getInputType() == 2) {
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002464", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
-                        }
-                    }
-                }
-            }
+//            // peptideshaker maps
+//            PSMaps psMaps = new PSMaps();
+//            psMaps = (PSMaps) identification.getUrParam(psMaps);
+//
+//            // peptide level threshold
+//            PeptideSpecificMap peptideSpecificMap = psMaps.getPeptideSpecificMap();
+//            ArrayList<String> peptideGroupsKeys = peptideSpecificMap.getKeys();
+//
+//            for (String key : peptideGroupsKeys) { // @TODO: find a way of annotating all thresholds..?
+//                TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(key);
+//                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+//                double threshold = targetDecoyResults.getUserInput() / 100;
+//                int thresholdType = targetDecoyResults.getInputType();
+//                if (peptideGroupsKeys.size() > 1) {
+//                    String peptideClass = PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), key);
+//                    // @TODO: somehow indicate the class of peptide thresholded?
+//                }
+//                if (thresholdType == 0) {
+//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002463", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
+//                } else if (targetDecoyResults.getInputType() == 1) {
+//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
+//                } else if (targetDecoyResults.getInputType() == 2) {
+//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002462", "distinct peptide-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
+//                }
+//            }
+//
+//            // psm level threshold
+//            ArrayList<Integer> chargesWithFileSpecificity = new ArrayList<Integer>();
+//            PsmSpecificMap psmSpecificMap = psMaps.getPsmSpecificMap();
+//
+//            for (Integer charge : psmSpecificMap.getPossibleCharges()) {
+//                for (String file : psmSpecificMap.getFilesAtCharge(charge)) {
+//                    if (!psmSpecificMap.isFileGrouped(charge, file)) { // @TODO: find a way of annotating all thresholds..?
+//                        chargesWithFileSpecificity.add(charge);
+//                        TargetDecoyMap targetDecoyMap = psMaps.getPsmSpecificMap().getTargetDecoyMap(charge, file);
+//                        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+//                        double threshold = targetDecoyResults.getUserInput() / 100;
+//                        int thresholdType = targetDecoyResults.getInputType();
+//                        String psmClass = "Charge " + charge + " of file " + file; // @TODO: annotate class?
+//                        if (thresholdType == 0) {
+//                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002465", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
+//                        } else if (targetDecoyResults.getInputType() == 1) {
+//                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FDR
+//                        } else if (targetDecoyResults.getInputType() == 2) {
+//                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002464", "PSM-level global FNR", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // FNR
+//                        }
+//                    }
+//                }
+//            }
             //@TODO: set the PSM group label
 //            for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
 //                int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
@@ -897,7 +908,6 @@ public class MzIdentMLExport {
 //                    }
 //                }
 //            }
-
             // @TODO: one for ptm scores, one per ptm per charge state per file
             // match quality thresholds 
             // @TODO: match quality thresholds?? some are per file...
@@ -1402,27 +1412,30 @@ public class MzIdentMLExport {
             tabCounter++;
 
             String idFileName = Util.getFileName(idFile);
-            try {
-                int advocateIndex = projectDetails.getIdentificationAlgorithm(idFileName);
+            HashMap<String, ArrayList<String>> algorithms = projectDetails.getIdentificationAlgorithmsForFile(idFileName);
 
-                if (advocateIndex == Advocate.mascot.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001199", "Mascot DAT format", null));
-                } else if (advocateIndex == Advocate.xtandem.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "xtandem xml file", null));
-                } else if (advocateIndex == Advocate.omssa.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
-                } else if (advocateIndex == Advocate.msgf.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
-                } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
-                } else {
-                    writeUserParam("Unknown"); // @TODO: add cv term?
-                    break;
+            if (algorithms != null && !algorithms.isEmpty()) {
+                for (String algorithmName : algorithms.keySet()) {
+                    Advocate advocate = Advocate.getAdvocate(algorithmName);
+                    int advocateIndex = advocate.getIndex();
+                    if (advocateIndex == Advocate.mascot.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001199", "Mascot DAT format", null));
+                    } else if (advocateIndex == Advocate.xtandem.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001401", "xtandem xml file", null));
+                    } else if (advocateIndex == Advocate.omssa.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001400", "OMSSA xml format", null));
+                    } else if (advocateIndex == Advocate.msgf.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
+                    } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
+                    } else {
+                        writeUserParam("Unknown"); // @TODO: add cv term?
+                        break;
+                    }
                 }
-            } catch (Exception e) {
+            } else {
                 // A backward compatibility error occurred
                 writeUserParam("Unknown"); // @TODO: add cv term?
-                break;
             }
 
             tabCounter--;
