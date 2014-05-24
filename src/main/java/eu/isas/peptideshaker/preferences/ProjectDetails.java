@@ -35,17 +35,11 @@ public class ProjectDetails implements Serializable {
      */
     private HashMap<String, String> identificationFileSearchEngineVersion = new HashMap<String, String>();
     /**
-     * Map of the identification algorithms versions used to generate the
-     * identification files. Key: identification file name, element: the
-     * identification algorithm version.
+     * Map of the identification algorithms names and versions used to generate
+     * the identification files. identification file name -> Advocate Ids ->
+     * identification algorithm versions used.
      */
-    private HashMap<String, String> identificationAlgorithmsVersion = new HashMap<String, String>();
-    /**
-     * Map of the identification algorithms used to generate the identification
-     * files. Key: identification file name, element: the identification
-     * algorithm version index.
-     */
-    private HashMap<String, Integer> identificationAdvocate = new HashMap<String, Integer>();
+    private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
     /**
      * List of the spectrum files.
      */
@@ -443,13 +437,17 @@ public class ProjectDetails implements Serializable {
      * of the Advocate class
      */
     public ArrayList<Integer> getIdentificationAlgorithms() {
-        if (identificationAdvocate == null) {
+        if (identificationAlgorithms == null) {
             backwardCompatibilityFix();
         }
         ArrayList<Integer> result = new ArrayList<Integer>();
-        for (Integer advocate : identificationAdvocate.values()) {
-            if (!result.contains(advocate)) {
-                result.add(advocate);
+        for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
+            for (String advocateName : advocateVersions.keySet()) {
+                Advocate advocate = Advocate.getAdvocate(advocateName);
+                int advocateId = advocate.getIndex();
+                if (!result.contains(advocateId)) {
+                    result.add(advocateId);
+                }
             }
         }
         return result;
@@ -459,93 +457,48 @@ public class ProjectDetails implements Serializable {
      * Loads the identification files advocate and version from the id files.
      */
     public void backwardCompatibilityFix() {
-        identificationAdvocate = new HashMap<String, Integer>();
-        identificationAlgorithmsVersion = new HashMap<String, String>();
+        identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
         IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
         ArrayList<File> idFiles = identificationFiles;
         for (File idFile : idFiles) {
             String idFileName = Util.getFileName(idFile);
-            Advocate advocate = null;
             try {
                 IdfileReader idFileReader = idFileReaderFactory.getFileReader(idFile);
-                advocate = Advocate.getAdvocate(idFileReader.getSoftware());
-                identificationAlgorithmsVersion.put(idFileName, idFileReader.getSoftwareVersion());
+                identificationAlgorithms.put(idFileName, idFileReader.getSoftwareVersions());
             } catch (Exception e) {
-                // File was moved, use the extension to map it
+                // File was moved, use the extension to map it manually
                 if (idFileName.toLowerCase().endsWith("dat")) {
-                    advocate = Advocate.mascot;
+                    Advocate advocate = Advocate.mascot;
+                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
+                    algorithms.put(advocate.getName(), new ArrayList<String>());
+                    identificationAlgorithms.put(idFileName, algorithms);
                 } else if (idFileName.toLowerCase().endsWith("omx")) {
-                    advocate = Advocate.omssa;
+                    Advocate advocate = Advocate.omssa;
+                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
+                    ArrayList<String> versions = new ArrayList<String>();
+                    versions.add("2.1.9");
+                    algorithms.put(advocate.getName(), versions);
+                    identificationAlgorithms.put(idFileName, algorithms);
                 } else if (idFileName.toLowerCase().endsWith("xml")) {
-                    advocate = Advocate.xtandem;
+                    Advocate advocate = Advocate.xtandem;
+                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
+                    algorithms.put(advocate.getName(), new ArrayList<String>());
+                    identificationAlgorithms.put(idFileName, algorithms);
                 } else if (idFileName.toLowerCase().endsWith("mzid")) {
-                    advocate = Advocate.msgf;
+                    Advocate advocate = Advocate.msgf;
+                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
+                    algorithms.put(advocate.getName(), new ArrayList<String>());
+                    identificationAlgorithms.put(idFileName, algorithms);
                 } else if (idFileName.toLowerCase().endsWith("csv")) {
-                    advocate = Advocate.msAmanda;
+                    Advocate advocate = Advocate.msAmanda;
+                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
+                    algorithms.put(advocate.getName(), new ArrayList<String>());
+                    identificationAlgorithms.put(idFileName, algorithms);
+                } else {
+                throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
                 }
             }
-            if (advocate == null) {
-                throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
-            }
-            identificationAdvocate.put(idFileName, advocate.getIndex());
         }
-    }
-
-    /**
-     * Sets the identification algorithm version for a given identification
-     * file.
-     *
-     * @param identificationFileName the name of the identification file
-     * @param version the version of the algorithm used
-     */
-    public void setIdentificationAlgorithmVersion(String identificationFileName, String version) {
-        if (identificationAlgorithmsVersion == null) {
-            identificationAlgorithmsVersion = new HashMap<String, String>();
-        }
-        identificationAlgorithmsVersion.put(identificationFileName, version);
-    }
-
-    /**
-     * Returns the version of the identification algorithm used for the
-     * identification of the given file. Null if not found.
-     *
-     * @param identificationFileName the identification file name
-     *
-     * @return the version of the algorithm used
-     */
-    public String getIdentificationAlgorithmVersion(String identificationFileName) {
-        if (identificationAdvocate == null) {
-            backwardCompatibilityFix();
-        }
-        return identificationAlgorithmsVersion.get(identificationFileName);
-    }
-
-    /**
-     * Sets the identification algorithm for a given identification file.
-     *
-     * @param identificationFileName the name of the identification file
-     * @param advocateId the index of the advocate used for identification
-     */
-    public void setIdentificationAlgorithm(String identificationFileName, Integer advocateId) {
-        if (identificationAdvocate == null) {
-            identificationAdvocate = new HashMap<String, Integer>();
-        }
-        identificationAdvocate.put(identificationFileName, advocateId);
-    }
-
-    /**
-     * Returns the identification algorithm used for the identification of the
-     * given file. Null if not found.
-     *
-     * @param identificationFileName the identification file name
-     *
-     * @return the index of the algorithm used
-     */
-    public Integer getIdentificationAlgorithm(String identificationFileName) {
-        if (identificationAdvocate == null) {
-            backwardCompatibilityFix();
-        }
-        return identificationAdvocate.get(identificationFileName);
     }
 
     /**
@@ -555,23 +508,59 @@ public class ProjectDetails implements Serializable {
      * @return the different identification algorithm versions used
      */
     public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
+        if (identificationAlgorithms == null) {
+            backwardCompatibilityFix();
+        }
         HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<String, ArrayList<String>>();
-        for (File idFile : identificationFiles) {
-            String idFileName = Util.getFileName(idFile);
-            Integer advocateId = getIdentificationAlgorithm(idFileName);
-            Advocate advocate = Advocate.getAdvocate(advocateId);
-            String name = advocate.getName();
-            String version = getIdentificationAlgorithmVersion(name);
-            ArrayList<String> algorithmVersions = algorithmNameToVersionMap.get(name);
-            if (algorithmVersions == null) {
-                algorithmVersions = new ArrayList<String>();
-                algorithmVersions.add(version);
-                algorithmNameToVersionMap.put(name, algorithmVersions);
-            } else if (!algorithmVersions.contains(version)) {
-                algorithmVersions.add(version);
+        for (HashMap<String, ArrayList<String>> fileMapping : identificationAlgorithms.values()) {
+            for (String softwareName : fileMapping.keySet()) {
+                ArrayList<String> newVersions = fileMapping.get(softwareName);
+                if (newVersions != null && !newVersions.isEmpty()) {
+                    ArrayList<String> currentVersions = algorithmNameToVersionMap.get(softwareName);
+                    if (currentVersions == null) {
+                        currentVersions = new ArrayList<String>(newVersions);
+                        algorithmNameToVersionMap.put(softwareName, currentVersions);
+                    } else {
+                        for (String version : newVersions) {
+                            if (!currentVersions.contains(version)) {
+                                currentVersions.add(version);
+                            }
+                        }
+                    }
+                }
             }
         }
         return algorithmNameToVersionMap;
+    }
+    
+    /**
+     * Returns the identification algorithms used to create the id file in map: algorithm name -> algorithm version
+     * 
+     * @param idFileName the identification file name
+     * 
+     * @return the identification algorithms used
+     */
+    public HashMap<String, ArrayList<String>> getIdentificationAlgorithmsForFile(String idFileName) {
+        if (identificationAlgorithms == null) {
+            backwardCompatibilityFix();
+        }
+        if (identificationAlgorithms == null) {
+            return null;
+        }
+        return identificationAlgorithms.get(idFileName);
+    }
+    
+    /**
+     * Sets the identification algorithms used to create an identification file.
+     * 
+     * @param idFileName the name of the identification file
+     * @param fileIdentificationAlgorithms the identification algorithms used to create this file in a map: algorithm name -> versions
+     */
+    public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
+        if (identificationAlgorithms == null) {
+            identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
+        }
+        identificationAlgorithms.put(idFileName, fileIdentificationAlgorithms);
     }
 
     /**
@@ -738,7 +727,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the user advocates used in this project.
-     * 
+     *
      * @return the user advocates used in this project
      */
     public HashMap<Integer, Advocate> getUserAdvocateMapping() {
@@ -747,8 +736,8 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Sets the user advocates used in this project.
-     * 
-     * @param userAdvocateMapping  the user advocates used in this project
+     *
+     * @param userAdvocateMapping the user advocates used in this project
      */
     public void setUserAdvocateMapping(HashMap<Integer, Advocate> userAdvocateMapping) {
         this.userAdvocateMapping = userAdvocateMapping;
