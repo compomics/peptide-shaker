@@ -471,6 +471,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     @Override
     protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
+
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i : rows) {
             String proteinKey = proteinKeys.get(i);
@@ -512,6 +513,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     return i;
                 }
             }
+        } catch (SQLNonTransientConnectionException e) {
+            // connection has been closed
+            return rows.get(rows.size() - 1); // @TODO: is this the correct thing to return in this case..? 
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);
@@ -560,7 +564,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * Set up the properties of the protein table. Warning: when changing this
      * method please update reporter as well!
-     * 
+     *
      * @TODO: really did not know where to put this...
      *
      * @param proteinTable the protein table
@@ -635,19 +639,19 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
         coverageCellRendered.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
         proteinTable.getColumn("Coverage").setCellRenderer(coverageCellRendered);
-        
+
         JSparklinesArrayListBarChartTableCellRenderer peptidesCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
         peptidesCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Peptides").setCellRenderer(peptidesCellRenderer);
-        
+
         JSparklinesArrayListBarChartTableCellRenderer spectraCellRenderer = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
         spectraCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("#Spectra").setCellRenderer(spectraCellRenderer);
-        
+
         JSparklinesBarChartTableCellRenderer spectrumCountingCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
         spectrumCountingCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(spectrumCountingCellRenderer);
-        
+
         JSparklinesBarChartTableCellRenderer mwCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
         mwCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(mwCellRenderer);

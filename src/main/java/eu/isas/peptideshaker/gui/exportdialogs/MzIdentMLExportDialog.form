@@ -173,12 +173,10 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="First Name"/>
-                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="contactFirstNameJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -194,12 +192,10 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Last Name"/>
-                <Property name="toolTipText" type="java.lang.String" value="A (short) label for the project"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="contactLastNameJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="A (short) label for the project"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -214,12 +210,10 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="E-mail"/>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="contactEmailJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -234,7 +228,6 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Address"/>
-                <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="contactAddressJScrollPane">
@@ -249,7 +242,6 @@
                     <Property name="columns" type="int" value="10"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
-                    <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
                   <Events>
@@ -260,16 +252,11 @@
             </Container>
             <Component class="javax.swing.JLabel" name="contactUrlLabel">
               <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="ff" type="rgb"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="URL"/>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="contactUrlJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -354,12 +341,10 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Name"/>
-                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="organizationNameJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -374,12 +359,10 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="E-mail"/>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="organizationEmailJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -394,7 +377,6 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Address"/>
-                <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="organizationAddressJScrollPane">
@@ -409,7 +391,6 @@
                     <Property name="columns" type="int" value="10"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
-                    <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
                   <Events>
@@ -420,16 +401,11 @@
             </Container>
             <Component class="javax.swing.JLabel" name="organizationUrlLabel">
               <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="0" green="0" red="ff" type="rgb"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="URL"/>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="organizationUrlJTextField">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -485,13 +461,13 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Folder"/>
-                <Property name="toolTipText" type="java.lang.String" value="The folder where the PRIDE XML file will be saved"/>
+                <Property name="toolTipText" type="java.lang.String" value="The folder where the mzIdentML file will be saved"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="outputFolderJTextField">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
-                <Property name="toolTipText" type="java.lang.String" value="The folder where the PRIDE XML file will be saved"/>
+                <Property name="toolTipText" type="java.lang.String" value="The folder where the mzIdentML file will be saved"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
