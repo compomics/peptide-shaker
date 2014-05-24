@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
-import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcid;
@@ -1265,30 +1264,22 @@ public class FileImporter {
                 double ptmIssueShare = 100.0 * ptmIssue / total;
                 double share = 100.0 * rejected / numberOfMatches;
                 if (rejected > 0) {
-                    String filterReport = rejected + " matches, " + Util.roundDouble(share, 1) + "% of total, excluded by the import filter (";
+                    waitingHandler.appendReport(rejected + " matches (" + Util.roundDouble(share, 1) + "%) excluded by the import filters:", true, true);
                     if (proteinIssueShare > 0) {
-                        filterReport += proteinIssue + ", " + Util.roundDouble(proteinIssueShare, 1) + "%, mapped in target and decoy";
+                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + proteinIssue 
+                                + " (" + Util.roundDouble(proteinIssueShare, 1) + "%) mapped in target and decoy.", true, true);
                     }
                     if (peptideIssueShare > 0) {
-                        if (proteinIssueShare > 0) {
-                            filterReport += "; ";
-                        }
-                        filterReport += peptideIssue + ", " + Util.roundDouble(peptideIssueShare, 1) + "%, size or e-value out of boundary";
+                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + peptideIssue 
+                                + " (" + Util.roundDouble(peptideIssueShare, 1) + "%) size or e-value out of boundary.", true, true);
                     }
                     if (precursorIssueShare > 0) {
-                        if (proteinIssueShare > 0 || peptideIssueShare > 0) {
-                            filterReport += "; ";
-                        }
-                        filterReport += precursorIssue + ", " + Util.roundDouble(precursorIssueShare, 1) + "%, high precursor deviation";
+                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + precursorIssue 
+                                + " (" + Util.roundDouble(precursorIssueShare, 1) + "%) high precursor deviation.", true, true);
                     }
                     if (ptmIssueShare > 0) {
-                        if (proteinIssueShare > 0 || peptideIssueShare > 0 || precursorIssueShare > 0) {
-                            filterReport += "; ";
-                        }
-                        filterReport += ptmIssue + ", " + Util.roundDouble(ptmIssueShare, 1) + "%, unrecognized modifications";
+                        waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + ptmIssue + " (" + Util.roundDouble(ptmIssueShare, 1) + "%) unrecognized modifications.", true, true);
                     }
-                    filterReport += ")";
-                    waitingHandler.appendReport(filterReport, true, true);
                 }
                 // inform the user in case more than 75% of the hits were rejected by the filters
                 if (share > 75) {

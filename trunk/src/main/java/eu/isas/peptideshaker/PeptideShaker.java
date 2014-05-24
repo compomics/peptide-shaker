@@ -3576,12 +3576,14 @@ public class PeptideShaker {
         if (enzymaticIssue + evidenceIssue + uncharacterizedIssue > 0) { // special case to not divide by zero
 
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Deleting Mapping Artifacts. Please Wait...");
+                waitingHandler.setWaitingText("Removing Mapping Artifacts. Please Wait...");
                 int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
                 int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
                 int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
-                waitingHandler.appendReport(toDelete.size() + " unlikely mappings found. (" + enzymaticPercent + "% non-enzymatic accessions, "
-                        + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + "% not characterized accessions)", true, true);
+                waitingHandler.appendReport(toDelete.size() + " unlikely protein mappings found:", true, true);
+                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + enzymaticIssue + " (" + enzymaticPercent + "%) non-enzymatic accessions.", true, true);
+                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + evidenceIssue + " (" + evidencePercent + "%) lower evidence accessions.", true, true);
+                waitingHandler.appendReport("&nbsp;&nbsp;&nbsp;&nbsp;- " + uncharacterizedIssue + " (" + uncharacterizedPercent + "%) not characterized accessions.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
