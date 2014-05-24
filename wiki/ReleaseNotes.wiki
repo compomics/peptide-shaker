@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.30.0 (Coming soon...)*
+
+ * NEW FEATURE: mzIdentML export.
+ * NEW FEATURE: Import of mzid files from other algorithms than MS-GF+. (beta)
+
+ * FEATURE IMPROVEMENT: Improved and extended the Methods Section export.
+ * FEATURE IMPROVEMENT: Better formatting of long lines in the waiting handler.
+
+ * BUG FIX: Tried to make the table models more robust against database connection dropped issues.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.28.1.
+
+----
+
 *Changes in PeptideShaker 0.29.1 (May 20. 2014)*
 
  * BUG FIX: Fixed a bug with the gene/GO downloads for non-vertebrate species.
