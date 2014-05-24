@@ -10,6 +10,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 
 /**
@@ -286,6 +287,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             }
             identification.loadSpectrumMatchParameters(tempPsmKeys, new PSParameter(), null);
             return rows.get(rows.size() - 1);
+        } catch (SQLNonTransientConnectionException e) {
+            // connection has been closed
+            return rows.get(0); // @TODO: is this the correct thing to return in this case..? 
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);

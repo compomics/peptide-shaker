@@ -319,6 +319,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                 loadPeptideObjects(tempKeys);
             }
+        } catch (SQLNonTransientConnectionException e) {
+            // connection has been closed
+            return rows.get(0); // @TODO: is this the correct thing to return in this case..? 
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);

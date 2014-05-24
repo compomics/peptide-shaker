@@ -41,19 +41,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         // set gui properties
         setGuiProperties();
 
-        // insert temp test details
-        contactFirstNameJTextField.setText("contactFirstName");
-        contactLastNameJTextField.setText("contactLastName");
-        contactEmailJTextField.setText("contactEmail");
-        contactAddressJTextArea.setText("contactAddress");
-        contactUrlJTextField.setText("contactUrl");
-        organizationNameJTextField.setText("organizationName");
-        organizationEmailJTextField.setText("organizationEmail");
-        organizationAddressJTextArea.setText("organizationAddress");
-        organizationUrlJTextField.setText("organizationUrl");
-
         // insert project data
-        //insertProjectData(); // @TODO: re-add when removing the temp inserts above!
+        insertProjectData();
 
         // validate the input
         validateInput();
@@ -143,9 +132,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         contactFirstNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactFirstNameLabel.setText("First Name");
-        contactFirstNameLabel.setToolTipText("The title of the project");
 
-        contactFirstNameJTextField.setToolTipText("The title of the project");
         contactFirstNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         contactFirstNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -156,9 +143,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         contactLastNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactLastNameLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         contactLastNameLabel.setText("Last Name");
-        contactLastNameLabel.setToolTipText("A (short) label for the project");
 
-        contactLastNameJTextField.setToolTipText("A (short) label for the project");
         contactLastNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         contactLastNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -168,9 +153,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         contactEmailLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactEmailLabel.setText("E-mail");
-        contactEmailLabel.setToolTipText("Allows experiments to be grouped or organized under a projects");
 
-        contactEmailJTextField.setToolTipText("Allows experiments to be grouped or organized under a projects");
         contactEmailJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         contactEmailJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -180,12 +163,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         contactAddressLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactAddressLabel.setText("Address");
-        contactAddressLabel.setToolTipText("A general free-text description of the experiment");
 
         contactAddressJTextArea.setColumns(10);
         contactAddressJTextArea.setLineWrap(true);
         contactAddressJTextArea.setRows(2);
-        contactAddressJTextArea.setToolTipText("A general free-text description of the experiment");
         contactAddressJTextArea.setWrapStyleWord(true);
         contactAddressJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -194,11 +175,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         });
         contactAddressJScrollPane.setViewportView(contactAddressJTextArea);
 
-        contactUrlLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactUrlLabel.setText("URL");
-        contactUrlLabel.setToolTipText("Allows experiments to be grouped or organized under a projects");
 
-        contactUrlJTextField.setToolTipText("Allows experiments to be grouped or organized under a projects");
         contactUrlJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         contactUrlJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -268,9 +246,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         organizationNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         organizationNameLabel.setText("Name");
-        organizationNameLabel.setToolTipText("The title of the project");
 
-        organizationNameJTextField.setToolTipText("The title of the project");
         organizationNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         organizationNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -280,9 +256,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         organizationEmailLabel.setForeground(new java.awt.Color(255, 0, 0));
         organizationEmailLabel.setText("E-mail");
-        organizationEmailLabel.setToolTipText("Allows experiments to be grouped or organized under a projects");
 
-        organizationEmailJTextField.setToolTipText("Allows experiments to be grouped or organized under a projects");
         organizationEmailJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         organizationEmailJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -292,12 +266,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         organizationAddressLabel.setForeground(new java.awt.Color(255, 0, 0));
         organizationAddressLabel.setText("Address");
-        organizationAddressLabel.setToolTipText("A general free-text description of the experiment");
 
         organizationAddressJTextArea.setColumns(10);
         organizationAddressJTextArea.setLineWrap(true);
         organizationAddressJTextArea.setRows(2);
-        organizationAddressJTextArea.setToolTipText("A general free-text description of the experiment");
         organizationAddressJTextArea.setWrapStyleWord(true);
         organizationAddressJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -306,11 +278,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         });
         organizationAddressJScrollPane.setViewportView(organizationAddressJTextArea);
 
-        organizationUrlLabel.setForeground(new java.awt.Color(255, 0, 0));
         organizationUrlLabel.setText("URL");
-        organizationUrlLabel.setToolTipText("Allows experiments to be grouped or organized under a projects");
 
-        organizationUrlJTextField.setToolTipText("Allows experiments to be grouped or organized under a projects");
         organizationUrlJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         organizationUrlJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -368,10 +337,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         outputFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
         outputFolderLabel.setText("Folder");
-        outputFolderLabel.setToolTipText("The folder where the PRIDE XML file will be saved");
+        outputFolderLabel.setToolTipText("The folder where the mzIdentML file will be saved");
 
         outputFolderJTextField.setEditable(false);
-        outputFolderJTextField.setToolTipText("The folder where the PRIDE XML file will be saved");
+        outputFolderJTextField.setToolTipText("The folder where the mzIdentML file will be saved");
         outputFolderJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
         browseOutputFolderJButton.setText("Browse");
@@ -615,12 +584,20 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getProjectDetails().setContactLastName(contactLastNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactEmail(contactEmailJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactAddress(contactAddressJTextArea.getText().trim());
-                peptideShakerGUI.getProjectDetails().setContactUrl(contactUrlJTextField.getText().trim());
+                if (!contactUrlJTextField.getText().trim().isEmpty()) {
+                    peptideShakerGUI.getProjectDetails().setContactUrl(contactUrlJTextField.getText().trim());
+                } else {
+                    peptideShakerGUI.getProjectDetails().setContactUrl(null);
+                }
 
                 peptideShakerGUI.getProjectDetails().setOrganizationName(organizationNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setOrganizationEmail(organizationEmailJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setOrganizationAddress(organizationAddressJTextArea.getText().trim());
-                peptideShakerGUI.getProjectDetails().setOrganizationUrl(organizationUrlJTextField.getText().trim());
+                if (!organizationUrlJTextField.getText().trim().isEmpty()) {
+                    peptideShakerGUI.getProjectDetails().setOrganizationUrl(organizationUrlJTextField.getText().trim());
+                } else {
+                    peptideShakerGUI.getProjectDetails().setOrganizationUrl(null);
+                }
 
                 peptideShakerGUI.getProjectDetails().setPrideOutputFolder(outputFolderJTextField.getText());
                 peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
@@ -628,10 +605,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 boolean conversionCompleted = false;
 
                 try {
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getProcessingPreferences(), 
-                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
-                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
-                            finalOutputFile, progressDialog);
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(), 
+                            peptideShakerGUI.getProcessingPreferences(),peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), 
+                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), 
+                            peptideShakerGUI.getAnnotationPreferences(), finalOutputFile, progressDialog);
                     mzIdentMLExport.createMzIdentMLFile(progressDialog);
 
                     // @TODO: validate mzIdentML file..?
@@ -743,11 +720,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 || contactLastNameJTextField.getText().length() == 0
                 || contactEmailJTextField.getText().length() == 0
                 || contactAddressJTextArea.getText().length() == 0
-                || contactUrlJTextField.getText().length() == 0
                 || organizationNameJTextField.getText().length() == 0
                 || organizationEmailJTextField.getText().length() == 0
                 || organizationAddressJTextArea.getText().length() == 0
-                || organizationUrlJTextField.getText().length() == 0
                 || outputFolderJTextField.getText().length() == 0) {
             inputValid = false;
         }
@@ -779,12 +754,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             contactAddressLabel.setForeground(Color.RED);
         }
 
-        if (contactUrlJTextField.getText().length() > 0) {
-            contactUrlLabel.setForeground(Color.BLACK);
-        } else {
-            contactUrlLabel.setForeground(Color.RED);
-        }
-
         if (organizationNameJTextField.getText().length() > 0) {
             organizationNameLabel.setForeground(Color.BLACK);
         } else {
@@ -801,12 +770,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             organizationAddressLabel.setForeground(Color.BLACK);
         } else {
             organizationAddressLabel.setForeground(Color.RED);
-        }
-
-        if (organizationUrlJTextField.getText().length() > 0) {
-            organizationUrlLabel.setForeground(Color.BLACK);
-        } else {
-            organizationUrlLabel.setForeground(Color.RED);
         }
 
         if (outputFolderJTextField.getText().length() > 0) {
