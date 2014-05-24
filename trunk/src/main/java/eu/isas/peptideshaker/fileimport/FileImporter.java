@@ -285,14 +285,14 @@ public class FileImporter {
                                 PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
                                 String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
                                 if (utilitiesPtmName == null) {
-                                    throw new IllegalArgumentException("Pepnovo ptm " + pepnovoPtmName + " not recognized.");
+                                    throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                             } else if (advocateId == Advocate.direcTag.getIndex()) {
                                 Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
                                 String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
                                 if (utilitiesPtmName == null) {
-                                    throw new IllegalArgumentException("DirecTag ptm " + directagIndex + " not recognized.");
+                                    throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                                 PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
