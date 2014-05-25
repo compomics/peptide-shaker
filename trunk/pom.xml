@@ -410,13 +410,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Used for the Venn diagrams -->
-        <dependency>
-            <groupId>com.googlecode.charts4j</groupId>
-            <artifactId>charts4j</artifactId>
-            <version>1.3</version>
-        </dependency>
-
         <dependency>
             <groupId>niklaas</groupId>
             <artifactId>jmol</artifactId>
@@ -431,11 +424,11 @@
         </dependency>
 
         <!-- JDAS dependency -->    <!-- not used!! -->
-        <dependency>
+        <!--<dependency>
             <groupId>uk.ac.ebi.das</groupId>
             <artifactId>jdas</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>no.uib</groupId>

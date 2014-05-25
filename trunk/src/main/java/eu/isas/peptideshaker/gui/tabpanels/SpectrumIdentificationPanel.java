@@ -26,22 +26,17 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import com.googlecode.charts4j.Color;
-import com.googlecode.charts4j.GCharts;
-import com.googlecode.charts4j.VennDiagram;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Component;
-import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,10 +87,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     static {
         BarRenderer.setDefaultBarPainter(new StandardBarPainter());
     }
-    /**
-     * The Venn diagram advocate colors.
-     */
-    private HashMap<Integer, Color> advocateVennColors;
     /**
      * The progress dialog.
      */
@@ -237,7 +228,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // set up the search engines color map
         searchEnginesColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEnginesColorMap.put(Advocate.peptideShaker.getIndex(), peptideShakerGUI.getSparklineColor());
+        searchEnginesColorMap.put(Advocate.peptideShaker.getIndex(), peptideShakerGUI.getSparklineColor()); // @TODO: get colors from the Advocate class!!
         searchEnginesColorMap.put(Advocate.xtandem.getIndex(), new java.awt.Color(153, 255, 255));
         searchEnginesColorMap.put(Advocate.omssa.getIndex(), new java.awt.Color(153, 153, 255));
         searchEnginesColorMap.put(Advocate.mascot.getIndex(), new java.awt.Color(255, 153, 255));
@@ -246,15 +237,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesColorMap.put(Advocate.direcTag.getIndex(), new java.awt.Color(189, 183, 107));
         
         // @TODO: set colors for the user advocates!!!
-
-        // the venn diagram colors
-        advocateVennColors = new HashMap<Integer, Color>();
-        advocateVennColors.put(Advocate.xtandem.getIndex(), Color.PALETURQUOISE);
-        advocateVennColors.put(Advocate.omssa.getIndex(), Color.MEDIUMSLATEBLUE);
-        advocateVennColors.put(Advocate.mascot.getIndex(), Color.PINK);
-        advocateVennColors.put(Advocate.msgf.getIndex(), Color.INDIANRED);
-        advocateVennColors.put(Advocate.msAmanda.getIndex(), Color.THISTLE);
-        advocateVennColors.put(Advocate.direcTag.getIndex(), Color.DARKKHAKI);
     }
 
     /**
@@ -362,7 +344,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesTooltipMap.put(Advocate.msAmanda.getIndex(), Advocate.msAmanda.getName());
         searchEnginesTooltipMap.put(Advocate.direcTag.getIndex(), Advocate.direcTag.getName());
 
-        searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), searchEnginesColorMap, searchEnginesTooltipMap));
+        searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEnginesColorMap, searchEnginesTooltipMap));
 
         searchResultsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -562,7 +544,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareJPanel = new javax.swing.JPanel();
         idSoftwareJLayeredPane = new javax.swing.JLayeredPane();
         idSoftwarePanel = new javax.swing.JPanel();
-        vennDiagramButton = new javax.swing.JButton();
         overviewPlotsPanel = new javax.swing.JPanel();
         idSoftwareHelpJButton = new javax.swing.JButton();
         exportIdPerformancePerformanceJButton = new javax.swing.JButton();
@@ -1239,11 +1220,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwarePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Identification Overview"));
         idSoftwarePanel.setOpaque(false);
 
-        vennDiagramButton.setBackground(new java.awt.Color(255, 255, 255));
-        vennDiagramButton.setBorderPainted(false);
-        vennDiagramButton.setContentAreaFilled(false);
-        vennDiagramButton.setFocusable(false);
-
         overviewPlotsPanel.setOpaque(false);
         overviewPlotsPanel.setLayout(new javax.swing.BoxLayout(overviewPlotsPanel, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -1253,25 +1229,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idSoftwarePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1012, Short.MAX_VALUE)
-                .addGap(246, 246, 246))
-            .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(idSoftwarePanelLayout.createSequentialGroup()
-                    .addContainerGap(1029, Short.MAX_VALUE)
-                    .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1248, Short.MAX_VALUE)
+                .addContainerGap())
         );
         idSoftwarePanelLayout.setVerticalGroup(
             idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idSoftwarePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(overviewPlotsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(idSoftwarePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(idSoftwarePanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addContainerGap()))
         );
 
         idSoftwareJLayeredPane.add(idSoftwarePanel);
@@ -2246,7 +2212,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane spectrumSelectionPsmSplitPane;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableJScrollPane;
-    private javax.swing.JButton vennDiagramButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -2386,14 +2351,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             uniqueAdvocateId.put(tempAdvocate, 0.0);
         }
 
-        int dataA = 0, dataB = 0, dataC = 0, dataAB = 0, dataAC = 0, dataBC = 0, dataABC = 0;
         int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
-
-        // venn diagram data
-        ArrayList<Integer> vennDiagramAdvocates = new ArrayList<Integer>();
-        for (int i = 0; i < advocatesUsed.size() && i < 3; i++) {
-            vennDiagramAdvocates.add(advocatesUsed.get(i));
-        }
 
         int fileCounter = 1;
         PSParameter probabilities = new PSParameter();
@@ -2439,43 +2397,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    // get the venn diagram data
-                    if (vennDiagramAdvocates.size() == 3) {
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))
-                                && currentAdvocates.contains(vennDiagramAdvocates.get(1))
-                                && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                            dataABC++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                            dataAB++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                            dataAC++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1)) && currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                            dataBC++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
-                            dataA++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                            dataB++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(2))) {
-                            dataC++;
-                        }
-                    } else if (vennDiagramAdvocates.size() == 2) {
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0)) && currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                            dataAB++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(0))) {
-                            dataA++;
-                        }
-                        if (currentAdvocates.contains(vennDiagramAdvocates.get(1))) {
-                            dataB++;
-                        }
-                    }
-
                     // overview plot data
                     for (Integer tempAdvocate : advocatesUsed) {
                         if (currentAdvocates.contains(tempAdvocate)) {
@@ -2499,139 +2420,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Updating Tables. Please Wait...");
 
-            // update the venn diagram
-            updateVennDiagram(dataA, dataB, dataC,
-                    dataAB, dataAC, dataBC, dataABC,
-                    vennDiagramAdvocates);
-
             // add the peptide shaker results
             totalAdvocateId.put(Advocate.peptideShaker.getIndex(), (double) totalPeptideShakerIds);
             uniqueAdvocateId.put(Advocate.peptideShaker.getIndex(), 0.0);
 
             // update the id software performance plots
             updateOverviewPlots(totalAdvocateId, uniqueAdvocateId, totalNumberOfSpectra);
-        }
-    }
-
-    /**
-     * Create a Venn diagram and add it to the given button.
-     *
-     * @param diagramButton the button to add the diagram to
-     * @param a the size of A
-     * @param b the size of B
-     * @param c the size of C
-     * @param ab the overlap of A and B
-     * @param ac the overlap of A and C
-     * @param bc the overlap of B and C
-     * @param abc the number of values in A, B and C
-     * @param titleA the title of dataset A
-     * @param titleB the title of dataset B
-     * @param titleC the title of dataset C
-     */
-    private void updateThreeWayVennDiagram(JButton diagramButton, int a, int b, int c, int ab, int ac, int bc, int abc,
-            String titleA, String titleB, String titleC, Color colorA, Color colorB, Color colorC) {
-
-        double maxValue = Math.max(Math.max(a, b), c);
-        if (maxValue < 1) {
-            maxValue = 1;
-        }
-
-        // @TODO: move this method to utilities?
-        final VennDiagram chart = GCharts.newVennDiagram(
-                a / maxValue, b / maxValue, c / maxValue, ab / maxValue, ac / maxValue, bc / maxValue, abc / maxValue);
-
-        // @TODO: remove the hardcoding below!!!
-        if (diagramButton.getWidth() == 0) {
-            chart.setSize(173, 105);
-        } else {
-            chart.setSize(diagramButton.getWidth(), diagramButton.getHeight() - 10);
-        }
-
-        chart.setCircleLegends(titleA, titleB, titleC);
-        chart.setCircleColors(colorA, colorB, colorC);
-
-        try {
-            diagramButton.setText("");
-            ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
-
-            if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
-                diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
-                diagramButton.setToolTipText("Not available in off line mode");
-            } else {
-                diagramButton.setIcon(icon);
-
-                diagramButton.setToolTipText("<html>"
-                        + titleA + ": " + a + "<br>"
-                        + titleB + ": " + b + "<br>"
-                        + titleC + ": " + c + "<br><br>"
-                        + titleA + " & " + titleB + ": " + ab + "<br>"
-                        + titleA + " & " + titleC + ": " + ac + "<br>"
-                        + titleB + " & " + titleC + ": " + bc + "<br><br>"
-                        + titleA + " & " + titleB + " & " + titleC + ": " + abc
-                        + "</html>");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
-            diagramButton.setToolTipText("Not available due to an error occuring");
-        }
-    }
-
-    /**
-     * Create a Venn diagram and add it to the given button.
-     *
-     * @param diagramButton the button to add the diagram to
-     * @param a the size of A
-     * @param b the size of B
-     * @param ab the overlap of A and B
-     * @param titleA the title of dataset A
-     * @param titleB the title of dataset B
-     */
-    private void updateTwoWayVennDiagram(JButton diagramButton, int a, int b, int ab, String titleA, String titleB, Color colorA, Color colorB) {
-
-        double maxValue = Math.max(a, b);
-        if (maxValue < 1) {
-            maxValue = 1;
-        }
-
-        // @TODO: move this method to utilities?
-        final VennDiagram chart = GCharts.newVennDiagram(
-                a / maxValue, b / maxValue, 0, ab / maxValue, 0, 0, 0);
-
-        // @TODO: remove the hardcoding below!!!
-        try {
-            if (diagramButton.getWidth() == 0) {
-                chart.setSize(173, 105);
-            } else {
-                chart.setSize(diagramButton.getWidth(), diagramButton.getHeight() - 10);
-            }
-
-            chart.setCircleLegends(titleA, titleB, "");
-            chart.setCircleColors(colorA, colorB, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
-
-            diagramButton.setText("");
-            ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
-
-            if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
-                diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
-                diagramButton.setToolTipText("Not available in off line mode");
-            } else {
-                diagramButton.setIcon(icon);
-
-                diagramButton.setToolTipText("<html>"
-                        + titleA + ": " + a + "<br>"
-                        + titleB + ": " + b + "<br>"
-                        + titleA + " & " + titleB + ": " + ab
-                        + "</html>");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
-            diagramButton.setToolTipText("Not available due to an error occuring");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
-            diagramButton.setToolTipText("Not available due to an error occuring");
         }
     }
 
@@ -3478,34 +3272,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
-        }
-    }
-
-    /**
-     * Update the Venn diagram.
-     *
-     * @param dataA the data in group A
-     * @param dataB the data in group B
-     * @param dataC the data in group C
-     * @param dataAB the data in group AB
-     * @param dataAC the data in group AC
-     * @param dataBC the data in group BC
-     * @param dataABC the data in group ABC
-     * @param vennDiagramAdvocates the advocates
-     */
-    private void updateVennDiagram(int dataA, int dataB, int dataC, int dataAB, int dataAC, int dataBC, int dataABC, ArrayList<Integer> vennDiagramAdvocates) {
-        if (vennDiagramAdvocates.size() == 3) {
-            updateThreeWayVennDiagram(vennDiagramButton, dataA, dataB, dataC,
-                    dataAB, dataAC, dataBC, dataABC, Advocate.getAdvocate(vennDiagramAdvocates.get(0)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(1)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(2)).getName(),
-                    advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)), advocateVennColors.get(vennDiagramAdvocates.get(2)));
-        } else if (vennDiagramAdvocates.size() == 2) {
-            updateTwoWayVennDiagram(vennDiagramButton, dataA, dataB, dataAB,
-                    Advocate.getAdvocate(vennDiagramAdvocates.get(0)).getName(), Advocate.getAdvocate(vennDiagramAdvocates.get(1)).getName(),
-                    advocateVennColors.get(vennDiagramAdvocates.get(0)), advocateVennColors.get(vennDiagramAdvocates.get(1)));
-        } else {
-            vennDiagramButton.setText(null);
-            vennDiagramButton.setToolTipText(null);
-            vennDiagramButton.setIcon(null);
         }
     }
 
