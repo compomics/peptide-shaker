@@ -892,7 +892,7 @@ public class FileImporter {
                                                         try {
                                                             seMass = new Double(parsedName[0]);
                                                         } catch (Exception e) {
-                                                            throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
+                                                            throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as a tagged modification.\n"
                                                                     + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
@@ -900,6 +900,8 @@ public class FileImporter {
                                                         Advocate advocate = Advocate.getAdvocate(advocateId);
                                                         throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
                                                     }
+                                                    
+                                                    // @TODO: what about the other advocates??
 
                                                     ArrayList<String> allNames = new ArrayList<String>();
                                                     for (ArrayList<String> namesAtAA : tempNames.values()) {
