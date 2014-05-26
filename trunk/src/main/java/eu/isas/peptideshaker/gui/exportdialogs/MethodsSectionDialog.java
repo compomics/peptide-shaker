@@ -97,7 +97,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         }
 
         if (peptideShakerCheck.isSelected()) {
-            text += PeptideShakerMethods.getPeptideShaker(peptideShakerGUI);
+            text += PeptideShakerMethods.getPeptideShaker();
         }
         if (validationCheck.isSelected()) {
             text += PeptideShakerMethods.getValidation(peptideShakerGUI.getProcessingPreferences());

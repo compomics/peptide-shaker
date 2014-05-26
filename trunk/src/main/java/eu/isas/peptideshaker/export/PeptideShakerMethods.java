@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -287,9 +288,9 @@ public class PeptideShakerMethods {
      * @param peptideShakerGUI reference to PeptideShaker
      * @return the PeptideShaker usage details
      */
-    public static String getPeptideShaker(PeptideShakerGUI peptideShakerGUI) {
+    public static String getPeptideShaker() {
         return "Peptides and proteins were infered from the spectrum identification results using PeptideShaker "
-                + "version " + peptideShakerGUI.getVersion() + " (http://peptide-shaker.googlecode.com). ";
+                + "version " + PeptideShaker.getVersion() + " (http://peptide-shaker.googlecode.com). ";
     }
 
     /**

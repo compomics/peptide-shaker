@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
@@ -45,10 +46,12 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import static java.awt.Frame.NORMAL;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,6 +180,12 @@ public class PeptideShaker {
      * The type of matching used for peptide to protein matching.
      */
     public final static AminoAcidPattern.MatchingType MATCHING_TYPE = AminoAcidPattern.MatchingType.indistiguishibleAminoAcids;
+
+    /**
+     * Empty constructor for instantiation purposes
+     */
+    private PeptideShaker() {
+    }
 
     /**
      * Constructor without mass specification. Calculation will be done on new
@@ -4442,5 +4451,33 @@ public class PeptideShaker {
      */
     public static File getSerializationDirectory(String jarFilePath) {
         return new File(getMatchesDirectoryParent(jarFilePath), PeptideShaker.getMatchesDirectorySubPath());
+    }
+
+    /**
+     * Retrieves the version number set in the pom file.
+     *
+     * @return the version number of PeptideShaker
+     */
+    public static String getVersion() {
+
+        java.util.Properties p = new java.util.Properties();
+
+        try {
+            InputStream is = (new PeptideShaker()).getClass().getClassLoader().getResourceAsStream("peptide-shaker.properties");
+            p.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return p.getProperty("peptide-shaker.version");
+    }
+
+    /**
+     * Retrieves the version number set in the pom file.
+     *
+     * @return the version number of PeptideShaker
+     */
+    public static String getJarFilePath() {
+        return CompomicsWrapper.getJarFilePath((new PeptideShaker()).getClass().getResource("PeptideShaker.class").getPath(), "PeptideShaker");
     }
 }

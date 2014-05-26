@@ -8,6 +8,8 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
+import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.TrainingExport;
@@ -17,6 +19,7 @@ import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.File;
 import java.io.IOException;
@@ -262,5 +265,39 @@ public class CLIMethods {
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
         PSExportFactory.writeDocumentation(exportScheme, reportFile);
+    }
+    
+    /**
+     * Exports the project in the mzidentml format.
+     * 
+     * @param mzidCLIInputBean the user input
+     * @param cpsParent a cps file parent allowing accessing the information it contains
+     * @param waitingHandler a waiting handler allowing display of progress and interruption of the export
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws MzMLUnmarshallerException
+     * @throws InterruptedException
+     * @throws SQLException 
+     */
+    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean,CpsParent cpsParent, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
+        
+        ProjectDetails projectDetails = cpsParent.getProjectDetails();
+                projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());
+                projectDetails.setContactLastName(mzidCLIInputBean.getContactLastName());
+                projectDetails.setContactEmail(mzidCLIInputBean.getContactEmail());
+                projectDetails.setContactAddress(mzidCLIInputBean.getContactAddress());
+                projectDetails.setContactUrl(mzidCLIInputBean.getContactUrl());
+                projectDetails.setOrganizationName(mzidCLIInputBean.getOrganizationName());
+                projectDetails.setOrganizationEmail(mzidCLIInputBean.getOrganizationMail());
+                projectDetails.setOrganizationAddress(mzidCLIInputBean.getOrganizationAddress());
+                projectDetails.setOrganizationUrl(mzidCLIInputBean.getOrganizationUrl());
+                projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFolder().getAbsolutePath());
+
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(), 
+                            cpsParent.getProcessingPreferences(),cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(), 
+                            cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(), 
+                            cpsParent.getAnnotationPreferences(), mzidCLIInputBean.getOutputFolder(), waitingHandler);
+                    mzIdentMLExport.createMzIdentMLFile();
     }
 }

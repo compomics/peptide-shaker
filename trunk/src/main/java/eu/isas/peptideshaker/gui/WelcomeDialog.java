@@ -14,6 +14,7 @@ import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReShakeGUIv2;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
@@ -816,7 +817,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
         new BugReport(this, peptideShakerGUI.getLastSelectedFolder(), "PeptideShaker", "peptide-shaker",
-                peptideShakerGUI.getVersion(), "peptide-shaker", "PeptideShaker",
+                PeptideShaker.getVersion(), "peptide-shaker", "PeptideShaker",
                 new File(peptideShakerGUI.getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_bugReportMenuItemActionPerformed
 

@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
@@ -555,7 +556,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
-        final File finalOutputFile = new File(outputFolderJTextField.getText());;
+        final File finalOutputFile = new File(outputFolderJTextField.getText());
 
         progressDialog = new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -605,11 +606,11 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 boolean conversionCompleted = false;
 
                 try {
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(), 
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(), 
                             peptideShakerGUI.getProcessingPreferences(),peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), 
-                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), 
+                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
                             peptideShakerGUI.getAnnotationPreferences(), finalOutputFile, progressDialog);
-                    mzIdentMLExport.createMzIdentMLFile(progressDialog);
+                    mzIdentMLExport.createMzIdentMLFile();
 
                     // @TODO: validate mzIdentML file..?
                     conversionCompleted = true;

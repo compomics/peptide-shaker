@@ -25,6 +25,7 @@ import com.compomics.util.gui.renderers.ToolTipComboBoxRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.pride.validation.PrideXmlValidator;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -1075,7 +1076,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                 boolean conversionCompleted = false;
 
                 try {
-                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
+                    PRIDEExport prideExport = new PRIDEExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
                             peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
                             selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,

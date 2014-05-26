@@ -31,7 +31,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
 
         // get the version number set in the pom file
         String jarFileName = "PeptideShaker-" + new Properties().getVersion() + ".jar";
-        String path = getJarFilePath();
+        String path = PeptideShaker.getJarFilePath();
         File jarFile = new File(path, jarFileName);
         // get the splash 
         String splash = "peptide-shaker-splash.png";
@@ -49,19 +49,10 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }
-    }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
-    public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerWrapper.class").getPath(), "PeptideShaker");
     }
 
     /**

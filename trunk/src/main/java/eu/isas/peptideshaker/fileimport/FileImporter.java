@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -20,6 +21,8 @@ import com.compomics.util.experiment.identification.protein_inference.proteintre
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
+import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -34,6 +37,8 @@ import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import de.proteinms.omxparser.util.OMSSAIdfileReader;
+import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -864,7 +869,7 @@ public class FileImporter {
                                                 HashMap<Integer, ArrayList<String>> tempNames = new HashMap<Integer, ArrayList<String>>();
                                                 if (modMatch.isVariable()) {
                                                     String sePTM = modMatch.getTheoreticPtm();
-                                                    if (advocateId == Advocate.omssa.getIndex()) {
+                                                    if (fileReader instanceof OMSSAIdfileReader) {
                                                         Integer omssaIndex = null;
                                                         try {
                                                             omssaIndex = new Integer(sePTM);
@@ -883,10 +888,9 @@ public class FileImporter {
                                                             }
                                                             tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, PeptideShaker.MATCHING_TYPE, ptmMassTolerance, searchParameters.getFragmentIonAccuracy());
                                                         }
-                                                    } else if (advocateId == Advocate.mascot.getIndex()
-                                                            || advocateId == Advocate.xtandem.getIndex()
-                                                            || advocateId == Advocate.msgf.getIndex()
-                                                            || advocateId == Advocate.msAmanda.getIndex()) {
+                                                    } else if (fileReader instanceof MascotIdfileReader
+                                                            || fileReader instanceof XTandemIdfileReader
+                                                            || fileReader instanceof MzIdentMLIdfileReader) {
                                                         String[] parsedName = sePTM.split("@");
                                                         double seMass = 0;
                                                         try {
@@ -896,12 +900,9 @@ public class FileImporter {
                                                                     + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
-                                                    } else if (advocateId != Advocate.direcTag.getIndex() && advocateId != Advocate.pepnovo.getIndex()) {
-                                                        Advocate advocate = Advocate.getAdvocate(advocateId);
-                                                        throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + advocate.getName() + ".");
+                                                    } else if (!(fileReader instanceof DirecTagIdfileReader)) {
+                                                        throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + idFile.getName() + ".");
                                                     }
-                                                    
-                                                    // @TODO: what about the other advocates??
 
                                                     ArrayList<String> allNames = new ArrayList<String>();
                                                     for (ArrayList<String> namesAtAA : tempNames.values()) {

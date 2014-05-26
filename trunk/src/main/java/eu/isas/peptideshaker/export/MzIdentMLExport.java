@@ -129,7 +129,7 @@ public class MzIdentMLExport {
     /**
      * The peptide spectrum annotator.
      */
-    private PeptideSpectrumAnnotator spectrumAnnotator;
+    private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
     /**
      * The annotation preferences.
      */
@@ -158,7 +158,6 @@ public class MzIdentMLExport {
      * @param identificationFeaturesGenerator
      * @param searchParameters
      * @param annotationPreferences
-     * @param spectrumAnnotator
      * @param ptmScoringPreferences
      * @param outputFile Output file
      * @param waitingHandler
@@ -171,7 +170,7 @@ public class MzIdentMLExport {
      * occurred while deserializing a pride object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
+            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             AnnotationPreferences annotationPreferences, File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
@@ -181,11 +180,11 @@ public class MzIdentMLExport {
         this.ptmScoringPreferences = ptmScoringPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.spectrumAnnotator = spectrumAnnotator;
         this.annotationPreferences = annotationPreferences;
         this.waitingHandler = waitingHandler;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance(); // @TODO: should be renamed!!!
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
+        this.peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         r = new FileWriter(outputFile);
         br = new BufferedWriter(r);
     }
@@ -193,7 +192,7 @@ public class MzIdentMLExport {
     /**
      * Creates the mzIdentML file.
      *
-     * @param progressDialog a dialog displaying progress to the user
+     * @param waitingHandler a waiting handler displaying progress to the user and allowing cancelling the process
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
@@ -202,7 +201,7 @@ public class MzIdentMLExport {
      * @throws java.lang.InterruptedException
      * @throws SQLException
      */
-    public void createMzIdentMLFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
+    public void createMzIdentMLFile() throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 
         // the mzIdentML start tag
         writeMzIdentMLStartTag();
@@ -1200,7 +1199,7 @@ public class MzIdentMLExport {
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
 
             // get all the fragment ion annotations
-            ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+            ArrayList<IonMatch> annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                     annotationPreferences.getNeutralLosses(),
                     annotationPreferences.getValidatedCharges(),
                     identificationCharge,
