@@ -34,6 +34,7 @@ import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.Properties;
+import eu.isas.peptideshaker.utils.Tips;
 import java.awt.Point;
 import java.awt.Toolkit;
 import org.apache.commons.cli.*;
@@ -113,13 +114,21 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 // ignore, use default look and feel
             }
+            
+            ArrayList<String> tips;
+            try {
+            tips = Tips.getTips();
+            }catch (Exception e) {
+                tips = new ArrayList<String>();
+                // Do something here?
+            }
 
             PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
             peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
-            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + peptideShakerGUI.getVersion(), "/icons/peptide-shaker.gif"),
+            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + PeptideShaker.getVersion(), "/icons/peptide-shaker.gif"),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    false, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
+                    false, tips, "Importing Data", "PeptideShaker", PeptideShaker.getVersion(), true);
             ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(false, false);
             ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
             Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
@@ -496,7 +505,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             identification.close();
         }
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
+        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {
@@ -533,7 +542,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     private void loadEnzymes() {
         try {
-            File lEnzymeFile = new File(getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
+            File lEnzymeFile = new File(PeptideShaker.getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
@@ -541,16 +550,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
     }
 
-    @Override
-    public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
-    }
-
     /**
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }

@@ -38,6 +38,7 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.utils.Tips;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -706,11 +707,19 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             experiment.addAnalysisSet(sample, analysisSet);
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
+            
+            ArrayList<String> tips;
+            try {
+            tips = Tips.getTips();
+            }catch (Exception e) {
+                tips = new ArrayList<String>();
+                // Do something here?
+            }
 
             WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
+                    true, tips, "Importing Data", "PeptideShaker", PeptideShaker.getVersion(), true);
             waitingDialog.setCloseDialogWhenImportCompletes(true, true);
 
             int progressCounter = idFiles.size() + spectrumFiles.size();

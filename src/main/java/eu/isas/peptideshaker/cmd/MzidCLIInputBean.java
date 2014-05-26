@@ -1,0 +1,217 @@
+package eu.isas.peptideshaker.cmd;
+
+import java.io.File;
+import org.apache.commons.cli.CommandLine;
+
+/**
+ * This class is a simple bean wrapping the CLI parameters provided in an
+ * Options instance.
+ *
+ * @author Marc
+ */
+public class MzidCLIInputBean {
+    
+    /**
+     * The PeptideShaker cps file
+     */
+    private File cpsFile;
+    /**
+     * The contact first name
+     */
+    private String contactFirstName;
+    /**
+     * The contact last name
+     */
+    private String contactLastName;
+    /**
+     * The contact email
+     */
+    private String contactEmail;
+    /**
+     * The contact address
+     */
+    private String contactAddress;
+    /**
+     * The contact url
+     */
+    private String contactUrl;
+    /**
+     * The organization name
+     */
+    private String organizationName;
+    /**
+     * The organization email
+     */
+    private String organizationMail;
+    /**
+     * The organization address
+     */
+    private String organizationAddress;
+    /**
+     * The organization url
+     */
+    private String organizationUrl;
+    /**
+     * The folder where the file should be output
+     */
+    private File outputFolder;
+    /**
+     * The path settings.
+     */
+    private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    
+    /**
+     * Parses a MzidCLI command line and stores the input in the attributes.
+     * 
+     * @param aLine a MzidCLI command line
+     */
+    public MzidCLIInputBean(CommandLine aLine) {
+        
+        if (aLine.hasOption(MzidCLIParams.CPS_FILE.id)) {
+            cpsFile = new File(aLine.getOptionValue(MzidCLIParams.CPS_FILE.id));
+        }
+        if (aLine.hasOption(MzidCLIParams.CONTACT_FIRST_NAME.id)) {
+            contactFirstName = aLine.getOptionValue(MzidCLIParams.CONTACT_FIRST_NAME.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.CONTACT_LAST_NAME.id)) {
+            contactLastName = aLine.getOptionValue(MzidCLIParams.CONTACT_LAST_NAME.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.CONTACT_EMAIL.id)) {
+            contactEmail = aLine.getOptionValue(MzidCLIParams.CONTACT_EMAIL.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.CONTACT_ADDRESS.id)) {
+            contactAddress = aLine.getOptionValue(MzidCLIParams.CONTACT_ADDRESS.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.CONTACT_URL.id)) {
+            contactUrl = aLine.getOptionValue(MzidCLIParams.CONTACT_URL.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_NAME.id)) {
+            organizationName = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_NAME.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_MAIL.id)) {
+            organizationMail = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_MAIL.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_ADDRESS.id)) {
+            organizationAddress = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_ADDRESS.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_URL.id)) {
+            organizationUrl = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_URL.id);
+        }
+        if (aLine.hasOption(MzidCLIParams.OUTPUT_FOLDER.id)) {
+            cpsFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FOLDER.id));
+        }
+        
+        pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
+    }
+
+    /**
+     * Returns the cps file.
+     * 
+     * @return the cps file
+     */
+    public File getCpsFile() {
+        return cpsFile;
+    }
+
+    /**
+     * Returns the contact first name.
+     * 
+     * @return the contact first name
+     */
+    public String getContactFirstName() {
+        return contactFirstName;
+    }
+    
+    /**
+     * Returns the contact last name.
+     * 
+     * @return the contact last name
+     */
+    public String getContactLastName() {
+        return contactLastName;
+    }
+
+    /**
+     * Returns the contact email.
+     * 
+     * @return the contact email
+     */
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    /**
+     * Returns the contact address.
+     * 
+     * @return the contact address
+     */
+    public String getContactAddress() {
+        return contactAddress;
+    }
+
+    /**
+     * Returns the contact URL.
+     * 
+     * @return the contact URL
+     */
+    public String getContactUrl() {
+        return contactUrl;
+    }
+
+    /**
+     * Returns the organization name.
+     * 
+     * @return the organization name
+     */
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    /**
+     * Returns the organization mail.
+     * 
+     * @return the organization mail
+     */
+    public String getOrganizationMail() {
+        return organizationMail;
+    }
+
+    /**
+     * Returns the organization address.
+     * 
+     * @return the organization address
+     */
+    public String getOrganizationAddress() {
+        return organizationAddress;
+    }
+
+    /**
+     * Returns the organization url.
+     * 
+     * @return the organization url
+     */
+    public String getOrganizationUrl() {
+        return organizationUrl;
+    }
+
+    /**
+     * Returns the folder where to output the file.
+     * 
+     * @return the folder where to output the file
+     */
+    public File getOutputFolder() {
+        return outputFolder;
+    }
+
+    /**
+     * Returns the path settings input.
+     * 
+     * @return the path settings input
+     */
+    public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
+        return pathSettingsCLIInputBean;
+    }
+    
+    
+    
+}

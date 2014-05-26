@@ -218,7 +218,7 @@ public class FollowUpCLI extends CpsParent {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }
@@ -236,7 +236,7 @@ public class FollowUpCLI extends CpsParent {
         SequenceFactory.getInstance().closeFile();
         identification.close();
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
+        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {
@@ -295,7 +295,7 @@ public class FollowUpCLI extends CpsParent {
      */
     private void loadEnzymes() {
         try {
-            File lEnzymeFile = new File(getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
+            File lEnzymeFile = new File(PeptideShaker.getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
@@ -312,21 +312,16 @@ public class FollowUpCLI extends CpsParent {
         ptmFactory = PTMFactory.getInstance();
 
         try {
-            ptmFactory.importModifications(new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE), false);
+            ptmFactory.importModifications(new File(PeptideShaker.getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE), false);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            ptmFactory.importModifications(new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE), true);
+            ptmFactory.importModifications(new File(PeptideShaker.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FollowUpCLI.class").getPath(), "PeptideShaker");
     }
 
     /**

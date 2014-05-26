@@ -41,7 +41,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
  *
  * @author Marc Vaudel
  */
-public abstract class CpsParent extends UserPreferencesParent {
+public class CpsParent extends UserPreferencesParent {
 
     /**
      * The identification.
@@ -218,7 +218,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         }
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
-        String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
+        String dbFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath()).getAbsolutePath();
         identification.establishConnection(dbFolder, false, objectsCache);
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -240,7 +240,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, searchParameters,
                 annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, getJarFilePath());
+                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, PeptideShaker.getJarFilePath());
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -404,15 +404,8 @@ public abstract class CpsParent extends UserPreferencesParent {
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadGeneMappings(WaitingHandler waitingHandler) {
-        return genePreferences.loadGeneMappings(getJarFilePath(), waitingHandler);
+        return genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
     }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
-    public abstract String getJarFilePath();
 
     /**
      * Returns the identification object.

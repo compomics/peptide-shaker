@@ -352,12 +352,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The cps parent used to manage the data.
      */
-    private CpsParent cpsBean = new CpsParent() {
-        @Override
-        public String getJarFilePath() {
-            return PeptideShakerGUI.this.getJarFilePath();
-        }
-    };
+    private CpsParent cpsBean = new CpsParent();
 
     /**
      * The main method used to start PeptideShaker.
@@ -459,7 +454,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             // set this version as the default PeptideShaker version
             if (!getJarFilePath().equalsIgnoreCase(".")) {
-                utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
+                utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + PeptideShaker.getVersion() + ".jar").getAbsolutePath());
                 UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
             }
 
@@ -620,9 +615,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void updateFrameTitle() {
         if (getExperiment() != null) {
-            this.setTitle("PeptideShaker " + getVersion() + " - " + getExperiment().getReference() + " (Sample: " + getSample().getReference() + ", Replicate: " + getReplicateNumber() + ")");
+            this.setTitle("PeptideShaker " + PeptideShaker.getVersion() + " - " + getExperiment().getReference() + " (Sample: " + getSample().getReference() + ", Replicate: " + getReplicateNumber() + ")");
         } else {
-            this.setTitle("PeptideShaker " + getVersion());
+            this.setTitle("PeptideShaker " + PeptideShaker.getVersion());
         }
     }
 
@@ -630,7 +625,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Reset the frame title.
      */
     public void resetFrameTitle() {
-        this.setTitle("PeptideShaker " + getVersion());
+        this.setTitle("PeptideShaker " + PeptideShaker.getVersion());
     }
 
     /**
@@ -649,25 +644,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void setLastSelectedFolder(String lastSelectedFolder) {
         this.lastSelectedFolder = lastSelectedFolder;
-    }
-
-    /**
-     * Retrieves the version number set in the pom file.
-     *
-     * @return the version number of PeptideShaker
-     */
-    public String getVersion() {
-
-        java.util.Properties p = new java.util.Properties();
-
-        try {
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream("peptide-shaker.properties");
-            p.load(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return p.getProperty("peptide-shaker.version");
     }
 
     /**
@@ -2654,7 +2630,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
-        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", getVersion(), 
+        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", PeptideShaker.getVersion(), 
                 "peptide-shaker", "PeptideShaker", new File(getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_logReportMenuActionPerformed
 
@@ -3346,7 +3322,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
                 }
                 System.err.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
-                        + ": PeptideShaker version " + getVersion() + ".");
+                        + ": PeptideShaker version " + PeptideShaker.getVersion() + ".");
                 System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
                 System.err.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
                 System.err.println("Free memory: " + Runtime.getRuntime().freeMemory() + ".");
@@ -5933,12 +5909,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
 
             String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
-            String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
+            String jarFileLocation = jarFilePath + "\\PeptideShaker-" + PeptideShaker.getVersion() + ".jar";
 
             try {
                 JShellLink link = new JShellLink();
                 link.setFolder(JShellLink.getDirectory("desktop"));
-                link.setName("Peptide Shaker " + getVersion());
+                link.setName("Peptide Shaker " + PeptideShaker.getVersion());
                 link.setIconLocation(iconFileLocation);
                 link.setPath(jarFileLocation);
                 link.save();
@@ -5947,35 +5923,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Returns the tips of the day.
-     *
-     * @return the tips of the day in an ArrayList
-     */
-    public ArrayList<String> getTips() {
-
-        ArrayList<String> tips;
-
-        try {
-            InputStream stream = getClass().getResource("/tips.txt").openStream();
-            InputStreamReader streamReader = new InputStreamReader(stream);
-            BufferedReader b = new BufferedReader(streamReader);
-            tips = new ArrayList<String>();
-            String line;
-
-            while ((line = b.readLine()) != null) {
-                tips.add(line);
-            }
-
-            b.close();
-        } catch (Exception e) {
-            catchException(e);
-            tips = new ArrayList<String>();
-        }
-
-        return tips;
     }
 
     /**
