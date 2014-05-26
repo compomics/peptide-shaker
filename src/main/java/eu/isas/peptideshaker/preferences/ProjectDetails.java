@@ -93,6 +93,10 @@ public class ProjectDetails implements Serializable {
      */
     private String prideOutputFolder;
     /**
+     * The mzIdentML output file.
+     */
+    private String mzIdentMLOutputFile;
+    /**
      * The PeptideShaker version used to create the project.
      */
     private String peptideShakerVersion;
@@ -427,6 +431,24 @@ public class ProjectDetails implements Serializable {
      */
     public void setPrideOutputFolder(String prideOutputFolder) {
         this.prideOutputFolder = prideOutputFolder;
+    }
+
+    /**
+     * Returns the mzIdentML output file.
+     *
+     * @return the mzIdentML output file
+     */
+    public String getMzIdentMLOutputFile() {
+        return mzIdentMLOutputFile;
+    }
+
+    /**
+     * Set the mzIdentML output file.
+     *
+     * @param mzIdentMLOutputFile the mzIdentMLOutputFile to set
+     */
+    public void setMzIdentOutputFile(String mzIdentMLOutputFile) {
+        this.mzIdentMLOutputFile = mzIdentMLOutputFile;
     }
 
     /**
