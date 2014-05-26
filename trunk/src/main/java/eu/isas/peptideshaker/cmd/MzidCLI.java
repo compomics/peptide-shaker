@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -22,7 +21,7 @@ import org.apache.commons.cli.Options;
 /**
  * Command line interface to export mzid files from cps files.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class MzidCLI extends CpsParent {
 
@@ -140,8 +139,7 @@ public class MzidCLI extends CpsParent {
             e.printStackTrace();
         }
 
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+        System.exit(0);
 
         return null;
     }
@@ -313,5 +311,4 @@ public class MzidCLI extends CpsParent {
                 + ", cliInputBean=" + mzidCLIInputBean
                 + '}';
     }
-
 }

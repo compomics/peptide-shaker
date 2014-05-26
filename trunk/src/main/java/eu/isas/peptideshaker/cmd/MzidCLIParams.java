@@ -5,7 +5,7 @@ import org.apache.commons.cli.Options;
 /**
  * Enum class specifying the Command Line Parameters for mzid export.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum MzidCLIParams {
 
@@ -33,7 +33,7 @@ public enum MzidCLIParams {
      */
     public final boolean mandatory;
     /**
-     * Indicates whether user input is expected
+     * Indicates whether user input is expected.
      */
     public final boolean hasArgument;
 
@@ -98,5 +98,4 @@ public enum MzidCLIParams {
 
         return output;
     }
-
 }

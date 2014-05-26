@@ -114,11 +114,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             } catch (Exception e) {
                 // ignore, use default look and feel
             }
-            
+
             ArrayList<String> tips;
             try {
-            tips = Tips.getTips();
-            }catch (Exception e) {
+                tips = Tips.getTips();
+            } catch (Exception e) {
                 tips = new ArrayList<String>();
                 // Do something here?
             }
