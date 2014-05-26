@@ -7,14 +7,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * This class provides the tips of the day
+ * This class provides the tips of the day.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class Tips {
 
     /**
-     * Empty constructor for instantiation purposes
+     * Empty constructor for instantiation purposes.
      */
     private Tips() {
 
@@ -24,15 +24,14 @@ public class Tips {
      * Returns the tips of the day.
      *
      * @return the tips of the day in an ArrayList
+     * @throws java.io.IOException
      */
     public static ArrayList<String> getTips() throws IOException {
-
-        ArrayList<String> tips;
 
         InputStream stream = (new Tips()).getClass().getResource("/tips.txt").openStream();
         InputStreamReader streamReader = new InputStreamReader(stream);
         BufferedReader b = new BufferedReader(streamReader);
-        tips = new ArrayList<String>();
+        ArrayList<String> tips = new ArrayList<String>();
         String line;
 
         while ((line = b.readLine()) != null) {
@@ -43,5 +42,4 @@ public class Tips {
 
         return tips;
     }
-
 }

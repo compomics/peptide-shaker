@@ -7,52 +7,52 @@ import org.apache.commons.cli.CommandLine;
  * This class is a simple bean wrapping the CLI parameters provided in an
  * Options instance.
  *
- * @author Marc
+ * @author Marc Vaueel
  */
 public class MzidCLIInputBean {
     
     /**
-     * The PeptideShaker cps file
+     * The PeptideShaker cps file.
      */
     private File cpsFile;
     /**
-     * The contact first name
+     * The contact first name.
      */
     private String contactFirstName;
     /**
-     * The contact last name
+     * The contact last name.
      */
     private String contactLastName;
     /**
-     * The contact email
+     * The contact email.
      */
     private String contactEmail;
     /**
-     * The contact address
+     * The contact address.
      */
     private String contactAddress;
     /**
-     * The contact url
+     * The contact URL.
      */
     private String contactUrl;
     /**
-     * The organization name
+     * The organization name.
      */
     private String organizationName;
     /**
-     * The organization email
+     * The organization email.
      */
     private String organizationMail;
     /**
-     * The organization address
+     * The organization address.
      */
     private String organizationAddress;
     /**
-     * The organization url
+     * The organization URL.
      */
     private String organizationUrl;
     /**
-     * The folder where the file should be output
+     * The folder where the file should be output.
      */
     private File outputFolder;
     /**
@@ -186,9 +186,9 @@ public class MzidCLIInputBean {
     }
 
     /**
-     * Returns the organization url.
+     * Returns the organization URL.
      * 
-     * @return the organization url
+     * @return the organization URL
      */
     public String getOrganizationUrl() {
         return organizationUrl;
@@ -211,7 +211,4 @@ public class MzidCLIInputBean {
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
         return pathSettingsCLIInputBean;
     }
-    
-    
-    
 }

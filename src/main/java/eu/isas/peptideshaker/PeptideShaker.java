@@ -182,7 +182,7 @@ public class PeptideShaker {
     public final static AminoAcidPattern.MatchingType MATCHING_TYPE = AminoAcidPattern.MatchingType.indistiguishibleAminoAcids;
 
     /**
-     * Empty constructor for instantiation purposes
+     * Empty constructor for instantiation purposes.
      */
     private PeptideShaker() {
     }

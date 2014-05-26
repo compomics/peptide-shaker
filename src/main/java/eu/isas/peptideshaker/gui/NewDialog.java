@@ -707,11 +707,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             experiment.addAnalysisSet(sample, analysisSet);
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
-            
+
             ArrayList<String> tips;
             try {
-            tips = Tips.getTips();
-            }catch (Exception e) {
+                tips = Tips.getTips();
+            } catch (Exception e) {
                 tips = new ArrayList<String>();
                 // Do something here?
             }
