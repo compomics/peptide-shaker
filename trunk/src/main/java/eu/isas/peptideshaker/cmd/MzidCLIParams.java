@@ -16,10 +16,10 @@ public enum MzidCLIParams {
     CONTACT_ADDRESS("contact_address", "Contact address", true, true),
     CONTACT_URL("url", "Contact url", true, false),
     ORGANIZATION_NAME("organization_name", "Organization name", true, true),
-    ORGANIZATION_MAIL("organization_mail", "Organization mail", true, true),
+    ORGANIZATION_EMAIL("organization_email", "Organization email", true, true),
     ORGANIZATION_ADDRESS("organization_address", "Organization address", true, true),
-    ORGANIZATION_URL("organization_url", "Organization url", true, true),
-    OUTPUT_FOLDER("output_folder", "Output folder", true, true);
+    ORGANIZATION_URL("organization_url", "Organization url", true, false),
+    OUTPUT_FILE("output_file", "Output file", true, true);
     /**
      * Short Id for the CLI parameter.
      */
@@ -93,7 +93,7 @@ public enum MzidCLIParams {
             }
         }
 
-        output += "\n\nOptional temporary folder:\n\n";
+        output += "\n\nOptional temporary folder:\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";
 
         return output;

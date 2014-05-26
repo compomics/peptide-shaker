@@ -52,9 +52,9 @@ public class MzidCLIInputBean {
      */
     private String organizationUrl;
     /**
-     * The folder where the file should be output.
+     * The file where the mzIdentML export should be output.
      */
-    private File outputFolder;
+    private File outputFile;
     /**
      * The path settings.
      */
@@ -88,8 +88,8 @@ public class MzidCLIInputBean {
         if (aLine.hasOption(MzidCLIParams.ORGANIZATION_NAME.id)) {
             organizationName = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_NAME.id);
         }
-        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_MAIL.id)) {
-            organizationMail = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_MAIL.id);
+        if (aLine.hasOption(MzidCLIParams.ORGANIZATION_EMAIL.id)) {
+            organizationMail = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_EMAIL.id);
         }
         if (aLine.hasOption(MzidCLIParams.ORGANIZATION_ADDRESS.id)) {
             organizationAddress = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_ADDRESS.id);
@@ -97,8 +97,8 @@ public class MzidCLIInputBean {
         if (aLine.hasOption(MzidCLIParams.ORGANIZATION_URL.id)) {
             organizationUrl = aLine.getOptionValue(MzidCLIParams.ORGANIZATION_URL.id);
         }
-        if (aLine.hasOption(MzidCLIParams.OUTPUT_FOLDER.id)) {
-            cpsFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FOLDER.id));
+        if (aLine.hasOption(MzidCLIParams.OUTPUT_FILE.id)) {
+            outputFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FILE.id));
         }
         
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
@@ -195,12 +195,12 @@ public class MzidCLIInputBean {
     }
 
     /**
-     * Returns the folder where to output the file.
+     * Returns the file where to mzIdentML export will be stored.
      * 
-     * @return the folder where to output the file
+     * @return the file where to mzIdentML export will be stored
      */
-    public File getOutputFolder() {
-        return outputFolder;
+    public File getOutputFile() {
+        return outputFile;
     }
 
     /**

@@ -76,9 +76,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationAddressJTextArea.setText(peptideShakerGUI.getProjectDetails().getOrganizationAddress());
         organizationUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationUrl());
 
-        if (peptideShakerGUI.getProjectDetails().getPrideOutputFolder() != null
-                && new File(peptideShakerGUI.getProjectDetails().getPrideOutputFolder()).exists()) {
-            outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideOutputFolder());
+        if (peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile() != null
+                && new File(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile()).exists()) {
+            outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile());
         }
     }
 
@@ -333,12 +333,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Folder"));
+        outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output File"));
         outputPanel.setOpaque(false);
 
         outputFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
-        outputFolderLabel.setText("Folder");
-        outputFolderLabel.setToolTipText("The folder where the mzIdentML file will be saved");
+        outputFolderLabel.setText("File");
+        outputFolderLabel.setToolTipText("The file where the mzIdentML export will be saved");
 
         outputFolderJTextField.setEditable(false);
         outputFolderJTextField.setToolTipText("The folder where the mzIdentML file will be saved");
@@ -580,7 +580,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             @Override
             public void run() {
 
-                // save the inserted pride details with the project
+                // save the inserted mzid details with the project
                 peptideShakerGUI.getProjectDetails().setContactFirstName(contactFirstNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactLastName(contactLastNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactEmail(contactEmailJTextField.getText().trim());
@@ -600,7 +600,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     peptideShakerGUI.getProjectDetails().setOrganizationUrl(null);
                 }
 
-                peptideShakerGUI.getProjectDetails().setPrideOutputFolder(outputFolderJTextField.getText());
+                peptideShakerGUI.getProjectDetails().setMzIdentOutputFile(outputFolderJTextField.getText());
                 peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
 
                 boolean conversionCompleted = false;

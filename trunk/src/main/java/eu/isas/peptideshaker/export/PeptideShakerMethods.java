@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.util.ArrayList;
@@ -285,7 +284,6 @@ public class PeptideShakerMethods {
     /**
      * Returns the PeptideShaker usage details.
      *
-     * @param peptideShakerGUI reference to PeptideShaker
      * @return the PeptideShaker usage details
      */
     public static String getPeptideShaker() {

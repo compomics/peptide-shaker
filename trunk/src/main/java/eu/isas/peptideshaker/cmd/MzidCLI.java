@@ -218,12 +218,6 @@ public class MzidCLI extends CpsParent {
             System.out.println("\n" + MzidCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
             return false;
         }
-        fileTxt = aLine.getOptionValue(MzidCLIParams.OUTPUT_FOLDER.id);
-        testFile = new File(fileTxt.trim());
-        if (!testFile.exists()) {
-            System.out.println("\n" + MzidCLIParams.OUTPUT_FOLDER.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
-            return false;
-        }
 
         return true;
     }

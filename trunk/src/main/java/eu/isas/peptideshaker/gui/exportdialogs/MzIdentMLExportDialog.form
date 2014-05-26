@@ -420,7 +420,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Output Folder"/>
+                <TitledBorder title="Output File"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -460,8 +460,8 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Folder"/>
-                <Property name="toolTipText" type="java.lang.String" value="The folder where the mzIdentML file will be saved"/>
+                <Property name="text" type="java.lang.String" value="File"/>
+                <Property name="toolTipText" type="java.lang.String" value="The file where the mzIdentML export will be saved"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="outputFolderJTextField">

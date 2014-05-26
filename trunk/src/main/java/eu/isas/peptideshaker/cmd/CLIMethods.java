@@ -240,13 +240,13 @@ public class CLIMethods {
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, int nSurroundingAA, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
-        PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, 
+        PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
                 searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
 
@@ -266,38 +266,40 @@ public class CLIMethods {
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
         PSExportFactory.writeDocumentation(exportScheme, reportFile);
     }
-    
+
     /**
      * Exports the project in the mzidentml format.
-     * 
+     *
      * @param mzidCLIInputBean the user input
-     * @param cpsParent a cps file parent allowing accessing the information it contains
-     * @param waitingHandler a waiting handler allowing display of progress and interruption of the export
-     * 
+     * @param cpsParent a cps file parent allowing accessing the information it
+     * contains
+     * @param waitingHandler a waiting handler allowing display of progress and
+     * interruption of the export
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      * @throws InterruptedException
-     * @throws SQLException 
+     * @throws SQLException
      */
-    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean,CpsParent cpsParent, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
-        
-        ProjectDetails projectDetails = cpsParent.getProjectDetails();
-                projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());
-                projectDetails.setContactLastName(mzidCLIInputBean.getContactLastName());
-                projectDetails.setContactEmail(mzidCLIInputBean.getContactEmail());
-                projectDetails.setContactAddress(mzidCLIInputBean.getContactAddress());
-                projectDetails.setContactUrl(mzidCLIInputBean.getContactUrl());
-                projectDetails.setOrganizationName(mzidCLIInputBean.getOrganizationName());
-                projectDetails.setOrganizationEmail(mzidCLIInputBean.getOrganizationMail());
-                projectDetails.setOrganizationAddress(mzidCLIInputBean.getOrganizationAddress());
-                projectDetails.setOrganizationUrl(mzidCLIInputBean.getOrganizationUrl());
-                projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFolder().getAbsolutePath());
+    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
 
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(), 
-                            cpsParent.getProcessingPreferences(),cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(), 
-                            cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(), 
-                            cpsParent.getAnnotationPreferences(), mzidCLIInputBean.getOutputFolder(), waitingHandler);
-                    mzIdentMLExport.createMzIdentMLFile();
+        ProjectDetails projectDetails = cpsParent.getProjectDetails();
+        projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());
+        projectDetails.setContactLastName(mzidCLIInputBean.getContactLastName());
+        projectDetails.setContactEmail(mzidCLIInputBean.getContactEmail());
+        projectDetails.setContactAddress(mzidCLIInputBean.getContactAddress());
+        projectDetails.setContactUrl(mzidCLIInputBean.getContactUrl());
+        projectDetails.setOrganizationName(mzidCLIInputBean.getOrganizationName());
+        projectDetails.setOrganizationEmail(mzidCLIInputBean.getOrganizationMail());
+        projectDetails.setOrganizationAddress(mzidCLIInputBean.getOrganizationAddress());
+        projectDetails.setOrganizationUrl(mzidCLIInputBean.getOrganizationUrl());
+        projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
+
+        MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
+                cpsParent.getProcessingPreferences(), cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(),
+                cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
+                cpsParent.getAnnotationPreferences(), mzidCLIInputBean.getOutputFile(), waitingHandler);
+        mzIdentMLExport.createMzIdentMLFile();
     }
 }
