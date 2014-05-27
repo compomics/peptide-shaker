@@ -185,10 +185,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private ArrayList<Integer> advocatesUsed;
     /**
-     * The search engine color map.
-     */
-    private HashMap<Integer, java.awt.Color> searchEnginesColorMap;
-    /**
      * The number of validated PSMs per mgf file. // @TODO: create this map when
      * loading the data...
      */
@@ -225,18 +221,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumSelectionDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         spectrumSelectionDialog.setModal(true);
-
-        // set up the search engines color map
-        searchEnginesColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEnginesColorMap.put(Advocate.peptideShaker.getIndex(), peptideShakerGUI.getSparklineColor()); // @TODO: get colors from the Advocate class!!
-        searchEnginesColorMap.put(Advocate.xtandem.getIndex(), new java.awt.Color(153, 255, 255));
-        searchEnginesColorMap.put(Advocate.omssa.getIndex(), new java.awt.Color(153, 153, 255));
-        searchEnginesColorMap.put(Advocate.mascot.getIndex(), new java.awt.Color(255, 153, 255));
-        searchEnginesColorMap.put(Advocate.msgf.getIndex(), new java.awt.Color(205, 92, 92));
-        searchEnginesColorMap.put(Advocate.msAmanda.getIndex(), new java.awt.Color(216, 191, 216));
-        searchEnginesColorMap.put(Advocate.direcTag.getIndex(), new java.awt.Color(189, 183, 107));
-        
-        // @TODO: set colors for the user advocates!!!
     }
 
     /**
@@ -334,17 +318,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
-        // set up the search engines tooltip map
-        HashMap<Integer, String> searchEnginesTooltipMap = new HashMap<Integer, String>();
-        searchEnginesTooltipMap.put(Advocate.peptideShaker.getIndex(), Advocate.peptideShaker.getName());
-        searchEnginesTooltipMap.put(Advocate.xtandem.getIndex(), Advocate.xtandem.getName());
-        searchEnginesTooltipMap.put(Advocate.omssa.getIndex(), Advocate.omssa.getName());
-        searchEnginesTooltipMap.put(Advocate.mascot.getIndex(), Advocate.mascot.getName());
-        searchEnginesTooltipMap.put(Advocate.msgf.getIndex(), Advocate.msgf.getName());
-        searchEnginesTooltipMap.put(Advocate.msAmanda.getIndex(), Advocate.msAmanda.getName());
-        searchEnginesTooltipMap.put(Advocate.direcTag.getIndex(), Advocate.direcTag.getName());
-
-        searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEnginesColorMap, searchEnginesTooltipMap));
+        searchResultsTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, Advocate.getAdvocateColorMap(), Advocate.getAdvocateToolTipMap()));
 
         searchResultsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchResultsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -2254,8 +2228,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                     eu.isas.peptideshaker.scoring.InputMap inputMap = pSMaps.getInputMap();
-                    //if (inputMap == null || !inputMap.hasAdvocateContribution()) { // @TODO: Enable this to use preloaded data
-                    if (true) {
+                    if (inputMap == null || !inputMap.hasAdvocateContribution()) {
                         // Backward compatibility
                         loadDataFromIdentification();
                     } else {
@@ -2274,9 +2247,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     usedAdvocatedAndPeptideShaker.add(Advocate.peptideShaker.getIndex());
                     String colorLegend = "<html>";
                     for (int tempAdvocate : usedAdvocatedAndPeptideShaker) {
-                        colorLegend += "<font color=\"rgb(" + searchEnginesColorMap.get(tempAdvocate).getRed() + ","
-                                + searchEnginesColorMap.get(tempAdvocate).getGreen() + ","
-                                + searchEnginesColorMap.get(tempAdvocate).getBlue() + ")\">&#9632;</font> "
+                        colorLegend += "<font color=\"rgb(" + Advocate.getAdvocateColorMap().get(tempAdvocate).getRed() + ","
+                                + Advocate.getAdvocateColorMap().get(tempAdvocate).getGreen() + ","
+                                + Advocate.getAdvocateColorMap().get(tempAdvocate).getBlue() + ")\">&#9632;</font> "
                                 + Advocate.getAdvocate(tempAdvocate).getName() + " &nbsp;";
                     }
                     colorLegend += "</html>";
@@ -2333,12 +2306,21 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public void loadDataFromIdentification() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        progressDialog.setPrimaryProgressCounterIndeterminate(false);
-        progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
-        progressDialog.setValue(0);
-
+        progressDialog.setTitle("Updating Project Data. Please Wait...");
+        
+        // see if the id software is saved
+        boolean newInformation = true;
+        if (peptideShakerGUI.getProjectDetails().hasIdentificationAlgorithms()) {
+            newInformation = false;
+        }
+        
         // get the list of id software used
         advocatesUsed = peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms();
+        
+        // set the dataset to not saved
+        if (newInformation) {
+            peptideShakerGUI.setDataSaved(false);
+        }
 
         // order the advocates to have the same order is in the overview plots
         Collections.sort(advocatesUsed);
@@ -2357,6 +2339,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         PSParameter probabilities = new PSParameter();
 
         numberOfValidatedPsmsMap = new HashMap<String, Integer>();
+        
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
+        progressDialog.setValue(0);
 
         ArrayList<String> spectrumFiles = identification.getSpectrumFiles();
         for (String fileName : spectrumFiles) {
@@ -3481,7 +3467,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         DefaultCategoryDataset psmDataset = new DefaultCategoryDataset();
         for (Integer tempAdvocate : advocatesUsed) {
-                psmDataset.addValue(data.get(tempAdvocate), Advocate.getAdvocate(tempAdvocate).getName(), xAxisLabel);
+            psmDataset.addValue(data.get(tempAdvocate), Advocate.getAdvocate(tempAdvocate).getName(), xAxisLabel);
         }
         psmDataset.addValue(data.get(Advocate.peptideShaker.getIndex()), Advocate.peptideShaker.getName(), xAxisLabel);
 
@@ -3503,10 +3489,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int dataSeriesCounter = 0;
         for (Integer tempAdvocate : advocatesUsed) {
             if (advocatesUsed.contains(tempAdvocate)) {
-                renderer.setSeriesPaint(dataSeriesCounter++, searchEnginesColorMap.get(tempAdvocate));
+                renderer.setSeriesPaint(dataSeriesCounter++, Advocate.getAdvocateColorMap().get(tempAdvocate));
             }
         }
-        renderer.setSeriesPaint(dataSeriesCounter, searchEnginesColorMap.get(Advocate.peptideShaker.getIndex()));
+        renderer.setSeriesPaint(dataSeriesCounter, Advocate.getAdvocateColorMap().get(Advocate.peptideShaker.getIndex()));
         if (roundDecimals) {
             renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator(StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, new DecimalFormat("0.0")));
         } else {

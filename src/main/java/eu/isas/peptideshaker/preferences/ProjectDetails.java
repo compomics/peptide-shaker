@@ -452,6 +452,15 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
+     * Returns true if the identification algorithms are stored.
+     *
+     * @return true if the identification algorithms are stored
+     */
+    public boolean hasIdentificationAlgorithms() {
+        return identificationAlgorithms != null;
+    }
+
+    /**
      * Returns a list of identification algorithms used based on the
      * identification files of the project.
      *
@@ -557,7 +566,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the identification algorithms used to create the id file in map:
-     * algorithm name -> algorithm version
+     * algorithm name -> algorithm version.
      *
      * @param idFileName the identification file name
      *

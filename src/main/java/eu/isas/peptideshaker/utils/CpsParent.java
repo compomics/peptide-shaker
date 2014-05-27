@@ -796,7 +796,7 @@ public class CpsParent extends UserPreferencesParent {
 
             report += "<b>Identification Files</b>:<br>";
             for (File idFile : projectDetails.getIdentificationFiles()) {
-                report += idFile.getAbsolutePath();
+                report += idFile.getAbsolutePath() + " - ";
                 HashMap<String, ArrayList<String>> versions = projectDetails.getIdentificationAlgorithmsForFile(idFile.getName());
                 ArrayList<String> software = new ArrayList<String>(versions.keySet());
                 Collections.sort(software);
@@ -818,7 +818,11 @@ public class CpsParent extends UserPreferencesParent {
                             } else {
                                 report += ", ";
                             }
-                            report += version;
+                            if (version != null) {
+                                report += version;
+                            } else {
+                                report += "unknown version";
+                            }
                         }
                         report += ")";
                     }
