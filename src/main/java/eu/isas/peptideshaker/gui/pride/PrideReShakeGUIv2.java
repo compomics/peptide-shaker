@@ -177,7 +177,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     /**
      * The list of reshakeable file endings.
      */
-    private ArrayList<String> reshakeableFileEndings;
+    private HashMap<String, ArrayList<String>> reshakeableFileEndings;
     /**
      * The web service URL.
      */
@@ -204,13 +204,19 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private void setUpGui() {
 
-        reshakeableFileEndings = new ArrayList<String>();
-        reshakeableFileEndings.add(".mzid"); // search files
-        reshakeableFileEndings.add(".mzid.gz"); // search files
-        reshakeableFileEndings.add(".xml"); // result    // PRIDE_Exp_Complete_Ac_27277.xml??
-        reshakeableFileEndings.add(".xml.gz"); // result
-        reshakeableFileEndings.add(".mgf"); // peak, other 
-        reshakeableFileEndings.add(".mgf.gz"); // peak, other 
+        reshakeableFileEndings = new HashMap<String, ArrayList<String>>();
+        reshakeableFileEndings.put("SEARCH", new ArrayList<String>());
+        reshakeableFileEndings.get("SEARCH").add(".mzid");
+        reshakeableFileEndings.get("SEARCH").add(".mzid.gz");
+        reshakeableFileEndings.put("RESULT", new ArrayList<String>());
+        reshakeableFileEndings.get("RESULT").add(".xml");
+        reshakeableFileEndings.get("RESULT").add(".xml.gz");
+        reshakeableFileEndings.put("PEAK", new ArrayList<String>());
+        reshakeableFileEndings.get("PEAK").add(".mgf");
+        reshakeableFileEndings.get("PEAK").add(".mgf.gz");
+        reshakeableFileEndings.put("OTHER", new ArrayList<String>());
+        reshakeableFileEndings.get("OTHER").add(".mgf");
+        reshakeableFileEndings.get("OTHER").add(".mgf.gz");
 
         projectsTable.getColumn("Accession").setMaxWidth(90);
         projectsTable.getColumn("Accession").setMinWidth(90);
@@ -1084,14 +1090,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         public void run() {
                             try {
                                 File downLoadLocation = new File(downloadFolder, new File(link).getName());
-                                saveUrl(downLoadLocation, link, progressDialog);
+                                File savedFile = saveUrl(downLoadLocation, link, progressDialog);
 
                                 boolean canceled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
 
                                 if (!canceled) {
-                                    JOptionPane.showMessageDialog(PrideReShakeGUIv2.this, new File(link).getName() + " downloaded to\n"
-                                            + downLoadLocation + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(PrideReShakeGUIv2.this, savedFile.getName() + " downloaded to\n"
+                                            + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
                                 } else {
                                     if (downLoadLocation.exists()) {
                                         downLoadLocation.delete();
@@ -1306,6 +1312,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         false});
                 }
             } catch (HttpServerErrorException e) {
+                e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
@@ -1371,6 +1378,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         false});
                 }
             } catch (HttpServerErrorException e) {
+                e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
@@ -1448,6 +1456,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     }
                 }
             } catch (HttpServerErrorException e) {
+                e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
@@ -1571,6 +1580,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             instrumentsAll.add(0, "");
             ptmsAll.add(0, "");
         } catch (HttpServerErrorException e) {
+            e.printStackTrace();
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
         }
@@ -2490,30 +2500,33 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * @param saveFile
      * @param urlString
      * @param progressDialog
+     * @return the saved file
      * @throws MalformedURLException
      * @throws IOException
      * @throws java.io.FileNotFoundException
      */
-    public void saveUrl(final File saveFile, String urlString, ProgressDialogX progressDialog)
+    public File saveUrl(File saveFile, String urlString, ProgressDialogX progressDialog)
             throws MalformedURLException, IOException, FileNotFoundException {
-
-        URLConnection conn = new URL(urlString).openConnection();
-        int contentLength = conn.getContentLength();
-
-        if (contentLength != -1) {
-            progressDialog.resetPrimaryProgressCounter();
-            progressDialog.setMaxPrimaryProgressCounter(contentLength);
-        }
 
         BufferedInputStream in = null;
         FileOutputStream fout = null;
+
         try {
             boolean urlExists = checkIfURLExists(urlString);
 
             if (!urlExists) {
                 if (urlString.endsWith(".gz")) {
                     urlString = urlString.substring(0, urlString.length() - 3);
+                    saveFile = new File(saveFile.getAbsolutePath().substring(0, saveFile.getAbsolutePath().length() - 3));
                 }
+            }
+
+            URLConnection conn = new URL(urlString).openConnection();
+            int contentLength = conn.getContentLength();
+
+            if (contentLength != -1) {
+                progressDialog.resetPrimaryProgressCounter();
+                progressDialog.setMaxPrimaryProgressCounter(contentLength);
             }
 
             in = new BufferedInputStream(new URL(urlString).openStream());
@@ -2545,6 +2558,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 fout.close();
             }
         }
+
+        return saveFile;
     }
 
     /**

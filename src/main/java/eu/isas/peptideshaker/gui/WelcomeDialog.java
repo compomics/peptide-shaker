@@ -673,7 +673,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                         if (!canceled) {
                             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                            new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                            //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                            new PrideReShakeGUIv2(peptideShakerGUI);
                             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                         }
                     } catch (Exception e) {
