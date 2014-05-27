@@ -22,6 +22,7 @@ import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
+import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -710,11 +711,12 @@ public class FileImporter {
 
                 int numberOfMatches = tempSet.size(),
                         progress = 0,
-                        rejected = 0,
+                        psmsRejected = 0, // @TODO: this counts the number of rejectes spectrum matches, i.e., all assumptions rejected
                         proteinIssue = 0,
                         peptideIssue = 0,
                         precursorIssue = 0,
-                        ptmIssue = 0;
+                        ptmIssue = 0, 
+                        numberOfAssumptions = 0;
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                 idReport = false;
                 ArrayList<Integer> charges = new ArrayList<Integer>();
@@ -739,6 +741,7 @@ public class FileImporter {
 
                         nPSMs++;
                         nSecondary += match.getAllAssumptions().size() - 1;
+                        numberOfAssumptions++;
 
                         String spectrumKey = match.getKey();
                         String fileName = Spectrum.getSpectrumFile(spectrumKey);
@@ -833,7 +836,7 @@ public class FileImporter {
                         }
 
                         if (!match.hasAssumption(advocateId)) {
-                            rejected++;
+                            psmsRejected++;
                         } else {
 
                             if (match.hasAssumption(advocateId)) {
@@ -890,6 +893,7 @@ public class FileImporter {
                                                         }
                                                     } else if (fileReader instanceof MascotIdfileReader
                                                             || fileReader instanceof XTandemIdfileReader
+                                                            || fileReader instanceof MsAmandaIdfileReader
                                                             || fileReader instanceof MzIdentMLIdfileReader) {
                                                         String[] parsedName = sePTM.split("@");
                                                         double seMass = 0;
@@ -1107,7 +1111,7 @@ public class FileImporter {
                                                     match.removeAssumption(assumption);
                                                     precursorIssue++;
                                                 } else if (!targetOrDecoy) {
-                                                    // Check whether there is a potential first hit which does not belong to the target and the decoy database
+                                                    // Check whether there is a potential first hit which does not belong to both the target and the decoy database
                                                     if (!idFilter.validateProteins(peptideAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
                                                         match.removeAssumption(assumption);
                                                         proteinIssue++;
@@ -1217,7 +1221,7 @@ public class FileImporter {
                                     }
                                 }
                             } else {
-                                rejected++;
+                                psmsRejected++;
                             }
                         }
 
@@ -1260,14 +1264,12 @@ public class FileImporter {
                 projectDetails.addIdentificationFiles(idFile);
 
                 double total = proteinIssue + peptideIssue + precursorIssue + ptmIssue;
-                double proteinIssueShare = 100.0 * proteinIssue / total;
-                double peptideIssueShare = 100.0 * peptideIssue / total;
-                double precursorIssueShare = 100.0 * precursorIssue / total;
-                double ptmIssueShare = 100.0 * ptmIssue / total;
-                double share = 100.0 * rejected / numberOfMatches;
+                double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;
+                double shareAssumptionsRejected = 100.0 * total / numberOfAssumptions;
 
-                if (rejected > 0) {
-                    waitingHandler.appendReport(rejected + " matches (" + Util.roundDouble(share, 1) + "%) excluded by the import filters:", true, true);
+                if (psmsRejected > 0) {
+                    waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters.", true, true);
+                    waitingHandler.appendReport(((int) total) + " assumptions (" + Util.roundDouble(shareAssumptionsRejected, 1) + "%) excluded by the import filters:", true, true);
 
                     String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
@@ -1275,24 +1277,24 @@ public class FileImporter {
                         padding = "    ";
                     }
 
-                    if (proteinIssueShare > 0) {
+                    if (proteinIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + proteinIssue
-                                + " (" + Util.roundDouble(proteinIssueShare, 1) + "%) mapped in target and decoy.", true, true);
+                                + " mapped to both target and decoy.", true, true);
                     }
-                    if (peptideIssueShare > 0) {
+                    if (peptideIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + peptideIssue
-                                + " (" + Util.roundDouble(peptideIssueShare, 1) + "%) size or e-value out of boundary.", true, true);
+                                + " had peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
                     }
-                    if (precursorIssueShare > 0) {
+                    if (precursorIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + precursorIssue
-                                + " (" + Util.roundDouble(precursorIssueShare, 1) + "%) high precursor deviation.", true, true);
+                                + " had precursor deviation bigger than " + idFilter.getMaxMzDeviation() + ".", true, true);
                     }
-                    if (ptmIssueShare > 0) {
-                        waitingHandler.appendReport(padding + "- " + ptmIssue + " (" + Util.roundDouble(ptmIssueShare, 1) + "%) unrecognized modifications.", true, true);
+                    if (ptmIssue > 0) {
+                        waitingHandler.appendReport(padding + "- " + ptmIssue + " had unrecognized modifications.", true, true);
                     }
                 }
                 // inform the user in case more than 75% of the hits were rejected by the filters
-                if (share > 75) {
+                if (sharePsmsRejected > 75) {
                     String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
                     double meanRejected = total / 4;
                     if (proteinIssue > meanRejected) {

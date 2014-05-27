@@ -46,7 +46,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import static java.awt.Frame.NORMAL;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -3587,9 +3586,6 @@ public class PeptideShaker {
 
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Removing Mapping Artifacts. Please Wait...");
-                int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
-                int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
-                int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
                 waitingHandler.appendReport(toDelete.size() + " unlikely protein mappings found:", true, true);
 
                 String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -3598,9 +3594,9 @@ public class PeptideShaker {
                     padding = "    ";
                 }
 
-                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " (" + enzymaticPercent + "%) non-enzymatic accessions.", true, true);
-                waitingHandler.appendReport(padding + "- " + evidenceIssue + " (" + evidencePercent + "%) lower evidence accessions.", true, true);
-                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " (" + uncharacterizedPercent + "%) not characterized accessions.", true, true);
+                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " non-enzymatic accessions.", true, true);
+                waitingHandler.appendReport(padding + "- " + evidenceIssue + " lower evidence accessions.", true, true);
+                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " not characterized accessions.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
