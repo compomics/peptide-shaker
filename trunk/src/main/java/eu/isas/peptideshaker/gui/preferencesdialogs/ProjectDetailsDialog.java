@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 
 /**
  * This dialog displays the project properties.
@@ -11,26 +13,79 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 public class ProjectDetailsDialog extends javax.swing.JDialog {
 
     /**
+     * The PeptideShakerGUI.
+     */
+    private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+
+    /**
      * Creates a dialog to display the project properties.
      *
      * @param peptideShakerGUI
      */
-    public ProjectDetailsDialog(PeptideShakerGUI peptideShakerGUI ){
+    public ProjectDetailsDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         initComponents();
+        this.peptideShakerGUI = peptideShakerGUI;
         setTitle("Project Properties - " + peptideShakerGUI.getExperiment().getReference());
+        setUpGui();
+    }
 
-        String report = peptideShakerGUI.getExtendedProjectReport();
-        
-        if (report == null) {
-             projectDetailsJEditorPane.setText("Project properties not availale.");
-        } else {
-            projectDetailsJEditorPane.setText(report);
-            projectDetailsJEditorPane.setCaretPosition(0);
-        }
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGui() {
 
-        setLocationRelativeTo(peptideShakerGUI);
-        setVisible(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Loading Project Details. Please Wait...");
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ProjectDetailsLoadingThread") {
+            @Override
+            public void run() {
+
+                // see if the id software details are saved
+                boolean newInformation = true;
+                if (peptideShakerGUI.getProjectDetails().hasIdentificationAlgorithms()) {
+                    newInformation = false;
+                }
+
+                String report = peptideShakerGUI.getExtendedProjectReport();
+
+                // set the dataset to not saved
+                if (newInformation) {
+                    peptideShakerGUI.setDataSaved(false);
+                }
+
+                if (report == null) {
+                    projectDetailsJEditorPane.setText("Project properties not availale.");
+                } else {
+                    projectDetailsJEditorPane.setText(report);
+                    projectDetailsJEditorPane.setCaretPosition(0);
+                }
+
+                progressDialog.setRunFinished();
+
+                setLocationRelativeTo(peptideShakerGUI);
+                setVisible(true);
+            }
+        }.start();
     }
 
     /**
