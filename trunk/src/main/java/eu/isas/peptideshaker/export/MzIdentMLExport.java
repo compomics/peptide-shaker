@@ -18,7 +18,8 @@ import com.compomics.util.experiment.identification.spectrum_annotators.PeptideS
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -192,7 +193,6 @@ public class MzIdentMLExport {
     /**
      * Creates the mzIdentML file.
      *
-     * @param waitingHandler a waiting handler displaying progress to the user and allowing cancelling the process
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
@@ -203,6 +203,7 @@ public class MzIdentMLExport {
      */
     public void createMzIdentMLFile() throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 
+        // @TODO: use the waiting handler more (especially for command line mode)
         // the mzIdentML start tag
         writeMzIdentMLStartTag();
 
@@ -1015,6 +1016,10 @@ public class MzIdentMLExport {
             }
         }
 
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
 
@@ -1297,14 +1302,12 @@ public class MzIdentMLExport {
                 br.write(getCurrentTabSpace() + "</Fragmentation>" + System.getProperty("line.separator"));
             }
 
-            // add cv and user params
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: add more? MS:1001105 - peptide result details
-
             // add peptide shaker score and confidence
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(pSParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(pSParameter.getPsmConfidence(), CONFIDENCE_DECIMALS))));
 
             // add the individual search engine results
+            Double mascotScore = null, msAmandaScore = null;
             HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
             for (Integer tempAdvocate : spectrumMatch.getAdvocates()) {
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate).keySet());
@@ -1317,6 +1320,14 @@ public class MzIdentMLExport {
                                 Double currentMinEvalue = scores.get(tempAdvocate);
                                 if (currentMinEvalue == null || eValue < currentMinEvalue) {
                                     scores.put(tempAdvocate, eValue);
+
+                                    // save the special advocate scores
+                                    if (tempAdvocate == Advocate.mascot.getIndex()) {
+                                        mascotScore = ((MascotScore) peptideAssumption.getUrParam(new MascotScore(0))).getScore();
+                                    } else if (tempAdvocate == Advocate.msAmanda.getIndex() 
+                                            && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
+                                        msAmandaScore = ((MsAmandaScore) peptideAssumption.getUrParam(new MsAmandaScore())).getScore();
+                                    }
                                 }
                             }
                         }
@@ -1332,14 +1343,27 @@ public class MzIdentMLExport {
                 } else if (tempAdvocate == Advocate.mascot.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.omssa.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue))); // @TODO: or OMSSA p-value (MS:1001329)?
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue))); // @TODO: is this the one? or is it "X!Tandem:hyperscore" (MS:1001331)?
-                } else if (tempAdvocate == Advocate.msAmanda.getIndex()) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", Double.toString(eValue)));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
+                } else {
+                    writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue); // @TODO: add cv params for the other new advocates
                 }
-                //@TODO: generic e-value for user algorithms?
+
+                // @TODO: add generic e-value for user algorithms?
             }
+
+            // add the additional search engine scores
+            if (mascotScore != null) {
+                writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
+            }
+            if (msAmandaScore != null) {
+                writeCvTerm(new CvTerm("MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
+            }
+
+            // add other cv and user params
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: add more? MS:1001105 - peptide result details
+
             // @TODO: 
             // add validation level information
             //writeUserParam(pSParameter.getMatchValidationLevel().getIndex());
@@ -1430,6 +1454,7 @@ public class MzIdentMLExport {
                     } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
                     } else {
+                        // @TODO: add support for the new advocates!!
                         writeUserParam("Unknown"); // @TODO: add cv term?
                         break;
                     }
@@ -1588,5 +1613,16 @@ public class MzIdentMLExport {
      */
     private void writeUserParam(String userParamAsString) throws IOException {
         br.write(getCurrentTabSpace() + "<userParam name=\"" + userParamAsString + "\"/>" + System.getProperty("line.separator"));
+    }
+
+    /**
+     * Convenience method writing a user parameter.
+     *
+     * @param name the name of the user param
+     * @param value the value of the user param
+     */
+    private void writeUserParam(String name, String value) throws IOException {
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + "\"/>" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + " e-value\" value=\"" + value + "\" />" + System.getProperty("line.separator"));
     }
 }

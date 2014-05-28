@@ -9,11 +9,11 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -342,22 +342,22 @@ public class PRIDEExport {
 
             // get the list of algorithms used
             String searchEngineReport;
-                ArrayList<Integer> seList = projectDetails.getIdentificationAlgorithms();
-                Collections.sort(seList);
-                searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
+            ArrayList<Integer> seList = projectDetails.getIdentificationAlgorithms();
+            Collections.sort(seList);
+            searchEngineReport = Advocate.getAdvocate(seList.get(0)).getName();
 
-                for (int i = 1; i < seList.size(); i++) {
+            for (int i = 1; i < seList.size(); i++) {
 
-                    if (i == seList.size() - 1) {
-                        searchEngineReport += " and ";
-                    } else {
-                        searchEngineReport += ", ";
-                    }
-
-                    searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
+                if (i == seList.size() - 1) {
+                    searchEngineReport += " and ";
+                } else {
+                    searchEngineReport += ", ";
                 }
 
-                searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
+                searchEngineReport += Advocate.getAdvocate(seList.get(i)).getName();
+            }
+
+            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
 
             for (String spectrumFile : identification.getSpectrumFiles()) {
                 identification.loadSpectrumMatches(spectrumFile, null);
@@ -437,7 +437,7 @@ public class PRIDEExport {
 
                         // Get scores
                         HashMap<Integer, Double> eValues = new HashMap<Integer, Double>();
-                        Double mascotScore = null;
+                        Double mascotScore = null, msAmandaScore = null;
                         for (int se : spectrumMatch.getAdvocates()) {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
@@ -448,6 +448,9 @@ public class PRIDEExport {
                                                 eValues.put(se, eValue);
                                                 if (se == Advocate.mascot.getIndex()) {
                                                     mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                                                } else if (se == Advocate.msAmanda.getIndex()
+                                                        && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
+                                                    msAmandaScore = ((MsAmandaScore) assumption.getUrParam(new MsAmandaScore())).getScore();
                                                 }
                                             }
                                         }
@@ -584,22 +587,32 @@ public class PRIDEExport {
                         Collections.sort(searchEngines);
 
                         // add the search engine e-values
-                        for (int se : searchEngines) {
-                            if (se == Advocate.mascot.getIndex()) {
-                                writeCvTerm(new CvTerm("MS", "MS:1001172", "Mascot:expectation value", "" + eValues.get(se)));
-                            } else if (se == Advocate.omssa.getIndex()) {
-                                writeCvTerm(new CvTerm("MS", "MS:1001328", "OMSSA:evalue", "" + eValues.get(se)));
-                            } else if (se == Advocate.xtandem.getIndex()) {
-                                writeCvTerm(new CvTerm("MS", "MS:1001330", "X!Tandem:expect", "" + eValues.get(se)));
+                        for (int advocateIndex : searchEngines) {
+
+                            String eValue = eValues.get(advocateIndex).toString();
+
+                            if (advocateIndex == Advocate.msgf.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", eValue));
+                            } else if (advocateIndex == Advocate.mascot.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", eValue));
+                            } else if (advocateIndex == Advocate.omssa.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", eValue));
+                            } else if (advocateIndex == Advocate.xtandem.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", eValue));
                             } else {
+                                // @TODO: what to add for the new advocates??
+                                // @TODO: generic e-value for user algorithms?
                                 Advocate advocate = Advocate.getAdvocate(fileName);
-                                br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(se) + "\" />" + System.getProperty("line.separator"));
+                                br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(advocateIndex) + "\" />" + System.getProperty("line.separator"));
                             }
                         }
 
                         // add the additional search engine scores
                         if (mascotScore != null) {
                             writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
+                        }
+                        if (msAmandaScore != null) {
+                            writeCvTerm(new CvTerm("MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
                         }
 
                         // @TODO: add additional scores for OMSSA and X!Tandem as well

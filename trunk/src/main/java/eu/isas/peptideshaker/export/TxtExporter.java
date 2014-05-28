@@ -207,7 +207,8 @@ public class TxtExporter {
                     + SEPARATOR + "PTM location confidence" + SEPARATOR + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum"
                     + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)" + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz"
                     + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR
-                    + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value" + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p"
+                    + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value" + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "MS-GF+ E-Value" + SEPARATOR 
+                    + "MS Amanda E-Value" + SEPARATOR + "p score" + SEPARATOR + "p"
                     + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
 
@@ -711,7 +712,7 @@ public class TxtExporter {
         line.append(spectrumMatch.getBestPeptideAssumption().getPeptide().getMass()).append(SEPARATOR);
         line.append(Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), true, true))).append(SEPARATOR);
         line.append(Math.abs(spectrumMatch.getBestPeptideAssumption().getIsotopeNumber(precursor.getMz()))).append(SEPARATOR);
-        Double mascotEValue = null, omssaEValue = null, xtandemEValue = null;
+        Double mascotEValue = null, omssaEValue = null, xtandemEValue = null, msgfEValue = null, msAmandaEValue = null;
         double mascotScore = 0;
 
         for (int se : spectrumMatch.getAdvocates()) {
@@ -733,7 +734,17 @@ public class TxtExporter {
                                 if (xtandemEValue == null || xtandemEValue > eValue) {
                                     xtandemEValue = eValue;
                                 }
+                            } else if (se == Advocate.msgf.getIndex()) {
+                                if (msgfEValue == null || msgfEValue > eValue) {
+                                    msgfEValue = eValue;
+                                }
+                            } else if (se == Advocate.msAmanda.getIndex()) {
+                                if (msAmandaEValue == null || msAmandaEValue > eValue) {
+                                    msAmandaEValue = eValue;
+                                }
                             }
+
+                            // @TODO: what about the other advocates??
                         }
                     }
                 }
@@ -763,6 +774,19 @@ public class TxtExporter {
         }
 
         line.append(SEPARATOR);
+
+        if (msgfEValue != null) {
+            line.append(msgfEValue);
+        }
+
+        line.append(SEPARATOR);
+
+        if (msAmandaEValue != null) {
+            line.append(msAmandaEValue);
+        }
+
+        line.append(SEPARATOR);
+
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getSpectrumMatchParameter(psmKey, probabilities);
 
@@ -793,6 +817,8 @@ public class TxtExporter {
      *
      * @return the peptide assumptions from a peptide spectrum match as lines of
      * text
+     * 
+     * @deprecated only supports xtandem, omssa and mascot
      */
     private String getAssumptionLines(String spectrumKey, SearchParameters searchParameters) throws Exception {
 
@@ -823,6 +849,8 @@ public class TxtExporter {
                         } else if (se == Advocate.xtandem.getIndex()) {
                             line += "X" + SEPARATOR;
                         }
+
+                        // @TODO: what about the other advocates??
 
                         line += rank + SEPARATOR;
 
@@ -867,14 +895,15 @@ public class TxtExporter {
                             line += assumption.getScore() + "";
                         }
 
+                        // @TODO: what about the other advocates??
+
                         line += SEPARATOR;
 
                         PSParameter probabilities = new PSParameter();
                         probabilities = (PSParameter) assumption.getUrParam(probabilities);
 
                         try {
-                            line += assumption.getScore() + SEPARATOR
-                                    + probabilities.getSearchEngineProbability() + SEPARATOR;
+                            line += assumption.getScore() + SEPARATOR + probabilities.getSearchEngineProbability() + SEPARATOR;
                         } catch (Exception e) {
                             line += SEPARATOR + SEPARATOR;
                         }
