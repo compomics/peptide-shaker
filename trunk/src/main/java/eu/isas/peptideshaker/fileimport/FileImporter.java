@@ -1283,11 +1283,11 @@ public class FileImporter {
                     }
                     if (peptideIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + peptideIssue
-                                + " had peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
+                                + " had peptide lengths less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
                     }
                     if (precursorIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + precursorIssue
-                                + " had precursor deviation bigger than " + idFilter.getMaxMzDeviation() + ".", true, true);
+                                + " had precursor deviations bigger than " + idFilter.getMaxMzDeviation() + ".", true, true);
                     }
                     if (ptmIssue > 0) {
                         waitingHandler.appendReport(padding + "- " + ptmIssue + " had unrecognized modifications.", true, true);
