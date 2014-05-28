@@ -1291,9 +1291,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
 
             RestTemplate template = new RestTemplate();
+            String url = projectServiceURL + "file/list/project/" + projectAccession;
 
             try {
-                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/project/" + projectAccession, FileDetailList.class);
+                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
 
                 // @TODO: sort based on assay accession and then on type
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
@@ -1312,9 +1313,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         false});
                 }
             } catch (HttpServerErrorException e) {
+                System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -1357,9 +1359,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             assayAccession = assayAccession.substring(assayAccession.lastIndexOf("\">") + 2, assayAccession.lastIndexOf("</font"));
 
             RestTemplate template = new RestTemplate();
+            String url = projectServiceURL + "file/list/assay/" + assayAccession;
 
             try {
-                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(projectServiceURL + "file/list/assay/" + assayAccession, FileDetailList.class);
+                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
 
                 // @TODO: sort based on assay accession and then on type
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
@@ -1378,9 +1381,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         false});
                 }
             } catch (HttpServerErrorException e) {
+                System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         }
 
@@ -1424,9 +1428,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             double maxNumProteins = 0, maxNumPeptides = 0, maxNumSpectra = 0;
 
             RestTemplate template = new RestTemplate();
+            String url = projectServiceURL + "assay/list/project/" + projectAccession;
 
             try {
-                ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(projectServiceURL + "assay/list/project/" + projectAccession, AssayDetailList.class);
+                ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(url, AssayDetailList.class);
 
                 for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
 
@@ -1456,9 +1461,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     }
                 }
             } catch (HttpServerErrorException e) {
+                System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
             }
 
             // update the sparklines with the max values
@@ -1580,9 +1586,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             instrumentsAll.add(0, "");
             ptmsAll.add(0, "");
         } catch (HttpServerErrorException e) {
+            System.out.println("project/count or project/list");
             e.printStackTrace();
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "PRIDE web service access error.", "Network Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "PRIDE web service access error:\nproject/count or project/list.", "Network Error", JOptionPane.WARNING_MESSAGE);
         }
 
         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
