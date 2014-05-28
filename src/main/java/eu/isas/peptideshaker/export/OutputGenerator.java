@@ -2225,9 +2225,9 @@ public class OutputGenerator {
                                 writer.write("Isotope number" + SEPARATOR);
                             }
                             if (scores) {
-                                writer.write("Mascot e-value" + SEPARATOR);
-                                writer.write("OMSSA e-value" + SEPARATOR);
-                                writer.write("X!Tandem e-value" + SEPARATOR);
+                                for (Integer advocateIndex : peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms()) {
+                                    writer.write(Advocate.getAdvocate(advocateIndex) + " e-value" + SEPARATOR);
+                                }
                             }
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
@@ -2352,18 +2352,12 @@ public class OutputGenerator {
                                                         writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                     }
                                                     if (scores) {
-                                                        if (se == Advocate.mascot.getIndex()) {
-                                                            writer.write("" + eValue);
+                                                        for (Integer advocateIndex : peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms()) {
+                                                            if (se == advocateIndex) {
+                                                                writer.write("" + eValue);
+                                                            }
+                                                            writer.write(SEPARATOR);
                                                         }
-                                                        writer.write(SEPARATOR);
-                                                        if (se == Advocate.omssa.getIndex()) {
-                                                            writer.write("" + eValue);
-                                                        }
-                                                        writer.write(SEPARATOR);
-                                                        if (se == Advocate.xtandem.getIndex()) {
-                                                            writer.write("" + eValue);
-                                                        }
-                                                        writer.write(SEPARATOR);
                                                     }
                                                     if (confidence) {
                                                         psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
