@@ -3398,7 +3398,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         SearchParameters searchParameters = getSearchParameters();
         AnnotationPreferences annotationPreferences = new AnnotationPreferences();
-        annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
+        annotationPreferences.setPreferencesFromSearchParameters(searchParameters);
         setAnnotationPreferences(annotationPreferences);
 
         if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {

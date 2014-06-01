@@ -442,7 +442,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the annotation preferences
         annotationPreferences = new AnnotationPreferences();
-        annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
+        annotationPreferences.setPreferencesFromSearchParameters(searchParameters);
 
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);

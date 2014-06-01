@@ -561,7 +561,7 @@ public class FileImporter {
                     waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
                     peptideShaker.setProteinCountMap(proteinCount);
                     peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
-                            idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
+                            idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
                 }
             } catch (OutOfMemoryError error) {
 
@@ -711,12 +711,11 @@ public class FileImporter {
 
                 int numberOfMatches = tempSet.size(),
                         progress = 0,
-                        psmsRejected = 0, // @TODO: this counts the number of rejectes spectrum matches, i.e., all assumptions rejected
+                        psmsRejected = 0,
                         proteinIssue = 0,
                         peptideIssue = 0,
                         precursorIssue = 0,
-                        ptmIssue = 0, 
-                        numberOfAssumptions = 0;
+                        ptmIssue = 0;
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                 idReport = false;
                 ArrayList<Integer> charges = new ArrayList<Integer>();
@@ -741,7 +740,6 @@ public class FileImporter {
 
                         nPSMs++;
                         nSecondary += match.getAllAssumptions().size() - 1;
-                        numberOfAssumptions++;
 
                         String spectrumKey = match.getKey();
                         String fileName = Spectrum.getSpectrumFile(spectrumKey);
@@ -859,7 +857,7 @@ public class FileImporter {
                                             Peptide peptide = peptideAssumption.getPeptide();
                                             String peptideSequence = peptide.getSequence();
 
-                                        // map the algorithm specific modifications on utilities modifications
+                                            // map the algorithm specific modifications on utilities modifications
                                             // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                                             // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
@@ -1173,7 +1171,9 @@ public class FileImporter {
                                                     }
                                                 }
                                             }
-                                            inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
+                                            if (!processingPreferences.isScoringNeeded(advocateId)) {
+                                                inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
+                                            }
                                             identification.addSpectrumMatch(match, false); //@TODO: adapt to the different scores
                                             nRetained++;
                                             break;
@@ -1263,13 +1263,10 @@ public class FileImporter {
                 }
                 projectDetails.addIdentificationFiles(idFile);
 
-                double total = proteinIssue + peptideIssue + precursorIssue + ptmIssue;
                 double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;
-                double shareAssumptionsRejected = 100.0 * total / numberOfAssumptions;
 
                 if (psmsRejected > 0) {
-                    waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters.", true, true);
-                    waitingHandler.appendReport(((int) total) + " assumptions (" + Util.roundDouble(shareAssumptionsRejected, 1) + "%) excluded by the import filters:", true, true);
+                    waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters. Hits rejection criteria:", true, true);
 
                     String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
@@ -1277,26 +1274,38 @@ public class FileImporter {
                         padding = "    ";
                     }
 
-                    if (proteinIssue > 0) {
-                        waitingHandler.appendReport(padding + "- " + proteinIssue
-                                + " mapped to both target and decoy.", true, true);
+                    int totalAssumptionsRejected = proteinIssue + peptideIssue + precursorIssue + ptmIssue;
+
+                    double share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
+                    if (share >= 1) {
+                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide mapping to both target and decoy.", true, true);
                     }
-                    if (peptideIssue > 0) {
-                        waitingHandler.appendReport(padding + "- " + peptideIssue
-                                + " had peptide lengths less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
+                    share = 100 * ((double) peptideIssue) / totalAssumptionsRejected;
+                    if (share >= 1) {
+                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide length less than " + idFilter.getMinPepLength() + " or greater than " + idFilter.getMaxPepLength() + ".", true, true);
                     }
-                    if (precursorIssue > 0) {
-                        waitingHandler.appendReport(padding + "- " + precursorIssue
-                                + " had precursor deviations bigger than " + idFilter.getMaxMzDeviation() + ".", true, true);
+                    share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
+                    if (share >= 1) {
+                        String unit;
+                        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+                            unit = "ppm";
+                        } else {
+                            unit = "Da";
+                        }
+                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1)
+                                + "% peptide mass deviation bigger than " + idFilter.getMaxMzDeviation() + " " + unit + ".", true, true);
                     }
-                    if (ptmIssue > 0) {
-                        waitingHandler.appendReport(padding + "- " + ptmIssue + " had unrecognized modifications.", true, true);
+                    share = 100 * ((double) ptmIssue) / totalAssumptionsRejected;
+                    if (share >= 1) {
+                        waitingHandler.appendReport(padding + "- " + Util.roundDouble(share, 1) + "% unrecognized modifications.", true, true);
                     }
                 }
                 // inform the user in case more than 75% of the hits were rejected by the filters
                 if (sharePsmsRejected > 75) {
                     String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
-                    double meanRejected = total / 4;
+                    double meanRejected = sharePsmsRejected / 4;
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
                         if (software.keySet().contains(Advocate.mascot.getName())) {
