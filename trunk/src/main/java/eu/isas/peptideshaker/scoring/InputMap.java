@@ -22,15 +22,20 @@ public class InputMap implements Serializable {
      */
     static final long serialVersionUID = 1117083720476649996L;
     /**
-     * Map of the hits as imported. One target/decoy map per search engine
-     * (referenced by their compomics utilities index).
+     * Map of the hits as imported. One target/decoy map per identification
+     * advocate (referenced by their compomics utilities index).
      */
     private HashMap<Integer, TargetDecoyMap> inputMap = new HashMap<Integer, TargetDecoyMap>();
     /**
-     * Map of the hits per file as imported. One target/decoy map per search
-     * engine (referenced by their compomics utilities index).
+     * Map of the hits per file as imported. advocate index -> file name ->
+     * target decoy map
      */
     private HashMap<Integer, HashMap<String, TargetDecoyMap>> inputSpecificMap = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
+    /**
+     * Map of the intermediate scores. Name of the file -> advocate index ->
+     * score index
+     */
+    private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>>();
     /**
      * The filters to use to flag doubtful matches.
      */
@@ -73,6 +78,17 @@ public class InputMap implements Serializable {
      */
     public Set<Integer> getInputAlgorithms() {
         return inputMap.keySet();
+    }
+    
+    /**
+     * Returns the algorithms having an intermediate score for the given spectrum file.
+     * 
+     * @param fileName the name of the spectrum file of interest 
+     * 
+     * @return the algorithm having an intermediate score for this file
+     */
+    public Set<Integer> getIntermediateScoreInputAlgorithms(String fileName) {
+        return intermediateScores.get(fileName).keySet();
     }
 
     /**
@@ -455,4 +471,57 @@ public class InputMap implements Serializable {
     public boolean hasAdvocateContribution() {
         return advocateContribution != null;
     }
+
+    /**
+     * Adds an intermediate score for a given match
+     *
+     * @param fileName the name of the spectrum file of interest
+     * @param advocateIndex the index of the advocate
+     * @param scoreIndex the index of the score
+     * @param score the score of the match
+     * @param decoy indicates whether the match maps to a target or a decoy
+     * protein
+     */
+    public void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy) {
+        HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        if (advocateMap == null) {
+            advocateMap = new HashMap<Integer, HashMap<Integer, TargetDecoyMap>>();
+            intermediateScores.put(fileName, advocateMap);
+        }
+        HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+        if (scoreMap == null) {
+            scoreMap = new HashMap<Integer, TargetDecoyMap>();
+            advocateMap.put(advocateIndex, scoreMap);
+        }
+        TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
+        if (targetDecoyMap == null) {
+            targetDecoyMap = new TargetDecoyMap();
+            scoreMap.put(scoreIndex, targetDecoyMap);
+        }
+        targetDecoyMap.put(score, decoy);
+    }
+
+    /**
+     * Returns the target decoy map associated to a given spectrum file,
+     * advocate and score type. Null if not found.
+     *
+     * @param fileName the name of the spectrum file
+     * @param advocateIndex the index of the advocate
+     * @param scoreIndex the index of the score
+     *
+     * @return the target decoy map associated to the given spectrum file,
+     * advocate and score type
+     */
+    public TargetDecoyMap getIntermediateScoreMap(String fileName, int advocateIndex, int scoreIndex) {
+        HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
+        if (advocateMap != null) {
+            HashMap<Integer, TargetDecoyMap> scoreMap = advocateMap.get(advocateIndex);
+            if (scoreMap != null) {
+                TargetDecoyMap targetDecoyMap = scoreMap.get(scoreIndex);
+                return targetDecoyMap;
+            }
+        }
+        return null;
+    }
+
 }

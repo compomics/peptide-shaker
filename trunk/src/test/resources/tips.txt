@@ -1,7 +1,7 @@
 You can contribute to <i>PeptideShaker</i>!<br><br>Use our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a> to explain your special needs and exchange new ideas!
 Post-Translational Modifications (PTMs) are color coded in <b>PeptideShaker</b>.<br><br>You can change the colors via <i>Search Parameters</i> on the <i>Edit</i> menu.<br><br>You can also verify the location of the PTMs in the <i>Modifications</i> tab!
 Not getting the result you wanted?<br><br>When creating a new project, be sure that the <i>Search Parameters</i> and <i>Import Filters</i> are correct!
-How to run user-friendly OMSSA and X!Tandem searches?<br><br>Try <a href="http://searchgui.googlecode.com">SearchGUI</a>!
+How to run user-friendly OMSSA, ms-gf+, MS-Amanda and X!Tandem searches?<br><br>Try <a href="http://searchgui.googlecode.com">SearchGUI</a>!
 How did you generate your mgf file?<br><br>Processing of the raw data can have dramatic impact on the final result.<br><br>More information in our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Need more help?<br><br>Look for the question marks.<br><br>We will also be happy to answer your questions on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>.
 Which database are you using?<br><br>Using large databases increases the amount of false positive identifications.<br><br>Use only the species expected in the sample.<br><br>We recommend the use of reviewed <a href="http://uniprot.org">UniProt</a> databases.

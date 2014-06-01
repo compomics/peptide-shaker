@@ -154,6 +154,10 @@ public class PSParameter implements UrParameter {
      * The results of the validation quality filters.
      */
     private HashMap<String, Boolean> qcFilters = new HashMap<String, Boolean>();
+    /**
+     * Map of the intermediate scores. Score index -> value
+     */
+    private HashMap<Integer, Double> intermediateScores;
 
     /**
      * Constructor.
@@ -846,6 +850,33 @@ public class PSParameter implements UrParameter {
      */
     public boolean hasQcFilters() {
         return qcFilters != null;
+    }
+    
+    /**
+     * Adds an intermediate score.
+     * 
+     * @param scoreId the index of the score
+     * @param score the value of the score
+     */
+    public void setIntermediateScore(int scoreId, double score) {
+        if (intermediateScores == null) {
+            intermediateScores = new HashMap<Integer, Double>();
+        }
+        intermediateScores.put(scoreId, score);
+    }
+    
+    /**
+     * Returns the desired intermediate score. Null if not found.
+     * 
+     * @param scoreId the index of the score
+     * 
+     * @return the intermediate score
+     */
+    public Double getIntermediateScore(int scoreId) {
+        if (intermediateScores == null) {
+            return null;
+        }
+        return intermediateScores.get(scoreId);
     }
 
     @Override
