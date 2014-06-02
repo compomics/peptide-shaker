@@ -2300,7 +2300,6 @@ public class PeptideShaker {
 //        br.close();
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
     }
 
     /**
