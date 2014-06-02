@@ -473,7 +473,7 @@ public class InputMap implements Serializable {
     }
 
     /**
-     * Adds an intermediate score for a given match
+     * Adds an intermediate score for a given match.
      *
      * @param fileName the name of the spectrum file of interest
      * @param advocateIndex the index of the advocate
