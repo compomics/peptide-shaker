@@ -10,10 +10,13 @@
 
  * FEATURE IMPROVEMENT: Improved and extended the Methods Section export.
  * FEATURE IMPROVEMENT: Better formatting of long lines in the waiting handler.
+ * FEATURE IMPROVEMENT: Removed the Venn diagram from the Spectrum IDs tab, as they could not support more than three search engines.
 
  * BUG FIX: Tried to make the table models more robust against database connection dropped issues.
 
- * LIBRARY UPDATE: Updated utilities to version 3.28.1.
+ * LIBRARY UPDATE: Removed charts4j as a dependency.
+ * LIBRARY UPDATE: Removed jdas as a dependency.
+ * LIBRARY UPDATE: Updated utilities to version 3.28.5.
 
 ----
 
