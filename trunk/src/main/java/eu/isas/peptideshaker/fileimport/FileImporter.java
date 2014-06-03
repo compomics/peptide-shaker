@@ -1266,7 +1266,7 @@ public class FileImporter {
                 double sharePsmsRejected = 100.0 * psmsRejected / numberOfMatches;
 
                 if (psmsRejected > 0) {
-                    waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters. Hits rejection criteria:", true, true);
+                    waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters:", true, true);
 
                     String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
 

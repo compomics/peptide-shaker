@@ -50,8 +50,8 @@ import org.jfree.ui.RectangleEdge;
 public class StatsPanel extends javax.swing.JPanel {
 
     /**
-     * It true the tab has been initiated, i.e., the data displayed at leaat
-     * once. False means that the tab has to be loaded from scratch.
+     * It true the tab has been initiated, i.e., the data has been displayed at
+     * least once. False means that the tab has to be loaded from scratch.
      */
     private boolean tabInitiated = false;
     /**
@@ -2841,8 +2841,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
     /**
      * Enable the validate button.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void thresholdTypeCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdTypeCmbActionPerformed
         validateButton.setEnabled(true);
@@ -2868,11 +2868,11 @@ public class StatsPanel extends javax.swing.JPanel {
 
     /**
      * Reset all thresholds.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void thresholdResetJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdResetJButtonActionPerformed
-       resetAllThresholds();
+        resetAllThresholds();
     }//GEN-LAST:event_thresholdResetJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3339,7 +3339,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private void updateCharts() {
 
         updatePepChart();
-        updateFDRFNRChart();
+        updateFDRFNRChart(); // @TODO: sometimes crashes on strange input values..?
         updateFDRsChart();
         updateConfidenceChart();
         updateCostBenefitChart();
@@ -3990,7 +3990,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
     /**
      * Resets the threshold of the given group to the last validated value.
-     * 
+     *
      * @param groupSelection the index of the group of interest
      */
     public void resetThreshold(int groupSelection) {
