@@ -9,17 +9,17 @@ import org.apache.commons.cli.Options;
  */
 public enum MzidCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cps file)", true, true),
-    CONTACT_FIRST_NAME("contact_first_name", "Contact first name", true, true),
-    CONTACT_LAST_NAME("contact_last_name", "Contact last name", true, true),
-    CONTACT_EMAIL("contact_email", "Contact email", true, true),
-    CONTACT_ADDRESS("contact_address", "Contact address", true, true),
-    CONTACT_URL("url", "Contact url", true, false),
-    ORGANIZATION_NAME("organization_name", "Organization name", true, true),
-    ORGANIZATION_EMAIL("organization_email", "Organization email", true, true),
-    ORGANIZATION_ADDRESS("organization_address", "Organization address", true, true),
-    ORGANIZATION_URL("organization_url", "Organization url", true, false),
-    OUTPUT_FILE("output_file", "Output file", true, true);
+    CPS_FILE("in", "PeptideShaker project (.cps file).", true, true),
+    CONTACT_FIRST_NAME("contact_first_name", "Contact first name.", true, true),
+    CONTACT_LAST_NAME("contact_last_name", "Contact last name.", true, true),
+    CONTACT_EMAIL("contact_email", "Contact e-mail.", true, true),
+    CONTACT_ADDRESS("contact_address", "Contact address.", true, true),
+    CONTACT_URL("contact_url", "Contact URL.", true, false),
+    ORGANIZATION_NAME("organization_name", "Organization name.", true, true),
+    ORGANIZATION_EMAIL("organization_email", "Organization e-mail.", true, true),
+    ORGANIZATION_ADDRESS("organization_address", "Organization address.", true, true),
+    ORGANIZATION_URL("organization_url", "Organization URL.", true, false),
+    OUTPUT_FILE("output_file", "Output file.", true, true);
     /**
      * Short Id for the CLI parameter.
      */
