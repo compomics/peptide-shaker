@@ -5,15 +5,16 @@
 
 The PeptideShaker command line interface can be used to process identification files and output identification results in various formats.
 
-There are five main sections to this page:
+There are six main sections to this page:
 
  * [#A)_PeptideShakerCLI A) PeptideShakerCLI] - data processing 
  * [#B)_ReportCLI B) ReportCLI] - identification results exports
  * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
- * [#D)_PathSettingsCLI D) PathSettingsCLI] - set the paths to use
- * [#E)_General E) General] - general command line help
+ * [#D)_MzidCLI C) MzidCLI] - export as mzIdentML
+ * [#E)_PathSettingsCLI D) PathSettingsCLI] - set the paths to use
+ * [#F)_General E) General] - general command line help
 
-Note that ReportCLI, FollowUpCLI and PathSettingsCLI options can also be appended to PeptideShakerCLI command lines.
+Note that ReportCLI, FollowUpCLI, MzidCLI and PathSettingsCLI options can also be appended to PeptideShakerCLI command lines.
 
 All command line options have the same overall structure and only differ in the features and parameters available.
 
@@ -308,7 +309,51 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum
 
 ----
 
-==D) PathSettingsCLI==
+==D) MzidCLI==
+
+Available from PeptideShaker v0.30.0.
+
+*Standard command line:*
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.MzidCLI [parameters]
+}}}
+
+*Mandatory parameters:*
+
+{{{
+-in                        PeptideShaker project (.cps file)
+
+-output_file               Output file.
+
+-contact_first_name        Contact first name.
+
+-contact_last_name         Contact last name.
+
+-contact_email             Contact e-mail.
+
+-contact_address           Contact address.
+
+-organization_name         Organization name.
+
+-organization_email        Organization e-mail.
+
+-organization_address      Organization address.
+}}}
+
+*Optional parameters:*
+
+{{{
+-contact_url               Contact URL.
+
+-organization_url          Organization URL.             
+}}}
+
+[#PeptideShaker_Command_Line_Interface Go to top of page]
+
+----
+
+==E) PathSettingsCLI==
 
 *Generic temporary folder:*
 
@@ -345,7 +390,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum
 
 ----
 
-==E) General==
+==F) General==
 
 *Comma Separated Lists*
 
