@@ -16,7 +16,7 @@
 
  * LIBRARY UPDATE: Removed charts4j as a dependency.
  * LIBRARY UPDATE: Removed jdas as a dependency.
- * LIBRARY UPDATE: Updated utilities to version 3.28.5.
+ * LIBRARY UPDATE: Updated utilities to version 3.28.7.
 
 ----
 
