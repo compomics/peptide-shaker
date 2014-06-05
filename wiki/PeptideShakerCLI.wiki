@@ -102,12 +102,6 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -max_peptide_length        Maximum peptide length filter (default is '30').
 
--max_mascot_e              Maximum Mascot E-value filter (default '100').
-
--max_omssa_e               Maximum OMSSA E-value filter (default '100').
-
--max_xtandem_e             Maximum X!Tandem E-value filter (default '100').
-
 -max_precursor_error       Maximum precursor error filter (default '10'). 
                            See also max_precursor_error_type.
 
