@@ -305,7 +305,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTableToolTips.add("File");
         filesTableToolTips.add("Download File");
         filesTableToolTips.add("File Size");
-        filesTableToolTips.add("ReShake");
+        filesTableToolTips.add("Reshake");
 
         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects");
         ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
@@ -399,7 +399,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         helpMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("PRIDE ReShake");
+        setTitle("PRIDE Reshake");
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -573,7 +573,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         reshakeButton.setBackground(new java.awt.Color(0, 153, 0));
         reshakeButton.setFont(reshakeButton.getFont().deriveFont(reshakeButton.getFont().getStyle() | java.awt.Font.BOLD));
         reshakeButton.setForeground(new java.awt.Color(255, 255, 255));
-        reshakeButton.setText("ReShake PRIDE Data");
+        reshakeButton.setText("Reshake PRIDE Data");
         reshakeButton.setEnabled(false);
         reshakeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -625,9 +625,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("Select the files to ReShake and click ReShake PRIDE Data to start re-analyzing the data. ");
+        filesHelpLabel.setText("Select the files to Reshake and click Reshake PRIDE Data to start re-analyzing the data. ");
 
-        reshakableCheckBox.setText("Show ReShakeable Files Only");
+        reshakableCheckBox.setText("Show Reshakeable Files Only");
         reshakableCheckBox.setToolTipText("Show only files that can be re-analyzed with ReShake");
         reshakableCheckBox.setIconTextGap(10);
         reshakableCheckBox.setOpaque(false);
@@ -941,7 +941,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }//GEN-LAST:event_assaysTableKeyReleased
 
     /**
-     * ReShake the selected PRIDE experiments.
+     * Reshake the selected PRIDE experiments.
      *
      * @param evt
      */
@@ -2486,7 +2486,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }
 
     /**
-     * Enable or disable the ReShake button.
+     * Enable or disable the Reshake button.
      */
     private void enableReshake() {
 
