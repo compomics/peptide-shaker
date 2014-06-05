@@ -255,7 +255,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         introductionTxt.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         introductionTxt.setLineWrap(true);
         introductionTxt.setRows(5);
-        introductionTxt.setText("Method Section Editor automatically drafts a methods section for protein identification with SearchGUI and PeptideShaker.\n\n1 - Select the wanted features in the left panel.\n2 - Copy the output to a text editor.\n3 - Complete the sections in brackets. (References are as PubMed IDs, paste into PubMed to retrieve the complete reference.)\n4 - Export the Certificate of Analysis and add it to your supplementary material and to the files uploaded to ProteomeXchange.\n\nNote: The section editor does not include the raw file to peak list conversion.");
+        introductionTxt.setText("Method Section Editor automatically drafts a methods section for protein identification with SearchGUI and PeptideShaker.\n\n1 - Select the wanted features in the left panel.\n2 - Copy the output to a text editor.\n3 - Complete the sections in brackets. (PubMed IDs are indicated for references, paste into PubMed to retrieve the complete reference)\n4 - Export the Certificate of Analysis and add it to your supplementary material and to the files uploaded to ProteomeXchange.\n\nNote: The section editor does not include the raw file to peak list conversion.");
         introductionTxt.setWrapStyleWord(true);
         introductionTxt.setMargin(new java.awt.Insets(10, 10, 10, 10));
         jScrollPane1.setViewportView(introductionTxt);
