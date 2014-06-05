@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.30.0 (Coming soon...)*
+*Changes in PeptideShaker 0.30.0 (June 5. 2014)*
 
  * NEW FEATURE: mzIdentML export.
  * NEW FEATURE: Import of mzid files from other algorithms than MS-GF+. (beta)
