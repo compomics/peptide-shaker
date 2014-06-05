@@ -743,7 +743,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="ReShake PRIDE Projects"/>
+            <Property name="text" type="java.lang.String" value="Reshake PRIDE Projects"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
