@@ -58,7 +58,7 @@ public class PeptideShakerMethods {
                 ArrayList<String> versions = algorithmToVersionMap.get(advocate.getName());
 
                 if (versions == null || versions.isEmpty()) {
-                    text += "[add version here]";
+                    text += "version [add version here]";
                 } else if (versions.size() == 1) {
                     if (versions.get(0) != null) {
                         text += "version " + versions.get(0);
@@ -172,7 +172,7 @@ public class PeptideShakerMethods {
      * @return the identification settings details
      */
     public static String getIdentificationSettings(SearchParameters searchParameters) {
-        String text = "The dentification settings were as follows: ";
+        String text = "The identification settings were as follows: ";
         text += searchParameters.getEnzyme().getName() + " with a maximum of " + searchParameters.getnMissedCleavages() + " missed cleavages; ";
         String msToleranceUnit;
         if (searchParameters.isPrecursorAccuracyTypePpm()) {
@@ -198,7 +198,7 @@ public class PeptideShakerMethods {
                 PTM ptm = ptmFactory.getPTM(ptmName);
                 String sign;
                 if (ptm.getMass() < 0) {
-                    sign = "-";
+                    sign = "";
                 } else {
                     sign = "+";
                 }
@@ -233,7 +233,7 @@ public class PeptideShakerMethods {
         }
         ArrayList<String> refinementFixedPtmsNames = searchParameters.getModificationProfile().getRefinementFixedModifications();
         if (!refinementFixedPtmsNames.isEmpty()) {
-            text += "refinement search fixed modifications: ";
+            text += "fixed modifications during refinement procedure: ";
             for (int i = 0; i < refinementFixedPtmsNames.size(); i++) {
                 if (i > 0) {
                     if (i == refinementFixedPtmsNames.size() - 1) {
@@ -257,7 +257,7 @@ public class PeptideShakerMethods {
         }
         ArrayList<String> refinementVariablePtmsNames = searchParameters.getModificationProfile().getRefinementVariableModifications();
         if (!refinementVariablePtmsNames.isEmpty()) {
-            text += "refinement search variable modifications: ";
+            text += "variable modifications during refinement procedure: ";
             for (int i = 0; i < refinementVariablePtmsNames.size(); i++) {
                 if (i > 0) {
                     if (i == refinementVariablePtmsNames.size() - 1) {
@@ -287,7 +287,7 @@ public class PeptideShakerMethods {
      * @return the PeptideShaker usage details
      */
     public static String getPeptideShaker() {
-        return "Peptides and proteins were infered from the spectrum identification results using PeptideShaker "
+        return "Peptides and proteins were inferred from the spectrum identification results using PeptideShaker "
                 + "version " + PeptideShaker.getVersion() + " (http://peptide-shaker.googlecode.com). ";
     }
 
@@ -309,7 +309,7 @@ public class PeptideShakerMethods {
         } else {
             text = "Peptide Spectrum Matches (PSMs), peptides and proteins were validated at a " + psmFDR + "%, " + peptideFDR + "%, and " + proteinFDR + "% False Discovery Rate (FDR) estimated using the decoy hit distribution, respectively. ";
         }
-        text += "All validation thresholds are listed in the Certificate of Analysis available in the supplementary information.";
+        text += "All validation thresholds are listed in the Certificate of Analysis available in the supplementary information. ";
         return text;
     }
 
