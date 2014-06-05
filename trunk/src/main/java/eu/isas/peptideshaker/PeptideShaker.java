@@ -47,11 +47,9 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.BufferedWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -292,6 +290,7 @@ public class PeptideShaker {
      * @param processingPreferences
      * @param ptmScoringPreferences
      * @param spectrumCountingPreferences
+     * @param projectDetails
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
