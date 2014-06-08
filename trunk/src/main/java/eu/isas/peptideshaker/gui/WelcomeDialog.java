@@ -656,7 +656,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_recentProjectsLabelMouseClicked
 
     /**
-     * Open the ReShake dialog.
+     * Open the Reshake dialog.
      *
      * @param evt
      */

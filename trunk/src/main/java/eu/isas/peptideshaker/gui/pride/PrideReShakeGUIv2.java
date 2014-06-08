@@ -2266,7 +2266,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         // @TODO: improve/extend guess!
         // guess fixed/variable
-        if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")) {
+        if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")
+                || pridePtmName.equalsIgnoreCase("S-carboxamidomethyl-L-cysteine")
+                || pridePtmName.equalsIgnoreCase("iodoacetamide - site C")
+                || pridePtmName.equalsIgnoreCase("iodoacetamide derivatized residue")
+                || pridePtmName.equalsIgnoreCase("Iodoacetamide derivative")
+                || pridePtmName.equalsIgnoreCase("Carboxymethyl")
+                || pridePtmName.equalsIgnoreCase("S-carboxymethyl-L-cysteine")
+                || pridePtmName.equalsIgnoreCase("iodoacetic acid derivatized residue")) {
             fixedPtm = true;
         }
 
