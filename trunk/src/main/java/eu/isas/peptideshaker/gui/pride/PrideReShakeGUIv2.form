@@ -169,7 +169,11 @@
                               <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                               <Component id="projectHelpLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="privateDataLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="browsePublicDataLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="dataTypeSeparatorLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="accessPrivateDataLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -184,8 +188,10 @@
                       <Component id="projectsScrollPane" pref="116" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="privateDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="accessPrivateDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="browsePublicDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="dataTypeSeparatorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -232,15 +238,15 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JLabel" name="privateDataLabel">
+            <Component class="javax.swing.JLabel" name="accessPrivateDataLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Access Private Data&lt;/a&gt;&lt;/html&gt;&#xa;&#xa;"/>
                 <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="privateDataLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="privateDataLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="privateDataLabelMouseExited"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="accessPrivateDataLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="accessPrivateDataLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="accessPrivateDataLabelMouseExited"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="projectHelpLabel">
@@ -249,6 +255,22 @@
                   <Font name="Tahoma" size="11" style="2"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Select a projects to see the project details. For more details click the Accession links."/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="browsePublicDataLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Browse Public Data&lt;/a&gt;&lt;/html&gt;  "/>
+                <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseExited"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="dataTypeSeparatorLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="/"/>
               </Properties>
             </Component>
           </SubComponents>

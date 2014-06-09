@@ -33,6 +33,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,8 +49,15 @@ import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import org.apache.commons.codec.binary.Base64;
 import org.jfree.chart.plot.PlotOrientation;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.pride.archive.web.service.model.assay.AssayDetail;
@@ -182,6 +190,18 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * The web service URL.
      */
     private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/";
+    /**
+     * The data format.
+     */
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * The user name.
+     */
+    private String userName = null;
+    /**
+     * The password.
+     */
+    private String password = null;
 
     /**
      * Creates a new PrideReShakeGUI2 frame.
@@ -195,14 +215,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         this.setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
 
-        // @TODO: ask for public or private data...
-        insertData();
+        PrideDataTypeSelectionDialog dataTypeSelectionDialog = new PrideDataTypeSelectionDialog(this, true);
+
+        if (dataTypeSelectionDialog.isPublic()) {
+            loadPublicProjects();
+        } else {
+            getPrivateProjectDetails();
+        }
     }
 
     /**
      * Set up the GUI.
      */
     private void setUpGui() {
+
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
         reshakeableFileEndings = new HashMap<String, ArrayList<String>>();
         reshakeableFileEndings.put("SEARCH", new ArrayList<String>());
@@ -331,6 +358,92 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }
 
     /**
+     * Get the private project details from the user.
+     */
+    private void getPrivateProjectDetails() {
+        PridePrivateDataDialog pridePrivateDataDialog = new PridePrivateDataDialog(this, true);
+        if (pridePrivateDataDialog.getProjectAccession() != null) {
+            userName = pridePrivateDataDialog.getUserName();
+            if (userName.lastIndexOf("@") == -1) {
+                userName += "@ebi.ac.uk"; // reviewer account
+            }
+            password = pridePrivateDataDialog.getPassword();
+            loadPrivateProject(pridePrivateDataDialog.getProjectAccession());
+        }
+    }
+
+    /**
+     * Loads a private project.
+     *
+     * @param projectAccession
+     */
+    private void loadPrivateProject(String projectAccession) {
+
+        try {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+            DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
+            projectsTableModel.getDataVector().removeAllElements();
+            projectsTableModel.fireTableDataChanged();
+
+            ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects");
+            projectsPanel.repaint();
+
+            // load the project information
+            RestTemplate template = new RestTemplate();
+            ResponseEntity<ProjectDetail> entity = template.exchange("http://www.ebi.ac.uk/pride/ws/archive/project/" + projectAccession, HttpMethod.GET, getHttpEntity(), ProjectDetail.class);
+
+            if (entity.getStatusCode() != null && entity.getStatusCode().equals(HttpStatus.OK)) {
+
+                ProjectDetail projectDetail = entity.getBody();
+
+                ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                    (projectsTable.getRowCount() + 1),
+                    projectDetail.getAccession(),
+                    projectDetail.getTitle(),
+                    setToString(projectDetail.getSpecies(), ", "),
+                    setToString(projectDetail.getTissues(), ", "),
+                    setToString(projectDetail.getPtmNames(), "; "),
+                    setToString(projectDetail.getInstrumentNames(), ", "),
+                    projectDetail.getNumAssays(),
+                    projectDetail.getSubmissionType(),
+                    null
+                });
+
+                ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
+                projectsPanel.repaint();
+
+                // update the sparklines with the max values
+                projectsTable.getColumn("#Assays").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, (double) projectDetail.getNumAssays(), peptideShakerGUI.getSparklineColor()));
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setLogScale(true);
+                ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
+
+                projectsTable.repaint();
+
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+            } else {
+                // @TODO: what to do here..?
+                JOptionPane.showMessageDialog(this, "Cannot access " + projectAccession + " with the given user details.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (HttpClientErrorException e) {
+
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+            if (e.getMessage().trim().equalsIgnoreCase("401 Unauthorized")) {
+                JOptionPane.showMessageDialog(this, "Cannot access " + projectAccession + " with the given user details.", "Access Denied", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Cannot access " + projectAccession + ": \n" + e.getMessage() + ".", "Access Denied", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -354,8 +467,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 };
             }
         };
-        privateDataLabel = new javax.swing.JLabel();
+        accessPrivateDataLabel = new javax.swing.JLabel();
         projectHelpLabel = new javax.swing.JLabel();
+        browsePublicDataLabel = new javax.swing.JLabel();
+        dataTypeSeparatorLabel = new javax.swing.JLabel();
         assaysPanel = new javax.swing.JPanel();
         assayTableScrollPane = new javax.swing.JScrollPane();
         assaysTable = new JTable() {
@@ -450,22 +565,38 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         });
         projectsScrollPane.setViewportView(projectsTable);
 
-        privateDataLabel.setText("<html><a href=\"dummy\">Access Private Data</a></html>\n\n");
-        privateDataLabel.setToolTipText("Open the PeptideShaker web page");
-        privateDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        accessPrivateDataLabel.setText("<html><a href=\"dummy\">Access Private Data</a></html>\n\n");
+        accessPrivateDataLabel.setToolTipText("Open the PeptideShaker web page");
+        accessPrivateDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                privateDataLabelMouseClicked(evt);
+                accessPrivateDataLabelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                privateDataLabelMouseEntered(evt);
+                accessPrivateDataLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                privateDataLabelMouseExited(evt);
+                accessPrivateDataLabelMouseExited(evt);
             }
         });
 
         projectHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         projectHelpLabel.setText("Select a projects to see the project details. For more details click the Accession links.");
+
+        browsePublicDataLabel.setText("<html><a href=\"dummy\">Browse Public Data</a></html>  ");
+        browsePublicDataLabel.setToolTipText("Open the PeptideShaker web page");
+        browsePublicDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                browsePublicDataLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                browsePublicDataLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                browsePublicDataLabelMouseExited(evt);
+            }
+        });
+
+        dataTypeSeparatorLabel.setText("/");
 
         javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
         projectsPanel.setLayout(projectsPanelLayout);
@@ -479,7 +610,11 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         .addGap(10, 10, 10)
                         .addComponent(projectHelpLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(privateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dataTypeSeparatorLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)))
                 .addContainerGap())
         );
@@ -490,8 +625,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(privateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(projectHelpLabel))
+                    .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(projectHelpLabel)
+                    .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dataTypeSeparatorLabel))
                 .addContainerGap())
         );
 
@@ -1239,34 +1376,60 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }//GEN-LAST:event_findMenuItemActionPerformed
 
     /**
-     * Open the private data login screen.
+     * Change the cursor back to the default icon.
      *
      * @param evt
      */
-    private void privateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseClicked
-
-        JOptionPane.showMessageDialog(null, "Not yet implemented...");
-
-        // @TODO: implement me!!
-    }//GEN-LAST:event_privateDataLabelMouseClicked
+    private void accessPrivateDataLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_accessPrivateDataLabelMouseExited
 
     /**
      * Change the cursor to a hand icon.
      *
      * @param evt
      */
-    private void privateDataLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseEntered
+    private void accessPrivateDataLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_privateDataLabelMouseEntered
+    }//GEN-LAST:event_accessPrivateDataLabelMouseEntered
+
+    /**
+     * Open the private data login screen.
+     *
+     * @param evt
+     */
+    private void accessPrivateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseClicked
+        getPrivateProjectDetails();
+    }//GEN-LAST:event_accessPrivateDataLabelMouseClicked
+
+    /**
+     * Reload the public projects list.
+     *
+     * @param evt
+     */
+    private void browsePublicDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseClicked
+        userName = null;
+        password = null;
+        loadPublicProjects();
+    }//GEN-LAST:event_browsePublicDataLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void browsePublicDataLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_browsePublicDataLabelMouseEntered
 
     /**
      * Change the cursor back to the default icon.
      *
      * @param evt
      */
-    private void privateDataLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_privateDataLabelMouseExited
+    private void browsePublicDataLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_privateDataLabelMouseExited
+    }//GEN-LAST:event_browsePublicDataLabelMouseExited
 
     /**
      * Update the file list based on the selected project.
@@ -1274,7 +1437,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private void updateProjectFileList() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
@@ -1288,13 +1450,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (selectedRow != -1) {
 
             projectAccession = (String) projectsTable.getValueAt(selectedRow, 1);
-            projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
+            if (password == null) {
+                projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
+            }
 
             RestTemplate template = new RestTemplate();
             String url = projectServiceURL + "file/list/project/" + projectAccession;
 
             try {
-                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+                ResponseEntity<FileDetailList> fileDetailListResult;
+
+                if (password != null) {
+                    fileDetailListResult = template.exchange(url, HttpMethod.GET, getHttpEntity(), FileDetailList.class);
+                } else {
+                    fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+                }
 
                 // @TODO: sort based on assay accession and then on type
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
@@ -1332,7 +1502,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesPanel.repaint();
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -1342,7 +1511,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private void updateAssayFileList() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
@@ -1356,15 +1524,22 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (selectedRow != -1) {
 
             assayAccession = (String) assaysTable.getValueAt(selectedRow, 1);
-            assayAccession = assayAccession.substring(assayAccession.lastIndexOf("\">") + 2, assayAccession.lastIndexOf("</font"));
+            if (password == null) {
+                assayAccession = assayAccession.substring(assayAccession.lastIndexOf("\">") + 2, assayAccession.lastIndexOf("</font"));
+            }
 
             RestTemplate template = new RestTemplate();
             String url = projectServiceURL + "file/list/assay/" + assayAccession;
 
             try {
-                ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+                ResponseEntity<FileDetailList> fileDetailListResult;
 
-                // @TODO: sort based on assay accession and then on type
+                if (password != null) {
+                    fileDetailListResult = template.exchange(url, HttpMethod.GET, getHttpEntity(), FileDetailList.class);
+                } else {
+                    fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+                }
+
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
                     ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
@@ -1400,7 +1575,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesPanel.repaint();
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -1410,7 +1584,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private void updateAssayList() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         DefaultTableModel assaysTableModel = (DefaultTableModel) assaysTable.getModel();
@@ -1423,7 +1596,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (selectedRow != -1) {
 
             projectAccession = (String) projectsTable.getValueAt(selectedRow, 1);
-            projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
+            if (password == null) {
+                projectAccession = projectAccession.substring(projectAccession.lastIndexOf("\">") + 2, projectAccession.lastIndexOf("</font"));
+            }
 
             double maxNumProteins = 0, maxNumPeptides = 0, maxNumSpectra = 0;
 
@@ -1431,7 +1606,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             String url = projectServiceURL + "assay/list/project/" + projectAccession;
 
             try {
-                ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(url, AssayDetailList.class);
+                ResponseEntity<AssayDetailList> assayDetailList;
+
+                if (password != null) {
+                    assayDetailList = template.exchange(url, HttpMethod.GET, getHttpEntity(), AssayDetailList.class);
+                } else {
+                    assayDetailList = template.getForEntity(url, AssayDetailList.class);
+                }
 
                 for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
 
@@ -1496,22 +1677,28 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         assaysPanel.repaint();
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
-     * Insert the PRIDE project data.
+     * Insert the public PRIDE project data.
      */
-    private void insertData() {
+    private void loadPublicProjects() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
         projectsTableModel.getDataVector().removeAllElements();
         projectsTableModel.fireTableDataChanged();
+
+        DefaultTableModel assayTableModel = (DefaultTableModel) assaysTable.getModel();
+        assayTableModel.getDataVector().removeAllElements();
+        assayTableModel.fireTableDataChanged();
+
+        DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
+        filesTableModel.getDataVector().removeAllElements();
+        filesTableModel.fireTableDataChanged();
 
         double maxNumAssays = 0;
 
@@ -1529,7 +1716,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             instrumentsAll = new ArrayList<String>();
             ptmsAll = new ArrayList<String>();
             tissuesAll = new ArrayList<String>();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             // iterate the project and add them to the table
             for (ProjectDetail projectDetail : projectList.getBody().getList()) {
@@ -1595,14 +1781,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
         projectsPanel.repaint();
 
+        ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
+        projectsPanel.repaint();
+
+        ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
+        projectsPanel.repaint();
+
         // update the sparklines with the max values
         projectsTable.getColumn("#Assays").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxNumAssays, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setLogScale(true);
         ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
 
+        projectsTable.repaint();
+
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -2075,10 +2268,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         // help the user get the correct database
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         new DatabaseHelpDialog(peptideShakerGUI, prideSearchParameters, true, species);
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-        //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         // map the ptms to utilities ptms
         String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
@@ -2108,13 +2299,11 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         if (!unknownPtms.isEmpty()) {
 
 //            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-//            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             for (String unknownPtm : unknownPtms) {
                 prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *"; // @TODO: have the user select them!!
             }
 
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-            //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         }
 
         // set the modification profile
@@ -2134,7 +2323,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 if (mappedEnzyme == null) {
 
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     // have the user select the enzyme
                     EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymes.get(0));
@@ -2163,7 +2351,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 }
 
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                //dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // have the user select the enzyme
                 EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText);
@@ -2597,13 +2784,31 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Get the authorization details.
+     *
+     * @return the authorization details
+     */
+    private HttpEntity<String> getHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        String authString = userName + ":" + password;
+        byte[] encodedAuthorisation = Base64.encodeBase64(authString.getBytes());
+        headers.add("Authorization", "Basic " + new String(encodedAuthorisation));
+        return new HttpEntity<String>(headers);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
+    private javax.swing.JLabel accessPrivateDataLabel;
     private javax.swing.JLabel assayHelpLabel;
     private javax.swing.JScrollPane assayTableScrollPane;
     private javax.swing.JPanel assaysPanel;
     private javax.swing.JTable assaysTable;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JLabel browsePublicDataLabel;
+    private javax.swing.JLabel dataTypeSeparatorLabel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
@@ -2616,7 +2821,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel peptideShakerHomePageLabel;
-    private javax.swing.JLabel privateDataLabel;
     private javax.swing.JLabel projectHelpLabel;
     private javax.swing.JPanel projectsPanel;
     private javax.swing.JScrollPane projectsScrollPane;
