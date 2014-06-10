@@ -64,7 +64,7 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
         publicDataJButton.setToolTipText("Browse publicly available PRIDE data");
         publicDataJButton.setFocusPainted(false);
         publicDataJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        publicDataJButton.setIconTextGap(27);
+        publicDataJButton.setIconTextGap(16);
         publicDataJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 publicDataJButtonActionPerformed(evt);
@@ -72,12 +72,12 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
         });
 
         privateDataJButton.setFont(privateDataJButton.getFont().deriveFont(privateDataJButton.getFont().getStyle() | java.awt.Font.BOLD, privateDataJButton.getFont().getSize()+3));
-        privateDataJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pride_private.png"))); // NOI18N
+        privateDataJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pride_private_beta.png"))); // NOI18N
         privateDataJButton.setText("Private Data");
         privateDataJButton.setToolTipText("Access password protected PRIDE data");
         privateDataJButton.setFocusPainted(false);
         privateDataJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        privateDataJButton.setIconTextGap(27);
+        privateDataJButton.setIconTextGap(15);
         privateDataJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 privateDataJButtonActionPerformed(evt);
@@ -98,8 +98,8 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
                 .addGap(25, 25, 25)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(publicDataJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(privateDataJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                    .addComponent(privateDataJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(saveLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                     .addComponent(saveLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))

@@ -49,9 +49,9 @@
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="publicDataJButton" max="32767" attributes="0"/>
-                      <Component id="privateDataJButton" pref="299" max="32767" attributes="0"/>
+                      <Component id="privateDataJButton" pref="284" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="37" max="32767" attributes="0"/>
+                  <EmptySpace pref="52" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="saveLabel1" pref="228" max="32767" attributes="0"/>
                       <Component id="saveLabel" max="32767" attributes="0"/>
@@ -93,7 +93,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Browse publicly available PRIDE data"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="27"/>
+            <Property name="iconTextGap" type="int" value="16"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="publicDataJButtonActionPerformed"/>
@@ -107,13 +107,13 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/pride_private.png"/>
+              <Image iconType="3" name="/icons/pride_private_beta.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Private Data"/>
             <Property name="toolTipText" type="java.lang.String" value="Access password protected PRIDE data"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="27"/>
+            <Property name="iconTextGap" type="int" value="15"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="privateDataJButtonActionPerformed"/>
