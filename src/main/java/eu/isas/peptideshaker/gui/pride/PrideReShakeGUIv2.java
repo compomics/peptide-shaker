@@ -387,7 +387,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             projectsTableModel.getDataVector().removeAllElements();
             projectsTableModel.fireTableDataChanged();
 
+            DefaultTableModel assaysTableModel = (DefaultTableModel) assaysTable.getModel();
+            assaysTableModel.getDataVector().removeAllElements();
+            assaysTableModel.fireTableDataChanged();
+
+            DefaultTableModel filesTableModel = (DefaultTableModel) filesTable.getModel();
+            filesTableModel.getDataVector().removeAllElements();
+            filesTableModel.fireTableDataChanged();
+
             ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects");
+            projectsPanel.repaint();
+
+            ((TitledBorder) assaysPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Assays");
+            projectsPanel.repaint();
+
+            ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files");
             projectsPanel.repaint();
 
             // load the project information
@@ -1469,16 +1483,28 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 // @TODO: sort based on assay accession and then on type
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
+                    String fileDownloadLink = null;
+
+                    if (fileDetail.getDownloadLink() != null) {
+                        fileDownloadLink = "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
+                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + "download" + "</font></a><html>";
+                    }
+
+                    String assayAccession = fileDetail.getAssayAccession();
+
+                    if (password == null) {
+                        assayAccession = "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
+                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + fileDetail.getAssayAccession() + "</font></a><html>";
+                    }
+
                     ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
                         (filesTable.getRowCount() + 1),
-                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
-                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + fileDetail.getAssayAccession() + "</font></a><html>",
+                        assayAccession,
                         fileDetail.getFileType().getName(),
                         fileDetail.getFileName(),
-                        "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
-                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + "download" + "</font></a><html>",
+                        fileDownloadLink,
                         Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                         false});
                 }
@@ -1542,16 +1568,28 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
+                    String fileDownloadLink = null;
+
+                    if (fileDetail.getDownloadLink() != null) {
+                        fileDownloadLink = "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
+                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + "download" + "</font></a><html>";
+                    }
+
+                    String assayAccessionLink = fileDetail.getAssayAccession();
+
+                    if (password == null) {
+                        assayAccessionLink = "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
+                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + fileDetail.getAssayAccession() + "</font></a><html>";
+                    }
+
                     ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
                         (filesTable.getRowCount() + 1),
-                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(fileDetail.getProjectAccession(), fileDetail.getAssayAccession())
-                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + fileDetail.getAssayAccession() + "</font></a><html>",
+                        assayAccessionLink,
                         fileDetail.getFileType().getName(),
                         fileDetail.getFileName(),
-                        "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
-                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + "download" + "</font></a><html>",
+                        fileDownloadLink,
                         Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                         false});
                 }
@@ -1616,11 +1654,17 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
                 for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
 
+                    String assayAccession = assayDetail.getAssayAccession();
+
+                    if (password == null) {
+                        assayAccession = "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(assayDetail.getProjectAccession(), assayDetail.getAssayAccession())
+                                + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + assayDetail.getAssayAccession() + "</font></a><html>";
+                    }
+
                     ((DefaultTableModel) assaysTable.getModel()).addRow(new Object[]{
                         (assaysTable.getRowCount() + 1),
-                        "<html><a href=\"" + DisplayFeaturesGenerator.getPrideAssayArchiveLink(assayDetail.getProjectAccession(), assayDetail.getAssayAccession())
-                        + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + assayDetail.getAssayAccession() + "</font></a><html>",
+                        assayAccession,
                         assayDetail.getTitle(),
                         setToString(assayDetail.getSpecies(), ", "),
                         setToString(assayDetail.getSampleDetails(), ", "),
