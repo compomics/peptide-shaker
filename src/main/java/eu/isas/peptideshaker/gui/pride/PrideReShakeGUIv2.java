@@ -231,6 +231,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
+        privateDataWarningLabel.setVisible(false);
+
         reshakeableFileEndings = new HashMap<String, ArrayList<String>>();
         reshakeableFileEndings.put("SEARCH", new ArrayList<String>());
         reshakeableFileEndings.get("SEARCH").add(".mzid");
@@ -517,6 +519,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         };
         filesHelpLabel = new javax.swing.JLabel();
         reshakableCheckBox = new javax.swing.JCheckBox();
+        privateDataWarningLabel = new javax.swing.JLabel();
         aboutButton = new javax.swing.JButton();
         peptideShakerHomePageLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
@@ -776,12 +779,16 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("Select the files to Reshake and click Reshake PRIDE Data to start re-analyzing the data. ");
+        filesHelpLabel.setText("Select the files to Reshake and click Reshake PRIDE Data to start re-analyzing. ");
 
         reshakableCheckBox.setText("Show Reshakeable Files Only");
         reshakableCheckBox.setToolTipText("Show only files that can be re-analyzed with ReShake");
         reshakableCheckBox.setIconTextGap(10);
         reshakableCheckBox.setOpaque(false);
+
+        privateDataWarningLabel.setFont(privateDataWarningLabel.getFont().deriveFont((privateDataWarningLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        privateDataWarningLabel.setForeground(new java.awt.Color(255, 0, 0));
+        privateDataWarningLabel.setText("Note: Downloading files from private projects can take a very long time... (beta)");
 
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
@@ -796,6 +803,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     .addGroup(filesPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(filesHelpLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(privateDataWarningLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(reshakableCheckBox)
                         .addGap(18, 18, 18))))
@@ -808,7 +817,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(filesHelpLabel)
-                    .addComponent(reshakableCheckBox))
+                    .addComponent(reshakableCheckBox)
+                    .addComponent(privateDataWarningLabel))
                 .addContainerGap())
         );
 
@@ -1211,6 +1221,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 String tempLink = (String) filesTable.getValueAt(row, column);
                 tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
+                final Double fileSize = (Double) filesTable.getValueAt(row, filesTable.getColumn("Size").getModelIndex());
 
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", peptideShakerGUI.getLastSelectedFolder(), "Download Folder", "Select", false);
 
@@ -1241,7 +1252,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         public void run() {
                             try {
                                 File downLoadLocation = new File(downloadFolder, new File(link).getName());
-                                File savedFile = saveUrl(downLoadLocation, link, progressDialog);
+                                File savedFile = saveUrl(downLoadLocation, link, fileSize, progressDialog);
 
                                 boolean canceled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
@@ -1413,6 +1424,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * @param evt
      */
     private void accessPrivateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseClicked
+        privateDataWarningLabel.setVisible(false);
         getPrivateProjectDetails();
     }//GEN-LAST:event_accessPrivateDataLabelMouseClicked
 
@@ -1424,6 +1436,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private void browsePublicDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_browsePublicDataLabelMouseClicked
         userName = null;
         password = null;
+        privateDataWarningLabel.setVisible(true);
         loadPublicProjects();
     }//GEN-LAST:event_browsePublicDataLabelMouseClicked
 
@@ -1480,7 +1493,6 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     fileDetailListResult = template.getForEntity(url, FileDetailList.class);
                 }
 
-                // @TODO: sort based on assay accession and then on type
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
                     String fileDownloadLink = null;
@@ -1489,6 +1501,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         fileDownloadLink = "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
                                 + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                                 + "download" + "</font></a><html>";
+                    } else {
+                        if (password != null) {
+                            fileDownloadLink = "<html><a href=\"" + "http://www.ebi.ac.uk/pride/ws/archive/file/" + projectAccession + "/" + fileDetail.getFileName()
+                                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + "download" + "</font></a><html>";
+                        }
                     }
 
                     String assayAccession = fileDetail.getAssayAccession();
@@ -1526,6 +1544,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files (" + filesTable.getRowCount() + ")");
         }
         filesPanel.repaint();
+
+        privateDataWarningLabel.setVisible(password != null);
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1574,6 +1594,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         fileDownloadLink = "<html><a href=\"" + fileDetail.getDownloadLink().toExternalForm()
                                 + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                                 + "download" + "</font></a><html>";
+                    } else {
+                        if (password != null) {
+                            fileDownloadLink = "<html><a href=\"" + "http://www.ebi.ac.uk/pride/ws/archive/file/" + fileDetail.getProjectAccession() + "/" + fileDetail.getFileName()
+                                    + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + "download" + "</font></a><html>";
+                        }
                     }
 
                     String assayAccessionLink = fileDetail.getAssayAccession();
@@ -1611,6 +1637,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files (" + filesTable.getRowCount() + ")");
         }
         filesPanel.repaint();
+
+        privateDataWarningLabel.setVisible(password != null);
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2743,38 +2771,51 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * Save a file from a URL.
      *
      * @param saveFile
-     * @param urlString
+     * @param targetUrlAsString
+     * @param fileSize the file size
      * @param progressDialog
      * @return the saved file
      * @throws MalformedURLException
      * @throws IOException
      * @throws java.io.FileNotFoundException
      */
-    public File saveUrl(File saveFile, String urlString, ProgressDialogX progressDialog)
+    public File saveUrl(File saveFile, String targetUrlAsString, Double fileSize, ProgressDialogX progressDialog)
             throws MalformedURLException, IOException, FileNotFoundException {
 
         BufferedInputStream in = null;
         FileOutputStream fout = null;
 
         try {
-            boolean urlExists = checkIfURLExists(urlString);
+            boolean urlExists = checkIfURLExists(targetUrlAsString);
 
             if (!urlExists) {
-                if (urlString.endsWith(".gz")) {
-                    urlString = urlString.substring(0, urlString.length() - 3);
+                if (targetUrlAsString.endsWith(".gz")) {
+                    targetUrlAsString = targetUrlAsString.substring(0, targetUrlAsString.length() - 3);
                     saveFile = new File(saveFile.getAbsolutePath().substring(0, saveFile.getAbsolutePath().length() - 3));
                 }
             }
 
-            URLConnection conn = new URL(urlString).openConnection();
-            int contentLength = conn.getContentLength();
+            URL targetUrl = new URL(targetUrlAsString);
+            URLConnection urlConnection = targetUrl.openConnection();
+
+            if (password != null) {
+                String userpass = userName + ":" + password;
+                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
+                urlConnection.setRequestProperty("Authorization", basicAuth);
+            }
+
+            int contentLength = urlConnection.getContentLength();
 
             if (contentLength != -1) {
                 progressDialog.resetPrimaryProgressCounter();
                 progressDialog.setMaxPrimaryProgressCounter(contentLength);
+            } else {
+                progressDialog.resetPrimaryProgressCounter();
+                contentLength = (int) (fileSize * 1024 * 1024);
+                progressDialog.setMaxPrimaryProgressCounter(contentLength);
             }
 
-            in = new BufferedInputStream(new URL(urlString).openStream());
+            in = new BufferedInputStream(urlConnection.getInputStream());
 
             fout = new FileOutputStream(saveFile);
 
@@ -2810,14 +2851,22 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     /**
      * Check if a given URL exists.
      *
-     * @param targetUrl the URL to check
+     * @param targetUrlAsString the URL to check
      * @return true of it exists
      */
-    public static boolean checkIfURLExists(String targetUrl) {
+    public boolean checkIfURLExists(String targetUrlAsString) {
 
         try {
-            URLConnection conn = new URL(targetUrl).openConnection();
-            InputStream inputStream = conn.getInputStream();
+            URL targetUrl = new URL(targetUrlAsString);
+            URLConnection urlConnection = targetUrl.openConnection();
+
+            if (password != null) {
+                String userpass = userName + ":" + password;
+                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
+                urlConnection.setRequestProperty("Authorization", basicAuth);
+            }
+
+            InputStream inputStream = urlConnection.getInputStream();
             inputStream.close();
             return true;
         } catch (FileNotFoundException e) {
@@ -2865,6 +2914,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel peptideShakerHomePageLabel;
+    private javax.swing.JLabel privateDataWarningLabel;
     private javax.swing.JLabel projectHelpLabel;
     private javax.swing.JPanel projectsPanel;
     private javax.swing.JScrollPane projectsScrollPane;
