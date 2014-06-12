@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
@@ -67,6 +68,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         initComponents();
         this.prideReShakeGUI = prideReShakeGUI;
         setUpGUI();
+        validateInput(false);
         setLocationRelativeTo(prideReShakeGUI);
         setVisible(true);
     }
@@ -354,6 +356,19 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseReleased(evt);
+            }
+        });
+        spectrumTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseMoved(evt);
+            }
+        });
         spectrumTableScrollPane.setViewportView(spectrumTable);
 
         javax.swing.GroupLayout spectrumPanelLayout = new javax.swing.GroupLayout(spectrumPanel);
@@ -410,8 +425,16 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         });
         searchSettingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                searchSettingsTableMouseExited(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 searchSettingsTableMouseReleased(evt);
+            }
+        });
+        searchSettingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                searchSettingsTableMouseMoved(evt);
             }
         });
         searchSettingsScrollPane.setViewportView(searchSettingsTable);
@@ -630,7 +653,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, "Not yet reimplemented...");
 
         // @TODO: re-implement me!!
-
 //        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
 //
 //        if (selectedFolder != null) {
@@ -824,7 +846,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 }
             }
 
-            validateParametersInput(false);
+            validateInput(false);
         }
     }//GEN-LAST:event_browseDatabaseSettingsButtonActionPerformed
 
@@ -837,8 +859,21 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         generateTargetDecoyDatabase();
     }//GEN-LAST:event_targetDecoySettingsButtonActionPerformed
 
+    /**
+     * Open a file chooser where the user can select the working/output
+     * directory.
+     *
+     * @param evt
+     */
     private void browseWorkingFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseWorkingFolderButtonActionPerformed
-        // TODO add your handling code here:
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Working Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Working Folder", "Select", false);
+
+        if (selectedFolder != null) {
+            prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(selectedFolder.getAbsolutePath());
+            workingFolderTxt.setText(selectedFolder.getAbsolutePath());
+        }
+
+        validateInput(false);
     }//GEN-LAST:event_browseWorkingFolderButtonActionPerformed
 
     /**
@@ -847,7 +882,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchSettingsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchSettingsTableMouseReleased
-
         int rowSelectionCount = 0;
 
         for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
@@ -859,7 +893,128 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         if (rowSelectionCount > 1) {
             JOptionPane.showMessageDialog(this, "You can only select one file to extract seach settings from.", "Search Settings Error", JOptionPane.WARNING_MESSAGE);
         }
+
+        if (evt != null) {
+
+            int row = searchSettingsTable.getSelectedRow();
+            int column = searchSettingsTable.getSelectedColumn();
+
+            // open pride project link in web browser
+            if (column == searchSettingsTable.getColumn("Assay").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) searchSettingsTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }
     }//GEN-LAST:event_searchSettingsTableMouseReleased
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an html
+     * link.
+     *
+     * @param evt
+     */
+    private void spectrumTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseMoved
+        int row = spectrumTable.rowAtPoint(evt.getPoint());
+        int column = spectrumTable.columnAtPoint(evt.getPoint());
+
+        spectrumTable.setToolTipText(null);
+
+        if (row != -1 && column != -1
+                && (column == spectrumTable.getColumn("Assay").getModelIndex())
+                && spectrumTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) spectrumTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_spectrumTableMouseMoved
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void spectrumTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_spectrumTableMouseExited
+
+    /**
+     * Open the assay link.
+     *
+     * @param evt
+     */
+    private void spectrumTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseReleased
+        if (evt != null) {
+
+            int row = spectrumTable.getSelectedRow();
+            int column = spectrumTable.getSelectedColumn();
+
+            // open pride project link in web browser
+            if (column == spectrumTable.getColumn("Assay").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) spectrumTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+            
+            validateInput(false);
+        }
+    }//GEN-LAST:event_spectrumTableMouseReleased
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void searchSettingsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchSettingsTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_searchSettingsTableMouseExited
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an html
+     * link.
+     *
+     * @param evt
+     */
+    private void searchSettingsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchSettingsTableMouseMoved
+        int row = searchSettingsTable.rowAtPoint(evt.getPoint());
+        int column = searchSettingsTable.columnAtPoint(evt.getPoint());
+
+        searchSettingsTable.setToolTipText(null);
+
+        if (row != -1 && column != -1
+                && (column == searchSettingsTable.getColumn("Assay").getModelIndex())
+                && searchSettingsTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) searchSettingsTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_searchSettingsTableMouseMoved
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
@@ -946,15 +1101,16 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param showMessage if true an error messages are shown to the users
      * @return a boolean indicating if the parameters are valid
      */
-    public boolean validateParametersInput(boolean showMessage) {
+    public boolean validateInput(boolean showMessage) {
 
-        // @TODO: validate the other inputs as well!!!
         boolean valid = true;
         databaseSettingsLbl.setForeground(Color.BLACK);
-
         databaseSettingsLbl.setToolTipText(null);
+        workingFolderLbl.setForeground(Color.BLACK);
+        workingFolderLbl.setToolTipText(null);
 
-        if (databaseSettingsTxt.getText() == null || databaseSettingsTxt.getText().trim().equals("")) {
+        // check the database
+        if (databaseSettingsTxt.getText() == null || databaseSettingsTxt.getText().trim().isEmpty()) {
             if (showMessage && valid) {
                 JOptionPane.showMessageDialog(this, "You need to specify a search database.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
             }
@@ -971,6 +1127,32 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 databaseSettingsLbl.setToolTipText("Database file could not be found!");
                 valid = false;
             }
+        }
+
+        // check the working folder
+        if (workingFolderTxt.getText().trim().isEmpty()) {
+
+            if (showMessage && valid) {
+                JOptionPane.showMessageDialog(this, "You need to specify a working folder.", "Working Folder", JOptionPane.WARNING_MESSAGE);
+            }
+            workingFolderLbl.setForeground(Color.RED);
+            workingFolderLbl.setToolTipText("Please select a working folder");
+            valid = false;
+        }
+
+        // check if at least one spectrum file is selected
+        int spectrumCounter = 0;
+        for (int i = 0; i < spectrumTable.getRowCount() && spectrumCounter == 0; i++) {
+            if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
+                spectrumCounter++;
+            }
+        }
+        
+        if (spectrumCounter == 0) {
+            if (showMessage && valid) {
+                JOptionPane.showMessageDialog(this, "You need to select at least one specturm file.", "Spectrum Files", JOptionPane.WARNING_MESSAGE);
+            }
+            valid = false;
         }
 
         reshakeButton.setEnabled(valid);
