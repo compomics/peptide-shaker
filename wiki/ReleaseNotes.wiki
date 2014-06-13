@@ -3,6 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.30.2 (Coming soon...)*
+
+ * FEATURE IMPROVEMENT: Made it possible to extract the version number for MS Amanda csv files.
+ * FEATURE IMPROVEMENT: Extended the PRIDE PTM mapping.
+
+ * BUG FIX: Fixed a bug where PTM masses in MS Amanda files could not be processed if comma was used as the decimal symbol.
+ * BUG FIX: Fixed typos in the spectrum panel help text.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.28.16.
+
+----
+
 *Changes in PeptideShaker 0.30.1 (June 5. 2014)*
 
  * BUG FIX: Fixed a bug in the parsing of terminal modifications for MS Amanda.
