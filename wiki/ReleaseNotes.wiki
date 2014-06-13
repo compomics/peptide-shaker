@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.30.2 (Coming soon...)*
+*Changes in PeptideShaker 0.30.2 (June 13. 2014)*
 
  * FEATURE IMPROVEMENT: Made it possible to extract the version number for MS Amanda csv files.
  * FEATURE IMPROVEMENT: Extended the PRIDE PTM mapping.
