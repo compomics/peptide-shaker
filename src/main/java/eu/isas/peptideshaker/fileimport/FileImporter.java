@@ -899,7 +899,8 @@ public class FileImporter {
                                                             seMass = new Double(parsedName[0]);
                                                         } catch (Exception e) {
                                                             throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as a tagged modification.\n"
-                                                                    + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
+                                                                    + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file " + fileName + ".\n"
+                                                                    + "Identification file: " + idFile.getName());
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
                                                     } else if (!(fileReader instanceof DirecTagIdfileReader)) {
