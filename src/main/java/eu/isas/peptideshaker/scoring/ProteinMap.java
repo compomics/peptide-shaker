@@ -136,6 +136,8 @@ public class ProteinMap implements Serializable {
     public static ArrayList<ProteinFilter> getDefaultProteinFilters() {
         ArrayList<ProteinFilter> filters = new ArrayList<ProteinFilter>();
 
+        // @TODO: make the thresholds editable by the user!
+        
         ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides"); // the name is used to show what we expect
         proteinFilter.setDescription("<2 confident peptides"); // the description is displayed as failure explanation
         proteinFilter.setnConfidentPeptides(1);

@@ -775,34 +775,43 @@ public class PeptideShaker {
             inputMap.resetAdvocateContributions();
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
+
             identification.loadSpectrumMatches(spectrumFileName, null);
             identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             ArrayList<Integer> charges = new ArrayList<Integer>();
+
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
                 if (psParameter.getMatchValidationLevel().isValidated()) {
+
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+
                     if (peptideAssumption != null) {
+
                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                         double precursorMzError = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
                         precursorMzDeviations.add(precursorMzError);
                         Integer charge = peptideAssumption.getIdentificationCharge().value;
+
                         if (!charges.contains(charge)) {
                             charges.add(charge);
                             PsmFilter psmFilter = new PsmFilter(">30% Fragment Ion Sequence Coverage");
                             psmFilter.setDescription("<30% sequence coverage by fragment ions");
-                            psmFilter.setSequenceCoverage(30.0);
+                            psmFilter.setSequenceCoverage(30.0); // @TODO: make the threshold editable by the user!
                             psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
                             psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
                         }
+
                         if (inputMap != null) {
+
                             Peptide bestPeptide = peptideAssumption.getPeptide();
                             ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+
                             for (int advocateId : spectrumMatch.getAdvocates()) {
                                 for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
                                     if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
@@ -814,10 +823,13 @@ public class PeptideShaker {
                                     }
                                 }
                             }
+
                             boolean unique = agreementAdvocates.size() == 1;
+
                             for (int advocateId : agreementAdvocates) {
                                 inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
                             }
+
                             inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
                         }
                     }
@@ -826,8 +838,11 @@ public class PeptideShaker {
                 // Go through the peptide assumptions
                 if (inputMap != null) { //backward compatibility check
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+
                     for (Integer advocateId : spectrumMatch.getAdvocates()) {
+
                         HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptions = spectrumMatch.getAllAssumptions(advocateId);
+
                         for (double eValue : assumptions.keySet()) {
                             for (SpectrumIdentificationAssumption spectrumIdAssumption : assumptions.get(eValue)) {
                                 if (spectrumIdAssumption instanceof PeptideAssumption) {
@@ -849,12 +864,15 @@ public class PeptideShaker {
                     }
                 }
             }
+
             // Check if we should narrow the mass accuracy window, if yes, do a second pass validation
             if (!precursorMzDeviations.isEmpty()) {
+
                 NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
                 Double minDeviation = precDeviationDistribution.getMinValueForProbability(0.0001);
                 Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(0.0001);
                 boolean needSecondPass = false;
+
                 if (minDeviation < maxDeviation) {
                     String unit = "ppm";
                     if (!searchParameters.isPrecursorAccuracyTypePpm()) {
@@ -891,11 +909,13 @@ public class PeptideShaker {
                     for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, psmMap, spectrumKey);
-
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
                         if (psParameter.getMatchValidationLevel().isValidated()) {
+
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+
                             if (peptideAssumption != null) {
                                 if (inputMap != null) {
                                     Peptide bestPeptide = peptideAssumption.getPeptide();
@@ -919,6 +939,7 @@ public class PeptideShaker {
                                 }
                             }
                         }
+
                         if (waitingHandler != null) {
                             waitingHandler.increaseSecondaryProgressCounter();
                             if (waitingHandler.isRunCanceled()) {
@@ -937,6 +958,7 @@ public class PeptideShaker {
         identification.loadPeptideMatches(null);
         identification.loadPeptideMatchParameters(new PSParameter(), null);
         ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
+
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
 
@@ -1011,6 +1033,7 @@ public class PeptideShaker {
                 }
             }
         }
+
         if (validatedPeptideLengths.size() >= 100) {
             NonSymmetricalNormalDistribution lengthDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(validatedPeptideLengths);
             metrics.setPeptideLengthDistribution(lengthDistribution);
@@ -1033,20 +1056,22 @@ public class PeptideShaker {
 
         identification.loadProteinMatches(null);
         identification.loadProteinMatchParameters(new PSParameter(), null);
+
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences,
+                    targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
 
             // set the fraction details
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
             HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
-
             ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatches();
-
             identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
+
             for (String currentPeptideKey : peptideKeys) {
 
                 psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter2);
@@ -1146,17 +1171,22 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProteinMap proteinMap,
-            String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProteinMap proteinMap, String proteinKey)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
         double proteinThreshold = targetDecoyResults.getScoreLimit();
         double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+
         if (proteinConfidentThreshold > 100) {
             proteinConfidentThreshold = 100;
         }
+
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
-        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences,
+                targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
     }
 
     /**
@@ -1183,7 +1213,9 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, TargetDecoyMap targetDecoyMap, double scoreThreshold, double confidenceThreshold, boolean noValidated, ArrayList<ProteinFilter> doubtfulMatchFilters,
+    public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, TargetDecoyMap targetDecoyMap, double scoreThreshold,
+            double confidenceThreshold, boolean noValidated, ArrayList<ProteinFilter> doubtfulMatchFilters,
             String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -1273,8 +1305,9 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, PeptideSpecificMap peptideMap,
-            String peptideKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, PeptideSpecificMap peptideMap, String peptideKey)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
@@ -1340,13 +1373,13 @@ public class PeptideShaker {
                         psParameter.setReasonDoubtful(reasonDoubtful);
                     }
                 }
-
             } else {
                 psParameter.setMatchValidationLevel(MatchValidationLevel.not_validated);
             }
         } else {
             psParameter.setMatchValidationLevel(MatchValidationLevel.none);
         }
+
         identification.updatePeptideMatchParameter(peptideKey, psParameter);
     }
 
@@ -1498,8 +1531,9 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey,
-            TagAssumption tagAssumption) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters,
+            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, TagAssumption tagAssumption)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
@@ -1602,8 +1636,9 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey,
-            PeptideAssumption peptideAssumption) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters,
+            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
@@ -2067,7 +2102,8 @@ public class PeptideShaker {
      * @throws ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public void estimateIntermediateScores(InputMap inputMap, ProcessingPreferences processingPreferences, AnnotationPreferences annotationPreferences, SearchParameters searchParameters, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void estimateIntermediateScores(InputMap inputMap, ProcessingPreferences processingPreferences, AnnotationPreferences annotationPreferences,
+            SearchParameters searchParameters, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -2080,7 +2116,6 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
 //        HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
-
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2116,7 +2151,8 @@ public class PeptideShaker {
                                     if (scoreIndex == PsmScores.native_score.index) {
                                         score = peptideAssumption.getScore();
                                     } else {
-                                        score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges, peptideAssumption.getIdentificationCharge().value, searchParameters, scoreIndex);
+                                        score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
+                                                peptideAssumption.getIdentificationCharge().value, searchParameters, scoreIndex);
                                     }
                                     psParameter.setIntermediateScore(scoreIndex, score);
                                     inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
@@ -2140,29 +2176,26 @@ public class PeptideShaker {
 //                                    } catch (Exception e) {
 //                                        e.printStackTrace();
 //                                    }
-
                                 }
 
                                 assumption.addUrParam(psParameter);
-
                             }
                         }
                     }
                 }
 
                 identification.updateSpectrumMatch(spectrumMatch);
+
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
         }
-        
+
 //        for (BufferedWriter br : brs.values()) {
 //            br.close();
 //        }
-
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-
     }
 
     /**
@@ -2190,6 +2223,7 @@ public class PeptideShaker {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
+
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             for (int advocateIndex : inputMap.getIntermediateScoreInputAlgorithms(spectrumFileName)) {
                 ArrayList<Integer> scores = processingPreferences.getScores(advocateIndex);
@@ -2207,7 +2241,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Attaches a score to the psms.
+     * Attaches a score to the PSMs.
      *
      * @param inputMap the input map scores
      * @param processingPreferences the processing preferences
@@ -2220,7 +2254,8 @@ public class PeptideShaker {
      * @throws ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public void scorePsms(InputMap inputMap, ProcessingPreferences processingPreferences, SearchParameters searchParameters, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void scorePsms(InputMap inputMap, ProcessingPreferences processingPreferences, SearchParameters searchParameters, WaitingHandler waitingHandler)
+            throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -2228,11 +2263,10 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         PSParameter psParameter = new PSParameter();
-        
+
 //                                          BufferedWriter  br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
 //                                            br.write("Title\tPeptide\tScore\tDecoy");
 //                                            br.newLine();
-
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2277,7 +2311,7 @@ public class PeptideShaker {
                                 Peptide peptide = peptideAssumption.getPeptide();
                                 boolean decoy = peptide.isDecoy(MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                 inputMap.addEntry(advocateIndex, spectrumFileName, score, decoy);
-                                
+
 //                                        if (decoy) {
 //                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
 //                                        } else {
@@ -2295,9 +2329,8 @@ public class PeptideShaker {
                 }
             }
         }
-        
-//        br.close();
 
+//        br.close();
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
@@ -2377,7 +2410,8 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler, SearchParameters searchParameters) 
+            throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
 
         waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
 
@@ -2473,7 +2507,8 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) 
+            throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Solving Peptide Inference. Please Wait...");
 
@@ -2711,7 +2746,8 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) 
+            throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
@@ -2921,7 +2957,8 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, IdFilter idFilter, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
+    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
+            PTMScoringPreferences ptmScoringPreferences, IdFilter idFilter, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
 
@@ -2954,7 +2991,8 @@ public class PeptideShaker {
                     }
                 }
                 if (spectrumCountingPreferences != null) {
-                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
+                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, 
+                            proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
                     if (tempSpectrumCounting > maxSpectrumCounting) {
                         maxSpectrumCounting = tempSpectrumCounting;
                     }
@@ -4067,7 +4105,8 @@ public class PeptideShaker {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private void retainBestScoringGroups(SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    private void retainBestScoringGroups(SearchParameters searchParameters, WaitingHandler waitingHandler) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
 
@@ -4403,7 +4442,8 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, SearchParameters searchParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, 
+            SearchParameters searchParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
         Enzyme enzyme = searchParameters.getEnzyme();
         if (enzyme != null && !enzyme.isSemiSpecific()) { // null enzymes should not occur, but could happen with old search param files
