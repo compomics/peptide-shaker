@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 
@@ -674,6 +675,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                         if (!canceled) {
                             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                             //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
+                            setVisible(false);
                             new PrideReShakeGUIv2(peptideShakerGUI);
                             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                         }
@@ -707,9 +709,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                     if (openReshake) {
                         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                        WelcomeDialog.this.setVisible(false);
+                        setVisible(false);
                         new PrideReShakeGUIv2(peptideShakerGUI);
-                        //new PrideReshakeGuiWS(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                         //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
@@ -919,6 +920,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
             URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
             return WebDAO.newVersionReleased(oldMavenJarFile, jarRepository);
+        } catch (UnknownHostException ex) {
+            System.out.println("Checking for new version failed. No internet connection.");
+            // no internet connection
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

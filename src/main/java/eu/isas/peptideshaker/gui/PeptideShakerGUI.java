@@ -6556,6 +6556,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             return CompomicsWrapper.checkForNewDeployedVersion("PeptideShaker", oldMavenJarFile, jarRepository, "peptide-shaker.ico",
                     false, true, true, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
+        } catch (UnknownHostException ex) {
+            // no internet connection
+            System.out.println("Checking for new version failed. No internet connection.");
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
