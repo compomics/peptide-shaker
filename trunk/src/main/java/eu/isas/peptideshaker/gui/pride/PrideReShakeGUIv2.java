@@ -62,6 +62,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.pride.archive.web.service.model.assay.AssayDetail;
 import uk.ac.ebi.pride.archive.web.service.model.assay.AssayDetailList;
@@ -1526,7 +1527,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + url + "<br>"
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+            } catch (ResourceAccessException e) {
+                JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             // update the border title
@@ -1647,7 +1654,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + url + "<br>"
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+            } catch (ResourceAccessException e) {
+                JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             // update the border title
@@ -1741,7 +1754,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 System.out.println(url);
                 e.printStackTrace();
                 this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "PRIDE web service access error:\n" + url, "Network Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + url + "<br>"
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+            } catch (ResourceAccessException e) {
+                JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
             }
 
             // update the sparklines with the max values
@@ -1871,7 +1890,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             System.out.println("project/count or project/list");
             e.printStackTrace();
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "PRIDE web service access error:\nproject/count or project/list.", "Network Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + "project/count or project/list<br>"
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+        } catch (ResourceAccessException e) {
+            JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
         }
 
         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
