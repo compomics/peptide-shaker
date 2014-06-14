@@ -323,7 +323,7 @@ public class PeptideSpecificMap implements Serializable {
 
         PeptideFilter peptideFilter = new PeptideFilter("One confident PSM");
         peptideFilter.setDescription("No confident PSM");
-        peptideFilter.setNConfidentSpectra(0);
+        peptideFilter.setNConfidentSpectra(0); // @TODO: make the thresholds editable by the user!
         peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         filters.add(peptideFilter);
 

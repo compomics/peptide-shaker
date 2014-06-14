@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.FTPDownloader;
@@ -948,6 +949,11 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         helpMenuItem.setMnemonic('H');
         helpMenuItem.setText("Help");
+        helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(helpMenuItem);
 
         menuBar.add(helpMenu);
@@ -1428,6 +1434,18 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             filesTable.setValueAt(i + 1, i, 0);
         }
     }//GEN-LAST:event_reshakableCheckBoxActionPerformed
+
+    /**
+     * Opens the help dialog.
+     * 
+     * @param evt 
+     */
+    private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
+        new HelpDialog(this, getClass().getResource("/helpFiles/PrideReshake.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PRIDE Reshake - Help");
+    }//GEN-LAST:event_helpMenuItemActionPerformed
 
     /**
      * Update the file list based on the selected project.

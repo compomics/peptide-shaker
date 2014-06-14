@@ -331,9 +331,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         }
         int nTarget = sequenceFactory.getNTargetSequences();
         nTargetLbl.setText(nTarget + " target sequences");
-        if (nTarget < 10000) {
+        if (nTarget < 10000) { // @TODO: make the threshold editable by the user!
             nTargetLbl.setForeground(Color.red);
-        } else if (nTarget > 100000) {
+        } else if (nTarget > 100000) { // @TODO: make the threshold editable by the user!
             nTargetLbl.setForeground(orange);
         } else {
             nTargetLbl.setForeground(green);
@@ -345,16 +345,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         if (targetDecoy) {
             int nTargetOnly = targetDecoyMap.getnTargetOnly();
             matchesBeforeFirstDecoyLbl.setText(nTargetOnly + " matches before the first decoy hit");
-            if (nTargetOnly < 100) {
+            if (nTargetOnly < 100) { // @TODO: make the threshold editable by the user!
                 matchesBeforeFirstDecoyLbl.setForeground(Color.red);
             } else {
                 matchesBeforeFirstDecoyLbl.setForeground(green);
             }
             double resolution = targetDecoyMap.getResolution();
             confidenceResolutionLbl.setText("PEP/Confidence resolution of " + Util.roundDouble(resolution, 2) + "%");
-            if (resolution > 5) {
+            if (resolution > 5) { // @TODO: make the threshold editable by the user!
                 confidenceResolutionLbl.setForeground(Color.red);
-            } else if (resolution > 1) {
+            } else if (resolution > 1) { // @TODO: make the threshold editable by the user!
                 confidenceResolutionLbl.setForeground(orange);
             } else {
                 confidenceResolutionLbl.setForeground(green);
