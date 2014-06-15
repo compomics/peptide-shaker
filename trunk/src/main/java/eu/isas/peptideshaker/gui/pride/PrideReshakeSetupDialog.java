@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -56,6 +57,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * True of a file is currently being downloaded.
+     */
+    private boolean isFileBeingDownloaded = false;
 
     /**
      * Creates a new PrideReshakeSetupDialog.
@@ -92,6 +97,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         filesTableToolTips.add("Assay Accession Numbers");
         filesTableToolTips.add("File Type");
         filesTableToolTips.add("File");
+        filesTableToolTips.add("Download File");
         filesTableToolTips.add("File Size");
         filesTableToolTips.add("Selected");
 
@@ -103,6 +109,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         spectrumTable.getColumn("  ").setMinWidth(30);
         spectrumTable.getColumn("Type").setMaxWidth(90);
         spectrumTable.getColumn("Type").setMinWidth(90);
+        spectrumTable.getColumn("Download").setMaxWidth(90);
+        spectrumTable.getColumn("Download").setMinWidth(90);
         spectrumTable.getColumn("Size").setMaxWidth(90);
         spectrumTable.getColumn("Size").setMinWidth(90);
 
@@ -114,11 +122,15 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         searchSettingsTable.getColumn("  ").setMinWidth(30);
         searchSettingsTable.getColumn("Type").setMaxWidth(90);
         searchSettingsTable.getColumn("Type").setMinWidth(90);
+        searchSettingsTable.getColumn("Download").setMaxWidth(90);
+        searchSettingsTable.getColumn("Download").setMinWidth(90);
         searchSettingsTable.getColumn("Size").setMaxWidth(90);
         searchSettingsTable.getColumn("Size").setMinWidth(90);
 
         spectrumTable.getColumn("Assay").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         searchSettingsTable.getColumn("Assay").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
+        spectrumTable.getColumn("Download").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
+        searchSettingsTable.getColumn("Download").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         spectrumTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
         searchSettingsTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
@@ -156,6 +168,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 filesTableModel.getValueAt(i, 1),
                 filesTableModel.getValueAt(i, 2),
                 filesTableModel.getValueAt(i, 3),
+                filesTableModel.getValueAt(i, 4),
                 filesTableModel.getValueAt(i, 5),
                 false
             });
@@ -165,6 +178,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 filesTableModel.getValueAt(i, 1),
                 filesTableModel.getValueAt(i, 2),
                 filesTableModel.getValueAt(i, 3),
+                filesTableModel.getValueAt(i, 4),
                 filesTableModel.getValueAt(i, 5),
                 false
             });
@@ -292,6 +306,9 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 };
             }
         };
+        selectAllLabel = new javax.swing.JLabel();
+        dataTypeSeparatorLabel = new javax.swing.JLabel();
+        deselectAllLabel = new javax.swing.JLabel();
         searchSettingsPanel = new javax.swing.JPanel();
         searchSettingsLabel = new javax.swing.JLabel();
         searchSettingsScrollPane = new javax.swing.JScrollPane();
@@ -321,9 +338,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         workingFolderTxt = new javax.swing.JTextField();
         browseWorkingFolderButton = new javax.swing.JButton();
         reshakeButton = new javax.swing.JButton();
+        aboutButton = new javax.swing.JButton();
+        peptideShakerHomePageLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Reshake Settings");
+        setMinimumSize(new java.awt.Dimension(780, 700));
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -338,14 +358,14 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Assay", "Type", "File", "Size", "  "
+                " ", "Assay", "Type", "File", "Download", "Size", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -357,11 +377,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         });
         spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                spectrumTableMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 spectrumTableMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseExited(evt);
             }
         });
         spectrumTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -371,27 +391,66 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         });
         spectrumTableScrollPane.setViewportView(spectrumTable);
 
+        selectAllLabel.setText("<html><a href=\"dummy\">Select All</a></html>  ");
+        selectAllLabel.setToolTipText("Open the PeptideShaker web page");
+        selectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseExited(evt);
+            }
+        });
+
+        dataTypeSeparatorLabel.setText("/");
+
+        deselectAllLabel.setText("<html><a href=\"dummy\">Deselect All</a></html>\n\n");
+        deselectAllLabel.setToolTipText("Open the PeptideShaker web page");
+        deselectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deselectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                deselectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                deselectAllLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectrumPanelLayout = new javax.swing.GroupLayout(spectrumPanel);
         spectrumPanel.setLayout(spectrumPanelLayout);
         spectrumPanelLayout.setHorizontalGroup(
             spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spectrumTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
-                    .addGroup(spectrumPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(spectrumLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(20, 20, 20)
+                .addComponent(spectrumLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dataTypeSeparatorLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
+            .addGroup(spectrumPanelLayout.createSequentialGroup()
+                .addComponent(spectrumTableScrollPane)
                 .addContainerGap())
         );
         spectrumPanelLayout.setVerticalGroup(
             spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                .addComponent(spectrumTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumLabel)
+                .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spectrumLabel)
+                    .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(deselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dataTypeSeparatorLabel)))
                 .addContainerGap())
         );
 
@@ -406,14 +465,14 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Assay", "Type", "File", "Size", "  "
+                " ", "Assay", "Type", "File", "Download", "Size", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -425,11 +484,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         });
         searchSettingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                searchSettingsTableMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 searchSettingsTableMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                searchSettingsTableMouseExited(evt);
             }
         });
         searchSettingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -457,7 +516,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             searchSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchSettingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                .addComponent(searchSettingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchSettingsLabel)
                 .addContainerGap())
@@ -473,7 +532,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         downloadUniProtJLabel.setForeground(new java.awt.Color(0, 0, 255));
         downloadUniProtJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        downloadUniProtJLabel.setText("<html><u><i>Download from UniProt</i></u></html>");
+        downloadUniProtJLabel.setText("<html><u>Download from UniProt</u></html>");
         downloadUniProtJLabel.setToolTipText("Download UniProt Database");
         downloadUniProtJLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -531,6 +590,9 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     .addComponent(downloadUniProtJLabel))
                 .addContainerGap())
         );
+
+        databasePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseDatabaseSettingsButton, targetDecoySettingsButton});
+
         databasePanelLayout.setVerticalGroup(
             databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, databasePanelLayout.createSequentialGroup()
@@ -570,10 +632,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(workingFolderLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(workingFolderTxt)
+                .addComponent(workingFolderTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(browseWorkingFolderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(89, 89, 89))
+                .addGap(92, 92, 92))
         );
         workingFolderPanelLayout.setVerticalGroup(
             workingFolderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -597,19 +659,46 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         });
 
+        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-medium-orange-shadow.png"))); // NOI18N
+        aboutButton.setToolTipText("Open the PeptideShaker web page");
+        aboutButton.setBorder(null);
+        aboutButton.setBorderPainted(false);
+        aboutButton.setContentAreaFilled(false);
+        aboutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                aboutButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                aboutButtonMouseExited(evt);
+            }
+        });
+        aboutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutButtonActionPerformed(evt);
+            }
+        });
+
+        peptideShakerHomePageLabel.setFont(peptideShakerHomePageLabel.getFont().deriveFont((peptideShakerHomePageLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        peptideShakerHomePageLabel.setText("Select the files to reanalyze, provide the search settings and click Start the Reshaking!");
+        peptideShakerHomePageLabel.setToolTipText("Open the PeptideShaker web page");
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(workingFolderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spectrumPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchSettingsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(databasePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(databasePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(workingFolderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchSettingsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(aboutButton)
+                        .addGap(44, 44, 44)
+                        .addComponent(peptideShakerHomePageLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(reshakeButton)))
                 .addContainerGap())
         );
@@ -625,7 +714,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(workingFolderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(reshakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(aboutButton)
+                    .addComponent(peptideShakerHomePageLabel)
+                    .addComponent(reshakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -650,92 +742,136 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void reshakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeButtonActionPerformed
 
-        JOptionPane.showMessageDialog(this, "Not yet reimplemented...");
+        progressDialog = new ProgressDialogX(prideReShakeGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-        // @TODO: re-implement me!!
-//        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
-//
-//        if (selectedFolder != null) {
-//            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
-//            outputFolder = selectedFolder.getAbsolutePath();
-//            currentSpecies = new ArrayList<String>();
-//
-//            progressDialog = new ProgressDialogX(peptideShakerGUI,
-//                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-//                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-//                true);
-//            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-//
-//            this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-//            progressDialog.setTitle("Checking Files. Please Wait...");
-//            isFileBeingDownloaded = true;
-//
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        progressDialog.setVisible(true);
-//                    } catch (IndexOutOfBoundsException e) {
-//                        // ignore
-//                    }
-//                }
-//            }, "ProgressDialog").start();
-//
-//            new Thread("FileExistsThread") {
-//                @Override
-//                public void run() {
-//
-//                    ArrayList<String> selectedFiles = new ArrayList<String>();
-//
-//                    for (int i = 0; i < filesTable.getRowCount(); i++) {
-//                        if ((Boolean) filesTable.getValueAt(i, filesTable.getColumn("  ").getModelIndex())) {
-//
-//                            String link = (String) filesTable.getValueAt(i, filesTable.getColumn("Download").getModelIndex());
-//                            link = link.substring(link.indexOf("\"") + 1);
-//                            link = link.substring(0, link.indexOf("\""));
-//
-//                            boolean exists = checkIfURLExists(link);
-//
-//                            if (!exists) {
-//                                if (link.endsWith(".gz")) {
-//                                    link = link.substring(0, link.length() - 3);
-//                                    exists = checkIfURLExists(link);
-//                                }
-//                            }
-//
-//                            if (exists) {
-//                                selectedFiles.add(link);
-//                            } else {
-//                                System.out.println("not found: " + link);
-//                            }
-//                        }
-//                    }
-//
-//                    boolean download = true;
-//
-//                    if (selectedFiles.isEmpty()) {
-//                        download = false;
-//                    }
-//
-//                    // check if multiple projects are selected
-//                    if (selectedFiles.size() > 1) {
-//                        //                int value = JOptionPane.showConfirmDialog(this,
-//                            //                        "Note that if multiple projects are selected the search\n"
-//                            //                        + "parameters from the first project in the list is used.",
-//                            //                        "Search Parameters", JOptionPane.OK_CANCEL_OPTION);
-//                        //
-//                        //                if (value == JOptionPane.CANCEL_OPTION) {
-//                            //                    download = false;
-//                            //                }
-//                    }
-//
-//                    progressDialog.setRunFinished();
-//
-//                    if (download) {
-//                        downloadPrideDatasets(selectedFiles);
-//                    }
-//                }
-//            }.start();
-//        }
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        progressDialog.setTitle("Checking Files. Please Wait...");
+        isFileBeingDownloaded = true;
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("FileExistsThread") {
+            @Override
+            public void run() {
+
+                ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
+                String selectedSearchSettingsFile = null;
+
+                for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+                    if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
+
+                        String link = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("Download").getModelIndex());
+                        link = link.substring(link.indexOf("\"") + 1);
+                        link = link.substring(0, link.indexOf("\""));
+
+                        boolean exists = prideReShakeGUI.checkIfURLExists(link);
+
+                        if (!exists) {
+                            if (link.endsWith(".gz")) {
+                                link = link.substring(0, link.length() - 3);
+                                exists = prideReShakeGUI.checkIfURLExists(link);
+                            }
+                        }
+
+                        if (exists) {
+                            selectedSpectrumFiles.add(link);
+                        } else {
+                            JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
+                                    "PRIDE web service access error. Cannot open:<br>"
+                                    + link + "<br>"
+                                    + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                                    "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                            System.out.println("Not found: " + link + "!");
+                        }
+                    }
+                }
+
+                for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
+                    if ((Boolean) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("  ").getModelIndex())) {
+
+                        String link = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Download").getModelIndex());
+                        link = link.substring(link.indexOf("\"") + 1);
+                        link = link.substring(0, link.indexOf("\""));
+
+                        if (!selectedSpectrumFiles.contains(link)) {
+
+                            boolean exists = prideReShakeGUI.checkIfURLExists(link);
+
+                            if (!exists) {
+                                if (link.endsWith(".gz")) {
+                                    link = link.substring(0, link.length() - 3);
+                                    if (!selectedSpectrumFiles.contains(link)) {
+                                        exists = prideReShakeGUI.checkIfURLExists(link);
+                                    } else {
+                                        exists = true;
+                                    }
+                                }
+                            }
+
+                            if (exists) {
+                                selectedSearchSettingsFile = link;
+                            } else {
+                                JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
+                                        "PRIDE web service access error. Cannot open:<br>"
+                                        + link + "<br>"
+                                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                                System.out.println("Not found: " + link + "!");
+                            }
+                        }
+                    }
+                }
+
+                boolean download = true;
+
+                if (selectedSpectrumFiles.isEmpty()) {
+                    download = false;
+                }
+
+                progressDialog.setRunFinished();
+
+                if (download) {
+
+                    String selectedSpectrumFilesAsText = "";
+
+                    for (String file : selectedSpectrumFiles) {
+                        selectedSpectrumFilesAsText += new File(file).getName() + "\n";
+                    }
+
+                    String selectedSearchSettingsFileAsText;
+                    if (selectedSearchSettingsFile != null) {
+                        selectedSearchSettingsFileAsText = new File(selectedSearchSettingsFile).getName();
+                    } else {
+                        selectedSearchSettingsFileAsText = "(default search settings)";
+                    }
+
+                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "Will reshake:\n"
+                            + selectedSpectrumFilesAsText + "\n"
+                            + "using search settings from:\n"
+                            + selectedSearchSettingsFileAsText + ".",
+                            "Reshake Settings", JOptionPane.INFORMATION_MESSAGE);
+
+                    JOptionPane.showMessageDialog(null, "Reshake not yet reimplemented...");
+
+                    // @TODO: reimplement me!!
+                    //downloadPrideDatasets(selectedFiles);
+                } else {
+                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }.start();
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
     /**
@@ -894,6 +1030,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "You can only select one file to extract seach settings from.", "Search Settings Error", JOptionPane.WARNING_MESSAGE);
         }
 
+        validateInput(false);
+
         if (evt != null) {
 
             int row = searchSettingsTable.getSelectedRow();
@@ -910,6 +1048,68 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            } else if (column == searchSettingsTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) searchSettingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String tempLink = (String) searchSettingsTable.getValueAt(row, column);
+                tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
+                final String link = tempLink.substring(0, tempLink.indexOf("\""));
+                final Double fileSize = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size").getModelIndex());
+
+                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Download Folder", "Select", false);
+
+                if (downloadFolder != null) {
+
+                    prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(downloadFolder.getAbsolutePath());
+
+                    progressDialog = new ProgressDialogX(prideReShakeGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                    progressDialog.setTitle("Downloading File. Please Wait...");
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
+                        }
+                    }, "ProgressDialog").start();
+
+                    Thread thread = new Thread("DownloadThread") {
+                        @Override
+                        public void run() {
+                            try {
+                                File downLoadLocation = new File(downloadFolder, new File(link).getName());
+                                File savedFile = prideReShakeGUI.saveUrl(downLoadLocation, link, fileSize, progressDialog);
+
+                                boolean canceled = progressDialog.isRunCanceled();
+                                progressDialog.setRunFinished();
+
+                                if (!canceled) {
+                                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, savedFile.getName() + " downloaded to\n"
+                                            + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    if (downLoadLocation.exists()) {
+                                        downLoadLocation.delete();
+                                    }
+                                }
+
+                            } catch (MalformedURLException e) {
+                                progressDialog.setRunFinished();
+                                prideReShakeGUI.getPeptideShakerGUI().catchException(e);
+                            } catch (IOException e) {
+                                progressDialog.setRunFinished();
+                                prideReShakeGUI.getPeptideShakerGUI().catchException(e);
+                            }
+                        }
+                    };
+                    thread.start();
+                }
             }
         }
     }//GEN-LAST:event_searchSettingsTableMouseReleased
@@ -927,7 +1127,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         spectrumTable.setToolTipText(null);
 
         if (row != -1 && column != -1
-                && (column == spectrumTable.getColumn("Assay").getModelIndex())
+                && (column == spectrumTable.getColumn("Assay").getModelIndex() || column == spectrumTable.getColumn("Download").getModelIndex())
                 && spectrumTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) spectrumTable.getValueAt(row, column);
@@ -973,8 +1173,70 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            } else if (column == spectrumTable.getColumn("Download").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String tempLink = (String) spectrumTable.getValueAt(row, column);
+                tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
+                final String link = tempLink.substring(0, tempLink.indexOf("\""));
+                final Double fileSize = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size").getModelIndex());
+
+                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Download Folder", "Select", false);
+
+                if (downloadFolder != null) {
+
+                    prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(downloadFolder.getAbsolutePath());
+
+                    progressDialog = new ProgressDialogX(prideReShakeGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                    progressDialog.setTitle("Downloading File. Please Wait...");
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
+                        }
+                    }, "ProgressDialog").start();
+
+                    Thread thread = new Thread("DownloadThread") {
+                        @Override
+                        public void run() {
+                            try {
+                                File downLoadLocation = new File(downloadFolder, new File(link).getName());
+                                File savedFile = prideReShakeGUI.saveUrl(downLoadLocation, link, fileSize, progressDialog);
+
+                                boolean canceled = progressDialog.isRunCanceled();
+                                progressDialog.setRunFinished();
+
+                                if (!canceled) {
+                                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, savedFile.getName() + " downloaded to\n"
+                                            + savedFile + ".", "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    if (downLoadLocation.exists()) {
+                                        downLoadLocation.delete();
+                                    }
+                                }
+
+                            } catch (MalformedURLException e) {
+                                progressDialog.setRunFinished();
+                                prideReShakeGUI.getPeptideShakerGUI().catchException(e);
+                            } catch (IOException e) {
+                                progressDialog.setRunFinished();
+                                prideReShakeGUI.getPeptideShakerGUI().catchException(e);
+                            }
+                        }
+                    };
+                    thread.start();
+                }
             }
-            
+
             validateInput(false);
         }
     }//GEN-LAST:event_spectrumTableMouseReleased
@@ -989,7 +1251,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_searchSettingsTableMouseExited
 
     /**
-     * Changes the cursor into a hand cursor if the table cell contains an html
+     * Changes the cursor into a hand cursor if the table cell contains an HTML
      * link.
      *
      * @param evt
@@ -1001,7 +1263,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         searchSettingsTable.setToolTipText(null);
 
         if (row != -1 && column != -1
-                && (column == searchSettingsTable.getColumn("Assay").getModelIndex())
+                && (column == searchSettingsTable.getColumn("Assay").getModelIndex() || column == spectrumTable.getColumn("Download").getModelIndex())
                 && searchSettingsTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) searchSettingsTable.getValueAt(row, column);
@@ -1016,19 +1278,111 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_searchSettingsTableMouseMoved
 
+    /**
+     * Open the PeptideShaker web page.
+     *
+     * @param evt
+     */
+    private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_aboutButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void aboutButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_aboutButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void aboutButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_aboutButtonMouseExited
+
+    /**
+     * Select all the spectrum files.
+     *
+     * @param evt
+     */
+    private void selectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseClicked
+        for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+            spectrumTable.setValueAt(true, i, spectrumTable.getColumn("  ").getModelIndex());
+        }
+    }//GEN-LAST:event_selectAllLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void selectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_selectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void selectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_selectAllLabelMouseExited
+
+    /**
+     * Deselect all the spectrum files.
+     *
+     * @param evt
+     */
+    private void deselectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deselectAllLabelMouseClicked
+        for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+            spectrumTable.setValueAt(false, i, spectrumTable.getColumn("  ").getModelIndex());
+        }
+    }//GEN-LAST:event_deselectAllLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void deselectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deselectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_deselectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void deselectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deselectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_deselectAllLabelMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aboutButton;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton browseDatabaseSettingsButton;
     private javax.swing.JButton browseWorkingFolderButton;
+    private javax.swing.JLabel dataTypeSeparatorLabel;
     private javax.swing.JPanel databasePanel;
     private javax.swing.JLabel databaseSettingsLbl;
     private javax.swing.JTextField databaseSettingsTxt;
+    private javax.swing.JLabel deselectAllLabel;
     private javax.swing.JLabel downloadUniProtJLabel;
+    private javax.swing.JLabel peptideShakerHomePageLabel;
     private javax.swing.JButton reshakeButton;
     private javax.swing.JLabel searchSettingsLabel;
     private javax.swing.JPanel searchSettingsPanel;
     private javax.swing.JScrollPane searchSettingsScrollPane;
     private javax.swing.JTable searchSettingsTable;
+    private javax.swing.JLabel selectAllLabel;
     private javax.swing.JTextField speciesJTextField;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JLabel spectrumLabel;
@@ -1147,10 +1501,26 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 spectrumCounter++;
             }
         }
-        
+
         if (spectrumCounter == 0) {
             if (showMessage && valid) {
                 JOptionPane.showMessageDialog(this, "You need to select at least one specturm file.", "Spectrum Files", JOptionPane.WARNING_MESSAGE);
+            }
+            valid = false;
+        }
+
+        // check that no more than one search settings file is selected
+        int searchSettingsCount = 0;
+
+        for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
+            if ((Boolean) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("  ").getModelIndex())) {
+                searchSettingsCount++;
+            }
+        }
+
+        if (searchSettingsCount > 1) {
+            if (showMessage && valid) {
+                JOptionPane.showMessageDialog(this, "You can only select one file to extract seach settings from.", "Search Settings Error", JOptionPane.WARNING_MESSAGE);
             }
             valid = false;
         }
