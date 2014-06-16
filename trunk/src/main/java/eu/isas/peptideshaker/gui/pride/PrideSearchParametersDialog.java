@@ -2,8 +2,8 @@ package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     /**
      * Reference to the main frame.
      */
-    private PeptideShakerGUI peptideShakerGUI;
+    private PrideReShakeGUIv2 prideReShakeGUI;
     /**
      * The extracted search parameters file.
      */
@@ -36,9 +36,9 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     private String speciesType;
 
     /**
-     * Creates a new PrideSearchParametersDialog
+     * Creates a new PrideSearchParametersDialog.
      *
-     * @param peptideShakerGUI a reference to the main frame
+     * @param prideReShakeGUI a reference to the main frame
      * @param prideSearchParametersFile the pride search parameters file
      * @param prideSearchParametersReport the pride search parameters report
      * @param mgfFiles the converted mgf files
@@ -47,18 +47,23 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param speciesType the species type
      * @param modal
      */
-    public PrideSearchParametersDialog(PeptideShakerGUI peptideShakerGUI, File prideSearchParametersFile, 
+    public PrideSearchParametersDialog(PrideReShakeGUIv2 prideReShakeGUI, File prideSearchParametersFile, 
             String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {
-        super(peptideShakerGUI, modal);
+        super(prideReShakeGUI, modal);
         initComponents();
-        this.peptideShakerGUI = peptideShakerGUI;
+        this.prideReShakeGUI = prideReShakeGUI;
         this.prideSearchParametersFile = prideSearchParametersFile;
         this.mgfFiles = mgfFiles;
         this.species = species;
         this.speciesType = speciesType;
         searchParametersReportEditorPane.setText(prideSearchParametersReport);
-        setLocationRelativeTo(peptideShakerGUI);
-        setVisible(true);
+        
+        if (prideSearchParametersReport == null) {
+            okButtonActionPerformed(null);
+        } else {
+            setLocationRelativeTo(prideReShakeGUI);
+            setVisible(true);
+        }
     }
 
     /**
@@ -77,7 +82,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         infoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("PRIDE Search Parameters");
+        setTitle("PRIDE Search Settings");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -86,6 +91,11 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
 
         searchParametersReportEditorPane.setEditable(false);
         searchParametersReportEditorPane.setContentType("text/html"); // NOI18N
+        searchParametersReportEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+            public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
+                searchParametersReportEditorPaneHyperlinkUpdate(evt);
+            }
+        });
         searchParametersReportScrollPane.setViewportView(searchParametersReportEditorPane);
 
         okButton.setText("OK");
@@ -148,7 +158,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
-        peptideShakerGUI.close();
+        //peptideShakerGUI.close();
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -158,8 +168,8 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        prideReShakeGUI.setVisible(false);
         this.setVisible(false);
-        peptideShakerGUI.setVisible(false);
 
         boolean openSearchGUI = true;
 
@@ -167,11 +177,11 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         try {
             UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
             if (utilitiesUserPreferences.getSearchGuiPath() == null || !(new File(utilitiesUserPreferences.getSearchGuiPath()).exists())) {
-                SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(peptideShakerGUI, true);
+                SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(prideReShakeGUI, true);
                 openSearchGUI = !searchGuiSetupDialog.isDialogCanceled();
             }
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            prideReShakeGUI.getPeptideShakerGUI().catchException(e);
         }
 
         if (openSearchGUI) {
@@ -189,10 +199,10 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                                 }
                             }
                         }
-                        ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, outputFolder, species, speciesType);
-                        peptideShakerGUI.close();
+                        ToolFactory.startSearchGUI(prideReShakeGUI, mgfFiles, prideSearchParametersFile, outputFolder, species, speciesType);
+                        prideReShakeGUI.getPeptideShakerGUI().close();
                     } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
+                        prideReShakeGUI.getPeptideShakerGUI().catchException(e);
                     }
                 }
             }, "StartSearchGUI").start();
@@ -207,6 +217,30 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         cancelButtonActionPerformed(null);
     }//GEN-LAST:event_formWindowClosing
+
+    /**
+     * Make the links active.
+     * 
+     * @param evt 
+     */
+    private void searchParametersReportEditorPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {//GEN-FIRST:event_searchParametersReportEditorPaneHyperlinkUpdate
+        if (evt.getEventType().toString().equalsIgnoreCase(
+                javax.swing.event.HyperlinkEvent.EventType.ENTERED.toString())) {
+            setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else if (evt.getEventType().toString().equalsIgnoreCase(
+                javax.swing.event.HyperlinkEvent.EventType.EXITED.toString())) {
+            setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        } else if (evt.getEventType().toString().equalsIgnoreCase(
+                javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.toString())) {
+            if (evt.getDescription().startsWith("#")) {
+                searchParametersReportEditorPane.scrollToReference(evt.getDescription());
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(evt.getDescription());
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }
+    }//GEN-LAST:event_searchParametersReportEditorPaneHyperlinkUpdate
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;

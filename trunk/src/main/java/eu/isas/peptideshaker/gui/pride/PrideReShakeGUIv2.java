@@ -6,13 +6,13 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.io.FTPDownloader;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -95,9 +95,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The list of currently selected species.
+     * The currently selected species.
      */
-    private ArrayList<String> currentSpecies;
+    private String currentSpecies;
     /**
      * The project table column header tooltips.
      */
@@ -117,27 +117,19 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     /**
      * The URL of the current PRIDE project.
      */
-    private URL currentPrideProjectUrl;
+    private URL currentPrideDataFileUrl;
     /**
      * The current zipped PRIDE XML file.
      */
-    private File currentZippedPrideXmlFile;
+    private File currentZippedPrideDataFile;
     /**
      * The current PRIDE XML file.
      */
-    private File currentPrideXmlFile;
+    private File currentPrideDataFile;
     /**
      * The current mgf file.
      */
     private File currentMgfFile;
-    /**
-     * The current URL content length.
-     */
-    private int currentUrlContentLength;
-    /**
-     * True of a file is currently being downloaded.
-     */
-    private boolean isFileBeingDownloaded = false;
     /**
      * The output folder for the mgfs and spectrum properties.
      */
@@ -211,6 +203,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * The password.
      */
     private String password = null;
+    /**
+     * The Reshake setup dialog.
+     */
+    private PrideReshakeSetupDialog prideReshakeSetupDialog;
 
     /**
      * Creates a new PrideReShakeGUI2 frame.
@@ -1133,7 +1129,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * @param evt
      */
     private void reshakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeButtonActionPerformed
-        new PrideReshakeSetupDialog(this, true);
+        prideReshakeSetupDialog = new PrideReshakeSetupDialog(this, true);
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
     /**
@@ -1437,8 +1433,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
     /**
      * Opens the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
         new HelpDialog(this, getClass().getResource("/helpFiles/PrideReshake.html"),
@@ -1909,10 +1905,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             e.printStackTrace();
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
-                        "PRIDE web service access error. Cannot open:<br>"
-                        + "project/count or project/list<br>"
-                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
-                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                    "PRIDE web service access error. Cannot open:<br>"
+                    + "project/count or project/list<br>"
+                    + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                    "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
         } catch (ResourceAccessException e) {
             JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
         }
@@ -1960,25 +1956,40 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }
 
     /**
-     * Download and convert a PRIDE project to mgf.
+     * Download and convert a PRIDE project.
      *
-     * @param accession the accession numbers of the PRIDE projects
+     * @param aWorkingFolder the working folder
+     * @param aSelectedSpectrumFiles the selected spectrum files
+     * @param aSearchSettingsProjectFile the selected search settings file, can
+     * be null
+     * @param aDatabase the database
+     * @param aSpecies the current species
+     * @param fileSizes the file sizes
      */
-    private void downloadPrideDatasets(ArrayList<String> aSelectedFiles) {
+    public void downloadPrideDatasets(String aWorkingFolder, ArrayList<String> aSelectedSpectrumFiles, String aSearchSettingsProjectFile, String aDatabase, String aSpecies, final ArrayList<Double> fileSizes) {
 
-        final ArrayList<String> selectedFiles = aSelectedFiles;
-        final PrideReShakeGUIv2 finalRef = this;
+        outputFolder = aWorkingFolder;
+        final ArrayList<String> selectedSpectrumFiles = aSelectedSpectrumFiles;
+        final String searchSettingsProjectFile = aSearchSettingsProjectFile;
+        final String database = aDatabase;
+        currentSpecies = aSpecies;
+
+        ArrayList<String> tempFiles = aSelectedSpectrumFiles;
+        if (aSearchSettingsProjectFile != null && !tempFiles.contains(aSearchSettingsProjectFile)) {
+            tempFiles.add(aSearchSettingsProjectFile);
+        }
+        final ArrayList<String> allFiles = tempFiles;
+
         maxPrecursorCharge = null;
         minPrecursorCharge = null;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
+        progressDialog = new ProgressDialogX(this,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
 
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         progressDialog.setTitle("Downloading Files. Please Wait...");
-        isFileBeingDownloaded = true;
 
         new Thread(new Runnable() {
             public void run() {
@@ -1997,14 +2008,23 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 try {
                     // set up the identification parameters
                     SearchParameters prideSearchParameters = new SearchParameters();
+
+                    // set the database
+                    prideSearchParameters.setFastaFile(new File(database));
+
+                    // default settings to be used, set the enzyme to trypsin
+                    if (searchSettingsProjectFile == null) {
+                        prideSearchParameters.setEnzyme(EnzymeFactory.getUtilitiesEnzyme("Trypsin"));
+                    }
+
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<File>();
                     boolean mgfConversionOk = true;
 
-                    for (int i = 0; i < selectedFiles.size() && mgfConversionOk; i++) {
+                    for (int i = 0; i < allFiles.size() && mgfConversionOk; i++) {
 
-                        String currentFile = selectedFiles.get(i);
-                        String currentFileName = currentFile.substring(currentFile.lastIndexOf("/"));
+                        String currentFile = selectedSpectrumFiles.get(i);
+                        String currentFileName = currentFile.substring(currentFile.lastIndexOf("/")).toLowerCase();
                         boolean unzipped = true;
 
                         if (currentFileName.lastIndexOf(".gz") != -1) {
@@ -2013,169 +2033,155 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         }
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
-                            finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
                         }
 
-                        //final Integer prideAccession = selectedFiles.get(i);
-                        final int counter = i;
-
-                        if (selectedFiles.size() > 1) {
-                            progressDialog.setTitle("Downloading Files (" + (i + 1) + "/" + selectedFiles.size() + "). Please Wait...");
-                        } else {
-                            progressDialog.setTitle("Downloading Files. Please Wait...");
-                        }
+                        progressDialog.setTitle("Downloading Files (" + (i + 1) + "/" + allFiles.size() + "). Please Wait...");
 
                         try {
-                            currentPrideProjectUrl = new URL(currentFile);
-                            currentZippedPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                            currentPrideDataFileUrl = new URL(currentFile);
+                            currentZippedPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
                             if (unzipped) {
-                                currentPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
-                            } else {
-                                currentPrideXmlFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                                currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
-                            }
-                            mgfFiles.add(currentMgfFile);
-                            URLConnection conn = currentPrideProjectUrl.openConnection();
-                            currentUrlContentLength = conn.getContentLength();
-                            // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
+                                currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
 
+                                if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                    } else {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
+                                    }
+                                }
+                            } else {
+                                currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
+                                if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                    if (currentFile.toLowerCase().endsWith(".mgf.")) {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
+                                    } else {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                                    }
+                                }
+                            }
+                            if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                mgfFiles.add(currentMgfFile);
+                            }
                         } catch (MalformedURLException ex) {
-                            JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("The PRIDE XML file could not be downloaded:<br>"
+                            JOptionPane.showMessageDialog(PrideReShakeGUIv2.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
                                     + ex.getMessage() + ".<br>"
                                     + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
-                            currentPrideProjectUrl = null;
+                            currentPrideDataFileUrl = null;
                         } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("The PRIDE XML file could not be downloaded:<br>"
+                            JOptionPane.showMessageDialog(PrideReShakeGUIv2.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
                                     + ex.getMessage() + ".<br>"
                                     + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
-                            currentPrideProjectUrl = null;
+                            currentPrideDataFileUrl = null;
                         }
 
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
-                            finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
                         }
 
-                        if (currentPrideProjectUrl != null) {
-                            if (currentUrlContentLength != -1) {
-                                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                                progressDialog.setValue(0);
-                                progressDialog.setMaxPrimaryProgressCounter(currentUrlContentLength);
-                            } else {
-                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                            }
-
-                            isFileBeingDownloaded = true;
-
-                            new Thread("DownloadMonitorThread") {
-                                @Override
-                                public void run() {
-
-                                    long start = System.currentTimeMillis();
-
-                                    while (isFileBeingDownloaded) {
-
-                                        if (progressDialog.isRunCanceled()) {
-                                            progressDialog.setRunFinished();
-                                            finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                                            return;
-                                        }
-
-                                        long now = System.currentTimeMillis();
-
-                                        // update the progress dialog every 100 millisecond or so
-                                        if ((now - start) > 100 && progressDialog != null) {
-                                            long length = currentZippedPrideXmlFile.length();
-
-                                            if (currentUrlContentLength != -1) {
-                                                progressDialog.setValue((int) length);
-                                            }
-
-                                            if (selectedFiles.size() > 1) {
-                                                progressDialog.setTitle("Downloading PRIDE Project (" + (counter + 1) + "/" + selectedFiles.size()
-                                                        + "). Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
-                                            } else {
-                                                progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
-                                            }
-
-                                            start = System.currentTimeMillis();
-                                        }
-                                    }
-                                }
-                            }.start();
+                        if (currentPrideDataFileUrl != null) {
 
                             if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(), currentFileName).exists()) {
 
                                 boolean downloadFile = true;
 
-                                if (currentPrideXmlFile.exists()) {
+                                if (currentPrideDataFile.exists()) {
                                     int option = JOptionPane.showConfirmDialog(PrideReShakeGUIv2.this,
-                                            "The PRIDE file \'" + currentPrideXmlFile.getName() + "\' already exists locally.\nUse local copy?",
+                                            "The file \'" + currentPrideDataFile.getName() + "\' already exists locally.\nUse local copy?",
                                             "Use Local File?", JOptionPane.YES_NO_OPTION);
 
+                                    // @TODO: ask if the same should be done for following files as well?
                                     downloadFile = (option == JOptionPane.NO_OPTION);
                                 }
 
                                 if (downloadFile) {
 
-                                    // download the pride xml file
-                                    FTPDownloader ftpDownloader = new FTPDownloader("ftp.pride.ebi.ac.uk", false);
-                                    ftpDownloader.downloadFile(currentPrideProjectUrl.getPath(), currentZippedPrideXmlFile);
-                                    ftpDownloader.disconnect();
-
-                                    isFileBeingDownloaded = false;
+                                    // download the pride data file
+                                    saveUrl(currentZippedPrideDataFile, currentFile, fileSizes.get(i), progressDialog);
 
                                     // file downloaded, unzip file
-                                    if (selectedFiles.size() > 1) {
-                                        progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedFiles.size() + "). Please Wait...");
+                                    if (selectedSpectrumFiles.size() > 1) {
+                                        progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
                                     } else {
-                                        progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                                        progressDialog.setTitle("Unzipping File. Please Wait...");
                                     }
                                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                     if (!unzipped) {
                                         unzipProject();
                                     }
-                                } else {
-                                    isFileBeingDownloaded = false;
                                 }
                             } else {
-                                isFileBeingDownloaded = false;
-                                currentPrideXmlFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(), currentFileName);
+                                currentPrideDataFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(), currentFileName);
                             }
 
                             if (progressDialog.isRunCanceled()) {
                                 progressDialog.setRunFinished();
-                                finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 return;
                             }
 
                             // file unzipped, time to start the conversion to mgf
-                            if (selectedFiles.size() > 1) {
-                                progressDialog.setTitle("Converting PRIDE Project (" + (i + 1) + "/" + selectedFiles.size() + "). Please Wait...");
-                            } else {
-                                progressDialog.setTitle("Converting PRIDE Project. Please Wait...");
+                            if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                if (currentFile.toLowerCase().endsWith(".mgf")
+                                        || currentFile.toLowerCase().endsWith(".mgf.gz")) {
+                                    // already mgf, no conversion needed
+                                } else {
+                                    progressDialog.setTitle("Converting Spectrum Data (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
+                                    mgfConversionOk = convertPrideXmlToMgf();
+                                }
                             }
-
-                            mgfConversionOk = convertPrideXmlToMgf();
 
                             if (progressDialog.isRunCanceled()) {
                                 progressDialog.setRunFinished();
-                                finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 return;
                             }
 
+                            // get the search params from the pride xml or mzid file
                             if (mgfConversionOk) {
-                                // get the search params from the pride xml file
-                                if (i == 0) {
-                                    progressDialog.setTitle("Getting Search Settings. Please Wait...");
-                                    prideSearchParametersReport = getSearchParams(prideSearchParameters); // @TODO: reimplement me!!!
+                                if (searchSettingsProjectFile != null
+                                        && currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                    progressDialog.setTitle("Extracting Search Settings. Please Wait...");
+
+                                    if (currentFile.toLowerCase().endsWith(".xml")
+                                            || currentFile.toLowerCase().endsWith(".xml.gz")) {
+                                        prideSearchParametersReport = getSearchParams(prideSearchParameters);
+                                    } else { // mzid
+                                        // convert the ptms from the assay
+                                        prideSearchParametersReport = MzIdentMLIdfileSearchParametersConverter.getSearchParameters(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
+
+                                        // add the ptms from the project/assay
+                                        String allPtms;
+                                        if (assaysTable.getSelectedRow() != -1) {
+                                            allPtms = (String) assaysTable.getValueAt(assaysTable.getSelectedRow(), assaysTable.getColumn("PTMs").getModelIndex());
+                                        } else {
+                                            allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
+                                        }
+
+                                        prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
+
+                                        // save the report to disk
+                                        File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
+                                        String tempReport = "<html>" + prideSearchParametersReport;
+                                        tempReport += "<br></html>";
+                                        FileWriter fw = new FileWriter(searchSettingsReportFile);
+                                        BufferedWriter bw = new BufferedWriter(fw);
+                                        bw.write(tempReport);
+                                        bw.close();
+                                        fw.close();
+
+                                        prideSearchParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
+                                        prideSearchParametersReport += "<br></html>";
+                                        prideSearchParametersReport = "<html>" + prideSearchParametersReport;
+                                    }
                                 }
                             }
                         } else {
@@ -2190,14 +2196,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     }
 
                     progressDialog.setRunFinished();
-                    finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     if (mgfConversionOk) {
 
                         // @TODO: support more species, but then the terms might have to be downloaded as well...
                         String selectedSpecies = null;
                         String selectedSpeciesType = null;
-                        if (currentSpecies.size() == 1 && currentSpecies.get(0).equalsIgnoreCase("Homo sapiens (Human)")) {
+                        if (currentSpecies.equalsIgnoreCase("Homo sapiens (Human)")) {
                             selectedSpecies = "Homo sapiens";
                             selectedSpeciesType = "Vertebrates";
                         }
@@ -2205,19 +2211,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         if (welcomeDialog != null) {
                             welcomeDialog.setVisible(false);
                         }
-
-                        PrideReShakeGUIv2.this.setVisible(false);
+                        
+                        if (prideReshakeSetupDialog != null) {
+                            prideReshakeSetupDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        }
 
                         // display the detected search parameters to the user
-                        new PrideSearchParametersDialog(peptideShakerGUI,
+                        new PrideSearchParametersDialog(PrideReShakeGUIv2.this,
                                 new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
                 } catch (Exception e) {
-                    finalRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    PrideReShakeGUIv2.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            "An error occured when trying to convert the PRIDE project: \n"
+                    JOptionPane.showMessageDialog(PrideReShakeGUIv2.this,
+                            "An error occured when processing the PRIDE project: \n"
                             + e.getMessage() + "."
                             + "See resources/PeptideShaker.log for details.",
                             "PRIDE Error", JOptionPane.INFORMATION_MESSAGE);
@@ -2246,7 +2254,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         Integer maxMissedCleavages = null;
         ArrayList<String> enzymes = new ArrayList<String>();
 
-        PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
+        PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideDataFile);
 
         Description description = prideXmlReader.getDescription();
         DataProcessing dataProcessing = description.getDataProcessing();
@@ -2300,8 +2308,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         progressDialog.setMaxPrimaryProgressCounter(ids.size());
         progressDialog.setValue(0);
 
+        // set the ion types
         for (String id : ids) {
 
+            // @TODO: implement me!
             progressDialog.increasePrimaryProgressCounter();
 
             Identification identification = prideXmlReader.getIdentById(id);
@@ -2364,8 +2374,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             }
         }
 
-        prideParametersReport = "";
-        prideParametersReport += "<html><br><b><u>Extracted Search Parameters</u></b><br>";
+        prideParametersReport = "<html><br><b><u>Extracted Search Parameters</u></b><br>";
 
         // set the fragment ion accuracy
         prideParametersReport += "<br><b>Fragment Ion Mass Tolerance:</b> ";
@@ -2385,73 +2394,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             prideParametersReport += prideSearchParameters.getPrecursorAccuracy() + " ppm (default)"; // @TODO: what about accuracy in Dalton
         }
 
-        // set the max missed cleavages
-        prideParametersReport += "<br><b>Maximum Missed Cleavages:</b> ";
-        if (maxMissedCleavages != null) {
-            prideSearchParameters.setnMissedCleavages(maxMissedCleavages);
-            prideParametersReport += maxMissedCleavages;
-        } else {
-            prideParametersReport += prideSearchParameters.getnMissedCleavages() + " (default)";
-        }
-
-        // taxonomy and species
-        prideParametersReport += "<br><br><b>Species:</b> ";
-        String species = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("Species").getModelIndex());
-        if (species == null || species.length() == 0) {
-            prideParametersReport += "unknown";
-            currentSpecies.add(null);
-        } else {
-            prideParametersReport += species;
-            currentSpecies.add(species);
-        }
-
-        // help the user get the correct database
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        new DatabaseHelpDialog(peptideShakerGUI, prideSearchParameters, true, species);
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-        // map the ptms to utilities ptms
-        String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
-        ArrayList<String> unknownPtms = new ArrayList<String>();
-
-        ModificationProfile modProfile = new ModificationProfile();
-
-        prideParametersReport += "<br><br><b>Post-Translational Modifications:</b>";
-
-        if (allPtms != null) {
-
-            if (allPtms.trim().length() > 0) {
-
-                String[] tempPtms = allPtms.split("; ");
-
-                for (String pridePtmName : tempPtms) {
-                    prideParametersReport += ptmFactory.convertPridePtm(pridePtmName, modProfile, unknownPtms, isFixedPtm(pridePtmName));
-                }
-            } else {
-                prideParametersReport += "<br>(none detected)";
-            }
-        } else {
-            prideParametersReport += "<br>(none detected)";
-        }
-
-        // handle the unknown ptms
-        if (!unknownPtms.isEmpty()) {
-
-//            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            for (String unknownPtm : unknownPtms) {
-                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *"; // @TODO: have the user select them!!
-            }
-
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-        }
-
-        // set the modification profile
-        prideSearchParameters.setModificationProfile(modProfile);
-
-        prideParametersReport += "<br>";
-
         // set the enzyme
-        prideParametersReport += "<br><b>Enzyme:</b> ";
+        prideParametersReport += "<br><br><b>Enzyme:</b> ";
 
         if (!enzymes.isEmpty()) {
             if (enzymes.size() == 1) {
@@ -2512,11 +2456,18 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             //}
 
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            prideParametersReport += "Trypsin (assumed)";
+            prideParametersReport += "Trypsin (assumed)<br>";
         }
 
-        // set the ion types
-        // @TODO: implement me!
+        // set the max missed cleavages
+        prideParametersReport += "<b>Maximum Missed Cleavages:</b> ";
+        if (maxMissedCleavages != null) {
+            prideSearchParameters.setnMissedCleavages(maxMissedCleavages);
+            prideParametersReport += maxMissedCleavages;
+        } else {
+            prideParametersReport += prideSearchParameters.getnMissedCleavages() + " (default)";
+        }
+
         // set the min/max precursor charge
         prideParametersReport += "<br><br><b>Min Precusor Charge:</b> ";
         if (minPrecursorCharge != null) {
@@ -2533,12 +2484,32 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             prideParametersReport += prideSearchParameters.getMaxChargeSearched().value + " (default)";
         }
 
-        prideParametersReport += "<br><br><b>MGF File Location:</b> " + new File(outputFolder).getAbsolutePath();
-
-        if (!unknownPtms.isEmpty()) {
-            prideParametersReport += "<br><br>* Remember to add these PTMs manually in SearchGUI."; // @TODO: this warning should be stronger!!
+        // taxonomy and species
+        prideParametersReport += "<br><br><b>Species:</b> ";
+        String species = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("Species").getModelIndex());
+        if (species == null || species.length() == 0) {
+            prideParametersReport += "unknown";
+            currentSpecies = species;
+        } else {
+            prideParametersReport += species;
+            currentSpecies = species;
         }
 
+        // map the ptms to utilities ptms
+        String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
+        prideParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
+
+        // save the report to disk
+        File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
+        String tempReport = prideParametersReport;
+        tempReport += "<br></html>";
+        FileWriter fw = new FileWriter(searchSettingsReportFile);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(tempReport);
+        bw.close();
+        fw.close();
+
+        prideParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
         prideParametersReport += "<br></html>";
 
         boolean debugOutput = false;
@@ -2613,9 +2584,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private void unzipProject() throws IOException {
 
-        FileInputStream instream = new FileInputStream(currentZippedPrideXmlFile);
+        FileInputStream instream = new FileInputStream(currentZippedPrideDataFile);
         GZIPInputStream ginstream = new GZIPInputStream(instream);
-        FileOutputStream outstream = new FileOutputStream(currentPrideXmlFile);
+        FileOutputStream outstream = new FileOutputStream(currentPrideDataFile);
         byte[] buf = new byte[1024];
         int len;
         while ((len = ginstream.read(buf)) > 0) {
@@ -2644,7 +2615,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         try {
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
+            PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideDataFile);
             FileWriter w = new FileWriter(currentMgfFile);
             BufferedWriter bw = new BufferedWriter(w);
             List<String> spectra = prideXmlReader.getSpectrumIds();
@@ -3030,5 +3001,53 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Convert a list of PRIDE PTM names to utilities modifications.
+     * 
+     * @param allPtms the PTMs to convert
+     * @param modProfile the modification profile to add the PTMs to
+     * @return a string with the conversion details
+     */
+    private String convertPtms(String allPtms, ModificationProfile modProfile) {
+
+        ArrayList<String> unknownPtms = new ArrayList<String>();
+        String report = "<br><br><b>Post-Translational Modifications:</b>";
+
+        if (allPtms != null) {
+
+            if (allPtms.trim().length() > 0) {
+
+                String[] tempPtms = allPtms.split("; ");
+
+                for (String pridePtmName : tempPtms) {
+                    report += ptmFactory.convertPridePtm(pridePtmName, modProfile, unknownPtms, isFixedPtm(pridePtmName));
+                }
+            } else {
+                report += "<br>(none detected)";
+            }
+        } else {
+            report += "<br>(none detected)";
+        }
+
+        // handle the unknown ptms
+        if (!unknownPtms.isEmpty()) {
+
+//            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            for (String unknownPtm : unknownPtms) {
+                report += "<br>" + unknownPtm + " (unknown ptm) *"; // @TODO: have the user select them!!
+            }
+
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        }
+
+        report += "<br>";
+
+        if (!unknownPtms.isEmpty()) {
+            report += "<br><br>* Remember to add these PTMs manually in SearchGUI."; // @TODO: this warning should be stronger!!
+        }
+
+        return report;
     }
 }

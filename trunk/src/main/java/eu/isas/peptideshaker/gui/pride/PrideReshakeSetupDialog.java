@@ -768,6 +768,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
                 String selectedSearchSettingsFile = null;
+                ArrayList<Double> fileSizes = new ArrayList<Double>();
 
                 for (int i = 0; i < spectrumTable.getRowCount(); i++) {
                     if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
@@ -787,6 +788,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                         if (exists) {
                             selectedSpectrumFiles.add(link);
+                            fileSizes.add((Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size").getModelIndex()));
                         } else {
                             JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                     "PRIDE web service access error. Cannot open:<br>"
@@ -822,6 +824,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                             if (exists) {
                                 selectedSearchSettingsFile = link;
+                                fileSizes.add((Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size").getModelIndex()));
                             } else {
                                 JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                         "PRIDE web service access error. Cannot open:<br>"
@@ -830,6 +833,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                                 System.out.println("Not found: " + link + "!");
                             }
+                        } else {
+                            selectedSearchSettingsFile = link;
                         }
                     }
                 }
@@ -843,30 +848,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 progressDialog.setRunFinished();
 
                 if (download) {
-
-                    String selectedSpectrumFilesAsText = "";
-
-                    for (String file : selectedSpectrumFiles) {
-                        selectedSpectrumFilesAsText += new File(file).getName() + "\n";
-                    }
-
-                    String selectedSearchSettingsFileAsText;
-                    if (selectedSearchSettingsFile != null) {
-                        selectedSearchSettingsFileAsText = new File(selectedSearchSettingsFile).getName();
-                    } else {
-                        selectedSearchSettingsFileAsText = "(default search settings)";
-                    }
-
-                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "Will reshake:\n"
-                            + selectedSpectrumFilesAsText + "\n"
-                            + "using search settings from:\n"
-                            + selectedSearchSettingsFileAsText + ".",
-                            "Reshake Settings", JOptionPane.INFORMATION_MESSAGE);
-
-                    JOptionPane.showMessageDialog(null, "Reshake not yet reimplemented...");
-
-                    // @TODO: reimplement me!!
-                    //downloadPrideDatasets(selectedFiles);
+                    prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFiles, selectedSearchSettingsFile, 
+                            databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
                 } else {
                     JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
                 }
