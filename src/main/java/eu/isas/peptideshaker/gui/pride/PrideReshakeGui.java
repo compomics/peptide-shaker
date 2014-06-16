@@ -1460,7 +1460,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         PrideReshakeGui.this.setVisible(false);
 
                         // display the detected search parameters to the user
-                        new PrideSearchParametersDialog(peptideShakerGUI,
+                        new PrideSearchParametersDialog(null,
                                 new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
