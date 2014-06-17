@@ -17,7 +17,6 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReShakeGUIv2;
-import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
@@ -674,7 +673,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                         if (!canceled) {
                             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                            //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                             setVisible(false);
                             new PrideReShakeGUIv2(peptideShakerGUI);
                             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -711,7 +709,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
                         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                         setVisible(false);
                         new PrideReShakeGUIv2(peptideShakerGUI);
-                        //new PrideReshakeGui(peptideShakerGUI, WelcomeDialog.this, dummyParentFrame, true);
                         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
                 }

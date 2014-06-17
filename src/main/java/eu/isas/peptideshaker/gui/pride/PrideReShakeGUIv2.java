@@ -2211,9 +2211,14 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         if (welcomeDialog != null) {
                             welcomeDialog.setVisible(false);
                         }
-                        
+
                         if (prideReshakeSetupDialog != null) {
                             prideReshakeSetupDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        }
+
+                        if (prideSearchParametersReport == null) {
+                            prideSearchParametersReport = "<html><br><b><u>Extracted Search Parameters</u></b><br><br>"
+                                    + "(No search parameters extracted)<br></html>";
                         }
 
                         // display the detected search parameters to the user
@@ -3005,7 +3010,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
     /**
      * Convert a list of PRIDE PTM names to utilities modifications.
-     * 
+     *
      * @param allPtms the PTMs to convert
      * @param modProfile the modification profile to add the PTMs to
      * @return a string with the conversion details
