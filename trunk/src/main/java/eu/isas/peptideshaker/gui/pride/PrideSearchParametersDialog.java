@@ -47,7 +47,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param speciesType the species type
      * @param modal
      */
-    public PrideSearchParametersDialog(PrideReShakeGUIv2 prideReShakeGUI, File prideSearchParametersFile, 
+    public PrideSearchParametersDialog(PrideReShakeGUIv2 prideReShakeGUI, File prideSearchParametersFile,
             String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {
         super(prideReShakeGUI, modal);
         initComponents();
@@ -57,13 +57,8 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         this.species = species;
         this.speciesType = speciesType;
         searchParametersReportEditorPane.setText(prideSearchParametersReport);
-        
-        if (prideSearchParametersReport == null) {
-            okButtonActionPerformed(null);
-        } else {
-            setLocationRelativeTo(prideReShakeGUI);
-            setVisible(true);
-        }
+        setLocationRelativeTo(prideReShakeGUI);
+        setVisible(true);
     }
 
     /**
@@ -113,7 +108,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         });
 
         infoLabel.setFont(infoLabel.getFont().deriveFont((infoLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        infoLabel.setText("Click OK to open the parameters in SearchGUI and re-analyze the data.");
+        infoLabel.setText("Click OK to open the data in SearchGUI and start the re-analysis!");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,7 +121,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(infoLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -220,8 +215,8 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
 
     /**
      * Make the links active.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void searchParametersReportEditorPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {//GEN-FIRST:event_searchParametersReportEditorPaneHyperlinkUpdate
         if (evt.getEventType().toString().equalsIgnoreCase(

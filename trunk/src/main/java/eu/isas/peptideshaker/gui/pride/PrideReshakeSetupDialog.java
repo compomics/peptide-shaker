@@ -8,7 +8,6 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -428,14 +427,15 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             .addGroup(spectrumPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(spectrumLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 310, Short.MAX_VALUE)
                 .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dataTypeSeparatorLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
-            .addGroup(spectrumPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(spectrumTableScrollPane)
                 .addContainerGap())
         );
@@ -445,12 +445,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(spectrumTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(spectrumLabel)
+                .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(deselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(dataTypeSeparatorLabel)))
+                        .addComponent(dataTypeSeparatorLabel))
+                    .addComponent(spectrumLabel))
                 .addContainerGap())
         );
 
@@ -532,7 +532,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         downloadUniProtJLabel.setForeground(new java.awt.Color(0, 0, 255));
         downloadUniProtJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        downloadUniProtJLabel.setText("<html><u>Download from UniProt</u></html>");
+        downloadUniProtJLabel.setText("<html><u><i>Download from UniProt</i></u></html>");
         downloadUniProtJLabel.setToolTipText("Download UniProt Database");
         downloadUniProtJLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -546,7 +546,19 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
         });
 
-        databaseSettingsLbl.setText("Database");
+        databaseSettingsLbl.setForeground(new java.awt.Color(0, 0, 255));
+        databaseSettingsLbl.setText("<html><u>Database</u></html>");
+        databaseSettingsLbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                databaseSettingsLblMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                databaseSettingsLblMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                databaseSettingsLblMouseExited(evt);
+            }
+        });
 
         databaseSettingsTxt.setEditable(false);
 
@@ -576,7 +588,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     .addGroup(databasePanelLayout.createSequentialGroup()
                         .addComponent(speciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(speciesJTextField))
+                        .addComponent(speciesJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE))
                     .addGroup(databasePanelLayout.createSequentialGroup()
                         .addComponent(databaseSettingsLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -603,7 +615,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     .addComponent(downloadUniProtJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(databaseSettingsLbl)
+                    .addComponent(databaseSettingsLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseDatabaseSettingsButton)
                     .addComponent(databaseSettingsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(targetDecoySettingsButton))
@@ -748,7 +760,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 true);
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         progressDialog.setTitle("Checking Files. Please Wait...");
         isFileBeingDownloaded = true;
 
@@ -1348,6 +1359,35 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_deselectAllLabelMouseExited
 
+    /**
+     * Open the database help web page.
+     *
+     * @param evt
+     */
+    private void databaseSettingsLblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://code.google.com/p/searchgui/wiki/DatabaseHelp");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_databaseSettingsLblMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void databaseSettingsLblMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_databaseSettingsLblMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void databaseSettingsLblMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_databaseSettingsLblMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JPanel backgroundPanel;
@@ -1441,18 +1481,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     public boolean validateInput(boolean showMessage) {
 
         boolean valid = true;
-        databaseSettingsLbl.setForeground(Color.BLACK);
-        databaseSettingsLbl.setToolTipText(null);
-        workingFolderLbl.setForeground(Color.BLACK);
-        workingFolderLbl.setToolTipText(null);
 
         // check the database
         if (databaseSettingsTxt.getText() == null || databaseSettingsTxt.getText().trim().isEmpty()) {
             if (showMessage && valid) {
                 JOptionPane.showMessageDialog(this, "You need to specify a search database.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
             }
-            databaseSettingsLbl.setForeground(Color.RED);
-            databaseSettingsLbl.setToolTipText("Please select a valid '.fasta' or '.fas' database file");
             valid = false;
         } else {
             File test = new File(databaseSettingsTxt.getText().trim());
@@ -1460,20 +1494,15 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 if (showMessage && valid) {
                     JOptionPane.showMessageDialog(this, "The database file could not be found.", "Search Database Not Found", JOptionPane.WARNING_MESSAGE);
                 }
-                databaseSettingsLbl.setForeground(Color.RED);
-                databaseSettingsLbl.setToolTipText("Database file could not be found!");
                 valid = false;
             }
         }
 
         // check the working folder
         if (workingFolderTxt.getText().trim().isEmpty()) {
-
             if (showMessage && valid) {
                 JOptionPane.showMessageDialog(this, "You need to specify a working folder.", "Working Folder", JOptionPane.WARNING_MESSAGE);
             }
-            workingFolderLbl.setForeground(Color.RED);
-            workingFolderLbl.setToolTipText("Please select a working folder");
             valid = false;
         }
 

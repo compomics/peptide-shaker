@@ -43,6 +43,8 @@ import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 /**
  * A simple GUI for getting the mgf and search parameters for a PRIDE dataset.
  *
+ * @deprecated use PrideReShakeGUIv2 instead
+ *
  * @author Harald Barsnes
  */
 public class PrideReshakeGui extends javax.swing.JDialog {
@@ -144,6 +146,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * @param dummyParentFrame dummy parent frame to be able to show an icon in
      * the task bar, can be null
      * @param modal
+     * @deprecated use PrideReShakeGUIv2 instead
      */
     public PrideReshakeGui(PeptideShakerGUI peptideShakerGUI, WelcomeDialog welcomeDialog, DummyFrame dummyParentFrame, boolean modal) {
         super(peptideShakerGUI, modal);

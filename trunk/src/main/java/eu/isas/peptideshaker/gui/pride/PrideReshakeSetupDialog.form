@@ -108,7 +108,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="spectrumLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="310" max="32767" attributes="0"/>
                       <Component id="selectAllLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="dataTypeSeparatorLabel" min="-2" max="-2" attributes="0"/>
@@ -116,7 +116,8 @@
                       <Component id="deselectAllLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="spectrumTableScrollPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -128,13 +129,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="spectrumTableScrollPane" pref="174" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="spectrumLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="deselectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="selectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="dataTypeSeparatorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="spectrumLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -320,7 +321,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="speciesLabel" min="-2" pref="70" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="speciesJTextField" max="32767" attributes="0"/>
+                              <Component id="speciesJTextField" pref="565" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="databaseSettingsLbl" min="-2" pref="70" max="-2" attributes="0"/>
@@ -337,7 +338,7 @@
                           </Group>
                           <Component id="downloadUniProtJLabel" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -380,7 +381,7 @@
                   <Color blue="ff" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;Download from UniProt&lt;/u&gt;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;&lt;i&gt;Download from UniProt&lt;/i&gt;&lt;/u&gt;&lt;/html&gt;"/>
                 <Property name="toolTipText" type="java.lang.String" value="Download UniProt Database"/>
               </Properties>
               <Events>
@@ -391,8 +392,16 @@
             </Component>
             <Component class="javax.swing.JLabel" name="databaseSettingsLbl">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Database"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="0" red="0" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;Database&lt;/u&gt;&lt;/html&gt;"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="databaseSettingsLblMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="databaseSettingsLblMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="databaseSettingsLblMouseExited"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="databaseSettingsTxt">
               <Properties>

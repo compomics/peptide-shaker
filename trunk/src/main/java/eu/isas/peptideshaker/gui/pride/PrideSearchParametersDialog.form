@@ -34,7 +34,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                       <Component id="infoLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="172" max="32767" attributes="0"/>
+                      <EmptySpace pref="203" max="32767" attributes="0"/>
                       <Component id="okButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -102,7 +102,7 @@
             <Font component="infoLabel" italic="true" property="font" relativeSize="true" size="0"/>
           </FontInfo>
         </Property>
-        <Property name="text" type="java.lang.String" value="Click OK to open the parameters in SearchGUI and re-analyze the data."/>
+        <Property name="text" type="java.lang.String" value="Click OK to open the data in SearchGUI and start the re-analysis!"/>
       </Properties>
     </Component>
   </SubComponents>
