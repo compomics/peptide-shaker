@@ -37,7 +37,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.*;
-import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -292,7 +291,7 @@ public class MzIdentMLExport {
 
         // @TODO: also add SearchGUI and/or search engines used?
         br.write(getCurrentTabSpace() + "<AnalysisSoftware "
-                + "name=\"PeptideShaker \" "
+                + "name=\"PeptideShaker\" "
                 + "version=\"" + peptideShakerVersion + "\" "
                 + "id=\"ID_software\" "
                 + "uri=\"http://peptide-shaker.googlecode.com\">"
@@ -426,7 +425,7 @@ public class MzIdentMLExport {
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
             br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", URLDecoder.decode(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription(), "utf-8")));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription())));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
 
@@ -1524,7 +1523,7 @@ public class MzIdentMLExport {
      * reading/writing a file
      */
     private void writeMzIdentMLStartTag() throws IOException {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         br.write("<?xml version=\"1.1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
         br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "

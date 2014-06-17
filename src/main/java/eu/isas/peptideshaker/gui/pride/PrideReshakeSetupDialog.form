@@ -95,7 +95,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="&lt;User Code&gt;">
-                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;1) Spectrum Files&quot;" type="code"/>
+                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;Spectrum Files&quot;" type="code"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -219,7 +219,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="&lt;User Code&gt;">
-                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;2) Search Settings&quot;" type="code"/>
+                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;Search Settings&quot;" type="code"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -305,7 +305,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="&lt;User Code&gt;">
-                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;3) Sequence Database&quot;" type="code"/>
+                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;Sequence Database&quot;" type="code"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -433,7 +433,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="&lt;User Code&gt;">
-                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;4) Working Folder&quot;" type="code"/>
+                  <Connection PropertyName="titleX" code="PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  &quot;Working Folder&quot;" type="code"/>
                 </TitledBorder>
               </Border>
             </Property>

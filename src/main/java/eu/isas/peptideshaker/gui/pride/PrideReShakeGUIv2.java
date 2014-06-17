@@ -2020,6 +2020,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<File>();
                     boolean mgfConversionOk = true;
+                    Boolean useLocalFiles = null;
 
                     for (int i = 0; i < allFiles.size() && mgfConversionOk; i++) {
 
@@ -2094,12 +2095,27 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                 boolean downloadFile = true;
 
                                 if (currentPrideDataFile.exists()) {
-                                    int option = JOptionPane.showConfirmDialog(PrideReShakeGUIv2.this,
-                                            "The file \'" + currentPrideDataFile.getName() + "\' already exists locally.\nUse local copy?",
-                                            "Use Local File?", JOptionPane.YES_NO_OPTION);
 
-                                    // @TODO: ask if the same should be done for following files as well?
-                                    downloadFile = (option == JOptionPane.NO_OPTION);
+                                    if (useLocalFiles == null) {
+
+                                        int option = JOptionPane.showConfirmDialog(PrideReShakeGUIv2.this,
+                                                "The file \'" + currentPrideDataFile.getName() + "\' already exists locally.\nUse local copy?",
+                                                "Use Local File?", JOptionPane.YES_NO_OPTION);
+
+                                        if (allFiles.size() > 1) {
+                                            int option2 = JOptionPane.showConfirmDialog(PrideReShakeGUIv2.this,
+                                                    "Do this for all following files?",
+                                                    "Use Local Files?", JOptionPane.YES_NO_OPTION);
+
+                                            if (option2 == JOptionPane.YES_OPTION) {
+                                                useLocalFiles = (option == JOptionPane.YES_OPTION);
+                                            }
+                                        }
+
+                                        downloadFile = (option == JOptionPane.NO_OPTION);
+                                    } else {
+                                        downloadFile = !useLocalFiles;
+                                    }
                                 }
 
                                 if (downloadFile) {

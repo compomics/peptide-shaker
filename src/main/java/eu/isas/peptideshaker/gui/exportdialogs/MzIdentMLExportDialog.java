@@ -68,12 +68,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         contactFirstNameJTextField.setText(peptideShakerGUI.getProjectDetails().getContactFirstName());
         contactLastNameJTextField.setText(peptideShakerGUI.getProjectDetails().getContactLastName());
         contactEmailJTextField.setText(peptideShakerGUI.getProjectDetails().getContactEmail());
-        contactAddressJTextArea.setText(peptideShakerGUI.getProjectDetails().getContactAddress());
+        contactAddressJTextField.setText(peptideShakerGUI.getProjectDetails().getContactAddress());
         contactUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getContactUrl());
 
         organizationNameJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationName());
         organizationEmailJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationEmail());
-        organizationAddressJTextArea.setText(peptideShakerGUI.getProjectDetails().getOrganizationAddress());
+        organizationAddressJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationAddress());
         organizationUrlJTextField.setText(peptideShakerGUI.getProjectDetails().getOrganizationUrl());
 
         if (peptideShakerGUI.getProjectDetails().getMzIdentMLOutputFile() != null
@@ -100,8 +100,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         contactEmailLabel = new javax.swing.JLabel();
         contactEmailJTextField = new javax.swing.JTextField();
         contactAddressLabel = new javax.swing.JLabel();
-        contactAddressJScrollPane = new javax.swing.JScrollPane();
-        contactAddressJTextArea = new javax.swing.JTextArea();
+        contactAddressJTextField = new javax.swing.JTextField();
         contactUrlLabel = new javax.swing.JLabel();
         contactUrlJTextField = new javax.swing.JTextField();
         organizationPanel = new javax.swing.JPanel();
@@ -110,8 +109,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationEmailLabel = new javax.swing.JLabel();
         organizationEmailJTextField = new javax.swing.JTextField();
         organizationAddressLabel = new javax.swing.JLabel();
-        organizationAddressJScrollPane = new javax.swing.JScrollPane();
-        organizationAddressJTextArea = new javax.swing.JTextArea();
+        organizationAddressJTextField = new javax.swing.JTextField();
         organizationUrlLabel = new javax.swing.JLabel();
         organizationUrlJTextField = new javax.swing.JTextField();
         outputPanel = new javax.swing.JPanel();
@@ -165,16 +163,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         contactAddressLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactAddressLabel.setText("Address");
 
-        contactAddressJTextArea.setColumns(10);
-        contactAddressJTextArea.setLineWrap(true);
-        contactAddressJTextArea.setRows(2);
-        contactAddressJTextArea.setWrapStyleWord(true);
-        contactAddressJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+        contactAddressJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
+        contactAddressJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                contactAddressJTextAreaKeyReleased(evt);
+                contactAddressJTextFieldKeyReleased(evt);
             }
         });
-        contactAddressJScrollPane.setViewportView(contactAddressJTextArea);
 
         contactUrlLabel.setText("URL");
 
@@ -206,7 +200,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                                 .addComponent(contactLastNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(contactLastNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
-                            .addComponent(contactAddressJScrollPane)))
+                            .addComponent(contactAddressJTextField)))
                     .addGroup(contactPanelLayout.createSequentialGroup()
                         .addComponent(contactUrlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -232,9 +226,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     .addComponent(contactEmailLabel)
                     .addComponent(contactEmailJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(contactAddressLabel)
-                    .addComponent(contactAddressJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(contactAddressJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(contactUrlLabel)
@@ -268,16 +262,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationAddressLabel.setForeground(new java.awt.Color(255, 0, 0));
         organizationAddressLabel.setText("Address");
 
-        organizationAddressJTextArea.setColumns(10);
-        organizationAddressJTextArea.setLineWrap(true);
-        organizationAddressJTextArea.setRows(2);
-        organizationAddressJTextArea.setWrapStyleWord(true);
-        organizationAddressJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                organizationAddressJTextAreaKeyReleased(evt);
-            }
-        });
-        organizationAddressJScrollPane.setViewportView(organizationAddressJTextArea);
+        organizationAddressJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
         organizationUrlLabel.setText("URL");
 
@@ -302,9 +287,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                             .addComponent(organizationAddressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(organizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(organizationAddressJScrollPane)
                             .addComponent(organizationEmailJTextField)
-                            .addComponent(organizationNameJTextField)))
+                            .addComponent(organizationNameJTextField)
+                            .addComponent(organizationAddressJTextField)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, organizationPanelLayout.createSequentialGroup()
                         .addComponent(organizationUrlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -323,9 +308,9 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     .addComponent(organizationEmailLabel)
                     .addComponent(organizationEmailJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(organizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(organizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(organizationAddressLabel)
-                    .addComponent(organizationAddressJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(organizationAddressJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(organizationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(organizationUrlLabel)
@@ -543,13 +528,6 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_contactEmailJTextFieldKeyReleased
 
     /**
-     * @see #validateInput()
-     */
-    private void contactAddressJTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_contactAddressJTextAreaKeyReleased
-        validateInput();
-    }//GEN-LAST:event_contactAddressJTextAreaKeyReleased
-
-    /**
      * Convert the project to an mzIdentML file.
      *
      * @param evt
@@ -584,7 +562,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getProjectDetails().setContactFirstName(contactFirstNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactLastName(contactLastNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setContactEmail(contactEmailJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setContactAddress(contactAddressJTextArea.getText().trim());
+                peptideShakerGUI.getProjectDetails().setContactAddress(contactAddressJTextField.getText().trim());
                 if (!contactUrlJTextField.getText().trim().isEmpty()) {
                     peptideShakerGUI.getProjectDetails().setContactUrl(contactUrlJTextField.getText().trim());
                 } else {
@@ -593,7 +571,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 peptideShakerGUI.getProjectDetails().setOrganizationName(organizationNameJTextField.getText().trim());
                 peptideShakerGUI.getProjectDetails().setOrganizationEmail(organizationEmailJTextField.getText().trim());
-                peptideShakerGUI.getProjectDetails().setOrganizationAddress(organizationAddressJTextArea.getText().trim());
+                peptideShakerGUI.getProjectDetails().setOrganizationAddress(organizationAddressJTextField.getText().trim());
                 if (!organizationUrlJTextField.getText().trim().isEmpty()) {
                     peptideShakerGUI.getProjectDetails().setOrganizationUrl(organizationUrlJTextField.getText().trim());
                 } else {
@@ -665,22 +643,21 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     /**
      * @see #validateInput()
      */
-    private void organizationAddressJTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_organizationAddressJTextAreaKeyReleased
-        validateInput();
-    }//GEN-LAST:event_organizationAddressJTextAreaKeyReleased
-
-    /**
-     * @see #validateInput()
-     */
     private void organizationUrlJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_organizationUrlJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_organizationUrlJTextFieldKeyReleased
 
+    /**
+     * @see #validateInput()
+     */
+    private void contactAddressJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_contactAddressJTextFieldKeyReleased
+        validateInput();
+    }//GEN-LAST:event_contactAddressJTextFieldKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundJPanel;
     private javax.swing.JButton browseOutputFolderJButton;
-    private javax.swing.JScrollPane contactAddressJScrollPane;
-    private javax.swing.JTextArea contactAddressJTextArea;
+    private javax.swing.JTextField contactAddressJTextField;
     private javax.swing.JLabel contactAddressLabel;
     private javax.swing.JTextField contactEmailJTextField;
     private javax.swing.JLabel contactEmailLabel;
@@ -694,8 +671,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private javax.swing.JButton convertJButton;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JButton openDialogHelpJButton;
-    private javax.swing.JScrollPane organizationAddressJScrollPane;
-    private javax.swing.JTextArea organizationAddressJTextArea;
+    private javax.swing.JTextField organizationAddressJTextField;
     private javax.swing.JLabel organizationAddressLabel;
     private javax.swing.JTextField organizationEmailJTextField;
     private javax.swing.JLabel organizationEmailLabel;
@@ -720,10 +696,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         if (contactFirstNameJTextField.getText().length() == 0
                 || contactLastNameJTextField.getText().length() == 0
                 || contactEmailJTextField.getText().length() == 0
-                || contactAddressJTextArea.getText().length() == 0
+                || contactAddressJTextField.getText().length() == 0
                 || organizationNameJTextField.getText().length() == 0
                 || organizationEmailJTextField.getText().length() == 0
-                || organizationAddressJTextArea.getText().length() == 0
+                || organizationAddressJTextField.getText().length() == 0
                 || outputFolderJTextField.getText().length() == 0) {
             inputValid = false;
         }
@@ -749,7 +725,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             contactEmailLabel.setForeground(Color.RED);
         }
 
-        if (contactAddressJTextArea.getText().length() > 0) {
+        if (contactAddressJTextField.getText().length() > 0) {
             contactAddressLabel.setForeground(Color.BLACK);
         } else {
             contactAddressLabel.setForeground(Color.RED);
@@ -767,7 +743,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             organizationEmailLabel.setForeground(Color.RED);
         }
 
-        if (organizationAddressJTextArea.getText().length() > 0) {
+        if (organizationAddressJTextField.getText().length() > 0) {
             organizationAddressLabel.setForeground(Color.BLACK);
         } else {
             organizationAddressLabel.setForeground(Color.RED);
