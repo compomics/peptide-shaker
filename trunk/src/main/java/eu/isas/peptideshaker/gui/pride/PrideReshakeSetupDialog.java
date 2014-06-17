@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -230,6 +231,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
             searchSettingsTable.setValueAt(i + 1, i, 0);
         }
+        
+        // update the border titles
+        ((TitledBorder) spectrumPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Spectrum Files (" + spectrumTable.getRowCount() + ")");
+        spectrumPanel.repaint();
+        ((TitledBorder) searchSettingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Spectrum Files (" + searchSettingsTable.getRowCount() + ")");
+        searchSettingsPanel.repaint();
     }
 
     /**
@@ -346,7 +353,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        spectrumPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "1) Spectrum Files"));
+        spectrumPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Spectrum Files"));
         spectrumPanel.setOpaque(false);
 
         spectrumLabel.setFont(spectrumLabel.getFont().deriveFont((spectrumLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
@@ -454,7 +461,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        searchSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "2) Search Settings"));
+        searchSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Search Settings"));
         searchSettingsPanel.setOpaque(false);
 
         searchSettingsLabel.setFont(searchSettingsLabel.getFont().deriveFont((searchSettingsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
@@ -522,7 +529,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        databasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "3) Sequence Database"));
+        databasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Sequence Database"));
         databasePanel.setOpaque(false);
 
         speciesLabel.setText("Species");
@@ -622,7 +629,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        workingFolderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "4) Working Folder"));
+        workingFolderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Working Folder"));
         workingFolderPanel.setOpaque(false);
 
         workingFolderLbl.setText("Folder");

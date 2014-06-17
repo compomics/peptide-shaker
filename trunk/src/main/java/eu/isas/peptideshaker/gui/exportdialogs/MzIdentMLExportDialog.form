@@ -123,7 +123,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="contactLastNameJTextField" linkSize="6" pref="171" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="contactAddressJScrollPane" max="32767" attributes="0"/>
+                                  <Component id="contactAddressJTextField" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -152,9 +152,9 @@
                           <Component id="contactEmailJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="contactAddressLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="contactAddressJScrollPane" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="contactAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="contactAddressJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -230,26 +230,16 @@
                 <Property name="text" type="java.lang.String" value="Address"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JScrollPane" name="contactAddressJScrollPane">
-              <AuxValues>
-                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-              <SubComponents>
-                <Component class="javax.swing.JTextArea" name="contactAddressJTextArea">
-                  <Properties>
-                    <Property name="columns" type="int" value="10"/>
-                    <Property name="lineWrap" type="boolean" value="true"/>
-                    <Property name="rows" type="int" value="2"/>
-                    <Property name="wrapStyleWord" type="boolean" value="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="contactAddressJTextAreaKeyReleased"/>
-                  </Events>
-                </Component>
-              </SubComponents>
-            </Container>
+            <Component class="javax.swing.JTextField" name="contactAddressJTextField">
+              <Properties>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="contactAddressJTextFieldKeyReleased"/>
+              </Events>
+            </Component>
             <Component class="javax.swing.JLabel" name="contactUrlLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="URL"/>
@@ -291,9 +281,9 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="organizationAddressJScrollPane" alignment="0" max="32767" attributes="0"/>
                                   <Component id="organizationEmailJTextField" alignment="0" max="32767" attributes="0"/>
                                   <Component id="organizationNameJTextField" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="organizationAddressJTextField" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -320,9 +310,9 @@
                           <Component id="organizationEmailJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="organizationAddressLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="organizationAddressJScrollPane" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="organizationAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="organizationAddressJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -379,26 +369,13 @@
                 <Property name="text" type="java.lang.String" value="Address"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JScrollPane" name="organizationAddressJScrollPane">
-              <AuxValues>
-                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-              <SubComponents>
-                <Component class="javax.swing.JTextArea" name="organizationAddressJTextArea">
-                  <Properties>
-                    <Property name="columns" type="int" value="10"/>
-                    <Property name="lineWrap" type="boolean" value="true"/>
-                    <Property name="rows" type="int" value="2"/>
-                    <Property name="wrapStyleWord" type="boolean" value="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="organizationAddressJTextAreaKeyReleased"/>
-                  </Events>
-                </Component>
-              </SubComponents>
-            </Container>
+            <Component class="javax.swing.JTextField" name="organizationAddressJTextField">
+              <Properties>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
+              </Properties>
+            </Component>
             <Component class="javax.swing.JLabel" name="organizationUrlLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="URL"/>
