@@ -2244,7 +2244,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // update the advocates color legend
                     ArrayList<Integer> usedAdvocatedAndPeptideShaker = new ArrayList<Integer>();
                     usedAdvocatedAndPeptideShaker.addAll(advocatesUsed);
-                    usedAdvocatedAndPeptideShaker.add(Advocate.peptideShaker.getIndex());
+                    if (!usedAdvocatedAndPeptideShaker.contains(Advocate.peptideShaker.getIndex())) {
+                        usedAdvocatedAndPeptideShaker.add(Advocate.peptideShaker.getIndex());
+                    }
                     String colorLegend = "<html>";
                     for (int tempAdvocate : usedAdvocatedAndPeptideShaker) {
                         colorLegend += "<font color=\"rgb(" + Advocate.getAdvocateColorMap().get(tempAdvocate).getRed() + ","
