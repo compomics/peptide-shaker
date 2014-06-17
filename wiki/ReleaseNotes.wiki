@@ -3,6 +3,16 @@
 
 ----
 
+*Changes in PeptideShaker 0.31.0 (June 17. 2014)*
+
+ * NEW FEATURE: Redesigned PRIDE Reshake.
+
+ * BUG FIX: Fixed various bugs in the mzid export.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.28.18.
+
+----
+
 *Changes in PeptideShaker 0.30.2 (June 13. 2014)*
 
  * FEATURE IMPROVEMENT: Made it possible to extract the version number for MS Amanda csv files.
