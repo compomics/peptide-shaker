@@ -1961,24 +1961,23 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * Download and convert a PRIDE project.
      *
      * @param aWorkingFolder the working folder
-     * @param aSelectedSpectrumFiles the selected spectrum files
-     * @param aSearchSettingsProjectFile the selected search settings file, can
+     * @param selectedSpectrumFiles the selected spectrum files
+     * @param searchSettingsProjectFile the selected search settings file, can
      * be null
-     * @param aDatabase the database
+     * @param database the database
      * @param aSpecies the current species
      * @param fileSizes the file sizes
      */
-    public void downloadPrideDatasets(String aWorkingFolder, ArrayList<String> aSelectedSpectrumFiles, String aSearchSettingsProjectFile, String aDatabase, String aSpecies, final ArrayList<Double> fileSizes) {
+    public void downloadPrideDatasets(String aWorkingFolder, final ArrayList<String> selectedSpectrumFiles, 
+            final String searchSettingsProjectFile, final String database, String aSpecies, final ArrayList<Double> fileSizes) {
 
         outputFolder = aWorkingFolder;
-        final ArrayList<String> selectedSpectrumFiles = aSelectedSpectrumFiles;
-        final String searchSettingsProjectFile = aSearchSettingsProjectFile;
-        final String database = aDatabase;
         currentSpecies = aSpecies;
 
-        ArrayList<String> tempFiles = aSelectedSpectrumFiles;
-        if (aSearchSettingsProjectFile != null && !tempFiles.contains(aSearchSettingsProjectFile)) {
-            tempFiles.add(aSearchSettingsProjectFile);
+        ArrayList<String> tempFiles = new ArrayList<String>();
+        tempFiles.addAll(selectedSpectrumFiles);
+        if (searchSettingsProjectFile != null && !tempFiles.contains(searchSettingsProjectFile)) {
+            tempFiles.add(searchSettingsProjectFile);
         }
         final ArrayList<String> allFiles = tempFiles;
 
@@ -2047,25 +2046,20 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             currentZippedPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
                             if (unzipped) {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-
-                                if (selectedSpectrumFiles.contains(currentFile)) {
-                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                    } else {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
-                                    }
+                                if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                } else {
+                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
                                 }
                             } else {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                                if (selectedSpectrumFiles.contains(currentFile)) {
-                                    if (currentFile.toLowerCase().endsWith(".mgf.")) {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
-                                    } else {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
-                                    }
+                                if (currentFile.toLowerCase().endsWith(".mgf.")) {
+                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
+                                } else {
+                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
                                 }
                             }
-                            if (selectedSpectrumFiles.contains(currentFile)) {
+                            if (i < selectedSpectrumFiles.size()) {
                                 mgfFiles.add(currentMgfFile);
                             }
                         } catch (MalformedURLException ex) {
@@ -2126,7 +2120,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                     saveUrl(currentZippedPrideDataFile, currentFile, fileSizes.get(i), progressDialog);
 
                                     // file downloaded, unzip file
-                                    progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
+                                    progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + allFiles.size() + "). Please Wait...");
 
                                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                     if (!unzipped) {
@@ -2144,12 +2138,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             }
 
                             // file unzipped, time to start the conversion to mgf
-                            if (selectedSpectrumFiles.contains(currentFile)) {
+                            if (i < selectedSpectrumFiles.size()) {
                                 if (currentFile.toLowerCase().endsWith(".mgf")
                                         || currentFile.toLowerCase().endsWith(".mgf.gz")) {
                                     // already mgf, no conversion needed
                                 } else {
-                                    progressDialog.setTitle("Converting Spectrum Data (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
+                                    progressDialog.setTitle("Converting Spectrum Data (" + (i + 1) + "/" + allFiles.size() + "). Please Wait...");
                                     mgfConversionOk = convertPrideXmlToMgf();
                                 }
                             }
@@ -2645,7 +2639,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 bw.close();
                 w.close();
                 progressDialog.setRunFinished();
-                JOptionPane.showMessageDialog(this, "The project contains no spectra! Conversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "The file " + currentPrideDataFile.getName() + " contains no valid spectra!"
+                        + "\nConversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
 
@@ -2676,7 +2671,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
             if (validSpectrumCount == 0) {
                 progressDialog.setRunFinished();
-                JOptionPane.showMessageDialog(this, "The project contains no valid spectra! Conversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "The file " + currentPrideDataFile.getName() + " contains no valid spectra!"
+                        + "\nConversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
 
