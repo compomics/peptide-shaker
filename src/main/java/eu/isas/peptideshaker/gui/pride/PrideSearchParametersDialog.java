@@ -76,6 +76,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PRIDE Search Settings");
@@ -87,7 +88,10 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        searchParametersReportScrollPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 10));
+
         searchParametersReportEditorPane.setEditable(false);
+        searchParametersReportEditorPane.setBorder(null);
         searchParametersReportEditorPane.setContentType("text/html"); // NOI18N
         searchParametersReportEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
             public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
@@ -120,6 +124,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
                     .addComponent(searchParametersReportScrollPane)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
@@ -137,7 +142,9 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchParametersReportScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+                .addComponent(searchParametersReportScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
@@ -255,6 +262,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton okButton;
     private javax.swing.JEditorPane searchParametersReportEditorPane;
     private javax.swing.JScrollPane searchParametersReportScrollPane;

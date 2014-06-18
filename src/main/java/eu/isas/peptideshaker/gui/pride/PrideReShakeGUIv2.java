@@ -782,11 +782,11 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTable.setOpaque(false);
         filesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         filesTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                filesTableMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 filesTableMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                filesTableMouseExited(evt);
             }
         });
         filesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -797,7 +797,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("Select the files to Reshake and click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML.");
+        filesHelpLabel.setText("When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML.");
 
         reshakableCheckBox.setSelected(true);
         reshakableCheckBox.setText("Reshakeable Files");
@@ -2046,17 +2046,21 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             currentZippedPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
                             if (unzipped) {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                if (currentFile.toLowerCase().endsWith(".mgf")) {
-                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                } else {
-                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
+                                if (i < selectedSpectrumFiles.size()) {
+                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                    } else {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
+                                    }
                                 }
                             } else {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                                if (currentFile.toLowerCase().endsWith(".mgf.")) {
-                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
-                                } else {
-                                    currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                                if (i < selectedSpectrumFiles.size()) {
+                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
+                                    } else {
+                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                                    }
                                 }
                             }
                             if (i < selectedSpectrumFiles.size()) {
