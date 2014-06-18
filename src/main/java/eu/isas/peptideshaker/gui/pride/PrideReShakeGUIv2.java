@@ -1691,6 +1691,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             filesTable.scrollRectToVisible(filesTable.getCellRect(0, 0, false));
         }
 
+        enableReshake();
+
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
@@ -2024,7 +2026,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
                     for (int i = 0; i < allFiles.size() && mgfConversionOk; i++) {
 
-                        String currentFile = selectedSpectrumFiles.get(i);
+                        String currentFile = allFiles.get(i);
                         String currentFileName = currentFile.substring(currentFile.lastIndexOf("/")).toLowerCase();
                         boolean unzipped = true;
 
@@ -2046,7 +2048,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             if (unzipped) {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
 
-                                if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                if (selectedSpectrumFiles.contains(currentFile)) {
                                     if (currentFile.toLowerCase().endsWith(".mgf")) {
                                         currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
                                     } else {
@@ -2055,7 +2057,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                 }
                             } else {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                                if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                if (selectedSpectrumFiles.contains(currentFile)) {
                                     if (currentFile.toLowerCase().endsWith(".mgf.")) {
                                         currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
                                     } else {
@@ -2063,7 +2065,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                     }
                                 }
                             }
-                            if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                            if (selectedSpectrumFiles.contains(currentFile)) {
                                 mgfFiles.add(currentMgfFile);
                             }
                         } catch (MalformedURLException ex) {
@@ -2124,11 +2126,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                     saveUrl(currentZippedPrideDataFile, currentFile, fileSizes.get(i), progressDialog);
 
                                     // file downloaded, unzip file
-                                    if (selectedSpectrumFiles.size() > 1) {
-                                        progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
-                                    } else {
-                                        progressDialog.setTitle("Unzipping File. Please Wait...");
-                                    }
+                                    progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + selectedSpectrumFiles.size() + "). Please Wait...");
+
                                     progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                     if (!unzipped) {
                                         unzipProject();
@@ -2145,7 +2144,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             }
 
                             // file unzipped, time to start the conversion to mgf
-                            if (!currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                            if (selectedSpectrumFiles.contains(currentFile)) {
                                 if (currentFile.toLowerCase().endsWith(".mgf")
                                         || currentFile.toLowerCase().endsWith(".mgf.gz")) {
                                     // already mgf, no conversion needed

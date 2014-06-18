@@ -235,7 +235,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         // update the border titles
         ((TitledBorder) spectrumPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Spectrum Files (" + spectrumTable.getRowCount() + ")");
         spectrumPanel.repaint();
-        ((TitledBorder) searchSettingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Spectrum Files (" + searchSettingsTable.getRowCount() + ")");
+        ((TitledBorder) searchSettingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Search Settings (" + searchSettingsTable.getRowCount() + ")");
         searchSettingsPanel.repaint();
     }
 
