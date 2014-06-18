@@ -3,7 +3,16 @@
 
 ----
 
-*Changes in PeptideShaker 0.31.0 (June 18. 2014)*
+*Changes in PeptideShaker 0.31.2 (June 18. 2014)*
+
+ * BUG FIX: Improved the PTM mapping during file import.
+ * BUG FIX: Fixed bugs in the PRIDE Reshake.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.28.20.
+
+----
+
+*Changes in PeptideShaker 0.31.1 (June 18. 2014)*
 
  * BUG FIX: Fixed bugs in the PRIDE Reshake.
 
