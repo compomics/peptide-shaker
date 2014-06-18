@@ -439,11 +439,11 @@ public class FileImporter {
             Collections.sort(names);
 
             // Process sequencing files first, they need much more memory
-            for (String name : names) {
-                if (name.endsWith("tags")) {
-
-                }
-            }
+//            for (String name : names) {
+//                if (name.endsWith("tags")) {
+//
+//                }
+//            }
             for (String name : names) {
                 this.idFiles.add(filesMap.get(name));
             }
