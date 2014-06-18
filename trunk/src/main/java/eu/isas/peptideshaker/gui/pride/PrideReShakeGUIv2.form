@@ -476,7 +476,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="11" style="2"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Select the files to Reshake and click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML."/>
+                <Property name="text" type="java.lang.String" value="When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="reshakableCheckBox">
