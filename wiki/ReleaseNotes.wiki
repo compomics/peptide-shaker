@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.31.0 (June 18. 2014)*
+
+ * BUG FIX: Fixed bugs in the PRIDE Reshake.
+
+----
+
 *Changes in PeptideShaker 0.31.0 (June 17. 2014)*
 
  * NEW FEATURE: Redesigned PRIDE Reshake.
