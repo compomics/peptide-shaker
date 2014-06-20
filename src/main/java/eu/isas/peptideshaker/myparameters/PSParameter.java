@@ -374,11 +374,7 @@ public class PSParameter implements UrParameter {
      */
     public double getPsmScore() {
         double score;
-        if (psmProbabilityScore < Math.pow(10, -100)) {
-            score = 100;
-        } else {
             score = -10 * Math.log10(psmProbabilityScore);
-        }
         if (score <= 0) {
             score = 0;
         }
