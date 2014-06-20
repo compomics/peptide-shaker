@@ -55,7 +55,7 @@ public class NewContactDialog extends javax.swing.JDialog {
         
         nameJTextField.setText(contact.getName());
         eMailJTextField.setText(contact.getEMail());
-        institutionJTextArea.setText(contact.getInstitution());
+        institutionJTextField.setText(contact.getInstitution());
         validateInput();
         
         setTitle("Edit Contact");
@@ -79,9 +79,8 @@ public class NewContactDialog extends javax.swing.JDialog {
         nameLabel = new javax.swing.JLabel();
         eMailLabel = new javax.swing.JLabel();
         eMailJTextField = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        institutionJTextArea = new javax.swing.JTextArea();
         nameJTextField = new javax.swing.JTextField();
+        institutionJTextField = new javax.swing.JTextField();
         okJButton = new javax.swing.JButton();
         cancelJButton = new javax.swing.JButton();
 
@@ -111,23 +110,17 @@ public class NewContactDialog extends javax.swing.JDialog {
             }
         });
 
-        institutionJTextArea.setColumns(20);
-        institutionJTextArea.setFont(institutionJTextArea.getFont());
-        institutionJTextArea.setLineWrap(true);
-        institutionJTextArea.setRows(2);
-        institutionJTextArea.setWrapStyleWord(true);
-        institutionJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                institutionJTextAreaKeyReleased(evt);
-            }
-        });
-        jScrollPane2.setViewportView(institutionJTextArea);
-
         nameJTextField.setFont(nameJTextField.getFont());
         nameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         nameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 nameJTextFieldKeyReleased(evt);
+            }
+        });
+
+        institutionJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                institutionJTextFieldKeyReleased(evt);
             }
         });
 
@@ -143,9 +136,9 @@ public class NewContactDialog extends javax.swing.JDialog {
                     .addComponent(institutionLabel))
                 .addGap(16, 16, 16)
                 .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
-                    .addComponent(eMailJTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(nameJTextField))
+                    .addComponent(eMailJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                    .addComponent(nameJTextField)
+                    .addComponent(institutionJTextField))
                 .addContainerGap())
         );
         contactPanelLayout.setVerticalGroup(
@@ -159,15 +152,11 @@ public class NewContactDialog extends javax.swing.JDialog {
                 .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(eMailJTextField)
                     .addComponent(eMailLabel))
-                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(contactPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
-                    .addGroup(contactPanelLayout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(institutionLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(institutionJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(institutionLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         okJButton.setText("OK");
@@ -207,12 +196,12 @@ public class NewContactDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(contactPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(contactPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okJButton)
                     .addComponent(cancelJButton))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -239,13 +228,6 @@ public class NewContactDialog extends javax.swing.JDialog {
     /**
      * @see #validateInput() 
      */
-    private void institutionJTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_institutionJTextAreaKeyReleased
-        validateInput();
-    }//GEN-LAST:event_institutionJTextAreaKeyReleased
-
-    /**
-     * @see #validateInput() 
-     */
     private void nameJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_nameJTextFieldKeyReleased
@@ -256,7 +238,7 @@ public class NewContactDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
-        Contact tempContact = new Contact(nameJTextField.getText(), eMailJTextField.getText(), institutionJTextArea.getText());
+        Contact tempContact = new Contact(nameJTextField.getText(), eMailJTextField.getText(), institutionJTextField.getText());
         
         if (modifiedRow != -1) {
             newContactGroupDialog.editContact(tempContact, modifiedRow);
@@ -276,15 +258,21 @@ public class NewContactDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelJButtonActionPerformed
 
+    /**
+     * @see #validateInput() 
+     */
+    private void institutionJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_institutionJTextFieldKeyReleased
+        validateInput();
+    }//GEN-LAST:event_institutionJTextFieldKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelJButton;
     private javax.swing.JPanel contactPanel;
     private javax.swing.JTextField eMailJTextField;
     private javax.swing.JLabel eMailLabel;
-    private javax.swing.JTextArea institutionJTextArea;
+    private javax.swing.JTextField institutionJTextField;
     private javax.swing.JLabel institutionLabel;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nameJTextField;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JButton okJButton;
@@ -309,7 +297,7 @@ public class NewContactDialog extends javax.swing.JDialog {
         
         if (nameJTextField.getText().length() > 0 
                 && eMailJTextField.getText().length() > 0
-                && institutionJTextArea.getText().length() > 0) {
+                && institutionJTextField.getText().length() > 0) {
             okJButton.setEnabled(true);
         } else {
             okJButton.setEnabled(false);
@@ -328,7 +316,7 @@ public class NewContactDialog extends javax.swing.JDialog {
             eMailLabel.setForeground(Color.RED);
         }
         
-        if (institutionJTextArea.getText().length() > 0) {
+        if (institutionJTextField.getText().length() > 0) {
             institutionLabel.setForeground(Color.BLACK);
         } else {
             institutionLabel.setForeground(Color.RED);

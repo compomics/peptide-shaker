@@ -59,7 +59,7 @@
                           <Component id="aboutButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                           <Component id="peptideShakerHomePageLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="175" max="32767" attributes="0"/>
                           <Component id="reshakeButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -108,7 +108,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="spectrumLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="310" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="selectAllLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="dataTypeSeparatorLabel" min="-2" max="-2" attributes="0"/>
@@ -317,26 +317,19 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="speciesLabel" min="-2" pref="70" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="speciesJTextField" pref="565" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="databaseSettingsLbl" min="-2" pref="70" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="databaseSettingsTxt" max="32767" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="databaseSettingsLbl" alignment="0" min="-2" pref="70" max="-2" attributes="0"/>
+                          <Component id="speciesLabel" alignment="0" min="-2" pref="70" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="speciesJTextField" max="32767" attributes="0"/>
+                          <Component id="databaseSettingsTxt" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="browseDatabaseSettingsButton" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="targetDecoySettingsButton" linkSize="1" min="-2" pref="73" max="-2" attributes="0"/>
-                          </Group>
                           <Component id="downloadUniProtJLabel" max="32767" attributes="0"/>
+                          <Component id="browseDatabaseSettingsButton" pref="80" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -356,7 +349,6 @@
                           <Component id="databaseSettingsLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseDatabaseSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="databaseSettingsTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="targetDecoySettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -373,6 +365,9 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="downloadUniProtJLabel">
@@ -381,8 +376,8 @@
                   <Color blue="ff" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;&lt;i&gt;Download from UniProt&lt;/i&gt;&lt;/u&gt;&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Download UniProt Database"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;u&gt;UniProt&lt;/u&gt;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Click to Download UniProt Database"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="downloadUniProtJLabelMouseClicked"/>
@@ -406,6 +401,9 @@
             <Component class="javax.swing.JTextField" name="databaseSettingsTxt">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="browseDatabaseSettingsButton">
@@ -414,16 +412,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="browseDatabaseSettingsButtonActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="targetDecoySettingsButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Decoy"/>
-                <Property name="toolTipText" type="java.lang.String" value="Generate a concatenated Target/Decoy database"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="targetDecoySettingsButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -446,11 +434,11 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="workingFolderLbl" min="-2" pref="70" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Component id="workingFolderTxt" pref="569" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="workingFolderTxt" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="browseWorkingFolderButton" min="-2" pref="80" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -477,6 +465,9 @@
             <Component class="javax.swing.JTextField" name="workingFolderTxt">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="browseWorkingFolderButton">
@@ -502,7 +493,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Start the Reshaking!"/>
+            <Property name="text" type="java.lang.String" value="  Start Reshaking!  "/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>

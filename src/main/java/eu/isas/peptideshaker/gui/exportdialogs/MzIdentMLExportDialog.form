@@ -375,6 +375,9 @@
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="organizationAddressJTextFieldKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="organizationUrlLabel">
               <Properties>

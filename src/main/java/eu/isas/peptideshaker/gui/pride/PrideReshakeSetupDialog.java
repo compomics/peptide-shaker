@@ -5,28 +5,23 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
+import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
@@ -338,7 +333,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         databaseSettingsLbl = new javax.swing.JLabel();
         databaseSettingsTxt = new javax.swing.JTextField();
         browseDatabaseSettingsButton = new javax.swing.JButton();
-        targetDecoySettingsButton = new javax.swing.JButton();
         workingFolderPanel = new javax.swing.JPanel();
         workingFolderLbl = new javax.swing.JLabel();
         workingFolderTxt = new javax.swing.JTextField();
@@ -434,7 +428,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             .addGroup(spectrumPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(spectrumLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 310, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dataTypeSeparatorLabel)
@@ -536,11 +530,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         speciesJTextField.setEditable(false);
         speciesJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        speciesJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
         downloadUniProtJLabel.setForeground(new java.awt.Color(0, 0, 255));
         downloadUniProtJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        downloadUniProtJLabel.setText("<html><u><i>Download from UniProt</i></u></html>");
-        downloadUniProtJLabel.setToolTipText("Download UniProt Database");
+        downloadUniProtJLabel.setText("<html><u>UniProt</u></html>");
+        downloadUniProtJLabel.setToolTipText("Click to Download UniProt Database");
         downloadUniProtJLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 downloadUniProtJLabelMouseClicked(evt);
@@ -568,20 +563,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         });
 
         databaseSettingsTxt.setEditable(false);
+        databaseSettingsTxt.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
         browseDatabaseSettingsButton.setText("Browse");
         browseDatabaseSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseDatabaseSettingsButtonActionPerformed(evt);
-            }
-        });
-
-        targetDecoySettingsButton.setText("Decoy");
-        targetDecoySettingsButton.setToolTipText("Generate a concatenated Target/Decoy database");
-        targetDecoySettingsButton.setEnabled(false);
-        targetDecoySettingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                targetDecoySettingsButtonActionPerformed(evt);
             }
         });
 
@@ -591,27 +578,19 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(databasePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(databasePanelLayout.createSequentialGroup()
-                        .addComponent(speciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(speciesJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE))
-                    .addGroup(databasePanelLayout.createSequentialGroup()
-                        .addComponent(databaseSettingsLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(databaseSettingsTxt)))
+                .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(databaseSettingsLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(speciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(speciesJTextField)
+                    .addComponent(databaseSettingsTxt))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(databasePanelLayout.createSequentialGroup()
-                        .addComponent(browseDatabaseSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(targetDecoySettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(downloadUniProtJLabel))
+                    .addComponent(downloadUniProtJLabel)
+                    .addComponent(browseDatabaseSettingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        databasePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseDatabaseSettingsButton, targetDecoySettingsButton});
-
         databasePanelLayout.setVerticalGroup(
             databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, databasePanelLayout.createSequentialGroup()
@@ -624,8 +603,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addGroup(databasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(databaseSettingsLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseDatabaseSettingsButton)
-                    .addComponent(databaseSettingsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(targetDecoySettingsButton))
+                    .addComponent(databaseSettingsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -635,6 +613,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         workingFolderLbl.setText("Folder");
 
         workingFolderTxt.setEditable(false);
+        workingFolderTxt.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
         browseWorkingFolderButton.setText("Browse");
         browseWorkingFolderButton.addActionListener(new java.awt.event.ActionListener() {
@@ -650,11 +629,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             .addGroup(workingFolderPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(workingFolderLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(workingFolderTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(workingFolderTxt)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(browseWorkingFolderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(92, 92, 92))
+                .addContainerGap())
         );
         workingFolderPanelLayout.setVerticalGroup(
             workingFolderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -670,7 +649,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         reshakeButton.setBackground(new java.awt.Color(0, 153, 0));
         reshakeButton.setFont(reshakeButton.getFont().deriveFont(reshakeButton.getFont().getStyle() | java.awt.Font.BOLD));
         reshakeButton.setForeground(new java.awt.Color(255, 255, 255));
-        reshakeButton.setText("Start the Reshaking!");
+        reshakeButton.setText("  Start Reshaking!  ");
         reshakeButton.setEnabled(false);
         reshakeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -717,7 +696,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         .addComponent(aboutButton)
                         .addGap(44, 44, 44)
                         .addComponent(peptideShakerHomePageLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
                         .addComponent(reshakeButton)))
                 .addContainerGap())
         );
@@ -811,7 +790,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                             JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                     "PRIDE web service access error. Cannot open:<br>"
                                     + link + "<br>"
-                                    + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                                    + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                                     "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                             System.out.println("Not found: " + link + "!");
                         }
@@ -847,7 +826,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                 JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                         "PRIDE web service access error. Cannot open:<br>"
                                         + link + "<br>"
-                                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                                 System.out.println("Not found: " + link + "!");
                             }
@@ -891,7 +870,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
+            String link = "http://www.uniprot.org/uniprot/?query=organism:\"" + species + "\"&sort=score";
+            BareBonesBrowserLaunch.openURL(link);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_downloadUniProtJLabelMouseClicked
@@ -925,76 +905,24 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsButtonActionPerformed
 
-        File startLocation = new File(prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder());
-        UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-        if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
-            startLocation = utilitiesUserPreferences.getDbFolder();
+        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(prideReShakeGUI, prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), true,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+        boolean success = sequenceDbDetailsDialog.selectDB(true);
+        if (success) {
+            sequenceDbDetailsDialog.setVisible(true);
         }
 
-        // First check whether a file has already been selected.
-        // If so, start from that file's parent.
-        if (databaseSettingsTxt.getText() != null && new File(databaseSettingsTxt.getText()).exists()) {
-            File temp = new File(databaseSettingsTxt.getText());
-            startLocation = temp.getParentFile();
+        prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
+
+        if (sequenceFactory.getCurrentFastaFile() != null) {
+            databaseSettingsTxt.setText(sequenceFactory.getCurrentFastaFile().getAbsolutePath());
+            checkFastaFile();
         }
 
-        JFileChooser fc = new JFileChooser(startLocation);
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("fasta")
-                        || myFile.getName().toLowerCase().endsWith("fas")
-                        || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Supported formats: FASTA (.fasta or .fas)";
-            }
-        };
-
-        fc.setFileFilter(filter);
-        int result = fc.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-
-            if (file.getName().indexOf(" ") != -1) {
-                renameFastaFileName(file);
-            } else {
-                databaseSettingsTxt.setText(file.getAbsolutePath());
-                databaseSettingsTxt.setText(file.getAbsolutePath());
-            }
-
-            prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(file.getAbsolutePath());
-            targetDecoySettingsButton.setEnabled(true);
-
-            // check if the database contains decoys
-            if (!file.getAbsolutePath().endsWith(SequenceFactory.getTargetDecoyFileNameTag())) {
-
-                int value = JOptionPane.showConfirmDialog(this,
-                        "The selected FASTA file does not seem to contain decoy sequences.\n"
-                        + "Decoys are required by PeptideShaker. Add decoys?", "Add Decoy Sequences?", JOptionPane.YES_NO_OPTION);
-
-                if (value == JOptionPane.NO_OPTION) {
-                    // do nothing
-                } else if (value == JOptionPane.YES_OPTION) {
-                    targetDecoySettingsButtonActionPerformed(null);
-                }
-            }
-
-            validateInput(false);
-        }
+        validateInput(false);
     }//GEN-LAST:event_browseDatabaseSettingsButtonActionPerformed
-
-    /**
-     * Generates a target-decoy database.
-     *
-     * @param evt
-     */
-    private void targetDecoySettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_targetDecoySettingsButtonActionPerformed
-        generateTargetDecoyDatabase();
-    }//GEN-LAST:event_targetDecoySettingsButtonActionPerformed
 
     /**
      * Open a file chooser where the user can select the working/output
@@ -1418,65 +1346,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     private javax.swing.JPanel spectrumPanel;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableScrollPane;
-    private javax.swing.JButton targetDecoySettingsButton;
     private javax.swing.JLabel workingFolderLbl;
     private javax.swing.JPanel workingFolderPanel;
     private javax.swing.JTextField workingFolderTxt;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Copies the content of the FASTA file to a new file and replaces any white
-     * space in the file name with '_' instead.
-     *
-     * @param file
-     */
-    public void renameFastaFileName(File file) {
-
-        // @TODO: this method should be merged with the identical method in SearchGUI...
-        String tempName = file.getName();
-        tempName = tempName.replaceAll(" ", "_");
-
-        File renamedFile = new File(file.getParentFile().getAbsolutePath() + File.separator + tempName);
-
-        boolean success = false;
-
-        try {
-            success = renamedFile.createNewFile();
-
-            if (success) {
-
-                FileReader r = new FileReader(file);
-                BufferedReader br = new BufferedReader(r);
-
-                FileWriter w = new FileWriter(renamedFile);
-                BufferedWriter bw = new BufferedWriter(w);
-
-                String line = br.readLine();
-
-                while (line != null) {
-                    bw.write(line + "\n");
-                    line = br.readLine();
-                }
-
-                bw.close();
-                w.close();
-                br.close();
-                r.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Your FASTA file name contained white space and has been renamed to:\n"
-                    + file.getParentFile().getAbsolutePath() + File.separator + tempName, "Renamed File", JOptionPane.WARNING_MESSAGE);
-            databaseSettingsTxt.setText(file.getParentFile().getAbsolutePath() + File.separator + tempName);
-            targetDecoySettingsButton.setEnabled(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Your FASTA file name contains white space and has to been renamed.",
-                    "Please Rename File", JOptionPane.WARNING_MESSAGE);
-        }
-    }
 
     /**
      * Inspects the parameters validity.
@@ -1549,144 +1422,32 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Adds a decoy database to the current FASTA file.
+     * Checks whether the FASTA file loaded is UniProt concatenated target
+     * decoy.
      */
-    public void generateTargetDecoyDatabase() {
+    public void checkFastaFile() {
+        if (sequenceFactory.getCurrentFastaIndex().getDatabaseType() != Header.DatabaseType.UniProt) {
+            showDataBaseHelpDialog();
+        }
+        if (!sequenceFactory.concatenatedTargetDecoy()) {
+            JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                    + "Some features will be limited if using other types of databases.\n\n"
+                    + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+                    + "See the PeptideShaker home page for details.",
+                    "No Decoys Found",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
-        // @TODO: this method should be merged with the identical method in SearchGUI...
-        progressDialog = new ProgressDialogX(this, prideReShakeGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-        progressDialog.setTitle("Creating Decoy. Please Wait...");
-
-        final PrideReshakeSetupDialog finalRef = this;
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("DecoyThread") {
-            public void run() {
-
-                String fastaInput = databaseSettingsTxt.getText().trim();
-                try {
-                    progressDialog.setTitle("Importing Database. Please Wait...");
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    sequenceFactory.loadFastaFile(new File(fastaInput), progressDialog);
-                } catch (IOException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            "File " + fastaInput + " not found.",
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (ClassNotFoundException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, JOptionEditorPane.getJOptionEditorPane("File index of " + fastaInput + " could not be imported.<br>"
-                            + "Please <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">contact the developers</a>."),
-                            "FASTA Import Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (StringIndexOutOfBoundsException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                } catch (IllegalArgumentException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                }
-
-                if (sequenceFactory.concatenatedTargetDecoy() && !progressDialog.isRunCanceled()) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef,
-                            "The database already contains decoy sequences.",
-                            "FASTA File Already Decoy!", JOptionPane.WARNING_MESSAGE);
-                    targetDecoySettingsButton.setEnabled(false);
-                    return;
-                }
-
-                if (!progressDialog.isRunCanceled()) {
-
-                    try {
-                        String newFasta = fastaInput.substring(0, fastaInput.lastIndexOf("."));
-                        newFasta += SequenceFactory.getTargetDecoyFileNameTag();
-                        progressDialog.setTitle("Appending Decoy Sequences. Please Wait...");
-                        sequenceFactory.appendDecoySequences(new File(newFasta), progressDialog);
-                        databaseSettingsTxt.setText(newFasta);
-                        targetDecoySettingsButton.setEnabled(false);
-                    } catch (IllegalArgumentException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA File Error.", fastaInput + " already contains decoy sequences."},
-                                "FASTA File Error", JOptionPane.WARNING_MESSAGE);
-                        targetDecoySettingsButton.setEnabled(false);
-                        e.printStackTrace();
-                        return;
-                    } catch (OutOfMemoryError error) {
-                        System.err.println("Ran out of memory!");
-                        System.err.println("Memory given to the Java virtual machine: " + Runtime.getRuntime().maxMemory() + ".");
-                        System.err.println("Memory used by the Java virtual machine: " + Runtime.getRuntime().totalMemory() + ".");
-                        System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
-                        Runtime.getRuntime().gc();
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                "PeptideShaker used up all the available memory and had to be stopped.\n"
-                                + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
-                                + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
-                                + "Java Options).\n\n"
-                                + "More help can be found at our website http://peptide-shaker.googlecode.com.",
-                                "Out Of Memory Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        System.out.println("Ran out of memory!");
-                        error.printStackTrace();
-                        return;
-                    } catch (IOException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " not found."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    } catch (InterruptedException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    } catch (ClassNotFoundException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(finalRef,
-                                new String[]{"FASTA Import Error.", "File " + fastaInput + " could not be imported."},
-                                "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    }
-                }
-
-                if (!progressDialog.isRunCanceled()) {
-                    progressDialog.setRunFinished();
-                    targetDecoySettingsButton.setEnabled(false);
-                    JOptionPane.showMessageDialog(finalRef, "Concatenated decoy database created and selected.", "Decoy Created", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    progressDialog.setRunFinished();
-                }
-            }
-        }.start();
+    /**
+     * Show a simple dialog saying that UniProt databases is recommended and
+     * display a link to the Database Help web page.
+     */
+    private void showDataBaseHelpDialog() {
+        JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                "We strongly recommend the use of UniProt databases. Some<br>"
+                + "features will be limited if using other databases.<br><br>"
+                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."),
+                "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 }

@@ -9,7 +9,15 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import javax.swing.*;
+import org.xml.sax.SAXException;
+import uk.ac.ebi.pride.tools.ErrorHandlerIface;
+import uk.ac.ebi.pride.tools.GenericSchemaValidator;
+import uk.ac.ebi.pride.tools.ValidationErrorHandler;
 
 /**
  * A dialog where the user can export the project to mzIdentML.
@@ -26,6 +34,11 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * The PeptideShakerGUI main class.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * If true, the created mzid file will be validated against the mzid 1.1
+     * schema.
+     */
+    private boolean validateMzIdentML = true;
 
     /**
      * Create a new MzIdentMLExportDialog.
@@ -263,6 +276,11 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
         organizationAddressLabel.setText("Address");
 
         organizationAddressJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
+        organizationAddressJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                organizationAddressJTextFieldKeyReleased(evt);
+            }
+        });
 
         organizationUrlLabel.setText("URL");
 
@@ -492,11 +510,11 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
             String path = selectedFile.getAbsolutePath();
-            
+
             if (!path.endsWith(".mzid")) {
                 path += ".mzid";
             }
-            
+
             peptideShakerGUI.setLastSelectedFolder(selectedFile.getParentFile().getAbsolutePath());
             outputFolderJTextField.setText(path);
         }
@@ -584,14 +602,39 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 boolean conversionCompleted = false;
 
                 try {
-                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(), 
-                            peptideShakerGUI.getProcessingPreferences(),peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), 
-                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(), 
+                    MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
+                            peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(),
+                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             peptideShakerGUI.getAnnotationPreferences(), finalOutputFile, progressDialog);
                     mzIdentMLExport.createMzIdentMLFile();
 
-                    // @TODO: validate mzIdentML file..?
-                    conversionCompleted = true;
+                    // validate the mzidentml file
+//                    if (!progressDialog.isRunCanceled()) {
+//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+//                        progressDialog.setTitle("Validating mzIdentML. Please Wait...");
+//                        MzIdentMLValidator validator = new MzIdentMLValidator();
+//                        conversionCompleted = validator.validate(finalOutputFile);
+//
+//                        // see if any errors were found, and display them to the user
+//                        if (!conversionCompleted) {
+//                            JOptionPane.showMessageDialog(null, validator.getErrorsAsString(), "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
+//                        }
+//                    } else {
+//                        conversionCompleted = true;
+//                    }
+////                            // validate the mzidentml file
+//                    if (validateMzIdentML && !progressDialog.isRunCanceled()) {
+//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+//                        progressDialog.setTitle("Validating mzIdentML. Please Wait...");
+//                        String errors = validateMzIdentML(finalOutputFile);
+//
+//                        // see if any errors were found, and display them to the user
+//                        if (!errors.isEmpty()) {
+//                            JOptionPane.showMessageDialog(null, errors, "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
+//                        } else {
+                            conversionCompleted = true;
+//                        }
+//                    }
 
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -653,6 +696,13 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private void contactAddressJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_contactAddressJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_contactAddressJTextFieldKeyReleased
+
+    /**
+     * @see #validateInput()
+     */
+    private void organizationAddressJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_organizationAddressJTextFieldKeyReleased
+        validateInput();
+    }//GEN-LAST:event_organizationAddressJTextFieldKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundJPanel;
@@ -763,5 +813,40 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      */
     public boolean progressCancelled() {
         return progressDialog.isRunCanceled();
+    }
+
+    /**
+     * Validates the mzIdentML file according to the schema.
+     * 
+     * @param mzidFile the file to validate
+     * @return the error messages, if any
+     * @throws SAXException
+     * @throws MalformedURLException
+     * @throws FileNotFoundException
+     * @throws URISyntaxException 
+     */
+    private String validateMzIdentML(File mzidFile) throws SAXException, MalformedURLException, FileNotFoundException, URISyntaxException {
+
+        String errors = "";
+
+        GenericSchemaValidator genericValidator = new GenericSchemaValidator();
+        genericValidator.setSchema(new URI("http://www.psidev.info/files/mzIdentML1.1.0.xsd"));
+
+        ErrorHandlerIface handler = new ValidationErrorHandler();
+        genericValidator.setErrorHandler(handler);
+        BufferedReader br = new BufferedReader(new FileReader(mzidFile));
+        genericValidator.validate(br);
+
+        //noinspection unchecked
+        List<String> errorMsgs = handler.getErrorMessages();
+        if (!errorMsgs.isEmpty()) {
+            int errorCount = 0;
+            for (String error : errorMsgs) {
+                errors += ++errorCount + ": " + error + "\n\n";
+                System.out.println(errorCount + ": " + error);
+            }
+        }
+
+        return errors;
     }
 }
