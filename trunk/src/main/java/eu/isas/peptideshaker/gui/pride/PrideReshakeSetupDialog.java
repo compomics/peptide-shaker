@@ -855,28 +855,6 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
     /**
-     * Open the UniProt download page for the given species.
-     *
-     * @param evt
-     */
-    private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
-        if (downloadUniProtJLabel.isEnabled()) {
-
-            String species = speciesJTextField.getText().trim();
-
-            // try to clean up the species field, e.g., Mus musculus (Mouse) to Mus musculus
-            if (species.endsWith(")") && species.lastIndexOf(",") == -1) {
-                species = species.substring(0, species.indexOf("("));
-            }
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            String link = "http://www.uniprot.org/uniprot/?query=organism:\"" + species + "\"&sort=score";
-            BareBonesBrowserLaunch.openURL(link);
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
-    }//GEN-LAST:event_downloadUniProtJLabelMouseClicked
-
-    /**
      * Change the cursor to a hand cursor.
      *
      * @param evt
@@ -1321,6 +1299,31 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     private void databaseSettingsLblMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_databaseSettingsLblMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_databaseSettingsLblMouseExited
+
+    /**
+     * Open the UniProt download page for the given species.
+     *
+     * @param evt
+     */
+    private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
+        if (downloadUniProtJLabel.isEnabled()) {
+
+            String species = speciesJTextField.getText().trim();
+
+            // try to clean up the species field, e.g., Mus musculus (Mouse) to Mus musculus
+            if (species.endsWith(")") && species.lastIndexOf(",") == -1) {
+                species = species.substring(0, species.indexOf("(")).trim();
+            }
+
+            species = species.replaceAll(" ", "%20");
+            
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            //String link = "http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score";
+            String link = "http://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
+            BareBonesBrowserLaunch.openURL(link);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_downloadUniProtJLabelMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;

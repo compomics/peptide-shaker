@@ -370,12 +370,12 @@ public class MzIdentMLExport {
                 + "id=\"PROVIDER\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<Affiliation organization_ref=\"ORG_DOC_OWNER\"/>" + System.getProperty("line.separator"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000587", "contact address", projectDetails.getContactAddress()));
         if (projectDetails.getContactUrl() != null && !projectDetails.getContactUrl().isEmpty()) {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1000588", "contact url", projectDetails.getContactUrl()));
         }
         writeCvTerm(new CvTerm("PSI-MS", "MS:1000589", "contact email", projectDetails.getContactEmail()));
+        br.write(getCurrentTabSpace() + "<Affiliation organization_ref=\"ORG_DOC_OWNER\"/>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Person>" + System.getProperty("line.separator"));
 
@@ -431,7 +431,7 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<DBSequence id=\"" + currentProtein.getAccession() + "\" "
                     + "accession=\"" + currentProtein.getAccession() + "\" searchDatabase_ref=\"" + "SearchDB_1" + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
-            br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
+            //br.write(getCurrentTabSpace() + "<Seq>" + currentProtein.getSequence() + "</Seq>" + System.getProperty("line.separator"));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001088", "protein description", StringEscapeUtils.escapeHtml4(sequenceFactory.getHeader(currentProtein.getAccession()).getDescription())));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</DBSequence>" + System.getProperty("line.separator"));
@@ -696,7 +696,7 @@ public class MzIdentMLExport {
             if (cvTerm != null) {
                 writeCvTerm(cvTerm);
             } else {
-                throw new IllegalArgumentException("The PTM " + ptm + " does not map to a CV term. This is mandatory in mzIdentML files. Please add a mapping and try again.");
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1001460", "unknown modification", null));
             }
 
             // add modification specificity
@@ -1537,10 +1537,10 @@ public class MzIdentMLExport {
      */
     private void writeMzIdentMLStartTag() throws IOException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        br.write("<?xml version=\"1.1\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
+        br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
         br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
-                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1\" "
+                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
                 + "creationDate=\"" + df.format(new Date()) + "\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
