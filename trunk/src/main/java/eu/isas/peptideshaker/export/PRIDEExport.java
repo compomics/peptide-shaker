@@ -556,7 +556,7 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                         tabCounter++;
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                        writeCvTerm(new CvTerm("MS", "MS:1000796", "Spectrum Title", "" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey))));
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "Spectrum Title", "" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey))));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Protein Inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
@@ -579,7 +579,7 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"" + matchValidationLevel + "\" />" + System.getProperty("line.separator"));
                         }
 
-                        writeCvTerm(new CvTerm("MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1000041", "Charge State", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
                         //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
 
                         // search engine specific parameters
@@ -587,32 +587,32 @@ public class PRIDEExport {
                         Collections.sort(searchEngines);
 
                         // add the search engine e-values
-                        for (int advocateIndex : searchEngines) {
-
-                            String eValue = eValues.get(advocateIndex).toString();
-
-                            if (advocateIndex == Advocate.msgf.getIndex()) {
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", eValue));
-                            } else if (advocateIndex == Advocate.mascot.getIndex()) {
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", eValue));
-                            } else if (advocateIndex == Advocate.omssa.getIndex()) {
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", eValue));
-                            } else if (advocateIndex == Advocate.xtandem.getIndex()) {
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", eValue));
+                        ArrayList<Integer> algorithms = new ArrayList<Integer>(eValues.keySet());
+                        Collections.sort(algorithms);
+                        for (int tempAdvocate : algorithms) {
+                            double eValue = eValues.get(tempAdvocate);
+                            if (tempAdvocate == Advocate.msgf.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002052", "MS-GF:SpecEValue", Double.toString(eValue)));
+                            } else if (tempAdvocate == Advocate.mascot.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001172", "Mascot:expectation value", Double.toString(eValue)));
+                            } else if (tempAdvocate == Advocate.omssa.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
+                            } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
                             } else {
-                                // @TODO: what to add for the new advocates??
-                                // @TODO: generic e-value for user algorithms?
-                                Advocate advocate = Advocate.getAdvocate(fileName);
-                                br.write(getCurrentTabSpace() + "<userParam name=\"" + advocate.getName() + " e-value\" value=\"" + eValues.get(advocateIndex) + "\" />" + System.getProperty("line.separator"));
+                                br.write(getCurrentTabSpace() + "<userParam name=\"" + Advocate.getAdvocate(tempAdvocate).getName()
+                                        + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));  // @TODO: add cv params for the other new advocates
                             }
+
+                            // @TODO: add generic e-value for user algorithms?
                         }
 
                         // add the additional search engine scores
                         if (mascotScore != null) {
-                            writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1001171", "Mascot:score", "" + mascotScore));
                         }
                         if (msAmandaScore != null) {
-                            writeCvTerm(new CvTerm("MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
                         }
 
                         // @TODO: add additional scores for OMSSA and X!Tandem as well
@@ -645,7 +645,7 @@ public class PRIDEExport {
                 }
                 try {
                     if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        writeCvTerm(new CvTerm("MS", "MS:1001905", "emPAI value", "" + identificationFeaturesGenerator.getSpectrumCounting(proteinKey)));
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001905", "emPAI value", "" + identificationFeaturesGenerator.getSpectrumCounting(proteinKey)));
                     } else {
                         br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
                                 + identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
@@ -815,7 +815,7 @@ public class PRIDEExport {
 
             if (cvTerm == null) {
                 br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>" + System.getProperty("line.separator"));
-                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MS" + "</ModDatabase>" + System.getProperty("line.separator"));
+                br.write(getCurrentTabSpace() + "<ModDatabase>" + "PSI-MS" + "</ModDatabase>" + System.getProperty("line.separator"));
             } else {
                 br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<ModDatabase>" + "UNIMOD" + "</ModDatabase>" + System.getProperty("line.separator"));

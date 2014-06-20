@@ -800,7 +800,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         filesHelpLabel.setText("When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML.");
 
         reshakableCheckBox.setSelected(true);
-        reshakableCheckBox.setText("Reshakeable Files");
+        reshakableCheckBox.setText("Reshakeable Files Only");
         reshakableCheckBox.setToolTipText("Show only files that can be re-analyzed");
         reshakableCheckBox.setIconTextGap(10);
         reshakableCheckBox.setOpaque(false);
@@ -1544,7 +1544,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             } catch (ResourceAccessException e) {
                 JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
@@ -1671,7 +1671,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             } catch (ResourceAccessException e) {
                 JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
@@ -1773,7 +1773,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                         "PRIDE web service access error. Cannot open:<br>"
                         + url + "<br>"
-                        + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             } catch (ResourceAccessException e) {
                 JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
@@ -1909,7 +1909,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
                     "PRIDE web service access error. Cannot open:<br>"
                     + "project/count or project/list<br>"
-                    + "Please contact the <a href=\"http://www.ebi.ac.uk/pride/ws/archive/\">PRIDE web service developers</a>."),
+                    + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
                     "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
         } catch (ResourceAccessException e) {
             JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);

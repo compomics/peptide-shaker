@@ -255,7 +255,7 @@ public class MzIdentMLExport {
      */
     private void writeCvList() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<cvList xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvList>" + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace()
@@ -273,6 +273,11 @@ public class MzIdentMLExport {
                 + "<cv id=\"UO\" "
                 + "uri=\"http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo\" "
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + System.getProperty("line.separator"));
+
+        br.write(getCurrentTabSpace()
+                + "<cv id=\"PRIDE\" "
+                + "uri=\"http://code.google.com/p/ebi-pride/source/browse/trunk/pride-core/schema/pride_cv.obo\" "
+                + "fullName=\"PRIDE\"/>" + System.getProperty("line.separator"));
 
         // @TODO: add more? perhaps not hardcode?
         tabCounter--;
@@ -298,12 +303,6 @@ public class MzIdentMLExport {
                 + System.getProperty("line.separator"));
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<SoftwareName>" + System.getProperty("line.separator"));
-        tabCounter++;
-        writeCvTerm(new CvTerm("PSI-MS", "MS:1002458", "PeptideShaker", null));
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</SoftwareName>" + System.getProperty("line.separator"));
-
         br.write(getCurrentTabSpace() + "<ContactRole contact_ref=\"PS_DEV\">" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<Role>" + System.getProperty("line.separator"));
@@ -313,6 +312,14 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</Role>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ContactRole>" + System.getProperty("line.separator"));
+
+        br.write(getCurrentTabSpace() + "<SoftwareName>" + System.getProperty("line.separator"));
+        tabCounter++;
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1002458", "PeptideShaker", null));
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</SoftwareName>" + System.getProperty("line.separator"));
+
+        br.write(getCurrentTabSpace() + "<Customizations>No customisations</Customizations>" + System.getProperty("line.separator"));
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</AnalysisSoftware>" + System.getProperty("line.separator"));
@@ -328,7 +335,7 @@ public class MzIdentMLExport {
      */
     private void writeProviderDetails() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<Provider id=\"PROVIDER\" xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Provider id=\"PROVIDER\">" + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<ContactRole contact_ref=\"PROVIDER\">" + System.getProperty("line.separator"));
@@ -354,7 +361,7 @@ public class MzIdentMLExport {
      */
     private void writeAuditCollection() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<AuditCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<AuditCollection>" + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<Person "
@@ -407,7 +414,7 @@ public class MzIdentMLExport {
      */
     private void writeSequenceCollection() throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
 
-        br.write(getCurrentTabSpace() + "<SequenceCollection  xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<SequenceCollection>" + System.getProperty("line.separator"));
         tabCounter++;
 
         // get the sequence database
@@ -593,7 +600,7 @@ public class MzIdentMLExport {
      */
     private void writeAnalysisCollection() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<AnalysisCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<AnalysisCollection>" + System.getProperty("line.separator"));
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentification "
@@ -603,7 +610,11 @@ public class MzIdentMLExport {
                 + System.getProperty("line.separator"));
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<InputSpectra spectraData_ref=\"SID_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
+        // iterate the spectrum files and add the file name refs
+        for (String mgfFileName : spectrumFactory.getMgfFileNames()) {
+            br.write(getCurrentTabSpace() + "<InputSpectra spectraData_ref=\"" + mgfFileName + "\"/>" + System.getProperty("line.separator"));
+        }
+
         br.write(getCurrentTabSpace() + "<SearchDatabaseRef searchDatabase_ref=\"SearchDB_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
 
         tabCounter--;
@@ -631,7 +642,7 @@ public class MzIdentMLExport {
      */
     private void writeAnalysisProtocol() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<AnalysisProtocolCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<AnalysisProtocolCollection>" + System.getProperty("line.separator"));
         tabCounter++;
 
         // add spectrum identification protocol
@@ -684,6 +695,8 @@ public class MzIdentMLExport {
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(ptm);
             if (cvTerm != null) {
                 writeCvTerm(cvTerm);
+            } else {
+                throw new IllegalArgumentException("The PTM " + ptm + " does not map to a CV term. This is mandatory in mzIdentML files. Please add a mapping and try again.");
             }
 
             // add modification specificity
@@ -988,7 +1001,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<AnalysisData>" + System.getProperty("line.separator"));
         tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<SpectrumIdentificationList id=\"SIL_1\" xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<SpectrumIdentificationList id=\"SIL_1\">" + System.getProperty("line.separator"));
         tabCounter++;
 
         writeFragmentationTable();
@@ -1323,7 +1336,7 @@ public class MzIdentMLExport {
                                     // save the special advocate scores
                                     if (tempAdvocate == Advocate.mascot.getIndex()) {
                                         mascotScore = ((MascotScore) peptideAssumption.getUrParam(new MascotScore(0))).getScore();
-                                    } else if (tempAdvocate == Advocate.msAmanda.getIndex() 
+                                    } else if (tempAdvocate == Advocate.msAmanda.getIndex()
                                             && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
                                         msAmandaScore = ((MsAmandaScore) peptideAssumption.getUrParam(new MsAmandaScore())).getScore();
                                     }
@@ -1354,10 +1367,10 @@ public class MzIdentMLExport {
 
             // add the additional search engine scores
             if (mascotScore != null) {
-                writeCvTerm(new CvTerm("MS", "MS:1001171", "Mascot:score", "" + mascotScore));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1001171", "Mascot:score", "" + mascotScore));
             }
             if (msAmandaScore != null) {
-                writeCvTerm(new CvTerm("MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
             }
 
             // add other cv and user params
@@ -1422,7 +1435,7 @@ public class MzIdentMLExport {
      */
     private void writeInputFileDetails() throws IOException {
 
-        br.write(getCurrentTabSpace() + "<Inputs xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\">" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<Inputs>" + System.getProperty("line.separator"));
         tabCounter++;
 
         int sourceFileCounter = 1;
@@ -1524,10 +1537,10 @@ public class MzIdentMLExport {
      */
     private void writeMzIdentMLStartTag() throws IOException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        br.write("<?xml version=\"1.1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
+        br.write("<?xml version=\"1.1\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
         br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
-                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
+                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1\" "
                 + "creationDate=\"" + df.format(new Date()) + "\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
