@@ -38,7 +38,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * If true, the created mzid file will be validated against the mzid 1.1
      * schema.
      */
-    private boolean validateMzIdentML = true;
+    private boolean validateMzIdentML = false; // just takes too long if switched on...
 
     /**
      * Create a new MzIdentMLExportDialog.
@@ -609,32 +609,20 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     mzIdentMLExport.createMzIdentMLFile();
 
                     // validate the mzidentml file
-//                    if (!progressDialog.isRunCanceled()) {
-//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-//                        progressDialog.setTitle("Validating mzIdentML. Please Wait...");
-//                        MzIdentMLValidator validator = new MzIdentMLValidator();
-//                        conversionCompleted = validator.validate(finalOutputFile);
-//
-//                        // see if any errors were found, and display them to the user
-//                        if (!conversionCompleted) {
-//                            JOptionPane.showMessageDialog(null, validator.getErrorsAsString(), "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
-//                        }
-//                    } else {
-//                        conversionCompleted = true;
-//                    }
-////                            // validate the mzidentml file
-//                    if (validateMzIdentML && !progressDialog.isRunCanceled()) {
-//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-//                        progressDialog.setTitle("Validating mzIdentML. Please Wait...");
-//                        String errors = validateMzIdentML(finalOutputFile);
-//
-//                        // see if any errors were found, and display them to the user
-//                        if (!errors.isEmpty()) {
-//                            JOptionPane.showMessageDialog(null, errors, "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
-//                        } else {
+                    if (validateMzIdentML && !progressDialog.isRunCanceled()) {
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        progressDialog.setTitle("Validating mzIdentML. Please Wait...");
+                        String errors = validateMzIdentML(finalOutputFile);
+
+                        // see if any errors were found, and display them to the user
+                        if (!errors.isEmpty()) {
+                            JOptionPane.showMessageDialog(null, errors, "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
+                        } else {
                             conversionCompleted = true;
-//                        }
-//                    }
+                        }
+                    } else {
+                        conversionCompleted = true;
+                    }
 
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -817,13 +805,13 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
     /**
      * Validates the mzIdentML file according to the schema.
-     * 
+     *
      * @param mzidFile the file to validate
      * @return the error messages, if any
      * @throws SAXException
      * @throws MalformedURLException
      * @throws FileNotFoundException
-     * @throws URISyntaxException 
+     * @throws URISyntaxException
      */
     private String validateMzIdentML(File mzidFile) throws SAXException, MalformedURLException, FileNotFoundException, URISyntaxException {
 

@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;

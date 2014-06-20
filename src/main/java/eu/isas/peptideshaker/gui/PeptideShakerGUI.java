@@ -2630,7 +2630,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
-        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", PeptideShaker.getVersion(), 
+        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", PeptideShaker.getVersion(),
                 "peptide-shaker", "PeptideShaker", new File(getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_logReportMenuActionPerformed
 
@@ -2918,6 +2918,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void exportPrideMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideMenuItemActionPerformed
+        // @TODO: check that all ptms are mapped to a cv term
         new ProjectExportDialog(this, true);
     }//GEN-LAST:event_exportPrideMenuItemActionPerformed
 
@@ -2996,6 +2997,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void exportMzIdentMLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMzIdentMLMenuItemActionPerformed
+        // @TODO: check that all ptms are mapped to a cv term
         new MzIdentMLExportDialog(this, true);
     }//GEN-LAST:event_exportMzIdentMLMenuItemActionPerformed
 
@@ -3028,8 +3030,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Open the PrivacySettingsDialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void privacyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_privacyMenuItemActionPerformed
         new PrivacySettingsDialog(this, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
