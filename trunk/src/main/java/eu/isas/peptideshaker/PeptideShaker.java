@@ -22,7 +22,6 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
@@ -303,7 +302,7 @@ public class PeptideShaker {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
         if (!objectsCache.memoryCheck()) {
-            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See <a href=\"http://peptide-shaker.googlecode.com\">http://peptide-shaker.googlecode.com</a> for help.", true, true);
+            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
         }
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -3902,11 +3901,7 @@ public class PeptideShaker {
                 waitingHandler.setWaitingText("Removing Mapping Artifacts. Please Wait...");
                 waitingHandler.appendReport(toDelete.size() + " unlikely protein mappings found:", true, true);
 
-                String padding = "&nbsp;&nbsp;&nbsp;&nbsp;";
-
-                if (waitingHandler instanceof WaitingHandlerCLIImpl) {
-                    padding = "    ";
-                }
+                String padding = "    ";
 
                 waitingHandler.appendReport(padding + "- " + enzymaticIssue + " non-enzymatic accessions.", true, true);
                 waitingHandler.appendReport(padding + "- " + evidenceIssue + " lower evidence accessions.", true, true);
