@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
+import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -150,10 +151,8 @@ public class ReportCLI extends CpsParent {
                 }
             }
         }
-
-
-        waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
-        waitingHandler.setSecondaryProgressText("Processing Completed!");
+        
+        waitingHandler.appendReport("Report export completed.", true, true);
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
@@ -288,6 +287,9 @@ public class ReportCLI extends CpsParent {
         identification.close();
 
         File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+
+        DerbyUtil.closeConnection();
+
         File[] tempFiles = matchFolder.listFiles();
 
         if (tempFiles != null) {

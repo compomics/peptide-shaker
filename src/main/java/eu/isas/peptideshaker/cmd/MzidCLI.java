@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.Util;
+import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -138,7 +139,9 @@ public class MzidCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-
+        
+        waitingHandler.appendReport("MzIdentML export completed.", true, true);
+        
         System.exit(0);
 
         return null;
@@ -165,6 +168,8 @@ public class MzidCLI extends CpsParent {
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().closeFile();
         identification.close();
+
+        DerbyUtil.closeConnection();
 
         File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();

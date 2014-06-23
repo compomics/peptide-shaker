@@ -475,6 +475,9 @@ public class ProjectDetails implements Serializable {
         for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
             for (String advocateName : advocateVersions.keySet()) {
                 Advocate advocate = Advocate.getAdvocate(advocateName);
+                if (advocate == null) {
+                    throw new IllegalArgumentException("Identification algorithm " + advocateName + " not recognized.");
+                }
                 int advocateId = advocate.getIndex();
                 if (!result.contains(advocateId)) {
                     result.add(advocateId);
@@ -498,30 +501,8 @@ public class ProjectDetails implements Serializable {
                 identificationAlgorithms.put(idFileName, idFileReader.getSoftwareVersions());
             } catch (Exception e) {
                 // File was moved, use the extension to map it manually
-                if (idFileName.toLowerCase().endsWith("dat")) {
-                    Advocate advocate = Advocate.mascot;
-                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    algorithms.put(advocate.getName(), new ArrayList<String>());
-                    identificationAlgorithms.put(idFileName, algorithms);
-                } else if (idFileName.toLowerCase().endsWith("omx")) {
-                    Advocate advocate = Advocate.omssa;
-                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    ArrayList<String> versions = new ArrayList<String>();
-                    versions.add("2.1.9");
-                    algorithms.put(advocate.getName(), versions);
-                    identificationAlgorithms.put(idFileName, algorithms);
-                } else if (idFileName.toLowerCase().endsWith("xml")) {
-                    Advocate advocate = Advocate.xtandem;
-                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    algorithms.put(advocate.getName(), new ArrayList<String>());
-                    identificationAlgorithms.put(idFileName, algorithms);
-                } else if (idFileName.toLowerCase().endsWith("mzid")) {
-                    Advocate advocate = Advocate.msgf;
-                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    algorithms.put(advocate.getName(), new ArrayList<String>());
-                    identificationAlgorithms.put(idFileName, algorithms);
-                } else if (idFileName.toLowerCase().endsWith("csv")) {
-                    Advocate advocate = Advocate.msAmanda;
+                Advocate advocate = Advocate.getAdvocateFromFile(idFileName);
+                if (advocate != null) {
                     HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
                     algorithms.put(advocate.getName(), new ArrayList<String>());
                     identificationAlgorithms.put(idFileName, algorithms);

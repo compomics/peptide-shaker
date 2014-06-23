@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.Util;
+import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
@@ -307,7 +308,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReportEndLine();
         }
 
-        waitingHandler.setWaitingText("PeptideShaker Import Completed.");
         waitingHandler.appendReportEndLine();
 
         try {
@@ -316,9 +316,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-
-        waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
-        waitingHandler.setSecondaryProgressText("Processing Completed!");
+        
+        waitingHandler.appendReport("PeptideShaker process completed.", true, true);
+        waitingHandler.setSecondaryProgressText("Processing Completed.");
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
@@ -503,6 +503,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (identification != null) {
             identification.close();
         }
+
+        DerbyUtil.closeConnection();
 
         File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();
