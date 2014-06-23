@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
+import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -207,6 +208,8 @@ public class FollowUpCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
+        
+        waitingHandler.appendReport("Follow-up export completed.", true, true);
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
@@ -235,6 +238,8 @@ public class FollowUpCLI extends CpsParent {
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().closeFile();
         identification.close();
+
+        DerbyUtil.closeConnection();
 
         File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
         File[] tempFiles = matchFolder.listFiles();

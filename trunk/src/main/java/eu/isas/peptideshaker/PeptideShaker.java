@@ -46,9 +46,11 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import java.io.BufferedWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -2114,7 +2116,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-//        HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
+        HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2156,25 +2158,25 @@ public class PeptideShaker {
                                     psParameter.setIntermediateScore(scoreIndex, score);
                                     inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
 
-//                                    try {
-//                                        BufferedWriter br = brs.get(scoreIndex);
-//                                        if (br == null) {
-//                                            PsmScores psmScores = PsmScores.getScore(scoreIndex);
-//                                            br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", psmScores.name + ".txt")));
-//                                            brs.put(scoreIndex, br);
-//                                            br.write("Title\tPeptide\tScore\tDecoy");
-//                                        br.newLine();
-//                                        }
-//                                        if (decoy) {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-//                                        } else {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-//                                        }
-//                                        br.newLine();
-//
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
+                                    try {
+                                        BufferedWriter br = brs.get(scoreIndex);
+                                        if (br == null) {
+                                            PsmScores psmScores = PsmScores.getScore(scoreIndex);
+                                            br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", psmScores.name + ".txt")));
+                                            brs.put(scoreIndex, br);
+                                            br.write("Title\tPeptide\tScore\tDecoy");
+                                        br.newLine();
+                                        }
+                                        if (decoy) {
+                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
+                                        } else {
+                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
+                                        }
+                                        br.newLine();
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                                 assumption.addUrParam(psParameter);
@@ -2191,9 +2193,9 @@ public class PeptideShaker {
             }
         }
 
-//        for (BufferedWriter br : brs.values()) {
-//            br.close();
-//        }
+        for (BufferedWriter br : brs.values()) {
+            br.close();
+        }
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
@@ -2263,9 +2265,9 @@ public class PeptideShaker {
 
         PSParameter psParameter = new PSParameter();
 
-//                                          BufferedWriter  br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
-//                                            br.write("Title\tPeptide\tScore\tDecoy");
-//                                            br.newLine();
+                                          BufferedWriter  br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
+                                            br.write("Title\tPeptide\tScore\tDecoy");
+                                            br.newLine();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2311,12 +2313,12 @@ public class PeptideShaker {
                                 boolean decoy = peptide.isDecoy(MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                 inputMap.addEntry(advocateIndex, spectrumFileName, score, decoy);
 
-//                                        if (decoy) {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-//                                        } else {
-//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-//                                        }
-//                                            br.newLine();
+                                        if (decoy) {
+                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
+                                        } else {
+                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
+                                        }
+                                            br.newLine();
                             }
                         }
                     }

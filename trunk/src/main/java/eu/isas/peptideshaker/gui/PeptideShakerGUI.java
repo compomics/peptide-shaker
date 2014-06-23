@@ -4070,6 +4070,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (matchFolder.exists()) {
 
+                DerbyUtil.closeConnection();
+
                 File[] tempFiles = matchFolder.listFiles();
 
                 if (tempFiles != null) {
