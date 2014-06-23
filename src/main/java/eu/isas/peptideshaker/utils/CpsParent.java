@@ -134,7 +134,7 @@ public class CpsParent extends UserPreferencesParent {
 
         CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, waitingHandler);
 
-        // close Files any open connection to an identification database
+        // close any open connection to an identification database
         if (identification != null) {
             identification.close();
         }

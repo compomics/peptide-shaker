@@ -2116,7 +2116,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
+        //HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2158,25 +2158,25 @@ public class PeptideShaker {
                                     psParameter.setIntermediateScore(scoreIndex, score);
                                     inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
 
-                                    try {
-                                        BufferedWriter br = brs.get(scoreIndex);
-                                        if (br == null) {
-                                            PsmScores psmScores = PsmScores.getScore(scoreIndex);
-                                            br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", psmScores.name + ".txt")));
-                                            brs.put(scoreIndex, br);
-                                            br.write("Title\tPeptide\tScore\tDecoy");
-                                        br.newLine();
-                                        }
-                                        if (decoy) {
-                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-                                        } else {
-                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-                                        }
-                                        br.newLine();
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+//                                    try {
+//                                        BufferedWriter br = brs.get(scoreIndex);
+//                                        if (br == null) {
+//                                            PsmScores psmScores = PsmScores.getScore(scoreIndex);
+//                                            br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", psmScores.name + ".txt")));
+//                                            brs.put(scoreIndex, br);
+//                                            br.write("Title\tPeptide\tScore\tDecoy");
+//                                        br.newLine();
+//                                        }
+//                                        if (decoy) {
+//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
+//                                        } else {
+//                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
+//                                        }
+//                                        br.newLine();
+//
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
                                 }
 
                                 assumption.addUrParam(psParameter);
@@ -2193,9 +2193,9 @@ public class PeptideShaker {
             }
         }
 
-        for (BufferedWriter br : brs.values()) {
-            br.close();
-        }
+//        for (BufferedWriter br : brs.values()) {
+//            br.close();
+//        }
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
@@ -2265,9 +2265,10 @@ public class PeptideShaker {
 
         PSParameter psParameter = new PSParameter();
 
-                                          BufferedWriter  br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
-                                            br.write("Title\tPeptide\tScore\tDecoy");
-                                            br.newLine();
+//        BufferedWriter br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
+//        br.write("Title\tPeptide\tScore\tDecoy");
+//        br.newLine();
+        
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -2313,12 +2314,12 @@ public class PeptideShaker {
                                 boolean decoy = peptide.isDecoy(MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                                 inputMap.addEntry(advocateIndex, spectrumFileName, score, decoy);
 
-                                        if (decoy) {
-                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
-                                        } else {
-                                            br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
-                                        }
-                                            br.newLine();
+//                                if (decoy) {
+//                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
+//                                } else {
+//                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
+//                                }
+//                                br.newLine();
                             }
                         }
                     }
@@ -2411,7 +2412,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler, SearchParameters searchParameters) 
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler, SearchParameters searchParameters)
             throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
 
         waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
@@ -2508,7 +2509,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) 
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters)
             throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Solving Peptide Inference. Please Wait...");
@@ -2747,7 +2748,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) 
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters)
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
@@ -2958,7 +2959,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
+    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             PTMScoringPreferences ptmScoringPreferences, IdFilter idFilter, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
@@ -2992,7 +2993,7 @@ public class PeptideShaker {
                     }
                 }
                 if (spectrumCountingPreferences != null) {
-                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, 
+                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory,
                             proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
                     if (tempSpectrumCounting > maxSpectrumCounting) {
                         maxSpectrumCounting = tempSpectrumCounting;
@@ -4102,7 +4103,7 @@ public class PeptideShaker {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private void retainBestScoringGroups(SearchParameters searchParameters, WaitingHandler waitingHandler) 
+    private void retainBestScoringGroups(SearchParameters searchParameters, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
@@ -4439,7 +4440,7 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, 
+    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession,
             SearchParameters searchParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
         Enzyme enzyme = searchParameters.getEnzyme();

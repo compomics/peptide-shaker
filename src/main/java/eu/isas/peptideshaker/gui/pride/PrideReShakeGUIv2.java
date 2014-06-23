@@ -2168,7 +2168,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                             || currentFile.toLowerCase().endsWith(".xml.gz")) {
                                         prideSearchParametersReport = getSearchParams(prideSearchParameters);
                                     } else { // mzid
-                                        // convert the ptms from the assay
+                                        
+                                        progressDialog.setPrimaryProgressCounterIndeterminate(true); // @TODO: better display of progress
+                                        
+                                        // convert the parameters from the assay
                                         prideSearchParametersReport = MzIdentMLIdfileSearchParametersConverter.getSearchParameters(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
 
                                         // add the ptms from the project/assay
@@ -3065,7 +3068,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         report += "<br>";
 
         if (!unknownPtms.isEmpty()) {
-            report += "<br><br>* Remember to add these PTMs manually in SearchGUI."; // @TODO: this warning should be stronger!!
+            report += "<br>* Remember to add these PTMs manually in SearchGUI."; // @TODO: this warning should be stronger!!
         }
 
         return report;

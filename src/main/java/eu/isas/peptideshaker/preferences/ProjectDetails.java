@@ -504,7 +504,13 @@ public class ProjectDetails implements Serializable {
                 Advocate advocate = Advocate.getAdvocateFromFile(idFileName);
                 if (advocate != null) {
                     HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    algorithms.put(advocate.getName(), new ArrayList<String>());
+                    if (advocate == Advocate.omssa) {
+                        ArrayList<String> versions = new ArrayList<String>();
+                        versions.add("2.1.9");
+                        algorithms.put(advocate.getName(), versions);
+                    } else {
+                        algorithms.put(advocate.getName(), new ArrayList<String>());
+                    }
                     identificationAlgorithms.put(idFileName, algorithms);
                 } else {
                     throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
