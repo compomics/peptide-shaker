@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.31.4 (Coming soon...)*
+
+ * FEATURE IMPROVEMENT: Improved the Waiting Dialog to work better for big projects.
+ * FEATURE IMPROVEMENT: Cleaned up the closing of the internal database connection.
+ * FEATURE IMPROVEMENT: Improved the end of process messages in command lines.
+
+ * BUG FIX: Fixed bugs in the mzid export, which now passes the PRIDE validation.
+ * BUG FIX: Fixed a bug in the PRIDE XML export that resulted in the exported files not validating.
+ * BUG FIX: Fixed a bug in the e-value parsing in the mzid reader.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.28.30.
+
+----
+
 *Changes in PeptideShaker 0.31.3 (June 18. 2014)*
 
  * FEATURE IMPROVEMENT: Improved the selections in the PRIDE Reshake Setup Dialog.
