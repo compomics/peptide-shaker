@@ -234,6 +234,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private void setUpGui() {
 
+        clearProjectFiltersLabel.setVisible(false);
+
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
         reshakeableFiles = new HashMap<String, ArrayList<String>>();
@@ -634,6 +636,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         dataTypeSeparatorLabel.setText("/");
 
+        clearProjectFiltersLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
         clearProjectFiltersLabel.setText("<html><a href=\"dummy\">Clear Project Filters</a></html>  ");
         clearProjectFiltersLabel.setToolTipText("Clear all project filters");
         clearProjectFiltersLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -674,7 +677,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
             projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1465,12 +1468,16 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
     /**
      * Clear the project filters.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void clearProjectFiltersLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseClicked
         ((TableRowSorter) projectsTable.getRowSorter()).setRowFilter(null);
+        showProjectFilterRemovalOption(false);
+        clearProjectFiltersLabel.setVisible(false);
         updateProjectTableSelection();
+        String[] tempFilterValues = new String[8];
+        setCurrentFilterValues(tempFilterValues, true);
     }//GEN-LAST:event_clearProjectFiltersLabelMouseClicked
 
     /**
@@ -2832,6 +2839,15 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         }
 
         return valid;
+    }
+
+    /**
+     * Show/hide the clear projects filters option.
+     *
+     * @param show if the option is to be shown or not
+     */
+    public void showProjectFilterRemovalOption(boolean show) {
+        clearProjectFiltersLabel.setVisible(show);
     }
 
     /**

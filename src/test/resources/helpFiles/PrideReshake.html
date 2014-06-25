@@ -8,16 +8,61 @@
         <a name="#top"/>
         <H2>PRIDE Reshake</H2>
 
-        <ul>
-            <li><a href='#PRIDE'>PRIDE</a></li>
-        </ul>
-
         <a name="#PRIDE"></a>
         <H3>PRIDE</H3>
         <p align="justify">
             More and more journals are requesting that you make your proteomics data available 
             when publishing a proteomics manuscript. The most commonly used database for 
-            proteomics identifications is the <a href="http://www.ebi.ac.uk/pride">Proteomics Identifications Database (PRIDE)</a>.
+            proteomics identifications is the <a href="http://www.ebi.ac.uk/pride">Proteomics Identifications Database (PRIDE)</a> 
+            which is one of the main entry points to <a href="http://www.proteomexchange.org/">ProteomeXchange</a>.
+            <br><br>
+            PRIDE consists of two main types of projects: public and private. Public projects are freely available for everyone 
+            to inspect, while private data requires the input of a valid username and password for the given project. Private 
+            data can be very useful, for example during a review process when you do not want the data to be publicly available 
+            until the manuscript is accepted.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a><br><br>
+
+        <a name="#Reshake"></a>
+        <H3>Reshake</H3>
+        <p align="justify">
+            Reshake is PeptideShaker lingo for reanalyzing data, here in the case of proteomics identifications from <a href="http://www.ebi.ac.uk/pride">PRIDE</a>. 
+            All PRIDE projects have a unique <a href="http://www.proteomexchange.org/">ProteomeXchange</a> identifier. These are cited in papers 
+            and links are also shown in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PumMed</a>. This makes it easy to locate a specific PRIDE project.
+            <br><br>
+            If you do not have a ProteomeXchange identifier, but rather want to reanalyze a certain type of data, for example data from a specific species, 
+            you can locate the available PRIDE projects using the Find feature in the Edit menu.
+            <br><br>
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a><br><br> 
+
+        <a name="#DataTypes"></a>
+        <H3>Data Types</H3>
+        <p align="justify">
+            PRIDE projects are split into three types Complete, Partial and PRIDE. Complete projects contain both the proteomics identifications 
+            and the raw data, while Partial projects are missing some of the information. There are several reasons for partial projects. For example 
+            it might be difficult to convert custom project output into the standard formats, or the project might only consist of raw data. Finally, 
+            the PRIDE category is used to label mainly the older PRIDE projects that were in PRIDE before ProteomeXchange came around.
+            <br><br>
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a><br><br>
+
+        <a name="#Reshakable"></a>
+        <H3>Reshakable</H3>
+        <p align="justify">
+            In order for PeptideShaker to be able to reshake a project it has to contain at least one mgf or PRIDE XML file. If the spectra are stored 
+            in a different format you can always download and convert the files manually. Search settings from the original project can also be extracted 
+            if the project contains at least one PRIDE XML or mzIdentML file. In any case the search settings can always be added or altered before 
+            reshaking. To show all files (and not just the reshakable files) deselect the "Reshakeable Files Only" in the lower right corner below 
+            the files table.
+            <br><br>
+            Note that many projects are split into multiple assays. Where each assay may have its own search settings and even come from different species. 
+            When analyzing such projects it is therefore very important to pay attention to the search settings and database used, to ensure that 
+            the correct settings are used. To analyze files from multiple assays, make sure that no specific assay is selected in the assay table. To 
+            remove the assay selection, simply click on the project once more.
         </p>
         <br>
         <a href="#top">Go to top of page</a><br><br>
