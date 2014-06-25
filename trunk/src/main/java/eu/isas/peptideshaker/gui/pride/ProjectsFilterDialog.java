@@ -751,6 +751,20 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                 projectsTable.setRowSelectionInterval(0, 0);
             }
 
+            // see if any filters were actually added
+            if (!accessionJTextField.getText().trim().isEmpty()
+                    || !titleJTextField.getText().trim().isEmpty()
+                    || !((JTextField) typeComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()
+                    || !assaysJTextField.getText().trim().isEmpty()
+                    || !((JTextField) speciesComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()
+                    || !((JTextField) tissuesComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()
+                    || !((JTextField) instrumentsComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()
+                    || !((JTextField) ptmsComboBox.getEditor().getEditorComponent()).getText().trim().isEmpty()) {
+                prideReShakeGUI.showProjectFilterRemovalOption(true);
+            } else {
+                prideReShakeGUI.showProjectFilterRemovalOption(false);
+            }
+
             prideReShakeGUI.updateProjectTableSelection();
         }
 
