@@ -2232,7 +2232,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         // Backward compatibility
                         loadDataFromIdentification();
                     } else {
-                        advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithms());
+                        advocatesUsed = new ArrayList<Integer>(inputMap.getInputAlgorithmsSorted());
                         ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                         numberOfValidatedPsmsMap = new HashMap<String, Integer>();
                         for (String fileName : spectrumFileNames) {
@@ -3284,7 +3284,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             for (String spectrumFile : identification.getSpectrumFiles()) {
                 totalNumberOfSpectra += spectrumFactory.getNSpectra(spectrumFile);
             }
-            for (int advocateId : inputMap.getInputAlgorithms()) {
+            for (int advocateId : inputMap.getInputAlgorithmsSorted()) {
                 TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId);
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 double nTP;
@@ -3318,7 +3318,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             searchEngineFN.put(Advocate.peptideShaker.getIndex(), nFN);
         } else {
             totalNumberOfSpectra = spectrumFactory.getNSpectra(selectedFileName);
-            for (int advocateId : inputMap.getInputAlgorithms()) {
+            for (int advocateId : inputMap.getInputAlgorithmsSorted()) {
                 TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(advocateId, selectedFileName);
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
                 double nTP;

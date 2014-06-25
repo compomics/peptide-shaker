@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import javax.swing.RowFilter;
@@ -79,12 +80,33 @@ public class InputMap implements Serializable {
     public Set<Integer> getInputAlgorithms() {
         return inputMap.keySet();
     }
-    
+
     /**
-     * Returns the algorithms having an intermediate score for the given spectrum file.
-     * 
-     * @param fileName the name of the spectrum file of interest 
-     * 
+     * Returns a sorted arraylist containing the indexes of the algorithms
+     * scored in this input map.
+     *
+     * @return a set containing the indexes of the algorithms scored in this
+     * input map
+     */
+    public ArrayList<Integer> getInputAlgorithmsSorted() {
+        Object[] keys = inputMap.keySet().toArray();
+        Arrays.sort(keys);
+
+        ArrayList<Integer> sortedKeys = new ArrayList<Integer>();
+
+        for (Object key : keys) {
+            sortedKeys.add((Integer) key); // @TODO: is there a quicker way of doing this..?
+        }
+
+        return sortedKeys;
+    }
+
+    /**
+     * Returns the algorithms having an intermediate score for the given
+     * spectrum file.
+     *
+     * @param fileName the name of the spectrum file of interest
+     *
      * @return the algorithm having an intermediate score for this file
      */
     public Set<Integer> getIntermediateScoreInputAlgorithms(String fileName) {
