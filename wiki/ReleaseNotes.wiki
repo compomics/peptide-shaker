@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.31.4 (Coming soon...)*
+*Changes in PeptideShaker 0.31.4 (June 25. 2014)*
 
  * FEATURE IMPROVEMENT: Improved the Waiting Dialog to work better for big projects.
  * FEATURE IMPROVEMENT: Cleaned up the closing of the internal database connection.
