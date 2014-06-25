@@ -1810,7 +1810,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
                 new NewDialog(this, true);
-            } else if (value == JOptionPane.CANCEL_OPTION) {
+            } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 // do nothing
             } else { // no option
                 new NewDialog(this, true);
@@ -2255,7 +2255,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-            } else if (value == JOptionPane.CANCEL_OPTION) {
+            } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 return;
             } else { // no option
                 // do nothing
@@ -4628,7 +4628,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-            } else if (value == JOptionPane.CANCEL_OPTION) {
+            } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 return;
             }
         }
@@ -5002,7 +5002,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         if (value == JOptionPane.YES_OPTION) {
                             saveMenuItemActionPerformed(null);
                             open = false;
-                        } else if (value == JOptionPane.CANCEL_OPTION) {
+                        } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                             open = false;
                         }
                     }
@@ -6036,7 +6036,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
                 open = false;
-            } else if (value == JOptionPane.CANCEL_OPTION) {
+            } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 open = false;
             }
         }

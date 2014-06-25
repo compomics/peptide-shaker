@@ -172,6 +172,8 @@
                               <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                               <Component id="projectHelpLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
+                              <Component id="clearProjectFiltersLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="browsePublicDataLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="dataTypeSeparatorLabel" min="-2" max="-2" attributes="0"/>
@@ -195,6 +197,7 @@
                           <Component id="projectHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browsePublicDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="dataTypeSeparatorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="clearProjectFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -244,7 +247,7 @@
             <Component class="javax.swing.JLabel" name="accessPrivateDataLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Access Private Data&lt;/a&gt;&lt;/html&gt;&#xa;&#xa;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
+                <Property name="toolTipText" type="java.lang.String" value="Access private data"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="accessPrivateDataLabelMouseClicked"/>
@@ -263,7 +266,7 @@
             <Component class="javax.swing.JLabel" name="browsePublicDataLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Browse Public Data&lt;/a&gt;&lt;/html&gt;  "/>
-                <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
+                <Property name="toolTipText" type="java.lang.String" value="Browse all public data"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="browsePublicDataLabelMouseClicked"/>
@@ -275,6 +278,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="/"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="clearProjectFiltersLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=&quot;dummy&quot;&gt;Clear Project Filters&lt;/a&gt;&lt;/html&gt;  "/>
+                <Property name="toolTipText" type="java.lang.String" value="Clear all project filters"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseExited"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
