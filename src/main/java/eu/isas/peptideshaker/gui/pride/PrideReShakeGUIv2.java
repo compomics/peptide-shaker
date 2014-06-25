@@ -506,6 +506,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         projectHelpLabel = new javax.swing.JLabel();
         browsePublicDataLabel = new javax.swing.JLabel();
         dataTypeSeparatorLabel = new javax.swing.JLabel();
+        clearProjectFiltersLabel = new javax.swing.JLabel();
         assaysPanel = new javax.swing.JPanel();
         assayTableScrollPane = new javax.swing.JScrollPane();
         assaysTable = new JTable() {
@@ -601,7 +602,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         projectsScrollPane.setViewportView(projectsTable);
 
         accessPrivateDataLabel.setText("<html><a href=\"dummy\">Access Private Data</a></html>\n\n");
-        accessPrivateDataLabel.setToolTipText("Open the PeptideShaker web page");
+        accessPrivateDataLabel.setToolTipText("Access private data");
         accessPrivateDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 accessPrivateDataLabelMouseClicked(evt);
@@ -618,7 +619,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         projectHelpLabel.setText("Select a projects to see the project details. For more details click the Accession links.");
 
         browsePublicDataLabel.setText("<html><a href=\"dummy\">Browse Public Data</a></html>  ");
-        browsePublicDataLabel.setToolTipText("Open the PeptideShaker web page");
+        browsePublicDataLabel.setToolTipText("Browse all public data");
         browsePublicDataLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 browsePublicDataLabelMouseClicked(evt);
@@ -633,6 +634,20 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         dataTypeSeparatorLabel.setText("/");
 
+        clearProjectFiltersLabel.setText("<html><a href=\"dummy\">Clear Project Filters</a></html>  ");
+        clearProjectFiltersLabel.setToolTipText("Clear all project filters");
+        clearProjectFiltersLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clearProjectFiltersLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                clearProjectFiltersLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                clearProjectFiltersLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
         projectsPanel.setLayout(projectsPanelLayout);
         projectsPanelLayout.setHorizontalGroup(
@@ -645,6 +660,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         .addGap(10, 10, 10)
                         .addComponent(projectHelpLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dataTypeSeparatorLabel)
@@ -663,7 +680,8 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     .addComponent(accessPrivateDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(projectHelpLabel)
                     .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dataTypeSeparatorLabel))
+                    .addComponent(dataTypeSeparatorLabel)
+                    .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1362,6 +1380,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      */
     private void accessPrivateDataLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accessPrivateDataLabelMouseClicked
         getPrivateProjectDetails();
+        clearProjectFiltersLabelMouseClicked(null);
     }//GEN-LAST:event_accessPrivateDataLabelMouseClicked
 
     /**
@@ -1373,6 +1392,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
         userName = null;
         password = null;
         loadPublicProjects();
+        clearProjectFiltersLabelMouseClicked(null);
     }//GEN-LAST:event_browsePublicDataLabelMouseClicked
 
     /**
@@ -1442,6 +1462,34 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PRIDE Reshake - Help");
     }//GEN-LAST:event_helpMenuItemActionPerformed
+
+    /**
+     * Clear the project filters.
+     * 
+     * @param evt 
+     */
+    private void clearProjectFiltersLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseClicked
+        ((TableRowSorter) projectsTable.getRowSorter()).setRowFilter(null);
+        updateProjectTableSelection();
+    }//GEN-LAST:event_clearProjectFiltersLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand icon.
+     *
+     * @param evt
+     */
+    private void clearProjectFiltersLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_clearProjectFiltersLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void clearProjectFiltersLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearProjectFiltersLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_clearProjectFiltersLabelMouseExited
 
     /**
      * Update the file list based on the selected project.
@@ -1968,7 +2016,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
      * @param aSpecies the current species
      * @param fileSizes the file sizes
      */
-    public void downloadPrideDatasets(String aWorkingFolder, final ArrayList<String> selectedSpectrumFiles, 
+    public void downloadPrideDatasets(String aWorkingFolder, final ArrayList<String> selectedSpectrumFiles,
             final String searchSettingsProjectFile, final String database, String aSpecies, final ArrayList<Double> fileSizes) {
 
         outputFolder = aWorkingFolder;
@@ -2168,9 +2216,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                                             || currentFile.toLowerCase().endsWith(".xml.gz")) {
                                         prideSearchParametersReport = getSearchParams(prideSearchParameters);
                                     } else { // mzid
-                                        
+
                                         progressDialog.setPrimaryProgressCounterIndeterminate(true); // @TODO: better display of progress
-                                        
+
                                         // convert the parameters from the assay
                                         prideSearchParametersReport = MzIdentMLIdfileSearchParametersConverter.getSearchParameters(currentPrideDataFile, prideSearchParameters, currentSpecies, progressDialog);
 
@@ -2971,6 +3019,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     private javax.swing.JTable assaysTable;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JLabel browsePublicDataLabel;
+    private javax.swing.JLabel clearProjectFiltersLabel;
     private javax.swing.JLabel dataTypeSeparatorLabel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
@@ -3011,18 +3060,25 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     }
 
     /**
-     * Returns the database for the currently selected project. Null if no
-     * project is currently selected.
+     * Returns the list of species for the currently selected assay or project.
+     * Null if no assay or project is currently selected.
      *
-     * @return the database for the currently selected project
+     * @return the list of species for the currently selected assay or project
      */
-    public String getCurrentDatabase() {
-        int projectRow = projectsTable.getSelectedRow();
+    public String getCurrentSpeciesList() {
 
-        if (projectRow != -1) {
-            return (String) projectsTable.getValueAt(projectRow, projectsTable.getColumn("Species").getModelIndex());
+        int assayRow = assaysTable.getSelectedRow();
+
+        if (assayRow != -1 && assaysTable.getValueAt(assayRow, assaysTable.getColumn("Species").getModelIndex()) != null) {
+            return (String) assaysTable.getValueAt(assayRow, assaysTable.getColumn("Species").getModelIndex());
         } else {
-            return null;
+            int projectRow = projectsTable.getSelectedRow();
+
+            if (projectRow != -1) {
+                return (String) projectsTable.getValueAt(projectRow, projectsTable.getColumn("Species").getModelIndex());
+            } else {
+                return null;
+            }
         }
     }
 

@@ -139,11 +139,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         searchSettingsScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, settingsCorner);
 
         // set the database
-        speciesJTextField.setText(prideReShakeGUI.getCurrentDatabase());
+        speciesJTextField.setText(prideReShakeGUI.getCurrentSpeciesList());
 
-        if (prideReShakeGUI.getCurrentDatabase() == null
-                || prideReShakeGUI.getCurrentDatabase().trim().isEmpty()
-                || prideReShakeGUI.getCurrentDatabase().indexOf(",") != -1) {
+        if (prideReShakeGUI.getCurrentSpeciesList() == null
+                || prideReShakeGUI.getCurrentSpeciesList().trim().isEmpty()) {
             downloadUniProtJLabel.setEnabled(false);
         }
 
@@ -1308,20 +1307,64 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
         if (downloadUniProtJLabel.isEnabled()) {
 
-            String species = speciesJTextField.getText().trim();
+            String tempSpecies = speciesJTextField.getText().trim();
 
-            // try to clean up the species field, e.g., Mus musculus (Mouse) to Mus musculus
-            if (species.endsWith(")") && species.lastIndexOf(",") == -1) {
-                species = species.substring(0, species.indexOf("(")).trim();
+            String[] allSpecies = tempSpecies.split(", ");
+
+            boolean combinedSearch = true;
+
+            if (allSpecies.length > 1) {
+
+                int option = JOptionPane.showConfirmDialog(this,
+                        "You have multiple species. Combine into one UniProt search?\n"
+                        + "Choosing 'No' will open one UniProt web page per species.", 
+                        "Multiple Species", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+                    return;
+                }
+                
+                combinedSearch = option == JOptionPane.YES_OPTION;
             }
 
-            species = species.replaceAll(" ", "%20");
-            
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            //String link = "http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score";
-            String link = "http://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
-            BareBonesBrowserLaunch.openURL(link);
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            String link = "http://www.uniprot.org/uniprot/?query=";
+
+            for (int i = 0; i < allSpecies.length; i++) {
+
+                String species = allSpecies[i];
+
+                // try to clean up the species field, e.g., Mus musculus (Mouse) to Mus musculus
+                if (species.endsWith(")")) {
+                    species = species.substring(0, species.indexOf("(")).trim();
+                }
+
+                species = species.replaceAll(" ", "%20");
+
+                if (combinedSearch) {
+                    if (i > 0) {
+                        link += "+OR+";
+                    }
+                    link += "organism%3A%22" + species + "%22";
+                } else {
+                    link = "http://www.uniprot.org/uniprot/?query=organism%3A%22" + species + "%22&sort=score";
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if (combinedSearch) {
+                link += "&sort=score";
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
         }
     }//GEN-LAST:event_downloadUniProtJLabelMouseClicked
 

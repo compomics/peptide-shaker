@@ -700,7 +700,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             } else {
                                 openReshake = false;
                             }
-                        } else if (option == JOptionPane.CANCEL_OPTION) {
+                        } else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                             openReshake = false;
                         }
                     }

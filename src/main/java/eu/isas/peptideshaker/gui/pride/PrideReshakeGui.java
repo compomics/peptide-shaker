@@ -1066,7 +1066,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         + "parameters from the first project in the list is used.",
                         "Search Parameters", JOptionPane.OK_CANCEL_OPTION);
 
-                if (value == JOptionPane.CANCEL_OPTION) {
+                if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                     download = false;
                 }
             }
