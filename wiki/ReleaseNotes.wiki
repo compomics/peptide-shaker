@@ -3,6 +3,16 @@
 
 ----
 
+*Changes in PeptideShaker 0.31.5 (June 26. 2014)*
+
+ * FEATURE IMPROVEMENT: Improved the way multiple species are supported in the UniProt link in the Reshake Settings dialog.
+ * FEATURE IMPROVEMENT: The order of the search engines in the Spectrum IDs tab overview plots is now always the same.
+ * FEATURE IMPROVEMENT: Added a remove all filters option in the main PRIDE Reshake window.
+ * FEATURE IMPROVEMENT: Made sure that closing a dialog is always considered the same as clicking the cancel button.
+ * FEATURE IMPROVEMENT: Extended the PRIDE Reshake help texts.
+
+----
+
 *Changes in PeptideShaker 0.31.4 (June 25. 2014)*
 
  * FEATURE IMPROVEMENT: Improved the Waiting Dialog to work better for big projects.
