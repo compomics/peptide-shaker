@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -177,6 +178,10 @@ public class PeptideShaker {
      * Number of groups deleted because of protein characterization issues.
      */
     private int uncharacterizedIssue = 0;
+    /**
+     * Number of groups deleted because explained by a simpler group
+     */
+    private int explainedGroup = 0;
     /**
      * The type of matching used for peptide to protein matching.
      */
@@ -3875,7 +3880,7 @@ public class PeptideShaker {
             waitingHandler.setMaxSecondaryProgressCounter(max);
         }
 
-        ArrayList<String> toDelete = new ArrayList<String>();
+        HashSet<String> toDelete = new HashSet<String>();
         HashMap<String, String> processedKeys = new HashMap<String, String>();
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
@@ -3898,7 +3903,7 @@ public class PeptideShaker {
             }
         }
 
-        if (enzymaticIssue + evidenceIssue + uncharacterizedIssue > 0) { // special case to not divide by zero
+        if (enzymaticIssue + evidenceIssue + uncharacterizedIssue + explainedGroup > 0) { // special case to not divide by zero
 
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Removing Mapping Artifacts. Please Wait...");
@@ -3906,9 +3911,19 @@ public class PeptideShaker {
 
                 String padding = "    ";
 
-                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " non-enzymatic accessions.", true, true);
-                waitingHandler.appendReport(padding + "- " + evidenceIssue + " lower evidence accessions.", true, true);
-                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " not characterized accessions.", true, true);
+                if (enzymaticIssue > 0) {
+                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " protein groups supported by non-enzymatic shared peptides.", true, true);
+                }
+                if (evidenceIssue > 0) {
+                waitingHandler.appendReport(padding + "- " + evidenceIssue + " protein groups explained by peptides shared to less confident mappings.", true, true);
+                }
+                if (uncharacterizedIssue > 0) {
+                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " protein groups supported by peptides shared to uncharacterized proteins.", true, true);
+                }
+                if (explainedGroup > 0) {
+                waitingHandler.appendReport(padding + "- " + explainedGroup + " groups explained by a simpler group.", true, true);
+                }
+                waitingHandler.appendReport("Note: a group can present combinations of these criteria.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
@@ -3945,7 +3960,7 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, SearchParameters searchParameters)
+    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, HashSet<String> keysToDelete, SearchParameters searchParameters)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
@@ -3990,19 +4005,15 @@ public class PeptideShaker {
                         preferenceReason = new HashMap<String, Integer>();
                         boolean best = true;
                         for (String key2 : keys) {
-                            if (!best) {
-                                break;
-                            } else if (!key1.equals(key2)) {
+                            if (!key1.equals(key2)) {
                                 if (!ProteinMatch.contains(key1, key2)) {
                                     if (!ProteinMatch.getCommonProteins(key1, key2).isEmpty()) {
                                         best = false;
-                                        break;
                                     }
                                     for (String accession2 : ProteinMatch.getAccessions(key2)) {
                                         int tempPrefernce = compareMainProtein(match, accession2, match, accession1, searchParameters);
                                         if (tempPrefernce != 1) {
                                             best = false;
-                                            break;
                                         } else {
                                             if (preferenceReason.containsKey(accession2)) {
                                                 tempPrefernce = Math.min(preferenceReason.get(accession2), tempPrefernce);
@@ -4027,7 +4038,7 @@ public class PeptideShaker {
                                     preferenceReason.put(accession2, tempPrefernce);
                                 }
                             }
-                            if (best) {
+                            if (best && minimalKey == null) {
                                 minimalKey = key1;
                             }
                         }
@@ -4037,7 +4048,7 @@ public class PeptideShaker {
                 }
                 if (minimalKey != null) {
                     for (String key2 : keys) {
-                        if (!key2.equals(minimalKey)) {
+                        if (!key2.equals(minimalKey) && !keysToDelete.contains(key2)) {
                             keysToDelete.add(key2);
                             for (int reason : preferenceReason.values()) {
                                 if (reason == 1) {
@@ -4075,7 +4086,7 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, ArrayList<String> keysToDelete)
+    private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, HashSet<String> keysToDelete)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch sharedMatch = identification.getProteinMatch(sharedGroup);
@@ -4087,6 +4098,7 @@ public class PeptideShaker {
 
         if (!keysToDelete.contains(sharedGroup)) {
             keysToDelete.add(sharedGroup);
+            explainedGroup++;
         }
     }
 
