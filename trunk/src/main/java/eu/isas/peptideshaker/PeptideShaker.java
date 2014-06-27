@@ -46,11 +46,9 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.BufferedWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -179,7 +177,7 @@ public class PeptideShaker {
      */
     private int uncharacterizedIssue = 0;
     /**
-     * Number of groups deleted because explained by a simpler group
+     * Number of groups deleted because explained by a simpler group.
      */
     private int explainedGroup = 0;
     /**
@@ -2273,7 +2271,6 @@ public class PeptideShaker {
 //        BufferedWriter br = new BufferedWriter(new FileWriter(new File("D:\\projects\\PeptideShaker\\rescoring", "combination.txt")));
 //        br.write("Title\tPeptide\tScore\tDecoy");
 //        br.newLine();
-        
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             // batch load the spectrum matches
@@ -3912,18 +3909,18 @@ public class PeptideShaker {
                 String padding = "    ";
 
                 if (enzymaticIssue > 0) {
-                waitingHandler.appendReport(padding + "- " + enzymaticIssue + " protein groups supported by non-enzymatic shared peptides.", true, true);
+                    waitingHandler.appendReport(padding + "- " + enzymaticIssue + " protein groups supported by non-enzymatic shared peptides.", true, true);
                 }
                 if (evidenceIssue > 0) {
-                waitingHandler.appendReport(padding + "- " + evidenceIssue + " protein groups explained by peptides shared to less confident mappings.", true, true);
+                    waitingHandler.appendReport(padding + "- " + evidenceIssue + " protein groups explained by peptides shared to less confident mappings.", true, true);
                 }
                 if (uncharacterizedIssue > 0) {
-                waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " protein groups supported by peptides shared to uncharacterized proteins.", true, true);
+                    waitingHandler.appendReport(padding + "- " + uncharacterizedIssue + " protein groups supported by peptides shared to uncharacterized proteins.", true, true);
                 }
                 if (explainedGroup > 0) {
-                waitingHandler.appendReport(padding + "- " + explainedGroup + " groups explained by a simpler group.", true, true);
+                    waitingHandler.appendReport(padding + "- " + explainedGroup + " groups explained by a simpler group.", true, true);
                 }
-                waitingHandler.appendReport("Note: a group can present combinations of these criteria.", true, true);
+                waitingHandler.appendReport(padding + "Note: a group can present combinations of these criteria.", true, true);
                 waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
             }
