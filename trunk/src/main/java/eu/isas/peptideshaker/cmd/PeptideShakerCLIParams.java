@@ -36,7 +36,8 @@ public enum PeptideShakerCLIParams {
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
     SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
-    SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false);
+    SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false),
+    ZIP("zip", "Exports the entire project as zip file in the file specified.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -94,6 +95,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
         aOptions.addOption(SPECIES.id, true, SPECIES.description);
         aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
+        aOptions.addOption(ZIP.id, true, ZIP.description);
 
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
@@ -145,6 +147,9 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";
+
+        output += "\n\nOptional Export:\n\n";
+        output += "-" + String.format(formatter, ZIP.id) + ZIP.description + "\n";
 
         output += "\n\nOptional temporary folder:\n\n";
         output += "-" + String.format(formatter, PathSettingsCLIParams.ALL.id) + PathSettingsCLIParams.ALL.description + "\n";

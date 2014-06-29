@@ -72,6 +72,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
@@ -96,8 +97,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
@@ -6089,7 +6088,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     final File zipFile = selectedFile;
 
-                    final PeptideShakerGUI tempRef = this; // needed due to threading issues
                     progressDialog = new ProgressDialogX(this,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -6112,138 +6110,29 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         @Override
                         public void run() {
 
-                            progressDialog.setTitle("Getting FASTA File. Please Wait...");
-
-                            File projectFolder = cpsBean.getCpsFile().getParentFile();
-                            File fastaLocation = tempRef.getSearchParameters().getFastaFile();
-                            ArrayList<String> dataFiles = new ArrayList<String>();
-                            dataFiles.add(tempRef.getSearchParameters().getFastaFile().getAbsolutePath());
-
-                            File indexFile = new File(fastaLocation.getParentFile(), fastaLocation.getName() + ".cui");
-
-                            if (indexFile.exists()) {
-                                dataFiles.add(indexFile.getAbsolutePath());
-                            }
-
-                            progressDialog.setTitle("Getting Spectrum Files. Please Wait...");
-                            progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                            progressDialog.setValue(0);
-                            progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumFiles().size());
-
-                            ArrayList<String> names = new ArrayList<String>();
-
+                            File cpsFile = cpsBean.getCpsFile();
+                            File fastaFile = PeptideShakerGUI.this.getSearchParameters().getFastaFile();
+                            ArrayList<File> spectrumFiles = new ArrayList<File>();
                             for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
-
-                                progressDialog.increasePrimaryProgressCounter();
-
                                 File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
-
-                                if (spectrumFile.exists() && !names.contains(spectrumFile.getName())) {
-
-                                    names.add(spectrumFile.getName());
-                                    dataFiles.add(spectrumFile.getAbsolutePath());
-
-                                    indexFile = new File(spectrumFile.getParentFile(), spectrumFile.getName() + ".cui");
-
-                                    if (indexFile.exists()) {
-                                        dataFiles.add(indexFile.getAbsolutePath());
-                                    }
-                                }
+                                spectrumFiles.add(spectrumFile);
                             }
 
-                            progressDialog.setTitle("Zipping Project. Please Wait...");
-                            progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
-                            // zip the project
                             try {
-                                FileOutputStream fos = new FileOutputStream(zipFile);
-                                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                                ZipOutputStream out = new ZipOutputStream(bos);
-                                final int BUFFER = 2048;
-                                byte data[] = new byte[BUFFER];
 
-                                progressDialog.setTitle("Zipping PeptideShaker File. Please Wait...");
-
-                                // add the cps file
-                                FileInputStream fi = new FileInputStream(cpsBean.getCpsFile());
-                                BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
-                                ZipEntry entry = new ZipEntry(cpsBean.getCpsFile().getName());
-                                out.putNextEntry(entry);
-                                int count;
-                                while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                                    out.write(data, 0, count);
-                                }
-                                origin.close();
-
-                                // add the cps folder if present (obsolete structure)
-                                String cpsFolderName = cpsBean.getCpsFile().getName().substring(0, cpsBean.getCpsFile().getName().length() - 4) + "_cps";
-                                File cpsFolder = new File(projectFolder, cpsFolderName);
-
-                                if (cpsFolder.exists()) {
-                                    String files[] = cpsFolder.list();
-
-                                    progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
-                                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                                    progressDialog.setValue(0);
-                                    progressDialog.setMaxPrimaryProgressCounter(files.length);
-
-                                    for (int i = 0; i < files.length && !progressDialog.isRunCanceled(); i++) {
-
-                                        progressDialog.increasePrimaryProgressCounter();
-
-                                        fi = new FileInputStream(new File(cpsFolder, files[i]));
-                                        origin = new BufferedInputStream(fi, BUFFER);
-                                        entry = new ZipEntry(cpsFolderName + File.separator + files[i]);
-                                        out.putNextEntry(entry);
-                                        while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                                            out.write(data, 0, count);
-                                        }
-                                        origin.close();
-                                    }
-                                }
-
-                                // add the data files
-                                progressDialog.setTitle("Zipping FASTA and Spectrum Files. Please Wait...");
-                                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                                progressDialog.setValue(0);
-                                progressDialog.setMaxPrimaryProgressCounter(dataFiles.size());
-
-                                // create the data folder in the zip file
-                                out.putNextEntry(new ZipEntry("data/"));
-
-                                // add the files to the data folder
-                                for (int i = 0; i < dataFiles.size() && !progressDialog.isRunCanceled(); i++) {
-
-                                    progressDialog.increasePrimaryProgressCounter();
-
-                                    fi = new FileInputStream(new File(dataFiles.get(i)));
-                                    origin = new BufferedInputStream(fi, BUFFER);
-                                    entry = new ZipEntry("data/" + new File(dataFiles.get(i)).getName());
-                                    out.putNextEntry(entry);
-                                    while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                                        out.write(data, 0, count);
-                                    }
-                                    origin.close();
-                                }
-
-                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                                progressDialog.setTitle("Cleaning Up. Please Wait...");
-
-                                out.close();
-                                bos.close();
-                                fos.close();
+                                ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
 
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
 
                                 progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             } catch (IOException e) {
                                 e.printStackTrace();
 
                                 progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             }
 
@@ -6255,7 +6144,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                                 double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
 
-                                JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
+                                JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
                                         "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
                             }
                         }
@@ -6552,12 +6441,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @return true if a new version is to be downloaded
      */
-    public boolean checkForNewVersion() {
+    public
+            boolean checkForNewVersion() {
         try {
-            File jarFile = new File(PeptideShakerGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            File jarFile = new File(PeptideShakerGUI.class
+                    .getProtectionDomain().getCodeSource().getLocation().toURI());
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
             URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
-            return CompomicsWrapper.checkForNewDeployedVersion("PeptideShaker", oldMavenJarFile, jarRepository, "peptide-shaker.ico",
+
+            return CompomicsWrapper.checkForNewDeployedVersion(
+                    "PeptideShaker", oldMavenJarFile, jarRepository, "peptide-shaker.ico",
                     false, true, true, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
         } catch (UnknownHostException ex) {

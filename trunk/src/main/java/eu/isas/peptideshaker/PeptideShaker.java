@@ -2549,23 +2549,31 @@ public class PeptideShaker {
                                 PTM ptm = ptmFactory.getPTM(modName);
                                 if (ptm.getType() == PTM.MODAA) {
                                     if (!modMatch.isConfident()) {
-                                        if (!notConfidentPeptideInference.containsKey(spectrumFileName)) {
-                                            notConfidentPeptideInference.put(spectrumFileName, new HashMap<String, ArrayList<String>>());
+                                        HashMap<String, ArrayList<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
+                                        if (fileMap == null) {
+                                            fileMap = new HashMap<String, ArrayList<String>>();
+                                            notConfidentPeptideInference.put(spectrumFileName, fileMap);
                                         }
-                                        if (!notConfidentPeptideInference.get(spectrumFileName).containsKey(modMatch.getTheoreticPtm())) {
-                                            notConfidentPeptideInference.get(spectrumFileName).put(modMatch.getTheoreticPtm(), new ArrayList<String>());
+                                        ArrayList<String> spectra = fileMap.get(modName);
+                                        if (spectra == null) {
+                                            spectra = new ArrayList<String>();
+                                            fileMap.put(modName, spectra);
                                         }
-                                        notConfidentPeptideInference.get(spectrumFileName).get(modMatch.getTheoreticPtm()).add(spectrumKey);
+                                        spectra.add(spectrumKey);
                                         confident = false;
                                     } else {
-                                        if (!confidentPeptideInference.containsKey(modName)) {
-                                            confidentPeptideInference.put(modName, new HashMap<String, ArrayList<String>>());
+                                        HashMap<String, ArrayList<String>> modMap = confidentPeptideInference.get(modName);
+                                        if (modMap == null) {
+                                            modMap = new HashMap<String, ArrayList<String>>();
+                                            confidentPeptideInference.put(modName, modMap);
                                         }
                                         String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
-                                        if (!confidentPeptideInference.get(modName).containsKey(sequence)) {
-                                            confidentPeptideInference.get(modName).put(sequence, new ArrayList<String>());
+                                        ArrayList<String> spectra = modMap.get(sequence);
+                                        if (spectra == null) {
+                                            spectra = new ArrayList<String>();
+                                            modMap.put(sequence, spectra);
                                         }
-                                        confidentPeptideInference.get(modName).get(sequence).add(spectrumKey);
+                                        spectra.add(spectrumKey);
                                     }
                                 }
                             }
@@ -2589,13 +2597,15 @@ public class PeptideShaker {
         // try to infer the modification site based on any related peptide
         for (String spectrumFile : notConfidentPeptideInference.keySet()) {
 
-            ArrayList<String> progress = new ArrayList<String>();
+            HashSet<String> progress = new HashSet<String>();
 
             for (String modification : notConfidentPeptideInference.get(spectrumFile).keySet()) {
 
-                identification.loadSpectrumMatches(notConfidentPeptideInference.get(spectrumFile).get(modification), null);
+                ArrayList<String> spectrumKeys = notConfidentPeptideInference.get(spectrumFile).get(modification);
+                
+                identification.loadSpectrumMatches(spectrumKeys, null);
 
-                for (String spectrumKey : notConfidentPeptideInference.get(spectrumFile).get(modification)) {
+                for (String spectrumKey : spectrumKeys) {
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();

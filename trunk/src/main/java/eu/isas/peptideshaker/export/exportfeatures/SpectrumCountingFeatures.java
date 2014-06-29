@@ -12,8 +12,8 @@ import java.util.Arrays;
  */
 public enum SpectrumCountingFeatures implements ExportFeature {
 
-    method("Method", "The method used to establish the spectrum counting index."),
-    validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.");
+    method("Method", "The method used to establish the spectrum counting index.", false),
+    validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -26,20 +26,26 @@ public enum SpectrumCountingFeatures implements ExportFeature {
      * The type of export feature.
      */
     public final static String type = "Spectrum Counting Parameters";
+    /**
+     * indicates whether a feature is for advanced user only
+     */
+    private boolean advanced;
 
     /**
      * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
+     * @param advanced indicates whether a feature is for advanced user only
      */
-    private SpectrumCountingFeatures(String title, String description) {
+    private SpectrumCountingFeatures(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
+        this.advanced = advanced;
     }
 
     @Override
-    public ArrayList<ExportFeature> getExportFeatures() {
+    public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         return result;
@@ -58,5 +64,10 @@ public enum SpectrumCountingFeatures implements ExportFeature {
     @Override
     public String getFeatureFamily() {
         return type;
+    }
+
+    @Override
+    public boolean isAdvanced() {
+        return advanced;
     }
 }
