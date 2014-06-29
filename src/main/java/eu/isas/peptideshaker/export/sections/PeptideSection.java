@@ -101,6 +101,8 @@ public class PeptideSection {
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
+     * @param validatedOnly whether only validated matches should be exported
+     * @param decoys whether decoy matches should be exported as well
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
@@ -112,7 +114,7 @@ public class PeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -157,30 +159,45 @@ public class PeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            peptideMatch = identification.getPeptideMatch(peptideKey);
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
-            if (indexes) {
-                if (linePrefix != null) {
-                    writer.write(linePrefix);
-                }
-                writer.write(line + separator);
-            }
+            if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
-            for (ExportFeature exportFeature : peptideFeatures) {
-                PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
-                writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, waitingHandler) + separator);
-            }
-            writer.newLine();
-            if (psmSection != null) {
-                String psmSectionPrefix = "";
-                if (linePrefix != null) {
-                    psmSectionPrefix += linePrefix;
+                peptideMatch = identification.getPeptideMatch(peptideKey);
+
+                if (decoys || !peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+
+                    boolean first = true;
+
+                    if (indexes) {
+                        if (linePrefix != null) {
+                            writer.write(linePrefix);
+                        }
+                        writer.write(line + "");
+                        first = false;
+                    }
+
+                    for (ExportFeature exportFeature : peptideFeatures) {
+                        if (!first) {
+                            writer.write(separator);
+                        } else {
+                            first = false;
+                        }
+                        PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler) + separator);
+                    }
+                    writer.newLine();
+                    if (psmSection != null) {
+                        String psmSectionPrefix = "";
+                        if (linePrefix != null) {
+                            psmSectionPrefix += linePrefix;
+                        }
+                        psmSectionPrefix += line + ".";
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
+                    }
+                    line++;
                 }
-                psmSectionPrefix += line + ".";
-                psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, null);
             }
-            line++;
         }
     }
 
@@ -199,6 +216,8 @@ public class PeptideSection {
      * @param peptideMatch the peptide match
      * @param psParameter the PeptideShaker parameters of the match
      * @param peptideFeature the peptide feature to export
+     * @param validatedOnly whether only validated matches should be exported
+     * @param decoys whether decoy matches should be exported as well
      * @param waitingHandler the waiting handler
      *
      * @return the component of the section corresponding to the given feature
@@ -212,7 +231,7 @@ public class PeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeatures peptideFeature, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeatures peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:

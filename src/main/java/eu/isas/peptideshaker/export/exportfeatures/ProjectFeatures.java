@@ -13,13 +13,13 @@ import java.util.Arrays;
  */
 public enum ProjectFeatures implements ExportFeature, Serializable {
 
-    peptide_shaker("PeptideShaker Version", "Software version used to create the project."),
-    date("Date", "Date of project creation."),
-    experiment("Experiment", "Experiment name."),
-    sample("Sample", "Sample name."),
-    replicate("Replicate Number", "Replicate number."),
-    identification_algorithms("Identification Algorithms", "The identification algorithms used."),
-    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.");
+    peptide_shaker("PeptideShaker Version", "Software version used to create the project.", false),
+    date("Date", "Date of project creation.", false),
+    experiment("Experiment", "Experiment name.", false),
+    sample("Sample", "Sample name.", false),
+    replicate("Replicate Number", "Replicate number.", false),
+    identification_algorithms("Identification Algorithms", "The identification algorithms used.", false),
+    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -32,20 +32,26 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
      * The type of export feature.
      */
     public final static String type = "Project Details";
+    /**
+     * indicates whether a feature is for advanced user only
+     */
+    private boolean advanced;
 
     /**
      * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
+     * @param advanced indicates whether a feature is for advanced user only
      */
-    private ProjectFeatures(String title, String description) {
+    private ProjectFeatures(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
+        this.advanced = advanced;
     }
 
     @Override
-    public ArrayList<ExportFeature> getExportFeatures() {
+    public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         return result;
@@ -64,5 +70,10 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
     @Override
     public String getFeatureFamily() {
         return type;
+    }
+
+    @Override
+    public boolean isAdvanced() {
+        return advanced;
     }
 }

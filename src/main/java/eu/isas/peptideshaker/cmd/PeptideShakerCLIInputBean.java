@@ -50,11 +50,6 @@ public class PeptideShakerCLIInputBean {
      */
     private File output = null;
     /**
-     * Text summary format 1 output directory. Three files: proteins, peptides
-     * and PSMs.
-     */
-    private File textSummaryDirectoryFormat1 = null;
-    /**
      * PeptideShaker pride output file.
      */
     private File prideFile = null;
@@ -138,6 +133,10 @@ public class PeptideShakerCLIInputBean {
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
+    /**
+     * File where to export the zipped folder
+     */
+    private File zipExport = null;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -274,6 +273,11 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_TYPE.id)) {
             speciesType = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_TYPE.id); // @TODO: check that it's a valid species type??
         }
+        
+        // zipped export
+        if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
+            zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
+        }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
@@ -287,21 +291,12 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the directory for text summary output format 1. Null if not set.
-     *
-     * @return the directory for text summary output format 1
+     * Returns the file where to export the project as zip file. Null if not set.
+     * 
+     * @return the file where to export the project as zip file
      */
-    public File getTextFormat1Directory() {
-        return textSummaryDirectoryFormat1;
-    }
-
-    /**
-     * Sets the directory for text summary output format 1.
-     *
-     * @param csvDirectory the directory for text summary output format 1
-     */
-    public void setTextFormat1Directory(File csvDirectory) {
-        this.textSummaryDirectoryFormat1 = csvDirectory;
+    public File getZipExport() {
+        return zipExport;
     }
 
     /**

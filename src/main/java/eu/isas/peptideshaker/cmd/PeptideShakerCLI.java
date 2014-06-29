@@ -29,6 +29,7 @@ import com.compomics.util.messages.FeedBack;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -298,14 +299,39 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        //@TODO: move that to the report cli as soon as tested
-        // text summary output - format 1
-        if (cliInputBean.getTextFormat1Directory() != null) {
-            waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator, searchParameters);
-            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat1Directory());
-            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
+        // Export as zip
+        File zipFile = cliInputBean.getZipExport();
+        if (zipFile != null) {
+            File parent = zipFile.getParentFile();
+            try {
+                parent.mkdirs();
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while creating folder " + parent.getAbsolutePath() + ".", true, true);
+            }
+
+            File fastaFile = searchParameters.getFastaFile();
+            ArrayList<File> spectrumFiles = new ArrayList<File>();
+            for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
+                spectrumFiles.add(spectrumFile);
+            }
+
+            try {
+
+                ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, waitingHandler);
+
+                final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
+                double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
+
+                waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",true, true);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+                waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+            }
         }
 
         waitingHandler.appendReportEndLine();
@@ -316,9 +342,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-        
-        waitingHandler.appendReport("PeptideShaker process completed.", true, true);
-        waitingHandler.setSecondaryProgressText("Processing Completed.");
+
+        waitingHandler.appendReport(
+                "PeptideShaker process completed.", true, true);
+        waitingHandler.setSecondaryProgressText(
+                "Processing Completed.");
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!

@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
-import com.compomics.util.gui.export.export.ReportEditor;
+import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.PSExportFactory;

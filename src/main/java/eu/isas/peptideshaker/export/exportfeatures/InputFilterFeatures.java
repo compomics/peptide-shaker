@@ -12,11 +12,11 @@ import java.util.Arrays;
  */
 public enum InputFilterFeatures implements ExportFeature {
 
-    min_peptide_length("Minimal Peptide Length", "The minimal peptide length."),
-    max_peptide_length("Maximal Peptide Length", "The maximal peptide length."),
-    max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed."),
-    max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed."),
-    unknown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting PTMs which do not match the search parameters were discarded.");
+    min_peptide_length("Minimal Peptide Length", "The minimal peptide length.", false),
+    max_peptide_length("Maximal Peptide Length", "The maximal peptide length.", false),
+    max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed.", false),
+    max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed.", false),
+    unknown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting PTMs which do not match the search parameters were discarded.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -29,20 +29,26 @@ public enum InputFilterFeatures implements ExportFeature {
      * The type of export feature.
      */
     public final static String type = "Input Filters";
+    /**
+     * indicates whether a feature is for advanced user only
+     */
+    private boolean advanced;
 
     /**
      * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
+     * @param advanced indicates whether a feature is for advanced user only
      */
-    private InputFilterFeatures(String title, String description) {
+    private InputFilterFeatures(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
+        this.advanced = advanced;
     }
 
     @Override
-    public ArrayList<ExportFeature> getExportFeatures() {
+    public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         return result;
@@ -61,5 +67,10 @@ public enum InputFilterFeatures implements ExportFeature {
     @Override
     public String getFeatureFamily() {
         return type;
+    }
+
+    @Override
+    public boolean isAdvanced() {
+        return advanced;
     }
 }

@@ -107,7 +107,10 @@ public class ProteinSection {
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
      * surrounding amino-acids, the number of surrounding amino acids to use
+     * @param validatedOnly whether only validated matches should be exported
+     * @param decoys whether decoy matches should be exported as well
      * @param waitingHandler the waiting handler
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -115,9 +118,10 @@ public class ProteinSection {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
+     * @throws org.apache.commons.math.MathException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
@@ -167,29 +171,44 @@ public class ProteinSection {
 
         for (String proteinKey : keys) {
 
-            if (waitingHandler != null) {
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                    if (waitingHandler != null) {
+                        if (waitingHandler.isRunCanceled()) {
+                            return;
+                        }
+                        waitingHandler.increaseSecondaryProgressCounter();
+                    }
+
+            if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
+
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
+                if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
+
+                    boolean first = true;
+                    
+                    if (indexes) {
+                        writer.write(line + "");
+                        first = false;
+                    }
+
+                    proteinMatch = identification.getProteinMatch(proteinKey);
+
+                    for (ExportFeature exportFeature : proteinFeatures) {
+                        if (!first) {
+                            writer.write(separator);
+                        } else {
+                            first = false;
+                        }
+                        ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
+                        writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
+                    }
+                    writer.newLine();
+                    if (peptideSection != null) {
+                        peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
+                    }
+                    line++;
                 }
-                waitingHandler.increaseSecondaryProgressCounter();
             }
-
-            if (indexes) {
-                writer.write(line + separator);
-            }
-
-            proteinMatch = identification.getProteinMatch(proteinKey);
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-
-            for (ExportFeature exportFeature : proteinFeatures) {
-                ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
-                writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler) + separator);
-            }
-            writer.newLine();
-            if (peptideSection != null) {
-                peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", null);
-            }
-            line++;
         }
     }
 
@@ -317,8 +336,18 @@ public class ProteinSection {
                     }
                     completeProteinGroup.append(accession);
                 }
-
                 return completeProteinGroup.toString();
+            case descriptions:
+                StringBuilder descriptions = new StringBuilder();
+                allAccessions = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
+                Collections.sort(allAccessions);
+                for (String accession : allAccessions) {
+                    if (descriptions.length() > 0) {
+                        descriptions.append(", ");
+                    }
+                    descriptions.append(SequenceFactory.getInstance().getHeader(accession).getSimpleProteinDescription());
+                }
+                return descriptions.toString();
             case confidence:
                 return psParameter.getProteinConfidence() + "";
             case confident_PTMs:
