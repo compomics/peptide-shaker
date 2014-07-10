@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -19,6 +20,11 @@ import java.util.zip.ZipOutputStream;
  * @author Marc
  */
 public class ProjectExport {
+
+    /**
+     * The name of the folder where to save the mgf and fasta file
+     */
+    public final static String defaultDataFolder = "data";
 
     /**
      * Exports the project as zip file.
@@ -89,30 +95,9 @@ public class ProjectExport {
             try {
                 ZipOutputStream out = new ZipOutputStream(bos);
                 try {
-                    final int BUFFER = 2048;
-                    byte data[] = new byte[BUFFER];
-                    int count;
 
                     // add the cps file
-                    FileInputStream fi = new FileInputStream(cpsFile);
-                    try {
-                        BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
-                        try {
-                            ZipEntry entry = new ZipEntry(cpsFile.getName());
-                            out.putNextEntry(entry);
-                            while ((count = origin.read(data, 0, BUFFER)) != -1) {
-
-                                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                                    return;
-                                }
-                                out.write(data, 0, count);
-                            }
-                        } finally {
-                            origin.close();
-                        }
-                    } finally {
-                        fi.close();
-                    }
+                    ZipUtils.addFileToZip(cpsFile, out, waitingHandler);
 
                     // add the data files
                     if (waitingHandler != null) {
@@ -123,10 +108,10 @@ public class ProjectExport {
                     }
 
                     // create the data folder in the zip file
-                    out.putNextEntry(new ZipEntry("data/"));
+                    ZipUtils.addFolderToZip(defaultDataFolder, out);
 
                     // add the files to the data folder
-                    for (int i = 0; i < dataFiles.size(); i++) {
+                    for (String dataFilePath : dataFiles) {
 
                         if (waitingHandler != null) {
                             if (waitingHandler.isRunCanceled()) {
@@ -135,21 +120,9 @@ public class ProjectExport {
                             waitingHandler.increasePrimaryProgressCounter();
                         }
 
-                        fi = new FileInputStream(new File(dataFiles.get(i)));
-                        try {
-                            BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
-                            try {
-                                ZipEntry entry = new ZipEntry("data/" + new File(dataFiles.get(i)).getName());
-                                out.putNextEntry(entry);
-                                while ((count = origin.read(data, 0, BUFFER)) != -1 && !waitingHandler.isRunCanceled()) {
-                                    out.write(data, 0, count);
-                                }
-                            } finally {
-                                origin.close();
-                            }
-                        } finally {
-                            fi.close();
-                        }
+                        File dataFile = new File(dataFilePath);
+
+                        ZipUtils.addFileToZip(defaultDataFolder, dataFile, out, waitingHandler);
                     }
 
                     if (waitingHandler != null) {

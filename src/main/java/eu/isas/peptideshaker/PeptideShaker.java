@@ -130,6 +130,10 @@ public class PeptideShaker {
      */
     private static String SERIALIZATION_DIRECTORY = "matches";
     /**
+     * Folder where the data files are stored by default. Should be the same as in SearchGUI.
+     */
+    public static String DATA_DIRECTORY = "data";
+    /**
      * The parent directory of the serialization directory. An empty string if
      * not set.
      */
