@@ -18,6 +18,7 @@ import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.identification_parameters.PepnovoParameters;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
@@ -108,6 +109,10 @@ public class FileImporter {
      * The protein tree used to map peptides on protein sequences.
      */
     public ProteinTree proteinTree;
+    /**
+     * Suffix for folders where the content of zip files should be extracted
+     */
+    public final static String tempFolderName = "PeptideShaker_temp";
 
     /**
      * Constructor for the importer.
@@ -435,14 +440,17 @@ public class FileImporter {
             ArrayList<String> names = new ArrayList<String>(filesMap.keySet());
             Collections.sort(names);
 
-            // Process sequencing files first, they need much more memory
-//            for (String name : names) {
-//                if (name.endsWith("tags")) {
-//
-//                }
-//            }
+            // Process sequencing files first, they need much more memory. TODO: make something more generic?
             for (String name : names) {
-                this.idFiles.add(filesMap.get(name));
+                if (name.endsWith("tags")) {
+                    this.idFiles.add(filesMap.get(name));
+                }
+            }
+            for (String name : names) {
+                File file = filesMap.get(name);
+                if (!this.idFiles.contains(file)) {
+                    this.idFiles.add(file);
+                }
             }
 
             this.spectrumFiles = new HashMap<String, File>();
@@ -691,6 +699,11 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
                 return;
             }
+            
+            // Clear cache for sequencing files. TODO: make something more generic?
+            if (idFile.getName().endsWith("tags") && !peptideShaker.getCache().isEmpty()) {
+                        peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
+            }
 
             // set the search engine name and version for this file
             HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
@@ -732,6 +745,10 @@ public class FileImporter {
                     // free memory if needed
                     if (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
                         peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                    }
+                    // free memory if needed
+                    if (memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                        ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, waitingHandler);
                     }
                     if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                         sequenceFactory.reduceNodeCacheSize(0.5);
@@ -1482,5 +1499,16 @@ public class FileImporter {
             }
         }
         return refMass;
+    }
+    
+    /**
+     * Returns the temp folder name to use when unzipping a zip file.
+     * 
+     * @param fileName the name of the zip file
+     * 
+     * @return the folder name associated to the zip file
+     */
+    public static String getTempFolderName(String fileName) {
+        return Util.removeExtension(fileName) + "_" + FileImporter.tempFolderName;
     }
 }

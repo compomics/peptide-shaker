@@ -6,7 +6,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.io.TarUtils;
+import com.compomics.util.io.compression.TarUtils;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;

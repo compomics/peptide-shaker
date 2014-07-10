@@ -23,10 +23,12 @@ import com.compomics.util.experiment.identification.identification_parameters.Xt
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -38,6 +40,7 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.utils.Tips;
 
 import javax.swing.*;
@@ -47,8 +50,10 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import org.jmol.export.dialog.FileChooser;
 
 /**
  * A dialog for selecting the files to load.
@@ -928,11 +933,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Identification File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setMultiSelectionEnabled(true);
-        ArrayList<File> folders = new ArrayList<File>();
 
         // filter for all search engines
         FileFilter allFilter = new FileFilter() {
@@ -950,12 +954,28 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         || myFile.getName().toLowerCase().endsWith("mzid")
                         || myFile.getName().toLowerCase().endsWith("csv")
                         || myFile.getName().toLowerCase().endsWith("tags")
+                        || myFile.getName().toLowerCase().endsWith("zip")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "MS-GF+ (.mzid), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
+                return "mzIdentML (.mzid), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
+            }
+        };
+
+        // filter for zip folders only
+        FileFilter zipFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("zip")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "compressed zip folder (.zip)";
             }
         };
 
@@ -989,8 +1009,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         };
 
-        // filter for ms-gf+ only
-        FileFilter msgfFilter = new FileFilter() {
+        // filter for mzIdentML only
+        FileFilter mzidFilter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
 
@@ -1000,7 +1020,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             @Override
             public String getDescription() {
-                return "MS-GF+ (.mzid)";
+                return "mzIdentML (.mzid)";
             }
         };
 
@@ -1050,7 +1070,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         };
 
         fileChooser.setFileFilter(allFilter);
-        fileChooser.addChoosableFileFilter(msgfFilter);
+        fileChooser.addChoosableFileFilter(zipFilter);
+        fileChooser.addChoosableFileFilter(mzidFilter);
         fileChooser.addChoosableFileFilter(omssaFilter);
         fileChooser.addChoosableFileFilter(tandemFilter);
         fileChooser.addChoosableFileFilter(msAmandaFilter);
@@ -1060,95 +1081,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         int returnVal = fileChooser.showDialog(this, "Add");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            ArrayList<File> parameterFiles = new ArrayList<File>();
-            for (File newFile : fileChooser.getSelectedFiles()) {
-                if (newFile.isDirectory()) {
-                    folders.add(newFile);
-                    File[] tempFiles = newFile.listFiles();
-                    for (File file : tempFiles) {
-                        if (file.getName().toLowerCase().endsWith("dat")
-                                || file.getName().toLowerCase().endsWith("omx")
-                                || file.getName().toLowerCase().endsWith("xml")
-                                || file.getName().toLowerCase().endsWith("mzid")
-                                || file.getName().toLowerCase().endsWith("csv")
-                                || file.getName().toLowerCase().endsWith("tags")) {
-                            if (!file.getName().equals("mods.xml")
-                                    && !file.getName().equals("usermods.xml")) {
-                                idFiles.add(file);
-                            } else if (file.getName().endsWith("usermods.xml")) {
-                                modificationFiles.add(file);
-                            }
-                        } else if (file.getName().toLowerCase().endsWith(".parameters")
-                                || file.getName().toLowerCase().endsWith(".properties")) {
-                            boolean found = false;
-                            for (File tempFile : parameterFiles) {
-                                if (tempFile.getName().equals(file.getName())) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                parameterFiles.add(file);
-                            }
-                        }
-                    }
-                } else {
-                    folders.add(newFile.getParentFile());
-                    idFiles.add(newFile);
-                    for (File file : newFile.getParentFile().listFiles()) {
-                        if (file.getName().toLowerCase().endsWith(".parameters")
-                                || file.getName().toLowerCase().endsWith(".properties")) {
-                            if (!parameterFiles.contains(file)) {
-                                parameterFiles.add(file);
-                            }
-                        }
-                        if (file.getName().endsWith("usermods.xml")) {
-                            modificationFiles.add(file);
-                        }
-                    }
-                }
-                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
-            }
-
-            File parameterFile = null;
-            if (parameterFiles.size() == 1) {
-                parameterFile = parameterFiles.get(0);
-            } else if (parameterFiles.size() > 1) {
-
-                boolean equalParameters = true;
-
-                try {
-                    for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
-                        for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
-                            equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
-                        }
-                    }
-                } catch (ClassNotFoundException e) {
-                    equalParameters = false;
-                } catch (IOException e) {
-                    equalParameters = false;
-                }
-
-                if (equalParameters) {
-                    // all parameters are equal, just select one of them
-                    parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
-                } else {
-                    FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
-                    if (!fileSelection.isCanceled()) {
-                        parameterFile = fileSelection.getSelectedFile();
-                    }
-                }
-            }
-
-            final ArrayList<File> finalFolders = folders;
-            final File finalParameterFile = parameterFile;
 
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
-            progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
+            progressDialog.setTitle("Loading Files. Please Wait...");
 
             new Thread(new Runnable() {
                 public void run() {
@@ -1162,25 +1101,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             new Thread("importThread") {
                 public void run() {
-
-                    boolean importSuccessfull = true;
-
-                    for (int i = 0; i < finalFolders.size() && importSuccessfull; i++) {
-                        File folder = finalFolders.get(i);
-                        File inputFile = new File(folder, SEARCHGUI_INPUT);
-                        if (inputFile.exists()) {
-                            importSuccessfull = importMgfFiles(inputFile);
-                        }
-                    }
-
-                    idFilesTxt.setText(idFiles.size() + " file(s) selected");
-
-                    if (finalParameterFile != null) {
-                        importSearchParameters(finalParameterFile, progressDialog);
-                    }
-
-                    progressDialog.setRunFinished();
-                    validateInput();
+                    loadIdInputFiles(fileChooser.getSelectedFiles());
                 }
             }.start();
         }
@@ -1597,9 +1518,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * Imports the search parameters from a SearchGUI file.
      *
      * @param file the selected searchGUI file
+     * @param dataFolders folders where to look for the fasta file
      * @param progressDialog the progress dialog
      */
-    public void importSearchParameters(File file, ProgressDialogX progressDialog) {
+    public void importSearchParameters(File file, ArrayList<File> dataFolders, ProgressDialogX progressDialog) {
 
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
@@ -1704,19 +1626,36 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         File fastaFile = searchParameters.getFastaFile();
         if (fastaFile != null) {
+            boolean found = false;
             if (fastaFile.exists()) {
-                fastaFileTxt.setText(fastaFile.getName());
-                loadFastaFile(fastaFile, progressDialog);
+                found = true;
             } else {
-                // try to find it in the same folder as the SearchGUI.properties file
-                if (new File(file.getParentFile(), fastaFile.getName()).exists()) {
-                    fastaFile = new File(file.getParentFile(), fastaFile.getName());
-                    searchParameters.setFastaFile(fastaFile);
-                    fastaFileTxt.setText(fastaFile.getName());
-                    loadFastaFile(fastaFile, progressDialog);
-                } else {
-                    JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                // look in the data folders
+                for (File dataFolder : dataFolders) {
+                    File newFile = new File(dataFolder, fastaFile.getName());
+                    if (newFile.exists()) {
+                        fastaFile = newFile;
+                        searchParameters.setFastaFile(fastaFile);
+                        found = true;
+                        break;
+                    }
                 }
+                if (!found) {
+                    // try to find it in the same folder as the SearchGUI.properties file
+                    File parentFolder = file.getParentFile();
+                    File newFile = new File(parentFolder, fastaFile.getName());
+                    if (newFile.exists()) {
+                        fastaFile = newFile;
+                        searchParameters.setFastaFile(fastaFile);
+                        found = true;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+            if (found) {
+                loadFastaFile(fastaFile, progressDialog);
+                fastaFileTxt.setText(fastaFile.getName());
             }
         }
 
@@ -1750,62 +1689,93 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     }
 
     /**
-     * Imports the mgf files from a SearchGUI file.
+     * Loads the path of the mgf files listed in the given searchGUI input files
+     * and provides them in a list without duplicates.
      *
-     * @param searchGUIFile a SearchGUI file
-     * @returns true of the mgf files were imported successfully
+     * @param searchguiInputFiles the SearchGUI input files to inspect
+     *
+     * @return a list of mgf input files
      */
-    private boolean importMgfFiles(File searchGUIFile) {
-
-        boolean success = true;
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
-            String line;
-            ArrayList<String> names = new ArrayList<String>();
-            String missing = "";
-            for (File file : spectrumFiles) {
-                names.add(file.getName());
+    private ArrayList<String> getMgfFiles(ArrayList<File> searchguiInputFiles) {
+        ArrayList<String> result = new ArrayList<String>();
+        for (File searchguiInputFile : searchguiInputFiles) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(searchguiInputFile));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    // Skip empty lines.
+                    line = line.trim();
+                    if (!line.equals("")) {
+                        // dirty fix to be able to open windows files on linux/mac and the other way around
+                        if (System.getProperty("os.name").lastIndexOf("Windows") == -1) {
+                            line = line.replaceAll("\\\\", "/");
+                        } else {
+                            line = line.replaceAll("/", "\\\\");
+                        }
+                        if (!result.contains(line)) {
+                            result.add(line);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            while ((line = br.readLine()) != null) {
-                // Skip empty lines.
-                line = line.trim();
-                if (!line.equals("")) {
-                    try {
-                        File newFile = new File(line);
-                        if (!names.contains(newFile.getName())) {
-                            if (newFile.exists()) {
-                                names.add(newFile.getName());
-                                spectrumFiles.add(newFile);
-                            } else {
-                                // try to find it in the same folder as the SearchGUI.properties file
-                                if (new File(searchGUIFile.getParentFile(), newFile.getName()).exists()) {
-                                    newFile = new File(searchGUIFile.getParentFile(), newFile.getName());
-                                    names.add(newFile.getName());
-                                    spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
-                                } else {
-                                    missing += newFile.getName() + "\n";
-                                }
+        }
+        return result;
+    }
+
+    /**
+     * Loads the mgf files listed in SearchGUI input files in the data folders
+     * provided.
+     *
+     * @param inputFiles the searchgui input files
+     * @param dataFolders the data folders where to look in
+     */
+    private void loadMgfs(ArrayList<File> inputFiles, ArrayList<File> dataFolders) {
+
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
+
+        ArrayList<String> neededMgfs = getMgfFiles(inputFiles);
+        ArrayList<String> names = new ArrayList<String>();
+        String missing = "";
+        for (File file : spectrumFiles) {
+            names.add(file.getName());
+        }
+
+        for (String path : neededMgfs) {
+            File newFile = new File(path);
+            String name = newFile.getName();
+            if (!names.contains(newFile.getName())) {
+                if (newFile.exists()) {
+                    spectrumFiles.add(newFile);
+                } else {
+                    boolean found = false;
+                    for (File folder : dataFolders) {
+                        for (File file : folder.listFiles()) {
+                            if (file.getName().equals(name)) {
+                                spectrumFiles.add(file);
+                                found = true;
+                                break;
                             }
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        if (found) {
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        missing += newFile.getName() + "\n";
                     }
                 }
             }
-            if (!missing.equals("")) {
-                JOptionPane.showMessageDialog(this, "Input file(s) not found:\n" + missing
-                        + "\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-                success = false;
-            }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
+        if (!missing.equals("")) {
+            JOptionPane.showMessageDialog(this, "Input file(s) not found:\n" + missing
+                    + "\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+        }
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
 
-        return success;
     }
 
     /**
@@ -1946,6 +1916,203 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         super.setIconImage(image);
         if (welcomeDialog != null) {
             welcomeDialog.setIconImage(image);
+        }
+    }
+
+    /**
+     * Loads the identification files collected and related information.
+     * 
+     * @param selectedFiles the files selected by the user
+     */
+    private void loadIdInputFiles(File[] selectedFiles) {
+        ArrayList<File> parameterFiles = new ArrayList<File>();
+        ArrayList<File> dataFolders = new ArrayList<File>();
+        ArrayList<File> inputFiles = new ArrayList<File>();
+        for (File newFile : selectedFiles) {
+            if (newFile.isDirectory()) {
+                dataFolders.add(newFile);
+
+                File dataFolder = new File(newFile, PeptideShaker.DATA_DIRECTORY);
+                if (dataFolder.exists()) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(newFile, "mgf");
+                if (dataFolder.exists()) {
+                    dataFolders.add(dataFolder);
+                }
+
+                File[] tempFiles = newFile.listFiles();
+                for (File file : tempFiles) {
+                    String lowerCaseName = file.getName().toLowerCase();
+                    if (lowerCaseName.endsWith("zip")) {
+                        loadZipFile(file, parameterFiles, dataFolders, inputFiles);
+                    } else {
+                        loadIdFile(file, parameterFiles, inputFiles);
+                    }
+                }
+            } else {
+                File parentFolder = newFile.getParentFile();
+                dataFolders.add(parentFolder);
+                
+                File dataFolder = new File(parentFolder, PeptideShaker.DATA_DIRECTORY);
+                if (dataFolder.exists()) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(parentFolder, "mgf");
+                if (dataFolder.exists()) {
+                    dataFolders.add(dataFolder);
+                }
+                
+                    String lowerCaseName = newFile.getName().toLowerCase();
+                    if (lowerCaseName.endsWith("zip")) {
+                        loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
+                    } else {
+                        loadIdFile(newFile, parameterFiles, inputFiles);
+                    }
+
+                for (File file : newFile.getParentFile().listFiles()) {
+                    if (file.getName().toLowerCase().endsWith(".parameters")
+                            || file.getName().toLowerCase().endsWith(".properties")) {
+                        if (!parameterFiles.contains(file)) {
+                            parameterFiles.add(file);
+                        }
+                    }
+                    if (file.getName().endsWith("usermods.xml")) {
+                        modificationFiles.add(file);
+                    }
+                }
+            }
+            peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+        }
+
+        File parameterFile = null;
+        if (parameterFiles.size() == 1) {
+            parameterFile = parameterFiles.get(0);
+        } else if (parameterFiles.size() > 1) {
+
+            boolean equalParameters = true;
+
+            try {
+                for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
+                    for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
+                        equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                equalParameters = false;
+            } catch (IOException e) {
+                equalParameters = false;
+            }
+
+            if (equalParameters) {
+                // all parameters are equal, just select one of them
+                parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
+            } else {
+                FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
+                if (!fileSelection.isCanceled()) {
+                    parameterFile = fileSelection.getSelectedFile();
+                }
+            }
+        }
+
+        loadMgfs(inputFiles, dataFolders);
+
+        idFilesTxt.setText(idFiles.size() + " file(s) selected");
+
+        if (parameterFile != null) {
+            importSearchParameters(parameterFile, dataFolders, progressDialog);
+        }
+
+        progressDialog.setRunFinished();
+        validateInput();
+    }
+
+    /**
+     * Unzips and loads the identification files from a compressed folder. Files
+     * in sub folders will be ignored.
+     *
+     * @param file the zip file to load
+     * @param parameterFiles list of the parameters file found
+     * @param dataFolders list of the folders where the mgf and fasta files
+     * could possibly be
+     * @param inputFiles list of the input files found
+     */
+    private void loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
+
+        String newName = FileImporter.getTempFolderName(file.getName());
+        File destinationFolder = new File(file.getParentFile(), newName);
+        destinationFolder.mkdir();
+        TempFilesManager.addTempFolder(destinationFolder);
+
+        progressDialog.setWaitingText("Unzipping " + file.getName() + ", please wait...");
+        progressDialog.setPrimaryProgressCounter(0);
+        progressDialog.setMaxPrimaryProgressCounter(100);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+
+        try {
+            ZipUtils.unzip(file, destinationFolder, progressDialog);
+            File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
+            if (dataFolder.exists()) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(destinationFolder, "mgf");
+            if (dataFolder.exists()) {
+                dataFolders.add(dataFolder);
+            }
+            for (File zippedFile : destinationFolder.listFiles()) {
+                loadIdFile(zippedFile, parameterFiles, inputFiles);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    e.getMessage(),
+                    "Unzip Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            idFiles.clear();
+            modificationFiles.clear();
+            return;
+        }
+
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setTitle("Loading Files. Please Wait...");
+    }
+
+    /**
+     * Loads the given identification file in the file list.
+     *
+     * @param file the identification file to load
+     * @param parameterFiles list of parameters files found
+     * @param inputFiles list of the input files found
+     */
+    private void loadIdFile(File file, ArrayList<File> parameterFiles, ArrayList<File> inputFiles) {
+
+        String lowerCaseName = file.getName().toLowerCase();
+
+        if (file.getName().equals(SEARCHGUI_INPUT)) {
+            inputFiles.add(file);
+        } else if (lowerCaseName.endsWith("dat")
+                || lowerCaseName.endsWith("omx")
+                || lowerCaseName.endsWith("xml")
+                || lowerCaseName.endsWith("mzid")
+                || lowerCaseName.endsWith("csv")
+                || lowerCaseName.endsWith("tags")) {
+            if (!lowerCaseName.endsWith("mods.xml")
+                    && !lowerCaseName.endsWith("usermods.xml")) {
+                idFiles.add(file);
+            } else if (lowerCaseName.endsWith("usermods.xml")) {
+                modificationFiles.add(file);
+            }
+        } else if (lowerCaseName.endsWith(".parameters")
+                || lowerCaseName.endsWith(".properties")) {
+            boolean found = false;
+            for (File tempFile : parameterFiles) {
+                if (tempFile.getName().equals(file.getName())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                parameterFiles.add(file);
+            }
         }
     }
 }

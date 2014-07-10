@@ -40,6 +40,7 @@ import com.compomics.util.gui.PrivacySettingsDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialogParent;
+import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
@@ -4586,6 +4587,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         GOFactory.getInstance().closeFiles();
                         cpsBean.saveUserPreferences();
                         saveModificationUsage();
+                        TempFilesManager.deleteTempFolders();
                     }
 
                 } catch (Exception e) {
