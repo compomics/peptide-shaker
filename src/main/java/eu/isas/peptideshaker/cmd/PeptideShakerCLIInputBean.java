@@ -40,7 +40,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The spectrum files.
      */
-    private ArrayList<File> spectrumFiles = null;
+    private ArrayList<File> spectrumFiles = new ArrayList<File>();
     /**
      * The identification files.
      */
@@ -155,10 +155,12 @@ public class PeptideShakerCLIInputBean {
             replicate = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id));
         }
 
-        String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
-        spectrumFiles = getSpectrumFiles(filesTxt);
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
+            spectrumFiles = getSpectrumFiles(filesTxt);
+        }
 
-        filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+        String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
         idFiles = getIdentificationFiles(filesTxt);
 
         output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
@@ -273,7 +275,7 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_TYPE.id)) {
             speciesType = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_TYPE.id); // @TODO: check that it's a valid species type??
         }
-        
+
         // zipped export
         if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
             zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
@@ -291,8 +293,9 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the file where to export the project as zip file. Null if not set.
-     * 
+     * Returns the file where to export the project as zip file. Null if not
+     * set.
+     *
      * @return the file where to export the project as zip file
      */
     public File getZipExport() {
@@ -525,6 +528,7 @@ public class PeptideShakerCLIInputBean {
     public void setMinPepLength(int minPepLength) {
         this.minPepLength = minPepLength;
     }
+
     /**
      * Returns the name of the sample.
      *
@@ -664,6 +668,7 @@ public class PeptideShakerCLIInputBean {
         extentions.add(".t.xml");
         extentions.add(".mzid");
         extentions.add(".csv");
+        extentions.add(".zip");
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
 
@@ -748,10 +753,10 @@ public class PeptideShakerCLIInputBean {
     public ReportCLIInputBean getReportCLIInputBean() {
         return reportCLIInputBean;
     }
-    
+
     /**
      * Returns the path settings provided by the user.
-     * 
+     *
      * @return the path settings provided by the user
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
