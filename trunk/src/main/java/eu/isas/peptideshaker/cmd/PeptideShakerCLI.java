@@ -17,7 +17,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.TxtExporter;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -25,11 +24,15 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.gui.DummyFrame;
+import com.compomics.util.gui.filehandling.TempFilesManager;
+import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
+import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
+import javax.swing.JOptionPane;
 
 /**
  * A Command line interface to run PeptideShaker
@@ -149,7 +153,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // create project
-        createProject();
+        try {
+            createProject();
+        } catch (Exception e) {
+            waitingHandler.appendReport("An error occurred while creating the project PeptideShaker.", true, true);
+            e.printStackTrace();
+        }
 
         // see if the project was created or canceled
         if (waitingHandler.isRunCanceled()) {
@@ -249,7 +258,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             }
 
-            // Pepnovo training export
+            // de novo training export
             if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
                 try {
                     CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
@@ -323,7 +332,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                 double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
 
-                waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",true, true);
+                waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -358,7 +367,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
      */
-    public void createProject() {
+    public void createProject() throws IOException {
 
         // Define new project references.
         experiment = new MsExperiment(cliInputBean.getiExperimentID());
@@ -382,8 +391,118 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         // Get the input files
+        ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
+        ArrayList<File> dataFolders = new ArrayList<File>();
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
-        ArrayList<File> identificationFiles = cliInputBean.getIdFiles();
+
+        // export data from zip files, try to find the mgf files
+        ArrayList<File> identificationFiles = new ArrayList<File>();
+        for (File inputFile : identificationFilesInput) {
+
+            File parentFile = inputFile.getParentFile();
+            if (!dataFolders.contains(parentFile)) {
+                dataFolders.add(parentFile);
+            }
+            File dataFolder = new File(parentFile, "mgf");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, "fasta");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, PeptideShaker.DATA_DIRECTORY);
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+
+            String fileName = inputFile.getName();
+            if (fileName.toLowerCase().endsWith("zip")) {
+                waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
+                String newName = FileImporter.getTempFolderName(fileName);
+                File destinationFolder = new File(parentFile, newName);
+                ZipUtils.unzip(inputFile, destinationFolder, null);
+                TempFilesManager.registerTempFolder(destinationFolder);
+
+                dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "mgf");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "fasta");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                for (File zippedFile : destinationFolder.listFiles()) {
+                    String nameLowerCase = zippedFile.getName().toLowerCase();
+                    if (nameLowerCase.endsWith("dat")
+                            || nameLowerCase.endsWith("omx")
+                            || nameLowerCase.endsWith("xml")
+                            || nameLowerCase.endsWith("mzid")
+                            || nameLowerCase.endsWith("csv")
+                            || nameLowerCase.endsWith("tags")) {
+                        if (!nameLowerCase.endsWith("mods.xml")
+                                && !nameLowerCase.endsWith("usermods.xml")) {
+                            identificationFiles.add(zippedFile);
+                        }
+                    }
+                }
+            } else {
+                identificationFiles.add(inputFile);
+            }
+        }
+
+        // List the spectrum files found
+        ArrayList<String> names = new ArrayList<String>();
+        for (File spectrumFile : spectrumFiles) {
+            names.add(spectrumFile.getName());
+        }
+        for (File dataFolder : dataFolders) {
+            for (File file : dataFolder.listFiles()) {
+                String name = file.getName();
+                if (name.endsWith(".mgf") && !names.contains(name)) {
+                    spectrumFiles.add(file);
+                    names.add(name);
+                }
+            }
+        }
+
+        // try to locate the fasta file
+        File fastaFile = searchParameters.getFastaFile();
+        if (!fastaFile.exists()) {
+            boolean found = false;
+            // look in the database folder {
+            try {
+                UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                File dbFolder = utilitiesUserPreferences.getDbFolder();
+                File newFile = new File(dbFolder, fastaFile.getName());
+                if (newFile.exists()) {
+                    fastaFile = newFile;
+                    searchParameters.setFastaFile(fastaFile);
+                    found = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!found) {
+                // look in the data folders
+                for (File dataFolder : dataFolders) {
+                    File newFile = new File(dataFolder, fastaFile.getName());
+                    if (newFile.exists()) {
+                        fastaFile = newFile;
+                        searchParameters.setFastaFile(fastaFile);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
+                }
+            }
+        }
 
         // set the filtering import settings
         idFilter = new IdFilter();
@@ -545,6 +664,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             }
         }
+
+        TempFilesManager.deleteTempFolders();
+
     }
 
     /**
@@ -615,14 +737,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             return false;
         }
 
-        if (!aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id)).equals("")) {
-            System.out.println("\nSpectrum files not specified.\n");
-            return false;
-        } else {
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id)) {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
             ArrayList<File> idFiles = PeptideShakerCLIInputBean.getSpectrumFiles(filesTxt);
             if (idFiles.isEmpty()) {
-                System.out.println("\nNo spectrum file found.\n");
+                System.out.println("\nNo spectrum file found for command line input " + filesTxt + ".\n");
                 return false;
             }
         }
@@ -770,7 +889,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             System.err.println("Free memory in the Java virtual machine: " + Runtime.getRuntime().freeMemory() + ".");
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.print("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
+            System.out.println("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
             e.printStackTrace();
         }
     }

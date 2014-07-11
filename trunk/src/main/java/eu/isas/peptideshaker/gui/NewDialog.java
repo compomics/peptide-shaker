@@ -38,6 +38,7 @@ import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.fileimport.FileImporter;
@@ -1630,26 +1631,41 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             if (fastaFile.exists()) {
                 found = true;
             } else {
-                // look in the data folders
-                for (File dataFolder : dataFolders) {
-                    File newFile = new File(dataFolder, fastaFile.getName());
+                // look in the database folder {
+                try {
+                    UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                    File dbFolder = utilitiesUserPreferences.getDbFolder();
+                    File newFile = new File(dbFolder, fastaFile.getName());
                     if (newFile.exists()) {
                         fastaFile = newFile;
                         searchParameters.setFastaFile(fastaFile);
                         found = true;
-                        break;
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 if (!found) {
-                    // try to find it in the same folder as the SearchGUI.properties file
-                    File parentFolder = file.getParentFile();
-                    File newFile = new File(parentFolder, fastaFile.getName());
-                    if (newFile.exists()) {
-                        fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile);
-                        found = true;
-                    } else {
-                        JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                    // look in the data folders
+                    for (File dataFolder : dataFolders) {
+                        File newFile = new File(dataFolder, fastaFile.getName());
+                        if (newFile.exists()) {
+                            fastaFile = newFile;
+                            searchParameters.setFastaFile(fastaFile);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // try to find it in the same folder as the SearchGUI.properties file
+                        File parentFolder = file.getParentFile();
+                        File newFile = new File(parentFolder, fastaFile.getName());
+                        if (newFile.exists()) {
+                            fastaFile = newFile;
+                            searchParameters.setFastaFile(fastaFile);
+                            found = true;
+                        } else {
+                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                        }
                     }
                 }
             }
@@ -1921,7 +1937,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Loads the identification files collected and related information.
-     * 
+     *
      * @param selectedFiles the files selected by the user
      */
     private void loadIdInputFiles(File[] selectedFiles) {
@@ -1930,14 +1946,21 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         ArrayList<File> inputFiles = new ArrayList<File>();
         for (File newFile : selectedFiles) {
             if (newFile.isDirectory()) {
+                
+                if (!dataFolders.contains(newFile)) {
                 dataFolders.add(newFile);
+                }
 
                 File dataFolder = new File(newFile, PeptideShaker.DATA_DIRECTORY);
-                if (dataFolder.exists()) {
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
                 dataFolder = new File(newFile, "mgf");
-                if (dataFolder.exists()) {
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(newFile, "fasta");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
 
@@ -1952,23 +1975,29 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
             } else {
                 File parentFolder = newFile.getParentFile();
+                if (!dataFolders.contains(parentFolder)) {
                 dataFolders.add(parentFolder);
-                
+                }
+
                 File dataFolder = new File(parentFolder, PeptideShaker.DATA_DIRECTORY);
-                if (dataFolder.exists()) {
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
                 dataFolder = new File(parentFolder, "mgf");
-                if (dataFolder.exists()) {
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                     dataFolders.add(dataFolder);
                 }
-                
-                    String lowerCaseName = newFile.getName().toLowerCase();
-                    if (lowerCaseName.endsWith("zip")) {
-                        loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
-                    } else {
-                        loadIdFile(newFile, parameterFiles, inputFiles);
-                    }
+                dataFolder = new File(parentFolder, "fasta");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+
+                String lowerCaseName = newFile.getName().toLowerCase();
+                if (lowerCaseName.endsWith("zip")) {
+                    loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
+                } else {
+                    loadIdFile(newFile, parameterFiles, inputFiles);
+                }
 
                 for (File file : newFile.getParentFile().listFiles()) {
                     if (file.getName().toLowerCase().endsWith(".parameters")
@@ -2042,7 +2071,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         String newName = FileImporter.getTempFolderName(file.getName());
         File destinationFolder = new File(file.getParentFile(), newName);
         destinationFolder.mkdir();
-        TempFilesManager.addTempFolder(destinationFolder);
+        TempFilesManager.registerTempFolder(destinationFolder);
 
         progressDialog.setWaitingText("Unzipping " + file.getName() + ", please wait...");
         progressDialog.setPrimaryProgressCounter(0);
@@ -2052,11 +2081,15 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         try {
             ZipUtils.unzip(file, destinationFolder, progressDialog);
             File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
-            if (dataFolder.exists()) {
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
             dataFolder = new File(destinationFolder, "mgf");
-            if (dataFolder.exists()) {
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(destinationFolder, "fasta");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
             }
             for (File zippedFile : destinationFolder.listFiles()) {
