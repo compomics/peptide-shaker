@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum SearchFeatures implements ExportFeature {
+public enum SearchFeature implements ExportFeature {
 
     precursor_accuracy_unit("Precursor Accuracy Unit", "Unit of the precursor accuracy: ppm or Da.", false),
     precursor_tolerance("Precursor Ion m/z Tolerance", "Precursor ion m/z tolerance used for the search.", false),
@@ -48,7 +47,7 @@ public enum SearchFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private SearchFeatures(String title, String description, boolean advanced) {
+    private SearchFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

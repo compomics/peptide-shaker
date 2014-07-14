@@ -2,11 +2,12 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeature;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class outputs the spectrum counting related export features.
@@ -18,7 +19,7 @@ public class SpectrumCountingSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<SpectrumCountingFeature> spectrumCountingFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -46,11 +47,19 @@ public class SpectrumCountingSection {
      * @param writer
      */
     public SpectrumCountingSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        spectrumCountingFeatures = new ArrayList<SpectrumCountingFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof SpectrumCountingFeature) {
+                spectrumCountingFeatures.add((SpectrumCountingFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as spectrum counting feature.");
+            }
+        }
+        Collections.sort(spectrumCountingFeatures);
     }
 
     /**
@@ -78,15 +87,14 @@ public class SpectrumCountingSection {
 
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
+        for (SpectrumCountingFeature spectrumCountingFeature : spectrumCountingFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
-            for (String title : exportFeature.getTitles()) {
+            for (String title : spectrumCountingFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            SpectrumCountingFeatures spectrumCountingFeatures = (SpectrumCountingFeatures) exportFeature;
-            switch (spectrumCountingFeatures) {
+            switch (spectrumCountingFeature) {
                 case method:
                     switch (spectrumCountingPreferences.getSelectedMethod()) {
                         case EMPAI:

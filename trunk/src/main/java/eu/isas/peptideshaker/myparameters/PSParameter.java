@@ -26,6 +26,14 @@ public class PSParameter implements UrParameter {
      */
     private double searchEngineProbability;
     /**
+     * The difference in identification algorithm level PEP with the next best peptide assumption with sequence difference for a given search engine.
+     */
+    private Double algorithmDeltaPEP;
+    /**
+     * The difference in identification algorithm level PEP with the next best peptide assumption with sequence difference across all search engines.
+     */
+    private Double deltaPEP;
+    /**
      * Probabilistic score for a peptide to spectrum match in the dataset.
      */
     private double psmProbabilityScore;
@@ -319,6 +327,42 @@ public class PSParameter implements UrParameter {
     }
 
     /**
+     * Returns the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference for the given search engine.
+     * 
+     * @return the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference for the given search engine
+     */
+    public Double getAlgorithmDeltaPEP() {
+        return algorithmDeltaPEP;
+    }
+
+    /**
+     * Sets the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference for the given search engine.
+     * 
+     * @param deltaPEP the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference for the given search engine
+     */
+    public void setAlgorithmDeltaPEP(Double deltaPEP) {
+        this.algorithmDeltaPEP = deltaPEP;
+    }
+
+    /**
+     * Returns the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference across all search engines.
+     * 
+     * @return the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference across all search engines
+     */
+    public Double getDeltaPEP() {
+        return deltaPEP;
+    }
+
+    /**
+     * Sets the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference across all search engines.
+     * 
+     * @param deltaPEP the difference in identification algorithm level PEP with the next best peptide assumption with sequence difference across all search engines
+     */
+    public void setDeltaPEP(double deltaPEP) {
+        this.deltaPEP = deltaPEP;
+    }
+
+    /**
      * Returns the search engine confidence.
      *
      * @return the search engine confidence
@@ -348,7 +392,7 @@ public class PSParameter implements UrParameter {
     public void setPsmProbability(double psmProbability) {
         this.psmProbability = psmProbability;
     }
-
+    
     /**
      * Returns the the PSM Probabilistic score.
      *

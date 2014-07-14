@@ -11,9 +11,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
-import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_number;
-import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_type;
+import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeature.fragment_number;
+import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeature.fragment_type;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ public class FragmentSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<FragmentFeature> fragmentFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -64,11 +64,22 @@ public class FragmentSection {
      * @param writer the writer
      */
     public FragmentSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
+
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+
+        fragmentFeatures = new ArrayList<FragmentFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof FragmentFeature) {
+                FragmentFeature fragmentFeature = (FragmentFeature) exportFeature;
+                fragmentFeatures.add(fragmentFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as fragment feature.");
+            }
+        }
+        Collections.sort(fragmentFeatures);
     }
 
     /**
@@ -87,7 +98,7 @@ public class FragmentSection {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public void writeSection(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
+    public void writeSection(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -146,10 +157,9 @@ public class FragmentSection {
                     }
                     writer.write(line + separator);
                 }
-                for (ExportFeature exportFeature : exportFeatures) {
-                    FragmentFeatures fragmentFeatures = (FragmentFeatures) exportFeature;
+                for (FragmentFeature fragmentFeature : fragmentFeatures) {
 
-                    switch (fragmentFeatures) {
+                    switch (fragmentFeature) {
                         case annotation:
                             writer.write(ionMatch.getPeakAnnotation() + separator);
                             break;
@@ -217,13 +227,13 @@ public class FragmentSection {
             writer.write(separator);
         }
         boolean firstColumn = true;
-        for (ExportFeature exportFeature : exportFeatures) {
-            for (String title : exportFeature.getTitles()) {
-            if (firstColumn) {
-                firstColumn = false;
-            } else {
-                writer.write(separator);
-            }
+        for (FragmentFeature fragmentFeature : fragmentFeatures) {
+            for (String title : fragmentFeature.getTitles()) {
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
                 writer.write(title + separator);
             }
         }

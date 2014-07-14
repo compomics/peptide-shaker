@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -9,18 +11,15 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum PsmFeatures implements ExportFeature {
+public enum ProjectFeature implements ExportFeature, Serializable {
 
-    localization_confidence("Localization Confidence", "The confidence in variable PTM localization.", false),
-    probabilistic_score("probabilistic PTM score", "The probabilistic score (e.g. A-score or PhosphoRS) used for variable PTM localization.", false),
-    d_score("D-score", "D-score for variable PTM localization.", false),
-    algorithm_score("Algorithm Score", "Best score given by the identification algorithm to the hit retained by PeptideShaker independent of modification localization.", false),
-    score("Score", "Score of the retained peptide as a combination of the algorithm scores (used to rank PSMs).", true),
-    raw_score("Raw score", "Score before log transformation.", true),
-    confidence("Confidence", "Confidence in percent associated to the retained PSM.", false),
-    validated("Validation", "Indicates the validation level of the protein group.", false),
-    starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
-    hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
+    peptide_shaker("PeptideShaker Version", "Software version used to create the project.", false),
+    date("Date", "Date of project creation.", false),
+    experiment("Experiment", "Experiment name.", false),
+    sample("Sample", "Sample name.", false),
+    replicate("Replicate Number", "Replicate number.", false),
+    identification_algorithms("Identification Algorithms", "The identification algorithms used.", false),
+    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -32,7 +31,7 @@ public enum PsmFeatures implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Peptide Spectrum Matching Summary";
+    public final static String type = "Project Details";
     /**
      * indicates whether a feature is for advanced user only
      */
@@ -45,7 +44,7 @@ public enum PsmFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private PsmFeatures(String title, String description, boolean advanced) {
+    private ProjectFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -55,7 +54,6 @@ public enum PsmFeatures implements ExportFeature {
     public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
-        result.addAll(IdentificationAlgorithmMatchesFeatures.values()[0].getExportFeatures(includeSubFeatures));
         return result;
     }
 

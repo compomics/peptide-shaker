@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,7 +10,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum ProteinFeatures implements ExportFeature {
+public enum ProteinFeature implements ExportFeature {
 
     accession(new String[]{"Main Accession"}, "Accession of the leading protein of the group.", false),
     protein_description(new String[]{"Description"}, "Description of the leading protein of the group.", false),
@@ -69,7 +69,7 @@ public enum ProteinFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private ProteinFeatures(String[] title, String description, boolean advanced) {
+    private ProteinFeature(String[] title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -80,7 +80,7 @@ public enum ProteinFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-        result.addAll(PeptideFeatures.values()[0].getExportFeatures(includeSubFeatures));
+        result.addAll(PeptideFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }

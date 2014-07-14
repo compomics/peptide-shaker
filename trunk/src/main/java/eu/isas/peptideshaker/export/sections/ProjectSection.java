@@ -3,14 +3,13 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ProjectFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.ProjectFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.xml.sax.SAXException;
 
 /**
  * This class outputs the project related export features.
@@ -22,7 +21,7 @@ public class ProjectSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<ProjectFeature> projectFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -50,11 +49,19 @@ public class ProjectSection {
      * @param writer
      */
     public ProjectSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        projectFeatures = new ArrayList<ProjectFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof ProjectFeature) {
+                projectFeatures.add((ProjectFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as project feature.");
+            }
+        }
+        Collections.sort(projectFeatures);
     }
 
     /**
@@ -84,12 +91,12 @@ public class ProjectSection {
 
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
+        for (ProjectFeature projectFeature : projectFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
             boolean firstTitle = true;
-            for (String title : exportFeature.getTitles()) {
+            for (String title : projectFeature.getTitles()) {
                 if (firstTitle) {
                     firstTitle = false;
                 } else {
@@ -98,8 +105,7 @@ public class ProjectSection {
                 writer.write(title);
             }
             writer.write(separator);
-            ProjectFeatures projectFeatures = (ProjectFeatures) exportFeature;
-            switch (projectFeatures) {
+            switch (projectFeature) {
                 case date:
                     writer.write(projectDetails.getCreationDate() + "");
                     break;
