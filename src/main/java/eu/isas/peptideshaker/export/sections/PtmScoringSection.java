@@ -3,10 +3,11 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class outputs the project related export features.
@@ -18,7 +19,7 @@ public class PtmScoringSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<PtmScoringFeature> ptmScoringFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -46,11 +47,19 @@ public class PtmScoringSection {
      * @param writer
      */
     public PtmScoringSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        ptmScoringFeatures = new ArrayList<PtmScoringFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof PtmScoringFeature) {
+                ptmScoringFeatures.add((PtmScoringFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as PTM scoring feature.");
+            }
+        }
+        Collections.sort(ptmScoringFeatures);
     }
 
     /**
@@ -77,15 +86,14 @@ public class PtmScoringSection {
 
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
+        for (PtmScoringFeature ptmScoringFeature : ptmScoringFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
-            for (String title : exportFeature.getTitles()) {
+            for (String title : ptmScoringFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            PtmScoringFeatures ptmScoringFeatures = (PtmScoringFeatures) exportFeature;
-            switch (ptmScoringFeatures) {
+            switch (ptmScoringFeature) {
                 case aScore:
                     if (ptmcoringPreferences.isProbabilitsticScoreCalculation()) {
                         writer.write("Yes");

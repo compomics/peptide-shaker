@@ -5,10 +5,12 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SearchFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeature;
+import eu.isas.peptideshaker.export.exportfeatures.SearchFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class outputs the search parameters related export features.
@@ -20,7 +22,7 @@ public class SearchParametersSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<SearchFeature> searchFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -48,11 +50,19 @@ public class SearchParametersSection {
      * @param writer
      */
     public SearchParametersSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        searchFeatures = new ArrayList<SearchFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof SearchFeature) {
+                searchFeatures.add((SearchFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as search parameter feature.");
+            }
+        }
+        Collections.sort(searchFeatures);
     }
 
     /**
@@ -79,7 +89,7 @@ public class SearchParametersSection {
 
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
+        for (SearchFeature exportFeature : searchFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -93,8 +103,7 @@ public class SearchParametersSection {
                 writer.write(title);
             }
             writer.write(separator);
-            SearchFeatures searchFeatures = (SearchFeatures) exportFeature;
-            switch (searchFeatures) {
+            switch (exportFeature) {
                 case database:
                     String fastaFileName = Util.getFileName(searchParameters.getFastaFile());
                     writer.write(fastaFileName);

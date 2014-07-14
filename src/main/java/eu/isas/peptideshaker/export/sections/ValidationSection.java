@@ -3,7 +3,8 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeature;
+import eu.isas.peptideshaker.export.exportfeatures.ValidationFeature;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
@@ -11,6 +12,7 @@ import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class ValidationSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<ValidationFeature> validationFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -52,11 +54,19 @@ public class ValidationSection {
      * @param writer
      */
     public ValidationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        validationFeatures = new ArrayList<ValidationFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof ValidationFeature) {
+                validationFeatures.add((ValidationFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as validation feature.");
+            }
+        }
+        Collections.sort(validationFeatures);
     }
 
     /**
@@ -83,9 +93,8 @@ public class ValidationSection {
 
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
-            ValidationFeatures validationFeatures = (ValidationFeatures) exportFeature;
-            switch (validationFeatures) {
+        for (ValidationFeature validationFeature : validationFeatures) {
+            switch (validationFeature) {
                 case peptide_accuracy:
                     PeptideSpecificMap peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
                     ArrayList<String> peptideKeys = peptideTargetDecoyMap.getKeys();
@@ -94,7 +103,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -121,7 +130,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -144,7 +153,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -167,7 +176,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -190,7 +199,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -213,7 +222,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -236,7 +245,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         boolean firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -256,7 +265,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     boolean firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -280,7 +289,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -300,7 +309,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -320,7 +329,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -340,7 +349,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -360,7 +369,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -380,7 +389,7 @@ public class ValidationSection {
                         writer.write(line + separator);
                     }
                     firstTitle = true;
-                    for (String subTitle : exportFeature.getTitles()) {
+                    for (String subTitle : validationFeature.getTitles()) {
                         if (firstTitle) {
                             firstTitle = false;
                         } else {
@@ -404,7 +413,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -429,7 +438,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -457,7 +466,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -478,7 +487,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -502,7 +511,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -523,7 +532,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -547,7 +556,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -568,7 +577,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -592,7 +601,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -613,7 +622,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -637,7 +646,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -658,7 +667,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {
@@ -682,7 +691,7 @@ public class ValidationSection {
                                     writer.write(line + separator);
                                 }
                                 firstTitle = true;
-                                for (String subTitle : exportFeature.getTitles()) {
+                                for (String subTitle : validationFeature.getTitles()) {
                                     if (firstTitle) {
                                         firstTitle = false;
                                     } else {
@@ -703,7 +712,7 @@ public class ValidationSection {
                             writer.write(line + separator);
                         }
                         firstTitle = true;
-                        for (String subTitle : exportFeature.getTitles()) {
+                        for (String subTitle : validationFeature.getTitles()) {
                             if (firstTitle) {
                                 firstTitle = false;
                             } else {

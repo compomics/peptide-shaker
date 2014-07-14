@@ -1,19 +1,29 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
+import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This class lists all the export features related to the spectrum counting.
+ * This class lists the fragment identification features.
  *
  * @author Marc Vaudel
  */
-public enum SpectrumCountingFeatures implements ExportFeature {
+public enum FragmentFeature implements ExportFeature {
 
-    method("Method", "The method used to establish the spectrum counting index.", false),
-    validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.", false);
+    annotation("Peak Annotation", "The fragment annotation as it would appear in the GUI.", false),
+    fragment_type("Type", "The type of fragment ion, for example 'Peptide Fragment Ion'.", false),
+    fragment_subType("Subtype", "The subtype of fragment if existing, for example 'b ion'.", false),
+    fragment_number("Number", "The fragment ion number, for example '5' for b5.", false),
+    fragment_losses("Neutral losses", "The fragment ion neutral losses, for example '-H2O' for b5-H2O.", false),
+    fragment_name("Name", "The name of the fragment ion, for example b5.", false),
+    fragment_charge("Fragment Charge", "The charge of the fragment ion according to the identification process.", false),
+    theoretic_mz("Theoretic m/z", "The theoretic m/z of the fragment ion.", false),
+    mz("m/z", "The m/z of the peak.", false),
+    intensity("Intensity", "The intensity of the peak.", false),
+    error_Da("m/z Error (Da)", "The absolute m/z error.", false),
+    error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -25,7 +35,7 @@ public enum SpectrumCountingFeatures implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Spectrum Counting Parameters";
+    public final static String type = "Fragment Ions Summary";
     /**
      * indicates whether a feature is for advanced user only
      */
@@ -38,7 +48,7 @@ public enum SpectrumCountingFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private SpectrumCountingFeatures(String title, String description, boolean advanced) {
+    private FragmentFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -50,7 +60,7 @@ public enum SpectrumCountingFeatures implements ExportFeature {
         result.addAll(Arrays.asList(values()));
         return result;
     }
-
+    
     @Override
     public String[] getTitles() {
         return new String[]{title};

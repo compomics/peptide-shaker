@@ -1,22 +1,19 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This enum lists the export features related to the import features.
+ * This enum groups the export features related to PTM scoring.
  *
  * @author Marc
  */
-public enum InputFilterFeatures implements ExportFeature {
+public enum PtmScoringFeature implements ExportFeature {
 
-    min_peptide_length("Minimal Peptide Length", "The minimal peptide length.", false),
-    max_peptide_length("Maximal Peptide Length", "The maximal peptide length.", false),
-    max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed.", false),
-    max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed.", false),
-    unknown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting PTMs which do not match the search parameters were discarded.", false);
+    aScore("A-score", "Indicates whether the A-score was computed for PTM localization.", false),
+    neutral_losses("Accounting for Neutral Losses", "Indicates whether the neutral losses are accounted for in the A-score calculation.", false),
+    flr("False Location Rate", "For peptides presenting a single modification of a kind and more than one modification site, the site is marked as confident if the A-score passes this estimated FLR.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -28,7 +25,7 @@ public enum InputFilterFeatures implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Input Filters";
+    public final static String type = "Postranslational Modification Scoring Settings";
     /**
      * indicates whether a feature is for advanced user only
      */
@@ -41,7 +38,7 @@ public enum InputFilterFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private InputFilterFeatures(String title, String description, boolean advanced) {
+    private PtmScoringFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

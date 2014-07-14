@@ -11,11 +11,10 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.OutputGenerator.SEPARATOR;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
-import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
-import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
-import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
+import eu.isas.peptideshaker.export.exportfeatures.ProteinFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsmFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -42,7 +41,7 @@ public class ProteinSection {
     /**
      * The protein features to export.
      */
-    private ArrayList<ExportFeature> proteinFeatures = new ArrayList<ExportFeature>();
+    private ArrayList<ProteinFeature> proteinFeatures = new ArrayList<ProteinFeature>();
     /**
      * The peptide subsection if any.
      */
@@ -78,14 +77,15 @@ public class ProteinSection {
     public ProteinSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof ProteinFeatures) {
-                proteinFeatures.add(exportFeature);
-            } else if (exportFeature instanceof PeptideFeatures || exportFeature instanceof PsmFeatures || exportFeature instanceof FragmentFeatures) {
+            if (exportFeature instanceof ProteinFeature) {
+                proteinFeatures.add((ProteinFeature) exportFeature);
+            } else if (exportFeature instanceof PeptideFeature || exportFeature instanceof PsmFeature || exportFeature instanceof FragmentFeature) {
                 peptideFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
             }
         }
+        Collections.sort(proteinFeatures);
         if (!peptideFeatures.isEmpty()) {
             peptideSection = new PeptideSection(peptideFeatures, separator, indexes, header, writer);
         }
@@ -199,7 +199,7 @@ public class ProteinSection {
                         } else {
                             first = false;
                         }
-                        ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
+                        ProteinFeature tempProteinFeatures = (ProteinFeature) exportFeature;
                         writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
@@ -242,7 +242,7 @@ public class ProteinSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, ProteinFeatures tempProteinFeatures, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, ProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {

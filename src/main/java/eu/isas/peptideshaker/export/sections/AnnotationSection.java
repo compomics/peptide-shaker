@@ -5,10 +5,11 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class outputs the annotation related export features.
@@ -20,7 +21,7 @@ public class AnnotationSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<AnnotationFeature> annotationFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -48,11 +49,19 @@ public class AnnotationSection {
      * @param writer
      */
     public AnnotationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        this.annotationFeatures = new ArrayList<AnnotationFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof AnnotationFeature) {
+                annotationFeatures.add((AnnotationFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as annotation feature.");
+            }
+        }
+        Collections.sort(this.annotationFeatures);
     }
 
     /**
@@ -78,7 +87,7 @@ public class AnnotationSection {
         }
         int line = 1;
 
-        for (ExportFeature exportFeature : exportFeatures) {
+        for (ExportFeature exportFeature : annotationFeatures) {
 
             if (indexes) {
                 writer.write(line + separator);
@@ -87,7 +96,7 @@ public class AnnotationSection {
             for (String title : exportFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            AnnotationFeatures annotationFeature = (AnnotationFeatures) exportFeature;
+            AnnotationFeature annotationFeature = (AnnotationFeature) exportFeature;
 
             switch (annotationFeature) {
                 case automatic_annotation:

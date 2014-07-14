@@ -3,10 +3,11 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class outputs the annotation related export features.
@@ -18,7 +19,7 @@ public class InputFilterSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<InputFilterFeature> exportFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -46,11 +47,19 @@ public class InputFilterSection {
      * @param writer
      */
     public InputFilterSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        this.exportFeatures = new ArrayList<InputFilterFeature>(exportFeatures.size());
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof InputFilterSection) {
+                this.exportFeatures.add((InputFilterFeature) exportFeature);
+            } else {
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as input filter feature.");
+            }
+        }
+        Collections.sort(this.exportFeatures);
     }
 
     /**
@@ -85,7 +94,7 @@ public class InputFilterSection {
             for (String title : exportFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            InputFilterFeatures inputFilterFeatures = (InputFilterFeatures) exportFeature;
+            InputFilterFeature inputFilterFeatures = (InputFilterFeature) exportFeature;
 
             switch (inputFilterFeatures) {
                 case max_mz_deviation:

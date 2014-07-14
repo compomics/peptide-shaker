@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc
  */
-public enum IdentificationAlgorithmMatchesFeatures implements ExportFeature {
+public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
 
     rank("Rank", "The rank assigned by the identification algorithm.", true),
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached.", false),
@@ -26,18 +26,21 @@ public enum IdentificationAlgorithmMatchesFeatures implements ExportFeature {
     mz("m/z", "Measured m/z.", false),
     spectrum_charge("Measured Charge", "The charge as given in the spectrum file.", false),
     total_spectrum_intensity("Total Spectrum Intensity", "The summed intensity of all peaks in the spectrum.", true),
+    intensity_coverage("Intensity Coverage [%]", "Annotated share of the total spectrum intensity.", true),
     max_intensity("Maximal Spectrum Intensity", "The maximal intensity found in the spectrum.", true),
     identification_charge("Identification Charge", "The charge as inferred by the search engine.", false),
     theoretical_mass("Theoretical Mass", "The theoretical mass of the peptide.", false),
     isotope("Isotope Number", "The isotope number targetted by the instrument.", false),
     mz_error("Precursor m/z Error", "The precursor m/z matching error.", false),
     algorithm_score("Algorithm Score", "Score given by the identification algorithm to the hit.", false),
-    algorithm_confidence("Algorithm Confidence", "Confidence in percent associated to the algorithm score.", false),
+    algorithm_confidence("Algorithm Confidence [%]", "Confidence in percent associated to the algorithm score.", false),
+    algorithm_delta_confidence("Algorithm Delta Confidence [%]", "Difference in percent between the match and the next best for a given identification algorithm without accounting for PTM localization.", false),
+    delta_confidence("Delta Confidence [%]", "Difference in percent between the match and the next best across all search engines without accounting for PTM localization.", false),
     fragment_mz_accuracy_score("Fragment m/z accuracy score", "Score reflecting the accuracy of the fragment ions m/z", true),
     intensity_score("Intensity score", "Score reflecting the coverage of the spectrum in intensity", true),
-    sequence_coverage("Sequence Coverage", "Coverage of the amino acid sequence by the annotated fragment ions in percent", true),
-    longest_tag("Longest tag annotated", "Longest consecutive series of amino acid annotated on the spectrum ", true),
-    tag("Tag annotated", "Tag annotated on the spectrum", true),
+    sequence_coverage("Sequence Coverage [%]", "Coverage of the amino acid sequence by the annotated fragment ions in percent", true),
+    longest_amino_acid_sequence_annotated("Longest amino acid sequence annotated", "Longest consecutive series of amino acid annotated on the spectrum ", true),
+    amino_acids_annotated("Amino Acids Annotated", "Amino acid sequence annotated on the spectrum.", true),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no).", false),
     validated("Validation", "Indicates the validation level of the protein group.", false),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
@@ -66,7 +69,7 @@ public enum IdentificationAlgorithmMatchesFeatures implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private IdentificationAlgorithmMatchesFeatures(String title, String description, boolean advanced) {
+    private IdentificationAlgorithmMatchesFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -77,7 +80,7 @@ public enum IdentificationAlgorithmMatchesFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-        result.addAll(FragmentFeatures.values()[0].getExportFeatures(includeSubFeatures));
+        result.addAll(FragmentFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }
