@@ -283,7 +283,7 @@ public class IdentificationAlgorithmMatchesSection {
             writer.write(separator);
         }
         boolean firstColumn = true;
-                            for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
+        for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
             for (String title : identificationAlgorithmMatchesFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
@@ -540,7 +540,13 @@ public class IdentificationAlgorithmMatchesSection {
                     if (ion instanceof PeptideFragmentIon) {
                         PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;
                         int number = peptideFragmentIon.getNumber();
-                        aaCoverage[number - 1] = true;
+                        if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION
+                                || peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION
+                                || peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION) {
+                            aaCoverage[number - 1] = true;
+                        } else {
+                            aaCoverage[sequenceLength - number] = true;
+                        }
                     }
                 }
                 StringBuilder currentTag = new StringBuilder();
@@ -555,6 +561,112 @@ public class IdentificationAlgorithmMatchesSection {
                         currentTag = new StringBuilder();
                     }
                 }
+                return longestTag;
+            case longest_amino_acid_sequence_annotated_single_serie:
+                peptide = peptideAssumption.getPeptide();
+                matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
+                        annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                        peptideAssumption.getIdentificationCharge().value,
+                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                sequence = peptide.getSequence();
+                sequenceLength = sequence.length();
+                HashMap<Integer, boolean[]> ionCoverage = new HashMap<Integer, boolean[]>(6);
+                ionCoverage.put(PeptideFragmentIon.A_ION, new boolean[sequenceLength]);
+                ionCoverage.put(PeptideFragmentIon.B_ION, new boolean[sequenceLength]);
+                ionCoverage.put(PeptideFragmentIon.C_ION, new boolean[sequenceLength]);
+                ionCoverage.put(PeptideFragmentIon.X_ION, new boolean[sequenceLength]);
+                ionCoverage.put(PeptideFragmentIon.Y_ION, new boolean[sequenceLength]);
+                ionCoverage.put(PeptideFragmentIon.Z_ION, new boolean[sequenceLength]);
+                for (IonMatch ionMatch : matches) {
+                    if (ionMatch.charge.value == 1) {
+                        Ion ion = ionMatch.ion;
+                        if (ion instanceof PeptideFragmentIon) {
+                            PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;
+                            int number = peptideFragmentIon.getNumber();
+                            if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.A_ION)[number - 1] = true;
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.B_ION)[number - 1] = true;
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.C_ION)[number - 1] = true;
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.X_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.X_ION)[sequenceLength - number] = true;
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Y_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.Y_ION)[sequenceLength - number] = true;
+                            } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Z_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
+                                ionCoverage.get(PeptideFragmentIon.Z_ION)[sequenceLength - number] = true;
+                            }
+                        }
+                    }
+                }
+                longestTag = new String();
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.A_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.B_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.C_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.X_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.Y_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+                currentTag = new StringBuilder();
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    if (ionCoverage.get(PeptideFragmentIon.Z_ION)[aaIndex]) {
+                        currentTag.append(sequence.charAt(aaIndex));
+                    } else {
+                        if (currentTag.length() > longestTag.length()) {
+                            longestTag = currentTag.toString();
+                        }
+                        currentTag = new StringBuilder();
+                    }
+                }
+
                 return longestTag;
             case amino_acids_annotated:
                 peptide = peptideAssumption.getPeptide();
@@ -571,7 +683,13 @@ public class IdentificationAlgorithmMatchesSection {
                     if (ion instanceof PeptideFragmentIon) {
                         PeptideFragmentIon peptideFragmentIon = (PeptideFragmentIon) ion;
                         int number = peptideFragmentIon.getNumber();
-                        aaCoverage[number - 1] = true;
+                        if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION
+                                || peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION
+                                || peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION) {
+                            aaCoverage[number - 1] = true;
+                        } else {
+                            aaCoverage[sequenceLength - number] = true;
+                        }
                     }
                 }
                 StringBuilder tag = new StringBuilder();
