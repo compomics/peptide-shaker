@@ -534,7 +534,8 @@ public class IdentificationAlgorithmMatchesSection {
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
-                aaCoverage = new boolean[sequenceLength];
+                boolean[] coverageForward = new boolean[sequenceLength];
+                boolean[] coverageRewind = new boolean[sequenceLength];
                 for (IonMatch ionMatch : matches) {
                     Ion ion = ionMatch.ion;
                     if (ion instanceof PeptideFragmentIon) {
@@ -543,11 +544,28 @@ public class IdentificationAlgorithmMatchesSection {
                         if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION
                                 || peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION
                                 || peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION) {
-                            aaCoverage[number - 1] = true;
+                            coverageForward[number - 1] = true;
                         } else {
-                            aaCoverage[sequenceLength - number] = true;
+                            coverageRewind[number - 1] = true;
                         }
                     }
+                }
+                aaCoverage = new boolean[sequenceLength];
+                boolean previous = true;
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    boolean current = coverageForward[aaIndex];
+                    if (current && previous) {
+                        aaCoverage[aaIndex] = true;
+                    }
+                    previous = current;
+                }
+                previous = true;
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    boolean current = coverageRewind[aaIndex];
+                    if (current && previous) {
+                        aaCoverage[sequenceLength - aaIndex  - 1] = true;
+                    }
+                    previous = current;
                 }
                 StringBuilder currentTag = new StringBuilder();
                 String longestTag = new String();
@@ -590,19 +608,21 @@ public class IdentificationAlgorithmMatchesSection {
                             } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
                                 ionCoverage.get(PeptideFragmentIon.C_ION)[number - 1] = true;
                             } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.X_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
-                                ionCoverage.get(PeptideFragmentIon.X_ION)[sequenceLength - number] = true;
+                                ionCoverage.get(PeptideFragmentIon.X_ION)[number - 1] = true;
                             } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Y_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
-                                ionCoverage.get(PeptideFragmentIon.Y_ION)[sequenceLength - number] = true;
+                                ionCoverage.get(PeptideFragmentIon.Y_ION)[number - 1] = true;
                             } else if (peptideFragmentIon.getSubType() == PeptideFragmentIon.Z_ION && peptideFragmentIon.getNeutralLosses().isEmpty()) {
-                                ionCoverage.get(PeptideFragmentIon.Z_ION)[sequenceLength - number] = true;
+                                ionCoverage.get(PeptideFragmentIon.Z_ION)[number - 1] = true;
                             }
                         }
                     }
                 }
                 longestTag = new String();
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.A_ION)[aaIndex]) {
+                    boolean current = ionCoverage.get(PeptideFragmentIon.A_ION)[aaIndex];
+                    if (current && previous) {
                         currentTag.append(sequence.charAt(aaIndex));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
@@ -610,10 +630,13 @@ public class IdentificationAlgorithmMatchesSection {
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.B_ION)[aaIndex]) {
+                    boolean current = ionCoverage.get(PeptideFragmentIon.B_ION)[aaIndex];
+                    if (current && previous) {
                         currentTag.append(sequence.charAt(aaIndex));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
@@ -621,10 +644,13 @@ public class IdentificationAlgorithmMatchesSection {
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.C_ION)[aaIndex]) {
+                    boolean current = ionCoverage.get(PeptideFragmentIon.C_ION)[aaIndex];
+                    if (current && previous) {
                         currentTag.append(sequence.charAt(aaIndex));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
@@ -632,39 +658,49 @@ public class IdentificationAlgorithmMatchesSection {
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.X_ION)[aaIndex]) {
-                        currentTag.append(sequence.charAt(aaIndex));
+                    boolean current = ionCoverage.get(PeptideFragmentIon.X_ION)[aaIndex];
+                    if (current && previous) {
+                        currentTag.append(sequence.charAt(sequenceLength - aaIndex - 1));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
-                            longestTag = currentTag.toString();
+                            longestTag = currentTag.reverse().toString();
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.Y_ION)[aaIndex]) {
-                        currentTag.append(sequence.charAt(aaIndex));
+                    boolean current = ionCoverage.get(PeptideFragmentIon.Y_ION)[aaIndex];
+                    if (current && previous) {
+                        currentTag.append(sequence.charAt(sequenceLength - aaIndex - 1));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
-                            longestTag = currentTag.toString();
+                            longestTag = currentTag.reverse().toString();
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
                 currentTag = new StringBuilder();
+                previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
-                    if (ionCoverage.get(PeptideFragmentIon.Z_ION)[aaIndex]) {
-                        currentTag.append(sequence.charAt(aaIndex));
+                    boolean current = ionCoverage.get(PeptideFragmentIon.Z_ION)[aaIndex];
+                    if (current && previous) {
+                        currentTag.append(sequence.charAt(sequenceLength - aaIndex - 1));
                     } else {
                         if (currentTag.length() > longestTag.length()) {
-                            longestTag = currentTag.toString();
+                            longestTag = currentTag.reverse().toString();
                         }
                         currentTag = new StringBuilder();
                     }
+                    previous = current;
                 }
 
                 return longestTag;
@@ -677,7 +713,8 @@ public class IdentificationAlgorithmMatchesSection {
                         (MSnSpectrum) spectrum, peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
-                aaCoverage = new boolean[sequenceLength];
+                coverageForward = new boolean[sequenceLength];
+                coverageRewind = new boolean[sequenceLength];
                 for (IonMatch ionMatch : matches) {
                     Ion ion = ionMatch.ion;
                     if (ion instanceof PeptideFragmentIon) {
@@ -686,11 +723,28 @@ public class IdentificationAlgorithmMatchesSection {
                         if (peptideFragmentIon.getSubType() == PeptideFragmentIon.A_ION
                                 || peptideFragmentIon.getSubType() == PeptideFragmentIon.B_ION
                                 || peptideFragmentIon.getSubType() == PeptideFragmentIon.C_ION) {
-                            aaCoverage[number - 1] = true;
+                            coverageForward[number - 1] = true;
                         } else {
-                            aaCoverage[sequenceLength - number] = true;
+                            coverageRewind[number - 1] = true;
                         }
                     }
+                }
+                aaCoverage = new boolean[sequenceLength];
+                previous = true;
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    boolean current = coverageForward[aaIndex];
+                    if (current && previous) {
+                        aaCoverage[aaIndex] = true;
+                    }
+                    previous = current;
+                }
+                previous = true;
+                for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
+                    boolean current = coverageRewind[aaIndex];
+                    if (current && previous) {
+                        aaCoverage[sequenceLength - aaIndex  - 1] = true;
+                    }
+                    previous = current;
                 }
                 StringBuilder tag = new StringBuilder();
                 double gap = 0;
