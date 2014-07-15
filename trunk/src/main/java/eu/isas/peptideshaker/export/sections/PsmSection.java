@@ -226,6 +226,11 @@ public class PsmSection {
                             writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : identificationAlgorithmMatchesFeatures) {
+                            if (!first) {
+                                writer.write(separator);
+                            } else {
+                                first = false;
+                            }
                             String feature;
                             if (peptideAssumption != null) {
                                 peptideAssumption = spectrumMatch.getBestPeptideAssumption();
@@ -504,6 +509,16 @@ public class PsmSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : psmFeatures) {
+            for (String title : exportFeature.getTitles()) {
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
+                writer.write(title);
+            }
+        }
+        for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
             for (String title : exportFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
