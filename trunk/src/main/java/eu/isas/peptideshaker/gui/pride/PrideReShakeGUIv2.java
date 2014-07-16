@@ -2111,7 +2111,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                             } else {
                                 currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
                                 if (i < selectedSpectrumFiles.size()) {
-                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                    if (currentFile.toLowerCase().endsWith(".mgf.gz")) {
                                         currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
                                     } else {
                                         currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
