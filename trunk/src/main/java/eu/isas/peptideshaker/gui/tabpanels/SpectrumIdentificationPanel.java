@@ -185,8 +185,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private ArrayList<Integer> advocatesUsed;
     /**
-     * The number of validated PSMs per mgf file. // @TODO: create this map when
-     * loading the data...
+     * The number of validated PSMs per mgf file.
      */
     private HashMap<String, Integer> numberOfValidatedPsmsMap;
 
