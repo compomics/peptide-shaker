@@ -836,6 +836,7 @@ public class FileImporter {
                             for (double score : scores) {
                                 ArrayList<SpectrumIdentificationAssumption> tempAssumptions = new ArrayList<SpectrumIdentificationAssumption>(assumptionsMap.get(score));
                                 ArrayList<String> inspectedTags = new ArrayList<String>();
+                                ArrayList<String> peptidesFound = new ArrayList<String>();
                                 for (SpectrumIdentificationAssumption assumption : tempAssumptions) {
                                     if (assumption instanceof TagAssumption) {
                                         TagAssumption tagAssumption = (TagAssumption) assumption;
@@ -845,7 +846,7 @@ public class FileImporter {
                                             ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
                                             extendedTagList.add(tagAssumption);
                                             if (currentSpectrum == null) {
-                                               currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                                                currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                                             }
                                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                                     new NeutralLossesMap(),
@@ -880,11 +881,15 @@ public class FileImporter {
                                             }
                                             for (TagAssumption extendedAssumption : extendedTagList) {
                                                 try {
-                                                    HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), true, true);
+                                                    HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), true, false);
                                                     for (Peptide peptide : proteinMapping.keySet()) {
-                                                        PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, assumption.getIdentificationCharge(), score, assumption.getIdentificationFile());
-                                                        peptideAssumption.addUrParam(tagAssumption);
-                                                        match.addHit(advocateId, peptideAssumption, true);
+                                                        String peptideKey = peptide.getKey();
+                                                        if (!peptidesFound.contains(peptideKey)) {
+                                                            PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, assumption.getIdentificationCharge(), score, assumption.getIdentificationFile());
+                                                            peptideAssumption.addUrParam(tagAssumption);
+                                                            match.addHit(advocateId, peptideAssumption, true);
+                                                            peptidesFound.add(peptideKey);
+                                                        }
                                                     }
                                                 } catch (Exception e) {
                                                     waitingHandler.appendReport("An error occurred while mapping tag " + extendedAssumption.getTag().asSequence() + " of spectrum " + spectrumTitle + " onto the database.", idReport, idReport);
@@ -979,7 +984,13 @@ public class FileImporter {
                                                                     + "Identification file: " + idFile.getName());
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
-                                                    } else if (!(fileReader instanceof DirecTagIdfileReader)) {
+                                                    } else if (fileReader instanceof DirecTagIdfileReader) {
+                                                        PTM ptm = ptmFactory.getPTM(sePTM);
+                                                        if (ptm == PTMFactory.unknownPTM) {
+                                                        throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + fileName + ".");
+                                                        }
+                                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
+                                                    } else {
                                                         throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + idFile.getName() + ".");
                                                     }
 
@@ -1553,6 +1564,8 @@ public class FileImporter {
                     // ignore
                 }
             }
+        } else {
+            refMass = refPtm.getMass();
         }
         return refMass;
     }
