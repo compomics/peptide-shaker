@@ -26,6 +26,7 @@ import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
@@ -876,8 +877,8 @@ public class FileImporter {
                                             if (nY < 3) {
                                                 extendedTagList.addAll(tagAssumption.getPossibleTags(true, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
                                             }
-                                            if (nB > 2 && nY > 2) {
-                                                extendedTagList.add(tagAssumption.reverse());
+                                            if (tagAssumption.getTag().canReverse()) {
+                                                extendedTagList.add(tagAssumption.reverse(nY >= nB));
                                             }
                                             for (TagAssumption extendedAssumption : extendedTagList) {
                                                 try {
