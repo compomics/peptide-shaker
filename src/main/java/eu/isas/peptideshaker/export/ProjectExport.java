@@ -4,25 +4,22 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
  * This class takes care of exporting the entire project as a single file.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ProjectExport {
 
     /**
-     * The name of the folder where to save the mgf and fasta file
+     * The name of the folder where to save the mgf and FASTA file.
      */
     public final static String defaultDataFolder = "data";
 
@@ -30,7 +27,7 @@ public class ProjectExport {
      * Exports the project as zip file.
      *
      * @param zipFile the destination file
-     * @param fastaFile the fasta file
+     * @param fastaFile the FASTA file
      * @param spectrumFiles the spectrum files
      * @param cpsFile the cps file
      * @param waitingHandler a waiting handler to display progress to the user
@@ -139,5 +136,4 @@ public class ProjectExport {
             fos.close();
         }
     }
-
 }

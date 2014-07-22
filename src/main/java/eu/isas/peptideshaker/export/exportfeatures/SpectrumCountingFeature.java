@@ -26,7 +26,7 @@ public enum SpectrumCountingFeature implements ExportFeature {
      */
     public final static String type = "Spectrum Counting Parameters";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 

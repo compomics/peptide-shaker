@@ -4777,7 +4777,7 @@ public class PtmPanel extends javax.swing.JPanel {
         for (int i = 1; i < psmAScoresTable.getColumnCount(); i++) {
             if (peptideShakerGUI.showSparklines()) {
                 psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
-                ((JSparklinesBarChartTableCellRenderer) psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
+                ((JSparklinesBarChartTableCellRenderer) psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue, false);
             } else {
                 ((JSparklinesBarChartTableCellRenderer) psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }
@@ -4786,7 +4786,7 @@ public class PtmPanel extends javax.swing.JPanel {
         for (int i = 1; i < psmDeltaScoresTable.getColumnCount(); i++) {
             if (peptideShakerGUI.showSparklines()) {
                 psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
-                ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
+                ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue, false);
             } else {
                 ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }

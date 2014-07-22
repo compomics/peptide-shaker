@@ -1,14 +1,13 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * This enum lists the export features related to the import features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum InputFilterFeature implements ExportFeature {
 
@@ -30,7 +29,7 @@ public enum InputFilterFeature implements ExportFeature {
      */
     public final static String type = "Input Filters";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 

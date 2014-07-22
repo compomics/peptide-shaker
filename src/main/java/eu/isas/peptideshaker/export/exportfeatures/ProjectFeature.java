@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +32,7 @@ public enum ProjectFeature implements ExportFeature, Serializable {
      */
     public final static String type = "Project Details";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 

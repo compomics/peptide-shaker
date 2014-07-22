@@ -26,7 +26,6 @@ import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
-import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
@@ -116,11 +115,11 @@ public class FileImporter {
      */
     public ProteinTree proteinTree;
     /**
-     * Suffix for folders where the content of zip files should be extracted
+     * Suffix for folders where the content of zip files should be extracted.
      */
     public final static String tempFolderName = "PeptideShaker_temp";
     /**
-     * A spectrum annotator for the tags
+     * A spectrum annotator for the tags.
      */
     private TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 

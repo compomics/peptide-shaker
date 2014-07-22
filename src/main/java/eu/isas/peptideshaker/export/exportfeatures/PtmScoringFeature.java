@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * This enum groups the export features related to PTM scoring.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum PtmScoringFeature implements ExportFeature {
 
@@ -27,7 +27,7 @@ public enum PtmScoringFeature implements ExportFeature {
      */
     public final static String type = "Postranslational Modification Scoring Settings";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 

@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.ValidationFeature.values;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,7 +27,7 @@ public enum AnnotationFeature implements ExportFeature {
      */
     private String description;
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
     /**

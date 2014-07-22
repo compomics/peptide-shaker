@@ -51,10 +51,8 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import org.jmol.export.dialog.FileChooser;
 
 /**
  * A dialog for selecting the files to load.
@@ -1946,9 +1944,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         ArrayList<File> inputFiles = new ArrayList<File>();
         for (File newFile : selectedFiles) {
             if (newFile.isDirectory()) {
-                
+
                 if (!dataFolders.contains(newFile)) {
-                dataFolders.add(newFile);
+                    dataFolders.add(newFile);
                 }
 
                 File dataFolder = new File(newFile, PeptideShaker.DATA_DIRECTORY);
@@ -1976,7 +1974,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             } else {
                 File parentFolder = newFile.getParentFile();
                 if (!dataFolders.contains(parentFolder)) {
-                dataFolders.add(parentFolder);
+                    dataFolders.add(parentFolder);
                 }
 
                 File dataFolder = new File(parentFolder, PeptideShaker.DATA_DIRECTORY);
