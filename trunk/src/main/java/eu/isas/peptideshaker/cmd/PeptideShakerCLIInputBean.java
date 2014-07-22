@@ -134,7 +134,7 @@ public class PeptideShakerCLIInputBean {
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
     /**
-     * File where to export the zipped folder
+     * File where to export the zipped folder.
      */
     private File zipExport = null;
 

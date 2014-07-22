@@ -2056,15 +2056,12 @@ public class PeptideShaker {
                         spectrumMatch.setBestPeptideAssumption(psAssumption);
                         psParameter = new PSParameter();
                         psParameter.setSpectrumProbabilityScore(retainedP);
-                        
+
                         PSParameter matchParameter = (PSParameter) bestPeptideAssumption.getUrParam(psParameter);
                         psParameter.setSearchEngineProbability(matchParameter.getSearchEngineProbability());
-                        if (matchParameter.getAlgorithmDeltaPEP() == null) {
-                            int debut = 0;
-                        }
                         psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                         psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
-                        
+
                         psmMap.addPoint(retainedP, spectrumMatch, searchParameters.getFragmentIonAccuracy());
                         psParameter.setSpecificMapKey(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value + "");
                         identification.addSpectrumMatchParameter(spectrumKey, psParameter);

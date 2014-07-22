@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
-import javax.swing.JOptionPane;
 
 /**
  * A Command line interface to run PeptideShaker
@@ -326,14 +325,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
             try {
-
                 ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, waitingHandler);
-
                 final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                 double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
-
                 waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
@@ -366,6 +361,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
+     * 
+     * @throws java.io.IOException
      */
     public void createProject() throws IOException {
 
@@ -666,7 +663,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         }
 
         TempFilesManager.deleteTempFolders();
-
     }
 
     /**

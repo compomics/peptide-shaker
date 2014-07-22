@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * This class lists the Algorithm identification features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
 
@@ -59,7 +59,7 @@ public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
      */
     public final static String type = "Identification Algorithm Results";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 
@@ -81,7 +81,7 @@ public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-        result.addAll(FragmentFeature.values()[0].getExportFeatures(includeSubFeatures));
+            result.addAll(FragmentFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }

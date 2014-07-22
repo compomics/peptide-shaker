@@ -38,9 +38,9 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This report section contains the results of the identification algorithms
+ * This report section contains the results of the identification algorithms.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class IdentificationAlgorithmMatchesSection {
 
@@ -69,7 +69,7 @@ public class IdentificationAlgorithmMatchesSection {
      */
     private BufferedWriter writer;
     /**
-     * A peptide spectrum annotator
+     * A peptide spectrum annotator.
      */
     private static final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
@@ -105,7 +105,7 @@ public class IdentificationAlgorithmMatchesSection {
     }
 
     /**
-     * Writes the desired section. Exports all algorithm assuptions including
+     * Writes the desired section. Exports all algorithm assumptions including
      * the decoy and non-validated matches.
      *
      * @param identification the identification of the project
@@ -125,7 +125,8 @@ public class IdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys,
+            String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -151,7 +152,6 @@ public class IdentificationAlgorithmMatchesSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        SpectrumMatch spectrumMatch = null;
         int line = 1;
 
         int totalSize = 0;
@@ -194,7 +194,7 @@ public class IdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
-                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                 for (int advocateId : spectrumMatch.getAdvocates()) {
                     HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptions = spectrumMatch.getAllAssumptions(advocateId);
@@ -223,10 +223,14 @@ public class IdentificationAlgorithmMatchesSection {
                                 String feature;
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                    feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
+                                            searchParameters, annotationPreferences, keys, linePrefix, separator,
+                                            peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
-                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, tagAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters,
+                                            annotationPreferences, keys, linePrefix, separator, tagAssumption, spectrumKey, psParameter,
+                                            identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else {
                                     throw new IllegalArgumentException("Spectrum identification assumption of type " + assumption.getClass() + " not supported.");
                                 }
@@ -330,6 +334,7 @@ public class IdentificationAlgorithmMatchesSection {
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
         switch (exportFeature) {
             case rank:
                 return peptideAssumption.getRank() + "";
@@ -494,11 +499,15 @@ public class IdentificationAlgorithmMatchesSection {
             case validated:
                 return psParameter.getMatchValidationLevel().toString();
             case fragment_mz_accuracy_score:
-                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(), (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(),
+                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey),
+                        annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value, searchParameters, PsmScores.aa_ms2_mz_fidelity.index);
                 return score + "";
             case intensity_score:
-                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(), (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(),
+                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey),
+                        annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value, searchParameters, PsmScores.aa_intensity.index);
                 return score + "";
             case sequence_coverage:
@@ -563,7 +572,7 @@ public class IdentificationAlgorithmMatchesSection {
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
                     boolean current = coverageRewind[aaIndex];
                     if (current && previous) {
-                        aaCoverage[sequenceLength - aaIndex  - 1] = true;
+                        aaCoverage[sequenceLength - aaIndex - 1] = true;
                     }
                     previous = current;
                 }
@@ -742,7 +751,7 @@ public class IdentificationAlgorithmMatchesSection {
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
                     boolean current = coverageRewind[aaIndex];
                     if (current && previous) {
-                        aaCoverage[sequenceLength - aaIndex  - 1] = true;
+                        aaCoverage[sequenceLength - aaIndex - 1] = true;
                     }
                     previous = current;
                 }
@@ -798,8 +807,9 @@ public class IdentificationAlgorithmMatchesSection {
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, String separator,
-            TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature,
+            WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+
         switch (exportFeature) {
             case rank:
                 return tagAssumption.getRank() + "";

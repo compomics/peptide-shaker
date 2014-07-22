@@ -45,7 +45,7 @@ public enum ValidationFeature implements ExportFeature {
      */
     public final static String type = "Target/Decoy Validation Summary";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 

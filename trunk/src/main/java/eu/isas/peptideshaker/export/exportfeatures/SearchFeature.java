@@ -36,7 +36,7 @@ public enum SearchFeature implements ExportFeature {
      */
     public final static String type = "Database Search Parameters";
     /**
-     * indicates whether a feature is for advanced user only
+     * Indicates whether a feature is for advanced user only.
      */
     private boolean advanced;
 
