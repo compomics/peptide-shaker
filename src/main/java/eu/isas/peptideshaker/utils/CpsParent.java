@@ -779,9 +779,11 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Returns an extended HTML project report.
      *
+     * @param waitingHandlerReport the progress report, if null the report from
+     * the project details will be used
      * @return an extended HTML project report
      */
-    public String getExtendedProjectReport() {
+    public String getExtendedProjectReport(String waitingHandlerReport) {
 
         String report = null;
 
@@ -840,10 +842,27 @@ public class CpsParent extends UserPreferencesParent {
             report += getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";
-            if (projectDetails.getReport().lastIndexOf("<br>") == -1) {
-                report += "<pre>" + projectDetails.getReport() + "</pre>";
+            if (waitingHandlerReport == null) {
+                waitingHandlerReport = projectDetails.getReport();
+            }
+
+            if (waitingHandlerReport.lastIndexOf("<br>") == -1) {
+                report += "<pre>" + waitingHandlerReport + "</pre>";
             } else {
-                report += projectDetails.getReport();
+                report += waitingHandlerReport;
+            }
+
+            report += "</html>";
+        } else {
+            report = "<html><br>";
+
+            report += "<b>Report:</b><br>";
+            if (waitingHandlerReport != null) {
+                if (waitingHandlerReport.lastIndexOf("<br>") == -1) {
+                    report += "<pre>" + waitingHandlerReport + "</pre>";
+                } else {
+                    report += waitingHandlerReport;
+                }
             }
 
             report += "</html>";

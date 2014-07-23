@@ -5597,7 +5597,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             updateRecentProjectsList();
 
                             // save the peptide shaker report next to the cps file
-                            String report = cpsBean.getExtendedProjectReport();
+                            String report = cpsBean.getExtendedProjectReport(null);
 
                             if (report != null) {
                                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
@@ -6435,7 +6435,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @return an extended HTML project report
      */
     public String getExtendedProjectReport() {
-        return cpsBean.getExtendedProjectReport();
+        return cpsBean.getExtendedProjectReport(null);
     }
 
     /**

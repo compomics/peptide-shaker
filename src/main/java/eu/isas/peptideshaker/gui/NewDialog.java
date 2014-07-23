@@ -2071,7 +2071,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         destinationFolder.mkdir();
         TempFilesManager.registerTempFolder(destinationFolder);
 
-        progressDialog.setWaitingText("Unzipping " + file.getName() + ", please wait...");
+        progressDialog.setWaitingText("Unzipping " + file.getName() + ". Please Wait...");
         progressDialog.setPrimaryProgressCounter(0);
         progressDialog.setMaxPrimaryProgressCounter(100);
         progressDialog.setPrimaryProgressCounterIndeterminate(false);

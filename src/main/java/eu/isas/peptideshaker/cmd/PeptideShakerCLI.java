@@ -93,275 +93,316 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
     /**
      * Calling this method will run the configured PeptideShaker process.
+     *
+     * @throws java.lang.Exception
      */
-    public Object call() {
+    public Object call() throws Exception {
 
-        PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
-        if (pathSettingsCLIInputBean.hasInput()) {
-            PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
-            pathSettingsCLI.setPathSettings();
-        } else {
+        try {
+            PathSettingsCLIInputBean pathSettingsCLIInputBean = cliInputBean.getPathSettingsCLIInputBean();
+            if (pathSettingsCLIInputBean.hasInput()) {
+                PathSettingsCLI pathSettingsCLI = new PathSettingsCLI(pathSettingsCLIInputBean);
+                pathSettingsCLI.setPathSettings();
+            } else {
+                try {
+                    setPathConfiguration();
+                } catch (Exception e) {
+                    System.out.println("An error occured when setting path configuration. Default will be used.");
+                    e.printStackTrace();
+                }
+            }
+
+            // Set up the waiting handler
+            if (cliInputBean.isGUI()) {
+
+                // set the look and feel
+                try {
+                    UtilitiesGUIDefaults.setLookAndFeel();
+                } catch (Exception e) {
+                    // ignore, use default look and feel
+                }
+
+                ArrayList<String> tips;
+                try {
+                    tips = Tips.getTips();
+                } catch (Exception e) {
+                    tips = new ArrayList<String>();
+                    // Do something here?
+                }
+
+                PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
+                peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
+                waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + PeptideShaker.getVersion(), "/icons/peptide-shaker.gif"),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        false, tips, "Importing Data", "PeptideShaker", PeptideShaker.getVersion(), true);
+                ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(false, false);
+                ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
+                Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
+                ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            ((WaitingDialog) waitingHandler).setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
+                    }
+                }, "ProgressDialog").start();
+            } else {
+                waitingHandler = new WaitingHandlerCLIImpl();
+            }
+
+            // create project
             try {
-                setPathConfiguration();
+                createProject();
             } catch (Exception e) {
-                System.out.println("An error occured when setting path configuration. Default will be used.");
+                waitingHandler.appendReport("An error occurred while creating the PeptideShaker project.", true, true);
                 e.printStackTrace();
             }
-        }
 
-        // Set up the waiting handler
-        if (cliInputBean.isGUI()) {
-
-            // set the look and feel
-            try {
-                UtilitiesGUIDefaults.setLookAndFeel();
-            } catch (Exception e) {
-                // ignore, use default look and feel
+            // see if the project was created or canceled
+            if (waitingHandler.isRunCanceled()) {
+                try {
+                    closePeptideShaker(identification);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e.printStackTrace();
+                }
+                System.exit(0);
+                return null;
+            } else {
+                waitingHandler.appendReport("Project successfully created.", true, true);
             }
 
-            ArrayList<String> tips;
+            // save project
             try {
-                tips = Tips.getTips();
+                cpsFile = cliInputBean.getOutput();
+                waitingHandler.appendReport("Saving results.", true, true);
+                saveProject(waitingHandler, true);
+                waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
+                waitingHandler.appendReportEndLine();
             } catch (Exception e) {
-                tips = new ArrayList<String>();
-                // Do something here?
+                waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
+                e.printStackTrace();
             }
 
-            PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
-            peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
-            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + PeptideShaker.getVersion(), "/icons/peptide-shaker.gif"),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    false, tips, "Importing Data", "PeptideShaker", PeptideShaker.getVersion(), true);
-            ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(false, false);
-            ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
-            Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
-            ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
+            // Finished
+            waitingHandler.setPrimaryProgressCounterIndeterminate(false);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-            new Thread(new Runnable() {
-                public void run() {
+            // Follow up tasks if needed
+            FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
+            if (followUpCLIInputBean.followUpNeeded()) {
+                waitingHandler.appendReport("Starting follow up tasks.", true, true);
+
+                // recalibrate spectra
+                if (followUpCLIInputBean.recalibrationNeeded()) {
                     try {
-                        ((WaitingDialog) waitingHandler).setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
+                        CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
+                        e.printStackTrace();
                     }
                 }
-            }, "ProgressDialog").start();
-        } else {
-            waitingHandler = new WaitingHandlerCLIImpl();
-        }
 
-        // create project
-        try {
-            createProject();
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while creating the project PeptideShaker.", true, true);
-            e.printStackTrace();
-        }
+                // export spectra
+                if (followUpCLIInputBean.spectrumExportNeeded()) {
+                    try {
+                        CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
+                        e.printStackTrace();
+                    }
+                }
 
-        // see if the project was created or canceled
-        if (waitingHandler.isRunCanceled()) {
+                // export protein accessions
+                if (followUpCLIInputBean.accessionExportNeeded()) {
+                    try {
+                        CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
+                        e.printStackTrace();
+                    }
+                }
+
+                // export protein details
+                if (followUpCLIInputBean.accessionExportNeeded()) {
+                    try {
+                        CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
+                        e.printStackTrace();
+                    }
+                }
+
+                // progenesis export
+                if (followUpCLIInputBean.progenesisExportNeeded()) {
+                    try {
+                        CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                        waitingHandler.appendReport("Progenesis export completed.", true, true);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
+                        e.printStackTrace();
+                    }
+                }
+
+                // de novo training export
+                if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
+                    try {
+                        CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                        waitingHandler.appendReport("Pepnovo training export completed.", true, true);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            // Report export if needed
+            ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
+
+            // see if output folder is set, and if not set to the same folder as the cps file
+            if (reportCLIInputBean.getReportOutputFolder() == null) {
+                reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
+            }
+
+            if (reportCLIInputBean.exportNeeded()) {
+                waitingHandler.appendReport("Starting report export.", true, true);
+
+                // Export report(s)
+                if (reportCLIInputBean.exportNeeded()) {
+                    int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
+                    for (String reportType : reportCLIInputBean.getReportTypes()) {
+                        try {
+                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
+                        } catch (Exception e) {
+                            waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                // Export documentation(s)
+                if (reportCLIInputBean.documentationExportNeeded()) {
+                    for (String reportType : reportCLIInputBean.getReportTypes()) {
+                        try {
+                            CLIMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
+                        } catch (Exception e) {
+                            waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            // Export as zip
+            File zipFile = cliInputBean.getZipExport();
+            if (zipFile != null) {
+                File parent = zipFile.getParentFile();
+                try {
+                    parent.mkdirs();
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while creating folder " + parent.getAbsolutePath() + ".", true, true);
+                }
+
+                File fastaFile = searchParameters.getFastaFile();
+                ArrayList<File> spectrumFiles = new ArrayList<File>();
+                for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
+                    File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
+                    spectrumFiles.add(spectrumFile);
+                }
+
+                try {
+                    ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, waitingHandler);
+                    final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
+                    double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
+                    waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
+                }
+            }
+
+            waitingHandler.appendReportEndLine();
+
             try {
                 closePeptideShaker(identification);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
                 e.printStackTrace();
             }
-            System.exit(0);
-            return null;
-        } else {
-            waitingHandler.appendReport("Project successfully created.", true, true);
-        }
 
-        // save project
-        try {
-            cpsFile = cliInputBean.getOutput();
-            waitingHandler.appendReport("Saving Results. Please Wait...", true, true);
-            saveProject(waitingHandler, true);
-            waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
+            waitingHandler.appendReport("PeptideShaker process completed.", true, true);
+            waitingHandler.setSecondaryProgressText("Processing Completed.");
 
-            // save the peptide shaker report next to the cps file
-            String report = getExtendedProjectReport();
-
-            if (report != null) {
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
-                String fileName = "PeptideShaker Report " + getCpsFile().getName() + " " + df.format(new Date()) + ".html";
-                File psReportFile = new File(getCpsFile().getParentFile(), fileName);
-                FileWriter fw = new FileWriter(psReportFile);
-                fw.write(report);
-                fw.close();
-            }
+            saveReport();
         } catch (Exception e) {
-            waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
-            e.printStackTrace();
+            waitingHandler.appendReport("PeptideShaker processing failed. See the PeptideShaker log for details.", true, true);
+            saveReport();
+            throw e;
         }
-
-        // Finished
-        waitingHandler.setPrimaryProgressCounterIndeterminate(false);
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-
-        // Follow up tasks if needed
-        FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
-        if (followUpCLIInputBean.followUpNeeded()) {
-            waitingHandler.appendReport("Starting follow up tasks.", true, true);
-
-            // recalibrate spectra
-            if (followUpCLIInputBean.recalibrationNeeded()) {
-                try {
-                    CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-            // export spectra
-            if (followUpCLIInputBean.spectrumExportNeeded()) {
-                try {
-                    CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, searchParameters);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-            // export protein accessions
-            if (followUpCLIInputBean.accessionExportNeeded()) {
-                try {
-                    CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-            // export protein details
-            if (followUpCLIInputBean.accessionExportNeeded()) {
-                try {
-                    CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler, filterPreferences);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-            // progenesis export
-            if (followUpCLIInputBean.progenesisExportNeeded()) {
-                try {
-                    CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, searchParameters);
-                    waitingHandler.appendReport("Progenesis export completed.", true, true);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-            // de novo training export
-            if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
-                try {
-                    CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
-                    waitingHandler.appendReport("Pepnovo training export completed.", true, true);
-                } catch (Exception e) {
-                    waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-        // Report export if needed
-        ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
-
-        // see if output folder is set, and if not set to the same folder as the cps file
-        if (reportCLIInputBean.getReportOutputFolder() == null) {
-            reportCLIInputBean.setReportOutputFolder(cliInputBean.getOutput().getParentFile());
-        }
-
-        if (reportCLIInputBean.exportNeeded()) {
-            waitingHandler.appendReport("Starting report export.", true, true);
-
-            // Export report(s)
-            if (reportCLIInputBean.exportNeeded()) {
-                int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
-                for (String reportType : reportCLIInputBean.getReportTypes()) {
-                    try {
-                        CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
-                    } catch (Exception e) {
-                        waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            // Export documentation(s)
-            if (reportCLIInputBean.documentationExportNeeded()) {
-                for (String reportType : reportCLIInputBean.getReportTypes()) {
-                    try {
-                        CLIMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
-                    } catch (Exception e) {
-                        waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        // Export as zip
-        File zipFile = cliInputBean.getZipExport();
-        if (zipFile != null) {
-            File parent = zipFile.getParentFile();
-            try {
-                parent.mkdirs();
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while creating folder " + parent.getAbsolutePath() + ".", true, true);
-            }
-
-            File fastaFile = searchParameters.getFastaFile();
-            ArrayList<File> spectrumFiles = new ArrayList<File>();
-            for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
-                File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
-                spectrumFiles.add(spectrumFile);
-            }
-
-            try {
-                ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, waitingHandler);
-                final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
-                double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
-                waitingHandler.appendReport("Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)", true, true);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
-            } catch (IOException e) {
-                e.printStackTrace();
-                waitingHandler.appendReport("An error occurred while attempting to zip project in " + zipFile.getAbsolutePath() + ".", true, true);
-            }
-        }
-
-        waitingHandler.appendReportEndLine();
-
-        try {
-            closePeptideShaker(identification);
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e.printStackTrace();
-        }
-
-        waitingHandler.appendReport(
-                "PeptideShaker process completed.", true, true);
-        waitingHandler.setSecondaryProgressText(
-                "Processing Completed.");
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
-
         return null;
+    }
+
+    /**
+     * Save the peptide shaker report next to the cps file.
+     */
+    private void saveReport() {
+        
+        String report;
+
+        if (waitingHandler instanceof WaitingDialog) {
+            report = getExtendedProjectReport(((WaitingDialog) waitingHandler).getReport(null));
+        } else {
+            report = getExtendedProjectReport(null);
+        }
+
+        if (report != null) {
+            if (waitingHandler instanceof WaitingDialog) {
+                report = "<html><br>";
+                report += "<b>Report:</b><br>";
+                report += "<pre>" + ((WaitingDialog) waitingHandler).getReport(null) + "</pre>";
+                report += "</html>";
+            }
+        }
+
+        if (report != null) {
+
+            try {
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss");
+                File psReportFile;
+
+                if (getCpsFile() != null) {
+                    String fileName = "PeptideShaker Report " + getCpsFile().getName() + " " + df.format(new Date()) + ".html";
+                    psReportFile = new File(getCpsFile().getParentFile(), fileName);
+                } else {
+                    String fileName = "PeptideShaker Report " + df.format(new Date()) + ".html";
+                    psReportFile = new File(cliInputBean.getOutput().getParentFile(), fileName);
+                }
+
+                FileWriter fw = new FileWriter(psReportFile);
+                fw.write(report);
+                fw.close();
+            } catch (IOException ex) {
+                waitingHandler.appendReport("An error occurred while saving the PeptideShaker report.", true, true);
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
-     * 
+     *
      * @throws java.io.IOException
      */
     public void createProject() throws IOException {

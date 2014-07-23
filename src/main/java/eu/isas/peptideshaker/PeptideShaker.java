@@ -4742,7 +4742,7 @@ public class PeptideShaker {
         String error = null;
         ArrayList<String> toCheck = PTMFactory.getInstance().loadBackedUpModifications(searchParameters, true);
         if (!toCheck.isEmpty()) {
-            error = "The definition of the following PTM(s) seems to have change and was overwritten:\n";
+            error = "The definition of the following PTM(s) seems to have changed and were overwritten:\n";
             for (int i = 0; i < toCheck.size(); i++) {
                 if (i > 0) {
                     if (i < toCheck.size() - 1) {
