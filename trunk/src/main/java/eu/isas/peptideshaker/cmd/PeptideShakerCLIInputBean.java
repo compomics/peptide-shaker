@@ -235,9 +235,11 @@ public class PeptideShakerCLIInputBean {
 
         if (aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id)) {
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id);
-            File testFile = new File(filesTxt);
-            if (testFile.exists()) {
-                identificationParameters = SearchParameters.getIdentificationParameters(testFile);
+            File tempSettingsFile = new File(filesTxt);
+            if (tempSettingsFile.exists()) {
+                identificationParameters = SearchParameters.getIdentificationParameters(tempSettingsFile);
+                
+                // @TODO: xtandem ptms are always added as the line above will always add default xtandem algorithm parameters...
                 ModificationProfile modificationProfile = identificationParameters.getModificationProfile();
                 IdentificationAlgorithmParameter algorithmParameter = identificationParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
                 if (algorithmParameter != null) {
