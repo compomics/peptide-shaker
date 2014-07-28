@@ -1980,8 +1980,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
 
                 for (File file : newFile.getParentFile().listFiles()) {
-                    if (file.getName().toLowerCase().endsWith(".parameters")
-                            || file.getName().toLowerCase().endsWith(".properties")) {
+                    String name = file.getName();
+                    if (name.equals(SEARCHGUI_INPUT)) {
+                        inputFiles.add(file);
+                    } else if (name.toLowerCase().endsWith(".parameters")
+                            || name.toLowerCase().endsWith(".properties")) {
                         if (!parameterFiles.contains(file)) {
                             parameterFiles.add(file);
                         }
@@ -2100,9 +2103,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         String lowerCaseName = file.getName().toLowerCase();
 
-        if (file.getName().equals(SEARCHGUI_INPUT)) {
-            inputFiles.add(file);
-        } else if (lowerCaseName.endsWith("dat")
+        if (lowerCaseName.endsWith("dat")
                 || lowerCaseName.endsWith("omx")
                 || lowerCaseName.endsWith("xml")
                 || lowerCaseName.endsWith("mzid")
