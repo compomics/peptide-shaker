@@ -1605,24 +1605,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         }
 
-        IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
-        if (algorithmParameter != null) {
-            XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
-            if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
-                PTM ptm = ptmFactory.getPTM("acetylation of protein n-term");
-                modificationProfile.addVariableModification(ptm);
-            }
-            String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
-            if (xtandemParameters.isQuickPyrolidone()) {
-                for (String ptmName : pyroMods) {
-                    if (!modificationProfile.getVariableModifications().contains(ptmName)) {
-                        PTM ptm = ptmFactory.getPTM(ptmName);
-                        modificationProfile.addVariableModification(ptm);
-                    }
-                }
-            }
-        }
-
         File fastaFile = searchParameters.getFastaFile();
         if (fastaFile != null) {
             boolean found = false;

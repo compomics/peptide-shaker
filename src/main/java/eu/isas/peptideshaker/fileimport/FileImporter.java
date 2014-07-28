@@ -19,6 +19,7 @@ import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.ions.TagFragmentIon;
 import com.compomics.util.experiment.identification.identification_parameters.PepnovoParameters;
+import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
@@ -429,6 +430,10 @@ public class FileImporter {
          * The database connection.
          */
         private Identification identification;
+        /**
+         * indicates whether the check for X!Tandem modifications was done
+         */
+        private boolean xTandemPtmsCheck = false;
 
         /**
          * Constructor of the worker.
@@ -766,6 +771,10 @@ public class FileImporter {
                     SpectrumMatch match = queue.pollLast();
 
                     for (int advocateId : match.getAdvocates()) {
+                        
+                        if (advocateId == Advocate.xtandem.getIndex() && !xTandemPtmsCheck) {
+                            verifyXTandemPtms();
+                        }
 
                         nPSMs++;
                         nSecondary += match.getAllAssumptions().size() - 1;
@@ -987,7 +996,7 @@ public class FileImporter {
                                                     } else if (fileReader instanceof DirecTagIdfileReader) {
                                                         PTM ptm = ptmFactory.getPTM(sePTM);
                                                         if (ptm == PTMFactory.unknownPTM) {
-                                                        throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + fileName + ".");
+                                                            throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + fileName + ".");
                                                         }
                                                         tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, searchParameters.getFragmentIonAccuracy(), PeptideShaker.MATCHING_TYPE);
                                                     } else {
@@ -1472,6 +1481,32 @@ public class FileImporter {
             }
 
             waitingHandler.increasePrimaryProgressCounter();
+        }
+
+        /**
+         * Verifies that the modifications targeted by the quick acetyl and
+         * quick pyrolidone are included in the search parameters
+         */
+        private void verifyXTandemPtms() {
+            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
+            if (algorithmParameter != null) {
+                XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
+                if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
+                    PTM ptm = PTMFactory.getInstance().getPTM("acetylation of protein n-term");
+                    modificationProfile.addVariableModification(ptm);
+                }
+                String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
+                if (xtandemParameters.isQuickPyrolidone()) {
+                    for (String ptmName : pyroMods) {
+                        if (!modificationProfile.getVariableModifications().contains(ptmName)) {
+                            PTM ptm = PTMFactory.getInstance().getPTM(ptmName);
+                            modificationProfile.addVariableModification(ptm);
+                        }
+                    }
+                }
+            }
+            xTandemPtmsCheck = true;
         }
 
         /**

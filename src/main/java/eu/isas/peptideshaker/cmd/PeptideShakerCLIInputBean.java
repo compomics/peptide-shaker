@@ -238,26 +238,6 @@ public class PeptideShakerCLIInputBean {
             File tempSettingsFile = new File(filesTxt);
             if (tempSettingsFile.exists()) {
                 identificationParameters = SearchParameters.getIdentificationParameters(tempSettingsFile);
-                
-                // @TODO: xtandem ptms are always added as the line above will always add default xtandem algorithm parameters...
-                ModificationProfile modificationProfile = identificationParameters.getModificationProfile();
-                IdentificationAlgorithmParameter algorithmParameter = identificationParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
-                if (algorithmParameter != null) {
-                    XtandemParameters xtandemParameters = (XtandemParameters) algorithmParameter;
-                    if (xtandemParameters.isProteinQuickAcetyl() && !modificationProfile.contains("acetylation of protein n-term")) {
-                        PTM ptm = PTMFactory.getInstance().getPTM("acetylation of protein n-term");
-                        modificationProfile.addVariableModification(ptm);
-                    }
-                    String[] pyroMods = {"pyro-cmc", "pyro-glu from n-term e", "pyro-glu from n-term q"};
-                    if (xtandemParameters.isQuickPyrolidone()) {
-                        for (String ptmName : pyroMods) {
-                            if (!modificationProfile.getVariableModifications().contains(ptmName)) {
-                                PTM ptm = PTMFactory.getInstance().getPTM(ptmName);
-                                modificationProfile.addVariableModification(ptm);
-                            }
-                        }
-                    }
-                }
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
