@@ -4750,8 +4750,8 @@ public class PeptideShaker {
                     } else {
                         error += " and ";
                     }
-                    error += toCheck.get(i);
                 }
+                error += toCheck.get(i);
             }
             error += ".\nPlease verify the definition of the PTM(s) in the modifications editor.";
         }
