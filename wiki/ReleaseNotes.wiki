@@ -3,6 +3,26 @@
 
 ----
 
+*Changes in PeptideShaker 0.32.0 (July 29. 2014)*
+
+ * NEW FEATURE: Added support for MyriMatch.
+ * NEW FEATURE: Support of zip export from the command line.
+ * NEW FEATURE: Possible to import zipped SearchGUI projects.
+ * NEW FEATURE: Added export functionality for search engine results.
+
+ * FEATURE IMPROVEMENT: Made sure that the column in the exports are always in the same order.
+ * FEATURE IMPROVEMENT: Made sure that the PeptideShaker log is saved even if the processing fails when run from SearchGUI.
+
+ * BUG FIX: Fixed a bug in the PRIDE Reshake to support zipped mgf files.
+ * BUG FIX: X!Tandem modifications are now added only if X!Tandem results are found.
+ * BUG FIX: Corrected the output of the discarded protein mappings.
+ * BUG FIX: Corrected minor HTML formatting issues in the help texts.
+
+ * LIBRARY UPDATE: Updated jsparklines to version 0.8.0.
+ * LIBRARY UPDATE: Updated utilities to version 3.29.7.
+
+----
+
 *Changes in PeptideShaker 0.31.5 (June 26. 2014)*
 
  * FEATURE IMPROVEMENT: Improved the way multiple species are supported in the UniProt link in the Reshake Settings dialog.
