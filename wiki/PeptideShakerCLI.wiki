@@ -24,13 +24,13 @@ The recommended way to generate an identification parameters file for use in Pep
 
 ==A) PeptideShakerCLI==
 
-*Standard command line:*
+*Standard command line*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
-*Mandatory parameters:*
+*Mandatory parameters*
 
 {{{
 -experiment                Specifies the experiment name.
@@ -43,14 +43,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            separated list or an entire folder.
                            Example: "file1.mgf, file2.mgf".
 
--identification_files      The identification files (X!Tandem .t.xml, MS-GF+ .mzid, 
+-identification_files      The identification files (X!Tandem .t.xml, mzIdentML .mzid, 
                            MS Amanda .cvs, OMSSA .omx and Mascot .dat files) 
                            in a comma separated list or an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
--out                       PeptideShaker output file. If the file 
-                           already exists it will be silently 
-                           overwritten.
+-out                       PeptideShaker output file. If the file already exists 
+                           it will be silently overwritten.
 
 -id_params                 The identification parameters file. 
                            Generated using SeachGUI or via IdentificationParametersCLI. 
@@ -58,7 +57,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            identification files.
 }}}
 
-*Optional gene annotation parameter:*
+*Optional gene annotation parameter*
 
 {{{
 -species                   The species to use for the gene annotation, e.g., 'Homo sapiens'. 
@@ -69,7 +68,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 }}}
 
 
-*Optional processing parameters:*
+*Optional processing parameters*
 
 {{{
 -protein_FDR               FDR at the protein level in percent 
@@ -95,7 +94,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            the fraction MW plot (default 95%: '95.0').
 }}}
 
-*Optional filtering parameters:*
+*Optional filtering parameters*
 
 {{{
 -min_peptide_length        Minimim peptide length filter (default is '6').
@@ -111,14 +110,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 -exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
 }}}
 
-*Optional output parameters:*
+*Optional output parameters*
 
 {{{
--out_txt_1                 Output folder for text summary - format 1 
-                           (three files: proteins, peptides and PSMs).
+-zip                       Exports the entire project as a zip file in the file specified.
 }}}
 
-*PeptideShakerCLI Example:*
+*PeptideShakerCLI Example*
 
 PeptideShakerCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 
@@ -138,13 +136,13 @@ _Note that for readability the command is here split over multiple lines. When u
 
 ==B) ReportCLI==
 
-*Standard command line:*
+*Standard command line*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters]
 }}}
 
-*Mandatory parameters:*
+*Mandatory parameters*
 
 {{{
 -in                        PeptideShaker project (.cps file)
@@ -152,7 +150,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 -out_reports               Output folder for report files. (Existing files will be overwritten.)
 }}}
 
-*Optional report options:*
+*Optional report options*
 
 {{{
 -reports                   Comma separated list of types of report to export. 
@@ -174,7 +172,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 
 To add custom reports see Export > Identification Features > Custom in PeptideShaker.
 
-*ReportCLI Example:*
+*ReportCLI Example*
 
 ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker:
 
@@ -188,19 +186,19 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0
 
 ==C) FollowUpCLI==
 
-*Standard command line:*
+*Standard command line*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [parameters]
 }}}
 
-*Mandatory parameters:*
+*Mandatory parameters*
 
 {{{
 -in                        PeptideShaker project (.cps file)
 }}}
 
-*Optional recalibration parameters:*
+*Optional recalibration parameters*
 
 {{{
 -recalibration_folder      Output folder for the recalibrated files. (Existing files will be overwritten.)
@@ -211,7 +209,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            2: fragment ions only.
 }}}
 
-*Optional spectrum export parameters:*
+*Optional spectrum export parameters*
 
 {{{
 -spectrum_folder           Output folder for the spectra. (Existing files will be overwritten.)
@@ -225,7 +223,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            5: Spectra of validated PSMs of Validated Peptides of Validated Proteins.
 }}}
 
-*Optional Progenesis export parameters:*
+*Optional Progenesis export parameters*
 
 {{{
 -progenesis_file           Output file for identification results in Progenesis LC-MS compatible format. 
@@ -240,7 +238,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 -progenesis_ptms           Comma separated list of PTMs to include in reports of Type 3.
 }}}
 
-*Optional protein accessions export parameters:*
+*Optional protein accessions export parameters*
 
 {{{
 -accessions_file           Output file to export the protein accessions in text format. 
@@ -252,7 +250,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            2: Non-Validated Accessions.
 }}}
 
-*Optional FASTA export parameters:*
+*Optional FASTA export parameters*
 
 {{{
 -fasta_file                File where to export the protein details in fasta format. 
@@ -264,7 +262,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
                            2: Non-Validated Accessions.
 }}}
 
-*Optional inclusion list generation parameters:*
+*Optional inclusion list generation parameters*
 
 {{{
 -inclusion_list_file       Output file for an inclusion list of validated hits. 
@@ -291,7 +289,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 -inclusion_list_rt_window  Retention time window for the inclusion list export (in seconds).
 }}}
 
-*FollowUpCLI Example:*
+*FollowUpCLI Example*
 
 FollowUpCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 
@@ -307,13 +305,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum
 
 Available from PeptideShaker v0.30.0.
 
-*Standard command line:*
+*Standard command line*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.MzidCLI [parameters]
 }}}
 
-*Mandatory parameters:*
+*Mandatory parameters*
 
 {{{
 -in                        PeptideShaker project (.cps file)
@@ -349,14 +347,14 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.MzidCLI [parameters]
 
 ==E) PathSettingsCLI==
 
-*Generic temporary folder:*
+*Generic temporary folder*
 
 {{{
 -temp_folder               A folder for temporary file storage. Use only if 
                            you encounter problems with the default configuration.
 }}}
 
-*Specific path setting:*
+*Specific path setting*
 
 {{{
 -peptideshaker_matches_directory    
