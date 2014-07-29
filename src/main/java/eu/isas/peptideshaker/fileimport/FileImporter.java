@@ -431,7 +431,7 @@ public class FileImporter {
          */
         private Identification identification;
         /**
-         * indicates whether the check for X!Tandem modifications was done
+         * Indicates whether the check for X!Tandem modifications was done.
          */
         private boolean xTandemPtmsCheck = false;
 
@@ -771,7 +771,7 @@ public class FileImporter {
                     SpectrumMatch match = queue.pollLast();
 
                     for (int advocateId : match.getAdvocates()) {
-                        
+
                         if (advocateId == Advocate.xtandem.getIndex() && !xTandemPtmsCheck) {
                             verifyXTandemPtms();
                         }
@@ -1485,7 +1485,7 @@ public class FileImporter {
 
         /**
          * Verifies that the modifications targeted by the quick acetyl and
-         * quick pyrolidone are included in the search parameters
+         * quick pyrolidone are included in the search parameters.
          */
         private void verifyXTandemPtms() {
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
