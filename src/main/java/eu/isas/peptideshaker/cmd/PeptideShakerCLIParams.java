@@ -37,7 +37,7 @@ public enum PeptideShakerCLIParams {
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
     SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
     SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false),
-    ZIP("zip", "Exports the entire project as zip file in the file specified.", false);
+    ZIP("zip", "Exports the entire project as a zip file in the file specified.", false);
     /**
      * Short Id for the CLI parameter.
      */
