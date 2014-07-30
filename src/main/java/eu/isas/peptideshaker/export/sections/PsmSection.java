@@ -216,15 +216,6 @@ public class PsmSection {
                             writer.write(line + "");
                             first = false;
                         }
-
-                        for (PsmFeature psmFeature : psmFeatures) {
-                            if (!first) {
-                                writer.write(separator);
-                            } else {
-                                first = false;
-                            }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
-                        }
                         for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : identificationAlgorithmMatchesFeatures) {
                             if (!first) {
                                 writer.write(separator);
@@ -242,6 +233,14 @@ public class PsmSection {
                                 throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                             }
                             writer.write(feature);
+                        }
+                        for (PsmFeature psmFeature : psmFeatures) {
+                            if (!first) {
+                                writer.write(separator);
+                            } else {
+                                first = false;
+                            }
+                            writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         writer.newLine();
                         if (fragmentSection != null) {
@@ -508,7 +507,7 @@ public class PsmSection {
             writer.write(separator);
         }
         boolean firstColumn = true;
-        for (ExportFeature exportFeature : psmFeatures) {
+        for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
             for (String title : exportFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
@@ -518,7 +517,7 @@ public class PsmSection {
                 writer.write(title);
             }
         }
-        for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
+        for (ExportFeature exportFeature : psmFeatures) {
             for (String title : exportFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
