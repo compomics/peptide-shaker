@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
+import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -15,6 +16,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
@@ -326,6 +328,23 @@ public class DisplayFeaturesGenerator {
                                 + ": " + modName + "<br>";
                     }
                 }
+            } else if (tagComponent instanceof AminoAcidSequence) {
+                AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
+                for (int site = 1; site <= aminoAcidSequence.length(); site++) {
+                    for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
+                        char affectedResidue = aminoAcidSequence.charAt(site - 1);
+                        String modName = modificationMatch.getTheoreticPtm();
+                        Color ptmColor = modificationProfile.getColor(modName);
+                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                                + affectedResidue
+                                + "</span>"
+                                + ": " + modName + "<br>";
+                    }
+                }
+            } else if (tagComponent instanceof MassGap) {
+                // Nothing to do here
+            } else {
+                throw new UnsupportedOperationException("Annotation not supported for the tag component " + tagComponent.getClass() + ".");
             }
         }
 

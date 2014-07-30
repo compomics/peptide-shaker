@@ -15,6 +15,7 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
+import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.ions.TagFragmentIon;
@@ -320,6 +321,45 @@ public class FileImporter {
                                 }
                                 int aaIndex = aa - 1;
                                 aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
+                            } else {
+                                Advocate notImplemented = Advocate.getAdvocate(advocateId);
+                                if (notImplemented == null) {
+                                    throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
+                                }
+                                throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
+                            }
+                        }
+                    }
+                }
+            } else if (tagComponent instanceof AminoAcidSequence) {
+
+                AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
+
+                for (int aa : aminoAcidSequence.getModificationIndexes()) {
+                    for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(aa)) {
+                        if (modificationMatch.isVariable()) {
+                            if (advocateId == Advocate.pepnovo.getIndex()) {
+                                String pepnovoPtmName = modificationMatch.getTheoreticPtm();
+                                PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
+                                String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
+                                if (utilitiesPtmName == null) {
+                                    throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
+                                }
+                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
+                            } else if (advocateId == Advocate.direcTag.getIndex()) {
+                                Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
+                                String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
+                                if (utilitiesPtmName == null) {
+                                    throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
+                                }
+                                modificationMatch.setTheoreticPtm(utilitiesPtmName);
+                                PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
+                                ArrayList<AminoAcid> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
+                                if (aaAtTarget.size() > 1) {
+                                    throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
+                                }
+                                int aaIndex = aa - 1;
+                                aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0).singleLetterCode.charAt(0));
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {
