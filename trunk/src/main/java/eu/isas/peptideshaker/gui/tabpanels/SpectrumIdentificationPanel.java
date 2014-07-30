@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
+import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -16,6 +17,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -2308,16 +2310,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public void loadDataFromIdentification() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         progressDialog.setTitle("Updating Project Data. Please Wait...");
-        
+
         // see if the id software is saved
         boolean newInformation = true;
         if (peptideShakerGUI.getProjectDetails().hasIdentificationAlgorithms()) {
             newInformation = false;
         }
-        
+
         // get the list of id software used
         advocatesUsed = peptideShakerGUI.getProjectDetails().getIdentificationAlgorithms();
-        
+
         // set the dataset to not saved
         if (newInformation) {
             peptideShakerGUI.setDataSaved(false);
@@ -2340,7 +2342,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         PSParameter probabilities = new PSParameter();
 
         numberOfValidatedPsmsMap = new HashMap<String, Integer>();
-        
+
         progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
         progressDialog.setValue(0);
@@ -2772,7 +2774,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 annotationPreferences.showForwardIonDeNovoTags(),
                                                 annotationPreferences.showRewindIonDeNovoTags());
 
-                                        // get the modifications for the tag // @TODO: is there an easier way to do this??
+                                        // get the modifications for the tag
                                         ArrayList<ModificationMatch> modificationMatches = new ArrayList<ModificationMatch>();
 
                                         for (TagComponent tagComponent : tagAssumption.getTag().getContent()) {
@@ -2783,6 +2785,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                         modificationMatches.add(modificationMatch);
                                                     }
                                                 }
+                                            } else if (tagComponent instanceof AminoAcidSequence) {
+                                                AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
+                                                for (int site = 1; site <= aminoAcidSequence.length(); site++) {
+                                                    for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(site)) {
+                                                        modificationMatches.add(modificationMatch);
+                                                    }
+                                                }
+                                            } else if (tagComponent instanceof MassGap) {
+                                                // Nothing to do here
+                                            } else {
+                                                throw new UnsupportedOperationException("Annotation not supported for the tag component " + tagComponent.getClass() + ".");
                                             }
                                         }
 
