@@ -588,6 +588,9 @@ public class IdentificationAlgorithmMatchesSection {
                         currentTag = new StringBuilder();
                     }
                 }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.toString();
+                }
                 return longestTag;
             case longest_amino_acid_sequence_annotated_single_serie:
                 peptide = peptideAssumption.getPeptide();
@@ -641,6 +644,9 @@ public class IdentificationAlgorithmMatchesSection {
                     }
                     previous = current;
                 }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
+                }
                 currentTag = new StringBuilder();
                 previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
@@ -654,6 +660,9 @@ public class IdentificationAlgorithmMatchesSection {
                         currentTag = new StringBuilder();
                     }
                     previous = current;
+                }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
                 }
                 currentTag = new StringBuilder();
                 previous = true;
@@ -669,6 +678,9 @@ public class IdentificationAlgorithmMatchesSection {
                     }
                     previous = current;
                 }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
+                }
                 currentTag = new StringBuilder();
                 previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
@@ -682,6 +694,9 @@ public class IdentificationAlgorithmMatchesSection {
                         currentTag = new StringBuilder();
                     }
                     previous = current;
+                }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
                 }
                 currentTag = new StringBuilder();
                 previous = true;
@@ -697,6 +712,9 @@ public class IdentificationAlgorithmMatchesSection {
                     }
                     previous = current;
                 }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
+                }
                 currentTag = new StringBuilder();
                 previous = true;
                 for (int aaIndex = 0; aaIndex < sequenceLength; aaIndex++) {
@@ -710,6 +728,9 @@ public class IdentificationAlgorithmMatchesSection {
                         currentTag = new StringBuilder();
                     }
                     previous = current;
+                }
+                if (currentTag.length() > longestTag.length()) {
+                    longestTag = currentTag.reverse().toString();
                 }
 
                 return longestTag;
