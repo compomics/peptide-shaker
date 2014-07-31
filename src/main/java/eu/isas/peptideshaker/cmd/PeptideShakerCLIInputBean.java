@@ -1,14 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.identification.IdentificationAlgorithmParameter;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
-import com.compomics.util.preferences.ModificationProfile;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -91,6 +85,11 @@ public class PeptideShakerCLIInputBean {
      * The species type to use for the gene mappings.
      */
     private String speciesType = null;
+    /**
+     * If true the tool will always check the Ensembl version for the selected
+     * species and try to update if the version is outdated.
+     */
+    private boolean autoUpdateSpecies = false;
     /**
      * The minimal peptide length allowed.
      */
@@ -256,6 +255,12 @@ public class PeptideShakerCLIInputBean {
         }
         if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_TYPE.id)) {
             speciesType = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_TYPE.id); // @TODO: check that it's a valid species type??
+        }
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_UPDATE.id)) {
+            String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_UPDATE.id);
+            if (guiOption.trim().equals("1")) {
+                autoUpdateSpecies = true;
+            }
         }
 
         // zipped export
@@ -698,6 +703,24 @@ public class PeptideShakerCLIInputBean {
      */
     public void setSpeciesType(String speciesType) {
         this.speciesType = speciesType;
+    }
+
+    /**
+     * Returns true of the species is to be auto updated to the latest version.
+     *
+     * @return rue of the species is to be auto updated to the latest versio
+     */
+    public boolean updateSpecies() {
+        return autoUpdateSpecies;
+    }
+
+    /**
+     * Set if the species is to be auto updated to the latest version.
+     *
+     * @param autoUpdateSpecies
+     */
+    public void setUpdateSpecies(boolean autoUpdateSpecies) {
+        this.autoUpdateSpecies = autoUpdateSpecies;
     }
 
     /**

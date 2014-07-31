@@ -37,6 +37,7 @@ public enum PeptideShakerCLIParams {
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
     SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
     SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false),
+    SPECIES_UPDATE("species_update", "Check for new species information in Ensembl and update if possible. (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false);
     /**
      * Short Id for the CLI parameter.
@@ -95,6 +96,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
         aOptions.addOption(SPECIES.id, true, SPECIES.description);
         aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
+        aOptions.addOption(SPECIES_UPDATE.id, true, SPECIES_UPDATE.description);
         aOptions.addOption(ZIP.id, true, ZIP.description);
 
         // Follow-up options
@@ -131,6 +133,7 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional gene annotation parameter:\n\n";
         output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";
         output += "-" + String.format(formatter, SPECIES_TYPE.id) + SPECIES_TYPE.description + "\n";
+        output += "-" + String.format(formatter, SPECIES_UPDATE.id) + SPECIES_UPDATE.description + "\n";
 
         output += "\n\nOptional processing parameters:\n\n";
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
