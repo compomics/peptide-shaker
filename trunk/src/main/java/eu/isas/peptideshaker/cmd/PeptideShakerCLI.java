@@ -357,7 +357,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Save the peptide shaker report next to the cps file.
      */
     private void saveReport() {
-        
+
         String report;
 
         if (waitingHandler instanceof WaitingDialog) {
@@ -595,26 +595,30 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
                 String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
 
-                // check if newer mappings are available
-                if (currentEnsemblVersionAsString != null) {
-                    currentEnsemblVersionAsString = currentEnsemblVersionAsString.substring(currentEnsemblVersionAsString.indexOf(" ") + 1);
-                    Integer currentEnsemblVersion;
+                boolean downloadNewMappings;
 
-                    try {
-                        currentEnsemblVersion = new Integer(currentEnsemblVersionAsString);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        currentEnsemblVersion = latestEnsemblVersion;
-                    }
-
-                    if (currentEnsemblVersion < latestEnsemblVersion) {
-                        genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
-                        genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+                if (currentEnsemblVersionAsString == null) {
+                    if (cliInputBean.updateSpecies()) {
+                        downloadNewMappings = true;
+                    } else {
+                        waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
+                        waitingHandler.setRunCanceled();
+                        downloadNewMappings = false;
                     }
                 } else {
+                    if (cliInputBean.updateSpecies()) {
+                        downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
+                    } else {
+                        downloadNewMappings = false;
+                    }
+                }
+
+                // download mappings if needed
+                if (downloadNewMappings) {
                     genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
                     genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
                 }
+
             } catch (IOException e) {
                 System.out.println("Failed to load the species and GO domains!");
                 e.printStackTrace();
@@ -939,5 +943,27 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 + ", ptmFactory=" + ptmFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
+    }
+
+    /**
+     * Returns true if a new species mapping is available.
+     * 
+     * @param currentEnsemblVersionAsString the current version
+     * @param latestEnsemblVersion the latest version available
+     * @return true if a new species mapping is available
+     */
+    private boolean checkForSpeciesUpdate(String currentEnsemblVersionAsString, Integer latestEnsemblVersion) {
+
+        currentEnsemblVersionAsString = currentEnsemblVersionAsString.substring(currentEnsemblVersionAsString.indexOf(" ") + 1);
+        Integer currentEnsemblVersion;
+
+        try {
+            currentEnsemblVersion = new Integer(currentEnsemblVersionAsString);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            currentEnsemblVersion = latestEnsemblVersion;
+        }
+
+        return currentEnsemblVersion < latestEnsemblVersion;
     }
 }
