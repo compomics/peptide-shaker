@@ -65,6 +65,9 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -species_type              The species type to use for the gene annotation, e.g., 'Vertebrates' or 'Plants'. 
                            Supported species types are listed in the GUI.
+
+-species_update            Check for new species information in Ensembl and update if possible. 
+                           (1: true, 0: false, default is '0').
 }}}
 
 
