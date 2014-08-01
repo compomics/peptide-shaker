@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.32.2 (August 1. 2014)*
+
+ * FEATURE IMPROVEMENT: Improved the MyriMatch support for terminal PTMs.
+ * FEATURE IMPROVEMENT: Improved handling of end of file exceptions occurring when opening a corrupt project.
+
+ * BUG FIX: Corrected a bug where the id filters were not always used.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.30.3.
+
+----
+
 *Changes in PeptideShaker 0.32.1 (July 31. 2014)*
 
  * NEW FEATURE: Added a new command line parameter called species_update to the PeptideShakerCLI to control the update of species and GO mappings.
