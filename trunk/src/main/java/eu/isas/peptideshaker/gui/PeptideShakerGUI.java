@@ -5309,31 +5309,33 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 } catch (OptionalDataException e) {
                     progressDialog.setRunFinished();
                     if (e.eof) {
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "The end of the file was reached unexpectedly. The file is corrupted and cannot be opened anymore.\nIf the file is a copy, make sure that it is identical to the orginial.\n",
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                                + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
+                                + "be opened. If the file is a copy, make sure that it is identical to the original file.",
+                                "File Input Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "Please verify that the version used to create\n"
-                            + "the file is compatible with your version of PeptideShaker.",
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                                + "Please verify that the version used to create the file\n"
+                                + "is compatible with your version of PeptideShaker.",
+                                "File Input Error", JOptionPane.ERROR_MESSAGE);
                     }
                     e.printStackTrace();
                 } catch (EOFException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "The end of the file was reached unexpectedly. The file is corrupted and cannot be opened anymore.\nIf the file is a copy, make sure that it is identical to the orginial.\n",
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                                + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
+                                + "be opened. If the file is a copy, make sure that it is identical to the original file.",
+                                "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 } catch (Exception e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "Please verify that the version used to create\n"
-                            + "the file is compatible with your version of PeptideShaker.",
+                            + "Please verify that the version used to create the file\n"
+                            + "is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
