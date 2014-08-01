@@ -18,7 +18,6 @@ import com.compomics.util.experiment.identification.spectrum_annotators.PeptideS
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -52,8 +51,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * The class that takes care of converting the data to mzIdentML. (Work in
- * progress...)
+ * The class that takes care of converting the data to mzIdentML.
  *
  * @author Harald Barsnes
  * @author Marc Vaudel
@@ -94,9 +92,9 @@ public class MzIdentMLExport {
      */
     private final int CONFIDENCE_DECIMALS = 2;
     /**
-     * The mzIdentML xsd.
+     * Write mzid 1.2? False, results in mzid 1.1.
      */
-    private String mzIdentMLXsd = "\"http://psidev.info/psi/pi/mzIdentML/1.1\"";
+    private boolean mzidVersion1_2 = false;
     /**
      * The PeptideShaker version.
      */
@@ -195,7 +193,7 @@ public class MzIdentMLExport {
     /**
      * Creates the mzIdentML file.
      *
-     * @param version12 if true 1.2 version information will be written
+     * @param version12 if true, mzid 1.2 version information will be included
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -207,9 +205,7 @@ public class MzIdentMLExport {
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 
-        if (version12) {
-            mzIdentMLXsd = "\"http://psidev.info/psi/pi/mzIdentML/1.2\"";
-        }
+        mzidVersion1_2 = version12;
 
         // @TODO: use the waiting handler more (especially for command line mode)
         // the mzIdentML start tag
@@ -232,16 +228,16 @@ public class MzIdentMLExport {
         waitingHandler.setMaxPrimaryProgressCounter(sequenceFactory.getNSequences() + identification.getSpectrumIdentificationSize() * 3 + identification.getProteinIdentification().size());
 
         // write the sequence collection
-        writeSequenceCollection(version12);
+        writeSequenceCollection();
 
         // write the analyis collection
         writeAnalysisCollection();
 
         // write the analysis protocol
-        writeAnalysisProtocol(version12);
+        writeAnalysisProtocol();
 
         // write the data collection
-        writeDataCollection(version12);
+        writeDataCollection();
 
         if (waitingHandler.isRunCanceled()) {
             br.close();
@@ -415,15 +411,13 @@ public class MzIdentMLExport {
     /**
      * Write the sequence collection.
      *
-     * @param version12 if true 1.2 version information will be written
-     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    private void writeSequenceCollection(boolean version12) throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
+    private void writeSequenceCollection() throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
 
         br.write(getCurrentTabSpace() + "<SequenceCollection>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -491,8 +485,8 @@ public class MzIdentMLExport {
                 if (ptmCvTerm != null) {
                     tabCounter++;
                     writeCvTerm(ptmCvTerm);
-                    if (version12) {
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "order", modMatchIndex + ""));
+                    if (mzidVersion1_2) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "order", modMatchIndex + "")); // @TODO: add correct cv term!
                         modMatchIndex++;
                     }
                     tabCounter--;
@@ -665,11 +659,9 @@ public class MzIdentMLExport {
     /**
      * Write the analysis protocol.
      *
-     * @param version12 if true 1.2 version information will be written
-     *
      * @throws IOException
      */
-    private void writeAnalysisProtocol(boolean version12) throws IOException {
+    private void writeAnalysisProtocol() throws IOException {
 
         br.write(getCurrentTabSpace() + "<AnalysisProtocolCollection>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -691,14 +683,14 @@ public class MzIdentMLExport {
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001211", "parent mass type mono", null));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
-        if (version12) {
-            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide-level scoring performed", null));
+        if (mzidVersion1_2) {
+            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide-level scoring performed", null)); // @TODO: add correct cv term!
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "Group PSMs by distinct peptide sequence with taking modifications into account", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002489", "Modification localization scoring performed", null));
             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", ptmScoringPreferences.getSelectedProbabilisticScore().getName(), null));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", ptmScoringPreferences.getSelectedProbabilisticScore().getName(), null)); // @TODO: add correct cv term!
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score", null));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score", null)); // @TODO: add correct cv term!
         }
 
         // @TODO: list all search parameters from the search engines used?
@@ -880,7 +872,7 @@ public class MzIdentMLExport {
             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "D-score threshold", "95"));//@TODO: avoid this hard coded value
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "D-score threshold", "95")); //@TODO: avoid this hard coded value
 
 //            // peptideshaker maps
 //            PSMaps psMaps = new PSMaps();
@@ -1022,15 +1014,13 @@ public class MzIdentMLExport {
     /**
      * Write the data collection.
      *
-     * @param version12 if true 1.2 version information will be written
-     *
      * @throws IOException
      */
-    private void writeDataCollection(boolean version12) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataCollection() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
         tabCounter++;
         writeInputFileDetails();
-        writeDataAnalysis(version12);
+        writeDataAnalysis();
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DataCollection>" + System.getProperty("line.separator"));
     }
@@ -1038,11 +1028,9 @@ public class MzIdentMLExport {
     /**
      * Write the data analysis section.
      *
-     * @param version12 if true 1.2 version information will be written
-     *
      * @throws IOException
      */
-    private void writeDataAnalysis(boolean version12) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataAnalysis() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         br.write(getCurrentTabSpace() + "<AnalysisData>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -1061,7 +1049,7 @@ public class MzIdentMLExport {
 
             // iterate the psms
             for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                writeSpectrumIdentificationResult(psmKey, ++psmCount, version12);
+                writeSpectrumIdentificationResult(psmKey, ++psmCount);
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
@@ -1196,11 +1184,9 @@ public class MzIdentMLExport {
     /**
      * Write a spectrum identification result.
      *
-     * @param version12 if true 1.2 version information will be written
-     *
      * @throws IOException
      */
-    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex, boolean version12) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
@@ -1368,10 +1354,9 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(psmParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getPsmConfidence(), CONFIDENCE_DECIMALS))));
 
-            if (version12) {
+            if (mzidVersion1_2) {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(bestPeptideKey);
-                Peptide peptide = peptideMatch.getTheoreticPeptide();
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 if (psPtmScores != null) {
                     int modMatchIndex = 0;
@@ -1385,22 +1370,24 @@ public class MzIdentMLExport {
                                 if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
                                     valid = "false";
                                 }
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", ptmScoringPreferences.getSelectedProbabilisticScore().getName(), modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX",
+                                        ptmScoringPreferences.getSelectedProbabilisticScore().getName(),
+                                        modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
                             if (score < 95) { //@TODO: avoid this hard coded value
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score",
+                                    modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
                         }
                         modMatchIndex++;
                     }
                 }
 
-// <SpectrumIdentificationItem passThreshold="true" rank="1" peptide_ref="ADKPDMGEIASFDK_acetylation of protein n-term_oxidation of m-ATAA-6" calculatedMassToCharge="790.8550580752562" experimentalMassToCharge="791.359850556172" chargeState="2" id="SII_3884_1">
                 PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(bestPeptideKey, psmParameter);
-                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: Confidence", peptideParameter.getPeptideConfidence() + ""));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: Confidence", peptideParameter.getPeptideConfidence() + "")); // @TODO: add correct cv term!
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002489", "peptide: Score", peptideParameter.getPeptideScore() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
 
@@ -1417,14 +1404,18 @@ public class MzIdentMLExport {
                                 if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
                                     valid = "false";
                                 }
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: " + ptmScoringPreferences.getSelectedProbabilisticScore().getName(), modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: "
+                                        + ptmScoringPreferences.getSelectedProbabilisticScore().getName(),
+                                        modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
-                            if (score < 95) { //@TODO: avoid this hard coded value
+                            if (score < 95) { // @TODO: avoid this hard coded value
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX",
+                                    "peptide: D-score", modMatchIndex
+                                    + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
                         }
                         modMatchIndex++;
                     }
@@ -1651,11 +1642,22 @@ public class MzIdentMLExport {
     private void writeMzIdentMLStartTag() throws IOException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
-        br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
-                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
-                + "creationDate=\"" + df.format(new Date()) + "\">"
-                + System.getProperty("line.separator"));
+
+        if (mzidVersion1_2) {
+            br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                    + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.2 http://www.psidev.info/files/mzIdentML1.2.0.xsd\" " // @TODO: the mzid 1.2 files do not exist?
+                    + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.2\" version=\"1.2.0\" " // @TODO: the mzid 1.2 files do not exist?
+                    + "creationDate=\"" + df.format(new Date()) + "\">"
+                    + System.getProperty("line.separator"));
+        } else {
+            // assumes version 1.1
+            br.write("<MzIdentML id=\"PeptideShaker v" + peptideShakerVersion + "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                    + "xsi:schemaLocation=\"http://psidev.info/psi/pi/mzIdentML/1.1 http://www.psidev.info/files/mzIdentML1.1.0.xsd\" "
+                    + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\" "
+                    + "creationDate=\"" + df.format(new Date()) + "\">"
+                    + System.getProperty("line.separator"));
+        }
+
         tabCounter++;
     }
 
