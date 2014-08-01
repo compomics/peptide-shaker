@@ -53,7 +53,7 @@ public class PeptideShakerMethods {
                 if (ref == null) {
                     ref = "add reference here";
                 }
-                text += advocate.getName() + " [PMID " + ref + "] ";
+                text += advocate.getName() + " ";
 
                 ArrayList<String> versions = algorithmToVersionMap.get(advocate.getName());
 
@@ -83,6 +83,8 @@ public class PeptideShakerMethods {
                         }
                     }
                 }
+
+                text += " [PMID " + ref + "]";
             }
             
             text += ".";
@@ -99,7 +101,7 @@ public class PeptideShakerMethods {
      * @return the SearchGUI usage details
      */
     public static String getSearchGUIText() {
-        return "The search was conducted using SearchGUI [PMID  21337703] version [add version].";
+        return "The search was conducted using SearchGUI version [add version] [PMID  21337703].";
     }
 
     /**
