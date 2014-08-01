@@ -300,6 +300,6 @@ public class CLIMethods {
                 cpsParent.getProcessingPreferences(), cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
                 cpsParent.getAnnotationPreferences(), mzidCLIInputBean.getOutputFile(), waitingHandler);
-        mzIdentMLExport.createMzIdentMLFile();
+        mzIdentMLExport.createMzIdentMLFile(false);
     }
 }
