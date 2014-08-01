@@ -5147,16 +5147,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     setCurentNotes(new ArrayList<String>());
                     updateNotesNotificationCounter();
 
-                    try {
-                        cpsBean.loadCpsFile(progressDialog);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                                + "It looks like another instance of PeptideShaker is still connected to the file.\n"
-                                + "Please close all instances of PeptideShaker and try again.",
-                                "File Input Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                    cpsBean.loadCpsFile(progressDialog);
 
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();
@@ -5291,6 +5282,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     peptideShakerGUI.updateFrameTitle();
                     dataSaved = true;
 
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            + "It looks like another instance of PeptideShaker is still connected to the file.\n"
+                            + "Please close all instances of PeptideShaker and try again.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    progressDialog.setRunFinished();
+                    e.printStackTrace();
                 } catch (OutOfMemoryError error) {
 
                     System.err.println("Ran out of memory!");
@@ -5307,18 +5306,33 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             "Out Of Memory", JOptionPane.ERROR_MESSAGE);
                     progressDialog.setRunFinished();
                     error.printStackTrace();
+                } catch (OptionalDataException e) {
+                    progressDialog.setRunFinished();
+                    if (e.eof) {
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            + "the end of the file was reached unexpectedly. The file is corrupted and cannot be opened anymore.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            + "Please verify that the version used to create\n"
+                            + "the file is compatible with your version of PeptideShaker.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    e.printStackTrace();
                 } catch (EOFException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "The file is corrupted and cannot be opened anymore.",
+                            + "the end of the file was reached unexpectedly. The file is corrupted and cannot be opened anymore.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 } catch (Exception e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                            + "Please verify that the compomics-utilities version used to create\n"
+                            + "Please verify that the version used to create\n"
                             + "the file is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
