@@ -459,8 +459,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = FileImporter.getTempFolderName(fileName);
                 File destinationFolder = new File(parentFile, newName);
-                ZipUtils.unzip(inputFile, destinationFolder, null);
+                destinationFolder.mkdir();
                 TempFilesManager.registerTempFolder(destinationFolder);
+                ZipUtils.unzip(inputFile, destinationFolder, null);
 
                 dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
@@ -947,7 +948,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
     /**
      * Returns true if a new species mapping is available.
-     * 
+     *
      * @param currentEnsemblVersionAsString the current version
      * @param latestEnsemblVersion the latest version available
      * @return true if a new species mapping is available
