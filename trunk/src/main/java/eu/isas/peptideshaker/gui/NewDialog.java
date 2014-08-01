@@ -115,6 +115,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
     /**
+     * The filter to use for matches filtering
+     */
+    private IdFilter idFilter = new IdFilter();
+    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
@@ -776,6 +780,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
                 peptideShakerGUI.setProcessingPreferences(processingPreferences);
                 peptideShakerGUI.setPtmScoringPreferences(ptmScoringPreferences);
+                peptideShakerGUI.setIdFilter(idFilter);
                 peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
@@ -1135,7 +1140,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         IdFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
             importFilterTxt.setText("User Defined");
-            peptideShakerGUI.setIdFilter(newFilter);
+            idFilter = newFilter;
         }
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
@@ -1507,7 +1512,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
+        peptideShaker.importFiles(waitingDialog, idFilter, idFiles,
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
                 processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(), true);
