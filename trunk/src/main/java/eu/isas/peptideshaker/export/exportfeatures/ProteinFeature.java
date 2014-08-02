@@ -13,7 +13,7 @@ public enum ProteinFeature implements ExportFeature {
 
     accession(new String[]{"Main Accession"}, "Accession of the leading protein of the group.", false),
     protein_description(new String[]{"Description"}, "Description of the leading protein of the group.", false),
-    descriptions(new String[]{"Descriptinos"}, "Description of the proteins of the group", false),
+    descriptions(new String[]{"Descriptions"}, "Description of the proteins of the group", false),
     ensembl_gene_id(new String[]{"Ensembl Gene ID"}, "The Ensembl gene ID associated to the accession of the leading protein of the group.", false),
     gene_name(new String[]{"Gene Name"}, "The gene names of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
     chromosome(new String[]{"Chromosome"}, "The chromosome of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),

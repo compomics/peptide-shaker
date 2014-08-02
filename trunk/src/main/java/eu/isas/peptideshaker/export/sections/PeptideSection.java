@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -306,6 +307,8 @@ public class PeptideSection {
             case fixed_ptms:
                 return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
             case score:
+                return -10*FastMath.log10(psParameter.getPeptideScore()) + "";
+            case raw_score:
                 return psParameter.getPeptideScore() + "";
             case sequence:
                 return peptideMatch.getTheoreticPeptide().getSequence();
