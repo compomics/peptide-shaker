@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -453,6 +454,8 @@ public class PsmSection {
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case score:
+                return -10*FastMath.log10(psParameter.getPsmScore()) + "";
+            case raw_score:
                 return psParameter.getPsmScore() + "";
             case validated:
                 return psParameter.getMatchValidationLevel().toString();

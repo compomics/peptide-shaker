@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -415,6 +416,8 @@ public class ProteinSection {
                 nHits = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
                 return nHits + "";
             case score:
+                return -10*FastMath.log10(psParameter.getProteinProbabilityScore()) + "";
+            case raw_score:
                 return psParameter.getProteinProbabilityScore() + "";
             case spectrum_counting_nsaf:
                 try {
