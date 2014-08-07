@@ -98,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
@@ -5155,6 +5156,31 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
 
+                    // backwards compatibility fix for gene and go references using only latin names
+                    boolean genesRemapped = false;
+                    String selectedSpecies = cpsBean.getGenePreferences().getCurrentSpecies();
+                    if (selectedSpecies != null) {
+
+                        HashMap<String, HashMap<String, String>> allSpecies = cpsBean.getGenePreferences().getAllSpeciesMap();
+                        HashMap<String, String> tempSpecies = allSpecies.get(cpsBean.getGenePreferences().getCurrentSpeciesType());
+
+                        if (!tempSpecies.containsKey(selectedSpecies)) {
+
+                            Iterator<String> iterator = tempSpecies.keySet().iterator();
+                            boolean keyFound = false;
+
+                            while (iterator.hasNext() && !keyFound) {
+                                String tempSpeciesKey = iterator.next();
+                                if (tempSpeciesKey.contains(selectedSpecies)) {
+                                    cpsBean.getGenePreferences().setCurrentSpecies(tempSpeciesKey);
+                                    keyFound = true;
+                                    loadGeneMappings(); // have to re-load the gene mappings now that we have the correct species name
+                                    genesRemapped = true;
+                                }
+                            }
+                        }
+                    }
+
                     // @TODO: check if the used gene mapping files are available and download if not?
                     if (progressDialog.isRunCanceled()) {
                         clearData(true, true);
@@ -5280,7 +5306,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.updateFrameTitle();
-                    dataSaved = true;
+                    dataSaved = !genesRemapped;
 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -5325,10 +5351,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 } catch (EOFException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
-                                + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
-                                + "be opened. If the file is a copy, make sure that it is identical to the original file.",
-                                "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
+                            + "be opened. If the file is a copy, make sure that it is identical to the original file.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 } catch (Exception e) {
                     progressDialog.setRunFinished();
