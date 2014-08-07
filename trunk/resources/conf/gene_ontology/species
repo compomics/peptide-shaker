@@ -133,63 +133,70 @@ Toxoplasma gondii	tgondii_eg_gene
 Trypanosoma brucei	tbrucei_eg_gene
 
 >Vertebrates
-Ailuropoda melanoleuca 	amelanoleuca_gene_ensembl
-Anolis carolinensis 	acarolinensis_gene_ensembl
-Bos taurus 	btaurus_gene_ensembl
-Caenorhabditis elegans 	celegans_gene_ensembl
-Callithrix jacchus 	cjacchus_gene_ensembl
-Canis familiaris 	cfamiliaris_gene_ensembl
-Cavia porcellus 	cporcellus_gene_ensembl
-Choloepus hoffmanni 	choffmanni_gene_ensembl
-Ciona intestinalis 	cintestinalis_gene_ensembl
-Ciona savignyi 	csavignyi_gene_ensembl
-Danio rerio 	drerio_gene_ensembl
-Dasypus novemcinctus 	dnovemcinctus_gene_ensembl
-Dipodomys ordii 	dordii_gene_ensembl
-Drosophila melanogaster 	dmelanogaster_gene_ensembl
-Echinops telfairi 	etelfairi_gene_ensembl
-Equus caballus 	ecaballus_gene_ensembl
-Erinaceus europaeus 	eeuropaeus_gene_ensembl
-Felis catus 	fcatus_gene_ensembl
-Gallus gallus 	ggallus_gene_ensembl
-Gasterosteus aculeatus 	gaculeatus_gene_ensembl
-Gorilla gorilla 	ggorilla_gene_ensembl
-Homo sapiens 	hsapiens_gene_ensembl
-Ictidomys tridecemlineatus 	itridecemlineatus_gene_ensembl
-Latimeria chalumnae 	lchalumnae_gene_ensembl
-Loxodonta africana 	lafricana_gene_ensembl
-Macaca mulatta 	mmulatta_gene_ensembl
-Macropus eugenii 	meugenii_gene_ensembl
-Meleagris gallopavo 	mgallopavo_gene_ensembl
-Microcebus murinus 	mmurinus_gene_ensembl
-Monodelphis domestica 	mdomestica_gene_ensembl
-Mus musculus 	mmusculus_gene_ensembl
-Mustela putorius furo 	mfuro_gene_ensembl
-Myotis lucifugus 	mlucifugus_gene_ensembl
-Nomascus leucogenys 	nleucogenys_gene_ensembl
-Ochotona princeps 	oprinceps_gene_ensembl
-Oreochromis niloticus 	oniloticus_gene_ensembl
-Ornithorhynchus anatinus 	oanatinus_gene_ensembl
-Oryctolagus cuniculus 	ocuniculus_gene_ensembl
-Oryzias latipes 	olatipes_gene_ensembl
-Otolemur garnettii 	ogarnettii_gene_ensembl
-Pan troglodytes 	ptroglodytes_gene_ensembl
-Petromyzon marinus 	pmarinus_gene_ensembl
-Pelodiscus sinensis 	psinensis_gene_ensembl
-Pongo abelii 	pabelii_gene_ensembl
-Procavia capensis 	pcapensis_gene_ensembl
-Pteropus vampyrus 	pvampyrus_gene_ensembl
-Rattus norvegicus 	rnorvegicus_gene_ensembl
-Saccharomyces cerevisiae 	scerevisiae_gene_ensembl
-Sarcophilus harrisii 	sharrisii_gene_ensembl
-Sorex araneus 	saraneus_gene_ensembl
-Sus scrofa 	sscrofa_gene_ensembl
-Taeniopygia guttata 	tguttata_gene_ensembl
-Takifugu rubripes 	trubripes_gene_ensembl
-Tarsius syrichta 	tsyrichta_gene_ensembl
-Tetraodon nigroviridis 	tnigroviridis_gene_ensembl
-Tupaia belangeri 	tbelangeri_gene_ensembl
-Tursiops truncatus 	ttruncatus_gene_ensembl
-Vicugna pacos 	vpacos_gene_ensembl
-Xenopus tropicalis 	xtropicalis_gene_ensembl
-Xiphophorus maculatus 	xmaculatus_gene_ensembl
+Alpaca (Vicugna pacos)	vpacos_gene_ensembl
+Amazon molly (Poecilia formosa)	pformosa_gene_ensembl
+Anole lizard (Anolis carolinensis)	acarolinensis_gene_ensembl
+Armadillo (Dasypus novemcinctus)	dnovemcinctus_gene_ensembl
+Bushbaby (Otolemur garnettii)	ogarnettii_gene_ensembl
+C. elegans (Caenorhabditis elegans)	celegans_gene_ensembl
+C.intestinalis (Ciona intestinalis)	cintestinalis_gene_ensembl
+C.savignyi (Ciona savignyi)	csavignyi_gene_ensembl
+Cat (Felis catus)	fcatus_gene_ensembl
+Cave fish (Astyanax mexicanus)	amexicanus_gene_ensembl
+Chicken (Gallus gallus)	ggallus_gene_ensembl
+Chimpanzee (Pan troglodytes)	ptroglodytes_gene_ensembl
+Chinese softshell turtle (Pelodiscus sinensis)	psinensis_gene_ensembl
+Cod (Gadus morhua)	gmorhua_gene_ensembl
+Coelacanth (Latimeria chalumnae)	lchalumnae_gene_ensembl
+Cow (Bos taurus)	btaurus_gene_ensembl
+Dog (Canis lupus familiaris)	cfamiliaris_gene_ensembl
+Dolphin (Tursiops truncatus)	ttruncatus_gene_ensembl
+Duck (Anas platyrhynchos)	aplatyrhynchos_gene_ensembl
+Elephant (Loxodonta africana)	lafricana_gene_ensembl
+Ferret (Mustela putorius furo)	mfuro_gene_ensembl
+Flycatcher (Ficedula albicollis)	falbicollis_gene_ensembl
+Fruitfly (Drosophila melanogaster)	dmelanogaster_gene_ensembl
+Fugu (Takifugu rubripes)	trubripes_gene_ensembl
+Gibbon (Nomascus leucogenys)	nleucogenys_gene_ensembl
+Gorilla (Gorilla gorilla gorilla)	ggorilla_gene_ensembl
+Guinea Pig (Cavia porcellus)	cporcellus_gene_ensembl
+Hedgehog (Erinaceus europaeus)	eeuropaeus_gene_ensembl
+Horse (Equus caballus)	ecaballus_gene_ensembl
+Human (Homo sapiens)	hsapiens_gene_ensembl
+Hyrax (Procavia capensis)	pcapensis_gene_ensembl
+Kangaroo rat (Dipodomys ordii)	dordii_gene_ensembl
+Lamprey (Petromyzon marinus)	pmarinus_gene_ensembl
+Lesser hedgehog tenrec (Echinops telfairi)	etelfairi_gene_ensembl
+Macaque (Macaca mulatta)	mmulatta_gene_ensembl
+Marmoset (Callithrix jacchus)	cjacchus_gene_ensembl
+Medaka (Oryzias latipes)	olatipes_gene_ensembl
+Megabat (Pteropus vampyrus)	pvampyrus_gene_ensembl
+Microbat (Myotis lucifugus)	mlucifugus_gene_ensembl
+Mouse (Mus musculus)	mmusculus_gene_ensembl
+Mouse Lemur (Microcebus murinus)	mmurinus_gene_ensembl
+Opossum (Monodelphis domestica)	mdomestica_gene_ensembl
+Orangutan (Pongo abelii)	pabelii_gene_ensembl
+Panda (Ailuropoda melanoleuca)	amelanoleuca_gene_ensembl
+Pig (Sus scrofa)	sscrofa_gene_ensembl
+Pika (Ochotona princeps)	oprinceps_gene_ensembl
+Platyfish (Xiphophorus maculatus)	xmaculatus_gene_ensembl
+Platypus (Ornithorhynchus anatinus)	oanatinus_gene_ensembl
+Rabbit (Oryctolagus cuniculus)	ocuniculus_gene_ensembl
+Rat (Rattus norvegicus)	rnorvegicus_gene_ensembl
+S. cerevisiae (Saccharomyces cerevisiae)	scerevisiae_gene_ensembl
+Sheep (Ovis aries)	oaries_gene_ensembl
+Shrew (Sorex araneus)	saraneus_gene_ensembl
+Sloth (Choloepus hoffmanni)	choffmanni_gene_ensembl
+Spotted gar (Lepisosteus oculatus)	loculatus_gene_ensembl
+Squirrel (Ictidomys tridecemlineatus)	itridecemlineatus_gene_ensembl
+Stickleback (Gasterosteus aculeatus)	gaculeatus_gene_ensembl
+Tarsier (Tarsius syrichta)	tsyrichta_gene_ensembl
+Tasmanian devil (Sarcophilus harrisii)	sharrisii_gene_ensembl
+Tetraodon (Tetraodon nigroviridis)	tnigroviridis_gene_ensembl
+Tilapia (Oreochromis niloticus)	oniloticus_gene_ensembl
+Tree Shrew (Tupaia belangeri)	tbelangeri_gene_ensembl
+Turkey (Meleagris gallopavo)	mgallopavo_gene_ensembl
+Wallaby (Macropus eugenii)	meugenii_gene_ensembl
+Xenopus (Xenopus tropicalis)	xtropicalis_gene_ensembl
+Zebra Finch (Taeniopygia guttata)	tguttata_gene_ensembl
+Zebrafish (Danio rerio)	drerio_gene_ensembl
