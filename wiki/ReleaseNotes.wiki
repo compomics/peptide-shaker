@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.32.3 (August 7. 2014)*
+
+ * NEW FEATURE: Added PTM tooltips in the tables in the SearchSettings dialog.
+
+ * FEATURE IMPROVEMENT: Updated the Ensembl mappings to Ensembl 76 and added seven new species: duck, cave fish, flycatcher, cod, spotted gar, sheep and amazon molly.
+ * FEATURE IMPROVEMENT: Improved the species names listed for vertebrates.
+ * FEATURE IMPROVEMENT: Minor formatting improvement in the PeptideShakerMethods export.
+
+ * BUG FIX: Fixed a bug where the search engine version numbers had gone missing when loading from mzid files.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.31.2.
+
+----
+
 *Changes in PeptideShaker 0.32.2 (August 1. 2014)*
 
  * FEATURE IMPROVEMENT: Improved the MyriMatch support for terminal PTMs.
