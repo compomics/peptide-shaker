@@ -28,7 +28,6 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -137,7 +136,7 @@ public class MzIdentMLExport {
      */
     private AnnotationPreferences annotationPreferences;
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
     /**

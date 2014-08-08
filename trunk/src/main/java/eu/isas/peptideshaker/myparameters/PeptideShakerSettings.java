@@ -75,7 +75,7 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private PTMScoringPreferences ptmScoringPreferences;
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
     /**

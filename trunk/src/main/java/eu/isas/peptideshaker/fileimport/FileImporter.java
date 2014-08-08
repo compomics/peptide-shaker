@@ -428,10 +428,10 @@ public class FileImporter {
          * The spectrum counting preferences.
          */
         private SpectrumCountingPreferences spectrumCountingPreferences;
-    /**
-     * The sequence matching preferences
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
+        /**
+         * The sequence matching preferences.
+         */
+        private SequenceMatchingPreferences sequenceMatchingPreferences;
         /**
          * The number of retained first hits.
          */
@@ -483,10 +483,12 @@ public class FileImporter {
         private boolean xTandemPtmsCheck = false;
 
         /**
-         * Constructor for a worker importing matches from a list of files
-         * 
-         * @param idFiles list of identification files from where matches should be imported
-         * @param spectrumFiles list of spectrum files where the searched spectra can be found
+         * Constructor for a worker importing matches from a list of files.
+         *
+         * @param idFiles list of identification files from where matches should
+         * be imported
+         * @param spectrumFiles list of spectrum files where the searched
+         * spectra can be found
          * @param idFilter the matches filter to use
          * @param searchParameters the identification parameters
          * @param annotationPreferences the annotation preferences

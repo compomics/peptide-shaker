@@ -101,7 +101,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private AnnotationPreferences annotationPreferences;
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
     /**
