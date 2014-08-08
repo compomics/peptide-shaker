@@ -283,6 +283,12 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         proteinTable.getColumn("  ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
 
+        sparklineColors = new ArrayList<Color>();
+        sparklineColors.add(peptideShakerGUI.getSparklineColor());
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
+        sparklineColors.add(nonValidatedColor);
+        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound());
+
         JSparklinesArrayListBarChartTableCellRenderer coverageCellRendered = new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
         coverageCellRendered.showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
         proteinTable.getColumn("Coverage").setCellRenderer(coverageCellRendered);
@@ -2120,7 +2126,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
-            ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+            ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
             ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
