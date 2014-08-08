@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
@@ -157,7 +156,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSequenceMatchingPreferences());
                     case 3:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {

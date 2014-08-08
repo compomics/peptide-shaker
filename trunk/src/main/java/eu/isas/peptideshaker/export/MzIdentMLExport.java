@@ -23,6 +23,7 @@ import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -136,6 +137,10 @@ public class MzIdentMLExport {
      */
     private AnnotationPreferences annotationPreferences;
     /**
+     * The sequence matching preferences
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences;
+    /**
      * The waiting handler.
      */
     private WaitingHandler waitingHandler;
@@ -151,17 +156,18 @@ public class MzIdentMLExport {
     /**
      * Constructor.
      *
-     * @param peptideShakerVersion
-     * @param identification
-     * @param projectDetails
+     * @param peptideShakerVersion the PeptideShaker version
+     * @param identification the identification object which can be used to retrieve identification matches and parameters
+     * @param projectDetails the project details
      * @param processingPreferences the processing preferences
-     * @param spectrumCountingPreferences
-     * @param identificationFeaturesGenerator
-     * @param searchParameters
-     * @param annotationPreferences
-     * @param ptmScoringPreferences
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param identificationFeaturesGenerator the identification features generator
+     * @param searchParameters the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param outputFile Output file
-     * @param waitingHandler
+     * @param waitingHandler waiting handler used to display progress to the user and interrupt the process
      *
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
@@ -172,7 +178,7 @@ public class MzIdentMLExport {
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            AnnotationPreferences annotationPreferences, File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+            AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
@@ -182,6 +188,7 @@ public class MzIdentMLExport {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.annotationPreferences = annotationPreferences;
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         this.waitingHandler = waitingHandler;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance(); // @TODO: should be renamed!!!
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
@@ -537,14 +544,14 @@ public class MzIdentMLExport {
                     Peptide peptide = bestPeptideAssumption.getPeptide();
 
                     // get all the possible parent proteins
-                    ArrayList<String> possibleProteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    ArrayList<String> possibleProteins = peptide.getParentProteins(sequenceMatchingPreferences);
 
                     // iterate all the possible protein parents for each peptide
                     for (String tempProtein : possibleProteins) {
 
                         // get the start indexes and the surrounding 
                         HashMap<Integer, String[]> aaSurrounding = sequenceFactory.getProtein(tempProtein).getSurroundingAA(
-                                peptide.getSequence(), 1, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                peptide.getSequence(), 1, sequenceMatchingPreferences);
 
                         ArrayList<Integer> indexes = new ArrayList<Integer>();
                         ArrayList<String> before = new ArrayList<String>();
@@ -580,12 +587,12 @@ public class MzIdentMLExport {
                             int peptideStart = indexes.get(i);
                             int peptideEnd = (indexes.get(i) + peptide.getSequence().length() - 1);
 
-                            String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                             String pepEvidenceKey = tempProtein + "_" + peptideStart + "_" + peptideKey;
                             pepEvidenceIds.put(pepEvidenceKey, "PepEv_" + ++peptideEvidenceCounter);
-                            String matchingPeptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            String matchingPeptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
 
-                            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()) + "\" "
+                            br.write(getCurrentTabSpace() + "<PeptideEvidence isDecoy=\"" + peptide.isDecoy(sequenceMatchingPreferences) + "\" "
                                     + "pre=\"" + aaBefore + "\" "
                                     + "post=\"" + aaAfter + "\" "
                                     + "start=\"" + peptideStart + "\" "
@@ -1122,7 +1129,7 @@ public class MzIdentMLExport {
                     String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
                     ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
-                            peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            peptideSequence, sequenceMatchingPreferences);
 
                     for (int start : peptideStarts) {
                         String pepEvidenceKey = accession + "_" + start + "_" + peptideKey;
@@ -1210,7 +1217,7 @@ public class MzIdentMLExport {
             String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
             spectrumIds.put(psmKey, spectrumIdentificationItemKey);
 
-            String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
 
             br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
                     + "passThreshold=\"" + psmParameter.getMatchValidationLevel().isValidated() + "\" "
@@ -1229,7 +1236,7 @@ public class MzIdentMLExport {
             //
             // add the peptide evidence references
             // get all the possible parent proteins
-            ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
             String peptideSequence = bestPeptideAssumption.getPeptide().getSequence();
 
             // iterate all the possible protein parents for each peptide
@@ -1237,7 +1244,7 @@ public class MzIdentMLExport {
 
                 // get the start indexes and the surrounding amino acids
                 ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(tempProtein).getPeptideStart(
-                        peptideSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        peptideSequence, sequenceMatchingPreferences);
 
                 for (int start : peptideStarts) {
                     String pepEvidenceKey = tempProtein + "_" + start + "_" + bestPeptideKey;
@@ -1248,7 +1255,7 @@ public class MzIdentMLExport {
 
             // add the fragment ion annotation
             int identificationCharge = bestPeptideAssumption.getIdentificationCharge().value;
-            annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, sequenceMatchingPreferences);
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
 
             // get all the fragment ion annotations
@@ -1432,7 +1439,7 @@ public class MzIdentMLExport {
                         if (currentAssumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                             if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
-                                    bestPeptideAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                    bestPeptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
                                 Double currentMinEvalue = scores.get(tempAdvocate);
                                 if (currentMinEvalue == null || eValue < currentMinEvalue) {
                                     scores.put(tempAdvocate, eValue);

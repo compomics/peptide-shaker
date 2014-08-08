@@ -73,6 +73,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
@@ -2472,7 +2473,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
             adaptCheckBoxMenuItem.setSelected(true);
             try {
-                getAnnotationPreferences().resetAutomaticAnnotation(PeptideShaker.MATCHING_TYPE, getSearchParameters().getFragmentIonAccuracy());
+                getAnnotationPreferences().resetAutomaticAnnotation(getSequenceMatchingPreferences());
             } catch (Exception e) {
                 catchException(e);
             }
@@ -3616,6 +3617,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public AnnotationPreferences getAnnotationPreferences() {
         return cpsBean.getAnnotationPreferences();
     }
+    
+    /**
+     * Returns the sequence matching preferences as set by the user.
+     * 
+     * @return the sequence matching preferences as set by the user
+     */
+    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
+        return cpsBean.getSequenceMatchingPreferences();
+    }
 
     /**
      * Return the filter preferences to use.
@@ -4341,7 +4351,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
         try {
             PeptideShaker miniShaker = new PeptideShaker(getExperiment(), getSample(), getReplicateNumber());
-            miniShaker.scorePTMs(getIdentification().getProteinMatch(selectedProteinKey), getSearchParameters(), getAnnotationPreferences(), false, getPtmScoringPreferences());
+            miniShaker.scorePTMs(getIdentification().getProteinMatch(selectedProteinKey), getSearchParameters(), getAnnotationPreferences(), false, getPtmScoringPreferences(), getSequenceMatchingPreferences());
         } catch (Exception e) {
             catchException(e);
         }

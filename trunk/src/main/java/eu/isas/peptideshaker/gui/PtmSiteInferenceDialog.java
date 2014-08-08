@@ -633,7 +633,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
                 // update protein level PTM scoring
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
-                ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     boolean candidate = false;
@@ -646,7 +646,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
-                                miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences());
+                                miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }

@@ -7,7 +7,6 @@ import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
@@ -53,7 +52,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -2379,7 +2378,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             if (spectrumMatch.getFirstHit(tempAdvocate) != null) {
                                 SpectrumIdentificationAssumption firstHit = spectrumMatch.getFirstHit(tempAdvocate);
                                 if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                        PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                        peptideShakerGUI.getSequenceMatchingPreferences())) {
                                     currentAdvocates.add(tempAdvocate);
                                 }
                             }
@@ -2578,7 +2577,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     String proteins = "";
                     String sequence;
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
-                        proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
+                        proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences()));
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
@@ -2589,7 +2588,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
-                        isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSearchParameters()),
+                        isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSequenceMatchingPreferences()),
                         sequence,
                         proteins,
                         probabilities.getPsmConfidence(),
@@ -2715,7 +2714,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     if (currentAssumption instanceof PeptideAssumption) {
                                         PeptideAssumption currentPeptideAssumption = (PeptideAssumption) currentAssumption;
                                         annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
-                                                PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                peptideShakerGUI.getSequenceMatchingPreferences());
                                         ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                                 annotationPreferences.getNeutralLosses(),
                                                 annotationPreferences.getValidatedCharges(),
@@ -2750,7 +2749,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         // add the annotations
                                         annotationPreferences.setCurrentSettings(tagAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
-                                                PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                peptideShakerGUI.getSequenceMatchingPreferences());
 
                                         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
@@ -3012,11 +3011,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * accounting for modification localization, false otherwise.
      *
      * @param spectrumMatch the PSM to check
-     * @param searchParameters the parameters used for the search
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return true if all the used id software agree on the top PSM
      */
-    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, SearchParameters searchParameters) {
+    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences) {
 
         // @TODO: the values should be stored and resued?
         HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<Integer, ArrayList<PeptideAssumption>>();
@@ -3074,7 +3073,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     for (PeptideAssumption firstAssumption : firstAssumptions) {
                         // check for same same sequence, modification and charge status
                         for (PeptideAssumption currentAssumption : peptideAssumptions.get(currentAdvocate)) {
-                            if (firstAssumption.getPeptide().isSameSequenceAndModificationStatus(currentAssumption.getPeptide(), PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                            if (firstAssumption.getPeptide().isSameSequenceAndModificationStatus(currentAssumption.getPeptide(), sequenceMatchingPreferences)) {
                                 advocateSameSequence = true;
                                 if (firstAssumption.getPeptide().sameModificationsAs(currentAssumption.getPeptide())) {
                                     advocateSameModifications = true;
@@ -3173,7 +3172,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             idSoftwareAgreement = NO_ID;
                         } else {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSearchParameters());
+                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSequenceMatchingPreferences());
                         }
                         return idSoftwareAgreement;
                     case 2:
@@ -3224,7 +3223,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
                                 return displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(
-                                        PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
+                                        peptideShakerGUI.getSequenceMatchingPreferences()));
                             }
                         }
                         return null;

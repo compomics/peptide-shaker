@@ -23,6 +23,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
@@ -116,6 +117,8 @@ public class IdentificationAlgorithmMatchesSection {
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
+     * @param sequenceMatchingPreferences the sequence matching preferences
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -125,7 +128,7 @@ public class IdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -224,7 +227,7 @@ public class IdentificationAlgorithmMatchesSection {
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            searchParameters, annotationPreferences, keys, linePrefix, separator,
+                                            searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, separator,
                                             peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
@@ -260,6 +263,7 @@ public class IdentificationAlgorithmMatchesSection {
      * @param peptide
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
+     * 
      * @return the map of the modifications on a peptide sequence
      */
     private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
@@ -309,6 +313,7 @@ public class IdentificationAlgorithmMatchesSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param annotationPreferences the annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param separator the column separator
@@ -330,7 +335,7 @@ public class IdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, String separator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, String separator,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -386,7 +391,7 @@ public class IdentificationAlgorithmMatchesSection {
                 return result.toString();
             case accessions:
                 result = new StringBuilder();
-                ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
                 for (String accession : accessions) {
                     if (result.length() > 0) {
                         result.append(", ");
@@ -397,7 +402,7 @@ public class IdentificationAlgorithmMatchesSection {
             case protein_description:
                 SequenceFactory sequenceFactory = SequenceFactory.getInstance();
                 StringBuilder descriptions = new StringBuilder();
-                accessions = peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                accessions = peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 for (String accession : accessions) {
                     if (descriptions.length() > 0) {
@@ -423,7 +428,7 @@ public class IdentificationAlgorithmMatchesSection {
                 delta *= 100;
                 return delta + "";
             case decoy:
-                if (peptideAssumption.getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                if (peptideAssumption.getPeptide().isDecoy(sequenceMatchingPreferences)) {
                     return "1";
                 } else {
                     return "0";

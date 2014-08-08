@@ -20,6 +20,7 @@ import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -546,8 +547,7 @@ public class DisplayFeaturesGenerator {
      * first amino acid.
      *
      * @param proteinMatchKey the key of the match of interest
-     * @param matchingType the type of sequence matching to use
-     * @param massTolerance the MS2 mass tolerance
+     * @param sequenceMatchingPreferences The sequence matching preferences
      * @param identificationFeaturesGenerator the identification feature
      * generator
      * @param metrics the metrics
@@ -565,8 +565,7 @@ public class DisplayFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, AminoAcidPattern.MatchingType matchingType,
-            Double massTolerance, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -619,12 +618,12 @@ public class DisplayFeaturesGenerator {
             boolean enzymaticPeptide = true;
             if (!allPeptides) {
                 enzymaticPeptide = currentProtein.isEnzymaticPeptide(peptideSequence, searchParameters.getEnzyme(),
-                        PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        sequenceMatchingPreferences);
             }
             if (allPeptides || (enzymatic && enzymaticPeptide) || (!enzymatic && !enzymatic)) {
                 String modifiedSequence = getTaggedPeptideSequence(peptideMatch, true, false, true);
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, matchingType, massTolerance);
+                ArrayList<Integer> startIndexes = aminoAcidPattern.getIndexes(sequence, sequenceMatchingPreferences);
                 for (int index : startIndexes) {
                     int peptideTempStart = index;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();

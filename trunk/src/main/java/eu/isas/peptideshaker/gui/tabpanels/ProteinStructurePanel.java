@@ -3080,7 +3080,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             String peptideSequence = Peptide.getSequence(peptideKey);
             AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
                 jmolPanel.getViewer().evalString(
@@ -3103,7 +3103,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         String peptideSequence = Peptide.getSequence(peptideKey);
         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
-        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
             if (progressDialog.isRunCanceled()) {
                 break;
             }
@@ -3135,7 +3135,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideShakerGUI.catchException(e);
             }
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence)) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
@@ -3395,7 +3395,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

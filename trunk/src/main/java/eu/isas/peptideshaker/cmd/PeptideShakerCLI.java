@@ -210,7 +210,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export spectra
                 if (followUpCLIInputBean.spectrumExportNeeded()) {
                     try {
-                        CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                        CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                         e.printStackTrace();
@@ -240,7 +240,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // progenesis export
                 if (followUpCLIInputBean.progenesisExportNeeded()) {
                     try {
-                        CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                        CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
                         waitingHandler.appendReport("Progenesis export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -277,7 +277,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
                     for (String reportType : reportCLIInputBean.getReportTypes()) {
                         try {
-                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
+                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                             e.printStackTrace();
@@ -639,7 +639,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // import the files
         peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
                 annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
-                spectrumCountingPreferences, false);
+                spectrumCountingPreferences, sequenceMatchingPreferences, false);
 
         // show the warnings
         Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();

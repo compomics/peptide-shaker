@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -45,14 +46,14 @@ public class ProgenesisExport {
      * allowing canceling the process
      * @param targetedPTMs the PTMs of interest in case of a PTM export. Ignored
      * otherwise.
-     * @param searchParameters the identificatoin parameters
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SearchParameters searchParameters)
+    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -130,7 +131,7 @@ public class ProgenesisExport {
                                     if (exportType != ExportType.confident_ptms || isTargetedPeptide(peptide, targetedPTMs)) {
 
                                         boolean decoy = false;
-                                        for (String protein : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                        for (String protein : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                             if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
                                                 decoy = true;
                                                 break;
@@ -138,16 +139,16 @@ public class ProgenesisExport {
                                         }
                                         if (!decoy) {
                                             if (exportType == ExportType.validated_psms) {
-                                                writePsm(writer, spectrumKey, identification, searchParameters);
+                                                writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences);
                                             } else {
-                                                String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                                String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                                                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                                                 if (psParameter.getMatchValidationLevel().isValidated()) {
                                                     if (exportType == ExportType.validated_psms_peptides) {
-                                                        writePsm(writer, spectrumKey, identification, searchParameters);
+                                                        writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences);
                                                     } else {
                                                         ArrayList<String> accessions = new ArrayList<String>();
-                                                        for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                                                        for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                             ArrayList<String> groups = identification.getProteinMap().get(accession);
                                                             if (groups != null) {
                                                                 for (String group : groups) {
@@ -163,7 +164,7 @@ public class ProgenesisExport {
                                                             }
                                                         }
                                                         if (!accessions.isEmpty()) {
-                                                            writePsm(writer, spectrumKey, accessions, identification, searchParameters);
+                                                            writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences);
                                                         }
                                                     }
                                                 }
@@ -220,15 +221,16 @@ public class ProgenesisExport {
      * @param writer the writer
      * @param spectrumKey the key of the PSM to export
      * @param identification the identification
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SearchParameters searchParameters)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        writePsm(writer, spectrumKey, null, identification, searchParameters);
+        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences);
     }
 
     /**
@@ -240,13 +242,15 @@ public class ProgenesisExport {
      * @param accessions the accessions corresponding to that peptide according
      * to protein inference. If null all proteins will be reported.
      * @param identification the identification
+     * @param sequenceMatchingPreferences the sequence matching preferences
+     * 
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SearchParameters searchParameters)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -255,7 +259,7 @@ public class ProgenesisExport {
         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
         if (accessions == null) {
-            accessions = bestAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+            accessions = bestAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
         }
 
         for (String protein : accessions) {

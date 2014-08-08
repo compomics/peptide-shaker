@@ -16,6 +16,7 @@ import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -53,6 +54,7 @@ public class CpsExporter {
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
      * @param idFilter the identifications filter
+     * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
      * @throws IOException
@@ -63,9 +65,9 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
         saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
-                null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, jarFilePath);
+                null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, sequenceMatchingPreferences, jarFilePath);
     }
 
     /**
@@ -90,6 +92,7 @@ public class CpsExporter {
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
      * @param idFilter the identifications filter
+     * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
      * @throws IOException
@@ -100,7 +103,7 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, String jarFilePath)
+            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences, String jarFilePath)
             throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         
@@ -110,7 +113,7 @@ public class CpsExporter {
         // set the experiment parameters
         experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
-                identificationFeaturesCache, ptmScoringPreferences, genePreferences, idFilter));
+                identificationFeaturesCache, ptmScoringPreferences, genePreferences, idFilter, sequenceMatchingPreferences));
         // Save the objects in cache
         objectsCache.saveCache(waitingHandler, emptyCache);
         // close connection

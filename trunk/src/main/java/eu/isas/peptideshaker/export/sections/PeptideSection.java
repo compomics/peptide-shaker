@@ -14,6 +14,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeature;
@@ -100,6 +101,7 @@ public class PeptideSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param annotationPreferences the annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
@@ -116,7 +118,7 @@ public class PeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -167,7 +169,7 @@ public class PeptideSection {
 
                 peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                if (decoys || !peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                if (decoys || !peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences)) {
 
                     boolean first = true;
 
@@ -186,7 +188,7 @@ public class PeptideSection {
                             first = false;
                         }
                         PeptideFeature peptideFeature = (PeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler) + separator);
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler) + separator);
                     }
                     writer.newLine();
                     if (psmSection != null) {
@@ -195,7 +197,7 @@ public class PeptideSection {
                             psmSectionPrefix += linePrefix;
                         }
                         psmSectionPrefix += line + ".";
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
                     }
                     line++;
                 }
@@ -211,6 +213,7 @@ public class PeptideSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param annotationPreferences the annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
@@ -233,12 +236,12 @@ public class PeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:
                 StringBuilder proteins = new StringBuilder();
-                ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 for (String accession : accessions) {
                     if (proteins.length() > 0) {
@@ -250,7 +253,7 @@ public class PeptideSection {
             case protein_description:
                 SequenceFactory sequenceFactory = SequenceFactory.getInstance();
                 StringBuilder descriptions = new StringBuilder();
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 for (String accession : accessions) {
                     if (descriptions.length() > 0) {
@@ -262,7 +265,7 @@ public class PeptideSection {
             case confidence:
                 return psParameter.getPeptideConfidence() + "";
             case decoy:
-                if (peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                if (peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences)) {
                     return "1";
                 } else {
                     return "0";
@@ -278,14 +281,14 @@ public class PeptideSection {
             case pi:
                 return psParameter.getProteinInferenceClassAsString();
             case position:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 Peptide peptide = peptideMatch.getTheoreticPeptide();
                 String start = "";
                 for (String proteinAccession : accessions) {
                     Protein protein = SequenceFactory.getInstance().getProtein(proteinAccession);
                     ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(),
-                            PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            sequenceMatchingPreferences);
                     Collections.sort(starts);
                     boolean first = true;
                     for (int startAa : starts) {
@@ -324,7 +327,7 @@ public class PeptideSection {
                     return "0";
                 }
             case aaBefore:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 peptide = peptideMatch.getTheoreticPeptide();
                 String subSequence = "";
@@ -333,8 +336,7 @@ public class PeptideSection {
                         subSequence += "; ";
                     }
                     HashMap<Integer, String[]> surroundingAAs = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                            nSurroundingAA, PeptideShaker.MATCHING_TYPE,
-                            searchParameters.getFragmentIonAccuracy());
+                            nSurroundingAA, sequenceMatchingPreferences);
                     ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;
@@ -349,7 +351,7 @@ public class PeptideSection {
                 }
                 return subSequence;
             case aaAfter:
-                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                accessions = peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences);
                 Collections.sort(accessions);
                 peptide = peptideMatch.getTheoreticPeptide();
                 subSequence = "";
@@ -359,7 +361,7 @@ public class PeptideSection {
                     }
                     HashMap<Integer, String[]> surroundingAAs
                             = SequenceFactory.getInstance().getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                    nSurroundingAA, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                    nSurroundingAA, sequenceMatchingPreferences);
                     ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
                     Collections.sort(starts);
                     boolean first = true;

@@ -28,7 +28,6 @@ import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -115,11 +114,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The current protein sequence.
      */
     private String currentProteinSequence = "";
-    /**
-     * The maximum sequence length for annotation and interaction in the
-     * sequence coverage panel.
-     */
-    private final int MAX_SEQUENCE_ANNOTATION_LENGTH = 2500;
     /**
      * The current spectrum panel.
      */
@@ -1996,7 +1990,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
                             identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key,
-                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
                         peptidesPanel.repaint();
@@ -2103,7 +2097,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), 
                                 identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getProteinMap(), proteinKey, 
-                                peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                                peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
                         if (matchValidationDialog.isValidationChanged()) {
                             updateProteinPanelTitle();
                         }
@@ -2179,7 +2173,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(), 
                             identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPeptideSpecificMap(), peptideKey, 
-                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
                     if (matchValidationDialog.isValidationChanged()) {
                         updateProteinPanelTitle();
                         updatePeptidePanelTitle();
@@ -3880,7 +3874,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         annotationPreferences.setCurrentSettings(
                                 spectrumMatch.getBestPeptideAssumption(),
-                                !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                !currentSpectrumKey.equalsIgnoreCase(spectrumKey), peptideShakerGUI.getSequenceMatchingPreferences());
                         ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(),
                                 annotationPreferences.getValidatedCharges(),
@@ -3966,7 +3960,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String peptideSequence = Peptide.getSequence(peptideKey);
 
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
                     selectedPeptideStart.add(startIndex - 1);
                 }
                 selectionLength = peptideSequence.length();
@@ -3976,10 +3970,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             int[] validationCoverage;
             if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
-                validationCoverage = identificationFeaturesGenerator.getAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                validationCoverage = identificationFeaturesGenerator.getAACoverage(proteinKey);
             } else {
-                validationCoverage = identificationFeaturesGenerator.estimateAACoverage(proteinKey, PeptideShaker.MATCHING_TYPE,
-                        searchParameters.getFragmentIonAccuracy(), coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
+                validationCoverage = identificationFeaturesGenerator.estimateAACoverage(proteinKey, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
             }
 
             double minHeight = 0.2, maxHeight = 1;
@@ -4031,7 +4024,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = ProteinSequencePanel.getSparkLineDataSeriesCoverage(coverageHeight, coverageColor, colors);
 
             HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = peptideShakerGUI.getDisplayFeaturesGenerator().getResidueAnnotation(
-                    proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy(), identificationFeaturesGenerator,
+                    proteinKey, peptideShakerGUI.getSequenceMatchingPreferences(), identificationFeaturesGenerator,
                     peptideShakerGUI.getMetrics(), peptideShakerGUI.getIdentification(), coverageShowAllPeptidesJRadioButtonMenuItem.isSelected(),
                     searchParameters, coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected());
 
@@ -4110,7 +4103,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 HashMap<Integer, Double> sequenceCoverage;
                 try {
                     sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(
-                            proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                            proteinKey);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     sequenceCoverage = new HashMap<Integer, Double>();
@@ -4205,7 +4198,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 String ptmName = modMatch.getTheoreticPtm();
                                 if (displayPreferences.isDisplayedPTM(ptmName)) {
                                     ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey),
-                                            PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                            peptideShakerGUI.getSequenceMatchingPreferences());
                                     for (Integer index : indexes) {
                                         fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
                                     }
@@ -4374,7 +4367,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                             annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey),
-                                    PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                    peptideShakerGUI.getSequenceMatchingPreferences());
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
@@ -4849,7 +4842,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // get the spectrum annotations
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                    annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                    annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumKey), peptideShakerGUI.getSequenceMatchingPreferences());
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
@@ -5164,7 +5157,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey),
-                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), peptideShakerGUI.getSequenceMatchingPreferences());
 
                 String before = "";
                 String after = "";
@@ -5361,7 +5354,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

@@ -1113,7 +1113,7 @@ public class FindDialog extends javax.swing.JDialog {
                         try {
                             HashMap<Integer, Double> sequenceCoverage;
                             try {
-                                sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                                 sequenceCoverage = new HashMap<Integer, Double>();
@@ -1414,14 +1414,14 @@ public class FindDialog extends javax.swing.JDialog {
                     case 4:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String accessions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
                             accessions += accession + " ";
                         }
                         return accessions;
                     case 5:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String descriptions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
                             descriptions += sequenceFactory.getHeader(accession).getSimpleProteinDescription() + " ";
                         }
                         return descriptions;

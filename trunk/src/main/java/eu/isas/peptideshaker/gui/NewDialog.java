@@ -34,6 +34,7 @@ import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
@@ -122,6 +123,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * The search parameters corresponding to the files selected.
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * The sequence matching preferences
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
     /**
      * The gene preferences.
      */
@@ -1511,7 +1516,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles,
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
-                processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(), true);
+                processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(),
+                sequenceMatchingPreferences, true);
     }
 
     /**

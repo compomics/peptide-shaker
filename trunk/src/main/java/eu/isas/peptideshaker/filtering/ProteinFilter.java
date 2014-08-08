@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -572,6 +571,7 @@ public class ProteinFilter extends MatchFilter {
      *
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
+     * 
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      * @throws java.lang.ClassNotFoundException
@@ -795,7 +795,7 @@ public class ProteinFilter extends MatchFilter {
             }
 
             if (proteinFilter.getProteinCoverage() != null) {
-                        HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinMatchKey, PeptideShaker.MATCHING_TYPE,  searchParameters.getFragmentIonAccuracy());
+                        HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinMatchKey);
                         Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                         Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
                         double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;

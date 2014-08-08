@@ -3074,7 +3074,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<String> result = new ArrayList<String>();
         try {
             for (String peptideKey : getDisplayedPeptides()) {
-                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
                 for (String protein : proteins) {
                     for (String proteinMatchKey : identification.getProteinMap().get(protein)) {
                         if (!result.contains(proteinMatchKey) && identification.matchExists(proteinMatchKey)) {
@@ -3317,7 +3317,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        selectedKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        selectedKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3480,7 +3480,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                    if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                    if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
 
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
                         double p = probabilities.getPeptideProbability();
@@ -3872,7 +3872,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                 Peptide peptide = peptideAssumption.getPeptide();
                 int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), peptideShakerGUI.getSequenceMatchingPreferences());
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),

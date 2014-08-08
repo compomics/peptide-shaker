@@ -8,6 +8,7 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -72,7 +73,7 @@ public class CLIMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
-     * @param searchParameters the search parameters used for the search
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException
      * @throws MzMLUnmarshallerException
@@ -80,13 +81,13 @@ public class CLIMethods {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
         if (!exportFolder.exists()) {
             exportFolder.mkdir();
         }
         SpectrumExporter spectrumExporter = new SpectrumExporter(identification);
-        spectrumExporter.exportSpectra(exportFolder, waitingHandler, SpectrumExporter.ExportType.getTypeFromIndex(followUpCLIInputBean.getSpectrumExportTypeIndex()), searchParameters);
+        spectrumExporter.exportSpectra(exportFolder, waitingHandler, SpectrumExporter.ExportType.getTypeFromIndex(followUpCLIInputBean.getSpectrumExportTypeIndex()), sequenceMatchingPreferences);
     }
 
     /**
@@ -120,6 +121,8 @@ public class CLIMethods {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param waitingHandler a waiting handler to display progress
+     * @param filteringPreferences the filtering preferences
+     * 
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -140,20 +143,20 @@ public class CLIMethods {
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
-     * @param searchParameters the parameters used for the search
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
         if (!destinationFileTemp.exists()) {
             destinationFileTemp.createNewFile();
         }
         File destinationFile = destinationFileTemp;
-        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), searchParameters);
+        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler, followUpCLIInputBean.getProgenesisTargetedPTMs(), sequenceMatchingPreferences);
     }
 
     /**
@@ -187,6 +190,7 @@ public class CLIMethods {
      * generator
      * @param searchParameters the search parameters
      * @param waitingHandler a waiting handler to display progress
+     * @param filterPreferences the filter preferences
      *
      * @throws IOException
      * @throws SQLException
@@ -222,6 +226,7 @@ public class CLIMethods {
      * generator
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param nSurroundingAA the number of amino acids to export on the side of
      * peptide sequences
      * @param idFilter the identification filter used when importing the files
@@ -239,15 +244,17 @@ public class CLIMethods {
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, int nSurroundingAA, IdFilter idFilter,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, int nSurroundingAA, IdFilter idFilter,
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
+        
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
+        
         PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
-                searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
+                searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, sequenceMatchingPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
 
     /**
@@ -299,7 +306,7 @@ public class CLIMethods {
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
                 cpsParent.getProcessingPreferences(), cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
-                cpsParent.getAnnotationPreferences(), mzidCLIInputBean.getOutputFile(), waitingHandler);
+                cpsParent.getAnnotationPreferences(), cpsParent.getSequenceMatchingPreferences(), mzidCLIInputBean.getOutputFile(), waitingHandler);
         mzIdentMLExport.createMzIdentMLFile(false);
     }
 }

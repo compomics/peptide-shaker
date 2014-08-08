@@ -140,7 +140,7 @@ public class FollowUpCLI extends CpsParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
-                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
                 waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
@@ -173,7 +173,7 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
-                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, searchParameters);
+                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);

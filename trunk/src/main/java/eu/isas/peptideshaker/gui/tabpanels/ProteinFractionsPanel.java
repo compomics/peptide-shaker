@@ -16,7 +16,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -487,19 +486,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                PeptideShaker.MATCHING_TYPE,
-                                                peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                peptideShakerGUI.getSequenceMatchingPreferences());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
                                                 peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                PeptideShaker.MATCHING_TYPE,
-                                                peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                                peptideShakerGUI.getSequenceMatchingPreferences());
                                     }
 
                                     if (includePeptide && selectedRows.length == 1) {
 
                                         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                                        for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                                        for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
                                             int peptideTempStart = startIndex -1;
                                             int peptideTempEnd = peptideTempStart + peptideSequence.length();
                                             for (int k = peptideTempStart; k < peptideTempEnd; k++) {
@@ -831,7 +828,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

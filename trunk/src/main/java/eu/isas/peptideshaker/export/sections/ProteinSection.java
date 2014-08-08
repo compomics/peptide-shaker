@@ -11,6 +11,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeature;
@@ -104,6 +105,7 @@ public class ProteinSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param annotationPreferences the annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
@@ -122,7 +124,7 @@ public class ProteinSection {
      * @throws org.apache.commons.math.MathException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
@@ -205,7 +207,7 @@ public class ProteinSection {
                     }
                     writer.newLine();
                     if (peptideSection != null) {
-                        peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
+                        peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
                     }
                     line++;
                 }
@@ -372,7 +374,7 @@ public class ProteinSection {
                 }
                 return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
             case coverage:
-                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
                 Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
