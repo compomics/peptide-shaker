@@ -1650,7 +1650,7 @@ public class QCPanel extends javax.swing.JPanel {
                 } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
                         HashMap<Integer, Double> sequenceCoverage;
                         try {
-                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE,  peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             sequenceCoverage = new HashMap<Integer, Double>();
@@ -1742,7 +1742,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!peptideParameter.isHidden()) {
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1791,7 +1791,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1839,7 +1839,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(length);
@@ -1911,7 +1911,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);
@@ -1960,7 +1960,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);

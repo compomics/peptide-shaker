@@ -11,6 +11,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -100,6 +101,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private AnnotationPreferences annotationPreferences;
     /**
+     * The sequence matching preferences
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences;
+    /**
      * The filter table column header tooltips.
      */
     private ArrayList<String> validationTableToolTips;
@@ -127,6 +132,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param proteinMatchKey the protein match key
      * @param searchParameters the search parameters
      * @param annotationPreferences the spectrum annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
@@ -135,7 +141,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -147,6 +153,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         type = Type.PROTEIN;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -176,6 +183,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param peptideSpecificMap the peptide specific target decoy map
      * @param peptideMatchKey the peptide match key
      * @param annotationPreferences the spectrum annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws SQLException
      * @throws IOException
@@ -184,7 +192,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -196,6 +204,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         type = Type.PEPTIDE;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -231,6 +240,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param psmSpecificMap the PSM specific target decoy map
      * @param psmMatchKey the spectrum match key
      * @param annotationPreferences the spectrum annotation preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws SQLException
      * @throws IOException
@@ -239,7 +249,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -251,6 +261,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         type = Type.PSM;
 
         String fileName = Spectrum.getSpectrumFile(psmMatchKey);
@@ -896,7 +907,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     ProteinMap proteinMap = pSMaps.getProteinMap();
                     PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
 
-                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
 
                         ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
 
@@ -934,7 +945,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                        String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                         identificationFeaturesGenerator.updateNConfidentSpectraForPeptide(peptideKey);
                         PSParameter peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
@@ -944,7 +955,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                             identification.updateSpectrumMatchParameter(matchKey, psParameter);
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
 
                                 ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
 

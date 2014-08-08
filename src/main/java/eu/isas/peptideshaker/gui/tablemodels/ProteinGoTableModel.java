@@ -151,33 +151,38 @@ public class ProteinGoTableModel extends DefaultTableModel {
                     case 3:
                         HashMap<Integer, Double> sequenceCoverage;
                         try {
-                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             return Double.NaN;
                         }
                         Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                         Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex());
+                        Double sequenceCoverageNotValidated = 100 * sequenceCoverage.get(MatchValidationLevel.not_validated.getIndex()); //@TODO: this does not seem to be used?
                         double possibleCoverage = 100;
                         try {
                             possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }
-                        Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
-                        return new XYDataPoint(validatedCoverage, possibleCoverage - validatedCoverage, true);
+                        ArrayList<Double> doubleValues = new ArrayList<Double>();
+                        doubleValues.add(sequenceCoverageConfident);
+                        doubleValues.add(sequenceCoverageDoubtful);
+                        doubleValues.add(sequenceCoverageNotValidated);
+                        doubleValues.add(possibleCoverage - sequenceCoverageConfident - sequenceCoverageDoubtful - sequenceCoverageNotValidated);
+                        ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumExceptLastNumber);
+                        return arrrayListDataPoints;
                     case 4:
                         try {
                             proteinMatch = identification.getProteinMatch(proteinKey);
                             double nConfidentPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentPeptides(proteinKey);
                             double nDoubtfulPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) - nConfidentPeptides;
 
-                            ArrayList<Double> doubleValues = new ArrayList<Double>();
+                            doubleValues = new ArrayList<Double>();
                             doubleValues.add(nConfidentPeptides);
                             doubleValues.add(nDoubtfulPeptides);
                             doubleValues.add(proteinMatch.getPeptideCount() - nConfidentPeptides - nDoubtfulPeptides);
-                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+                            arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                             return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
@@ -189,11 +194,11 @@ public class ProteinGoTableModel extends DefaultTableModel {
                             double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) - nConfidentSpectra;
                             int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
 
-                            ArrayList<Double> doubleValues = new ArrayList<Double>();
+                            doubleValues = new ArrayList<Double>();
                             doubleValues.add(nConfidentSpectra);
                             doubleValues.add(nDoubtfulSpectra);
                             doubleValues.add(nSpectra - nConfidentSpectra - nDoubtfulSpectra);
-                            ArrrayListDataPoints arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
+                            arrrayListDataPoints = new ArrrayListDataPoints(doubleValues, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers);
                             return arrrayListDataPoints;
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);

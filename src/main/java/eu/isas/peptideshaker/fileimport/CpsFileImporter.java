@@ -11,6 +11,7 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
@@ -114,7 +115,7 @@ public class CpsFileImporter {
                     tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
                     tempSettings.getDisplayPreferences(),
                     tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
-                    tempPTMScoringPreferences, new GenePreferences(), new IdFilter());
+                    tempPTMScoringPreferences, new GenePreferences(), new IdFilter(), SequenceMatchingPreferences.getDefaultSequenceMatching(tempSettings.getSearchParameters()));
 
         } else {
             experimentSettings = (PeptideShakerSettings) experiment.getUrParam(experimentSettings);

@@ -16,6 +16,7 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
@@ -116,6 +117,10 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
+     * The sequence matching preferences
+     */
+    protected SequenceMatchingPreferences sequenceMatchingPreferences;
+    /**
      * The currently loaded cps file.
      */
     protected File cpsFile = null;
@@ -180,6 +185,9 @@ public class CpsParent extends UserPreferencesParent {
         processingPreferences = experimentSettings.getProcessingPreferences();
         metrics = experimentSettings.getMetrics();
         genePreferences = experimentSettings.getGenePreferences();
+        filterPreferences = experimentSettings.getFilterPreferences();
+        displayPreferences = experimentSettings.getDisplayPreferences();
+        sequenceMatchingPreferences = experimentSettings.getSequenceMatchingPreferences();
 
         // backwards compatability for the gene preferences
         if (genePreferences.getCurrentSpecies() == null) {
@@ -188,17 +196,23 @@ public class CpsParent extends UserPreferencesParent {
         if (genePreferences.getCurrentSpecies() != null && genePreferences.getCurrentSpeciesType() == null) {
             genePreferences.setCurrentSpeciesType("Vertebrates");
         }
-        if (experimentSettings.getFilterPreferences() != null) {
-            filterPreferences = experimentSettings.getFilterPreferences();
-        } else {
+
+        // backwards compatability for the filter preferences
+        if (filterPreferences == null) {
             filterPreferences = new FilterPreferences();
         }
-        if (experimentSettings.getDisplayPreferences() != null) {
-            displayPreferences = experimentSettings.getDisplayPreferences();
+
+        // backwards compatability for the display preferences
+        if (displayPreferences != null) {
             displayPreferences.compatibilityCheck(searchParameters.getModificationProfile());
         } else {
             displayPreferences = new DisplayPreferences();
             displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
+        }
+
+        // backwards compatability for the sequence matching preferences
+        if (sequenceMatchingPreferences == null) {
+            sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
         }
 
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -212,7 +226,7 @@ public class CpsParent extends UserPreferencesParent {
             // 0.18 version, needs update of the spectrum mapping
             identification.updateSpectrumMapping();
         }
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences, sequenceMatchingPreferences);
         if (experimentSettings.getIdentificationFeaturesCache() != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
         }
@@ -240,7 +254,7 @@ public class CpsParent extends UserPreferencesParent {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, searchParameters,
                 annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, PeptideShaker.getJarFilePath());
+                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, sequenceMatchingPreferences, PeptideShaker.getJarFilePath());
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -651,6 +665,24 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
+     * Returns the sequence matching preferences.
+     *
+     * @return the sequence matching preferences
+     */
+    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
+        return sequenceMatchingPreferences;
+    }
+
+    /**
+     * Sets the sequence matching preferences.
+     *
+     * @param sequenceMatchingPreferences the sequence matching preferences
+     */
+    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+    }
+
+    /**
      * Set the metrics.
      *
      * @param metrics
@@ -749,6 +781,7 @@ public class CpsParent extends UserPreferencesParent {
         searchParameters = new SearchParameters();
         processingPreferences = new ProcessingPreferences();
         genePreferences = new GenePreferences();
+        sequenceMatchingPreferences = null;
         idFilter = new IdFilter();
     }
 
@@ -766,6 +799,7 @@ public class CpsParent extends UserPreferencesParent {
         processingPreferences = new ProcessingPreferences();
         ptmScoringPreferences = new PTMScoringPreferences();
         genePreferences = new GenePreferences();
+        sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
         idFilter = new IdFilter();
     }
 
@@ -773,7 +807,7 @@ public class CpsParent extends UserPreferencesParent {
      * Resets the feature generator.
      */
     public void resetIdentificationFeaturesGenerator() {
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences, sequenceMatchingPreferences);
     }
 
     /**

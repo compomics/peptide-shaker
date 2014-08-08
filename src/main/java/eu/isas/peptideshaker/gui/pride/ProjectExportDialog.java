@@ -26,7 +26,7 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.pride.validation.PrideXmlValidator;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.PRIDEExport;
+import eu.isas.peptideshaker.export.PrideXmlExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import java.awt.Color;
@@ -1073,12 +1073,12 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                 peptideShakerGUI.getProjectDetails().setPrideOutputFolder(outputFolderJTextField.getText());
                 peptideShakerGUI.setDataSaved(false); // @TODO: this might not always be true, e.g., if nothing has changed, but better than not saving at all
 
-                boolean conversionCompleted = false;
+                boolean conversionCompleted;
 
                 try {
-                    PRIDEExport prideExport = new PRIDEExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
+                    PrideXmlExport prideExport = new PrideXmlExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
-                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(),
+                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(),
                             selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,
                             new File(outputFolderJTextField.getText()), outputFileName, progressDialog);
 

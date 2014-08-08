@@ -58,3 +58,4 @@ Using <b>PeptideShaker</b> without <b>SearchGUI</b>?<br><br>Don't forget to prov
 Running out of disc space?<br><br>An index file is created for every protein database. You can select the folder where to store these indexes and clean it using the <i>Advanced</i> button of the database selection dialog.
 When shall I update my tool?<br><br>New versions are regularly released for a constant improvement of our tools. You will be notified if the tool can connect the internet and it is advised to always keep your tools up to date.
 How do results compare between versions?<br><br>Results cannot be compared between major releases (big number change) but between minor releases (small number change).
+Click <a href="https://www.youtube.com/watch?v=8yRdDnrB5kM">here</a> to improve your shaking experience.

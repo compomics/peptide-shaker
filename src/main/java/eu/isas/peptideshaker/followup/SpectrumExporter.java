@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -56,7 +57,7 @@ public class SpectrumExporter {
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process. Can be null.
      * @param exportType the type of PSM to export
-     * @param searchParameters the search parameters used for the search
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException
      * @throws MzMLUnmarshallerException
@@ -64,7 +65,7 @@ public class SpectrumExporter {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SearchParameters searchParameters)
+    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
@@ -117,7 +118,7 @@ public class SpectrumExporter {
 
                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
                         String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                        if (shallExport(spectrumKey, exportType, searchParameters)) {
+                        if (shallExport(spectrumKey, exportType, sequenceMatchingPreferences)) {
                             b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
                         }
                         if (waitingHandler != null) {
@@ -180,7 +181,7 @@ public class SpectrumExporter {
      *
      * @param spectrumKey the key of the spectrum
      * @param exportType the export type number
-     * @param searchParameters the search parameters used for the search
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return whether a spectrum shall be exported
      *
@@ -188,7 +189,7 @@ public class SpectrumExporter {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private boolean shallExport(String spectrumKey, ExportType exportType, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private boolean shallExport(String spectrumKey, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter psParameter = new PSParameter();
         switch (exportType) {
             case non_validated_psms:
@@ -199,7 +200,7 @@ public class SpectrumExporter {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             boolean decoy = false;
-                            for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                            for (String accession : spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(sequenceMatchingPreferences)) {
                                 if (sequenceFactory.isDecoyAccession(accession)) {
                                     decoy = true;
                                     break;
@@ -219,14 +220,14 @@ public class SpectrumExporter {
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                         boolean decoy = false;
-                        for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                        for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
                             if (sequenceFactory.isDecoyAccession(accession)) {
                                 decoy = true;
                                 break;
                             }
                         }
                         if (!decoy) {
-                            String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
                                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -246,18 +247,18 @@ public class SpectrumExporter {
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                         boolean decoy = false;
-                        for (String accession : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy())) {
+                        for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
                             if (sequenceFactory.isDecoyAccession(accession)) {
                                 decoy = true;
                                 break;
                             }
                         }
                         if (!decoy) {
-                            String peptideKey = peptide.getMatchingKey(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                             if (exportType == ExportType.non_validated_proteins
                                     || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).getMatchValidationLevel().isValidated()
                                     && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
-                                ArrayList<String> proteins = peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                                ArrayList<String> proteins = peptide.getParentProteins(sequenceMatchingPreferences);
                                 for (String accession : proteins) {
                                     ArrayList<String> accessions = identification.getProteinMap().get(accession);
                                     if (accessions != null) {

@@ -309,7 +309,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         }
                         HashMap<Integer, Double> sequenceCoverage;
                         try {
-                            sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         } catch (Exception e) {
                             exceptionHandler.catchException(e);
                             return Double.NaN;
@@ -482,7 +482,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
             for (int i : rows) {
                 String proteinKey = proteinKeys.get(i);
-                identificationFeaturesGenerator.getSequenceCoverage(proteinKey, PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 if (interrupted) {
                     loadProteins(tempKeys);
                     return i;

@@ -452,7 +452,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     // check if it's a valid peptide sequence
                                     boolean validPeptideSequence;
                                     try {
-                                        AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                        AminoAcid.getMatchingSequence(input, peptideShakerGUI.getSequenceMatchingPreferences());
                                         validPeptideSequence = true;
                                     } catch (IllegalArgumentException e) {
                                         // ignore, not a peptide sequence
@@ -466,7 +466,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                         // pre-caching
                                         PSParameter psParameter = new PSParameter();
                                         peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
-                                        String matchingInput = AminoAcid.getMatchingSequence(input, PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                                        String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getSequenceMatchingPreferences());
 
                                         for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                                             try {

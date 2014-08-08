@@ -2034,7 +2034,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                        miniShaker.validateIdentifications(pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+                        miniShaker.validateIdentifications(pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -3794,7 +3794,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
+                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
@@ -3844,7 +3844,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
+                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"

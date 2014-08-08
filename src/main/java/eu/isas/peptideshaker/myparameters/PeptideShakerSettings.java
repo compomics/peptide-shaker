@@ -7,6 +7,7 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -74,6 +75,10 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private PTMScoringPreferences ptmScoringPreferences;
     /**
+     * The sequence matching preferences
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences;
+    /**
      * The identification filters.
      */
     private IdFilter idFilter;
@@ -99,6 +104,7 @@ public class PeptideShakerSettings implements UrParameter {
      * @param ptmScoringPreferences The PTM scoring preferences
      * @param genePreferences the gene preferences
      * @param idFilter the identification filters
+     * @param sequenceMatchingPreferences the sequence matching preferences
      */
     public PeptideShakerSettings(SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences,
@@ -111,7 +117,8 @@ public class PeptideShakerSettings implements UrParameter {
             IdentificationFeaturesCache identificationFeaturesCache,
             PTMScoringPreferences ptmScoringPreferences,
             GenePreferences genePreferences,
-            IdFilter idFilter) {
+            IdFilter idFilter,
+            SequenceMatchingPreferences sequenceMatchingPreferences) {
         this.utiltiesSearchParameters = searchParameters;
         this.utilitiesAnnotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -124,6 +131,7 @@ public class PeptideShakerSettings implements UrParameter {
         this.ptmScoringPreferences = ptmScoringPreferences;
         this.genePreferences = genePreferences;
         this.idFilter = idFilter;
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
     }
 
     /**
@@ -299,4 +307,24 @@ public class PeptideShakerSettings implements UrParameter {
     public void setIdFilter(IdFilter idFilter) {
         this.idFilter = idFilter;
     }
+
+    /**
+     * Returns the sequence matching preferences.
+     * 
+     * @return the sequence matching preferences
+     */
+    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
+        return sequenceMatchingPreferences;
+    }
+
+    /**
+     * Sets the sequence matching preferences.
+     * 
+     * @param sequenceMatchingPreferences the sequence matching preferences
+     */
+    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
+        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+    }
+    
+    
 }
