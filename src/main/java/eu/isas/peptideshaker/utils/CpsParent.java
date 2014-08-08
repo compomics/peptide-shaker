@@ -117,7 +117,7 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     protected SequenceMatchingPreferences sequenceMatchingPreferences;
     /**

@@ -23,7 +23,6 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -170,7 +169,7 @@ public class PrideXmlExport {
      */
     private AnnotationPreferences annotationPreferences;
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
 
@@ -178,11 +177,13 @@ public class PrideXmlExport {
      * Constructor.
      *
      * @param peptideShakerVersion the PeptideShaker version
-     * @param identification the identification object which can be used to retrieve identification matches and parameters
+     * @param identification the identification object which can be used to
+     * retrieve identification matches and parameters
      * @param projectDetails the project details
      * @param experimentTitle Title of the experiment
      * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param searchParameters the identification parameters
      * @param annotationPreferences the annotation preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
@@ -198,8 +199,9 @@ public class PrideXmlExport {
      * @param instrument Instruments used in this experiment
      * @param outputFolder Output folder
      * @param fileName the file name without extension
-     * @param waitingHandler waiting handler used to display progress to the user and interrupt the process
-     * 
+     * @param waitingHandler waiting handler used to display progress to the
+     * user and interrupt the process
+     *
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
      * @throws IOException Exception thrown whenever an error occurred while
@@ -710,7 +712,7 @@ public class PrideXmlExport {
      * Writes the fragment ions for a given spectrum match.
      *
      * @param spectrumMatch the spectrum match considered
-     * 
+     *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem

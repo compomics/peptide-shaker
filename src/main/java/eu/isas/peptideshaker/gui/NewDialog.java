@@ -124,7 +124,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private SearchParameters searchParameters = new SearchParameters();
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
     /**
