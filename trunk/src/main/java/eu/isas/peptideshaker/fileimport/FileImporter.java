@@ -28,6 +28,7 @@ import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
+import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
@@ -373,6 +374,10 @@ public class FileImporter {
                         }
                     }
                 }
+            } else if (tagComponent instanceof MassGap) {
+                // no PTM there
+            } else {
+                throw new UnsupportedOperationException("PTM mapping not implemeted for tag component " + tagComponent.getClass() + ".");
             }
         }
     }
@@ -784,7 +789,7 @@ public class FileImporter {
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-            HashSet<SpectrumMatch> tempSet = null;
+            LinkedList<SpectrumMatch> tempSet = null;
             try {
                 tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
             } catch (Exception e) {
@@ -805,6 +810,19 @@ public class FileImporter {
                         peptideIssue = 0,
                         precursorIssue = 0,
                         ptmIssue = 0;
+
+                HashMap<String, LinkedList<Peptide>> peptideMap = fileReader.getPeptidesMap();
+                if (!peptideMap.isEmpty() && false) {
+                    waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
+                    waitingHandler.appendReport("Mapping peptides to proteins", true, true);
+                    for (LinkedList<Peptide> tagPeptides : fileReader.getPeptidesMap().values()) {
+                        for (Peptide peptide : tagPeptides) {
+                            peptide.getParentProteins(sequenceMatchingPreferences);
+                        }
+                        waitingHandler.increaseSecondaryProgressCounter();
+                    }
+                }
+
                 waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                 idReport = false;
                 HashSet<Integer> charges = new HashSet<Integer>();
@@ -957,6 +975,10 @@ public class FileImporter {
                                                             peptideAssumption.addUrParam(tagAssumption);
                                                             match.addHit(advocateId, peptideAssumption, true);
                                                             peptidesFound.add(peptideKey);
+                                                            if (peptideKey.contains("null")) {
+                                                                int debug = 1;
+                                                                proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), false);
+                                                            }
                                                         }
                                                     }
                                                 } catch (Exception e) {
@@ -964,6 +986,9 @@ public class FileImporter {
                                                     throw e;
                                                 }
                                                 String extendedSequence = extendedAssumption.getTag().asSequence();
+                                                if (extendedSequence.contains("null")) {
+                                                    int debug = 1;
+                                                }
                                                 inspectedTags.add(extendedSequence);
                                             }
                                         }

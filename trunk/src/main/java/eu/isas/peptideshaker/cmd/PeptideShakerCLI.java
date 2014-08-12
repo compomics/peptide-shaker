@@ -484,7 +484,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             || nameLowerCase.endsWith("csv")
                             || nameLowerCase.endsWith("tags")) {
                         if (!nameLowerCase.endsWith("mods.xml")
-                                && !nameLowerCase.endsWith("usermods.xml")) {
+                                && !nameLowerCase.endsWith("usermods.xml")
+                                && !nameLowerCase.endsWith("settings.xml")) {
                             identificationFiles.add(zippedFile);
                         }
                     }
