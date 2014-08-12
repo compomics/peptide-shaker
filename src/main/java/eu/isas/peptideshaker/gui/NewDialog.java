@@ -2117,7 +2117,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 || lowerCaseName.endsWith("csv")
                 || lowerCaseName.endsWith("tags")) {
             if (!lowerCaseName.endsWith("mods.xml")
-                    && !lowerCaseName.endsWith("usermods.xml")) {
+                    && !lowerCaseName.endsWith("usermods.xml")
+                    && !lowerCaseName.endsWith("settings.xml")) {
                 idFiles.add(file);
             } else if (lowerCaseName.endsWith("usermods.xml")) {
                 modificationFiles.add(file);

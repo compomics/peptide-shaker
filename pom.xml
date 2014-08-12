@@ -314,7 +314,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.32.1</version>
+            <version>3.33.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -342,7 +342,7 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.6.6</version>
+            <version>1.6.7</version>
         </dependency>
         
         <dependency>
