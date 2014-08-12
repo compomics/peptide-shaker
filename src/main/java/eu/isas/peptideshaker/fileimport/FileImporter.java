@@ -814,7 +814,7 @@ public class FileImporter {
                 HashMap<String, LinkedList<Peptide>> peptideMap = fileReader.getPeptidesMap();
                 if (!peptideMap.isEmpty()) {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
-                    waitingHandler.appendReport("Mapping peptides to proteins", true, true);
+                    waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
                     for (LinkedList<Peptide> tagPeptides : fileReader.getPeptidesMap().values()) {
                         for (Peptide peptide : tagPeptides) {
                             peptide.getParentProteins(sequenceMatchingPreferences);
