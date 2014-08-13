@@ -791,7 +791,7 @@ public class FileImporter {
 
             LinkedList<SpectrumMatch> tempSet = null;
             try {
-                tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
+                tempSet = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
@@ -812,6 +812,7 @@ public class FileImporter {
                         ptmIssue = 0;
 
                 HashMap<String, LinkedList<Peptide>> peptideMap = fileReader.getPeptidesMap();
+                System.out.println("Size: " + peptideMap.size());
                 if (!peptideMap.isEmpty()) {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
