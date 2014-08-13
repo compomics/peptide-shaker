@@ -812,13 +812,14 @@ public class FileImporter {
                         ptmIssue = 0;
 
                 HashMap<String, LinkedList<Peptide>> peptideMap = fileReader.getPeptidesMap();
-                System.out.println("Size: " + peptideMap.size());
                 if (!peptideMap.isEmpty()) {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
                     for (LinkedList<Peptide> tagPeptides : fileReader.getPeptidesMap().values()) {
                         for (Peptide peptide : tagPeptides) {
+                            if (idFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
                             peptide.getParentProteins(sequenceMatchingPreferences);
+                            }
                         }
                         waitingHandler.increaseSecondaryProgressCounter();
                     }
@@ -994,7 +995,7 @@ public class FileImporter {
                         for (SpectrumIdentificationAssumption assumption : match.getAllAssumptions()) {
                             if (assumption instanceof PeptideAssumption) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                if (!idFilter.validatePeptideAssumption(peptideAssumption, sequenceMatchingPreferences)) {
+                                if (!idFilter.validatePeptide(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
                                     match.removeAssumption(assumption);
                                     peptideIssue++;
                                 }

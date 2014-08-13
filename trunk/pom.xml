@@ -314,7 +314,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.34.1</version>
+            <version>3.34.2</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -354,7 +354,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.23</version>
+            <version>3.4.24</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>
