@@ -994,7 +994,7 @@ public class FileImporter {
                         for (SpectrumIdentificationAssumption assumption : match.getAllAssumptions()) {
                             if (assumption instanceof PeptideAssumption) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                if (!idFilter.validatePeptideAssumption(peptideAssumption)) {
+                                if (!idFilter.validatePeptideAssumption(peptideAssumption, sequenceMatchingPreferences)) {
                                     match.removeAssumption(assumption);
                                     peptideIssue++;
                                 }
