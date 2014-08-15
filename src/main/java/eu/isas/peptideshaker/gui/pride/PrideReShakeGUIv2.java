@@ -6,7 +6,7 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileSearchParametersConverter;
+import com.compomics.util.experiment.io.identifications.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
