@@ -721,7 +721,7 @@ public class FileImporter {
 
                     // Map the peptides on protein sequences
                     mapPeptides(fileReader);
-                    
+
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
                     HashSet<Integer> charges = new HashSet<Integer>();

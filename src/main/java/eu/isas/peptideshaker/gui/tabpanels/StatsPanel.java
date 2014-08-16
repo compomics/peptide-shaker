@@ -3648,18 +3648,39 @@ public class StatsPanel extends javax.swing.JPanel {
     private void updateFDRFNRChart() {
         DefaultXYDataset classicalFdrData = new DefaultXYDataset();
         double[][] classicalFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getClassicalFDR()};
+        
+//        for (int i=0; i<classicalFdrSeries[0].length; i++) {
+//            if (classicalFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
+//                classicalFdrSeries[0][i] = 0;
+//            }
+//        }
+        
         classicalFdrData.addSeries("Classical FDR ", classicalFdrSeries);
         fdrFnrPlot.setDataset(0, classicalFdrData);
         fdrFnrPlot.mapDatasetToRangeAxis(0, 0);
 
         DefaultXYDataset probaFdrData = new DefaultXYDataset();
         double[][] probaFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFDR()};
+        
+//        for (int i=0; i<probaFdrSeries[0].length; i++) {
+//            if (probaFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
+//                probaFdrSeries[0][i] = 0;
+//            }
+//        }
+        
         probaFdrData.addSeries("Probabilistic FDR ", probaFdrSeries);
         fdrFnrPlot.setDataset(1, probaFdrData);
         fdrFnrPlot.mapDatasetToRangeAxis(1, 0);
 
         DefaultXYDataset probaFnrData = new DefaultXYDataset();
         double[][] probaFnrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFNR()};
+        
+//        for (int i=0; i<probaFnrSeries[0].length; i++) {
+//            if (probaFnrSeries[0][i] < new Double("1E-200").doubleValue()) {
+//                probaFnrSeries[0][i] = 0;
+//            }
+//        }
+        
         probaFnrData.addSeries("Probabilistic FNR ", probaFnrSeries);
         fdrFnrPlot.setDataset(2, probaFnrData);
         fdrFnrPlot.mapDatasetToRangeAxis(2, 0);

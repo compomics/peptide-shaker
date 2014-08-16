@@ -9,7 +9,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.export.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
@@ -229,7 +229,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        psmSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
+        psmSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs", "ProteomeDiscoverer Excel File (beta)" }));
 
         exportToProgenesisLinkLabel.setText("<html><a href=\\\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\\\">Progenesis LC-MS</a></html>");
         exportToProgenesisLinkLabel.setToolTipText("Click for Progenesis LC-MS export help");
@@ -525,7 +525,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+        final File finalOutputFile;
+
+        if (psmSelectionComboBox.getSelectedIndex() == 4) {
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".xls", "(Excel Workbook) *.xls", "Select Destination File", false);
+        } else {
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+        }
 
         if (finalOutputFile != null) {
 
@@ -561,13 +567,26 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection, peptideShakerGUI.getSequenceMatchingPreferences());
+                        if (psmSelectionComboBox.getSelectedIndex() == 4) {
+                            ProgenesisExcelExport progenesisExcelExport = new ProgenesisExcelExport(
+                                    progressDialog,
+                                    peptideShakerGUI.getIdentification().getProteinIdentification(),
+                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                    peptideShakerGUI.getIdentification(),
+                                    finalOutputFile);
+                            progenesisExcelExport.writeProgenesisExcelExport();
+                        } else {
+                            ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(),
+                                    ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection,
+                                    peptideShakerGUI.getSequenceMatchingPreferences());
+                        }
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'"
+                                    + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
@@ -830,8 +849,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Exports a text file containing the information to create a swath library.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void swathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_swathButtonActionPerformed
         exportSwath();
@@ -878,15 +897,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice), 
+                        SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice),
                                 progressDialog, ptmSelection, peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'" + 
-                                    finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'"
+                                    + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();

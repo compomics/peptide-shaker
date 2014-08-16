@@ -325,6 +325,4 @@ public class PeptideShakerSettings implements UrParameter {
     public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
         this.sequenceMatchingPreferences = sequenceMatchingPreferences;
     }
-    
-    
 }

@@ -12,7 +12,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
