@@ -207,7 +207,7 @@ public class ProgenesisExcelExport {
         rowHead.setHeightInPoints(12.75f);
 
         Cell cell = rowHead.createCell(column++);
-        cell.setCellValue("High"); // High, Medium, Low - not sure what this is... // @TODO: figure out what this value refers to
+        cell.setCellValue("High"); // High, Medium or Low - refers to the confidence in the peptide // @TODO: figure out how to set this value?
         cell.setCellStyle(a2CellStyle);
 
         cell = rowHead.createCell(column++);
