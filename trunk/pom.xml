@@ -475,6 +475,13 @@
             <version>3.9</version>
         </dependency>
 
+        <!-- can be used to create excel 2007 workbooks -->
+        <!--<dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>-->
+
         <dependency>
             <groupId>uk.ac.ebi.pride.archive</groupId>
             <artifactId>web-service-model</artifactId>

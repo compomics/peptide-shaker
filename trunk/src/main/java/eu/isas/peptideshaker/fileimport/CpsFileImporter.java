@@ -122,7 +122,6 @@ public class CpsFileImporter {
         }
 
         return experimentSettings;
-
     }
 
     /**
