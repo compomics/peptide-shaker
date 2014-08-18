@@ -30,6 +30,7 @@ import com.compomics.util.messages.FeedBack;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.fileimport.FileImporter;
@@ -427,6 +428,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (error != null) {
             System.out.println(error);
         }
+        
+        // Get the default sequence matching preferences
+        sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
 
         // Get the input files
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
