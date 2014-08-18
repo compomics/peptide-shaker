@@ -11,10 +11,18 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.ElementaryIon;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.*;
 import java.util.ArrayList;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -61,6 +69,10 @@ public class ProgenesisExcelExport {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
      * The row in the Excel file that is currently being written to.
      */
     private int currentRow = 0;
@@ -68,6 +80,10 @@ public class ProgenesisExcelExport {
      * The current enzyme.
      */
     private Enzyme enzyme;
+    /**
+     * The sequence matching preferences
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences;
 
     /**
      * Constructor.
@@ -75,10 +91,11 @@ public class ProgenesisExcelExport {
      * @param waitingHandler the waiting handler
      * @param proteinKeys the protein keys to export
      * @param enzyme the enzyme used, needed for the missed cleavages
+     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param identification the identifications
      * @param outputFile the file to export to
      */
-    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Enzyme enzyme, Identification identification, File outputFile) {
+    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Enzyme enzyme, SequenceMatchingPreferences sequenceMatchingPreferences, Identification identification, File outputFile) {
         this.waitingHandler = waitingHandler;
         this.proteinKeys = proteinKeys;
         this.enzyme = enzyme;
@@ -107,6 +124,17 @@ public class ProgenesisExcelExport {
 
         // create cell styles
         createCellStyles();
+        
+        // Batch load data
+        PSParameter psParameter = new PSParameter();
+        for (String spectrumFile : identification.getOrderedSpectrumFileNames()) {
+        identification.loadSpectrumMatches(spectrumFile, waitingHandler);
+        identification.loadSpectrumMatchParameters(spectrumFile, psParameter, waitingHandler);
+        }
+        identification.loadPeptideMatches(waitingHandler);
+        identification.loadPeptideMatchParameters(psParameter, waitingHandler);
+        identification.loadProteinMatches(waitingHandler);
+        identification.loadProteinMatchParameters(psParameter, waitingHandler);
 
         // insert the protein data
         insertProteinData();
@@ -114,8 +142,11 @@ public class ProgenesisExcelExport {
         // write the data to an excel file
         if (!waitingHandler.isRunCanceled()) {
             FileOutputStream fileOut = new FileOutputStream(outputFile);
-            workbook.write(fileOut);
-            fileOut.close();
+            try {
+                workbook.write(fileOut);
+            } finally {
+                fileOut.close();
+            }
         }
     }
 
@@ -127,10 +158,9 @@ public class ProgenesisExcelExport {
         // create the protein header row
         createProteinHeader();
 
-        for (int i = 1; i < proteinKeys.size(); i++) {
+        for (String proteinKey : proteinKeys) {
 
-            // get the protein
-            String proteinKey = proteinKeys.get(i);
+            // get the protein match
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
             // insert the protein details
@@ -145,9 +175,7 @@ public class ProgenesisExcelExport {
             int proteinStartRow = currentRow;
 
             // print the peptide details
-            for (int j = 0; j < proteinMatch.getPeptideMatches().size(); j++) {
-
-                String peptideKey = proteinMatch.getPeptideMatches().get(j);
+            for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                 // insert peptide data
                 insertPeptideData(peptideKey);
@@ -202,91 +230,147 @@ public class ProgenesisExcelExport {
      */
     private void insertPeptideData(String peptideKey) throws Exception {
 
-        int column = 1;
-        HSSFRow rowHead = sheet.createRow(++currentRow);
-        rowHead.setHeightInPoints(12.75f);
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        Peptide peptide = peptideMatch.getTheoreticPeptide();
+        ArrayList<String> proteinAccessions = peptide.getParentProteins(sequenceMatchingPreferences);
+        StringBuilder proteinAccessionsAsString = new StringBuilder();
+        for (String proteinAccession : proteinAccessions) {
+            if (proteinAccessionsAsString.length() > 0) {
+                proteinAccessionsAsString.append(';');
+            }
+            proteinAccessionsAsString.append(proteinAccession);
+        }
+        ArrayList<String> proteinGroups = identification.getProteinMatches(peptide);
 
-        Cell cell = rowHead.createCell(column++);
-        cell.setCellValue("High"); // High, Medium or Low - refers to the confidence in the peptide // @TODO: figure out how to set this value?
-        cell.setCellStyle(a2CellStyle);
+        PSParameter psParameter = new PSParameter();
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequenceWithLowerCasePtms()); // peptide sequence, modified residues in lower case
-        cell.setCellStyle(peptideRowCellStyle);
+        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(identification.getPeptideMatch(peptideKey).getSpectrumCount()); // number of PSMs
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        identification.loadSpectrumMatches(spectrumKeys, null);
+        identification.loadSpectrumMatchParameters(spectrumKeys, psParameter, null);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(1); // number of proteins // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        for (String spectrumKey : spectrumKeys) {
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(1); // number of protein groups // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue("P02768"); // protein group accessions, separated by semi colon // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
+            if (spectrumMatch.getBestPeptideAssumption() != null) { // Should always be the case
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(getPeptideModificationsAsString(identification.getPeptideMatch(peptideKey).getTheoreticPeptide())); // the modifications, separated by semi colon _and_ space // @TODO: reformat
-        cell.setCellStyle(peptideRowCellStyle);
+                PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+                peptide = peptideAssumption.getPeptide();
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(0.0000); // no idea what this is... // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                int column = 1;
+                HSSFRow rowHead = sheet.createRow(++currentRow);
+                rowHead.setHeightInPoints(12.75f);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(0); // q-value // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                Cell cell = rowHead.createCell(column++);
+                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                // High, Medium or Low - refers to the confidence in the peptide
+                if (matchValidationLevel == MatchValidationLevel.confident) {
+                    cell.setCellValue("High");
+                } else if (matchValidationLevel == MatchValidationLevel.doubtful) {
+                    cell.setCellValue("Medium");
+                } else {
+                    cell.setCellValue("Low");
+                }
+                cell.setCellStyle(a2CellStyle);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(4.948E-16); // pep value // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(peptide.getSequenceWithLowerCasePtms()); // peptide sequence, modified residues in lower case
+                cell.setCellStyle(peptideRowCellStyle);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(137); // ion score // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(1); // number of PSMs
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(7.83842E-14); // e-value // @TODO: insert real value
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(proteinAccessions.size()); // number of proteins
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(2); // charge // @TODO: how to link the charge to a peptide when the psms can have more than one?
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(proteinGroups.size()); // number of protein groups
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getMass()
-                + ElementaryIon.proton.getTheoreticMass()); // theoretical mass for single charge: MH+ [Da]
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(proteinAccessionsAsString.toString()); // protein accessions, separated by semi colon
+                cell.setCellStyle(peptideRowCellStyle);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(-1.63); // mass error in ppm // @TODO: how to link the mass error to a peptide when the psms can have different errors?
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(getPeptideModificationsAsString(peptide)); // the modifications, separated by semi colon _and_ space // @TODO: reformat
+                cell.setCellStyle(peptideRowCellStyle);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(97.32); // retention time in minutes // @TODO: how to link the RT to a peptide when the psms can have different RTs?
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                Double delta = psParameter.getDeltaPEP(); // PeptideShaker closest equivalent to a delta Cn
+                if (delta == null) {
+                    cell.setCellValue(Double.NaN);
+                    // @TODO: set another type?
+                } else {
+                    cell.setCellValue(delta);
+                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                }
+                cell.setCellStyle(peptideRowCellStyle);
 
-        cell = rowHead.createCell(column++);
-        cell.setCellValue(identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getNMissedCleavages(enzyme)); // number of missed cleavages
-        cell.setCellStyle(peptideRowCellStyle);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(0); // PeptideShaker q-value // @TODO: insert real value
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(psParameter.getPsmProbability()); // pep value
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                double score = psParameter.getPsmScore(); // PeptideShaker closest equivalent to an ion score
+                cell.setCellValue(score);
+                cell.setCellStyle(peptideRowCellStyle);
+                if (score != Double.POSITIVE_INFINITY) {
+                    cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                }
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(psParameter.getPsmProbabilityScore()); // PeptideShaker closest equivalent to an e-value
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(peptideAssumption.getIdentificationCharge().value); // charge
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getMass()
+                        + ElementaryIon.proton.getTheoreticMass()); // theoretical mass for single charge: MH+ [Da]
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(peptideAssumption.getDeltaMass(precursor.getMz(), true)); // mass error in ppm
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                Double rt = precursor.getRt();
+                if (rt > 0) {
+                    rt /= 60;
+                } else {
+                    rt = Double.NaN;
+                }
+                cell.setCellValue(rt); // retention time in minutes
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+
+                cell = rowHead.createCell(column++);
+                cell.setCellValue(peptide.getNMissedCleavages(enzyme)); // number of missed cleavages
+                cell.setCellStyle(peptideRowCellStyle);
+                cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            }
+        }
     }
 
     /**

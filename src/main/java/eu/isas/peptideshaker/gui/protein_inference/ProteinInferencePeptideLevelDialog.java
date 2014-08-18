@@ -10,7 +10,6 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -113,7 +112,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
         } else {
             retainedProteins = new ArrayList<String>();
-            for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+            for (String proteinKey : peptideShakerGUI.getIdentification().getProteinMatches(peptideMatch.getTheoreticPeptide())) {
                 for (String protein : possibleProteins) {
                     if (!retainedProteins.contains(protein) && proteinKey.contains(protein)) {
                         retainedProteins.add(protein);

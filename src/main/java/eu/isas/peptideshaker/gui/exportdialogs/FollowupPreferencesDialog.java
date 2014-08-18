@@ -572,6 +572,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     progressDialog,
                                     peptideShakerGUI.getIdentification().getProteinIdentification(),
                                     peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                    peptideShakerGUI.getSequenceMatchingPreferences(),
                                     peptideShakerGUI.getIdentification(),
                                     finalOutputFile);
                             progenesisExcelExport.writeProgenesisExcelExport();
