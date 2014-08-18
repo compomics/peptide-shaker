@@ -69,7 +69,7 @@ public class ProgenesisExcelExport {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
@@ -81,7 +81,7 @@ public class ProgenesisExcelExport {
      */
     private Enzyme enzyme;
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
 
