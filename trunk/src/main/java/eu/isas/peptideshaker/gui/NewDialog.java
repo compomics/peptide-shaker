@@ -1731,7 +1731,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * Loads the mgf files listed in SearchGUI input files in the data folders
      * provided.
      *
-     * @param inputFiles the searchgui input files
+     * @param inputFiles the SearchGUI input files
      * @param dataFolders the data folders where to look in
      */
     private void loadMgfs(ArrayList<File> inputFiles, ArrayList<File> dataFolders) {
@@ -1777,8 +1777,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             JOptionPane.showMessageDialog(this, "Input file(s) not found:\n" + missing
                     + "\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
         }
-        spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
 
+        spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
     }
 
     /**
@@ -1928,9 +1928,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param selectedFiles the files selected by the user
      */
     private void loadIdInputFiles(File[] selectedFiles) {
+
         ArrayList<File> parameterFiles = new ArrayList<File>();
         ArrayList<File> dataFolders = new ArrayList<File>();
         ArrayList<File> inputFiles = new ArrayList<File>();
+
         for (File newFile : selectedFiles) {
             if (newFile.isDirectory()) {
 
@@ -1991,7 +1993,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     if (name.equals(SEARCHGUI_INPUT)) {
                         inputFiles.add(file);
                     } else if (name.toLowerCase().endsWith(".parameters")
-                            || name.toLowerCase().endsWith(".properties")) {
+                            || name.toLowerCase().endsWith(".properties")) { // @TODO: always loads two parameter files...
                         if (!parameterFiles.contains(file)) {
                             parameterFiles.add(file);
                         }
@@ -2107,6 +2109,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param inputFiles list of the input files found
      */
     private void loadIdFile(File file, ArrayList<File> parameterFiles, ArrayList<File> inputFiles) {
+
+        // add searchGUI_input.txt
+        if (file.getName().equals(SEARCHGUI_INPUT)) {
+            inputFiles.add(file);
+        }
 
         String lowerCaseName = file.getName().toLowerCase();
 
