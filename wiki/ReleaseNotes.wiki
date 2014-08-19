@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.0 (August 19. 2014)*
+
+ * FEATURE IMPROVEMENT: Peptides are now sorted before remapped to proteins, which should be quicker.
+ * FEATURE IMPROVEMENT: Peptides with too many Xs are now filtered out.
+ * FEATURE IMPROVEMENT: Several fixes related to running PeptideShaker from SearchGUI.
+
+ * BUG FIX: Fixed a bug in the import in the New Project dialog where the listing the mgf files use) was not used if inside a zip file.
+ * BUG FIX: Settings files from MS Amanda are no longer selected as identification files.
+
+ * LIBRARY UPDATE: Updated mascotdatfile parser to version 3.4.25.
+ * LIBRARY UPDATE: Updated omssa parser to version 1.6.9.
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.7.13.
+ * LIBRARY UPDATE: Updated utilities to version 3.35.2.
+
+----
+
 *Changes in PeptideShaker 0.32.3 (August 7. 2014)*
 
  * NEW FEATURE: Added PTM tooltips in the tables in the SearchSettings dialog.
