@@ -110,10 +110,6 @@ public class ProgenesisExcelExport {
      */
     public void writeProgenesisExcelExport() throws Exception {
 
-        // set up the waiting handler
-        waitingHandler.resetPrimaryProgressCounter();
-        waitingHandler.setMaxPrimaryProgressCounter(proteinKeys.size());
-
         // create the workbook and sheet
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet("Sheet1");
@@ -124,17 +120,37 @@ public class ProgenesisExcelExport {
 
         // create cell styles
         createCellStyles();
-        
+
+        waitingHandler.setWaitingText("Loading Data. Please Wait..."); // @TODO: better use of the waiting dialog
+        waitingHandler.resetPrimaryProgressCounter();
+        waitingHandler.setMaxPrimaryProgressCounter(6);
+        waitingHandler.increasePrimaryProgressCounter();
+
         // Batch load data
         PSParameter psParameter = new PSParameter();
         for (String spectrumFile : identification.getOrderedSpectrumFileNames()) {
-        identification.loadSpectrumMatches(spectrumFile, waitingHandler);
-        identification.loadSpectrumMatchParameters(spectrumFile, psParameter, waitingHandler);
+            identification.loadSpectrumMatches(spectrumFile, null);
+            identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
         }
-        identification.loadPeptideMatches(waitingHandler);
-        identification.loadPeptideMatchParameters(psParameter, waitingHandler);
-        identification.loadProteinMatches(waitingHandler);
-        identification.loadProteinMatchParameters(psParameter, waitingHandler);
+
+        waitingHandler.increasePrimaryProgressCounter();
+
+        identification.loadPeptideMatches(null);
+        waitingHandler.increasePrimaryProgressCounter();
+
+        identification.loadPeptideMatchParameters(psParameter, null);
+        waitingHandler.increasePrimaryProgressCounter();
+
+        identification.loadProteinMatches(null);
+        waitingHandler.increasePrimaryProgressCounter();
+
+        identification.loadProteinMatchParameters(psParameter, null);
+        waitingHandler.increasePrimaryProgressCounter();
+
+        // set up the waiting handler
+        waitingHandler.setWaitingText("Exporting Data. Please Wait...");
+        waitingHandler.resetPrimaryProgressCounter();
+        waitingHandler.setMaxPrimaryProgressCounter(proteinKeys.size());
 
         // insert the protein data
         insertProteinData();
