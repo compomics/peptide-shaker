@@ -1156,6 +1156,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 sequenceFactory.clearFactory();
                 genePreferences.setCurrentSpeciesType(null);
                 genePreferences.setCurrentSpecies(null);
+                TempFilesManager.deleteTempFolders();
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Failed to clear the database.", "File Error", JOptionPane.WARNING_MESSAGE);
@@ -1993,7 +1994,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     if (name.equals(SEARCHGUI_INPUT)) {
                         inputFiles.add(file);
                     } else if (name.toLowerCase().endsWith(".parameters")
-                            || name.toLowerCase().endsWith(".properties")) { // @TODO: always loads two parameter files...
+                            || name.toLowerCase().endsWith(".properties")) {
                         if (!parameterFiles.contains(file)) {
                             parameterFiles.add(file);
                         }
