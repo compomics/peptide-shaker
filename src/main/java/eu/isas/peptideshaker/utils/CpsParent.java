@@ -821,7 +821,7 @@ public class CpsParent extends UserPreferencesParent {
 
         String report = null;
 
-        if (projectDetails != null) {
+        if (projectDetails != null && getIdentification() != null) {
 
             report = "<html><br>";
             report += "<b>Experiment</b>: " + experiment.getReference() + "<br>";

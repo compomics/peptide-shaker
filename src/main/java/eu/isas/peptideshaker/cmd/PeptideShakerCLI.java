@@ -677,8 +677,12 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
         } else {
+            if (waitingHandler instanceof WaitingDialog) {
+                saveReport();
+            }
+            TempFilesManager.deleteTempFolders();
             waitingHandler.setWaitingText("PeptideShaker Processing Canceled.");
-            System.out.println("<CompomicsError>PeptideShaker processing canceled.</CompomicsError>");
+            System.out.println("<CompomicsError>PeptideShaker processing canceled. See the PeptideShaker log for details.</CompomicsError>");
         }
     }
 
