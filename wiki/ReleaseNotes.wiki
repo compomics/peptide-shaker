@@ -5,6 +5,7 @@
 
 *Changes in PeptideShaker 0.33.0 (August 19. 2014)*
 
+ * FEATURE IMPROVEMENT: Improvements in the peptide to protein inference.
  * FEATURE IMPROVEMENT: Peptides are now sorted before remapped to proteins, which should be quicker.
  * FEATURE IMPROVEMENT: Peptides with too many Xs are now filtered out.
  * FEATURE IMPROVEMENT: Several fixes related to running PeptideShaker from SearchGUI.
