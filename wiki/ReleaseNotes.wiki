@@ -3,6 +3,16 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.1 (August 21. 2014):*
+
+ * FEATURE IMPROVEMENT: Updated Ensembl genomes to release 23.
+
+ * BUG FIX: Fixed an issue in the auto update feature that could occur on specific client machine setups.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.35.3. 
+
+----
+
 *Changes in PeptideShaker 0.33.0 (August 19. 2014)*
 
  * FEATURE IMPROVEMENT: Improvements in the peptide to protein inference.
