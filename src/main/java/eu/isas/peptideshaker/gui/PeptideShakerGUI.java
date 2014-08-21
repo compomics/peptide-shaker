@@ -6497,7 +6497,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public boolean checkForNewVersion() {
         try {
-            File jarFile = new File(PeptideShakerGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            File jarFile = new File(PeptideShakerGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             MavenJarFile oldMavenJarFile = new MavenJarFile(jarFile.toURI());
             URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
 
@@ -6514,6 +6514,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             return false;
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            System.out.println("Checking for new version failed. Unknown error.");
             return false;
         }
     }
