@@ -8,9 +8,16 @@ Aspergillus nidulans	anidulans_eg_gene
 Aspergillus niger	aniger_eg_gene
 Aspergillus oryzae	aoryzae_eg_gene
 Aspergillus terreus	aterreus_eg_gene
+Blumeria graminis	bgraminis_eg_gene
 Botryotinia fuckeliana	bfuckeliana_eg_gene
+Colletotrichum gloeosporioides	cgloeosporioides_eg_gene
+Colletotrichum higginsianum	chigginsianum_eg_gene
+Colletotrichum orbiculare	corbiculare_eg_gene
 Cryptococcus neoformans	cneoformans_eg_gene
+Dothistroma septosporum	dseptosporum_eg_gene
+Fusarium fujikuroi	ffujikuroi_eg_gene
 Fusarium oxysporum	foxysporum_eg_gene
+Fusarium pseudograminearum	fpseudograminearum_eg_gene
 Gaeumannomyces graminis	ggraminis_eg_gene
 Gibberella moniliformis	gmoniliformis_eg_gene
 Gibberella zeae	gzeae_eg_gene
@@ -25,10 +32,14 @@ Neosartorya fischeri	nfischeri_eg_gene
 Neurospora crassa	ncrassa_eg_gene
 Phaeosphaeria nodorum	pnodorum_eg_gene
 Puccinia graminis	pgraminis_eg_gene
+Puccinia graminis Ug99	pgraminisug99_eg_gene
 Puccinia triticina	ptriticina_eg_gene
 Pyrenophora teres	pteres_eg_gene
 Pyrenophora tritici-repentis	ptriticirepentis_eg_gene
 Saccharomyces cerevisiae	scerevisiae_eg_gene
+Schizosaccharomyces cryophilus	scryophilus_eg_gene
+Schizosaccharomyces japonicus	japonicus_eg_gene
+Schizosaccharomyces octosporus	octosporus_eg_gene
 Schizosaccharomyces pombe	spombe_eg_gene
 Sclerotinia sclerotiorum	ssclerotiorum_eg_gene
 Sporisorium reilianum	sreilianum_eg_gene
@@ -36,15 +47,16 @@ Trichoderma reesei	treesei_eg_gene
 Trichoderma virens	tvirens_eg_gene
 Tuber melanosporum	tmelanosporum_eg_gene
 Ustilago maydis	umaydis_eg_gene
+Verticillium dahliae	dahliae_eg_gene
 Yarrowia lipolytica	ylipolytica_eg_gene
 Zymoseptoria tritici	ztritici_eg_gene
 
 >Metazoa
 Acyrthosiphon pisum	apisum_eg_gene
-Aedes aegypti	aaegypti_eg_gene
+Aedes aegypti (Yellow fever mosquito)	aaegypti_eg_gene
 Amphimedon queenslandica	aqueenslandica_eg_gene
 Anopheles darlingi	adarlingi_eg_gene
-Anopheles gambiae 	agambiae_eg_gene
+Anopheles gambiae (African malaria mosquito) 	agambiae_eg_gene
 Apis mellifera 	amellifera_eg_gene
 Atta cephalotes 	acephalotes_eg_gene
 Bombyx mori 	bmori_eg_gene
@@ -54,13 +66,14 @@ Caenorhabditis briggsae 	cbriggsae_eg_gene
 Caenorhabditis elegans 	celegans_eg_gene
 Caenorhabditis japonica 	cjaponica_eg_gene
 Caenorhabditis remanei 	cremanei_eg_gene
-Culex quinquefasciatus 	cquinquefasciatus_eg_gene
+Culex quinquefasciatus (Southern house mosquito) 	cquinquefasciatus_eg_gene
 Danaus plexippus 	dplexippus_eg_gene
 Daphnia pulex 	dpulex_eg_gene
+Dendroctonus ponderosae	ponderosae_eg_gene
 Drosophila ananassae 	dananassae_eg_gene
 Drosophila erecta 	derecta_eg_gene
 Drosophila grimshawi 	dgrimshawi_eg_gene
-Drosophila melanogaster 	dmelanogaster_eg_gene
+Drosophila melanogaster (Fruit fly) 	dmelanogaster_eg_gene
 Drosophila mojavensis 	dmojavensis_eg_gene
 Drosophila persimilis 	dpersimilis_eg_gene
 Drosophila pseudoobscura 	dpseudoobscura_eg_gene
@@ -70,55 +83,84 @@ Drosophila virilis 	dvirilis_eg_gene
 Drosophila willistoni 	dwillistoni_eg_gene
 Drosophila yakuba 	dyakuba_eg_gene
 Heliconius melpomene 	hmelpomene_eg_gene
-Ixodes scapularis 	iscapularis_eg_gene
+Helobdella robusta	robusta_eg_gene
+Ixodes scapularis (Black-legged tick) 	iscapularis_eg_gene
 Loa loa 	lloa_eg_gene
+Lottia gigantea	lgigantea_eg_gene
 Megaselia scalaris 	mscalaris_eg_gene
+Melitaea cinxia	mcinxia_eg_gene
+Mnemiopsis leidyi	mleidyi_eg_gene
 Nasonia vitripennis 	nvitripennis_eg_gene
 Nematostella vectensis 	nvectensis_eg_gene
-Pediculus humanus 	phumanus_eg_gene
+Onchocerca volvulus	ovolvulus_eg_gene
+Pediculus humanus (Human louse) 	phumanus_eg_gene
 Pristionchus pacificus 	ppacificus_eg_gene
+Rhodnius prolixus	rprolixus_eg_gene
 Schistosoma mansoni 	smansoni_eg_gene
+Solenopsis invicta (Red fire ant)	sinvicta_eg_gene
 Strigamia maritima 	smaritima_eg_gene
 Strongylocentrotus purpuratus 	spurpuratus_eg_gene
-Tribolium castaneum 	tcastaneum_eg_gene
+Tetranychus urticae	turticae_eg_gene
+Tribolium castaneum (red flour beetle) 	tcastaneum_eg_gene
 Trichinella spiralis 	tspiralis_eg_gene
 Trichoplax adhaerens 	tadhaerens_eg_gene
 
 >Plants
-Arabidopsis lyrata	alyrata_eg_gene 
-Arabidopsis thaliana	athaliana_eg_gene 
-Brachypodium distachyon	bdistachyon_eg_gene 
-Brassica rapa genes	brapa_eg_gene 
-Chlamydomonas reinhardtii	creinhardtii_eg_gene 
-Cyanidioschyzon merolae	cmerolae_eg_gene 
-Glycine max	gmax_eg_gene 
-Hordeum vulgare	hvulgare_eg_gene 
-Medicago truncatula	mtruncatula_eg_gene 
-Musa acuminata	macuminata_eg_gene 
+Amborella (Amborella trichopoda)	atrichopoda_eg_gene
+Arabidopsis lyrata (Lyrate rockcress)	alyrata_eg_gene 
+Arabidopsis thaliana (Thale-cress)	athaliana_eg_gene 
+Brachypodium distachyon (False brome)	bdistachyon_eg_gene
+Brassica oleracea	boleracea_eg_gene 
+Brassica rapa genes (Field mustard)	brapa_eg_gene 
+Chlamydomonas reinhardtii (Green algae)	creinhardtii_eg_gene 
+Cyanidioschyzon merolae (Red algae)	cmerolae_eg_gene 
+Glycine max (Soybean)	gmax_eg_gene 
+Hordeum vulgare (Barley)	hvulgare_eg_gene 
+Leersia perrieri (Leersia)	lperrieri_eg_gene
+Medicago truncatula (Barrel medic)	mtruncatula_eg_gene 
+Musa acuminata (Banana)	macuminata_eg_gene 
 Oryza brachyantha	obrachyantha_eg_gene 
-Oryza glaberrima	oglaberrima_eg_gene 
+Oryza glumaepatula	oglumaepatula_eg_gene
+Oryza meridionalis	omeridionalis_eg_gene
+Oryza nivara	onivara_eg_gene
+Oryza punctata	opunctata_eg_gene
+Oryza rufipogon (Common wild rice)	orufipogon_eg_gene
+Oryza sativa (Indica rice)	osativa_eg_gene 
 Oryza sativa Indica Group	oindica_eg_gene 
-Oryza sativa	osativa_eg_gene 
+Oryza sativa Japonica (Japonica rice)	osativa_eg_gene
+Ostreococcus lucimarinus (Green algae)	olucimarinus_eg_gene
 Physcomitrella patens	ppatens_eg_gene 
+Physcomitrella patens (Moss)	ppatens_eg_gene
 Populus trichocarpa	ptrichocarpa_eg_gene 
-Selaginella moellendorffii	smoellendorffii_eg_gene 
-Setaria italica	sitalica_eg_gene 
-Solanum lycopersicum	slycopersicum_eg_gene 
-Solanum tuberosum	stuberosum_eg_gene 
-Sorghum bicolor	sbicolor_eg_gene 
-Vitis vinifera	vvinifera_eg_gene 
-Zea mays	zmays_eg_gene
+Populus trichocarpa (Western balsam poplar)	ptrichocarpa_eg_gene
+Prunus persica (Peach)	ppersica_eg_gene
+Selaginella moellendorffii (Spike moss)	smoellendorffii_eg_gene 
+Setaria italica (Foxtail millet)	sitalica_eg_gene 
+Solanum lycopersicum (Tomato)	slycopersicum_eg_gene 
+Solanum tuberosum (Potato)	stuberosum_eg_gene 
+Sorghum bicolor (Sorghum)	sbicolor_eg_gene 
+Theobroma cacao (Cocoa)	tcacao_eg_gene
+Triticum aestivum (Bread wheat)	taestivum_eg_gene
+Triticum urartu (Einkorn)	turartu_eg_gene
+Vitis vinifera (Wine grape)	vvinifera_eg_gene 
+Zea mays (Maize)	zmays_eg_gene
 
 >Protists
 Albugo laibachii	alaibachii_eg_gene
+Bigelowiella natans	bnatans_eg_gene
 Dictyostelium discoideum	ddiscoideum_eg_gene
+Emiliania huxleyi	ehuxleyi_eg_gene
 Entamoeba histolytica	ehistolytica_eg_gene
 Giardia lamblia	glamblia_eg_gene
 Guillardia theta CCMP2712	gtheta_eg_gene
 Hyaloperonospora arabidopsidis	harabidopsidis_eg_gene
 Leishmania major	lmajor_eg_gene
+Paramecium tetraurelia	ptetraurelia_eg_gene
 Phaeodactylum tricornutum	ptricornutum_eg_gene
 Phytophthora infestans	pinfestans_eg_gene
+Phytophthora kernoviae	pkernoviae_eg_gene
+Phytophthora lateralis	plateralis_eg_ge
+Phytophthora parasitica	pparasitica_eg_gene
 Phytophthora ramorum	pramorum_eg_gene
 Phytophthora sojae	psojae_eg_gene
 Plasmodium berghei	pberghei_eg_gene
@@ -126,7 +168,12 @@ Plasmodium chabaudi	pchabaudi_eg_gene
 Plasmodium falciparum	pfalciparum_eg_gene
 Plasmodium knowlesi	pknowlesi_eg_gene
 Plasmodium vivax	pvivax_eg_gene
+Pythium aphanidermatum	paphanidermatum_eg_gene
+Pythium arrhenomanes	parrhenomanes_eg_gene
+Pythium irregulare	pirregulare_eg_gene
+Pythium iwayamai	piwayamai_eg_gene
 Pythium ultimum	pultimum_eg_gene
+Pythium vexans	pvexans_eg_gene
 Tetrahymena thermophila	tthermophila_eg_gene
 Thalassiosira pseudonana	tpseudonana_eg_gene
 Toxoplasma gondii	tgondii_eg_gene
