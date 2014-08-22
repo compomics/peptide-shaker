@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
+import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
 
 /**
  * A dialog for displaying the various save/export options.
@@ -81,7 +81,7 @@ public class SaveDialog extends javax.swing.JDialog {
         exportPrideJButton.setFont(exportPrideJButton.getFont().deriveFont(exportPrideJButton.getFont().getStyle() | java.awt.Font.BOLD, exportPrideJButton.getFont().getSize()+3));
         exportPrideJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_pride.png"))); // NOI18N
         exportPrideJButton.setText("Export to PRIDE");
-        exportPrideJButton.setToolTipText("Export the PeptideShaker project as PRIDE XML.");
+        exportPrideJButton.setToolTipText("Export the PeptideShaker project as mzIdentML.");
         exportPrideJButton.setFocusPainted(false);
         exportPrideJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         exportPrideJButton.setIconTextGap(25);
@@ -114,7 +114,7 @@ public class SaveDialog extends javax.swing.JDialog {
         exportZipLabel.setText("Export the project as a zip file");
 
         exportPrideLabel.setFont(exportPrideLabel.getFont().deriveFont((exportPrideLabel.getFont().getStyle() | java.awt.Font.ITALIC) | java.awt.Font.BOLD, exportPrideLabel.getFont().getSize()+1));
-        exportPrideLabel.setText("Export the project as PRIDE XML");
+        exportPrideLabel.setText("Export the project as mzIdentML");
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -201,7 +201,7 @@ public class SaveDialog extends javax.swing.JDialog {
      */
     private void exportPrideJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideJButtonActionPerformed
         dispose();
-        new ProjectExportDialog(peptideShakerGUI, true);
+        new MzIdentMLExportDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_exportPrideJButtonActionPerformed
 
     /**
