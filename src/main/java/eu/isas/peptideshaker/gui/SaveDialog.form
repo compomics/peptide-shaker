@@ -143,7 +143,7 @@
               <Image iconType="3" name="/icons/export_pride.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Export to PRIDE"/>
-            <Property name="toolTipText" type="java.lang.String" value="Export the PeptideShaker project as PRIDE XML."/>
+            <Property name="toolTipText" type="java.lang.String" value="Export the PeptideShaker project as mzIdentML."/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="25"/>
@@ -209,7 +209,7 @@
                 <Font bold="true" component="exportPrideLabel" italic="true" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Export the project as PRIDE XML"/>
+            <Property name="text" type="java.lang.String" value="Export the project as mzIdentML"/>
           </Properties>
         </Component>
       </SubComponents>
