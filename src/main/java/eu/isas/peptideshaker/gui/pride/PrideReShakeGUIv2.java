@@ -2275,7 +2275,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         String selectedSpecies = null;
                         String selectedSpeciesType = null;
                         if (currentSpecies.equalsIgnoreCase("Homo sapiens (Human)")) {
-                            selectedSpecies = "Homo sapiens";
+                            selectedSpecies = "Human (Homo sapiens)";
                             selectedSpeciesType = "Vertebrates";
                         }
 
@@ -2940,7 +2940,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 progressDialog.setMaxPrimaryProgressCounter(contentLength);
             }
 
-            in = new BufferedInputStream(urlConnection.getInputStream());
+            in = new BufferedInputStream(urlConnection.getInputStream()); // @TODO: can result in IOException: sun.net.ftp.FtpProtocolException: CWD pride:550 Failed to change directory.
 
             fout = new FileOutputStream(saveFile);
 
