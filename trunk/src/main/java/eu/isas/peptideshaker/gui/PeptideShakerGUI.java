@@ -1484,8 +1484,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         editMenu.add(speciesJMenuItem);
         editMenu.add(jSeparator13);
 
-        javaOptionsJMenuItem.setMnemonic('O');
-        javaOptionsJMenuItem.setText("Java Options");
+        javaOptionsJMenuItem.setMnemonic('J');
+        javaOptionsJMenuItem.setText("Java Settings");
         javaOptionsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 javaOptionsJMenuItemActionPerformed(evt);
