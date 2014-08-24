@@ -154,9 +154,6 @@
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JTabbedPane" name="tabbedPane">
-              <Properties>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
-              </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
               <SubComponents>

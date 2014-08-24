@@ -2940,7 +2940,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 progressDialog.setMaxPrimaryProgressCounter(contentLength);
             }
 
-            in = new BufferedInputStream(urlConnection.getInputStream()); // @TODO: can result in IOException: sun.net.ftp.FtpProtocolException: CWD pride:550 Failed to change directory.
+            in = new BufferedInputStream(urlConnection.getInputStream());
 
             fout = new FileOutputStream(saveFile);
 

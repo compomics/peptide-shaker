@@ -2922,8 +2922,8 @@ public class OutputGenerator {
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
 
         StringBuilder result = new StringBuilder();
-
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
@@ -2932,18 +2932,23 @@ public class OutputGenerator {
                 modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-        boolean first = true, first2;
+
+        boolean first = true;
         ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
         Collections.sort(mods);
+
         for (String mod : mods) {
+
             if (first) {
                 first = false;
             } else {
                 result.append(", ");
             }
-            first2 = true;
+
+            boolean first2 = true;
             result.append(mod);
             result.append(" (");
+
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
@@ -2952,6 +2957,7 @@ public class OutputGenerator {
                 }
                 result.append(aa);
             }
+
             result.append(")");
         }
 
