@@ -238,8 +238,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         featuresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
         featuresPanel.setOpaque(false);
 
-        tabbedPane.setToolTipText("");
-
         customReportsPanel.setBackground(new java.awt.Color(230, 230, 230));
 
         reportsTable.setModel(new ReportsTableModel());
