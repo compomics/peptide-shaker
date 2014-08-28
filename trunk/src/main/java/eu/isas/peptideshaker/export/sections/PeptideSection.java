@@ -42,7 +42,7 @@ public class PeptideSection {
      */
     private ArrayList<PeptideFeature> peptideFeatures = new ArrayList<PeptideFeature>();
     /**
-     * The psm subsection if needed.
+     * The PSM subsection if needed.
      */
     private PsmSection psmSection = null;
     /**
@@ -187,7 +187,7 @@ public class PeptideSection {
                             first = false;
                         }
                         PeptideFeature peptideFeature = (PeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler) + separator);
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
                     }
                     writer.newLine();
                     if (psmSection != null) {
