@@ -1534,6 +1534,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 }
 
                 int reshakeableCounter = 0;
+                int prideMissingFiles = 0;
 
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
@@ -1564,9 +1565,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     // check if the file is reshakeable
                     if (reshakeableFiles.containsKey(fileDetail.getFileType().getName())) {
                         for (String fileEnding : reshakeableFiles.get(fileDetail.getFileType().getName())) {
-                            if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)
-                                    && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
-                                    && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) {
+                            if (fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
+                                    || fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
+                                prideMissingFiles++;
+                                reshakeable = false;
+                                break;
+                            } else if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)) {
                                 reshakeable = true;
                                 reshakeableCounter++;
                                 break;
@@ -1591,10 +1595,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 // update the border title
                 if (projectAccession != null) {
                     ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files for "
-                            + projectAccession + " (" + reshakeableCounter + "/" + fileDetailListResult.getBody().getList().size() + ")");
+                            + projectAccession + " (" + reshakeableCounter + "/" + (fileDetailListResult.getBody().getList().size() - prideMissingFiles) + ")");
                 } else {
                     ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files ("
-                            + reshakeableCounter + "/" + fileDetailListResult.getBody().getList().size() + ")");
+                            + reshakeableCounter + "/" + (fileDetailListResult.getBody().getList().size() - prideMissingFiles) + ")");
                 }
                 filesPanel.repaint();
 
@@ -1667,6 +1671,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 }
 
                 int reshakeableCounter = 0;
+                int prideMissingFiles = 0;
 
                 for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
 
@@ -1697,7 +1702,13 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     // check if the file is reshakeable
                     if (reshakeableFiles.containsKey(fileDetail.getFileType().getName())) {
                         for (String fileEnding : reshakeableFiles.get(fileDetail.getFileType().getName())) {
-                            if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)) {
+                            if (fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
+                                    || fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
+                                prideMissingFiles++;
+                                reshakeable = false;
+                                break;
+                            } else if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)) {
+                                reshakeable = true;
                                 reshakeableCounter++;
                                 break;
                             }
@@ -1721,10 +1732,10 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 // update the border title
                 if (assayAccession != null) {
                     ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files for Assay "
-                            + assayAccession + " (" + reshakeableCounter + "/" + fileDetailListResult.getBody().getList().size() + ")");
+                            + assayAccession + " (" + reshakeableCounter + "/" + (fileDetailListResult.getBody().getList().size() - prideMissingFiles) + ")");
                 } else {
                     ((TitledBorder) filesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Files ("
-                            + reshakeableCounter + "/" + fileDetailListResult.getBody().getList().size() + ")");
+                            + reshakeableCounter + "/" + (fileDetailListResult.getBody().getList().size() - prideMissingFiles) + ")");
                 }
                 filesPanel.repaint();
 
