@@ -3,6 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.2 (August 29. 2014):*
+
+ * FEATURE IMPROVEMENT: Updated the getting started slides.
+ * FEATURE IMPROVEMENT: Changed the default PRIDE export to mzIdentML.
+ * FEATURE IMPROVEMENT: Made the progress bar when unzipping in the New Project dialog indeterminate.
+
+ * BUG FIX: Fixed a bug in the setting of the species in the PRIDE Reshake.
+ * BUG FIX: Fixed a bug with the use of custom PTM patterns.
+ * BUG FIX: Fixed a bug with the tooltips for the PTMs in the Search Settings dialog.
+ * BUG FIX: Fixed a bug in the default peptide export where additional empty columns where added messing.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.35.5. 
+
+----
+
 *Changes in PeptideShaker 0.33.1 (August 21. 2014):*
 
  * FEATURE IMPROVEMENT: Updated Ensembl genomes to release 23.
