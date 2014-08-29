@@ -1564,7 +1564,9 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     // check if the file is reshakeable
                     if (reshakeableFiles.containsKey(fileDetail.getFileType().getName())) {
                         for (String fileEnding : reshakeableFiles.get(fileDetail.getFileType().getName())) {
-                            if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)) {
+                            if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)
+                                    && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
+                                    && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) {
                                 reshakeable = true;
                                 reshakeableCounter++;
                                 break;
@@ -1572,14 +1574,18 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         }
                     }
 
-                    ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
-                        (filesTable.getRowCount() + 1),
-                        assayAccession,
-                        fileDetail.getFileType().getName(),
-                        fileDetail.getFileName(),
-                        fileDownloadLink,
-                        Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
-                        reshakeable});
+                    if (!fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
+                            && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
+
+                        ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
+                            (filesTable.getRowCount() + 1),
+                            assayAccession,
+                            fileDetail.getFileType().getName(),
+                            fileDetail.getFileName(),
+                            fileDownloadLink,
+                            Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
+                            reshakeable});
+                    }
                 }
 
                 // update the border title
@@ -1692,21 +1698,24 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     if (reshakeableFiles.containsKey(fileDetail.getFileType().getName())) {
                         for (String fileEnding : reshakeableFiles.get(fileDetail.getFileType().getName())) {
                             if (fileDetail.getFileName().toLowerCase().endsWith(fileEnding)) {
-                                reshakeable = true;
                                 reshakeableCounter++;
                                 break;
                             }
                         }
                     }
 
-                    ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
-                        (filesTable.getRowCount() + 1),
-                        assayAccessionLink,
-                        fileDetail.getFileType().getName(),
-                        fileDetail.getFileName(),
-                        fileDownloadLink,
-                        Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
-                        reshakeable});
+                    if (!fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
+                            && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
+
+                        ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
+                            (filesTable.getRowCount() + 1),
+                            assayAccessionLink,
+                            fileDetail.getFileType().getName(),
+                            fileDetail.getFileName(),
+                            fileDownloadLink,
+                            Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
+                            reshakeable});
+                    }
                 }
 
                 // update the border title
