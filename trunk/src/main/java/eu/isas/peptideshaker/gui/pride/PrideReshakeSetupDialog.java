@@ -247,6 +247,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         // check if the file is reshakeable
         if (prideReShakeGUI.getReshakeableFiles().containsKey(fileType)) {
             for (String fileEnding : prideReShakeGUI.getReshakeableFiles().get(fileType)) {
+
+                if (fileName.toLowerCase().endsWith(".pride.mgf.gz")
+                        && fileName.toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
+                    return false;
+                }
+
                 if (fileName.toLowerCase().endsWith(fileEnding)) {
                     reshakeable = true;
                     break;
@@ -1317,13 +1323,13 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 int option = JOptionPane.showConfirmDialog(this,
                         "You have multiple species. Combine into one UniProt search?\n"
-                        + "Choosing 'No' will open one UniProt web page per species.", 
+                        + "Choosing 'No' will open one UniProt web page per species.",
                         "Multiple Species", JOptionPane.YES_NO_CANCEL_OPTION);
 
                 if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                     return;
                 }
-                
+
                 combinedSearch = option == JOptionPane.YES_OPTION;
             }
 
