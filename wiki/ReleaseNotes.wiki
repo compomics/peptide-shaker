@@ -7,6 +7,7 @@
 
  * FEATURE IMPROVEMENT: Changed the default PTM localization score to A-score.
  * FEATURE IMPROVEMENT: Added a special fix to the file import to escape Mascot mapping multiple fixed PTMs to the same residue.
+ * FEATURE IMPROVEMENT: Updated the example dataset.
 
  * BUG FIX: Added a missing line break in the display of the extracted search parameters in PRIDE Reshake.
 
