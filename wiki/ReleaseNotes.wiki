@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.5 (August 30. 2014):*
+
+ * FEATURE IMPROVEMENT: Improved the mapping to the protein 3D structure, resulting in a lot more mapped peptides.
+
+----
+
 *Changes in PeptideShaker 0.33.4 (August 30. 2014):*
 
  * FEATURE IMPROVEMENT: Changed the default PTM localization score to A-score.
