@@ -22,7 +22,6 @@ import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
@@ -58,7 +57,6 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jmol.adapter.smarter.SmarterJmolAdapter;
 import org.jmol.api.JmolAdapter;
@@ -291,7 +289,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
-                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(), 
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(),
                 peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
 
         proteinTable.getModel().addTableModelListener(new TableModelListener() {
@@ -3076,11 +3074,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         // iterate the peptide table and highlight the covered areas
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
+
             String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
             AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
             for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
+
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
                 jmolPanel.getViewer().evalString(
@@ -3088,10 +3088,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                if (chainSequence.indexOf(peptideSequence) != -1) {
+                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getSequenceMatchingPreferences()).isEmpty()) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
+
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
@@ -3104,16 +3105,17 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
         for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
+
             if (progressDialog.isRunCanceled()) {
                 break;
             }
+
             int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
             jmolPanel.getViewer().evalString(
                     "select resno >=" + (peptideTempStart - chains[selectedChainIndex - 1].getDifference())
                     + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                     + " and chain = " + currentChain + "; color blue");
-
         }
 
         // remove old labels
