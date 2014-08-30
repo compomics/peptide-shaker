@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.4 (August 30. 2014):*
+
+ * FEATURE IMPROVEMENT: Changed the default PTM localization score to A-score.
+ * FEATURE IMPROVEMENT: Added a special fix to the file import to escape Mascot mapping multiple fixed PTMs to the same residue.
+
+ * BUG FIX: Added a missing line break in the display of the extracted search parameters in PRIDE Reshake.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.35.6. 
+
+----
+
 *Changes in PeptideShaker 0.33.3 (August 29. 2014):*
 
  * FEATURE IMPROVEMENT: Updated the getting started slides.
