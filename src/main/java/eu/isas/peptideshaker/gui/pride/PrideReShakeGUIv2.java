@@ -190,7 +190,7 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
     /**
      * The web service URL.
      */
-    private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/";
+    private static final String projectServiceURL = "http://www.ebi.ac.uk/pride/ws/archive/"; // "http://wwwdev.ebi.ac.uk:80/pride/ws/archive/";
     /**
      * The data format.
      */
@@ -2510,12 +2510,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                     Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                     if (selectedEnzyme != null) {
                         mappedEnzyme = selectedEnzyme;
-                        prideParametersReport += selectedEnzyme.getName();
+                        prideParametersReport += selectedEnzyme.getName() + "<br>";
                     } else {
-                        prideParametersReport += enzymes.get(0) + " (unknown)";
+                        prideParametersReport += enzymes.get(0) + " (unknown)<br>";
                     }
                 } else {
-                    prideParametersReport += mappedEnzyme.getName();
+                    prideParametersReport += mappedEnzyme.getName() + "<br>";
                 }
 
                 prideSearchParameters.setEnzyme(mappedEnzyme);
@@ -2536,11 +2536,11 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                 EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText);
                 Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
                 if (selectedEnzyme != null) {
-                    prideParametersReport += selectedEnzyme.getName();
+                    prideParametersReport += selectedEnzyme.getName() + "<br>";
                     prideSearchParameters.setEnzyme(selectedEnzyme);
                 } else {
                     prideSearchParameters.setEnzyme(null);
-                    prideParametersReport += enzymesAsText + " (unknown)";
+                    prideParametersReport += enzymesAsText + " (unknown)<br>";
                 }
             }
         } else {
