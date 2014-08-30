@@ -1912,11 +1912,12 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
 
         // get the project count
         try {
-            ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // @TODO: catch connection issues
+            ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // can also use project/count/?q=*
             Integer projectCount = projectCountResult.getBody();
 
             // get the list of projects
-            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
+            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL 
+                    + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
 
             speciesAll = new ArrayList<String>();
             instrumentsAll = new ArrayList<String>();

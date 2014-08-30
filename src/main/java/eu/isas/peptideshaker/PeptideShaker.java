@@ -2949,7 +2949,7 @@ public class PeptideShaker {
                             ptmScores.addSecondaryModificationSite(modName, secondaryLocation);
                         }
                     } else {
-                        throw new IllegalArgumentException("PTM scoring null for modification " + modName + "in spectrum " + spectrumMatch.getKey() + ".");
+                        throw new IllegalArgumentException("PTM scoring null for modification " + modName + " in spectrum " + spectrumMatch.getKey() + ".");
                     }
                 }
             } else {
