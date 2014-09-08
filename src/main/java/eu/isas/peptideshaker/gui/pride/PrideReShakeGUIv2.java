@@ -85,7 +85,7 @@ import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 
 /**
  * Frame for talking to the PRIDE Archive web service to select projects for
- * reshaking. (Work in progress...)
+ * reshaking.
  *
  * @author Harald Barsnes
  */
