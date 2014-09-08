@@ -641,7 +641,8 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private String getObjectKey(String cacheKey) {
         StringBuilder buf = new StringBuilder();
-        String[] splittedKey = cacheKey.split(cacheKey);
+        String escapedString = java.util.regex.Pattern.quote(cacheKey);
+        String[] splittedKey = cacheKey.split(escapedString);
         for (int i = 1; i < splittedKey.length; i++) {
             buf.append(splittedKey[i]);
         }
