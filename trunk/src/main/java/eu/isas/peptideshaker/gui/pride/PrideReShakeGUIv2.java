@@ -61,6 +61,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -1613,6 +1614,24 @@ public class PrideReShakeGUIv2 extends javax.swing.JFrame {
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             } catch (ResourceAccessException e) {
                 JOptionPane.showMessageDialog(this, "PRIDE web service could not be reached.\n Please make sure that you are online.", "Network Error", JOptionPane.WARNING_MESSAGE);
+            } catch (HttpMessageNotReadableException e) {
+                System.out.println(url);
+                e.printStackTrace();
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + url + "<br>"
+                        + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+            } catch (Exception e) {
+                System.out.println(url);
+                e.printStackTrace();
+                this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                JOptionPane.showMessageDialog(this, JOptionEditorPane.getJOptionEditorPane(
+                        "PRIDE web service access error. Cannot open:<br>"
+                        + url + "<br>"
+                        + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
+                        "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             // update the border title
