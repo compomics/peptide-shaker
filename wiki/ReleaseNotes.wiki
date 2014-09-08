@@ -3,6 +3,15 @@
 
 ----
 
+*Changes in PeptideShaker 0.33.6 (September 8. 2014):*
+
+ * FEATURE IMPROVEMENT: Updated to the new PRIDE web service model (needed for the PRIDE Reshake).
+ * FEATURE IMPROVEMENT: Improved the parsing of headers of type genome translated to protein sequence.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.35.7.
+
+----
+
 *Changes in PeptideShaker 0.33.5 (August 30. 2014):*
 
  * FEATURE IMPROVEMENT: Improved the mapping to the protein 3D structure, resulting in a lot more mapped peptides.
