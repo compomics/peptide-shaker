@@ -526,7 +526,7 @@ public class FileImporter {
 
                     // clear the objects not needed anymore
                     singleProteinList.clear();
-                    sequenceFactory.emptyCache(); // @TODO: should only be used in extreme cases!!
+                    sequenceFactory.emptyCache();
 
                     if (nRetained == 0) {
                         waitingHandler.appendReport("No identifications retained.", true, true);
@@ -682,7 +682,7 @@ public class FileImporter {
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
-                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences);
+                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);//@TODO: make the remapping of the Xs a user option?
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
@@ -720,7 +720,17 @@ public class FileImporter {
                     mapTags(fileReader);
 
                     // Map the peptides on protein sequences
-                    mapPeptides(fileReader);
+                    try {
+                        mapPeptides(fileReader);
+                    } catch (OutOfMemoryError e) {
+                        e.printStackTrace();
+                        fileReader.clearPeptidesMap();
+                    }
+                    // empty protein caches
+                    if (memoryUsed() > 0.8) {
+                        ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
+                        sequenceFactory.reduceNodeCacheSize(1);
+                    }
 
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
@@ -730,12 +740,12 @@ public class FileImporter {
                     while (!idFileSpectrumMatches.isEmpty()) {
 
                         // free memory if needed
-                        if (memoryUsed() > 0.8 && !peptideShaker.getCache().isEmpty()) {
-                            peptideShaker.getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                        if (memoryUsed() > 0.9 && !peptideShaker.getCache().isEmpty()) {
+                            peptideShaker.getCache().reduceMemoryConsumption(0.5, null);
                         }
                         // free memory if needed
-                        if (memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-                            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, waitingHandler);
+                        if (memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
                         }
                         if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                             sequenceFactory.reduceNodeCacheSize(0.5);
@@ -795,15 +805,19 @@ public class FileImporter {
                                                 // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                                                 ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-                                                // special fix to escape mascot mapping multiple fixed ptms on the same residue
                                                 boolean fixedPtmIssue = false;
                                                 try {
-                                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences); 
+                                                    ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences);
                                                 } catch (IllegalArgumentException e) {
-                                                    System.out.println(e.getMessage());
-                                                    match.removeAssumption(assumption);
-                                                    ptmIssue++;
-                                                    fixedPtmIssue = true;
+                                                    if (idFilter.removeUnknownPTMs()) {
+                                                        // Exclude peptides with aberrant PTM mapping
+                                                        System.out.println(e.getMessage());
+                                                        match.removeAssumption(assumption);
+                                                        ptmIssue++;
+                                                        fixedPtmIssue = true;
+                                                    } else {
+                                                        throw e;
+                                                    }
                                                 }
 
                                                 if (!fixedPtmIssue) {
@@ -1381,7 +1395,10 @@ public class FileImporter {
          * @return the share of memory being used
          */
         public double memoryUsed() {
-            return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory();
+            long memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            float memoryAvailable = Runtime.getRuntime().maxMemory();
+            double ratio = (double) (memoryUsed / memoryAvailable);
+            return ratio;
         }
 
         /**
@@ -1701,14 +1718,33 @@ public class FileImporter {
             if (peptideMap != null && !peptideMap.isEmpty()) {
                 waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
                 waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-                for (LinkedList<Peptide> tagPeptides : idfileReader.getPeptidesMap().values()) {
-                    for (Peptide peptide : tagPeptides) {
+                HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
+                for (String key : keys) {
+                    LinkedList<Peptide> peptides = peptideMap.get(key);
+                    for (Peptide peptide : peptides) {
                         if (idFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
                             if (peptide.getParentProteins(sequenceMatchingPreferences).isEmpty()) {
                                 throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + " using the selected matching settings.");
                             }
                         }
+
+                        // free memory if needed
+                        if (memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
+                        }
+                        if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                            sequenceFactory.reduceNodeCacheSize(0.5);
+                        }
+                        if (memoryUsed() > 0.8) {
+                            Runtime.getRuntime().gc();
+                            if (memoryUsed() > 0.8) {
+                                // all peptides/protein mappings cannot be kept in memory at the same time, abort
+                                System.out.println("Memory issue while mapping peptides, abort");
+                                return;
+                            }
+                        }
                     }
+                    peptideMap.remove(key);
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
             }
