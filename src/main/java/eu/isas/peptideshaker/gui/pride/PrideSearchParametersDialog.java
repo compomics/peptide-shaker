@@ -17,7 +17,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
     /**
      * Reference to the main frame.
      */
-    private PrideReShakeGUIv2 prideReShakeGUI;
+    private PrideReshakeGUI prideReShakeGUI;
     /**
      * The extracted search parameters file.
      */
@@ -47,7 +47,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param speciesType the species type
      * @param modal
      */
-    public PrideSearchParametersDialog(PrideReShakeGUIv2 prideReShakeGUI, File prideSearchParametersFile,
+    public PrideSearchParametersDialog(PrideReshakeGUI prideReShakeGUI, File prideSearchParametersFile,
             String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {
         super(prideReShakeGUI, modal);
         initComponents();

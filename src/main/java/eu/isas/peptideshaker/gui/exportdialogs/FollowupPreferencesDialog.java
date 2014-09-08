@@ -229,7 +229,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        psmSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs", "ProteomeDiscoverer Excel File (beta)" }));
+        psmSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs of Validated Peptides of Validated Proteins", "Validated PSMs of Validated Peptides", "Validated PSMs", "Validated PSMs Containing Confidently Localized PTMs" }));
 
         exportToProgenesisLinkLabel.setText("<html><a href=\\\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\\\">Progenesis LC-MS</a></html>");
         exportToProgenesisLinkLabel.setToolTipText("Click for Progenesis LC-MS export help");

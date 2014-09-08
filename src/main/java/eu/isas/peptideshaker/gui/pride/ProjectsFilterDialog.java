@@ -35,9 +35,9 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
      */
     private JTable projectsTable;
     /**
-     * The PrideReShakeGUIv2 parent frame.
+     * The PrideReshakeGUI parent frame.
      */
-    private PrideReShakeGUIv2 prideReShakeGUI;
+    private PrideReshakeGUI prideReShakeGUI;
     /**
      * Counts the number of times the users has pressed a key on the keyboard in
      * the search field.
@@ -51,7 +51,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     /**
      * Creates a new ProjectsFilterDialog.
      *
-     * @param prideReShakeGUI the PrideReShakeGUIv2 parent frame
+     * @param prideReShakeGUI the PrideReshakeGUI parent frame
      * @param modal if the dialog is modal or not
      * @param currentFilterValues the current filter text values
      * @param assaysBiggerThan if assay filter is bigger than or smaller than
@@ -61,7 +61,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
      * @param instruments the available instruments
      * @param ptms the available PTMs
      */
-    public ProjectsFilterDialog(PrideReShakeGUIv2 prideReShakeGUI, boolean modal, String[] currentFilterValues, boolean assaysBiggerThan, boolean visible,
+    public ProjectsFilterDialog(PrideReshakeGUI prideReShakeGUI, boolean modal, String[] currentFilterValues, boolean assaysBiggerThan, boolean visible,
             ArrayList<String> species, ArrayList<String> tissues, ArrayList<String> instruments, ArrayList<String> ptms) {
         super(prideReShakeGUI, modal);
 

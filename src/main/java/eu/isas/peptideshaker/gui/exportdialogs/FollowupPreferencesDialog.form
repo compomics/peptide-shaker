@@ -294,12 +294,11 @@
             <Component class="javax.swing.JComboBox" name="psmSelectionComboBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
+                  <StringArray count="4">
                     <StringItem index="0" value="Validated PSMs of Validated Peptides of Validated Proteins"/>
                     <StringItem index="1" value="Validated PSMs of Validated Peptides"/>
                     <StringItem index="2" value="Validated PSMs"/>
                     <StringItem index="3" value="Validated PSMs Containing Confidently Localized PTMs"/>
-                    <StringItem index="4" value="ProteomeDiscoverer Excel File (beta)"/>
                   </StringArray>
                 </Property>
               </Properties>
