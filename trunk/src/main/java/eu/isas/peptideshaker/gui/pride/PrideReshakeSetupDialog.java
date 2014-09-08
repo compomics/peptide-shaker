@@ -37,9 +37,9 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
     /**
-     * The PrideReShakeGUI parent.
+     * The PrideReshakeGUI parent.
      */
-    private PrideReShakeGUIv2 prideReShakeGUI;
+    private PrideReshakeGUI prideReShakeGUI;
     /**
      * The files table column header tooltips.
      */
@@ -63,7 +63,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param prideReShakeGUI
      * @param modal
      */
-    public PrideReshakeSetupDialog(PrideReShakeGUIv2 prideReShakeGUI, boolean modal) {
+    public PrideReshakeSetupDialog(PrideReshakeGUI prideReShakeGUI, boolean modal) {
         super(prideReShakeGUI, modal);
         initComponents();
         this.prideReShakeGUI = prideReShakeGUI;
