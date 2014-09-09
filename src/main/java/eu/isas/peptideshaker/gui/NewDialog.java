@@ -2067,13 +2067,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         TempFilesManager.registerTempFolder(destinationFolder);
 
         progressDialog.setWaitingText("Unzipping " + file.getName() + ". Please Wait...");
-        //progressDialog.setPrimaryProgressCounter(0);
-        //progressDialog.setMaxPrimaryProgressCounter(100);
-        //progressDialog.setPrimaryProgressCounterIndeterminate(false);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.setSecondaryProgressCounter(0);
+        progressDialog.setMaxSecondaryProgressCounter(100);
+        progressDialog.setSecondaryProgressCounterIndeterminate(false);
 
         try {
-            ZipUtils.unzip(file, destinationFolder, progressDialog); // @TODO: better use of the progress bar!
+            ZipUtils.unzip(file, destinationFolder, progressDialog);
+            progressDialog.setSecondaryProgressCounterIndeterminate(true);
             File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
             if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
                 dataFolders.add(dataFolder);
