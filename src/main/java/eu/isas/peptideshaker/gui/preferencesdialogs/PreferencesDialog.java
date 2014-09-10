@@ -52,7 +52,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         // set the values
         nAASpinner.setValue(peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
         methodCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        aScoreCalculationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        probabilitsticScoreCalculationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         neutralLossesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         insertSpectrumCountingPreferences();
         insertPTMScoringPreferences();
@@ -78,13 +78,13 @@ public class PreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Updates the GUI based on the PTM scoring preferences
+     * Updates the GUI based on the PTM scoring preferences.
      */
     private void insertPTMScoringPreferences() {
         if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-            aScoreCalculationCmb.setSelectedIndex(0);
+            probabilitsticScoreCalculationCmb.setSelectedIndex(0);
         } else {
-            aScoreCalculationCmb.setSelectedIndex(1);
+            probabilitsticScoreCalculationCmb.setSelectedIndex(1);
         }
         if (ptmScoringPreferences.isProbabilisticScoreNeutralLosses()) {
             neutralLossesCmb.setSelectedIndex(0);
@@ -128,12 +128,12 @@ public class PreferencesDialog extends javax.swing.JDialog {
         surroundingAminoAcidsLabel = new javax.swing.JLabel();
         nAASpinner = new javax.swing.JSpinner();
         preferencesPanel = new javax.swing.JPanel();
-        aScoreLabel = new javax.swing.JLabel();
+        flrLabel = new javax.swing.JLabel();
         flrThresholdTxt = new javax.swing.JTextField();
         neutralLossesLabel = new javax.swing.JLabel();
         neutralLossesCmb = new javax.swing.JComboBox();
-        aScoreCalculationLabel = new javax.swing.JLabel();
-        aScoreCalculationCmb = new javax.swing.JComboBox();
+        probalisticScoreCalculationLabel = new javax.swing.JLabel();
+        probabilitsticScoreCalculationCmb = new javax.swing.JComboBox();
         helpJButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -211,7 +211,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
         preferencesPanel.setOpaque(false);
 
-        aScoreLabel.setText("False Localization Rate");
+        flrLabel.setText("False Localization Rate");
 
         flrThresholdTxt.setEditable(false);
         flrThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -221,9 +221,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
         neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
-        aScoreCalculationLabel.setText("A-score Calculation");
+        probalisticScoreCalculationLabel.setText("Probabilitstic Score");
 
-        aScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
+        probabilitsticScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
         javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
         preferencesPanel.setLayout(preferencesPanelLayout);
@@ -233,16 +233,16 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(aScoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(flrLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(neutralLossesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(flrThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
-                            .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(probabilitsticScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(neutralLossesLabel)
-                            .addComponent(aScoreCalculationLabel))
+                            .addComponent(probalisticScoreCalculationLabel))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -251,11 +251,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(aScoreCalculationLabel)
-                    .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(probalisticScoreCalculationLabel)
+                    .addComponent(probabilitsticScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(aScoreLabel)
+                    .addComponent(flrLabel)
                     .addComponent(flrThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -367,9 +367,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 ptmScoreThresholdChanged = true;
             }
 
-            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()&& aScoreCalculationCmb.getSelectedIndex() != 0
-                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 1) {
-                peptideShakerGUI.getPtmScoringPreferences().setProbabilitsticScoreCalculation(aScoreCalculationCmb.getSelectedIndex() == 0);
+            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()&& probabilitsticScoreCalculationCmb.getSelectedIndex() != 0
+                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilitsticScoreCalculationCmb.getSelectedIndex() != 1) {
+                peptideShakerGUI.getPtmScoringPreferences().setProbabilitsticScoreCalculation(probabilitsticScoreCalculationCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
 
@@ -473,11 +473,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox aScoreCalculationCmb;
-    private javax.swing.JLabel aScoreCalculationLabel;
-    private javax.swing.JLabel aScoreLabel;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel flrLabel;
     private javax.swing.JTextField flrThresholdTxt;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
@@ -489,6 +487,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel optionsPanel;
     private javax.swing.JPanel optionsPanel1;
     private javax.swing.JPanel preferencesPanel;
+    private javax.swing.JComboBox probabilitsticScoreCalculationCmb;
+    private javax.swing.JLabel probalisticScoreCalculationLabel;
     private javax.swing.JLabel surroundingAminoAcidsLabel;
     private javax.swing.JCheckBox validatedCheck;
     // End of variables declaration//GEN-END:variables

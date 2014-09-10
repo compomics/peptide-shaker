@@ -124,10 +124,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private SearchParameters searchParameters = new SearchParameters();
     /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
-    /**
      * The gene preferences.
      */
     private GenePreferences genePreferences;
@@ -1518,14 +1514,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
                 processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(),
-                sequenceMatchingPreferences, true);
+                SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters), true);
     }
 
     /**
      * Imports the search parameters from a SearchGUI file.
      *
      * @param file the selected searchGUI file
-     * @param dataFolders folders where to look for the fasta file
+     * @param dataFolders folders where to look for the FASTA file
      * @param progressDialog the progress dialog
      */
     public void importSearchParameters(File file, ArrayList<File> dataFolders, ProgressDialogX progressDialog) {
@@ -1619,7 +1615,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             if (fastaFile.exists()) {
                 found = true;
             } else {
-                // look in the database folder {
+                // look in the database folder
                 try {
                     UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
                     File dbFolder = utilitiesUserPreferences.getDbFolder();
@@ -1652,7 +1648,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                             searchParameters.setFastaFile(fastaFile);
                             found = true;
                         } else {
-                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() 
+                                    + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                         }
                     }
                 }
@@ -2067,9 +2064,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         TempFilesManager.registerTempFolder(destinationFolder);
 
         progressDialog.setWaitingText("Unzipping " + file.getName() + ". Please Wait...");
-        progressDialog.setSecondaryProgressCounter(0);
-        progressDialog.setMaxSecondaryProgressCounter(100);
-        progressDialog.setSecondaryProgressCounterIndeterminate(false);
 
         try {
             ZipUtils.unzip(file, destinationFolder, progressDialog);
