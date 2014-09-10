@@ -251,7 +251,8 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, boolean backgroundThread) {
+            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, 
+            SequenceMatchingPreferences sequenceMatchingPreferences, boolean backgroundThread) {
 
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
         waitingHandler.appendReportEndLine();
@@ -265,7 +266,8 @@ public class PeptideShaker {
         identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
-        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, sequenceMatchingPreferences, projectDetails, backgroundThread);
+        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, 
+                ptmScoringPreferences, spectrumCountingPreferences, sequenceMatchingPreferences, projectDetails, backgroundThread);
     }
 
     /**
