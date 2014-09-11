@@ -506,6 +506,7 @@ public class AssumptionFilter extends MatchFilter {
         }
 
         if (assumptionFilter.getSequenceCoverage() != null) {
+
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
             Peptide peptide = peptideAssumption.getPeptide();

@@ -8,6 +8,8 @@ import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.IonFactory;
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -637,6 +639,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the annotation preferences
         annotationPreferences = new AnnotationPreferences();
         annotationPreferences.setPreferencesFromSearchParameters(searchParameters);
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
 
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
