@@ -407,7 +407,6 @@ public class DisplayFeaturesGenerator {
      */
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-
             Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 
             HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);

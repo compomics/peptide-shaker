@@ -2877,8 +2877,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             }
         }
 
-        updatePtmColorCoding();
         displayFeaturesGenerator.setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
+        updatePtmColorCoding();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**
