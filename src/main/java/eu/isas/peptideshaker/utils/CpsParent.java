@@ -240,7 +240,7 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Saves the project in the cps file
+     * Saves the project in the cps file.
      *
      * @param waitingHandler waiting handler displaying feedback to the user.
      * can be null.
