@@ -9,11 +9,10 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.JColorChooser;
-import javax.swing.JOptionPane;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
@@ -29,7 +28,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     /**
      * The list of ion types.
      */
-    private HashMap<Ion.IonType, ArrayList<Integer>> iontypes;
+    private HashMap<Ion.IonType, HashSet<Integer>> iontypes;
     /**
      * The list of neutral losses.
      */

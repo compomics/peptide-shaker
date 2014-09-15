@@ -1862,7 +1862,7 @@ public class PeptideShaker {
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).put(-1.0, new HashMap<Double, ArrayList<PeptideAssumption>>());
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).put(-1.0, assumptions);
                                 } else {
-                                    HashMap<Ion.IonType, ArrayList<Integer>> iontypes = annotationPreferences.getIonTypes();
+                                    HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
                                     NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
                                     ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
                                     MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -2133,7 +2133,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        HashMap<Ion.IonType, ArrayList<Integer>> iontypes = annotationPreferences.getIonTypes();
+        HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
         NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
         ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
 
@@ -2149,23 +2149,17 @@ public class PeptideShaker {
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 waitingHandler.increaseSecondaryProgressCounter();
-
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                 for (int advocateIndex : spectrumMatch.getAdvocates()) {
-
                     for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
-
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
 
                             if (assumption instanceof PeptideAssumption) {
 
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-
                                 annotationPreferences.setCurrentSettings(peptideAssumption, true, sequenceMatchingPreferences);
-
                                 PSParameter psParameter = new PSParameter();
-
                                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
                                 for (int scoreIndex : processingPreferences.getScores(advocateIndex)) {
@@ -2173,12 +2167,14 @@ public class PeptideShaker {
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
                                     double score;
+
                                     if (scoreIndex == PsmScores.native_score.index) {
                                         score = peptideAssumption.getScore();
                                     } else {
                                         score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
                                                 peptideAssumption.getIdentificationCharge().value, searchParameters, scoreIndex);
                                     }
+
                                     psParameter.setIntermediateScore(scoreIndex, score);
                                     inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
 
