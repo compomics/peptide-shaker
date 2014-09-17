@@ -251,7 +251,7 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, 
+            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences,
             SequenceMatchingPreferences sequenceMatchingPreferences, boolean backgroundThread) {
 
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")", true, true);
@@ -266,7 +266,7 @@ public class PeptideShaker {
         identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
-        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, 
+        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences,
                 ptmScoringPreferences, spectrumCountingPreferences, sequenceMatchingPreferences, projectDetails, backgroundThread);
     }
 
@@ -2901,6 +2901,12 @@ public class PeptideShaker {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     ptmScoring.setSiteConfidence(modMatch.getModificationSite(), PtmScoring.VERY_CONFIDENT);
                     modMatch.setConfident(true);
+                    for (int mainLocation : ptmScoring.getConfidentPtmLocations()) {
+                        ptmScores.addMainModificationSite(modName, mainLocation);
+                    }
+                    for (int secondaryLocation : ptmScoring.getSecondaryPtmLocations()) {
+                        ptmScores.addSecondaryModificationSite(modName, secondaryLocation);
+                    }
                 }
             } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()
                     || ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && ptmMatches.size() > 1) {
@@ -2921,6 +2927,12 @@ public class PeptideShaker {
                                 modMatch.setConfident(true);
                             }
                         }
+                    }
+                    for (int mainLocation : ptmScoring.getConfidentPtmLocations()) {
+                        ptmScores.addMainModificationSite(modName, mainLocation);
+                    }
+                    for (int secondaryLocation : ptmScoring.getSecondaryPtmLocations()) {
+                        ptmScores.addSecondaryModificationSite(modName, secondaryLocation);
                     }
                 }
             } else {
