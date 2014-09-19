@@ -15,6 +15,7 @@
  * BUG FIX: Fixed a command line bug where the neutral losses were not set, resulting in slightly different results compared to the GUI.
  * BUG FIX: The sequence matching preferences now change according to the search parameters in the New Project Dialog.
  * BUG FIX: Fixed a bug where the show/hide of the fixed PTMs was not working as it should in all tabs.
+ * BUG FIX: Corrected a bug where the cleaning of the obsolete protein trees was deleting all files in the folder.
 
  * LIBRARY UPDATE: Updated jsparklines to version 1.0.4.
  * LIBRARY UPDATE: Updated utilities to version 3.37.3.
