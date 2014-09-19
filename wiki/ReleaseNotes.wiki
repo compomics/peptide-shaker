@@ -3,11 +3,30 @@
 
 ----
 
+*Changes in PeptideShaker 0.34.0 (September 19. 2014):*
+
+ * FEATURE IMPROVEMENT: Improved the memory handling when loading data.
+ * FEATURE IMPROVEMENT: Tried to speed up the loading of the data.
+ * FEATURE IMPROVEMENT: Improved the handling of poorly localized PTMs.
+ * FEATURE IMPROVEMENT: Tried to escape regular expressions in protein accession numbers.
+ * FEATURE IMPROVEMENT: The waiting handler is now used when unzipping SearchGUI results in PeptideShaker.
+ * FEATURE IMPROVEMENT: Fixed an issue with indexing mgf files with empty charge tags.
+
+ * BUG FIX: Fixed a command line bug where the neutral losses were not set, resulting in slightly different results compared to the GUI.
+ * BUG FIX: The sequence matching preferences now change according to the search parameters in the New Project Dialog.
+ * BUG FIX: Fixed a bug where the show/hide of the fixed PTMs was not working as it should in all tabs.
+
+ * LIBRARY UPDATE: Updated jsparklines to version 1.0.4.
+ * LIBRARY UPDATE: Updated utilities to version 3.37.3.
+
+----
+
 *Changes in PeptideShaker 0.33.6 (September 8. 2014):*
 
  * FEATURE IMPROVEMENT: Updated to the new PRIDE web service model (needed for the PRIDE Reshake).
  * FEATURE IMPROVEMENT: Improved the parsing of headers of type genome translated to protein sequence.
 
+ * LIBRARY UPDATE: Updated web-service-model to version 0.2.4.
  * LIBRARY UPDATE: Updated utilities to version 3.35.7.
 
 ----
