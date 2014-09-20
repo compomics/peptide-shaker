@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
- * The Cps file importer extracts the information contained in a cps file.
+ * The cps file importer extracts the information contained in a cps file.
  *
  * @author Marc Vaudel
  */

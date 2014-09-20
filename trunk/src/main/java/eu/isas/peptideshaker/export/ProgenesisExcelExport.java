@@ -1,11 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-/**
- * This class exports identifications for post-processing with Non-Linear
- * Progenesis as Excel workbooks. Work in progress...
- *
- * @author Harald Barsnes
- */
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
@@ -34,6 +28,12 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
+/**
+ * This class exports identifications for post-processing with Non-Linear
+ * Progenesis as Excel workbooks. Work in progress...
+ *
+ * @author Harald Barsnes
+ */
 public class ProgenesisExcelExport {
 
     /**
