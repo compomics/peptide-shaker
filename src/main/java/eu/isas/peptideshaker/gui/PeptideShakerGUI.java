@@ -6108,6 +6108,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 cpsBean.getUserPreferences().addRecentProject(filePath);
                 lastSelectedFolder = new File(filePath).getAbsolutePath();
             }
+
             updateRecentProjectsList();
         }
     }
