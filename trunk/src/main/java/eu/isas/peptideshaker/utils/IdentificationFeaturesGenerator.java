@@ -226,8 +226,8 @@ public class IdentificationFeaturesGenerator {
      * acid.
      *
      * @param proteinMatchKey the key of the protein match
-     * @param enzymatic if not all peptides are considered, if true only enzymatic peptides will be considered, if
-     * false only non enzymatic
+     * @param enzymatic if not all peptides are considered, if true only
+     * enzymatic peptides will be considered, if false only non enzymatic
      *
      * @return the identification coverage of the protein sequence
      *
@@ -243,15 +243,16 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns amino acid coverage of this protein by all peptides or by enzymatic or non-enzymatic
-     * peptides only in an array where the index of the best validation level of
-     * every peptide covering a given amino acid is given. 0 is the first amino
-     * acid.
+     * Returns amino acid coverage of this protein by all peptides or by
+     * enzymatic or non-enzymatic peptides only in an array where the index of
+     * the best validation level of every peptide covering a given amino acid is
+     * given. 0 is the first amino acid.
      *
      * @param proteinMatchKey the key of the protein match
-     * @param allPeptides indicates whether all peptides should be taken into account
-     * @param enzymatic if not all peptides are considered, if true only enzymatic peptides will be considered, if
-     * false only non enzymatic
+     * @param allPeptides indicates whether all peptides should be taken into
+     * account
+     * @param enzymatic if not all peptides are considered, if true only
+     * enzymatic peptides will be considered, if false only non enzymatic
      *
      * @return the identification coverage of the protein sequence
      *
@@ -297,7 +298,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
                 for (int index : aminoAcidPattern.getIndexes(sequence, sequenceMatchingPreferences)) {
-                    int peptideTempStart = index -1;
+                    int peptideTempStart = index - 1;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                         boolean found = validationLevelCoverage[j];
@@ -383,7 +384,7 @@ public class IdentificationFeaturesGenerator {
                     } else {
                         p = peptideLengthDistribution.getProbabilityAt(length);
                     }
-                    for (int j = lastCleavage+1; j <= i; j++) {
+                    for (int j = lastCleavage + 1; j <= i; j++) {
                         result[j] = p;
                     }
                     lastCleavage = i;
@@ -419,7 +420,7 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      *
      * @return the sequence coverage
-     * 
+     *
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -450,9 +451,9 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @param enzyme the enzyme used
-     * 
+     *
      * @return a list of non-enzymatic peptides for a given protein match
-     * 
+     *
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -474,9 +475,9 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @param enzyme the enzyme used
-     * 
+     *
      * @return a list of non-enzymatic peptides for a given protein match
-     * 
+     *
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -616,7 +617,7 @@ public class IdentificationFeaturesGenerator {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
-     * 
+     *
      * @return the spectrum counting index
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1397,16 +1398,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinKey the key of the protein match of interest
      * @param separator the separator used to separate the sites and the number
      * of sites
+     *
      * @return a PTM summary for the given protein
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey, String separator)
+    public String getConfidentPTMSummary(String proteinKey, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return getPrimaryPTMSummary(proteinKey, null, separator);
+        return getConfidentPTMSummary(proteinKey, null, separator);
     }
 
     /**
@@ -1418,14 +1421,16 @@ public class IdentificationFeaturesGenerator {
      * @param targetedPtms the PTMs to include in the summary
      * @param separator the separator used to separate the sites and the number
      * of sites
+     *
      * @return a PTM summary for the given protein
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
+    public String getConfidentPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1435,9 +1440,9 @@ public class IdentificationFeaturesGenerator {
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
 
         for (int aa = 0; aa < sequence.length(); aa++) {
-            if (psPtmScores != null && !psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+            if (psPtmScores != null && !psPtmScores.getConfidentModificationsAt(aa).isEmpty()) {
                 int index = aa + 1;
-                for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
+                for (String ptm : psPtmScores.getConfidentModificationsAt(aa)) {
                     if (!locations.containsKey(ptm)) {
                         locations.put(ptm, new ArrayList<String>());
                     }
@@ -1521,13 +1526,16 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
-     * of M (M6)
+     * assigned to an amino acid grouped by representative site followed by
+     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
+     * gives Oxidation of M (M6 {M9})
      *
      * @param proteinKey the key of the protein match of interest
      * @param separator the separator used to separate the sites and the number
      * of sites
+     *
      * @return a PTM summary for the given protein
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -1541,14 +1549,17 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
-     * returns 6, 9.
+     * assigned to an amino acid grouped by representative site followed by
+     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
+     * returns M6 {M9}.
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the targeted PTMs, can be null
      * @param separator the separator used to separate the sites and the number
      * of sites
+     *
      * @return a PTM summary for the given protein
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws InterruptedException
@@ -1564,17 +1575,69 @@ public class IdentificationFeaturesGenerator {
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
 
-        for (int aa = 0; aa < sequence.length(); aa++) {
-            if (psPtmScores != null && !psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
-                int index = aa + 1;
-                for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
-                    if (!locations.containsKey(ptm)) {
-                        locations.put(ptm, new ArrayList<String>());
+        if (targetedPtms != null) {
+            for (String ptmName : targetedPtms) {
+                ArrayList<String> ptmReports = new ArrayList<String>();
+                HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
+                ArrayList<Integer> representativeSites = new ArrayList<Integer>(ptmAmbiguousSites.keySet());
+                Collections.sort(representativeSites);
+                for (int representativeSite : representativeSites) {
+                    int site = representativeSite + 1;
+                    StringBuilder report = new StringBuilder();
+                    char aa = sequence.charAt(representativeSite);
+                    report.append(aa).append(site).append(" {");
+                    ArrayList<Integer> secondarySites = ptmAmbiguousSites.get(representativeSite);
+                    Collections.sort(secondarySites);
+                    boolean first = true;
+                    for (int secondarySite : secondarySites) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            report.append(", ");
+                        }
+                        site = secondarySite + 1;
+                        aa = sequence.charAt(secondarySite);
+                        report.append(aa).append(site);
                     }
-                    String report = sequence.charAt(aa) + "" + index;
-                    if (!locations.get(ptm).contains(report)) {
-                        locations.get(ptm).add(report);
+                    report.append("}");
+                    ptmReports.add(report.toString());
+                }
+                locations.put(ptmName, ptmReports);
+            }
+        } else {
+            ArrayList<Integer> representativeSites = new ArrayList<Integer>(psPtmScores.getRepresentativeSites());
+            Collections.sort(representativeSites);
+            for (int representativeSite : representativeSites) {
+                HashMap<Integer, ArrayList<String>> ambiguousSitesForSite = psPtmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+                    int site = representativeSite + 1;
+                    StringBuilder report = new StringBuilder();
+                    char aa = sequence.charAt(representativeSite);
+                    report.append(aa).append(site).append(" {");
+                    ArrayList<Integer> secondarySites = new ArrayList<Integer>(ambiguousSitesForSite.keySet());
+                    Collections.sort(secondarySites);
+                    boolean first = true;
+                    for (int secondarySite : secondarySites) {
+                        if (secondarySite != representativeSite) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            report.append(", ");
+                        }
+                        site = secondarySite + 1;
+                        aa = sequence.charAt(secondarySite);
+                        report.append(aa).append(site);
+                        }
                     }
+                    report.append("}");
+                String reportAsString = report.toString();
+                ArrayList<String> modifications = ambiguousSitesForSite.get(representativeSite);
+                for (String ptmName : modifications) {
+                    ArrayList<String> modificationReports = locations.get(ptmName);
+                    if (modificationReports == null) {
+                        modificationReports = new ArrayList<String>();
+                        locations.put(ptmName, modificationReports);
+                    }
+                    modificationReports.add(reportAsString);
                 }
             }
         }
@@ -1645,10 +1708,6 @@ public class IdentificationFeaturesGenerator {
         }
 
         String resultsAsString = result.toString();
-
-        if (resultsAsString.equalsIgnoreCase("|")) {
-            resultsAsString = "";
-        }
 
         return resultsAsString;
     }
@@ -1673,10 +1732,10 @@ public class IdentificationFeaturesGenerator {
 
         for (int aa = 0; aa < sequence.length(); aa++) {
             result.append(sequence.charAt(aa));
-            if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+            if (!psPtmScores.getConfidentModificationsAt(aa).isEmpty()) {
                 boolean first = true;
                 result.append("<");
-                for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
+                for (String ptm : psPtmScores.getConfidentModificationsAt(aa)) {
                     if (first) {
                         first = false;
                     } else {

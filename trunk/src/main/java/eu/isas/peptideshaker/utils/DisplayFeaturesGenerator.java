@@ -23,7 +23,6 @@ import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import java.awt.Color;
@@ -368,25 +367,15 @@ public class DisplayFeaturesGenerator {
      * PTM tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
+     *
      * @return the tagged peptide sequence
      */
     public String getTaggedPeptideSequence(PeptideMatch peptideMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
-
             Peptide peptide = peptideMatch.getTheoreticPeptide();
-
-            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-            HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
-            HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
-
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-            if (ptmScores != null) {
-                mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayedPTMs);
-                secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayedPTMs);
-            }
-            return Peptide.getTaggedModifiedSequence(modificationProfile,
-                    peptide, mainLocations, secondaryLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+            return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
             return "Error";
@@ -408,19 +397,9 @@ public class DisplayFeaturesGenerator {
     public String getTaggedPeptideSequence(SpectrumMatch spectrumMatch, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
             Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-
-            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
-            HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
-            HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
-
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
-            if (ptmScores != null) {
-                mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayedPTMs);
-                secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayedPTMs);
-            }
-            return Peptide.getTaggedModifiedSequence(modificationProfile,
-                    peptide, mainLocations, secondaryLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
+            return getTaggedPeptideSequence(peptide, ptmScores, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
             exceptionHandler.catchException(e);
             return "Error";
@@ -428,57 +407,31 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns the modified sequence as an tagged string with potential
-     * modification sites color coded or with PTM tags, e.g, &lt;mox&gt;. /!\
-     * This method will work only if the PTM found in the peptide are in the
-     * PTMFactory. /!\ This method uses the modifications as set in the
-     * modification matches of this peptide and displays all of them.
+     * Returns the peptide with modification sites tagged (color coded or with
+     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on the provided PTM
+     * localization scores.
      *
-     * @param peptide the peptide
+     * @param peptide the spectrum match of interest
+     * @param ptmScores the PTM localization scores
      * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
      * PTM tags, e.g, &lt;mox&gt;, are used
-     * @param includeHtmlStartEndTag if true, start and end HTML tags are added
+     * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
-     * @return the tagged sequence as a string
+     *
+     * @return the tagged peptide sequence
      */
-    public String getTaggedPeptideSequence(Peptide peptide, boolean useHtmlColorCoding, boolean includeHtmlStartEndTag, boolean useShortName) {
-
-        HashMap<Integer, ArrayList<String>> mainModificationSites = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> secondaryModificationSites = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> fixedModificationSites = new HashMap<Integer, ArrayList<String>>();
-
-        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-            String modName = modMatch.getTheoreticPtm();
-            if (displayedPTMs.contains(modName)) {
-
-                if (ptmFactory.getPTM(modMatch.getTheoreticPtm()).getType() == PTM.MODAA) { // exclude terminal ptms
-
-                    int modSite = modMatch.getModificationSite();
-
-                    if (modMatch.isVariable()) {
-                        if (modMatch.isConfident()) {
-                            if (!mainModificationSites.containsKey(modSite)) {
-                                mainModificationSites.put(modSite, new ArrayList<String>());
-                            }
-                            mainModificationSites.get(modSite).add(modName);
-                        } else {
-                            if (!secondaryModificationSites.containsKey(modSite)) {
-                                secondaryModificationSites.put(modSite, new ArrayList<String>());
-                            }
-                            secondaryModificationSites.get(modSite).add(modName);
-                        }
-                    } else {
-                        if (!fixedModificationSites.containsKey(modSite)) {
-                            fixedModificationSites.put(modSite, new ArrayList<String>());
-                        }
-                        fixedModificationSites.get(modSite).add(modName);
-                    }
-                }
-            }
+    public String getTaggedPeptideSequence(Peptide peptide, PSPtmScores ptmScores, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
+        if (ptmScores != null) {
+            confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
+            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
+            secondaryAmbiguousLocations = getFilteredAmbiguousModificationsSecondarySites(ptmScores, displayedPTMs);
         }
-
-        return Peptide.getTaggedModifiedSequence(modificationProfile, peptide, mainModificationSites,
-                secondaryModificationSites, fixedModificationSites, useHtmlColorCoding, includeHtmlStartEndTag, useShortName);
+        return Peptide.getTaggedModifiedSequence(modificationProfile,
+                peptide, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
     }
 
     /**
@@ -500,6 +453,90 @@ public class DisplayFeaturesGenerator {
                         result.put(aa, new ArrayList<String>());
                     }
                     result.get(aa).add(ptm);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Exports the confidently localized modification sites in a map: site ->
+     * mapped modifications.
+     *
+     * @param ptmScores the PeptideShaker PTM scores
+     * @param displayedPtms list of PTMs to display
+     *
+     * @return a map of filtered modifications based on the user display
+     * preferences
+     */
+    public static HashMap<Integer, ArrayList<String>> getFilteredConfidentModificationsSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        for (String ptmName : displayedPtms) {
+            for (int confidentSite : ptmScores.getConfidentSitesForPtm(ptmName)) {
+                ArrayList<String> modifications = result.get(confidentSite);
+                if (modifications == null) {
+                    modifications = new ArrayList<String>();
+                    result.put(confidentSite, modifications);
+                }
+                modifications.add(ptmName);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Exports the ambiguously localized modification representative sites in a
+     * map: site -> mapped modifications.
+     *
+     * @param ptmScores the PeptideShaker PTM scores
+     * @param displayedPtms list of PTMs to display
+     *
+     * @return a map of filtered modifications based on the user display
+     * preferences
+     */
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsRepresentativeSites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        for (int representativeSite : ptmScores.getRepresentativeSites()) {
+            for (String ptmName : ptmScores.getPtmsAtRepresentativeSite(representativeSite)) {
+                if (displayedPtms.contains(ptmName)) {
+                    ArrayList<String> modifications = result.get(representativeSite);
+                    if (modifications == null) {
+                        modifications = new ArrayList<String>();
+                        result.put(representativeSite, modifications);
+                    }
+                    modifications.add(ptmName);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Exports the ambiguously localized modification secondary sites in a map:
+     * site -> mapped modifications.
+     *
+     * @param ptmScores the PeptideShaker PTM scores
+     * @param displayedPtms list of PTMs to display
+     *
+     * @return a map of filtered modifications based on the user display
+     * preferences
+     */
+    public static HashMap<Integer, ArrayList<String>> getFilteredAmbiguousModificationsSecondarySites(PSPtmScores ptmScores, ArrayList<String> displayedPtms) {
+        HashMap<Integer, ArrayList<String>> result = new HashMap<Integer, ArrayList<String>>();
+        for (int representativeSite : ptmScores.getRepresentativeSites()) {
+            HashMap<Integer, ArrayList<String>> modificationsAtSite = ptmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+            for (int secondarySite : modificationsAtSite.keySet()) {
+                if (secondarySite != representativeSite) {
+                    for (String ptmName : modificationsAtSite.get(secondarySite)) {
+                        if (displayedPtms.contains(ptmName)) {
+                            ArrayList<String> modifications = result.get(representativeSite);
+                            if (modifications == null) {
+                                modifications = new ArrayList<String>();
+                                result.put(secondarySite, modifications);
+                            }
+                            modifications.add(ptmName);
+                        }
+                    }
                 }
             }
         }

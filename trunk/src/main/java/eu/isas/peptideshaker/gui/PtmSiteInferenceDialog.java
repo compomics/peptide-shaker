@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -8,6 +9,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -42,13 +44,17 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private PTM ptm;
     /**
-     * The peptide scoring.
+     * The PTM factory
      */
-    private PtmScoring peptideScoring = null;
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * The key of the investigated peptide.
+     * The peptide PTM scoring.
      */
-    private String peptideKey;
+    private PSPtmScores peptidePtmScore = null;
+    /**
+     * The peptide match.
+     */
+    private PeptideMatch peptideMatch;
     /**
      * list of psms for this peptide.
      */
@@ -79,22 +85,30 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         this.peptideShakerGUI = peptideShakerGUI;
         this.ptm = ptm;
-        this.peptideKey = peptideKey;
+        double ptmMass = ptm.getMass();
 
         try {
-            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-            PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
-            if (peptideScores != null) {
-                this.peptideScoring = peptideScores.getPtmScoring(ptm.getName());
-                mainSelection = new boolean[Peptide.getSequence(peptideKey).length()];
-                secondarySelection = new boolean[Peptide.getSequence(peptideKey).length()];
-                if (peptideScoring != null) {
-                    for (int aa = 0; aa < Peptide.getSequence(peptideKey).length(); aa++) {
-                        if (peptideScoring.getConfidentPtmLocations().contains(aa + 1)) {
-                            mainSelection[aa] = true;
+            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+            Peptide peptide = peptideMatch.getTheoreticPeptide();
+            peptidePtmScore = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            if (peptidePtmScore != null) {
+
+                mainSelection = new boolean[peptide.getSequence().length()];
+                for (String ptmName : peptidePtmScore.getConfidentlyLocalizedPtms()) {
+                    PTM tempPTM = ptmFactory.getPTM(ptmName);
+                    if (tempPTM.getMass() == ptmMass) {
+                        for (int site : peptidePtmScore.getConfidentSitesForPtm(ptmName)) {
+                            mainSelection[site] = true;
                         }
-                        if (peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
-                            secondarySelection[aa] = true;
+                    }
+                }
+
+                secondarySelection = new boolean[peptide.getSequence().length()];
+                for (String ptmName : peptidePtmScore.getAmbiguouslyLocalizedPtms()) {
+                    PTM tempPTM = ptmFactory.getPTM(ptmName);
+                    if (tempPTM.getMass() == ptmMass) {
+                        for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {
+                            secondarySelection[site] = true;
                         }
                     }
                 }
@@ -111,10 +125,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         initComponents();
 
         setTableProperties();
-
-        if (peptideScoring != null) {
-            peptidePtmConfidence.setSelectedIndex(peptideScoring.getMinimalLocalizationConfidence() + 1);
-        }
 
         // set sequence
         updateSequenceLabel();
@@ -137,7 +147,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private void setTableProperties() {
 
-        peptidePtmConfidence.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ptmSiteTableScrollPane.getViewport().setOpaque(false);
         ptmsTableScrollPane.getViewport().setOpaque(false);
         ptmSiteTable.getTableHeader().setReorderingAllowed(false);
@@ -193,11 +202,14 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void updateSequenceLabel() {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+            ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+            Peptide peptide = peptideMatch.getTheoreticPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-            HashMap<Integer, ArrayList<String>> mainLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences.getDisplayedPtms());
-            HashMap<Integer, ArrayList<String>> secondaryLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> confidentLocations = DisplayFeaturesGenerator.getFilteredConfidentModificationsSites(ptmScores, displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedPtms());
+            HashMap<Integer, ArrayList<String>> secondaryAmbiguousLocations = DisplayFeaturesGenerator.getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayPreferences.getDisplayedPtms());
 
             String modName = ptm.getName();
             int aa;
@@ -205,32 +217,33 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             for (int i = 0; i < mainSelection.length; i++) {
                 aa = i + 1;
                 if (mainSelection[i]) {
-                    if (!mainLocations.containsKey(aa)) {
-                        mainLocations.put(aa, new ArrayList<String>());
+                    if (!confidentLocations.containsKey(aa)) {
+                        confidentLocations.put(aa, new ArrayList<String>());
                     }
-                    if (!mainLocations.get(aa).contains(modName)) {
-                        mainLocations.get(aa).add(modName);
+                    if (!confidentLocations.get(aa).contains(modName)) {
+                        confidentLocations.get(aa).add(modName);
                     }
                 } else {
-                    if (mainLocations.containsKey(aa) && mainLocations.get(aa).contains(modName)) {
-                        mainLocations.get(aa).remove(modName);
+                    if (confidentLocations.containsKey(aa) && confidentLocations.get(aa).contains(modName)) {
+                        confidentLocations.get(aa).remove(modName);
                     }
                 }
                 if (secondarySelection[i]) {
-                    if (!secondaryLocations.containsKey(aa)) {
-                        secondaryLocations.put(aa, new ArrayList<String>());
+                    if (!representativeAmbiguousLocations.containsKey(aa)) {
+                        representativeAmbiguousLocations.put(aa, new ArrayList<String>());
                     }
-                    if (!secondaryLocations.get(aa).contains(modName)) {
-                        secondaryLocations.get(aa).add(modName);
+                    if (!representativeAmbiguousLocations.get(aa).contains(modName)) {
+                        representativeAmbiguousLocations.get(aa).add(modName);
                     }
                 } else {
-                    if (secondaryLocations.containsKey(aa) && secondaryLocations.get(aa).contains(modName)) {
-                        secondaryLocations.get(aa).remove(modName);
+                    if (representativeAmbiguousLocations.containsKey(aa) && representativeAmbiguousLocations.get(aa).contains(modName)) {
+                        representativeAmbiguousLocations.get(aa).remove(modName);
                     }
                 }
             }
 
-            sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch.getTheoreticPeptide(), true, true, true));
+            sequenceLabel.setText(Peptide.getTaggedModifiedSequence(modificationProfile,
+                    peptide, confidentLocations, representativeAmbiguousLocations, secondaryAmbiguousLocations, fixedModifications, true, true, true));
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             sequenceLabel.setText("Error");
@@ -249,7 +262,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return Peptide.getSequence(peptideKey).length() + 1;
+            
+            return peptideMatch.getTheoreticPeptide().getSequence().length() + 1;
         }
 
         @Override
@@ -258,7 +272,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return "";
                 default:
-                    return "" + Peptide.getSequence(peptideKey).charAt(column - 1) + column;
+                    return "" + peptideMatch.getTheoreticPeptide().getSequence().charAt(column - 1) + column;
             }
         }
 
@@ -298,6 +312,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public void setValueAt(Object aValue, int row, int column) {
+            
             if (row == 0) {
                 mainSelection[column - 1] = !mainSelection[column - 1];
                 if (mainSelection[column - 1] && secondarySelection[column - 1]) {
@@ -328,7 +343,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return Peptide.getSequence(peptideKey).length() + 1;
+            return peptideMatch.getTheoreticPeptide().getSequence().length() + 1;
         }
 
         @Override
@@ -337,7 +352,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return "";
                 default:
-                    return "" + Peptide.getSequence(peptideKey).charAt(column - 1) + column;
+                    return "" + peptideMatch.getTheoreticPeptide().getSequence().charAt(column - 1) + column;
             }
         }
 
@@ -391,9 +406,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         backgroundPanel = new javax.swing.JPanel();
         peptidePanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        peptidePtmConfidence = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
         sequenceLabel = new javax.swing.JLabel();
         ptmSitePanel = new javax.swing.JPanel();
         ptmSiteTableScrollPane = new javax.swing.JScrollPane();
@@ -412,12 +424,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         peptidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide"));
         peptidePanel.setOpaque(false);
 
-        jLabel1.setText("Site Assignment Confidence:");
-
-        peptidePtmConfidence.setModel(new DefaultComboBoxModel(PtmScoring.getPossibleConfidenceLevels()));
-
-        jLabel2.setText("Sequence:");
-
         sequenceLabel.setText("Peptide Sequence");
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
@@ -425,26 +431,16 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         peptidePanelLayout.setHorizontalGroup(
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(peptidePtmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(183, 183, 183)
                 .addComponent(sequenceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(225, 225, 225))
         );
         peptidePanelLayout.setVerticalGroup(
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(peptidePtmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sequenceLabel)
-                    .addComponent(jLabel2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(sequenceLabel)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         ptmSitePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Potential Modification Sites"));
@@ -481,7 +477,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             .addGroup(ptmSitePanelLayout.createSequentialGroup()
                 .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2)
-                .addComponent(ptmsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                .addComponent(ptmsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -588,46 +584,10 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         boolean changed = false;
         int aa;
 
-        for (int i = 0; i < mainSelection.length; i++) {
-            aa = i + 1;
-            if (mainSelection[i]) {
-                if (!peptideScoring.getConfidentPtmLocations().contains(aa)) {
-                    peptideScoring.setSiteConfidence(aa, PtmScoring.CONFIDENT);
-                    changed = true;
-                }
-            } else {
-                if (peptideScoring.getConfidentPtmLocations().contains(aa)) {
-                    peptideScoring.setSiteConfidence(aa, PtmScoring.DOUBTFUL);
-                    changed = true;
-                }
-            }
-            if (secondarySelection[i]) {
-                if (!peptideScoring.getSecondaryPtmLocations().contains(aa)) {
-                    peptideScoring.setSiteConfidence(aa, PtmScoring.DOUBTFUL);
-                    changed = true;
-                }
-            } else {
-                if (peptideScoring.getSecondaryPtmLocations().contains(aa)) {
-                    peptideScoring.setSiteConfidence(aa, PtmScoring.CONFIDENT);
-                    changed = true;
-                }
-            }
-        }
 
         if (changed) {
             try {
                 // save changes in the peptide match
-                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
-                scores.addPtmScoring(ptm.getName(), peptideScoring);
-
-                for (int mainLocation : peptideScoring.getConfidentPtmLocations()) {
-                    scores.addMainModificationSite(ptm.getName(), mainLocation);
-                }
-
-                for (int secondaryLocation : peptideScoring.getSecondaryPtmLocations()) {
-                    scores.addSecondaryModificationSite(ptm.getName(), secondaryLocation);
-                }
 
                 peptideShakerGUI.getIdentification().updatePeptideMatch(peptideMatch);
 
@@ -694,12 +654,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JButton okButton;
     private javax.swing.JButton openDialogHelpJButton;
     private javax.swing.JPanel peptidePanel;
-    private javax.swing.JComboBox peptidePtmConfidence;
     private javax.swing.JPanel ptmSitePanel;
     private javax.swing.JTable ptmSiteTable;
     private javax.swing.JScrollPane ptmSiteTableScrollPane;

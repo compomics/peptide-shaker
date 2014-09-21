@@ -354,7 +354,7 @@ public class ProteinSection {
             case confidence:
                 return psParameter.getProteinConfidence() + "";
             case confident_PTMs:
-                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, separator);
             case other_PTMs:
                 return identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator);
             case confident_phosphosites:
@@ -364,7 +364,7 @@ public class ProteinSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, separator);
             case other_phosphosites:
                 modifications = new ArrayList<String>();
                 for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
@@ -372,7 +372,7 @@ public class ProteinSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, separator);
             case coverage:
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
