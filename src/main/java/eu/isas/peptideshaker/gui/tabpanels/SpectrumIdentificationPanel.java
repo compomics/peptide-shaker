@@ -4,9 +4,11 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
@@ -52,6 +54,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
@@ -2699,8 +2702,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
 
-                    int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
-                    int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
+                    SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+                    int forwardIon = searchParameters.getIonSearched1();
+                    int rewindIon = searchParameters.getIonSearched2();
+                    ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
                     if (currentSpectrum != null && tempSpectrumPanel != null) {
 
@@ -2713,13 +2718,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     currentSpectrumKey = spectrumMatch.getKey();
                                     if (currentAssumption instanceof PeptideAssumption) {
                                         PeptideAssumption currentPeptideAssumption = (PeptideAssumption) currentAssumption;
+                                        Peptide peptide = currentPeptideAssumption.getPeptide();
                                         annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
                                                 peptideShakerGUI.getSequenceMatchingPreferences());
                                         ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                                 annotationPreferences.getNeutralLosses(),
                                                 annotationPreferences.getValidatedCharges(),
                                                 currentPeptideAssumption.getIdentificationCharge().value,
-                                                currentSpectrum, currentPeptideAssumption.getPeptide(),
+                                                currentSpectrum, peptide,
                                                 currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                                 annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
 
@@ -2729,15 +2735,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         tempSpectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
                                         // add de novo sequencing
-                                        tempSpectrumPanel.addAutomaticDeNovoSequencing(currentPeptideAssumption.getPeptide(), annotations,
+                                        tempSpectrumPanel.addAutomaticDeNovoSequencing(peptide, annotations,
                                                 forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                                                 annotationPreferences.showForwardIonDeNovoTags(),
                                                 annotationPreferences.showRewindIonDeNovoTags());
 
-                                        peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, currentPeptideAssumption.getPeptide().getModificationMatches());
+                                        peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, peptide.getModificationMatches());
 
                                         // update the spectrum title
-                                        String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptideAssumption.getPeptide(), false, false, true);
+                                        String modifiedSequence = peptide.getTaggedModifiedSequence(modificationProfile, false, false, true);
                                         ((TitledBorder) spectrumPanel.getBorder()).setTitle(
                                                 PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                                                 + "Spectrum & Fragment Ions (" + modifiedSequence
@@ -3210,7 +3216,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                             if (spectrumMatch.getBestPeptideAssumption() != null) {
-                                return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestPeptideAssumption().getPeptide(), true, true, true);
+                                return displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 //TODO: include fixed ptms
                                 return spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), true, true, true, false, false);
@@ -3428,12 +3434,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         String sequence;
         if (currentAssumption instanceof PeptideAssumption) {
-            PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
-            sequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), true, true, true);
+            SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            Peptide peptide = ((PeptideAssumption) currentAssumption).getPeptide();
+            sequence = peptide.getTaggedModifiedSequence(modificationProfile, true, true, true);
             if (addRowAtBottom) {
-                searchResultsTablePeptideTooltips.add(peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
+                searchResultsTablePeptideTooltips.add(peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide));
             } else {
-                searchResultsTablePeptideTooltips.add(currentRowNumber, peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideAssumption.getPeptide()));
+                searchResultsTablePeptideTooltips.add(currentRowNumber, peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide));
             }
         } else if (currentAssumption instanceof TagAssumption) {
             TagAssumption tagAssumption = (TagAssumption) currentAssumption;

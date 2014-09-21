@@ -4170,7 +4170,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 PSPtmScores psPtmScores = new PSPtmScores();
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
 
                 String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
                 psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
@@ -4211,7 +4210,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 0; aa < sequence.length(); aa++) {
 
                     String ptmName = fixedPtms.get(aa);
-                    for (String variablePTM : psPtmScores.getMainModificationsAt(aa)) {
+                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa)) {
+                        if (displayPreferences.isDisplayedPTM(variablePTM)) {
+                            ptmName = variablePTM;
+                            break;
+                        }
+                    }
+                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
@@ -4426,7 +4431,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             // create the sequence fragment ion view
                             secondarySpectrumPlotsJPanel.removeAll();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                                    peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), false, false, false),
+                                    peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, false),
                                     annotations, true, peptideShakerGUI.getSearchParameters().getModificationProfile(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
@@ -5188,7 +5193,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String spectrumKey = psmKeys.get(psmIndex);
 
                 try {
-                    PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestPeptideAssumption();
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                     if (!before.equals("")) {
                         before += " - ";
@@ -5196,8 +5202,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (!after.equals("")) {
                         after = " - " + after;
                     }
-                    // filter ptms??
-                    String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideAssumption.getPeptide(), false, false, true);
+                    String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, true);
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Spectrum & Fragment Ions (" + before + modifiedSequence + after

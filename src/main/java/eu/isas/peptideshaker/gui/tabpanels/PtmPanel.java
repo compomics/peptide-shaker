@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -23,10 +24,9 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
-import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -3887,8 +3887,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
-                int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
-                int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
+                SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+                int forwardIon = searchParameters.getIonSearched1();
+                int rewindIon = searchParameters.getIonSearched2();
 
                 // add de novo sequencing
                 spectrum.addAutomaticDeNovoSequencing(peptide, annotations,
@@ -3902,7 +3903,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                         + "Spectrum & Fragment Ions ("
-                        + peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptide, false, false, true)
+                        + peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch, false, false, true)
                         + ")"
                         + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
@@ -3923,16 +3924,16 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param scores The PTM scores
      * @return The modification profile
      */
-    private ArrayList<ModificationProfile> getModificationProfile(Peptide peptide, PSPtmScores scores) {
-        ArrayList<ModificationProfile> profiles = new ArrayList<ModificationProfile>();
+    private ArrayList<com.compomics.util.gui.protein.ModificationProfile> getModificationProfile(Peptide peptide, PSPtmScores scores) {
+        ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<com.compomics.util.gui.protein.ModificationProfile>();
         if (scores != null) {
             for (String ptmName : scores.getScoredPTMs()) {
                 Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
-                ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
+                com.compomics.util.gui.protein.ModificationProfile tempProfile = new com.compomics.util.gui.protein.ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
                 for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
-                    tempProfile.getProfile()[aa - 1][ModificationProfile.SCORE_1_ROW_INDEX] = locationScoring.getDeltaScore(aa);
-                    tempProfile.getProfile()[aa - 1][ModificationProfile.SCORE_2_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
+                    tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_1_ROW_INDEX] = locationScoring.getDeltaScore(aa);
+                    tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_2_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
                 }
 
                 profiles.add(tempProfile);
@@ -4395,7 +4396,7 @@ public class PtmPanel extends javax.swing.JPanel {
         try {
             PSPtmScores scores = new PSPtmScores();
             scores = (PSPtmScores) peptideMatch.getUrParam(scores);
-            ArrayList<ModificationProfile> profiles = getModificationProfile(peptideMatch.getTheoreticPeptide(), scores);
+            ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = getModificationProfile(peptideMatch.getTheoreticPeptide(), scores);
 
             SequenceModificationPanel sequenceModificationPanel
                     = new SequenceModificationPanel(peptideMatch.getTheoreticPeptide().getNTerminal() + "-"
