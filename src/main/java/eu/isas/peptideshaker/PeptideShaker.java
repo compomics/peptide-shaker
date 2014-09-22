@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
-import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -9,61 +8,41 @@ import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
-import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.filtering.AssumptionFilter;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.ProteinInference;
-import eu.isas.peptideshaker.ptm.PtmLocalizer;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.*;
 import eu.isas.peptideshaker.scoring.psm_scoring.PsmScorer;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import javax.swing.RowFilter;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class will be responsible for the identification import and the
@@ -377,8 +356,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-        PtmLocalizer ptmLocalizer = new PtmLocalizer();
-        ptmLocalizer.peptideInference(identification, ptmScorer, ptmScoringPreferences, searchParameters, sequenceMatchingPreferences, waitingHandler);
+        ptmScorer.peptideInference(identification, ptmScoringPreferences, searchParameters, sequenceMatchingPreferences, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
