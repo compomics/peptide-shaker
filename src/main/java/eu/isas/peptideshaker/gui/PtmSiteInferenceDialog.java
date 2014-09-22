@@ -46,7 +46,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private PTM ptm;
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**

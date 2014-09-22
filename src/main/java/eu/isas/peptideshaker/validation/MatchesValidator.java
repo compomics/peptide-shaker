@@ -42,12 +42,11 @@ import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class validates the quality of identification matches
+ * This class validates the quality of identification matches.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class MatchesValidator {
-
 
     /**
      * The PSM target decoy map.
@@ -62,17 +61,17 @@ public class MatchesValidator {
      */
     private ProteinMap proteinMap;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The protein sequence factory
+     * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param psmMap the PSM target decoy map
      * @param peptideMap the peptide target decoy map
      * @param proteinMap the protein target decoy map
@@ -82,11 +81,16 @@ public class MatchesValidator {
         this.peptideMap = peptideMap;
         this.proteinMap = proteinMap;
     }
+
     /**
-     * Validates the identification matches comprised in an identification object based on the target/decoy strategy and quality control metrics based on given FDR thresholds.
+     * Validates the identification matches comprised in an identification
+     * object based on the target/decoy strategy and quality control metrics
+     * based on given FDR thresholds.
      *
-     * @param identification the identification class containing the matches to validate
-     * @param metrics if provided, metrics on fractions will be saved while iterating the matches
+     * @param identification the identification class containing the matches to
+     * validate
+     * @param metrics if provided, metrics on fractions will be saved while
+     * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param aPSMFDR Accepted FDR at Peptide-Spectrum-Match level (e.g. '1.0'
      * for 1% FDR)
@@ -100,7 +104,8 @@ public class MatchesValidator {
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences,
+    public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
+            double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences,
             AnnotationPreferences annotationPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
 
         waitingHandler.setWaitingText("Finding FDR thresholds. Please Wait...");
@@ -167,7 +172,8 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
         try {
-            validateIdentifications(identification, metrics, inputMap, waitingHandler, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences);
+            validateIdentifications(identification, metrics, inputMap, waitingHandler, 
+                    identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while validating the results.", true, true);
             waitingHandler.setRunCanceled();
@@ -178,10 +184,13 @@ public class MatchesValidator {
     }
 
     /**
-     * This method validates the identification matches of an identification object. Target Decoy thresholds must be set.
+     * This method validates the identification matches of an identification
+     * object. Target Decoy thresholds must be set.
      *
-     * @param identification the identification class containing  the matches to validate
-     * @param metrics if provided, metrics on fractions will be saved while iterating the matches
+     * @param identification the identification class containing the matches to
+     * validate
+     * @param metrics if provided, metrics on fractions will be saved while
+     * iterating the matches
      * @param inputMap the target decoy map of all search engine scores
      * @param waitingHandler the progress bar
      * @param identificationFeaturesGenerator an identification features
@@ -196,13 +205,17 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      * @throws InterruptedException
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap, WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
-        
+    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap, 
+            WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
+            SequenceMatchingPreferences sequenceMatchingPreferences) 
+            throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
+
         PSParameter psParameter = new PSParameter();
         PSParameter psParameter2 = new PSParameter();
 
         if (waitingHandler != null) {
-        waitingHandler.setWaitingText("Matches validation. Please Wait...");
+            waitingHandler.setWaitingText("Matches validation. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
@@ -278,7 +291,7 @@ public class MatchesValidator {
                     }
                 }
 
-                // Go through the peptide assumptions
+                // go through the peptide assumptions
                 if (inputMap != null) { //backward compatibility check
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
@@ -308,7 +321,7 @@ public class MatchesValidator {
                 }
             }
 
-            // Check if we should narrow the mass accuracy window, if yes, do a second pass validation
+            // check if we should narrow the mass accuracy window, if yes, do a second pass validation
             if (!precursorMzDeviations.isEmpty()) {
 
                 NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
@@ -589,12 +602,12 @@ public class MatchesValidator {
         }
 
         if (metrics != null) {
-        // set the max values in the metrics
-        metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
-        metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
-        metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
-        metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
-        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
+            // set the max values in the metrics
+            metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
+            metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
+            metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
+            metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
+            metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
         }
     }
 
@@ -848,8 +861,8 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PsmSpecificMap psmMap, String spectrumKey) throws SQLException,
-            IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, 
+            PsmSpecificMap psmMap, String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
@@ -1173,17 +1186,20 @@ public class MatchesValidator {
     /**
      * Fills the peptide specific map.
      *
-     * @param identification the identification class containing the matches to validate
-     * @param metrics if provided fraction information and found modifications will be saved while iterating the matches
+     * @param identification the identification class containing the matches to
+     * validate
+     * @param metrics if provided fraction information and found modifications
+     * will be saved while iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.lang.InterruptedException
      */
-    public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
+            SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
@@ -1253,10 +1269,10 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
         if (metrics != null) {
-        // set the fraction psm matches
-        metrics.setFractionPsmMatches(fractionPsmMatches);
-        // set the ptms
-        metrics.setFoundModifications(foundModifications);
+            // set the fraction psm matches
+            metrics.setFractionPsmMatches(fractionPsmMatches);
+            // set the ptms
+            metrics.setFoundModifications(foundModifications);
         }
     }
 
@@ -1264,10 +1280,16 @@ public class MatchesValidator {
      * Attaches the peptide posterior error probabilities to the peptide
      * matches.
      *
-     * @param identification the identification class containing the matches to validate
+     * @param identification the identification class containing the matches to
+     * validate
      * @param waitingHandler the handler displaying feedback to the user
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
      */
-    public void attachPeptideProbabilities(Identification identification, WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void attachPeptideProbabilities(Identification identification, WaitingHandler waitingHandler) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Peptide Probabilities. Please Wait...");
 
@@ -1309,8 +1331,10 @@ public class MatchesValidator {
     /**
      * Fills the protein map.
      *
-     * @param identification the identification class containing the matches to validate
+     * @param identification the identification class containing the matches to
+     * validate
      * @param waitingHandler the handler displaying feedback to the user
+     * @throws java.lang.Exception
      */
     public void fillProteinMap(Identification identification, WaitingHandler waitingHandler) throws Exception {
 
@@ -1375,12 +1399,18 @@ public class MatchesValidator {
     /**
      * Attaches the protein posterior error probability to the protein matches.
      *
-     * @param identification the identification class containing the matches to validate
+     * @param identification the identification class containing the matches to
+     * validate
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
      * @param processingPreferences
+     * @throws java.sql.SQLException
+     * @throws java.io.IOException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.InterruptedException
      */
-    public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
+            ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -1432,8 +1462,8 @@ public class MatchesValidator {
         }
 
         if (metrics != null) {
-        // set the observed fractional molecular weights per fraction
-        metrics.setObservedFractionalMassesAll(fractionMW);
+            // set the observed fractional molecular weights per fraction
+            metrics.setObservedFractionalMassesAll(fractionMW);
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -1441,7 +1471,7 @@ public class MatchesValidator {
 
     /**
      * Returns the PSM scoring specific map.
-     * 
+     *
      * @return the PSM scoring specific map
      */
     public PsmSpecificMap getPsmMap() {
@@ -1450,7 +1480,7 @@ public class MatchesValidator {
 
     /**
      * Sets the PSM scoring specific map.
-     * 
+     *
      * @param psmMap the PSM scoring specific map
      */
     public void setPsmMap(PsmSpecificMap psmMap) {
@@ -1459,7 +1489,7 @@ public class MatchesValidator {
 
     /**
      * Returns the peptide scoring specific map.
-     * 
+     *
      * @return the peptide scoring specific map
      */
     public PeptideSpecificMap getPeptideMap() {
@@ -1468,7 +1498,7 @@ public class MatchesValidator {
 
     /**
      * Sets the peptide scoring specific map.
-     * 
+     *
      * @param peptideMap the peptide scoring specific map
      */
     public void setPeptideMap(PeptideSpecificMap peptideMap) {
@@ -1477,7 +1507,7 @@ public class MatchesValidator {
 
     /**
      * Returns the protein scoring map.
-     * 
+     *
      * @return the protein scoring map
      */
     public ProteinMap getProteinMap() {
@@ -1486,12 +1516,10 @@ public class MatchesValidator {
 
     /**
      * Sets the protein scoring map.
-     * 
+     *
      * @param proteinMap the protein scoring map
      */
     public void setProteinMap(ProteinMap proteinMap) {
         this.proteinMap = proteinMap;
     }
-    
-    
 }
