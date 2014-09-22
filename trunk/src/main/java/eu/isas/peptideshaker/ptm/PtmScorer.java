@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -19,7 +18,6 @@ import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -43,22 +41,23 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class scores the PSM PTMs using the scores implemented in compomics utilities
+ * This class scores the PSM PTMs using the scores implemented in compomics
+ * utilities.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PtmScorer {
 
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The protein sequence factory
+     * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
@@ -67,17 +66,19 @@ public class PtmScorer {
     private PsmPTMMap psmPTMMap;
 
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param psmPTMMap the PSM PTM score map
      */
     public PtmScorer(PsmPTMMap psmPTMMap) {
         this.psmPTMMap = psmPTMMap;
     }
+
     /**
      * Scores the PTM locations using the delta score.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param spectrumMatch the spectrum match of interest
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
@@ -199,7 +200,8 @@ public class PtmScorer {
     /**
      * Attaches the selected probabilistic PTM score.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param spectrumMatch the spectrum match studied, the A-score will be
      * calculated for the best assumption
      * @param searchParameters the identification parameters
@@ -209,7 +211,8 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * computing the score
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
@@ -321,14 +324,15 @@ public class PtmScorer {
     /**
      * Attaches scores to possible PTM locations to spectrum matches.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param psmSpecificMap the PSM specific target/decoy scoring map
      * @param inspectedSpectra the spectra to inspect
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the prm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws Exception
@@ -356,7 +360,8 @@ public class PtmScorer {
     /**
      * Scores PTM locations for a desired spectrumMatch.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param spectrumMatch The spectrum match of interest
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -510,7 +515,7 @@ public class PtmScorer {
      * Computes the statistics on localization confidence (beta).
      *
      * @param waitingHandler waiting handler displaying progress to the user
-     * 
+     *
      * @param psmError the desired PSM localization error rate
      */
     public void computeLocalizationStatistics(WaitingHandler waitingHandler, double psmError) {
@@ -539,7 +544,8 @@ public class PtmScorer {
     /**
      * Scores the PTMs for a peptide match.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param peptideMatch the peptide match of interest
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -549,7 +555,8 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
-    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
+    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
@@ -631,15 +638,16 @@ public class PtmScorer {
     }
 
     /**
-     * Scores ptms in a protein match.
+     * Scores PTMs in a protein match.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param proteinMatch the protein match
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
      * @param scorePeptides if true peptide scores will be recalculated
-     * @param ptmScoringPreferences the prm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws Exception exception thrown whenever an error occurred while
@@ -697,11 +705,12 @@ public class PtmScorer {
         proteinMatch.addUrParam(proteinScores);
         identification.updateProteinMatch(proteinMatch);
     }
-    
+
     /**
      * Scores the PTMs of all PSMs contained in an identification object.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -712,7 +721,8 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
 
@@ -737,9 +747,11 @@ public class PtmScorer {
     }
 
     /**
-     * Scores the PTMs of all peptide matches contained in an identification object.
+     * Scores the PTMs of all peptide matches contained in an identification
+     * object.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -773,10 +785,13 @@ public class PtmScorer {
     }
 
     /**
-     * Scores the PTMs of all protein matches contained in an identification object.
+     * Scores the PTMs of all protein matches contained in an identification
+     * object.
      *
-     * @param identification identification object containing the identification matches
-     * @param metrics if provided, metrics on proteins will be saved while iterating the matches
+     * @param identification identification object containing the identification
+     * matches
+     * @param metrics if provided, metrics on proteins will be saved while
+     * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -787,15 +802,19 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
         scoreProteinPtms(identification, metrics, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, new IdFilter(), null, sequenceMatchingPreferences);
     }
 
     /**
-     * Scores the PTMs of all protein matches contained in an identification object.
+     * Scores the PTMs of all protein matches contained in an identification
+     * object.
      *
-     * @param identification identification object containing the identification matches
-     * @param metrics if provided, metrics on proteins will be saved while iterating the matches
+     * @param identification identification object containing the identification
+     * matches
+     * @param metrics if provided, metrics on proteins will be saved while
+     * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
      * tolerances
@@ -865,7 +884,7 @@ public class PtmScorer {
 
     /**
      * Returns the PSM PTM map.
-     * 
+     *
      * @return the PSM PTM map
      */
     public PsmPTMMap getPsmPTMMap() {
@@ -874,12 +893,10 @@ public class PtmScorer {
 
     /**
      * Sets the PSM PTM map.
-     * 
+     *
      * @param psmPTMMap the PSM PTM map
      */
     public void setPsmPTMMap(PsmPTMMap psmPTMMap) {
         this.psmPTMMap = psmPTMMap;
     }
-    
-    
 }

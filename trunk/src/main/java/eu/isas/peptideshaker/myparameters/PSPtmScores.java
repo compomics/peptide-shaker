@@ -33,7 +33,7 @@ public class PSPtmScores implements UrParameter {
     private HashMap<Integer, ArrayList<String>> mainModificationSites = null;
     /**
      * A map of all confident modifications in a sequence indexed by ptm: PTM
-     * name -> sites
+     * name -> sites.
      */
     private HashMap<String, ArrayList<Integer>> confidentModificationsByPTM = null;
     /**
@@ -44,17 +44,17 @@ public class PSPtmScores implements UrParameter {
     private HashMap<Integer, ArrayList<String>> secondaryModificationSites = null;
     /**
      * A list of all ambiguous modifications in a sequence: representative site
-     * -> secondary site -> PTM names
+     * -> secondary site -> PTM names.
      */
     private HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousModificationsByRepresentativeSite = null;
     /**
      * Map of the representative sites a secondary site can map to: secondary
-     * site -> representative sites
+     * site -> representative sites.
      */
     private HashMap<Integer, ArrayList<Integer>> secondaryToRepresentativesSitesMap = null;
     /**
-     * A map of all ambiguous modifications in a sequence indexed by ptm: PTM
-     * name -> representative site -> secondary sites
+     * A map of all ambiguous modifications in a sequence indexed by PTM: PTM
+     * name -> representative site -> secondary sites.
      */
     private HashMap<String, HashMap<Integer, ArrayList<Integer>>> ambiguousModificationsByPTM = null;
 

@@ -28,23 +28,23 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * This class localizes the PTMs based on PTM localization scores
+ * This class localizes the PTMs based on PTM localization scores.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PtmLocalizer {
-    
+
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
-    
 
     /**
      * Infers the PTM localization and its confidence for the best match of
-     * every spectrum
+     * every spectrum.
      *
-     * @param identification identification object containing the identification matches
+     * @param identification identification object containing the identification
+     * matches
      * @param ptmScorer the PTM scorer used to score PTM sites
      * @param waitingHandler waiting handler displaying progress to the user
      * @param ptmScoringPreferences the PTM scoring preferences
@@ -62,7 +62,8 @@ public class PtmLocalizer {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void peptideInference(Identification identification, PtmScorer ptmScorer, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+    public void peptideInference(Identification identification, PtmScorer ptmScorer, PTMScoringPreferences ptmScoringPreferences,
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
             throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Peptide Inference. Please Wait...");
@@ -143,6 +144,7 @@ public class PtmLocalizer {
                 }
             }
         }
+
         // try to infer the modification site based on any related peptide
         for (String spectrumFile : notConfidentPeptideInference.keySet()) {
 
@@ -151,7 +153,6 @@ public class PtmLocalizer {
             for (String modification : notConfidentPeptideInference.get(spectrumFile).keySet()) {
 
                 ArrayList<String> spectrumKeys = notConfidentPeptideInference.get(spectrumFile).get(modification);
-
                 identification.loadSpectrumMatches(spectrumKeys, null);
 
                 for (String spectrumKey : spectrumKeys) {
@@ -196,6 +197,7 @@ public class PtmLocalizer {
                                 }
                             }
                         }
+
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help. That is uggly but the results should be cool.
                             for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
@@ -254,7 +256,8 @@ public class PtmLocalizer {
                                 }
                             }
                         }
-                        // Map the most likely inferred sites
+
+                        // map the most likely inferred sites
                         if (!newLocalizationCandidates.isEmpty()) {
                             HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -281,9 +284,11 @@ public class PtmLocalizer {
                         }
                         identification.updateSpectrumMatch(spectrumMatch);
                     }
+
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
+
                     if (!progress.contains(spectrumKey)) {
                         progress.add(spectrumKey);
                         waitingHandler.increaseSecondaryProgressCounter();
@@ -311,7 +316,8 @@ public class PtmLocalizer {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PtmScorer ptmScorer, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private void ptmInference(SpectrumMatch spectrumMatch, PtmScorer ptmScorer, PTMScoringPreferences ptmScoringPreferences,
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         PsmPTMMap psmPTMMap = ptmScorer.getPsmPTMMap();
@@ -320,6 +326,7 @@ public class PtmLocalizer {
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         HashMap<Double, ArrayList<ModificationMatch>> modMatchesMap = new HashMap<Double, ArrayList<ModificationMatch>>();
         HashMap<Double, HashMap<Integer, String>> possiblePositions = new HashMap<Double, HashMap<Integer, String>>();
+
         for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 String modName = modificationMatch.getTheoreticPtm();
@@ -353,12 +360,14 @@ public class PtmLocalizer {
         }
 
         for (double ptmMass : modMatchesMap.keySet()) {
+
             ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
             HashMap<Integer, String> ptmPotentialSites = possiblePositions.get(ptmMass);
             HashMap<Double, ArrayList<Integer>> scoreToAmbiguousSitesMap = new HashMap<Double, ArrayList<Integer>>();
             HashMap<Integer, ArrayList<String>> temporaryAmbiguousSites = new HashMap<Integer, ArrayList<String>>();
             HashMap<String, ArrayList<Integer>> confidentSites = new HashMap<String, ArrayList<Integer>>();
             int nPTMs = ptmMatches.size();
+
             if (ptmPotentialSites.size() < ptmMatches.size()) {
                 throw new IllegalArgumentException("The occurence of modification of mass " + ptmMass + " (" + ptmMatches.size()
                         + ") is higher than the number of possible sites (" + ptmPotentialSites.size() + ") on sequence " + psPeptide.getSequence()
@@ -505,7 +514,8 @@ public class PtmLocalizer {
                     }
                 }
             }
-            // Select the best scoring ambiguous sites as representative PTM sites
+
+            // select the best scoring ambiguous sites as representative PTM sites
             ArrayList<Double> scores = new ArrayList<Double>(scoreToAmbiguousSitesMap.keySet());
             Collections.sort(scores, Collections.reverseOrder());
             ArrayList<Integer> ambiguousRepresentativeSites = new ArrayList<Integer>();
@@ -522,7 +532,8 @@ public class PtmLocalizer {
                     break;
                 }
             }
-            // Map ambiguous sites to their closest representative site
+
+            // map ambiguous sites to their closest representative site
             HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousSiteMap = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
             for (Integer site : temporaryAmbiguousSites.keySet()) {
                 Integer distance = null;
@@ -543,7 +554,8 @@ public class PtmLocalizer {
                 }
                 representativeSiteSites.put(site, temporaryAmbiguousSites.get(site));
             }
-            // Store PTM site confidence in the PTMScores object
+
+            // store PTM site confidence in the PTMScores object
             for (String ptmName : confidentSites.keySet()) {
                 for (int site : confidentSites.get(ptmName)) {
                     ptmScores.addConfidentModificationSite(ptmName, site);
@@ -558,5 +570,4 @@ public class PtmLocalizer {
             }
         }
     }
-
 }

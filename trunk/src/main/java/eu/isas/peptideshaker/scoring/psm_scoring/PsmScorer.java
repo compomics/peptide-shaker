@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.scoring.psm_scoring;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -30,16 +29,16 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 /**
  * This class scores peptide spectrum matches.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PsmScorer {
 
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The protein sequence factory
+     * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
@@ -150,7 +149,7 @@ public class PsmScorer {
     }
 
     /**
-     * Estimates the probabilities associated to the intermediate psm scores.
+     * Estimates the probabilities associated to the intermediate PSM scores.
      *
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
@@ -207,7 +206,8 @@ public class PsmScorer {
      * @throws ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+    public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, 
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);

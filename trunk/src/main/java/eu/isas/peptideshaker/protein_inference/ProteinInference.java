@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.protein_inference;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -22,9 +21,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * This class groups the methods for protein inference
+ * This class groups the methods for protein inference.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ProteinInference {
 
@@ -45,7 +44,7 @@ public class ProteinInference {
      */
     private int explainedGroup = 0;
     /**
-     * The protein sequence factory
+     * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
@@ -64,7 +63,9 @@ public class ProteinInference {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void removeRedundantGroups(Identification identification, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    public void removeRedundantGroups(Identification identification, SearchParameters searchParameters,
+            SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         ArrayList<String> toRemove = new ArrayList<String>();
         int max = identification.getProteinIdentification().size();
@@ -158,7 +159,8 @@ public class ProteinInference {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, HashSet<String> keysToDelete, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys,
+            HashSet<String> keysToDelete, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
@@ -187,12 +189,14 @@ public class ProteinInference {
                 }
             }
         }
+
         ArrayList<String> keys = new ArrayList<String>();
         for (String accession : candidateUnique) {
             if (!keysToDelete.contains(accession)) {
                 keys.add(accession);
             }
         }
+
         String minimalKey = null;
         if (keys.size() > 1) {
             ProteinMatch match = identification.getProteinMatch(sharedKey);
@@ -312,16 +316,14 @@ public class ProteinInference {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws Exception exception thrown whenever it is attempted to attach two
-     * different spectrum matches to the same spectrum from the same search
-     * engine.
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+    public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap,
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
@@ -803,5 +805,4 @@ public class ProteinInference {
             }
         }
     }
-
 }
