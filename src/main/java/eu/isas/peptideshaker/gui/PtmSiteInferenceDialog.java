@@ -3,23 +3,25 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.ptm.PtmScorer;
+import eu.isas.peptideshaker.scoring.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -262,7 +264,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            
+
             return peptideMatch.getTheoreticPeptide().getSequence().length() + 1;
         }
 
@@ -312,7 +314,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public void setValueAt(Object aValue, int row, int column) {
-            
+
             if (row == 0) {
                 mainSelection[column - 1] = !mainSelection[column - 1];
                 if (mainSelection[column - 1] && secondarySelection[column - 1]) {
@@ -584,16 +586,18 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         boolean changed = false;
         int aa;
 
-
         if (changed) {
             try {
                 // save changes in the peptide match
-
-                peptideShakerGUI.getIdentification().updatePeptideMatch(peptideMatch);
+                Identification identification = peptideShakerGUI.getIdentification();
+                identification.updatePeptideMatch(peptideMatch);
 
                 // update protein level PTM scoring
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
+                PSMaps psMaps = new PSMaps();
+                psMaps = (PSMaps) identification.getUrParam(psMaps);
+                PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
+                PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     boolean candidate = false;
@@ -606,7 +610,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
-                                miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
+                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }

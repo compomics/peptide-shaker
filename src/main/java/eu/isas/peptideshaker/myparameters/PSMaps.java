@@ -42,8 +42,9 @@ public class PSMaps implements UrParameter {
     private InputMap inputMap;
     /**
      * The fractions map.
+     * @deprecated not implemented
      */
-    private FractionsMap fractionsMap; // @TODO: this object should be made serializable
+    private FractionsMap fractionsMap;
 
     /**
      * Constructor.
@@ -60,7 +61,7 @@ public class PSMaps implements UrParameter {
      * @param inputMap The target decoy map of all search engine scores
      * @param psmPTMMap the PSM level PTM scoring map
      */
-    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
+    public PSMaps(PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap, ProteinMap proteinMap, InputMap inputMap, PsmPTMMap psmPTMMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
