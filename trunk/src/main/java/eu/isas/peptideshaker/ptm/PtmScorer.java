@@ -216,7 +216,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * computing the score
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters, 
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
@@ -560,17 +560,13 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
-    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters, 
+    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
 
-        if (peptideMatch.getTheoreticPeptide().getSequence().equals("DNSTMGYMMAK")) {
-            int debug = 1;
-        }
-        
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
@@ -580,12 +576,11 @@ public class PtmScorer {
                     if (nPtm == null) {
                         variableModifications.put(ptmMass, 1);
                     } else {
-                        variableModifications.put(ptmMass, nPtm+1);
+                        variableModifications.put(ptmMass, nPtm + 1);
                     }
                 }
             }
         }
-        
 
         if (variableModifications.size() > 0) {
 
@@ -627,6 +622,32 @@ public class PtmScorer {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
+                for (String ptmName : psmScores.getScoredPTMs()) {
+                    PtmScoring psmScoring = psmScores.getPtmScoring(ptmName);
+                    PtmScoring peptideScoring = peptideScores.getPtmScoring(ptmName);
+                    if (peptideScoring == null) {
+                        peptideScoring = new PtmScoring(ptmName);
+                        peptideScores.addPtmScoring(ptmName, peptideScoring);
+                    }
+                    for (int site : psmScoring.getAllPtmLocations()) {
+                        double psmDScore = psmScoring.getDeltaScore(site);
+                        double peptideDScore = peptideScoring.getDeltaScore(site);
+                        if (peptideDScore < psmDScore) {
+                            peptideScoring.setDeltaScore(site, psmDScore);
+                        }
+                        double psmPScore = psmScoring.getProbabilisticScore(site);
+                        double peptidePScore = peptideScoring.getProbabilisticScore(site);
+                        if (peptidePScore < psmPScore) {
+                            peptideScoring.setProbabilisticScore(site, psmPScore);
+                        }
+                        int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
+                        int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
+                        if (peptideValidationLevel < psmValidationLevel) {
+                            peptideScoring.setSiteConfidence(site, validationLevel);
+                        }
+                    }
+                }
+
                 for (int confidentSite : psmScores.getConfidentSites()) {
                     for (String ptmName : psmScores.getConfidentModificationsAt(confidentSite)) {
                         PTM ptm = ptmFactory.getPTM(ptmName);
@@ -658,9 +679,9 @@ public class PtmScorer {
                 }
             }
             if (!enoughSites) {
-                
-            HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>();
-            
+
+                HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>();
+
                 for (String spectrumKey : bestKeys) {
 
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -888,7 +909,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
@@ -969,7 +990,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
         scoreProteinPtms(identification, metrics, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, new IdFilter(), null, sequenceMatchingPreferences);
     }
@@ -1055,7 +1076,6 @@ public class PtmScorer {
      *
      * @param identification identification object containing the identification
      * matches
-     * @param ptmScorer the PTM scorer used to score PTM sites
      * @param waitingHandler waiting handler displaying progress to the user
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param searchParameters the search parameters used
@@ -1498,8 +1518,9 @@ public class PtmScorer {
                             } else {
                                 ptmScoring.setSiteConfidence(site, PtmScoring.VERY_CONFIDENT);
                                 if (modificationMatch != null) {
-                                    modificationMatch.setConfident(false);
+                                    modificationMatch.setConfident(true);
                                 }
+                                confidentSites.put(site, modName);
                             }
                             if (modificationMatch == null || !modificationMatch.isConfident()) {
                                 HashMap<Double, HashMap<Integer, ArrayList<String>>> pScoreAmbiguousMap = ambiguousSitesMap.get(pScore);

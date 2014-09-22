@@ -432,7 +432,11 @@ public class PtmScoring implements Serializable {
      */
     public int getLocalizationConfidence(int site) {
         compatibilityCheck();
-        return ptmLocationAtAA.get(site);
+        Integer confidence = ptmLocationAtAA.get(site);
+        if (confidence == null) {
+            confidence = NOT_FOUND;
+        }
+        return confidence;
     }
 
     /**
