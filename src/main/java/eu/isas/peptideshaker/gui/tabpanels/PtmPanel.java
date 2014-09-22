@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -3828,8 +3829,6 @@ public class PtmPanel extends javax.swing.JPanel {
                 } else if (selectedPsmsTable.getSelectedRow() != -1 && selectedPsmsTable.getSelectedRow() != -1) {
                     updateSpectrum(getSelectedPsm().get(0));
                 }
-
-                //@TODO: update psm modification profile
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
@@ -3934,7 +3933,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
                     tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_1_ROW_INDEX] = locationScoring.getDeltaScore(aa);
                     tempProfile.getProfile()[aa - 1][com.compomics.util.gui.protein.ModificationProfile.SCORE_2_ROW_INDEX] = locationScoring.getProbabilisticScore(aa);
-                }
+                    }
 
                 profiles.add(tempProfile);
             }
@@ -4734,6 +4733,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         ((DefaultTableModel) psmDeltaScoresTable.getModel()).addColumn(columnName);
                     }
 
+                    String selectedPtmName = getSelectedModification();
+                    PTM selectedPtm = ptmFactory.getPTM(selectedPtmName);
+
                     // add the psm scores (a score and delta score)
                     identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
                     for (int i = 0; i < peptideMatch.getSpectrumMatches().size(); i++) {
@@ -4741,24 +4743,43 @@ public class PtmPanel extends javax.swing.JPanel {
                         String spectrumKey = peptideMatch.getSpectrumMatches().get(i);
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getSpectrumMatch(spectrumKey).getUrParam(ptmScores);
+                        ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
+                        ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
 
-                        if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
+                        if (ptmScores != null) {
 
-                            PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
+                            HashMap<Integer, Double> dScores = new HashMap<Integer, Double>();
+                            HashMap<Integer, Double> pScores = new HashMap<Integer, Double>();
 
-                            ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
-                            ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
+                            for (String ptmName : ptmScores.getScoredPTMs()) {
 
-                            for (int location : ptmScoring.getDSites()) {
-                                psmDeltaScoresTable.setValueAt(ptmScoring.getDeltaScore(location), i, location);
+                                PTM ptm = ptmFactory.getPTM(ptmName);
+
+                                if (ptm.getMass() == selectedPtm.getMass()) {
+
+                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
+                                    for (int site : ptmScoring.getAllPtmLocations()) {
+                                        double ptmDScore = ptmScoring.getDeltaScore(site);
+                                        Double tableDScore = dScores.get(site);
+                                        if (tableDScore == null || tableDScore < ptmDScore) {
+                                            dScores.put(site, ptmDScore);
+                                        }
+                                        double ptmPScore = ptmScoring.getProbabilisticScore(site);
+                                        Double tablePScore = pScores.get(site);
+                                        if (tablePScore == null || tablePScore < ptmPScore) {
+                                            pScores.put(site, ptmPScore);
+                                        }
+                                    }
+                                }
                             }
-                            for (int location : ptmScoring.getProbabilisticSites()) {
-                                psmAScoresTable.setValueAt(ptmScoring.getProbabilisticScore(location), i, location);
+                            
+                            for (int site : dScores.keySet()) {
+                                psmDeltaScoresTable.setValueAt(dScores.get(site), i, site);
+                            }
+                            for (int site : pScores.keySet()) {
+                                psmAScoresTable.setValueAt(pScores.get(site), i, site);
                             }
 
-                        } else {
-                            ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
-                            ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                         }
                     }
 
