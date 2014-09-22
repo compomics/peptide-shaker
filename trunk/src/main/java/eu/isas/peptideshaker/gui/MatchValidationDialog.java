@@ -27,6 +27,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -923,7 +924,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                 if (proteinValidation.isValidated()) {
 
-                                    PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
+                                    MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
                                     proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                     MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
 
@@ -951,7 +952,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                         if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
-                            PeptideShaker.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
+                            MatchesValidator.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
                             identification.updateSpectrumMatchParameter(matchKey, psParameter);
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
@@ -972,7 +973,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                         if (proteinValidation.isValidated()) {
 
-                                            PeptideShaker.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator,
+                                            MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator,
                                                     searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
                                             proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                             MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();

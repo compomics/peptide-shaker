@@ -14,6 +14,7 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -2032,9 +2033,9 @@ public class StatsPanel extends javax.swing.JPanel {
                     try {
                         PSMaps pSMaps = new PSMaps();
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                        PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                        miniShaker.validateIdentifications(pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
+                        MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
+                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -3815,7 +3816,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
+                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
@@ -3865,7 +3866,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
+                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"

@@ -77,7 +77,10 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
+import eu.isas.peptideshaker.ptm.PtmScorer;
+import eu.isas.peptideshaker.scoring.PsmPTMMap;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -3617,10 +3620,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public AnnotationPreferences getAnnotationPreferences() {
         return cpsBean.getAnnotationPreferences();
     }
-    
+
     /**
      * Returns the sequence matching preferences as set by the user.
-     * 
+     *
      * @return the sequence matching preferences as set by the user
      */
     public SequenceMatchingPreferences getSequenceMatchingPreferences() {
@@ -4350,8 +4353,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
         try {
-            PeptideShaker miniShaker = new PeptideShaker(getExperiment(), getSample(), getReplicateNumber());
-            miniShaker.scorePTMs(getIdentification().getProteinMatch(selectedProteinKey), getSearchParameters(), getAnnotationPreferences(), false, getPtmScoringPreferences(), getSequenceMatchingPreferences());
+            PSMaps psMaps = new PSMaps();
+            psMaps = (PSMaps) getIdentification().getUrParam(psMaps);
+            PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
+            PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
+            Identification identification = getIdentification();
+            ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
+            ptmScorer.scorePTMs(identification, proteinMatch, getSearchParameters(), getAnnotationPreferences(), false, getPtmScoringPreferences(), getSequenceMatchingPreferences());
         } catch (Exception e) {
             catchException(e);
         }
