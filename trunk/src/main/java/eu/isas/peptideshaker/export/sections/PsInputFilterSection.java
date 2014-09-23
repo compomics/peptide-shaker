@@ -3,8 +3,8 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +21,6 @@ public class PsInputFilterSection {
      */
     private ArrayList<PsInputFilterFeature> exportFeatures;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -35,19 +31,17 @@ public class PsInputFilterSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsInputFilterSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.separator = separator;
+    public PsInputFilterSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -78,9 +72,11 @@ public class PsInputFilterSection {
 
         if (header) {
             if (indexes) {
-                writer.write(separator);
+                writer.addSeparator();
             }
-            writer.write("Parameter" + separator + "Value");
+            writer.writeHeaderText("Parameter");
+            writer.addSeparator();
+            writer.writeHeaderText("Value");
             writer.newLine();
         }
 
@@ -89,11 +85,19 @@ public class PsInputFilterSection {
         for (ExportFeature exportFeature : exportFeatures) {
 
             if (indexes) {
-                writer.write(line + separator);
+                writer.write(line + "");
+                writer.addSeparator();
             }
+            boolean first = true;
             for (String title : exportFeature.getTitles()) {
-                writer.write(title + separator);
+                if (first) {
+                    first = false;
+                } else {
+                    writer.write(", ");
+                }
+                writer.write(title);
             }
+            writer.addSeparator();
             PsInputFilterFeature inputFilterFeatures = (PsInputFilterFeature) exportFeature;
 
             switch (inputFilterFeatures) {

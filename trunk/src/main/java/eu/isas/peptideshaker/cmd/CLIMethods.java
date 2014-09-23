@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -253,7 +254,8 @@ public class CLIMethods {
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
         
-        PSExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
+        //@TODO: allow format selection
+        PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
                 searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, sequenceMatchingPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
 

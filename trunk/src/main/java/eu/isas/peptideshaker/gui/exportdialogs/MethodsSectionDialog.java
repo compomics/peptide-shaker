@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.PeptideShakerMethods;
 import eu.isas.peptideshaker.export.PSExportFactory;
@@ -139,7 +140,8 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
     private void writeCoa() {
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Text file (.txt)", "Export...", false);
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Text file (.txt)", "Export...", false); //@TODO: allow selecting multiple formats using com.compomics.util.io.export.ExportFormat
+        final ExportFormat exportFormat = ExportFormat.text;
 
         if (selectedFile != null) {
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
@@ -168,7 +170,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                         String schemeName = "Certificate of Analysis"; //TODO: get this from the PSExportFactory
                         ExportScheme exportScheme = PSExportFactory.getInstance().getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
-                        PSExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
+                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),

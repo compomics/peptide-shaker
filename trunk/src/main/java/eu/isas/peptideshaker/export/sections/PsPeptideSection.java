@@ -13,6 +13,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -21,7 +22,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,10 +46,6 @@ public class PsPeptideSection {
      */
     private PsPsmSection psmSection = null;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -60,18 +56,17 @@ public class PsPeptideSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         ArrayList<ExportFeature> psmFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPeptideFeature) {
@@ -84,9 +79,8 @@ public class PsPeptideSection {
         }
         Collections.sort(peptideFeatures);
         if (!psmFeatures.isEmpty()) {
-            psmSection = new PsPsmSection(psmFeatures, separator, indexes, header, writer);
+            psmSection = new PsPsmSection(psmFeatures, indexes, header, writer);
         }
-        this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -182,12 +176,12 @@ public class PsPeptideSection {
 
                     for (ExportFeature exportFeature : peptideFeatures) {
                         if (!first) {
-                            writer.write(separator);
+            writer.addSeparator();
                         } else {
                             first = false;
                         }
                         PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
                     }
                     writer.newLine();
                     if (psmSection != null) {
@@ -216,7 +210,6 @@ public class PsPeptideSection {
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
-     * @param separator the column separator
      * @param peptideMatch the peptide match
      * @param psParameter the PeptideShaker parameters of the match
      * @param peptideFeature the peptide feature to export
@@ -235,7 +228,7 @@ public class PsPeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:
@@ -512,7 +505,8 @@ public class PsPeptideSection {
      */
     public void writeHeader() throws IOException {
         if (indexes) {
-            writer.write(separator);
+            writer.writeHeaderText("");
+            writer.addSeparator();
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : peptideFeatures) {
@@ -520,8 +514,9 @@ public class PsPeptideSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+            writer.addSeparator();
                 }
+            writer.writeHeaderText(title);
                 writer.write(title);
             }
         }

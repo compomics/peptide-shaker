@@ -22,15 +22,14 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,10 +53,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     private PsFragmentSection fragmentSection = null;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -68,7 +63,7 @@ public class PsIdentificationAlgorithmMatchesSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
     /**
      * A peptide spectrum annotator.
      */
@@ -78,12 +73,11 @@ public class PsIdentificationAlgorithmMatchesSection {
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator the separator to write between columns
      * @param indexes indicates whether the line index should be written
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsIdentificationAlgorithmMatchesSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsIdentificationAlgorithmMatchesSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsIdentificationAlgorithmMatchesFeature) {
@@ -97,9 +91,8 @@ public class PsIdentificationAlgorithmMatchesSection {
         }
         Collections.sort(matchExportFeatures);
         if (!fragmentFeatures.isEmpty()) {
-            fragmentSection = new PsFragmentSection(fragmentFeatures, separator, indexes, header, writer);
+            fragmentSection = new PsFragmentSection(fragmentFeatures, indexes, header, writer);
         }
-        this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -118,7 +111,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -218,7 +211,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
                             for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
                                 if (!firstFeature) {
-                                    writer.write(separator);
+                                    writer.addSeparator();
                                 } else {
                                     firstFeature = false;
                                 }
@@ -227,19 +220,19 @@ public class PsIdentificationAlgorithmMatchesSection {
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, separator,
+                                            searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix,
                                             peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
                                     feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters,
-                                            annotationPreferences, keys, linePrefix, separator, tagAssumption, spectrumKey, psParameter,
+                                            annotationPreferences, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
                                             identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else {
                                     throw new IllegalArgumentException("Spectrum identification assumption of type " + assumption.getClass() + " not supported.");
                                 }
                                 writer.write(feature);
                             }
-                            writer.newLine();
+                            writer.addSeparator();
                             if (fragmentSection != null) {
                                 String fractionPrefix = "";
                                 if (linePrefix != null) {
@@ -263,7 +256,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param peptide
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
-     * 
+     *
      * @return the map of the modifications on a peptide sequence
      */
     private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
@@ -288,7 +281,8 @@ public class PsIdentificationAlgorithmMatchesSection {
      */
     public void writeHeader() throws IOException {
         if (indexes) {
-            writer.write(separator);
+            writer.writeHeaderText("");
+            writer.addSeparator();
         }
         boolean firstColumn = true;
         for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
@@ -296,9 +290,9 @@ public class PsIdentificationAlgorithmMatchesSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+                    writer.addSeparator();
                 }
-                writer.write(title);
+                writer.writeHeaderText(title);
             }
         }
         writer.newLine();
@@ -316,7 +310,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
-     * @param separator the column separator
      * @param peptideAssumption the assumption for the match to inspect
      * @param spectrumKey the key of the spectrum
      * @param psParameter the PeptideShaker parameter of the match
@@ -335,7 +328,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, String separator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -813,7 +806,6 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param annotationPreferences the annotation preferences
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
-     * @param separator the column separator
      * @param spectrumKey the key of the spectrum
      * @param tagAssumption the assumption for the match to inspect
      * @param psParameter the PeptideShaker parameter of the match
@@ -832,7 +824,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, String separator,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix,
             TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 

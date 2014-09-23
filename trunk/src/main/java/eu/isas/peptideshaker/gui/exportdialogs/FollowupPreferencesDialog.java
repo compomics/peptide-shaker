@@ -9,7 +9,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.export.ProgenesisExcelExport;
+import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;

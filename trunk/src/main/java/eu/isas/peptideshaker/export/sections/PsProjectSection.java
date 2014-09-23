@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsProjectFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.BufferedWriter;
@@ -23,10 +24,6 @@ public class PsProjectSection {
      */
     private ArrayList<PsProjectFeature> projectFeatures;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -37,19 +34,17 @@ public class PsProjectSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsProjectSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.separator = separator;
+    public PsProjectSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -83,9 +78,12 @@ public class PsProjectSection {
 
         if (header) {
             if (indexes) {
-                writer.write(separator);
+            writer.writeHeaderText("");
+                writer.addSeparator();
             }
-            writer.write("Parameter" + separator + "Value");
+            writer.writeHeaderText("Parameter");
+            writer.addSeparator();
+            writer.writeHeaderText("Value");
             writer.newLine();
         }
 
@@ -93,7 +91,8 @@ public class PsProjectSection {
 
         for (PsProjectFeature projectFeature : projectFeatures) {
             if (indexes) {
-                writer.write(line + separator);
+                writer.write(line + "");
+                writer.addSeparator();
             }
             boolean firstTitle = true;
             for (String title : projectFeature.getTitles()) {
@@ -104,7 +103,7 @@ public class PsProjectSection {
                 }
                 writer.write(title);
             }
-            writer.write(separator);
+                writer.addSeparator();
             switch (projectFeature) {
                 case date:
                     writer.write(projectDetails.getCreationDate() + "");

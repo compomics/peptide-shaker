@@ -11,6 +11,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
@@ -38,10 +39,6 @@ public class PsFragmentSection {
      */
     private ArrayList<PsFragmentFeature> fragmentFeatures;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -52,20 +49,18 @@ public class PsFragmentSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator the separator
-     * @param indexes show indexes
-     * @param header show header
-     * @param writer the writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsFragmentSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsFragmentSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
 
-        this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -155,29 +150,29 @@ public class PsFragmentSection {
                     if (linePrefix != null) {
                         writer.write(linePrefix);
                     }
-                    writer.write(line + separator);
+                    writer.write(line + "");
+                    writer.addSeparator();
                 }
                 for (PsFragmentFeature fragmentFeature : fragmentFeatures) {
 
                     switch (fragmentFeature) {
                         case annotation:
-                            writer.write(ionMatch.getPeakAnnotation() + separator);
+                            writer.write(ionMatch.getPeakAnnotation());
                             break;
                         case fragment_type:
-                            writer.write(Ion.getTypeAsString(ionMatch.ion.getType()) + separator);
+                            writer.write(Ion.getTypeAsString(ionMatch.ion.getType()));
                             break;
                         case fragment_subType:
-                            writer.write(ionMatch.ion.getSubTypeAsString() + separator);
+                            writer.write(ionMatch.ion.getSubTypeAsString());
                             break;
                         case fragment_number:
                             Ion ion = ionMatch.ion;
                             if (ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION) {
                                 writer.write(((PeptideFragmentIon) ion).getNumber() + "");
                             }
-                            writer.write(separator);
                             break;
                         case fragment_losses:
-                            writer.write(ionMatch.ion.getNeutralLossesAsString() + separator);
+                            writer.write(ionMatch.ion.getNeutralLossesAsString());
                             break;
                         case fragment_name:
                             ion = ionMatch.ion;
@@ -187,29 +182,30 @@ public class PsFragmentSection {
                             } else {
                                 name = ion.getName();
                             }
-                            writer.write(name + separator);
+                            writer.write(name);
                             break;
                         case fragment_charge:
-                            writer.write(ionMatch.charge.value + separator);
+                            writer.write(ionMatch.charge.value + "");
                             break;
                         case theoretic_mz:
-                            writer.write(ionMatch.ion.getTheoreticMz(ionMatch.charge.value) + separator);
+                            writer.write(ionMatch.ion.getTheoreticMz(ionMatch.charge.value) + "");
                             break;
                         case mz:
-                            writer.write(ionMatch.peak.mz + separator);
+                            writer.write(ionMatch.peak.mz + "");
                             break;
                         case intensity:
-                            writer.write(ionMatch.peak.intensity + separator);
+                            writer.write(ionMatch.peak.intensity + "");
                             break;
                         case error_Da:
-                            writer.write(ionMatch.getAbsoluteError() + separator);
+                            writer.write(ionMatch.getAbsoluteError() + "");
                             break;
                         case error_ppm:
-                            writer.write(ionMatch.getRelativeError() + separator);
+                            writer.write(ionMatch.getRelativeError() + "");
                             break;
                         default:
-                            writer.write("Not implemented" + separator);
+                            writer.write("Not implemented");
                     }
+                    writer.addSeparator();
                 }
                 writer.newLine();
                 line++;
@@ -224,7 +220,8 @@ public class PsFragmentSection {
      */
     public void writeHeader() throws IOException {
         if (indexes) {
-            writer.write(separator);
+            writer.writeHeaderText("");
+            writer.addSeparator();
         }
         boolean firstColumn = true;
         for (PsFragmentFeature fragmentFeature : fragmentFeatures) {
@@ -232,9 +229,9 @@ public class PsFragmentSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+                    writer.addSeparator();
                 }
-                writer.write(title + separator);
+                writer.writeHeaderText(title);
             }
         }
         writer.newLine();
