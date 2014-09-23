@@ -7,7 +7,6 @@ import com.compomics.util.io.export.ExportFormat;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;

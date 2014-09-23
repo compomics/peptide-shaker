@@ -15,7 +15,6 @@ import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -106,7 +105,6 @@ public class PsFragmentSection {
         }
 
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),

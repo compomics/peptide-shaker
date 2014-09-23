@@ -12,43 +12,44 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 /**
  * This class contains the style for a PeptideShaker excel export.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PsExportStyle implements WorkbookStyle {
 
     /**
-     * Workbook
+     * Workbook.
      */
     private HSSFWorkbook workbook;
     /**
-     * The implemented cell styles
+     * The implemented cell styles.
      */
     private CellStyle mainTitle, standardHeader, standard;
     /**
-     * Map of the cell styles according to the hierarchical depth
+     * Map of the cell styles according to the hierarchical depth.
      */
     private HashMap<Integer, CellStyle> hierarchicalStyles = new HashMap<Integer, CellStyle>();
     /**
-     * Map of the header styles according to the hierarchical depth
+     * Map of the header styles according to the hierarchical depth.
      */
     private HashMap<Integer, CellStyle> hierarchicalHeaders = new HashMap<Integer, CellStyle>();
+
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param excelWriter the excel writer for this style
      */
     public PsExportStyle(ExcelWriter excelWriter) { //@TODO: possible to make a generic style workbook independent?
         this.workbook = excelWriter.getWorkbook();
     }
-    
+
     private void setCellStyles() {
-        
-// Main title
+
+        // Main title
         Font f = workbook.createFont();
         f.setFontHeightInPoints((short) 20);
         mainTitle = workbook.createCellStyle();
         mainTitle.setFont(f);
-        
+
         // Standard Header
         f = workbook.createFont();
         f.setFontHeightInPoints((short) 8);
@@ -62,15 +63,14 @@ public class PsExportStyle implements WorkbookStyle {
         standardHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
         standardHeader.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
         standardHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        
+
         // Standard Cell
         f = workbook.createFont();
         f.setFontHeightInPoints((short) 8);
         standard = workbook.createCellStyle();
         standard.setFont(f);
-        
     }
-    
+
     @Override
     public CellStyle getMainTitleStyle() {
         return mainTitle;
@@ -118,5 +118,4 @@ public class PsExportStyle implements WorkbookStyle {
     public float getHeaderHeight() {
         return 12.75f;
     }
-
 }

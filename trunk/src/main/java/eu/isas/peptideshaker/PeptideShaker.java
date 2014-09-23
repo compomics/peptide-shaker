@@ -257,7 +257,7 @@ public class PeptideShaker {
      * @param annotationPreferences the spectrum annotation preferences
      * @param idFilter the identification filter used
      * @param processingPreferences the processing preferences
-     * @param ptmScoringPreferences the ptm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
      * @param sequenceMatchingPreferences the sequence matching preferences
