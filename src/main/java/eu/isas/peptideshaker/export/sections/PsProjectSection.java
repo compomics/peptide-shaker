@@ -6,7 +6,6 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsProjectFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +77,7 @@ public class PsProjectSection {
 
         if (header) {
             if (indexes) {
-            writer.writeHeaderText("");
+                writer.writeHeaderText("");
                 writer.addSeparator();
             }
             writer.writeHeaderText("Parameter");
@@ -103,7 +102,7 @@ public class PsProjectSection {
                 }
                 writer.write(title);
             }
-                writer.addSeparator();
+            writer.addSeparator();
             switch (projectFeature) {
                 case date:
                     writer.write(projectDetails.getCreationDate() + "");
@@ -121,59 +120,59 @@ public class PsProjectSection {
                     writer.write(sample);
                     break;
                 case identification_algorithms:
-                        ArrayList<Integer> advocatesIds = projectDetails.getIdentificationAlgorithms();
-                        Collections.sort(advocatesIds);
-                        for (int i = 0; i < advocatesIds.size(); i++) {
-                            if (i > 0) {
-                                if (i == advocatesIds.size() - 1) {
-                                    writer.write(" and ");
-                                } else {
-                                    writer.write(", ");
-                                }
+                    ArrayList<Integer> advocatesIds = projectDetails.getIdentificationAlgorithms();
+                    Collections.sort(advocatesIds);
+                    for (int i = 0; i < advocatesIds.size(); i++) {
+                        if (i > 0) {
+                            if (i == advocatesIds.size() - 1) {
+                                writer.write(" and ");
+                            } else {
+                                writer.write(", ");
                             }
-                            Integer advocateId = advocatesIds.get(i);
-                            Advocate advocate = Advocate.getAdvocate(advocateId);
-                            writer.write(advocate.getName());
                         }
+                        Integer advocateId = advocatesIds.get(i);
+                        Advocate advocate = Advocate.getAdvocate(advocateId);
+                        writer.write(advocate.getName());
+                    }
                     break;
                 case algorithms_versions:
-                        advocatesIds = projectDetails.getIdentificationAlgorithms();
-                        HashMap<String, ArrayList<String>> versions = projectDetails.getAlgorithmNameToVersionsMap();
-                        Collections.sort(advocatesIds);
-                        for (int i = 0; i < advocatesIds.size(); i++) {
-                            if (i > 0) {
-                                if (i == advocatesIds.size() - 1) {
-                                    writer.write(" and ");
-                                } else {
-                                    writer.write(", ");
-                                }
-                            }
-                            Integer advocateId = advocatesIds.get(i);
-                            Advocate advocate = Advocate.getAdvocate(advocateId);
-                            String advocateName = advocate.getName();
-                            writer.write(advocateName + " (");
-                            ArrayList<String> algorithmVersions = versions.get(advocateName);
-                            if (algorithmVersions == null || algorithmVersions.isEmpty()) {
-                                writer.write("unknown version)");
+                    advocatesIds = projectDetails.getIdentificationAlgorithms();
+                    HashMap<String, ArrayList<String>> versions = projectDetails.getAlgorithmNameToVersionsMap();
+                    Collections.sort(advocatesIds);
+                    for (int i = 0; i < advocatesIds.size(); i++) {
+                        if (i > 0) {
+                            if (i == advocatesIds.size() - 1) {
+                                writer.write(" and ");
                             } else {
-                                if (algorithmVersions.size() == 1) {
-                                    writer.write("version " + algorithmVersions.get(0) + ")");
-                                } else {
-                                    writer.write("versions ");
-                                    for (int j = 0; j < algorithmVersions.size(); j++) {
-                                        if (j > 0) {
-                                            if (j == algorithmVersions.size() - 1) {
-                                                writer.write(" and ");
-                                            } else {
-                                                writer.write(", ");
-                                            }
-                                        }
-                                        writer.write(algorithmVersions.get(j));
-                                    }
-                                    writer.write(")");
-                                }
+                                writer.write(", ");
                             }
                         }
+                        Integer advocateId = advocatesIds.get(i);
+                        Advocate advocate = Advocate.getAdvocate(advocateId);
+                        String advocateName = advocate.getName();
+                        writer.write(advocateName + " (");
+                        ArrayList<String> algorithmVersions = versions.get(advocateName);
+                        if (algorithmVersions == null || algorithmVersions.isEmpty()) {
+                            writer.write("unknown version)");
+                        } else {
+                            if (algorithmVersions.size() == 1) {
+                                writer.write("version " + algorithmVersions.get(0) + ")");
+                            } else {
+                                writer.write("versions ");
+                                for (int j = 0; j < algorithmVersions.size(); j++) {
+                                    if (j > 0) {
+                                        if (j == algorithmVersions.size() - 1) {
+                                            writer.write(" and ");
+                                        } else {
+                                            writer.write(", ");
+                                        }
+                                    }
+                                    writer.write(algorithmVersions.get(j));
+                                }
+                                writer.write(")");
+                            }
+                        }
+                    }
                     break;
                 default:
                     writer.write("Not implemented");
