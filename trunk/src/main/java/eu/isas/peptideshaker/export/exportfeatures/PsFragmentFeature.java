@@ -5,15 +5,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This enum groups the export features related to PTM scoring.
+ * This class lists the fragment identification features.
  *
  * @author Marc Vaudel
  */
-public enum PtmScoringFeature implements ExportFeature {
+public enum PsFragmentFeature implements ExportFeature {
 
-    aScore("A-score", "Indicates whether the A-score was computed for PTM localization.", false),
-    neutral_losses("Accounting for Neutral Losses", "Indicates whether the neutral losses are accounted for in the A-score calculation.", false),
-    flr("False Location Rate", "For peptides presenting a single modification of a kind and more than one modification site, the site is marked as confident if the A-score passes this estimated FLR.", false);
+    annotation("Peak Annotation", "The fragment annotation as it would appear in the GUI.", false),
+    fragment_type("Type", "The type of fragment ion, for example 'Peptide Fragment Ion'.", false),
+    fragment_subType("Subtype", "The subtype of fragment if existing, for example 'b ion'.", false),
+    fragment_number("Number", "The fragment ion number, for example '5' for b5.", false),
+    fragment_losses("Neutral losses", "The fragment ion neutral losses, for example '-H2O' for b5-H2O.", false),
+    fragment_name("Name", "The name of the fragment ion, for example b5.", false),
+    fragment_charge("Fragment Charge", "The charge of the fragment ion according to the identification process.", false),
+    theoretic_mz("Theoretic m/z", "The theoretic m/z of the fragment ion.", false),
+    mz("m/z", "The m/z of the peak.", false),
+    intensity("Intensity", "The intensity of the peak.", false),
+    error_Da("m/z Error (Da)", "The absolute m/z error.", false),
+    error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -25,11 +34,11 @@ public enum PtmScoringFeature implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Postranslational Modification Scoring Settings";
+    public final static String type = "Fragment Ions Summary";
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -38,7 +47,7 @@ public enum PtmScoringFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private PtmScoringFeature(String title, String description, boolean advanced) {
+    private PsFragmentFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -50,7 +59,7 @@ public enum PtmScoringFeature implements ExportFeature {
         result.addAll(Arrays.asList(values()));
         return result;
     }
-
+    
     @Override
     public String[] getTitles() {
         return new String[]{title};

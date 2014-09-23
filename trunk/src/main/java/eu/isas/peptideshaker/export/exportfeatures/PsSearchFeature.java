@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum SearchFeature implements ExportFeature {
+public enum PsSearchFeature implements ExportFeature {
 
     precursor_accuracy_unit("Precursor Accuracy Unit", "Unit of the precursor accuracy: ppm or Da.", false),
     precursor_tolerance("Precursor Ion m/z Tolerance", "Precursor ion m/z tolerance used for the search.", false),
@@ -38,7 +38,7 @@ public enum SearchFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public enum SearchFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private SearchFeature(String title, String description, boolean advanced) {
+    private PsSearchFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

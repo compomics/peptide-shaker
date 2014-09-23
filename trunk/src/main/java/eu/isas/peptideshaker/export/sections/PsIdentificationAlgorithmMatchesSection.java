@@ -26,8 +26,8 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
-import eu.isas.peptideshaker.export.exportfeatures.IdentificationAlgorithmMatchesFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
@@ -43,16 +43,16 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public class IdentificationAlgorithmMatchesSection {
+public class PsIdentificationAlgorithmMatchesSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<IdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<IdentificationAlgorithmMatchesFeature>();
+    private ArrayList<PsIdentificationAlgorithmMatchesFeature> matchExportFeatures = new ArrayList<PsIdentificationAlgorithmMatchesFeature>();
     /**
      * The fragment subsection if needed.
      */
-    private FragmentSection fragmentSection = null;
+    private PsFragmentSection fragmentSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -83,13 +83,13 @@ public class IdentificationAlgorithmMatchesSection {
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public IdentificationAlgorithmMatchesSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsIdentificationAlgorithmMatchesSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof IdentificationAlgorithmMatchesFeature) {
-                IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature = (IdentificationAlgorithmMatchesFeature) exportFeature;
+            if (exportFeature instanceof PsIdentificationAlgorithmMatchesFeature) {
+                PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature = (PsIdentificationAlgorithmMatchesFeature) exportFeature;
                 matchExportFeatures.add(identificationAlgorithmMatchesFeature);
-            } else if (exportFeature instanceof FragmentFeature) {
+            } else if (exportFeature instanceof PsFragmentFeature) {
                 fragmentFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
@@ -97,7 +97,7 @@ public class IdentificationAlgorithmMatchesSection {
         }
         Collections.sort(matchExportFeatures);
         if (!fragmentFeatures.isEmpty()) {
-            fragmentSection = new FragmentSection(fragmentFeatures, separator, indexes, header, writer);
+            fragmentSection = new PsFragmentSection(fragmentFeatures, separator, indexes, header, writer);
         }
         this.separator = separator;
         this.indexes = indexes;
@@ -216,7 +216,7 @@ public class IdentificationAlgorithmMatchesSection {
                                 firstFeature = false;
                             }
 
-                            for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
+                            for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
                                 if (!firstFeature) {
                                     writer.write(separator);
                                 } else {
@@ -291,7 +291,7 @@ public class IdentificationAlgorithmMatchesSection {
             writer.write(separator);
         }
         boolean firstColumn = true;
-        for (IdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
+        for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
             for (String title : identificationAlgorithmMatchesFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
@@ -336,7 +336,7 @@ public class IdentificationAlgorithmMatchesSection {
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, String separator,
-            PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature,
+            PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -833,7 +833,7 @@ public class IdentificationAlgorithmMatchesSection {
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, String separator,
-            TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, IdentificationAlgorithmMatchesFeature exportFeature,
+            TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (exportFeature) {

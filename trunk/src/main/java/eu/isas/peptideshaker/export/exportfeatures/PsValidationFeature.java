@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum ValidationFeature implements ExportFeature {
+public enum PsValidationFeature implements ExportFeature {
 
     validated_protein("#Validated Proteins", "The number of validated proteins.", false),
     total_protein("Protein Total", "The estimated total number of proteins.", false),
@@ -47,7 +47,7 @@ public enum ValidationFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -56,7 +56,7 @@ public enum ValidationFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private ValidationFeature(String title, String description, boolean advanced) {
+    private PsValidationFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

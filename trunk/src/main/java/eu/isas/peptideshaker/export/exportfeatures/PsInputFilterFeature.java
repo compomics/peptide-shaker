@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This class lists all the export features related to the spectrum counting.
+ * This enum lists the export features related to the import features.
  *
  * @author Marc Vaudel
  */
-public enum SpectrumCountingFeature implements ExportFeature {
+public enum PsInputFilterFeature implements ExportFeature {
 
-    method("Method", "The method used to establish the spectrum counting index.", false),
-    validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.", false);
+    min_peptide_length("Minimal Peptide Length", "The minimal peptide length.", false),
+    max_peptide_length("Maximal Peptide Length", "The maximal peptide length.", false),
+    max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed.", false),
+    max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed.", false),
+    unknown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting PTMs which do not match the search parameters were discarded.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -24,11 +27,11 @@ public enum SpectrumCountingFeature implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Spectrum Counting Parameters";
+    public final static String type = "Input Filters";
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -37,7 +40,7 @@ public enum SpectrumCountingFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private SpectrumCountingFeature(String title, String description, boolean advanced) {
+    private PsInputFilterFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

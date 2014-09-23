@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
+public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
 
     rank("Rank", "The rank assigned by the identification algorithm.", true),
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached.", false),
@@ -61,7 +61,7 @@ public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -70,7 +70,7 @@ public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private IdentificationAlgorithmMatchesFeature(String title, String description, boolean advanced) {
+    private PsIdentificationAlgorithmMatchesFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -81,7 +81,7 @@ public enum IdentificationAlgorithmMatchesFeature implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-            result.addAll(FragmentFeature.values()[0].getExportFeatures(includeSubFeatures));
+            result.addAll(PsFragmentFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }

@@ -1,28 +1,24 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This class lists the fragment identification features.
+ * This class lists the PSM identification features.
  *
  * @author Marc Vaudel
  */
-public enum FragmentFeature implements ExportFeature {
+public enum PsProjectFeature implements ExportFeature, Serializable {
 
-    annotation("Peak Annotation", "The fragment annotation as it would appear in the GUI.", false),
-    fragment_type("Type", "The type of fragment ion, for example 'Peptide Fragment Ion'.", false),
-    fragment_subType("Subtype", "The subtype of fragment if existing, for example 'b ion'.", false),
-    fragment_number("Number", "The fragment ion number, for example '5' for b5.", false),
-    fragment_losses("Neutral losses", "The fragment ion neutral losses, for example '-H2O' for b5-H2O.", false),
-    fragment_name("Name", "The name of the fragment ion, for example b5.", false),
-    fragment_charge("Fragment Charge", "The charge of the fragment ion according to the identification process.", false),
-    theoretic_mz("Theoretic m/z", "The theoretic m/z of the fragment ion.", false),
-    mz("m/z", "The m/z of the peak.", false),
-    intensity("Intensity", "The intensity of the peak.", false),
-    error_Da("m/z Error (Da)", "The absolute m/z error.", false),
-    error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).", false);
+    peptide_shaker("PeptideShaker Version", "Software version used to create the project.", false),
+    date("Date", "Date of project creation.", false),
+    experiment("Experiment", "Experiment name.", false),
+    sample("Sample", "Sample name.", false),
+    replicate("Replicate Number", "Replicate number.", false),
+    identification_algorithms("Identification Algorithms", "The identification algorithms used.", false),
+    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -34,11 +30,11 @@ public enum FragmentFeature implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Fragment Ions Summary";
+    public final static String type = "Project Details";
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -47,7 +43,7 @@ public enum FragmentFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private FragmentFeature(String title, String description, boolean advanced) {
+    private PsProjectFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -59,7 +55,7 @@ public enum FragmentFeature implements ExportFeature {
         result.addAll(Arrays.asList(values()));
         return result;
     }
-    
+
     @Override
     public String[] getTitles() {
         return new String[]{title};

@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import java.util.Collections;
  *
  * @author Marc Vaudel
  */
-public class PtmScoringSection {
+public class PsPtmScoringSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<PtmScoringFeature> ptmScoringFeatures;
+    private ArrayList<PsPtmScoringFeature> ptmScoringFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -46,15 +46,15 @@ public class PtmScoringSection {
      * @param header
      * @param writer
      */
-    public PtmScoringSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsPtmScoringSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        ptmScoringFeatures = new ArrayList<PtmScoringFeature>(exportFeatures.size());
+        ptmScoringFeatures = new ArrayList<PsPtmScoringFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof PtmScoringFeature) {
-                ptmScoringFeatures.add((PtmScoringFeature) exportFeature);
+            if (exportFeature instanceof PsPtmScoringFeature) {
+                ptmScoringFeatures.add((PsPtmScoringFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as PTM scoring feature.");
             }
@@ -86,7 +86,7 @@ public class PtmScoringSection {
 
         int line = 1;
 
-        for (PtmScoringFeature ptmScoringFeature : ptmScoringFeatures) {
+        for (PsPtmScoringFeature ptmScoringFeature : ptmScoringFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }

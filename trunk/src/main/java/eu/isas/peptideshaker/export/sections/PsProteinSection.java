@@ -9,13 +9,12 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ProteinFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsmFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -38,16 +37,16 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class ProteinSection {
+public class PsProteinSection {
 
     /**
      * The protein features to export.
      */
-    private ArrayList<ProteinFeature> proteinFeatures = new ArrayList<ProteinFeature>();
+    private ArrayList<PsProteinFeature> proteinFeatures = new ArrayList<PsProteinFeature>();
     /**
      * The peptide subsection if any.
      */
-    private PeptideSection peptideSection = null;
+    private PsPeptideSection peptideSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -76,12 +75,12 @@ public class ProteinSection {
      * @param header
      * @param writer
      */
-    public ProteinSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsProteinSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof ProteinFeature) {
-                proteinFeatures.add((ProteinFeature) exportFeature);
-            } else if (exportFeature instanceof PeptideFeature || exportFeature instanceof PsmFeature || exportFeature instanceof FragmentFeature) {
+            if (exportFeature instanceof PsProteinFeature) {
+                proteinFeatures.add((PsProteinFeature) exportFeature);
+            } else if (exportFeature instanceof PsPeptideFeature || exportFeature instanceof PsPsmFeature || exportFeature instanceof PsFragmentFeature) {
                 peptideFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
@@ -89,7 +88,7 @@ public class ProteinSection {
         }
         Collections.sort(proteinFeatures);
         if (!peptideFeatures.isEmpty()) {
-            peptideSection = new PeptideSection(peptideFeatures, separator, indexes, header, writer);
+            peptideSection = new PsPeptideSection(peptideFeatures, separator, indexes, header, writer);
         }
         this.separator = separator;
         this.indexes = indexes;
@@ -174,12 +173,12 @@ public class ProteinSection {
 
         for (String proteinKey : keys) {
 
-                    if (waitingHandler != null) {
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
-                        waitingHandler.increaseSecondaryProgressCounter();
-                    }
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
 
@@ -188,7 +187,7 @@ public class ProteinSection {
                 if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
 
                     boolean first = true;
-                    
+
                     if (indexes) {
                         writer.write(line + "");
                         first = false;
@@ -202,7 +201,7 @@ public class ProteinSection {
                         } else {
                             first = false;
                         }
-                        ProteinFeature tempProteinFeatures = (ProteinFeature) exportFeature;
+                        PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
                         writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
@@ -245,7 +244,7 @@ public class ProteinSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, ProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {
@@ -418,7 +417,7 @@ public class ProteinSection {
                 nHits = identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
                 return nHits + "";
             case score:
-                return -10*FastMath.log10(psParameter.getProteinProbabilityScore()) + "";
+                return -10 * FastMath.log10(psParameter.getProteinProbabilityScore()) + "";
             case raw_score:
                 return psParameter.getProteinProbabilityScore() + "";
             case spectrum_counting_nsaf:

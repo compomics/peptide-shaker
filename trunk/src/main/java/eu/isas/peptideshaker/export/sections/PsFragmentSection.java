@@ -11,9 +11,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
-import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeature.fragment_number;
-import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeature.fragment_type;
+import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
+import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -27,7 +27,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public class FragmentSection {
+public class PsFragmentSection {
 
     /**
      * The spectrum factory.
@@ -36,7 +36,7 @@ public class FragmentSection {
     /**
      * The features to export.
      */
-    private ArrayList<FragmentFeature> fragmentFeatures;
+    private ArrayList<PsFragmentFeature> fragmentFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -63,17 +63,17 @@ public class FragmentSection {
      * @param header show header
      * @param writer the writer
      */
-    public FragmentSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsFragmentSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
 
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
 
-        fragmentFeatures = new ArrayList<FragmentFeature>(exportFeatures.size());
+        fragmentFeatures = new ArrayList<PsFragmentFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof FragmentFeature) {
-                FragmentFeature fragmentFeature = (FragmentFeature) exportFeature;
+            if (exportFeature instanceof PsFragmentFeature) {
+                PsFragmentFeature fragmentFeature = (PsFragmentFeature) exportFeature;
                 fragmentFeatures.add(fragmentFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as fragment feature.");
@@ -157,7 +157,7 @@ public class FragmentSection {
                     }
                     writer.write(line + separator);
                 }
-                for (FragmentFeature fragmentFeature : fragmentFeatures) {
+                for (PsFragmentFeature fragmentFeature : fragmentFeatures) {
 
                     switch (fragmentFeature) {
                         case annotation:
@@ -227,7 +227,7 @@ public class FragmentSection {
             writer.write(separator);
         }
         boolean firstColumn = true;
-        for (FragmentFeature fragmentFeature : fragmentFeatures) {
+        for (PsFragmentFeature fragmentFeature : fragmentFeatures) {
             for (String title : fragmentFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
