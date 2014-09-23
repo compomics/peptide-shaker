@@ -3,9 +3,11 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportFormat;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
 import eu.isas.peptideshaker.export.OutputGenerator;
+import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -2064,8 +2066,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void writeSelectedReport() {
 
         // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
-
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".xls", "Microsoft Excel (.xls)", "Export...", false);
+//        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false); //@TODO: allow selecting multiple formats using com.compomics.util.io.export.ExportFormat
+        final ExportFormat exportFormat = ExportFormat.excel;
+        
         if (selectedFile != null) {
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -2093,7 +2097,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         progressDialog.setTitle("Exporting. Please Wait...");
-                        PSExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
+                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),

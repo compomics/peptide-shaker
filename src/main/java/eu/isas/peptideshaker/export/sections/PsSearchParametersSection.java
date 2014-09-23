@@ -5,9 +5,8 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
+import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +23,6 @@ public class PsSearchParametersSection {
      */
     private ArrayList<PsSearchFeature> searchFeatures;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -38,19 +33,17 @@ public class PsSearchParametersSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsSearchParametersSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.separator = separator;
+    public PsSearchParametersSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -81,9 +74,12 @@ public class PsSearchParametersSection {
 
         if (header) {
             if (indexes) {
-                writer.write(separator);
+                writer.writeHeaderText("");
+                writer.addSeparator();
             }
-            writer.write("Parameter" + separator + "Value");
+            writer.writeHeaderText("Parameter");
+            writer.addSeparator();
+            writer.writeHeaderText("Value");
             writer.newLine();
         }
 
@@ -91,7 +87,8 @@ public class PsSearchParametersSection {
 
         for (PsSearchFeature exportFeature : searchFeatures) {
             if (indexes) {
-                writer.write(line + separator);
+                writer.write(line + "");
+                writer.addSeparator();
             }
             boolean firstTitle = true;
             for (String title : exportFeature.getTitles()) {
@@ -102,7 +99,7 @@ public class PsSearchParametersSection {
                 }
                 writer.write(title);
             }
-            writer.write(separator);
+            writer.addSeparator();
             switch (exportFeature) {
                 case database:
                     String fastaFileName = Util.getFileName(searchParameters.getFastaFile());

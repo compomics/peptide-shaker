@@ -3,18 +3,15 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
+import com.compomics.util.io.export.ExportWriter;
 import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This class outputs the validation related export features.
@@ -28,10 +25,6 @@ public class PsValidationSection {
      */
     private ArrayList<PsValidationFeature> validationFeatures;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -42,19 +35,17 @@ public class PsValidationSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsValidationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.separator = separator;
+    public PsValidationSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -85,9 +76,12 @@ public class PsValidationSection {
 
         if (header) {
             if (indexes) {
-                writer.write(separator);
+                writer.writeHeaderText("");
+                writer.addSeparator();
             }
-            writer.write("Parameter" + separator + "Value");
+            writer.writeHeaderText("Parameter");
+            writer.addSeparator();
+            writer.writeHeaderText("Value");
             writer.newLine();
         }
 
@@ -100,7 +94,8 @@ public class PsValidationSection {
                     ArrayList<String> peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -111,7 +106,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double pmin = 0;
                         int nMax = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getnMax();
                         if (nMax != 0) {
@@ -127,7 +122,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -138,7 +134,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -150,7 +146,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -161,7 +158,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFdrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -173,7 +170,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -184,7 +182,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFnrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -196,7 +194,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -207,7 +206,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = 100 - peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -219,7 +218,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -230,7 +230,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getnTPTotal();
                         writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
@@ -242,7 +242,8 @@ public class PsValidationSection {
                     peptideKeys = peptideTargetDecoyMap.getKeys();
                     for (String peptideKey : peptideKeys) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         boolean firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -253,7 +254,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getN();
                         writer.write(Util.roundDouble(result, 0) + "");
                         writer.newLine();
@@ -262,7 +263,8 @@ public class PsValidationSection {
                     break;
                 case protein_accuracy:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     boolean firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -273,7 +275,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     ProteinMap proteinMap = psMaps.getProteinMap();
                     double pmin = 0;
                     int nMax = proteinMap.getTargetDecoyMap().getnMax();
@@ -286,7 +288,8 @@ public class PsValidationSection {
                     break;
                 case protein_confidence:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -297,7 +300,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     double result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
                     writer.write(Util.roundDouble(result, 2) + " %");
@@ -306,7 +309,7 @@ public class PsValidationSection {
                     break;
                 case protein_fdr:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -317,7 +320,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getFdrLimit();
                     writer.write(Util.roundDouble(result, 2) + " %");
@@ -326,7 +329,8 @@ public class PsValidationSection {
                     break;
                 case protein_fnr:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -337,7 +341,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getFnrLimit();
                     writer.write(Util.roundDouble(result, 2) + " %");
@@ -346,7 +350,8 @@ public class PsValidationSection {
                     break;
                 case protein_pep:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -357,7 +362,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = 100 - proteinMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
                     writer.write(Util.roundDouble(result, 2) + " %");
@@ -366,7 +371,8 @@ public class PsValidationSection {
                     break;
                 case total_protein:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -377,7 +383,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getnTPTotal();
                     writer.write(Util.roundDouble(result, 2) + "");
@@ -386,7 +392,8 @@ public class PsValidationSection {
                     break;
                 case validated_protein:
                     if (indexes) {
-                        writer.write(line + separator);
+                        writer.write(line + "");
+                        writer.addSeparator();
                     }
                     firstTitle = true;
                     for (String subTitle : validationFeature.getTitles()) {
@@ -397,7 +404,7 @@ public class PsValidationSection {
                         }
                         writer.write(subTitle);
                     }
-                    writer.write(separator);
+                    writer.addSeparator();
                     proteinMap = psMaps.getProteinMap();
                     result = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getN();
                     writer.write(Util.roundDouble(result, 0) + "");
@@ -410,7 +417,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -421,7 +429,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 pmin = 0;
                                 nMax = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getnMax();
                                 if (nMax != 0) {
@@ -435,7 +443,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -446,7 +455,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         pmin = 0;
                         nMax = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getnMax();
                         if (nMax != 0) {
@@ -463,7 +472,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -474,7 +484,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
                                 writer.write(Util.roundDouble(result, 2) + " %");
                                 writer.newLine();
@@ -484,7 +494,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -495,7 +506,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -508,7 +519,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -519,7 +531,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFdrLimit();
                                 writer.write(Util.roundDouble(result, 2) + " %");
                                 writer.newLine();
@@ -529,7 +541,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -540,7 +553,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFdrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -553,7 +566,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -564,7 +578,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getFnrLimit();
                                 writer.write(Util.roundDouble(result, 2) + " %");
                                 writer.newLine();
@@ -574,7 +588,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -585,7 +600,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getFnrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -598,7 +613,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -609,7 +625,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getConfidenceLimit();
                                 writer.write(Util.roundDouble(result, 2) + " %");
                                 writer.newLine();
@@ -619,7 +635,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -630,7 +647,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -643,7 +660,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -654,7 +672,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getnTPTotal();
                                 writer.write(Util.roundDouble(result, 2) + "");
                                 writer.newLine();
@@ -664,7 +682,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -675,7 +694,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getnTPTotal();
                         writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
@@ -688,7 +707,8 @@ public class PsValidationSection {
                         for (String file : psmTargetDecoyMap.getFilesAtCharge(charge)) {
                             if (!psmTargetDecoyMap.isFileGrouped(charge, file)) {
                                 if (indexes) {
-                                    writer.write(line + separator);
+                                    writer.write(line + "");
+                                    writer.addSeparator();
                                 }
                                 firstTitle = true;
                                 for (String subTitle : validationFeature.getTitles()) {
@@ -699,7 +719,7 @@ public class PsValidationSection {
                                     }
                                     writer.write(subTitle);
                                 }
-                                writer.write(separator);
+                                writer.addSeparator();
                                 result = psmTargetDecoyMap.getTargetDecoyMap(charge, file).getTargetDecoyResults().getN();
                                 writer.write(Util.roundDouble(result, 0) + "");
                                 writer.newLine();
@@ -709,7 +729,8 @@ public class PsValidationSection {
                     }
                     for (int charge : psmTargetDecoyMap.getGroupedCharges()) {
                         if (indexes) {
-                            writer.write(line + separator);
+                            writer.write(line + "");
+                            writer.addSeparator();
                         }
                         firstTitle = true;
                         for (String subTitle : validationFeature.getTitles()) {
@@ -720,7 +741,7 @@ public class PsValidationSection {
                             }
                             writer.write(subTitle);
                         }
-                        writer.write(separator);
+                        writer.addSeparator();
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge, null).getTargetDecoyResults().getN();
                         writer.write(Util.roundDouble(result, 0) + "");
                         writer.newLine();

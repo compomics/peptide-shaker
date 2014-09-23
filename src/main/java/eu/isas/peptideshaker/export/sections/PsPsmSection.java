@@ -15,6 +15,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -23,7 +24,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,10 +52,6 @@ public class PsPsmSection {
      */
     private PsFragmentSection fragmentSection = null;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -66,18 +62,17 @@ public class PsPsmSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator the separator to write between columns
      * @param indexes indicates whether the line index should be written
      * @param header indicates whether the table header should be written
      * @param writer the writer which will write to the file
      */
-    public PsPsmSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsPsmSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPsmFeature) {
@@ -93,9 +88,8 @@ public class PsPsmSection {
         Collections.sort(psmFeatures);
         Collections.sort(identificationAlgorithmMatchesFeatures);
         if (!fragmentFeatures.isEmpty()) {
-            fragmentSection = new PsFragmentSection(fragmentFeatures, separator, indexes, header, writer);
+            fragmentSection = new PsFragmentSection(fragmentFeatures, indexes, header, writer);
         }
-        this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -115,7 +109,7 @@ public class PsPsmSection {
      * @param validatedOnly whether only validated matches should be exported
      * @param decoys whether decoy matches should be exported as well
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -221,17 +215,17 @@ public class PsPsmSection {
                         }
                         for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : identificationAlgorithmMatchesFeatures) {
                             if (!first) {
-                                writer.write(separator);
+                                writer.addSeparator();
                             } else {
                                 first = false;
                             }
                             String feature;
                             if (peptideAssumption != null) {
                                 peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, separator, peptideAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, peptideAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, separator, tagAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, tagAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                             } else {
                                 throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                             }
@@ -239,11 +233,11 @@ public class PsPsmSection {
                         }
                         for (PsPsmFeature psmFeature : psmFeatures) {
                             if (!first) {
-                                writer.write(separator);
+                                writer.addSeparator();
                             } else {
                                 first = false;
                             }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, separator, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
+                            writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         writer.newLine();
                         if (fragmentSection != null) {
@@ -272,7 +266,6 @@ public class PsPsmSection {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
-     * @param separator the column separator
      * @param spectrumMatch the spectrum match inspected
      * @param psParameter the PeptideShaker parameter of the match
      * @param psmFeature the feature to export
@@ -293,7 +286,7 @@ public class PsPsmSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, String separator, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (psmFeature) {
@@ -457,7 +450,7 @@ public class PsPsmSection {
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case score:
-                return -10*FastMath.log10(psParameter.getPsmScore()) + "";
+                return -10 * FastMath.log10(psParameter.getPsmScore()) + "";
             case raw_score:
                 return psParameter.getPsmScore() + "";
             case validated:
@@ -510,7 +503,8 @@ public class PsPsmSection {
      */
     public void writeHeader() throws IOException {
         if (indexes) {
-            writer.write(separator);
+            writer.writeHeaderText("");
+            writer.addSeparator();
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
@@ -518,7 +512,7 @@ public class PsPsmSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+                    writer.addSeparator();
                 }
                 writer.write(title);
             }
@@ -528,7 +522,7 @@ public class PsPsmSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+                    writer.addSeparator();
                 }
                 writer.write(title);
             }

@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
+import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -19,7 +20,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,10 +48,6 @@ public class PsProteinSection {
      */
     private PsPeptideSection peptideSection = null;
     /**
-     * The separator used to separate columns.
-     */
-    private String separator;
-    /**
      * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
@@ -62,7 +58,7 @@ public class PsProteinSection {
     /**
      * The writer used to send the output to file.
      */
-    private BufferedWriter writer;
+    private ExportWriter writer;
 
     /**
      * Constructor.
@@ -70,12 +66,11 @@ public class PsProteinSection {
      * @param exportFeatures the features to export in this section.
      * ProteinFeatures as main features. If Peptide or protein features are
      * selected, they will be added as sub-sections.
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param indexes indicates whether the line index should be written
+     * @param header indicates whether the table header should be written
+     * @param writer the writer which will write to the file
      */
-    public PsProteinSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsProteinSection(ArrayList<ExportFeature> exportFeatures, boolean indexes, boolean header, ExportWriter writer) {
         ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsProteinFeature) {
@@ -88,9 +83,8 @@ public class PsProteinSection {
         }
         Collections.sort(proteinFeatures);
         if (!peptideFeatures.isEmpty()) {
-            peptideSection = new PsPeptideSection(peptideFeatures, separator, indexes, header, writer);
+            peptideSection = new PsPeptideSection(peptideFeatures, indexes, header, writer);
         }
-        this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
@@ -197,12 +191,12 @@ public class PsProteinSection {
 
                     for (ExportFeature exportFeature : proteinFeatures) {
                         if (!first) {
-                            writer.write(separator);
+                            writer.addSeparator();
                         } else {
                             first = false;
                         }
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, separator, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
+                        writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
                     if (peptideSection != null) {
@@ -223,7 +217,6 @@ public class PsProteinSection {
      * @param annotationPreferences the annotation preferences
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
-     * @param separator the column separator
      * @param nSurroundingAas in case a peptide export is included with
      * surrounding amino-acids, the number of surrounding amino acids to use
      * @param proteinKey the key of the protein match being written
@@ -242,9 +235,10 @@ public class PsProteinSection {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
+     * @throws org.apache.commons.math.MathException
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String separator, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {
@@ -353,9 +347,9 @@ public class PsProteinSection {
             case confidence:
                 return psParameter.getProteinConfidence() + "";
             case confident_PTMs:
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, "");
             case other_PTMs:
-                return identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator);
+                return identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, "");
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
                 for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
@@ -363,7 +357,7 @@ public class PsProteinSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, "");
             case other_phosphosites:
                 modifications = new ArrayList<String>();
                 for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
@@ -371,7 +365,7 @@ public class PsProteinSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, separator);
+                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, "");
             case coverage:
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
@@ -456,7 +450,8 @@ public class PsProteinSection {
      */
     public void writeHeader() throws IOException {
         if (indexes) {
-            writer.write(separator);
+            writer.writeHeaderText("");
+            writer.addSeparator();
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : proteinFeatures) {
@@ -464,8 +459,9 @@ public class PsProteinSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-                    writer.write(separator);
+                    writer.addSeparator();
                 }
+                writer.writeHeaderText(title);
                 writer.write(title);
             }
         }
