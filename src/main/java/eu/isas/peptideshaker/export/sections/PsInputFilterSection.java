@@ -1,25 +1,25 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.waiting.WaitingHandler;
+import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeature;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * This class outputs the spectrum counting related export features.
+ * This class outputs the annotation related export features.
  *
  * @author Marc Vaudel
  */
-public class SpectrumCountingSection {
+public class PsInputFilterSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<SpectrumCountingFeature> spectrumCountingFeatures;
+    private ArrayList<PsInputFilterFeature> exportFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -46,32 +46,31 @@ public class SpectrumCountingSection {
      * @param header
      * @param writer
      */
-    public SpectrumCountingSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsInputFilterSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        spectrumCountingFeatures = new ArrayList<SpectrumCountingFeature>(exportFeatures.size());
+        this.exportFeatures = new ArrayList<PsInputFilterFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof SpectrumCountingFeature) {
-                spectrumCountingFeatures.add((SpectrumCountingFeature) exportFeature);
+            if (exportFeature instanceof PsInputFilterSection) {
+                this.exportFeatures.add((PsInputFilterFeature) exportFeature);
             } else {
-                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as spectrum counting feature.");
+                throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as input filter feature.");
             }
         }
-        Collections.sort(spectrumCountingFeatures);
+        Collections.sort(this.exportFeatures);
     }
 
     /**
      * Writes the desired section.
      *
-     * @param spectrumCountingPreferences the spectrum counting preferences of
-     * this project
+     * @param idFilter the identification used for this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException {
+    public void writeSection(IdFilter idFilter, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -87,28 +86,40 @@ public class SpectrumCountingSection {
 
         int line = 1;
 
-        for (SpectrumCountingFeature spectrumCountingFeature : spectrumCountingFeatures) {
+        for (ExportFeature exportFeature : exportFeatures) {
+
             if (indexes) {
                 writer.write(line + separator);
             }
-            for (String title : spectrumCountingFeature.getTitles()) {
+            for (String title : exportFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            switch (spectrumCountingFeature) {
-                case method:
-                    switch (spectrumCountingPreferences.getSelectedMethod()) {
-                        case EMPAI:
-                            writer.write("emPAI");
-                            break;
-                        case NSAF:
-                            writer.write("NSAF");
-                            break;
-                        default:
-                            writer.write("unknown");
+            PsInputFilterFeature inputFilterFeatures = (PsInputFilterFeature) exportFeature;
+
+            switch (inputFilterFeatures) {
+                case max_mz_deviation:
+                    double value = idFilter.getMaxMzDeviation();
+                    if (value == -1) {
+                        writer.write("none");
+                    } else {
+                        writer.write(value + "");
                     }
                     break;
-                case validated:
-                    if (spectrumCountingPreferences.isValidatedHits()) {
+                case max_mz_deviation_unit:
+                    if (idFilter.isIsPpm()) {
+                        writer.write("Yes");
+                    } else {
+                        writer.write("No");
+                    }
+                    break;
+                case max_peptide_length:
+                    writer.write(idFilter.getMaxPepLength() + "");
+                    break;
+                case min_peptide_length:
+                    writer.write(idFilter.getMinPepLength() + "");
+                    break;
+                case unknown_PTM:
+                    if (idFilter.removeUnknownPTMs()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
@@ -117,6 +128,7 @@ public class SpectrumCountingSection {
                 default:
                     writer.write("Not implemented");
             }
+
             writer.newLine();
             line++;
         }

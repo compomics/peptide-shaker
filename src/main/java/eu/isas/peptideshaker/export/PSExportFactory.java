@@ -11,29 +11,29 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeature;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
-import eu.isas.peptideshaker.export.exportfeatures.IdentificationAlgorithmMatchesFeature;
-import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ProjectFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ProteinFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsmFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SearchFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ValidationFeature;
-import eu.isas.peptideshaker.export.sections.AnnotationSection;
-import eu.isas.peptideshaker.export.sections.IdentificationAlgorithmMatchesSection;
-import eu.isas.peptideshaker.export.sections.InputFilterSection;
-import eu.isas.peptideshaker.export.sections.PeptideSection;
-import eu.isas.peptideshaker.export.sections.ProjectSection;
-import eu.isas.peptideshaker.export.sections.ProteinSection;
-import eu.isas.peptideshaker.export.sections.PsmSection;
-import eu.isas.peptideshaker.export.sections.PtmScoringSection;
-import eu.isas.peptideshaker.export.sections.SearchParametersSection;
-import eu.isas.peptideshaker.export.sections.SpectrumCountingSection;
-import eu.isas.peptideshaker.export.sections.ValidationSection;
+import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsInputFilterFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsProjectFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
+import eu.isas.peptideshaker.export.sections.PsAnnotationSection;
+import eu.isas.peptideshaker.export.sections.PsIdentificationAlgorithmMatchesSection;
+import eu.isas.peptideshaker.export.sections.PsInputFilterSection;
+import eu.isas.peptideshaker.export.sections.PsPeptideSection;
+import eu.isas.peptideshaker.export.sections.PsProjectSection;
+import eu.isas.peptideshaker.export.sections.PsProteinSection;
+import eu.isas.peptideshaker.export.sections.PsPsmSection;
+import eu.isas.peptideshaker.export.sections.PsPtmScoringSection;
+import eu.isas.peptideshaker.export.sections.PsSearchParametersSection;
+import eu.isas.peptideshaker.export.sections.PsSpectrumCountingSection;
+import eu.isas.peptideshaker.export.sections.PsValidationSection;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -163,45 +163,45 @@ public class PSExportFactory implements ExportFactory {
     @Override
     public ArrayList<String> getImplementedSections() {
         ArrayList<String> result = new ArrayList<String>();
-        result.add(ProteinFeature.type);
-        result.add(PeptideFeature.type);
-        result.add(PsmFeature.type);
-        result.add(IdentificationAlgorithmMatchesFeature.type);
-        result.add(FragmentFeature.type);
-        result.add(AnnotationFeature.type);
-        result.add(InputFilterFeature.type);
-        result.add(ProjectFeature.type);
-        result.add(PtmScoringFeature.type);
-        result.add(SearchFeature.type);
-        result.add(SpectrumCountingFeature.type);
-        result.add(ValidationFeature.type);
+        result.add(PsProteinFeature.type);
+        result.add(PsPeptideFeature.type);
+        result.add(PsPsmFeature.type);
+        result.add(PsIdentificationAlgorithmMatchesFeature.type);
+        result.add(PsFragmentFeature.type);
+        result.add(PsAnnotationFeature.type);
+        result.add(PsInputFilterFeature.type);
+        result.add(PsProjectFeature.type);
+        result.add(PsPtmScoringFeature.type);
+        result.add(PsSearchFeature.type);
+        result.add(PsSpectrumCountingFeature.type);
+        result.add(PsValidationFeature.type);
         return result;
     }
 
     @Override
     public ArrayList<ExportFeature> getExportFeatures(String sectionName, boolean includeSubFeatures) {
-        if (sectionName.equals(AnnotationFeature.type)) {
-            return AnnotationFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(InputFilterFeature.type)) {
-            return InputFilterFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PeptideFeature.type)) {
-            return PeptideFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(ProjectFeature.type)) {
-            return ProjectFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(ProteinFeature.type)) {
-            return ProteinFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PsmFeature.type)) {
-            return PsmFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(PtmScoringFeature.type)) {
-            return PtmScoringFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(SearchFeature.type)) {
-            return SearchFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(SpectrumCountingFeature.type)) {
-            return SpectrumCountingFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(ValidationFeature.type)) {
-            return ValidationFeature.values()[0].getExportFeatures(includeSubFeatures);
-        } else if (sectionName.equals(IdentificationAlgorithmMatchesFeature.type)) {
-            return IdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures);
+        if (sectionName.equals(PsAnnotationFeature.type)) {
+            return PsAnnotationFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsInputFilterFeature.type)) {
+            return PsInputFilterFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsPeptideFeature.type)) {
+            return PsPeptideFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsProjectFeature.type)) {
+            return PsProjectFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsProteinFeature.type)) {
+            return PsProteinFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsPsmFeature.type)) {
+            return PsPsmFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsPtmScoringFeature.type)) {
+            return PsPtmScoringFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsSearchFeature.type)) {
+            return PsSearchFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsSpectrumCountingFeature.type)) {
+            return PsSpectrumCountingFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsValidationFeature.type)) {
+            return PsValidationFeature.values()[0].getExportFeatures(includeSubFeatures);
+        } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
+            return PsIdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures);
         }
         return new ArrayList<ExportFeature>();
     }
@@ -287,38 +287,38 @@ public class PSExportFactory implements ExportFactory {
                 writer.write(sectionName);
                 writer.newLine();
             }
-            if (sectionName.equals(AnnotationFeature.type)) {
-                AnnotationSection section = new AnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            if (sectionName.equals(PsAnnotationFeature.type)) {
+                PsAnnotationSection section = new PsAnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(annotationPreferences, waitingHandler);
-            } else if (sectionName.equals(InputFilterFeature.type)) {
-                InputFilterSection section = new InputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsInputFilterFeature.type)) {
+                PsInputFilterSection section = new PsInputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(idFilter, waitingHandler);
-            } else if (sectionName.equals(PeptideFeature.type)) {
-                PeptideSection section = new PeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsPeptideFeature.type)) {
+                PsPeptideSection section = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(ProjectFeature.type)) {
-                ProjectSection section = new ProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsProjectFeature.type)) {
+                PsProjectSection section = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
-            } else if (sectionName.equals(ProteinFeature.type)) {
-                ProteinSection section = new ProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsProteinFeature.type)) {
+                PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(PsmFeature.type)) {
-                PsmSection section = new PsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsPsmFeature.type)) {
+                PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
-            } else if (sectionName.equals(IdentificationAlgorithmMatchesFeature.type)) {
-                IdentificationAlgorithmMatchesSection section = new IdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
+                PsIdentificationAlgorithmMatchesSection section = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, mainTitle, waitingHandler);
-            } else if (sectionName.equals(PtmScoringFeature.type)) {
-                PtmScoringSection section = new PtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsPtmScoringFeature.type)) {
+                PsPtmScoringSection section = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(ptmcoringPreferences, waitingHandler);
-            } else if (sectionName.equals(SearchFeature.type)) {
-                SearchParametersSection section = new SearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsSearchFeature.type)) {
+                PsSearchParametersSection section = new PsSearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(searchParameters, waitingHandler);
-            } else if (sectionName.equals(SpectrumCountingFeature.type)) {
-                SpectrumCountingSection section = new SpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsSpectrumCountingFeature.type)) {
+                PsSpectrumCountingSection section = new PsSpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(spectrumCountingPreferences, waitingHandler);
-            } else if (sectionName.equals(ValidationFeature.type)) {
-                ValidationSection section = new ValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+            } else if (sectionName.equals(PsValidationFeature.type)) {
+                PsValidationSection section = new PsValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 PSMaps psMaps = new PSMaps();
                 psMaps = (PSMaps) identification.getUrParam(psMaps);
                 section.writeSection(psMaps, waitingHandler);
@@ -469,93 +469,93 @@ public class PSExportFactory implements ExportFactory {
         ArrayList<ExportFeature> sectionContent = new ArrayList<ExportFeature>();
 
         // protein accessions and protein inferences 
-        sectionContent.add(ProteinFeature.accession);
-        sectionContent.add(ProteinFeature.protein_description);
-        sectionContent.add(ProteinFeature.pi);
-        sectionContent.add(ProteinFeature.other_proteins);
-        sectionContent.add(ProteinFeature.protein_group);
+        sectionContent.add(PsProteinFeature.accession);
+        sectionContent.add(PsProteinFeature.protein_description);
+        sectionContent.add(PsProteinFeature.pi);
+        sectionContent.add(PsProteinFeature.other_proteins);
+        sectionContent.add(PsProteinFeature.protein_group);
 
         // peptide and spectrum counts
-        sectionContent.add(ProteinFeature.peptides);
-        sectionContent.add(ProteinFeature.validated_peptides);
-        sectionContent.add(ProteinFeature.unique_peptides);
-        sectionContent.add(ProteinFeature.psms);
-        sectionContent.add(ProteinFeature.validated_psms);
+        sectionContent.add(PsProteinFeature.peptides);
+        sectionContent.add(PsProteinFeature.validated_peptides);
+        sectionContent.add(PsProteinFeature.unique_peptides);
+        sectionContent.add(PsProteinFeature.psms);
+        sectionContent.add(PsProteinFeature.validated_psms);
 
         // protein coverage
-        sectionContent.add(ProteinFeature.coverage);
-        sectionContent.add(ProteinFeature.possible_coverage);
+        sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.possible_coverage);
 
         // molecular weight and spectrum counting
-        sectionContent.add(ProteinFeature.mw);
-        sectionContent.add(ProteinFeature.spectrum_counting_nsaf);
-        sectionContent.add(ProteinFeature.spectrum_counting_empai);
+        sectionContent.add(PsProteinFeature.mw);
+        sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
+        sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
-        sectionContent.add(ProteinFeature.confident_PTMs);
-        sectionContent.add(ProteinFeature.other_PTMs);
+        sectionContent.add(PsProteinFeature.confident_PTMs);
+        sectionContent.add(PsProteinFeature.other_PTMs);
 
         // protein scores
-        sectionContent.add(ProteinFeature.confidence);
-        sectionContent.add(ProteinFeature.decoy);
-        sectionContent.add(ProteinFeature.validated);
+        sectionContent.add(PsProteinFeature.confidence);
+        sectionContent.add(PsProteinFeature.decoy);
+        sectionContent.add(PsProteinFeature.validated);
 
         // Peptide sub-section
         // accessions
-        sectionContent.add(PeptideFeature.accessions);
+        sectionContent.add(PsPeptideFeature.accessions);
 
         // peptide sequence
-        sectionContent.add(PeptideFeature.aaBefore);
-        sectionContent.add(PeptideFeature.sequence);
-        sectionContent.add(PeptideFeature.aaAfter);
+        sectionContent.add(PsPeptideFeature.aaBefore);
+        sectionContent.add(PsPeptideFeature.sequence);
+        sectionContent.add(PsPeptideFeature.aaAfter);
 
         // variable_ptms
-        sectionContent.add(PeptideFeature.variable_ptms);
-        sectionContent.add(PeptideFeature.localization_confidence);
-        sectionContent.add(PeptideFeature.fixed_ptms);
+        sectionContent.add(PsPeptideFeature.variable_ptms);
+        sectionContent.add(PsPeptideFeature.localization_confidence);
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
 
         // psms
-        sectionContent.add(PeptideFeature.validated_psms);
-        sectionContent.add(PeptideFeature.psms);
+        sectionContent.add(PsPeptideFeature.validated_psms);
+        sectionContent.add(PsPeptideFeature.psms);
 
         // peptide scores
-        sectionContent.add(PeptideFeature.confidence);
-        sectionContent.add(PeptideFeature.decoy);
-        sectionContent.add(PeptideFeature.validated);
+        sectionContent.add(PsPeptideFeature.confidence);
+        sectionContent.add(PsPeptideFeature.decoy);
+        sectionContent.add(PsPeptideFeature.validated);
 
         // PSM sub-section
         // protein accessions
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.accessions);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.sequence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
 
         // ptms
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.modified_sequence);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.variable_ptms);
-        sectionContent.add(PsmFeature.d_score);
-        sectionContent.add(PsmFeature.probabilistic_score);
-        sectionContent.add(PsmFeature.localization_confidence);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.fixed_ptms);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.modified_sequence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
+        sectionContent.add(PsPsmFeature.d_score);
+        sectionContent.add(PsPsmFeature.probabilistic_score);
+        sectionContent.add(PsPsmFeature.localization_confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
 
         // spectrum file
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_file);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_title);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_scan_number);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_file);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_title);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_scan_number);
 
         // spectrum details
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.rt);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.mz);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_charge);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.identification_charge);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.theoretical_mass);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.isotope);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.mz_error);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.rt);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error);
 
         // psm scores
-        sectionContent.add(PsmFeature.confidence);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.decoy);
-        sectionContent.add(PsmFeature.validated);
+        sectionContent.add(PsPsmFeature.confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
+        sectionContent.add(PsPsmFeature.validated);
 
-        exportFeatures.put(ProteinFeature.type, sectionContent);
+        exportFeatures.put(PsProteinFeature.type, sectionContent);
 
         ExportScheme topDownReport = new ExportScheme("Default Hierarchical Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
 
@@ -566,40 +566,40 @@ public class PSExportFactory implements ExportFactory {
         sectionContent = new ArrayList<ExportFeature>();
 
         // protein accessions and protein inferences 
-        sectionContent.add(ProteinFeature.accession);
-        sectionContent.add(ProteinFeature.protein_description);
-        sectionContent.add(ProteinFeature.gene_name);
-        sectionContent.add(ProteinFeature.chromosome);
-        sectionContent.add(ProteinFeature.pi);
-        sectionContent.add(ProteinFeature.other_proteins);
-        sectionContent.add(ProteinFeature.protein_group);
+        sectionContent.add(PsProteinFeature.accession);
+        sectionContent.add(PsProteinFeature.protein_description);
+        sectionContent.add(PsProteinFeature.gene_name);
+        sectionContent.add(PsProteinFeature.chromosome);
+        sectionContent.add(PsProteinFeature.pi);
+        sectionContent.add(PsProteinFeature.other_proteins);
+        sectionContent.add(PsProteinFeature.protein_group);
 
         // peptide and spectrum counts
-        sectionContent.add(ProteinFeature.peptides);
-        sectionContent.add(ProteinFeature.validated_peptides);
-        sectionContent.add(ProteinFeature.unique_peptides);
-        sectionContent.add(ProteinFeature.psms);
-        sectionContent.add(ProteinFeature.validated_psms);
+        sectionContent.add(PsProteinFeature.peptides);
+        sectionContent.add(PsProteinFeature.validated_peptides);
+        sectionContent.add(PsProteinFeature.unique_peptides);
+        sectionContent.add(PsProteinFeature.psms);
+        sectionContent.add(PsProteinFeature.validated_psms);
 
         // protein coverage
-        sectionContent.add(ProteinFeature.coverage);
-        sectionContent.add(ProteinFeature.possible_coverage);
+        sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.possible_coverage);
 
         // molecular weight and spectrum counting
-        sectionContent.add(ProteinFeature.mw);
-        sectionContent.add(ProteinFeature.spectrum_counting_nsaf);
-        sectionContent.add(ProteinFeature.spectrum_counting_empai);
+        sectionContent.add(PsProteinFeature.mw);
+        sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
+        sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
-        sectionContent.add(ProteinFeature.confident_PTMs);
-        sectionContent.add(ProteinFeature.other_PTMs);
+        sectionContent.add(PsProteinFeature.confident_PTMs);
+        sectionContent.add(PsProteinFeature.other_PTMs);
 
         // protein scores
-        sectionContent.add(ProteinFeature.confidence);
-        sectionContent.add(ProteinFeature.decoy);
-        sectionContent.add(ProteinFeature.validated);
+        sectionContent.add(PsProteinFeature.confidence);
+        sectionContent.add(PsProteinFeature.decoy);
+        sectionContent.add(PsProteinFeature.validated);
 
-        exportFeatures.put(ProteinFeature.type, sectionContent);
+        exportFeatures.put(PsProteinFeature.type, sectionContent);
 
         ExportScheme proteinReport = new ExportScheme("Default Protein Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
 
@@ -610,29 +610,29 @@ public class PSExportFactory implements ExportFactory {
         sectionContent = new ArrayList<ExportFeature>();
 
         // accessions
-        sectionContent.add(PeptideFeature.accessions);
+        sectionContent.add(PsPeptideFeature.accessions);
 
         // peptide sequence
-        sectionContent.add(PeptideFeature.aaBefore);
-        sectionContent.add(PeptideFeature.sequence);
-        sectionContent.add(PeptideFeature.aaAfter);
+        sectionContent.add(PsPeptideFeature.aaBefore);
+        sectionContent.add(PsPeptideFeature.sequence);
+        sectionContent.add(PsPeptideFeature.aaAfter);
 
         // variable_ptms
-        sectionContent.add(PeptideFeature.modified_sequence);
-        sectionContent.add(PeptideFeature.variable_ptms);
-        sectionContent.add(PeptideFeature.localization_confidence);
-        sectionContent.add(PeptideFeature.fixed_ptms);
+        sectionContent.add(PsPeptideFeature.modified_sequence);
+        sectionContent.add(PsPeptideFeature.variable_ptms);
+        sectionContent.add(PsPeptideFeature.localization_confidence);
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
 
         // psms
-        sectionContent.add(PeptideFeature.validated_psms);
-        sectionContent.add(PeptideFeature.psms);
+        sectionContent.add(PsPeptideFeature.validated_psms);
+        sectionContent.add(PsPeptideFeature.psms);
 
         // peptide scores
-        sectionContent.add(PeptideFeature.confidence);
-        sectionContent.add(PeptideFeature.decoy);
-        sectionContent.add(PeptideFeature.validated);
+        sectionContent.add(PsPeptideFeature.confidence);
+        sectionContent.add(PsPeptideFeature.decoy);
+        sectionContent.add(PsPeptideFeature.validated);
 
-        exportFeatures.put(PeptideFeature.type, sectionContent);
+        exportFeatures.put(PsPeptideFeature.type, sectionContent);
 
         ExportScheme peptideReport = new ExportScheme("Default Peptide Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
 
@@ -643,36 +643,36 @@ public class PSExportFactory implements ExportFactory {
         sectionContent = new ArrayList<ExportFeature>();
 
         // protein accessions
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.accessions);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.sequence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
 
         // ptms
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.variable_ptms);
-        sectionContent.add(PsmFeature.d_score);
-        sectionContent.add(PsmFeature.probabilistic_score);
-        sectionContent.add(PsmFeature.localization_confidence);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.fixed_ptms);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
+        sectionContent.add(PsPsmFeature.d_score);
+        sectionContent.add(PsPsmFeature.probabilistic_score);
+        sectionContent.add(PsPsmFeature.localization_confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
 
         // spectrum file
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_file);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_title);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_scan_number);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_file);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_title);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_scan_number);
 
         // spectrum details
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.rt);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.mz);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.spectrum_charge);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.identification_charge);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.theoretical_mass);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.isotope);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.mz_error);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.rt);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error);
 
         // psm scores
-        sectionContent.add(PsmFeature.confidence);
-        sectionContent.add(IdentificationAlgorithmMatchesFeature.decoy);
-        sectionContent.add(PsmFeature.validated);
+        sectionContent.add(PsPsmFeature.confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
+        sectionContent.add(PsPsmFeature.validated);
 
-        exportFeatures.put(PsmFeature.type, sectionContent);
+        exportFeatures.put(PsPsmFeature.type, sectionContent);
 
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
 
@@ -684,38 +684,38 @@ public class PSExportFactory implements ExportFactory {
 
         // project details
         sectionContent = new ArrayList<ExportFeature>();
-        sectionsList.add(ProjectFeature.type);
-        sectionContent.add(ProjectFeature.peptide_shaker);
-        sectionContent.add(ProjectFeature.date);
-        sectionContent.add(ProjectFeature.experiment);
-        sectionContent.add(ProjectFeature.sample);
-        sectionContent.add(ProjectFeature.replicate);
-        sectionContent.add(ProjectFeature.identification_algorithms);
-        exportFeatures.put(ProjectFeature.type, sectionContent);
+        sectionsList.add(PsProjectFeature.type);
+        sectionContent.add(PsProjectFeature.peptide_shaker);
+        sectionContent.add(PsProjectFeature.date);
+        sectionContent.add(PsProjectFeature.experiment);
+        sectionContent.add(PsProjectFeature.sample);
+        sectionContent.add(PsProjectFeature.replicate);
+        sectionContent.add(PsProjectFeature.identification_algorithms);
+        exportFeatures.put(PsProjectFeature.type, sectionContent);
 
         // search parameters
-        sectionsList.add(SearchFeature.type);
-        exportFeatures.put(SearchFeature.type, SearchFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsSearchFeature.type);
+        exportFeatures.put(PsSearchFeature.type, PsSearchFeature.values()[0].getExportFeatures(false));
 
         // input filters
-        sectionsList.add(InputFilterFeature.type);
-        exportFeatures.put(InputFilterFeature.type, InputFilterFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsInputFilterFeature.type);
+        exportFeatures.put(PsInputFilterFeature.type, PsInputFilterFeature.values()[0].getExportFeatures(false));
 
         // validation details
-        sectionsList.add(ValidationFeature.type);
-        exportFeatures.put(ValidationFeature.type, ValidationFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsValidationFeature.type);
+        exportFeatures.put(PsValidationFeature.type, PsValidationFeature.values()[0].getExportFeatures(false));
 
         // ptms
-        sectionsList.add(PtmScoringFeature.type);
-        exportFeatures.put(PtmScoringFeature.type, PtmScoringFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsPtmScoringFeature.type);
+        exportFeatures.put(PsPtmScoringFeature.type, PsPtmScoringFeature.values()[0].getExportFeatures(false));
 
         // spectrum counting details
-        sectionsList.add(SpectrumCountingFeature.type);
-        exportFeatures.put(SpectrumCountingFeature.type, SpectrumCountingFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsSpectrumCountingFeature.type);
+        exportFeatures.put(PsSpectrumCountingFeature.type, PsSpectrumCountingFeature.values()[0].getExportFeatures(false));
 
         // annotation settings
-        sectionsList.add(AnnotationFeature.type);
-        exportFeatures.put(AnnotationFeature.type, AnnotationFeature.values()[0].getExportFeatures(false));
+        sectionsList.add(PsAnnotationFeature.type);
+        exportFeatures.put(PsAnnotationFeature.type, PsAnnotationFeature.values()[0].getExportFeatures(false));
 
         ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, ": ", true, false, 2, true, false, true);
 

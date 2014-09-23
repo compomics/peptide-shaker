@@ -3,8 +3,8 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ValidationFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsSpectrumCountingFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsValidationFeature;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
@@ -21,12 +21,12 @@ import java.util.Set;
  *
  * @author Marc Vaudel
  */
-public class ValidationSection {
+public class PsValidationSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<ValidationFeature> validationFeatures;
+    private ArrayList<PsValidationFeature> validationFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -53,15 +53,15 @@ public class ValidationSection {
      * @param header
      * @param writer
      */
-    public ValidationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsValidationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        validationFeatures = new ArrayList<ValidationFeature>(exportFeatures.size());
+        validationFeatures = new ArrayList<PsValidationFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof ValidationFeature) {
-                validationFeatures.add((ValidationFeature) exportFeature);
+            if (exportFeature instanceof PsValidationFeature) {
+                validationFeatures.add((PsValidationFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as validation feature.");
             }
@@ -93,7 +93,7 @@ public class ValidationSection {
 
         int line = 1;
 
-        for (ValidationFeature validationFeature : validationFeatures) {
+        for (PsValidationFeature validationFeature : validationFeatures) {
             switch (validationFeature) {
                 case peptide_accuracy:
                     PeptideSpecificMap peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();

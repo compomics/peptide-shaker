@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum PeptideFeature implements ExportFeature {
+public enum PsPeptideFeature implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which this peptide can be attached.", false),
     protein_description("Description(s)", "Description of the Protein(s) to which this peptide can be attached.", false),
@@ -50,7 +50,7 @@ public enum PeptideFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ public enum PeptideFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private PeptideFeature(String title, String description, boolean advanced) {
+    private PsPeptideFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -70,7 +70,7 @@ public enum PeptideFeature implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-        result.addAll(PsmFeature.values()[0].getExportFeatures(includeSubFeatures));
+            result.addAll(PsPsmFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }

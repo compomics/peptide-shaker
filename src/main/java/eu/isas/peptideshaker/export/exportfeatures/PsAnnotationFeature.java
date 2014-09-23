@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum AnnotationFeature implements ExportFeature {
+public enum PsAnnotationFeature implements ExportFeature {
 
     intensity_limit("Intensity Limit", "The intensity threshold for considering a peak (in percentile of the intensities in the spectrum).", false),
     automatic_annotation("Automatic Annotation", "Indicates whether the PeptideShaker automated peak annotation was used (1: yes, 0: no).", false),
@@ -29,7 +29,7 @@ public enum AnnotationFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
     /**
      * The type of export feature.
      */
@@ -42,7 +42,7 @@ public enum AnnotationFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private AnnotationFeature(String title, String description, boolean advanced) {
+    private PsAnnotationFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author Marc Vaudel
  */
-public enum PsmFeature implements ExportFeature {
+public enum PsPsmFeature implements ExportFeature {
 
     localization_confidence("Localization Confidence", "The confidence in variable PTM localization.", false),
     probabilistic_score("probabilistic PTM score", "The probabilistic score (e.g. A-score or PhosphoRS) used for variable PTM localization.", false),
@@ -36,7 +36,7 @@ public enum PsmFeature implements ExportFeature {
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -45,7 +45,7 @@ public enum PsmFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private PsmFeature(String title, String description, boolean advanced) {
+    private PsPsmFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -54,7 +54,7 @@ public enum PsmFeature implements ExportFeature {
     @Override
     public ArrayList<ExportFeature> getExportFeatures(boolean includeSubFeatures) {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
-        result.addAll(IdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures));
+        result.addAll(PsIdentificationAlgorithmMatchesFeature.values()[0].getExportFeatures(includeSubFeatures));
         result.addAll(Arrays.asList(values()));
         return result;
     }

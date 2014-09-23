@@ -14,9 +14,9 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.export.exportfeatures.FragmentFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PeptideFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PsmFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -35,16 +35,16 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public class PeptideSection {
+public class PsPeptideSection {
 
     /**
      * The peptide features to export.
      */
-    private ArrayList<PeptideFeature> peptideFeatures = new ArrayList<PeptideFeature>();
+    private ArrayList<PsPeptideFeature> peptideFeatures = new ArrayList<PsPeptideFeature>();
     /**
      * The PSM subsection if needed.
      */
-    private PsmSection psmSection = null;
+    private PsPsmSection psmSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -71,12 +71,12 @@ public class PeptideSection {
      * @param header
      * @param writer
      */
-    public PeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsPeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         ArrayList<ExportFeature> psmFeatures = new ArrayList<ExportFeature>();
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof PeptideFeature) {
-                peptideFeatures.add((PeptideFeature) exportFeature);
-            } else if (exportFeature instanceof PsmFeature || exportFeature instanceof FragmentFeature) {
+            if (exportFeature instanceof PsPeptideFeature) {
+                peptideFeatures.add((PsPeptideFeature) exportFeature);
+            } else if (exportFeature instanceof PsPsmFeature || exportFeature instanceof PsFragmentFeature) {
                 psmFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
@@ -84,7 +84,7 @@ public class PeptideSection {
         }
         Collections.sort(peptideFeatures);
         if (!psmFeatures.isEmpty()) {
-            psmSection = new PsmSection(psmFeatures, separator, indexes, header, writer);
+            psmSection = new PsPsmSection(psmFeatures, separator, indexes, header, writer);
         }
         this.separator = separator;
         this.indexes = indexes;
@@ -186,7 +186,7 @@ public class PeptideSection {
                         } else {
                             first = false;
                         }
-                        PeptideFeature peptideFeature = (PeptideFeature) exportFeature;
+                        PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
                         writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, separator, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
                     }
                     writer.newLine();
@@ -235,7 +235,7 @@ public class PeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, String separator, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         switch (peptideFeature) {
             case accessions:

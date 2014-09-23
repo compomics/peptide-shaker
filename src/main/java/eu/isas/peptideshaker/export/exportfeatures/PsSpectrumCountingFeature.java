@@ -1,24 +1,18 @@
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import com.compomics.util.io.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * This class lists the PSM identification features.
+ * This class lists all the export features related to the spectrum counting.
  *
  * @author Marc Vaudel
  */
-public enum ProjectFeature implements ExportFeature, Serializable {
+public enum PsSpectrumCountingFeature implements ExportFeature {
 
-    peptide_shaker("PeptideShaker Version", "Software version used to create the project.", false),
-    date("Date", "Date of project creation.", false),
-    experiment("Experiment", "Experiment name.", false),
-    sample("Sample", "Sample name.", false),
-    replicate("Replicate Number", "Replicate number.", false),
-    identification_algorithms("Identification Algorithms", "The identification algorithms used.", false),
-    algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.", false);
+    method("Method", "The method used to establish the spectrum counting index.", false),
+    validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.", false);
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -30,11 +24,11 @@ public enum ProjectFeature implements ExportFeature, Serializable {
     /**
      * The type of export feature.
      */
-    public final static String type = "Project Details";
+    public final static String type = "Spectrum Counting Parameters";
     /**
      * Indicates whether a feature is for advanced user only.
      */
-    private boolean advanced;
+    private final boolean advanced;
 
     /**
      * Constructor.
@@ -43,7 +37,7 @@ public enum ProjectFeature implements ExportFeature, Serializable {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private ProjectFeature(String title, String description, boolean advanced) {
+    private PsSpectrumCountingFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;

@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.ProjectFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsProjectFeature;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,12 +16,12 @@ import java.util.HashMap;
  *
  * @author Marc Vaudel
  */
-public class ProjectSection {
+public class PsProjectSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<ProjectFeature> projectFeatures;
+    private ArrayList<PsProjectFeature> projectFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -48,15 +48,15 @@ public class ProjectSection {
      * @param header
      * @param writer
      */
-    public ProjectSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsProjectSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        projectFeatures = new ArrayList<ProjectFeature>(exportFeatures.size());
+        projectFeatures = new ArrayList<PsProjectFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof ProjectFeature) {
-                projectFeatures.add((ProjectFeature) exportFeature);
+            if (exportFeature instanceof PsProjectFeature) {
+                projectFeatures.add((PsProjectFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as project feature.");
             }
@@ -91,7 +91,7 @@ public class ProjectSection {
 
         int line = 1;
 
-        for (ProjectFeature projectFeature : projectFeatures) {
+        for (PsProjectFeature projectFeature : projectFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }

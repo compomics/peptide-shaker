@@ -5,7 +5,7 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,12 +16,12 @@ import java.util.Collections;
  *
  * @author Marc Vaudel
  */
-public class AnnotationSection {
+public class PsAnnotationSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<AnnotationFeature> annotationFeatures;
+    private ArrayList<PsAnnotationFeature> annotationFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -48,15 +48,15 @@ public class AnnotationSection {
      * @param header
      * @param writer
      */
-    public AnnotationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsAnnotationSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        this.annotationFeatures = new ArrayList<AnnotationFeature>(exportFeatures.size());
+        this.annotationFeatures = new ArrayList<PsAnnotationFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof AnnotationFeature) {
-                annotationFeatures.add((AnnotationFeature) exportFeature);
+            if (exportFeature instanceof PsAnnotationFeature) {
+                annotationFeatures.add((PsAnnotationFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as annotation feature.");
             }
@@ -96,7 +96,7 @@ public class AnnotationSection {
             for (String title : exportFeature.getTitles()) {
                 writer.write(title + separator);
             }
-            AnnotationFeature annotationFeature = (AnnotationFeature) exportFeature;
+            PsAnnotationFeature annotationFeature = (PsAnnotationFeature) exportFeature;
 
             switch (annotationFeature) {
                 case automatic_annotation:

@@ -5,8 +5,8 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SearchFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsPtmScoringFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsSearchFeature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.Collections;
  *
  * @author Marc Vaudel
  */
-public class SearchParametersSection {
+public class PsSearchParametersSection {
 
     /**
      * The features to export.
      */
-    private ArrayList<SearchFeature> searchFeatures;
+    private ArrayList<PsSearchFeature> searchFeatures;
     /**
      * The separator used to separate columns.
      */
@@ -49,15 +49,15 @@ public class SearchParametersSection {
      * @param header
      * @param writer
      */
-    public SearchParametersSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PsSearchParametersSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        searchFeatures = new ArrayList<SearchFeature>(exportFeatures.size());
+        searchFeatures = new ArrayList<PsSearchFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof SearchFeature) {
-                searchFeatures.add((SearchFeature) exportFeature);
+            if (exportFeature instanceof PsSearchFeature) {
+                searchFeatures.add((PsSearchFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as search parameter feature.");
             }
@@ -89,7 +89,7 @@ public class SearchParametersSection {
 
         int line = 1;
 
-        for (SearchFeature exportFeature : searchFeatures) {
+        for (PsSearchFeature exportFeature : searchFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
