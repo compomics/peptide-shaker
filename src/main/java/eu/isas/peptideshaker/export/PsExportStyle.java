@@ -40,8 +40,12 @@ public class PsExportStyle implements WorkbookStyle {
      */
     public PsExportStyle(ExcelWriter excelWriter) { //@TODO: possible to make a generic style workbook independent?
         this.workbook = excelWriter.getWorkbook();
+        setCellStyles();
     }
 
+    /**
+     * Sets the cell styles
+     */
     private void setCellStyles() {
 
         // Main title
@@ -61,7 +65,7 @@ public class PsExportStyle implements WorkbookStyle {
         standardHeader.setBorderRight(CellStyle.BORDER_THIN);
         standardHeader.setAlignment(CellStyle.ALIGN_CENTER);
         standardHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        standardHeader.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+        standardHeader.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
         standardHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
         // Standard Cell

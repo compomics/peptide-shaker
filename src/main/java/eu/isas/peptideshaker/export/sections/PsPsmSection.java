@@ -514,7 +514,7 @@ public class PsPsmSection {
                 } else {
                     writer.addSeparator();
                 }
-                writer.write(title);
+                writer.writeHeaderText(title);
             }
         }
         for (ExportFeature exportFeature : psmFeatures) {
@@ -524,7 +524,7 @@ public class PsPsmSection {
                 } else {
                     writer.addSeparator();
                 }
-                writer.write(title);
+                writer.writeHeaderText(title);
             }
         }
         writer.newLine();
