@@ -16,6 +16,7 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -71,7 +72,7 @@ public class PsPeptideSection {
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsPeptideFeature) {
                 peptideFeatures.add((PsPeptideFeature) exportFeature);
-            } else if (exportFeature instanceof PsPsmFeature || exportFeature instanceof PsFragmentFeature) {
+            } else if (exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
                 psmFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
@@ -176,7 +177,7 @@ public class PsPeptideSection {
 
                     for (ExportFeature exportFeature : peptideFeatures) {
                         if (!first) {
-            writer.addSeparator();
+                            writer.addSeparator();
                         } else {
                             first = false;
                         }
@@ -190,7 +191,9 @@ public class PsPeptideSection {
                             psmSectionPrefix += linePrefix;
                         }
                         psmSectionPrefix += line + ".";
+                        writer.increaseDepth();
                         psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
+                        writer.decreseDepth();
                     }
                     line++;
                 }
@@ -302,7 +305,7 @@ public class PsPeptideSection {
             case fixed_ptms:
                 return getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false);
             case score:
-                return -10*FastMath.log10(psParameter.getPeptideScore()) + "";
+                return -10 * FastMath.log10(psParameter.getPeptideScore()) + "";
             case raw_score:
                 return psParameter.getPeptideScore() + "";
             case sequence:
@@ -514,10 +517,9 @@ public class PsPeptideSection {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
-            writer.addSeparator();
+                    writer.addSeparator();
                 }
-            writer.writeHeaderText(title);
-                writer.write(title);
+                writer.writeHeaderText(title);
             }
         }
         writer.newLine();

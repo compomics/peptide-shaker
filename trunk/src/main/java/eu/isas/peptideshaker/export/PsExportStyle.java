@@ -56,6 +56,12 @@ public class PsExportStyle implements WorkbookStyle {
         mainTitle = workbook.createCellStyle();
         mainTitle.setFont(f);
 
+        // Standard Cell
+        f = workbook.createFont();
+        f.setFontHeightInPoints((short) 8);
+        standard = workbook.createCellStyle();
+        standard.setFont(f);
+
         // Standard Header
         f = workbook.createFont();
         f.setFontHeightInPoints((short) 8);
@@ -73,16 +79,66 @@ public class PsExportStyle implements WorkbookStyle {
         // Change PALE_BLUE to actually pale blue
         HSSFPalette palette = workbook.getCustomPalette();
         palette.setColorAtIndex(HSSFColor.PALE_BLUE.index,
-                (byte) 204,
-                (byte) 229,
-                (byte) 255
+                (byte) 200,
+                (byte) 200,
+                (byte) 250
         );
-
-        // Standard Cell
-        f = workbook.createFont();
-        f.setFontHeightInPoints((short) 8);
-        standard = workbook.createCellStyle();
-        standard.setFont(f);
+        
+        // Hierarchical headers
+        hierarchicalHeaders.put(0, standardHeader);
+        
+        CellStyle subHeader = workbook.createCellStyle();
+        subHeader.setFont(f);
+        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
+        subHeader.setBorderTop(CellStyle.BORDER_THIN);
+        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
+        subHeader.setBorderRight(CellStyle.BORDER_THIN);
+        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
+        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
+        palette.setColorAtIndex(HSSFColor.GREY_50_PERCENT.index,
+                (byte) 220,
+                (byte) 220,
+                (byte) 250
+        );
+        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        hierarchicalHeaders.put(1, subHeader);
+        
+        subHeader = workbook.createCellStyle();
+        subHeader.setFont(f);
+        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
+        subHeader.setBorderTop(CellStyle.BORDER_THIN);
+        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
+        subHeader.setBorderRight(CellStyle.BORDER_THIN);
+        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
+        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
+        palette.setColorAtIndex(HSSFColor.GREY_40_PERCENT.index,
+                (byte) 230,
+                (byte) 230,
+                (byte) 250
+        );
+        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        hierarchicalHeaders.put(2, subHeader);
+        
+        subHeader = workbook.createCellStyle();
+        subHeader.setFont(f);
+        subHeader.setBorderBottom(CellStyle.BORDER_THIN);
+        subHeader.setBorderTop(CellStyle.BORDER_THIN);
+        subHeader.setBorderLeft(CellStyle.BORDER_THIN);
+        subHeader.setBorderRight(CellStyle.BORDER_THIN);
+        subHeader.setAlignment(CellStyle.ALIGN_CENTER);
+        subHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        subHeader.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+        palette.setColorAtIndex(HSSFColor.GREY_25_PERCENT.index,
+                (byte) 240,
+                (byte) 240,
+                (byte) 250
+        );
+        subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        for (int i = 3 ; i < 100 ; i++) {
+        hierarchicalHeaders.put(i, subHeader);
+        }
     }
 
     @Override

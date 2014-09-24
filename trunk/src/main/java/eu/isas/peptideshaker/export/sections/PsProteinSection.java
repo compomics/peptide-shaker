@@ -13,6 +13,7 @@ import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsProteinFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
@@ -75,7 +76,7 @@ public class PsProteinSection {
         for (ExportFeature exportFeature : exportFeatures) {
             if (exportFeature instanceof PsProteinFeature) {
                 proteinFeatures.add((PsProteinFeature) exportFeature);
-            } else if (exportFeature instanceof PsPeptideFeature || exportFeature instanceof PsPsmFeature || exportFeature instanceof PsFragmentFeature) {
+            } else if (exportFeature instanceof PsPeptideFeature || exportFeature instanceof PsPsmFeature || exportFeature instanceof PsIdentificationAlgorithmMatchesFeature || exportFeature instanceof PsFragmentFeature) {
                 peptideFeatures.add(exportFeature);
             } else {
                 throw new IllegalArgumentException("Export feature of type " + exportFeature.getClass() + " not recognized.");
@@ -200,7 +201,9 @@ public class PsProteinSection {
                     }
                     writer.newLine();
                     if (peptideSection != null) {
+                        writer.increaseDepth();
                         peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
+                        writer.decreseDepth();
                     }
                     line++;
                 }
@@ -462,7 +465,6 @@ public class PsProteinSection {
                     writer.addSeparator();
                 }
                 writer.writeHeaderText(title);
-                writer.write(title);
             }
         }
         writer.newLine();
