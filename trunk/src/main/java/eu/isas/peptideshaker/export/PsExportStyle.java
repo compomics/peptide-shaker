@@ -9,7 +9,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
  * This class contains the style for a PeptideShaker excel export.
@@ -34,13 +33,33 @@ public class PsExportStyle implements WorkbookStyle {
      * Map of the header styles according to the hierarchical depth.
      */
     private HashMap<Integer, CellStyle> hierarchicalHeaders = new HashMap<Integer, CellStyle>();
+    /**
+     * Map of the different styles available
+     */
+    private final static HashMap<HSSFWorkbook, PsExportStyle> styles = new HashMap<HSSFWorkbook, PsExportStyle>();
 
+    /**
+     * Returns the style attached to that writer or create a new one if none found
+     * 
+     * @param excelWriter the writer of interest
+     * 
+     * @return the style attached to that writer
+     */
+    public static PsExportStyle getReportStyle(ExcelWriter excelWriter) {
+        HSSFWorkbook workbook = excelWriter.getWorkbook();
+        PsExportStyle result = styles.get(workbook);
+        if (result == null) {
+            result = new PsExportStyle(excelWriter);
+            styles.put(workbook, result);
+        }
+        return result;
+    }
     /**
      * Constructor.
      *
      * @param excelWriter the excel writer for this style
      */
-    public PsExportStyle(ExcelWriter excelWriter) { //@TODO: possible to make a generic style workbook independent?
+    private PsExportStyle(ExcelWriter excelWriter) { //@TODO: possible to make a generic style workbook independent?
         this.workbook = excelWriter.getWorkbook();
         setCellStyles();
     }
