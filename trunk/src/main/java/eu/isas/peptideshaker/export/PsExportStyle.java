@@ -4,7 +4,9 @@ import com.compomics.util.io.export.WorkbookStyle;
 import com.compomics.util.io.export.writers.ExcelWriter;
 import java.util.HashMap;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -65,8 +67,16 @@ public class PsExportStyle implements WorkbookStyle {
         standardHeader.setBorderRight(CellStyle.BORDER_THIN);
         standardHeader.setAlignment(CellStyle.ALIGN_CENTER);
         standardHeader.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        standardHeader.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        standardHeader.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
         standardHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        // Change PALE_BLUE to actually pale blue
+        HSSFPalette palette = workbook.getCustomPalette();
+        palette.setColorAtIndex(HSSFColor.PALE_BLUE.index,
+                (byte) 204,
+                (byte) 229,
+                (byte) 255
+        );
 
         // Standard Cell
         f = workbook.createFont();
