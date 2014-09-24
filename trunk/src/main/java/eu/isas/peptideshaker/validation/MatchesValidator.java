@@ -215,7 +215,7 @@ public class MatchesValidator {
         PSParameter psParameter2 = new PSParameter();
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Matches validation. Please Wait...");
+            waitingHandler.setWaitingText("Match Validation. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()

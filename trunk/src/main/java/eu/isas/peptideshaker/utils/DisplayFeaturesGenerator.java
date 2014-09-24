@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -35,6 +34,7 @@ import java.util.HashMap;
  * This class creates the display features needed for the GUI.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class DisplayFeaturesGenerator {
 
@@ -257,37 +257,144 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns a String with the HTML tooltip for the peptide indicating the
+     * Returns a string with the HTML tooltip for the peptide indicating the
      * modification details.
      *
-     * @param peptide
-     * @return a String with the HTML tooltip for the peptide
+     * @param spectrumMatch the spectrum match
+     * @return a string with the HTML tooltip for the peptide
+     */
+    public String getPeptideModificationTooltipAsHtml(SpectrumMatch spectrumMatch) {
+        try {
+            Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+            PSPtmScores ptmScores = new PSPtmScores();
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+        } catch (Exception e) {
+            exceptionHandler.catchException(e);
+            return "Error";
+        }
+    }
+
+    /**
+     * Returns a string with the HTML tooltip for the peptide indicating the
+     * modification details.
+     *
+     * @param peptideMatch the peptide match
+     * @return a string with the HTML tooltip for the peptide
+     */
+    public String getPeptideModificationTooltipAsHtml(PeptideMatch peptideMatch) {
+        try {
+            Peptide peptide = peptideMatch.getTheoreticPeptide();
+            PSPtmScores ptmScores = new PSPtmScores();
+            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            return getPeptideModificationTooltipAsHtml(peptide, ptmScores);
+        } catch (Exception e) {
+            exceptionHandler.catchException(e);
+            return "Error";
+        }
+    }
+
+    /**
+     * Returns a string with the HTML tooltip for the peptide indicating the
+     * modification details.
+     *
+     * @param peptide the peptide
+     * @param ptmScores the PTM scores
+     * @return a string with the HTML tooltip for the peptide
+     */
+    public String getPeptideModificationTooltipAsHtml(Peptide peptide, PSPtmScores ptmScores) {
+
+        String peptideSequence = peptide.getSequence();
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
+        HashMap<Integer, ArrayList<String>> confidentLocations = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations = new HashMap<Integer, ArrayList<String>>();
+
+        if (ptmScores != null) {
+            confidentLocations = getFilteredConfidentModificationsSites(ptmScores, displayedPTMs);
+            representativeAmbiguousLocations = getFilteredAmbiguousModificationsRepresentativeSites(ptmScores, displayedPTMs);
+        }
+
+        return getPtmToolTip(peptideSequence, fixedModifications, confidentLocations, representativeAmbiguousLocations);
+    }
+
+    /**
+     * Returns a string with the HTML tooltip for the peptide indicating the
+     * modification details.
+     *
+     * @param peptide the peptide
+     * @return a string with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
 
-        // @TODO: merge with getTagModificationTooltipAsHtml below (and in DeNovoGUI) -  and moved to utilities?
-        String tooltip = "<html>";
-        ArrayList<String> alreadyAnnotated = new ArrayList<String>();
+        HashMap<Integer, ArrayList<String>> confidentModificationSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> representativeModificationSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayedPTMs);
 
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             String modName = modMatch.getTheoreticPtm();
-            PTM ptm = ptmFactory.getPTM(modName);
+            int modSite = modMatch.getModificationSite();
+            if (modMatch.isVariable()) {
+                if (modMatch.isConfident()) {
+                    if (!confidentModificationSites.containsKey(modSite)) {
+                        confidentModificationSites.put(modSite, new ArrayList<String>());
+                    }
+                    confidentModificationSites.get(modSite).add(modName);
+                } else {
+                    if (!representativeModificationSites.containsKey(modSite)) {
+                        representativeModificationSites.put(modSite, new ArrayList<String>());
+                    }
+                    representativeModificationSites.get(modSite).add(modName);
+                }
+            }
+        }
 
-            if (ptm.getType() == PTM.MODAA && displayedPTMs.contains(modName)) {
+        return getPtmToolTip(peptide.getSequence(), fixedModifications, confidentModificationSites, representativeModificationSites);
+    }
 
-                int modSite = modMatch.getModificationSite();
+    /**
+     * Returns the PTM tooltip as HTML.
+     *
+     * @param peptideSequence the peptide sequence
+     * @param fixedModifications the fixed modifications
+     * @param confidentLocations the confident locations
+     * @param representativeAmbiguousLocations the representative locations
+     * @return the PTM tooltip as HTML
+     */
+    private String getPtmToolTip(String peptideSequence,
+            HashMap<Integer, ArrayList<String>> fixedModifications,
+            HashMap<Integer, ArrayList<String>> confidentLocations,
+            HashMap<Integer, ArrayList<String>> representativeAmbiguousLocations) {
 
-                if (modSite > 0) {
-                    char affectedResidue = peptide.getSequence().charAt(modSite - 1);
-                    Color ptmColor = modificationProfile.getColor(modName);
+        String tooltip = "<html>";
+        ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
-                    if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
-                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                                + affectedResidue
-                                + "</span>"
-                                + ": " + modName + "<br>";
+        for (int aa = 1; aa <= peptideSequence.length(); aa++) {
 
-                        alreadyAnnotated.add(modName + "_" + affectedResidue);
+            int aaIndex = aa - 1;
+            char aminoAcid = peptideSequence.charAt(aaIndex);
+
+            if (confidentLocations.containsKey(aa) && !confidentLocations.get(aa).isEmpty()) {
+                for (String ptmName : confidentLocations.get(aa)) { //There should be only one
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 1, true, true) + ": " + ptmName + " (confident)<br>";
+                    if (!alreadyAnnotated.contains(temp)) {
+                        tooltip += temp;
+                        alreadyAnnotated.add(temp);
+                    }
+                }
+            } else if (representativeAmbiguousLocations.containsKey(aa) && !representativeAmbiguousLocations.get(aa).isEmpty()) {
+                for (String ptmName : representativeAmbiguousLocations.get(aa)) { //There should be only one
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 2, true, true) + ": " + ptmName + " (not confident)<br>";
+                    if (!alreadyAnnotated.contains(temp)) {
+                        tooltip += temp;
+                        alreadyAnnotated.add(temp);
+                    }
+                }
+            } else if (fixedModifications.containsKey(aa) && !fixedModifications.get(aa).isEmpty()) {
+                for (String ptmName : fixedModifications.get(aa)) { //There should be only one
+                    String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 1, true, true) + ": " + ptmName + " (fixed)<br>";
+                    if (!alreadyAnnotated.contains(temp)) {
+                        tooltip += temp;
+                        alreadyAnnotated.add(temp);
                     }
                 }
             }
@@ -303,14 +410,15 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns a String with the HTML tooltip for the tag indicating the
+     * Returns a string with the HTML tooltip for the tag indicating the
      * modification details.
      *
      * @param tag the tag
-     * @return a String with the HTML tooltip for the tag
+     * @return a string with the HTML tooltip for the tag
      */
     public String getTagModificationTooltipAsHtml(Tag tag) {
 
+        // @TODO: update to use the ptm scores
         // @TODO: merge with getTagModificationTooltipAsHtml in DeNovoGUI and move to utilities
         String tooltip = "<html>";
 
@@ -322,10 +430,17 @@ public class DisplayFeaturesGenerator {
                         String affectedResidue = aminoAcidPattern.asSequence(site - 1);
                         String modName = modificationMatch.getTheoreticPtm();
                         Color ptmColor = modificationProfile.getColor(modName);
-                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                                + affectedResidue
-                                + "</span>"
-                                + ": " + modName + "<br>";
+                        if (modificationMatch.isConfident()) {
+                            tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                                    + affectedResidue
+                                    + "</span>"
+                                    + ": " + modName + " (confident)<br>";
+                        } else {
+                            tooltip += "<span style=\"color:#" + Util.color2Hex(ptmColor) + ";background:#" + Util.color2Hex(Color.WHITE) + "\">"
+                                    + affectedResidue
+                                    + "</span>"
+                                    + ": " + modName + " (not confident)<br>";
+                        }
                     }
                 }
             } else if (tagComponent instanceof AminoAcidSequence) {
@@ -335,10 +450,17 @@ public class DisplayFeaturesGenerator {
                         char affectedResidue = aminoAcidSequence.charAt(site - 1);
                         String modName = modificationMatch.getTheoreticPtm();
                         Color ptmColor = modificationProfile.getColor(modName);
-                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                                + affectedResidue
-                                + "</span>"
-                                + ": " + modName + "<br>";
+                        if (modificationMatch.isConfident()) {
+                            tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                                    + affectedResidue
+                                    + "</span>"
+                                    + ": " + modName + " (confident)<br>";
+                        } else {
+                            tooltip += "<span style=\"color:#" + Util.color2Hex(ptmColor) + ";background:#" + Util.color2Hex(Color.WHITE) + "\">"
+                                    + affectedResidue
+                                    + "</span>"
+                                    + ": " + modName + " (not confident)<br>";
+                        }
                     }
                 }
             } else if (tagComponent instanceof MassGap) {

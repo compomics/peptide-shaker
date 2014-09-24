@@ -1739,7 +1739,7 @@ public class FileImporter {
                             Runtime.getRuntime().gc();
                             if (memoryUsed() > 0.8) {
                                 // all peptides/protein mappings cannot be kept in memory at the same time, abort
-                                System.out.println("Memory issue while mapping peptides, abort");
+                                System.out.println("Memory issue while mapping peptides. Revert to mapping peptides one by one."); // @TODO: handle this better??
                                 return;
                             }
                         }

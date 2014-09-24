@@ -2230,8 +2230,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
                         String peptideKey = peptideKeys.get(tableModel.getViewIndex(row));
-                        Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey));
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2367,8 +2366,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                         if (peptideAssumption.getPeptide().getKey().equals(currentPeptideMatch.getTheoreticPeptide().getKey())) {
-                            Peptide peptide = peptideAssumption.getPeptide();
-                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(currentPeptideMatch);
                             psmTable.setToolTipText(tooltip);
                         } else {
                             // @TODO: do we have to do anything here??

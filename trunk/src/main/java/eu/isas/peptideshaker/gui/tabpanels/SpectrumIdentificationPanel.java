@@ -1994,7 +1994,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            String tooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
+                            String tooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                             spectrumTable.setToolTipText(tooltip);
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
                             TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
@@ -2582,7 +2582,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         proteins = displayFeaturesGenerator.addDatabaseLinks(spectrumMatch.getBestPeptideAssumption().getPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences()));
                         sequence = displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch, true, true, true);
-                        peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestPeptideAssumption().getPeptide());
+                        peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch);
                     } else if (spectrumMatch.getBestTagAssumption() != null) {
                         sequence = spectrumMatch.getBestTagAssumption().getTag().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), true, true, true, false, false);
                         peptideShakerJTablePeptideTooltip = displayFeaturesGenerator.getTagModificationTooltipAsHtml(spectrumMatch.getBestTagAssumption().getTag());
@@ -3437,7 +3437,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
             Peptide peptide = ((PeptideAssumption) currentAssumption).getPeptide();
-            sequence = peptide.getTaggedModifiedSequence(modificationProfile, true, true, true);
+
+            boolean showFixed = false; // @TODO: has to be a better way of doing this?
+            for (String ptmName : peptideShakerGUI.getDisplayPreferences().getDisplayedPtms()) {
+                if (modificationProfile.getFixedModifications().contains(ptmName)) {
+                    showFixed = true;
+                }
+            }
+
+            sequence = peptide.getTaggedModifiedSequence(modificationProfile, true, true, true, !showFixed);
             if (addRowAtBottom) {
                 searchResultsTablePeptideTooltips.add(peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide));
             } else {
