@@ -246,7 +246,9 @@ public class PsPsmSection {
                                 fractionPrefix += linePrefix;
                             }
                             fractionPrefix += line + ".";
+                            writer.increaseDepth();
                             fragmentSection.writeSection(spectrumMatch, searchParameters, annotationPreferences, fractionPrefix, null);
+                            writer.decreseDepth();
                         }
                         line++;
                     }
