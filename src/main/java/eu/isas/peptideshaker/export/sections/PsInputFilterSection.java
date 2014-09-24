@@ -47,7 +47,7 @@ public class PsInputFilterSection {
         this.writer = writer;
         this.exportFeatures = new ArrayList<PsInputFilterFeature>(exportFeatures.size());
         for (ExportFeature exportFeature : exportFeatures) {
-            if (exportFeature instanceof PsInputFilterSection) {
+            if (exportFeature instanceof PsInputFilterFeature) {
                 this.exportFeatures.add((PsInputFilterFeature) exportFeature);
             } else {
                 throw new IllegalArgumentException("Impossible to export " + exportFeature.getClass().getName() + " as input filter feature.");
