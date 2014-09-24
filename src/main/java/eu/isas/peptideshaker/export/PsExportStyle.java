@@ -34,15 +34,16 @@ public class PsExportStyle implements WorkbookStyle {
      */
     private HashMap<Integer, CellStyle> hierarchicalHeaders = new HashMap<Integer, CellStyle>();
     /**
-     * Map of the different styles available
+     * Map of the different styles available.
      */
     private final static HashMap<HSSFWorkbook, PsExportStyle> styles = new HashMap<HSSFWorkbook, PsExportStyle>();
 
     /**
-     * Returns the style attached to that writer or create a new one if none found
-     * 
+     * Returns the style attached to that writer or create a new one if none
+     * found.
+     *
      * @param excelWriter the writer of interest
-     * 
+     *
      * @return the style attached to that writer
      */
     public static PsExportStyle getReportStyle(ExcelWriter excelWriter) {
@@ -54,6 +55,7 @@ public class PsExportStyle implements WorkbookStyle {
         }
         return result;
     }
+
     /**
      * Constructor.
      *
@@ -65,7 +67,7 @@ public class PsExportStyle implements WorkbookStyle {
     }
 
     /**
-     * Sets the cell styles
+     * Sets the cell styles.
      */
     private void setCellStyles() {
 
@@ -102,10 +104,10 @@ public class PsExportStyle implements WorkbookStyle {
                 (byte) 200,
                 (byte) 250
         );
-        
+
         // Hierarchical headers
         hierarchicalHeaders.put(0, standardHeader);
-        
+
         CellStyle subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
         subHeader.setBorderBottom(CellStyle.BORDER_THIN);
@@ -122,7 +124,7 @@ public class PsExportStyle implements WorkbookStyle {
         );
         subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         hierarchicalHeaders.put(1, subHeader);
-        
+
         subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
         subHeader.setBorderBottom(CellStyle.BORDER_THIN);
@@ -139,7 +141,7 @@ public class PsExportStyle implements WorkbookStyle {
         );
         subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         hierarchicalHeaders.put(2, subHeader);
-        
+
         subHeader = workbook.createCellStyle();
         subHeader.setFont(f);
         subHeader.setBorderBottom(CellStyle.BORDER_THIN);
@@ -155,8 +157,8 @@ public class PsExportStyle implements WorkbookStyle {
                 (byte) 250
         );
         subHeader.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        for (int i = 3 ; i < 100 ; i++) {
-        hierarchicalHeaders.put(i, subHeader);
+        for (int i = 3; i < 100; i++) {
+            hierarchicalHeaders.put(i, subHeader);
         }
     }
 
