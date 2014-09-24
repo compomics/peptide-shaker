@@ -280,7 +280,7 @@ public class PSExportFactory implements ExportFactory {
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
         if (exportWriter instanceof ExcelWriter) {
             ExcelWriter excelWriter = (ExcelWriter) exportWriter;
-            PsExportStyle exportStyle = new PsExportStyle(excelWriter);
+            PsExportStyle exportStyle =  PsExportStyle.getReportStyle(excelWriter);
             excelWriter.setWorkbookStyle(exportStyle);
         }
 
