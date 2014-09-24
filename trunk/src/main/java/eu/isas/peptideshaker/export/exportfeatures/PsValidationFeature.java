@@ -43,7 +43,7 @@ public enum PsValidationFeature implements ExportFeature {
     /**
      * The type of export feature.
      */
-    public final static String type = "Target/Decoy Validation Summary";
+    public final static String type = "Validation Summary";
     /**
      * Indicates whether a feature is for advanced user only.
      */
