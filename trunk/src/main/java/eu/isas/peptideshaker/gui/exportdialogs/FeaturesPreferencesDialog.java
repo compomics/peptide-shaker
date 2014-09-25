@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
+import com.compomics.util.gui.ExportFormatSelectionDialog;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -1838,7 +1839,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             removeReportMenuItem.setVisible(exportScheme.isEditable());
             reportDocumentationPopupMenu.show(reportsTable, evt.getX(), evt.getY());
         }
-        
+
         if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
             writeSelectedReport();
         }
@@ -2064,65 +2065,75 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void writeSelectedReport() {
 
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".xls", "Microsoft Excel (.xls)", "Export...", false);
-//        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false); //@TODO: allow selecting multiple formats using com.compomics.util.io.export.ExportFormat
-        final ExportFormat exportFormat = ExportFormat.excel;
-        
-        if (selectedFile != null) {
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setTitle("Exporting Report. Please Wait...");
+        ExportFormatSelectionDialog exportFormatSelectionDialog = new ExportFormatSelectionDialog(this, true);
 
-            final String filePath = selectedFile.getPath();
+        if (!exportFormatSelectionDialog.isCanceled()) {
+            
+            final File selectedFile;
+            final ExportFormat exportFormat = exportFormatSelectionDialog.getFormat();
+            
+            // get the file to send the output to
+            if (exportFormat == ExportFormat.text) {
+                selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+            } else {
+                selectedFile = peptideShakerGUI.getUserSelectedFile(".xls", "Excel Workbook (.xls)", "Export...", false);
+            }
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
+            if (selectedFile != null) {
+                progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setTitle("Exporting Report. Please Wait...");
 
-            new Thread("ExportThread") {
-                @Override
-                public void run() {
+                final String filePath = selectedFile.getPath();
 
-                    try {
-                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
-                        ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
-                        progressDialog.setTitle("Exporting. Please Wait...");
-                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
-                                peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
-                                peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
-                                null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(), peptideShakerGUI.getIdFilter(),
-                                peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
                         }
-                    } catch (FileNotFoundException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occurred while generating the output. Please make sure "
-                                + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
                     }
-                }
-            }.start();
+                }, "ProgressDialog").start();
+
+                new Thread("ExportThread") {
+                    @Override
+                    public void run() {
+
+                        try {
+                            String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+                            ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
+                            progressDialog.setTitle("Exporting. Please Wait...");
+                            PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
+                                    peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
+                                    peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
+                                    null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                    peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(), peptideShakerGUI.getIdFilter(),
+                                    peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
+
+                            boolean processCancelled = progressDialog.isRunCanceled();
+                            progressDialog.setRunFinished();
+
+                            if (!processCancelled) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        } catch (FileNotFoundException e) {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    "An error occurred while generating the output. Please make sure "
+                                    + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
         }
     }
 
