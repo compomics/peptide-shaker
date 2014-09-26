@@ -11,43 +11,47 @@ import java.util.Arrays;
  */
 public enum PsProteinFeature implements ExportFeature {
 
-    accession(new String[]{"Main Accession"}, "Accession of the leading protein of the group.", false),
-    protein_description(new String[]{"Description"}, "Description of the leading protein of the group.", false),
-    descriptions(new String[]{"Descriptions"}, "Description of the proteins of the group", false),
-    ensembl_gene_id(new String[]{"Ensembl Gene ID"}, "The Ensembl gene ID associated to the accession of the leading protein of the group.", false),
-    gene_name(new String[]{"Gene Name"}, "The gene names of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
-    chromosome(new String[]{"Chromosome"}, "The chromosome of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
-    go_accession(new String[]{"GO Accession"}, "The accessions of the Gene Ontology terms associated to the accessions of the group.", false),
-    go_description(new String[]{"GO Description"}, "The descriptions of the Gene Ontology terms associated to the accessions of the group.", false),
-    mw(new String[]{"MW [kDa]"}, "Molecular Weight [kDa].", false),
-    coverage(new String[]{"Coverage [%]"}, "Sequence coverage in percent of the protein designed by the main accession.", false),
-    possible_coverage(new String[]{"Possible Coverage [%]"}, "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings.", false),
-    non_enzymatic(new String[]{"Non-Enzymatic"}, "Indicates how many non-enzymatic peptides were found for this protein match.", false),
-    spectrum_counting_nsaf(new String[]{"Spectrum Counting NSAF "}, "Normalized Spectrum Abundance Factor (NSAF)", false),
-    spectrum_counting_empai(new String[]{"Spectrum Counting emPAI"}, "exponentially modified Protein Abundance Index (emPAI)", false),
-    confident_PTMs(new String[]{"Confident Modification Sites", "# Confident Modification Sites"}, "List of the sites where a variable modification was confidently localized.", false),
-    other_PTMs(new String[]{"Other Modification Sites", "# Other Modification Sites"}, "List of the non-confident sites where a variable modification was localized.", false),
-    confident_phosphosites(new String[]{"Confident Phosphosites"}, "List of the sites where a phosphorylation was confidently localized.", false),
-    other_phosphosites(new String[]{"Other Phosphosites"}, "List of the non-confident sites where a phosphorylation was localized.", false),
-    pi(new String[]{"PI"}, "Protein Inference status of the protein group.", false),
-    other_proteins(new String[]{"Secondary Accessions"}, "Other accessions in the protein group (alphabetical order).", false),
-    protein_group(new String[]{"Protein Group"}, "The complete protein group (alphabetical order).", false),
-    validated_peptides(new String[]{"#Validated Peptides"}, "Number of validated peptides.", false),
-    peptides(new String[]{"#Peptides"}, "Total number of peptides.", false),
-    unique_peptides(new String[]{"#Unique"}, "Total number of peptides unique to this protein group.", false),
-    validated_psms(new String[]{"#Validated PSMs"}, "Number of validated PSMs", false),
-    psms(new String[]{"#PSMs"}, "Number of PSMs", false),
-    score(new String[]{"Score"}, "Score of the protein group.", true),
-    raw_score(new String[]{"Raw Score"}, "Protein group score before log transformation.", true),
-    confidence(new String[]{"Confidence"}, "Confidence in percent associated to the protein group.", false),
-    decoy(new String[]{"Decoy"}, "Indicates whether the protein group is a decoy (1: yes, 0: no).", false),
-    validated(new String[]{"Validation"}, "Indicates the validation level of the protein group.", false),
-    starred(new String[]{"Starred"}, "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
-    hidden(new String[]{"Hidden"}, "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
+    accession("Main Accession", "Accession of the leading protein of the group.", false),
+    protein_description("Description", "Description of the leading protein of the group.", false),
+    descriptions("Descriptions", "Description of the proteins of the group", false),
+    ensembl_gene_id("Ensembl Gene ID", "The Ensembl gene ID associated to the accession of the leading protein of the group.", false),
+    gene_name("Gene Name", "The gene names of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
+    chromosome("Chromosome", "The chromosome of the Ensembl gene ID associated to the accession of the leading protein of the group.", false),
+    go_accession("GO Accession", "The accessions of the Gene Ontology terms associated to the accessions of the group.", false),
+    go_description("GO Description", "The descriptions of the Gene Ontology terms associated to the accessions of the group.", false),
+    mw("MW [kDa]", "Molecular Weight [kDa].", false),
+    coverage("Coverage [%]", "Sequence coverage in percent of the protein designed by the main accession.", false),
+    possible_coverage("Possible Coverage [%]", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings.", false),
+    non_enzymatic("Non-Enzymatic", "Indicates how many non-enzymatic peptides were found for this protein match.", false),
+    spectrum_counting_nsaf("Spectrum Counting NSAF ", "Normalized Spectrum Abundance Factor (NSAF)", false),
+    spectrum_counting_empai("Spectrum Counting emPAI", "exponentially modified Protein Abundance Index (emPAI)", false),
+    confident_modification_sites("Confidently Localized Modification Sites", "List of the sites where a variable modification was confidently localized.", false),
+    confident_modification_sites_number("# Confidently Localized Modification Sites", "Number of sites where a variable modification was confidently localized.", false),
+    ambiguous_modification_sites("Ambiguously Localized Modification Sites", "List of the sites where ambiguously localized variable modification could possibly be located.", false),
+    ambiguous_modification_sites_number("# Ambiguously Localized Modification Sites", "Number of ambiguously localized modifications.", false),
+    confident_phosphosites("Confident Phosphosites", "List of the sites where a phosphorylation was confidently localized.", false),
+    confident_phosphosites_number("# Confident Phosphosites", "Number of sites where a phosphorylation was confidently localized.", false),
+    ambiguous_phosphosites("Ambiguous Phosphosites", "List of the sites where a phosphorylation was ambiguously localized.", false),
+    ambiguous_phosphosites_number("# Ambiguous Phosphosites", "Number of sites where a phosphorylation was ambiguously localized.", false),
+    pi("PI", "Protein Inference status of the protein group.", false),
+    other_proteins("Secondary Accessions", "Other accessions in the protein group (alphabetical order).", false),
+    protein_group("Protein Group", "The complete protein group (alphabetical order).", false),
+    validated_peptides("#Validated Peptides", "Number of validated peptides.", false),
+    peptides("#Peptides", "Total number of peptides.", false),
+    unique_peptides("#Unique", "Total number of peptides unique to this protein group.", false),
+    validated_psms("#Validated PSMs", "Number of validated PSMs", false),
+    psms("#PSMs", "Number of PSMs", false),
+    score("Score", "Score of the protein group.", true),
+    raw_score("Raw Score", "Protein group score before log transformation.", true),
+    confidence("Confidence", "Confidence in percent associated to the protein group.", false),
+    decoy("Decoy", "Indicates whether the protein group is a decoy (1: yes, 0: no).", false),
+    validated("Validation", "Indicates the validation level of the protein group.", false),
+    starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
+    hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
     /**
      * The title of the feature which will be used for column heading.
      */
-    public String[] title;
+    public String title;
     /**
      * The description of the feature.
      */
@@ -68,7 +72,7 @@ public enum PsProteinFeature implements ExportFeature {
      * @param description description of the feature
      * @param advanced indicates whether a feature is for advanced user only
      */
-    private PsProteinFeature(String[] title, String description, boolean advanced) {
+    private PsProteinFeature(String title, String description, boolean advanced) {
         this.title = title;
         this.description = description;
         this.advanced = advanced;
@@ -85,7 +89,7 @@ public enum PsProteinFeature implements ExportFeature {
     }
 
     @Override
-    public String[] getTitles() {
+    public String getTitle() {
         return title;
     }
 

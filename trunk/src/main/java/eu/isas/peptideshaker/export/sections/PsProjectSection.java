@@ -93,15 +93,7 @@ public class PsProjectSection {
                 writer.write(line + "");
                 writer.addSeparator();
             }
-            boolean firstTitle = true;
-            for (String title : projectFeature.getTitles()) {
-                if (firstTitle) {
-                    firstTitle = false;
-                } else {
-                    writer.write(", ");
-                }
-                writer.write(title);
-            }
+            writer.write(projectFeature.getTitle());
             writer.addSeparator();
             switch (projectFeature) {
                 case date:

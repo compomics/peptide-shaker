@@ -223,14 +223,12 @@ public class PsFragmentSection {
         }
         boolean firstColumn = true;
         for (PsFragmentFeature fragmentFeature : fragmentFeatures) {
-            for (String title : fragmentFeature.getTitles()) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(title);
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
             }
+            writer.writeHeaderText(fragmentFeature.getTitle());
         }
         writer.newLine();
     }

@@ -90,15 +90,7 @@ public class PsSearchParametersSection {
                 writer.write(line + "");
                 writer.addSeparator();
             }
-            boolean firstTitle = true;
-            for (String title : exportFeature.getTitles()) {
-                if (firstTitle) {
-                    firstTitle = false;
-                } else {
-                    writer.write(", ");
-                }
-                writer.write(title);
-            }
+            writer.write(exportFeature.getTitle());
             writer.addSeparator();
             switch (exportFeature) {
                 case database:

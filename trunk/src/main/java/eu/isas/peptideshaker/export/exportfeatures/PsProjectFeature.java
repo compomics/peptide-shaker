@@ -57,8 +57,8 @@ public enum PsProjectFeature implements ExportFeature, Serializable {
     }
 
     @Override
-    public String[] getTitles() {
-        return new String[]{title};
+    public String getTitle() {
+        return title;
     }
 
     @Override
