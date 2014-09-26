@@ -349,10 +349,14 @@ public class PsProteinSection {
                 return descriptions.toString();
             case confidence:
                 return psParameter.getProteinConfidence() + "";
-            case confident_PTMs:
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, "");
-            case other_PTMs:
-                return identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, "");
+            case confident_modification_sites:
+                return identificationFeaturesGenerator.getConfidentPtmSites(proteinKey);
+            case confident_modification_sites_number:
+                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinKey);
+            case ambiguous_modification_sites:
+                return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinKey);
+            case ambiguous_modification_sites_number:
+                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinKey);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
                 for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
@@ -360,15 +364,31 @@ public class PsProteinSection {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, "");
-            case other_phosphosites:
+                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinKey, modifications);
+            case confident_phosphosites_number:
                 modifications = new ArrayList<String>();
                 for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
                 }
-                return identificationFeaturesGenerator.getConfidentPTMSummary(proteinKey, modifications, "");
+                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinKey, modifications);
+            case ambiguous_phosphosites:
+                modifications = new ArrayList<String>();
+                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinKey, keys);
+            case ambiguous_phosphosites_number:
+                modifications = new ArrayList<String>();
+                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinKey, keys);
             case coverage:
                 HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
@@ -458,14 +478,12 @@ public class PsProteinSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : proteinFeatures) {
-            for (String title : exportFeature.getTitles()) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(title);
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
             }
+            writer.writeHeaderText(exportFeature.getTitle());
         }
         writer.newLine();
     }

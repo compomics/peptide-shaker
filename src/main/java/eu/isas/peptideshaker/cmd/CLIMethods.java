@@ -273,7 +273,9 @@ public class CLIMethods {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
-        PSExportFactory.writeDocumentation(exportScheme, reportFile);
+        
+        //@TODO: allow format selection
+        PSExportFactory.writeDocumentation(exportScheme, ExportFormat.text, reportFile);
     }
 
     /**

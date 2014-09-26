@@ -88,10 +88,8 @@ public class PsPtmScoringSection {
                 writer.write(line + "");
                 writer.addSeparator();
             }
-            for (String title : ptmScoringFeature.getTitles()) {
-                writer.write(title + "");
-                writer.addSeparator();
-            }
+            writer.write(ptmScoringFeature.getTitle() + "");
+            writer.addSeparator();
             switch (ptmScoringFeature) {
                 case aScore:
                     if (ptmcoringPreferences.isProbabilitsticScoreCalculation()) {

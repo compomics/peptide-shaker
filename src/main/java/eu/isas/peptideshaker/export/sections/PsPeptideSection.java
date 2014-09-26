@@ -513,14 +513,12 @@ public class PsPeptideSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : peptideFeatures) {
-            for (String title : exportFeature.getTitles()) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(title);
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
             }
+            writer.writeHeaderText(exportFeature.getTitle());
         }
         writer.newLine();
     }

@@ -89,10 +89,8 @@ public class PsSpectrumCountingSection {
                 writer.write(line + "");
                 writer.addSeparator();
             }
-            for (String title : spectrumCountingFeature.getTitles()) {
-                writer.write(title + "");
-                writer.addSeparator();
-            }
+            writer.write(spectrumCountingFeature.getTitle());
+            writer.addSeparator();
             switch (spectrumCountingFeature) {
                 case method:
                     switch (spectrumCountingPreferences.getSelectedMethod()) {

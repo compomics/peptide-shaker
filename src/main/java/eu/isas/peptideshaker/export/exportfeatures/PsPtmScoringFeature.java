@@ -52,8 +52,8 @@ public enum PsPtmScoringFeature implements ExportFeature {
     }
 
     @Override
-    public String[] getTitles() {
-        return new String[]{title};
+    public String getTitle() {
+        return title;
     }
 
     @Override

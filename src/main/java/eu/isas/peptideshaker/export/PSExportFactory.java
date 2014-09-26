@@ -41,9 +41,7 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -280,7 +278,7 @@ public class PSExportFactory implements ExportFactory {
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
         if (exportWriter instanceof ExcelWriter) {
             ExcelWriter excelWriter = (ExcelWriter) exportWriter;
-            PsExportStyle exportStyle =  PsExportStyle.getReportStyle(excelWriter);
+            PsExportStyle exportStyle = PsExportStyle.getReportStyle(excelWriter);
             excelWriter.setWorkbookStyle(exportStyle);
         }
 
@@ -339,53 +337,39 @@ public class PSExportFactory implements ExportFactory {
      * Writes the documentation related to a report.
      *
      * @param exportScheme the export scheme of the report
+     * @param exportFormat the export format chosen by the user
      * @param destinationFile the destination file where to write the
      * documentation
+     *
      * @throws IOException
      */
-    public static void writeDocumentation(ExportScheme exportScheme, File destinationFile) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
+    public static void writeDocumentation(ExportScheme exportScheme, ExportFormat exportFormat, File destinationFile) throws IOException {
+
+        ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
+        if (exportWriter instanceof ExcelWriter) {
+            ExcelWriter excelWriter = (ExcelWriter) exportWriter;
+            PsExportStyle exportStyle = PsExportStyle.getReportStyle(excelWriter); //@TODO use another style?
+            excelWriter.setWorkbookStyle(exportStyle);
+        }
 
         String mainTitle = exportScheme.getMainTitle();
         if (mainTitle != null) {
-            writer.write(mainTitle);
-            writeSeparationLines(writer, exportScheme.getSeparationLines());
+            exportWriter.writeMainTitle(mainTitle);
         }
         for (String sectionName : exportScheme.getSections()) {
+            exportWriter.startNewSection(sectionName);
             if (exportScheme.isIncludeSectionTitles()) {
-                writer.write(sectionName);
-                writer.newLine();
+                exportWriter.write(sectionName);
+                exportWriter.newLine();
             }
             for (ExportFeature exportFeature : exportScheme.getExportFeatures(sectionName)) {
-                boolean firstTitle = true;
-                for (String title : exportFeature.getTitles()) {
-                    if (firstTitle) {
-                        firstTitle = false;
-                    } else {
-                        writer.write(", ");
-                    }
-                    writer.write(title);
-                }
-                writer.write(exportScheme.getSeparator());
-                writer.write(exportFeature.getDescription());
-                writer.newLine();
+                exportWriter.write(exportFeature.getTitle());
+                exportWriter.addSeparator();
+                exportWriter.write(exportFeature.getDescription());
+                exportWriter.newLine();
             }
-            writeSeparationLines(writer, exportScheme.getSeparationLines());
         }
-        writer.close();
-    }
-
-    /**
-     * Writes section separation lines using the given writer.
-     *
-     * @param writer the writer
-     * @param nSeparationLines the number of separation lines to write
-     * @throws IOException
-     */
-    private static void writeSeparationLines(BufferedWriter writer, int nSeparationLines) throws IOException {
-        for (int i = 1; i <= nSeparationLines; i++) {
-            writer.newLine();
-        }
+        exportWriter.close();
     }
 
     /**
@@ -495,8 +479,10 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
-        sectionContent.add(PsProteinFeature.confident_PTMs);
-        sectionContent.add(PsProteinFeature.other_PTMs);
+        sectionContent.add(PsProteinFeature.confident_modification_sites);
+        sectionContent.add(PsProteinFeature.confident_modification_sites_number);
+        sectionContent.add(PsProteinFeature.ambiguous_modification_sites);
+        sectionContent.add(PsProteinFeature.ambiguous_modification_sites_number);
 
         // protein scores
         sectionContent.add(PsProteinFeature.confidence);
@@ -594,8 +580,10 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
-        sectionContent.add(PsProteinFeature.confident_PTMs);
-        sectionContent.add(PsProteinFeature.other_PTMs);
+        sectionContent.add(PsProteinFeature.confident_modification_sites);
+        sectionContent.add(PsProteinFeature.confident_modification_sites_number);
+        sectionContent.add(PsProteinFeature.ambiguous_modification_sites);
+        sectionContent.add(PsProteinFeature.ambiguous_modification_sites_number);
 
         // protein scores
         sectionContent.add(PsProteinFeature.confidence);

@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.math.statistics.Distribution;
@@ -1395,8 +1396,6 @@ public class IdentificationFeaturesGenerator {
      * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
-     * @param separator the separator used to separate the sites and the number
-     * of sites
      *
      * @return a PTM summary for the given protein
      *
@@ -1406,9 +1405,42 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getConfidentPTMSummary(String proteinKey, String separator)
+    public String getConfidentPtmSites(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return getConfidentPTMSummary(proteinKey, null, separator);
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+
+        StringBuilder result = new StringBuilder();
+        boolean firstPtm = true;
+        ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedPtms();
+        Collections.sort(ptms);
+        for (String ptm : ptms) {
+            if (firstPtm) {
+                firstPtm = false;
+            } else {
+                result.append("; ");
+            }
+            result.append(ptm);
+            result.append("(");
+            boolean firstSite = true;
+            ArrayList<Integer> sites = psPtmScores.getConfidentSitesForPtm(ptm);
+            Collections.sort(sites);
+            for (Integer site : sites) {
+                if (!firstSite) {
+                    result.append(", ");
+                } else {
+                    firstSite = false;
+                }
+                char aa = sequence.charAt(site);
+                int aaNumber = site + 1;
+                result.append(aa + aaNumber);
+            }
+            result.append(")");
+        }
+        return result.toString();
     }
 
     /**
@@ -1418,8 +1450,6 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the PTMs to include in the summary
-     * @param separator the separator used to separate the sites and the number
-     * of sites
      *
      * @return a PTM summary for the given protein
      *
@@ -1429,109 +1459,46 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getConfidentPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
+    public String getConfidentPtmSites(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-        HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
-
-        for (int aa = 0; aa < sequence.length(); aa++) {
-            if (psPtmScores != null && !psPtmScores.getConfidentModificationsAt(aa).isEmpty()) {
-                int index = aa + 1;
-                for (String ptm : psPtmScores.getConfidentModificationsAt(aa)) {
-                    if (!locations.containsKey(ptm)) {
-                        locations.put(ptm, new ArrayList<String>());
-                    }
-                    String report = sequence.charAt(aa) + "" + index;
-                    if (!locations.get(ptm).contains(report)) {
-                        locations.get(ptm).add(report);
-                    }
-                }
-            }
-        }
 
         StringBuilder result = new StringBuilder();
-        boolean firstPtm = true;
-        ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
-        Collections.sort(ptms);
 
-        if (targetedPtms == null) {
-            for (String ptm : ptms) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result.append("; ");
-                }
-                result.append(ptm);
-                result.append("(");
-                boolean firstSite = true;
-                for (String site : locations.get(ptm)) {
-                    if (!firstSite) {
-                        result.append(", ");
-                    } else {
-                        firstSite = false;
-                    }
-                    result.append(site);
-                }
-                result.append(")");
-            }
-        } else {
-            Collections.sort(targetedPtms);
-            for (String ptm : targetedPtms) {
-                if (locations.containsKey(ptm)) {
-                    for (String site : locations.get(ptm)) {
-                        if (result.length() > 0) {
-                            result.append(", ");
-                        }
-                        result.append(site);
-                    }
+        Collections.sort(targetedPtms);
+        ArrayList<Integer> sites = new ArrayList<Integer>();
+        for (String ptm : targetedPtms) {
+            for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
+                if (!sites.contains(site)) {
+                    sites.add(site);
                 }
             }
         }
-
-        result.append(separator);
-
-        firstPtm = true;
-
-        if (targetedPtms == null) {
-            for (String ptm : ptms) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result.append("; ");
-                }
-                result.append(ptm);
-                result.append("(");
-                result.append(locations.get(ptm).size());
-                result.append(")");
+        boolean firstSite = true;
+        Collections.sort(sites);
+        for (Integer site : sites) {
+            if (!firstSite) {
+                result.append(", ");
+            } else {
+                firstSite = false;
             }
-        } else {
-            int n = 0;
-            for (String ptm : targetedPtms) {
-                if (locations.containsKey(ptm)) {
-                    n += locations.get(ptm).size();
-                }
-            }
-            result.append(n);
+            char aa = sequence.charAt(site);
+            int aaNumber = site + 1;
+            result.append(aa + aaNumber);
         }
-
-        String resultsAsString = result.toString();
-
-        return resultsAsString;
+        return result.toString();
     }
 
     /**
-     * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid grouped by representative site followed by
-     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
-     * gives Oxidation of M (M6 {M9})
+     *
+     * /**
+     * Returns the number of confidently localized variable modifications.
      *
      * @param proteinKey the key of the protein match of interest
-     * @param separator the separator used to separate the sites and the number
-     * of sites
      *
      * @return a PTM summary for the given protein
      *
@@ -1541,21 +1508,131 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey, String separator)
+    public String getConfidentPtmSitesNumber(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return getSecondaryPTMSummary(proteinKey, null, separator);
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+
+        StringBuilder result = new StringBuilder();
+        boolean firstPtm = true;
+        ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedPtms();
+        Collections.sort(ptms);
+
+        for (String ptm : ptms) {
+            if (firstPtm) {
+                firstPtm = false;
+            } else {
+                result.append("; ");
+            }
+            result.append(ptm);
+            result.append("(");
+            result.append(psPtmScores.getConfidentSitesForPtm(ptm).size());
+            result.append(")");
+        }
+        return result.toString();
     }
 
     /**
-     * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid grouped by representative site followed by
-     * secondary ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
-     * returns M6 {M9}.
+     * Returns the number of confidently localized variable modifications.
+     *
+     * @param proteinKey the key of the protein match of interest
+     * @param targetedPtms the PTMs to include in the summary
+     *
+     * @return a PTM summary for the given protein
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getConfidentPtmSitesNumber(String proteinKey, ArrayList<String> targetedPtms)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+
+        ArrayList<Integer> sites = new ArrayList<Integer>();
+        for (String ptm : targetedPtms) {
+            for (Integer site : psPtmScores.getConfidentSitesForPtm(ptm)) {
+                if (!sites.contains(site)) {
+                    sites.add(site);
+                }
+            }
+        }
+        return sites.size() + "";
+    }
+
+    /**
+     * Returns a list of the PTMs present on the sequence ambiguously assigned
+     * to an amino acid grouped by representative site followed by secondary
+     * ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6
+     * {M9}.
+     *
+     * @param proteinKey the key of the protein match of interest
+     *
+     * @return a PTM summary for the given protein
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getAmbiguousPtmSites(String proteinKey)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+        StringBuilder result = new StringBuilder();
+        ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedPtms();
+        Collections.sort(ptms);
+        for (String ptmName : ptms) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            result.append(ptmName).append(" (");
+            HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
+            ArrayList<Integer> representativeSites = new ArrayList<Integer>(sites.keySet());
+            Collections.sort(representativeSites);
+            boolean firstRepresentativeSite = true;
+            for (int representativeSite : representativeSites) {
+                if (firstRepresentativeSite) {
+                    firstRepresentativeSite = false;
+                } else {
+                    result.append(", ");
+                }
+                result.append(representativeSite).append("-{");
+                ArrayList<Integer> secondarySites = sites.get(representativeSite);
+                Collections.sort(secondarySites);
+                boolean firstSecondarySite = true;
+                for (Integer secondarySite : secondarySites) {
+                    if (firstSecondarySite) {
+                        firstSecondarySite = false;
+                    } else {
+                        result.append(" ");
+                    }
+                    result.append(secondarySite);
+                }
+                result.append("}");
+            }
+            result.append(")");
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns a list of the PTMs present on the sequence ambiguously assigned
+     * to an amino acid grouped by representative site followed by secondary
+     * ambiguous sites. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6
+     * {M9}.
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the targeted PTMs, can be null
-     * @param separator the separator used to separate the sites and the number
-     * of sites
      *
      * @return a PTM summary for the given protein
      *
@@ -1565,150 +1642,127 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator)
+    public String getAmbiguousPtmSites(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-        HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
-
-        if (targetedPtms != null) {
-            for (String ptmName : targetedPtms) {
-                ArrayList<String> ptmReports = new ArrayList<String>();
-                HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
-                ArrayList<Integer> representativeSites = new ArrayList<Integer>(ptmAmbiguousSites.keySet());
-                Collections.sort(representativeSites);
-                for (int representativeSite : representativeSites) {
-                    int site = representativeSite + 1;
-                    StringBuilder report = new StringBuilder();
-                    char aa = sequence.charAt(representativeSite);
-                    report.append(aa).append(site).append(" {");
-                    ArrayList<Integer> secondarySites = ptmAmbiguousSites.get(representativeSite);
-                    Collections.sort(secondarySites);
-                    boolean first = true;
-                    for (int secondarySite : secondarySites) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            report.append(", ");
-                        }
-                        site = secondarySite + 1;
-                        aa = sequence.charAt(secondarySite);
-                        report.append(aa).append(site);
-                    }
-                    report.append("}");
-                    ptmReports.add(report.toString());
-                }
-                locations.put(ptmName, ptmReports);
-            }
-        } else {
-            ArrayList<Integer> representativeSites = new ArrayList<Integer>(psPtmScores.getRepresentativeSites());
+        HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<Integer, ArrayList<String>>();
+        for (String ptmName : targetedPtms) {
+            HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
+            ArrayList<Integer> representativeSites = new ArrayList<Integer>(sites.keySet());
             Collections.sort(representativeSites);
             for (int representativeSite : representativeSites) {
-                HashMap<Integer, ArrayList<String>> ambiguousSitesForSite = psPtmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
-                    int site = representativeSite + 1;
-                    StringBuilder report = new StringBuilder();
-                    char aa = sequence.charAt(representativeSite);
-                    report.append(aa).append(site).append(" {");
-                    ArrayList<Integer> secondarySites = new ArrayList<Integer>(ambiguousSitesForSite.keySet());
-                    Collections.sort(secondarySites);
-                    boolean first = true;
-                    for (int secondarySite : secondarySites) {
-                        if (secondarySite != representativeSite) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            report.append(", ");
-                        }
-                        site = secondarySite + 1;
-                        aa = sequence.charAt(secondarySite);
-                        report.append(aa).append(site);
-                        }
-                    }
-                    report.append("}");
-                String reportAsString = report.toString();
-                ArrayList<String> modifications = ambiguousSitesForSite.get(representativeSite);
-                for (String ptmName : modifications) {
-                    ArrayList<String> modificationReports = locations.get(ptmName);
-                    if (modificationReports == null) {
-                        modificationReports = new ArrayList<String>();
-                        locations.put(ptmName, modificationReports);
-                    }
-                    modificationReports.add(reportAsString);
+                StringBuilder reportAtSite = new StringBuilder();
+                if (reportAtSite.length() > 0) {
+                    reportAtSite.append(", ");
                 }
-            }
-        }
-
-        StringBuilder result = new StringBuilder();
-        boolean firstPtm = true;
-        ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
-        Collections.sort(ptms);
-
-        if (targetedPtms == null) {
-            for (String ptm : ptms) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result.append("; ");
-                }
-                result.append(ptm);
-                result.append("(");
-                boolean firstSite = true;
-                for (String site : locations.get(ptm)) {
-                    if (!firstSite) {
-                        result.append(", ");
+                reportAtSite.append(representativeSite).append("-{");
+                ArrayList<Integer> secondarySites = sites.get(representativeSite);
+                Collections.sort(secondarySites);
+                boolean firstSecondarySite = true;
+                for (Integer secondarySite : secondarySites) {
+                    if (firstSecondarySite) {
+                        firstSecondarySite = false;
                     } else {
-                        firstSite = false;
+                        reportAtSite.append(" ");
                     }
-                    result.append(site);
+                    reportAtSite.append(secondarySite);
                 }
-                result.append(")");
+                reportAtSite.append("}");
+
+                ArrayList<String> reportsAtSite = reportPerSite.get(representativeSite);
+                if (reportsAtSite == null) {
+                    reportsAtSite = new ArrayList<String>();
+                    reportPerSite.put(representativeSite, reportsAtSite);
+                }
+                reportsAtSite.add(reportAtSite.toString());
             }
-        } else {
-            Collections.sort(targetedPtms);
-            for (String ptm : targetedPtms) {
-                if (locations.containsKey(ptm)) {
-                    for (String site : locations.get(ptm)) {
-                        if (result.length() > 0) {
-                            result.append(", ");
-                        }
-                        result.append(site);
-                    }
+        }
+        ArrayList<Integer> sites = new ArrayList<Integer>(reportPerSite.keySet());
+        Collections.sort(sites);
+        StringBuilder result = new StringBuilder();
+        for (int site : sites) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            ArrayList<String> siteReports = reportPerSite.get(site);
+            Collections.sort(siteReports);
+            for (String siteReport : siteReports) {
+                result.append(siteReport);
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns a summary of the number of PTMs present on the sequence
+     * ambiguously assigned to an amino acid grouped by representative site
+     * followed by secondary ambiguous sites. Example:
+     * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6 {M9}.
+     *
+     * @param proteinKey the key of the protein match of interest
+     *
+     * @return a PTM summary for the given protein
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getAmbiguousPtmSiteNumber(String proteinKey)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+        StringBuilder result = new StringBuilder();
+        ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedPtms();
+        Collections.sort(ptms);
+        for (String ptmName : ptms) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            result.append(ptmName).append(" (").append(psPtmScores.getAmbiguousModificationsSites(ptmName).size()).append(")");
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns a summary of the number of PTMs present on the sequence
+     * ambiguously assigned to an amino acid grouped by representative site
+     * followed by secondary ambiguous sites. Example:
+     * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns M6 {M9}.
+     *
+     * @param proteinKey the key of the protein match of interest
+     * @param targetedPtms the targeted PTMs, can be null
+     *
+     * @return a PTM summary for the given protein
+     *
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getAmbiguousPtmSiteNumber(String proteinKey, ArrayList<String> targetedPtms)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+        ArrayList<Integer> sites = new ArrayList<Integer>();
+        for (String ptmName : targetedPtms) {
+            HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
+            for (int site : ptmAmbiguousSites.keySet()) {
+                if (!sites.contains(site)) {
+                    sites.add(site);
                 }
             }
         }
-
-        result.append(separator);
-
-        firstPtm = true;
-
-        if (targetedPtms == null) {
-            for (String ptm : ptms) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result.append("; ");
-                }
-                result.append(ptm);
-                result.append("(");
-                result.append(locations.get(ptm).size());
-                result.append(")");
-            }
-        } else {
-            int n = 0;
-            for (String ptm : targetedPtms) {
-                if (locations.containsKey(ptm)) {
-                    n += locations.get(ptm).size();
-                }
-            }
-            result.append(n);
-        }
-
-        String resultsAsString = result.toString();
-
-        return resultsAsString;
+        return sites.size() + "";
     }
 
     /**

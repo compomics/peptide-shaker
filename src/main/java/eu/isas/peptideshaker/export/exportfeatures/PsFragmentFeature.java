@@ -59,10 +59,10 @@ public enum PsFragmentFeature implements ExportFeature {
         result.addAll(Arrays.asList(values()));
         return result;
     }
-    
+
     @Override
-    public String[] getTitles() {
-        return new String[]{title};
+    public String getTitle() {
+        return title;
     }
 
     @Override

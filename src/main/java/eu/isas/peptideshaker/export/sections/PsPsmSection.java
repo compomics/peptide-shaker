@@ -510,24 +510,20 @@ public class PsPsmSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
-            for (String title : exportFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
                     writer.addSeparator();
                 }
-                writer.writeHeaderText(title);
-            }
+                writer.writeHeaderText(exportFeature.getTitle());
         }
         for (ExportFeature exportFeature : psmFeatures) {
-            for (String title : exportFeature.getTitles()) {
                 if (firstColumn) {
                     firstColumn = false;
                 } else {
                     writer.addSeparator();
                 }
-                writer.writeHeaderText(title);
-            }
+                writer.writeHeaderText(exportFeature.getTitle());
         }
         writer.newLine();
     }

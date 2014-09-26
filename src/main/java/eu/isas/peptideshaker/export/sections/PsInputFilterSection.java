@@ -88,15 +88,8 @@ public class PsInputFilterSection {
                 writer.write(line + "");
                 writer.addSeparator();
             }
-            boolean first = true;
-            for (String title : exportFeature.getTitles()) {
-                if (first) {
-                    first = false;
-                } else {
-                    writer.write(", ");
-                }
-                writer.write(title);
-            }
+
+            writer.write(exportFeature.getTitle());
             writer.addSeparator();
             PsInputFilterFeature inputFilterFeatures = (PsInputFilterFeature) exportFeature;
 

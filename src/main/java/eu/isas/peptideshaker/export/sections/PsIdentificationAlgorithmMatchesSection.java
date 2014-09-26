@@ -286,14 +286,12 @@ public class PsIdentificationAlgorithmMatchesSection {
         }
         boolean firstColumn = true;
         for (PsIdentificationAlgorithmMatchesFeature identificationAlgorithmMatchesFeature : matchExportFeatures) {
-            for (String title : identificationAlgorithmMatchesFeature.getTitles()) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(title);
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
             }
+            writer.writeHeaderText(identificationAlgorithmMatchesFeature.getTitle());
         }
         writer.newLine();
     }
