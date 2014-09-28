@@ -74,10 +74,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * The identification parameters used for the search.
-     */
-    private SearchParameters searchParameters;
-    /**
      * The list of the keys of the protein matches being displayed.
      */
     private ArrayList<String> proteinKeys = null;
@@ -102,16 +98,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * generator generating the features of the identification
      * @param displayFeaturesGenerator the display features generator generating
      * the display elements
-     * @param searchParameters the identification parameters
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, SearchParameters searchParameters,
+    public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
             ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
-        this.searchParameters = searchParameters;
         this.exceptionHandler = exceptionHandler;
         this.proteinKeys = proteinKeys;
     }
@@ -127,16 +121,14 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * generator generating the features of the identification
      * @param displayFeaturesGenerator the display features generator generating
      * the display elements
-     * @param searchParameters the identification parameters
      * @param exceptionHandler an exception handler catching exceptions
      * @param proteinKeys the keys of the protein matches to display
      */
-    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator, SearchParameters searchParameters,
+    public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
             ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
-        this.searchParameters = searchParameters;
         this.exceptionHandler = exceptionHandler;
         this.proteinKeys = proteinKeys;
     }
