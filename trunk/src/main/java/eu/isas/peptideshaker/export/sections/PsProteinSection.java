@@ -395,7 +395,7 @@ public class PsProteinSection {
                 Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
                 Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
                 Double value = 100 * validatedCoverage;
-                return Util.roundDouble(value, 2) + "";
+                return Util.roundDouble(value, 2) + ""; // @TODO: this number can get bigger than 100%!!!
             case possible_coverage:
                 value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
                 return Util.roundDouble(value, 2) + "";
