@@ -11,7 +11,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.math.statistics.Distribution;
@@ -617,6 +616,7 @@ public class IdentificationFeaturesGenerator {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return the spectrum counting index
      * @throws IOException
@@ -738,6 +738,7 @@ public class IdentificationFeaturesGenerator {
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws org.apache.commons.math.MathException
      */
     public Double getObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
@@ -769,6 +770,7 @@ public class IdentificationFeaturesGenerator {
      * @throws InterruptedException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws org.apache.commons.math.MathException
      */
     public void updateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = estimateObservableCoverage(proteinMatchKey);
@@ -1384,7 +1386,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Clears the spectrum counting data in cache
+     * Clears the spectrum counting data in cache.
      */
     public void clearSpectrumCounting() {
         identificationFeaturesCache.removeObjects(IdentificationFeaturesCache.ObjectType.spectrum_counting);
@@ -1393,7 +1395,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * Returns a summary of all PTMs present on the sequence confidently
      * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
-     * of M (M6)
+     * of M (M6).
      *
      * @param proteinKey the key of the protein match of interest
      *
@@ -1417,6 +1419,7 @@ public class IdentificationFeaturesGenerator {
         boolean firstPtm = true;
         ArrayList<String> ptms = psPtmScores.getConfidentlyLocalizedPtms();
         Collections.sort(ptms);
+
         for (String ptm : ptms) {
             if (firstPtm) {
                 firstPtm = false;
@@ -1440,6 +1443,7 @@ public class IdentificationFeaturesGenerator {
             }
             result.append(")");
         }
+
         return result.toString();
     }
 
@@ -1494,8 +1498,6 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     *
-     * /**
      * Returns the number of confidently localized variable modifications.
      *
      * @param proteinKey the key of the protein match of interest
@@ -1531,6 +1533,7 @@ public class IdentificationFeaturesGenerator {
             result.append(psPtmScores.getConfidentSitesForPtm(ptm).size());
             result.append(")");
         }
+
         return result.toString();
     }
 
@@ -1649,19 +1652,25 @@ public class IdentificationFeaturesGenerator {
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<Integer, ArrayList<String>>();
+
         for (String ptmName : targetedPtms) {
+
             HashMap<Integer, ArrayList<Integer>> sites = psPtmScores.getAmbiguousModificationsSites(ptmName);
             ArrayList<Integer> representativeSites = new ArrayList<Integer>(sites.keySet());
             Collections.sort(representativeSites);
+
             for (int representativeSite : representativeSites) {
+
                 StringBuilder reportAtSite = new StringBuilder();
                 if (reportAtSite.length() > 0) {
                     reportAtSite.append(", ");
                 }
+
                 reportAtSite.append(representativeSite).append("-{");
                 ArrayList<Integer> secondarySites = sites.get(representativeSite);
                 Collections.sort(secondarySites);
                 boolean firstSecondarySite = true;
+
                 for (Integer secondarySite : secondarySites) {
                     if (firstSecondarySite) {
                         firstSecondarySite = false;
@@ -1670,6 +1679,7 @@ public class IdentificationFeaturesGenerator {
                     }
                     reportAtSite.append(secondarySite);
                 }
+
                 reportAtSite.append("}");
 
                 ArrayList<String> reportsAtSite = reportPerSite.get(representativeSite);
@@ -1680,9 +1690,11 @@ public class IdentificationFeaturesGenerator {
                 reportsAtSite.add(reportAtSite.toString());
             }
         }
+
         ArrayList<Integer> sites = new ArrayList<Integer>(reportPerSite.keySet());
         Collections.sort(sites);
         StringBuilder result = new StringBuilder();
+
         for (int site : sites) {
             if (result.length() > 0) {
                 result.append(", ");
@@ -1693,6 +1705,7 @@ public class IdentificationFeaturesGenerator {
                 result.append(siteReport);
             }
         }
+
         return result.toString();
     }
 
@@ -1721,12 +1734,14 @@ public class IdentificationFeaturesGenerator {
         StringBuilder result = new StringBuilder();
         ArrayList<String> ptms = psPtmScores.getAmbiguouslyLocalizedPtms();
         Collections.sort(ptms);
+
         for (String ptmName : ptms) {
             if (result.length() > 0) {
                 result.append(", ");
             }
             result.append(ptmName).append(" (").append(psPtmScores.getAmbiguousModificationsSites(ptmName).size()).append(")");
         }
+
         return result.toString();
     }
 
@@ -1754,6 +1769,7 @@ public class IdentificationFeaturesGenerator {
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         ArrayList<Integer> sites = new ArrayList<Integer>();
+
         for (String ptmName : targetedPtms) {
             HashMap<Integer, ArrayList<Integer>> ptmAmbiguousSites = psPtmScores.getAmbiguousModificationsSites(ptmName);
             for (int site : ptmAmbiguousSites.keySet()) {
@@ -1762,6 +1778,7 @@ public class IdentificationFeaturesGenerator {
                 }
             }
         }
+
         return sites.size() + "";
     }
 
@@ -1777,6 +1794,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public String getModifiedSequence(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();

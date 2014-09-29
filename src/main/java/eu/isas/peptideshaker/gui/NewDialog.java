@@ -2068,20 +2068,22 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         try {
             ZipUtils.unzip(file, destinationFolder, progressDialog);
             progressDialog.setSecondaryProgressCounterIndeterminate(true);
-            File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-            dataFolder = new File(destinationFolder, "mgf");
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-            dataFolder = new File(destinationFolder, "fasta");
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-            for (File zippedFile : destinationFolder.listFiles()) {
-                loadIdFile(zippedFile, parameterFiles, inputFiles);
+            if (!progressDialog.isRunCanceled()) {
+                File dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "mgf");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "fasta");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                for (File zippedFile : destinationFolder.listFiles()) {
+                    loadIdFile(zippedFile, parameterFiles, inputFiles);
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(peptideShakerGUI,
