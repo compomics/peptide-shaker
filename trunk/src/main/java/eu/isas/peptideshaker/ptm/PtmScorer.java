@@ -563,10 +563,6 @@ public class PtmScorer {
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
-        if (peptideMatch.equals("SIYASSPGGVYATR_phosphorylation of s")) {
-            int debug = 1;
-        }
-
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
@@ -830,7 +826,7 @@ public class PtmScorer {
     }
 
     /**
-     * Scores ptms in a protein match.
+     * Scores PTMs in a protein match.
      *
      * @param identification identification object containing the identification
      * matches
@@ -847,10 +843,6 @@ public class PtmScorer {
      */
     public void scorePTMs(Identification identification, ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             boolean scorePeptides, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
-
-        if (proteinMatch.getKey().equals("P08670")) {
-            int debug = 1;
-        }
 
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
@@ -910,10 +902,11 @@ public class PtmScorer {
             }
         }
 
+        // remove ambiguous sites where a confident was found and merge overlapping groups
         PSPtmScores proteinScores = new PSPtmScores();
-        // Remove ambiguous sites where a confident was found and merge overlapping groups
         ArrayList<Integer> representativeSites = new ArrayList<Integer>(ambiguousSites.keySet());
         Collections.sort(representativeSites);
+
         for (Integer representativeSite : representativeSites) {
             HashMap<Integer, ArrayList<String>> secondarySitesMap = ambiguousSites.get(representativeSite);
             ArrayList<Integer> secondarySites = new ArrayList<Integer>(secondarySitesMap.keySet());
@@ -975,14 +968,17 @@ public class PtmScorer {
                 }
             }
         }
+
         for (int confidentSite : confidentSites.keySet()) {
             for (String modificationName : confidentSites.get(confidentSite)) {
                 proteinScores.addConfidentModificationSite(modificationName, confidentSite);
             }
         }
+
         for (int representativeSite : ambiguousSites.keySet()) {
             proteinScores.addAmbiguousModificationSites(representativeSite, ambiguousSites.get(representativeSite));
         }
+
         proteinMatch.addUrParam(proteinScores);
         identification.updateProteinMatch(proteinMatch);
     }

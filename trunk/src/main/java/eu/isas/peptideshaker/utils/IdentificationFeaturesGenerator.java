@@ -1439,7 +1439,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 char aa = sequence.charAt(site);
                 int aaNumber = site + 1;
-            result.append(aa).append(aaNumber);
+                result.append(aa).append(aaNumber);
             }
             result.append(")");
         }
