@@ -563,6 +563,10 @@ public class PtmScorer {
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
+        if (peptideMatch.equals("SIYASSPGGVYATR_phosphorylation of s")) {
+            int debug = 1;
+        }
+
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
@@ -844,11 +848,17 @@ public class PtmScorer {
     public void scorePTMs(Identification identification, ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
             boolean scorePeptides, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
-        PSPtmScores proteinScores = new PSPtmScores();
+        if (proteinMatch.getKey().equals("P08670")) {
+            int debug = 1;
+        }
+
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+
+        HashMap<Integer, ArrayList<String>> confidentSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousSites = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
 
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -869,27 +879,110 @@ public class PtmScorer {
                     for (int confidentSite : peptideScores.getConfidentSites()) {
                         for (int peptideTempStart : peptideStart) {
                             int siteOnProtein = peptideTempStart + confidentSite - 2;
+                            ArrayList<String> modificationsAtSite = confidentSites.get(siteOnProtein);
+                            if (modificationsAtSite == null) {
+                                modificationsAtSite = new ArrayList<String>();
+                                confidentSites.put(siteOnProtein, modificationsAtSite);
+                            }
                             for (String ptmName : peptideScores.getConfidentModificationsAt(confidentSite)) {
-                                proteinScores.addConfidentModificationSite(ptmName, siteOnProtein);
+                                if (!modificationsAtSite.contains(ptmName)) {
+                                    modificationsAtSite.add(ptmName);
+                                }
                             }
                         }
                     }
                     for (int representativeSite : peptideScores.getRepresentativeSites()) {
-                        HashMap<Integer, ArrayList<String>> ambiguousSites = peptideScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+                        HashMap<Integer, ArrayList<String>> peptideAmbiguousSites = peptideScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
                         for (int peptideTempStart : peptideStart) {
-                            HashMap<Integer, ArrayList<String>> proteinAmbiguousSites = new HashMap<Integer, ArrayList<String>>(ambiguousSites.size());
-                            for (int peptideSite : ambiguousSites.keySet()) {
-                                int siteOnProtein = peptideTempStart + peptideSite - 2;
-                                proteinAmbiguousSites.put(siteOnProtein, ambiguousSites.get(peptideSite));
+                            int proteinRepresentativeSite = peptideTempStart + representativeSite - 2;
+                            HashMap<Integer, ArrayList<String>> proteinAmbiguousSites = ambiguousSites.get(proteinRepresentativeSite);
+                            if (proteinAmbiguousSites == null) {
+                                proteinAmbiguousSites = new HashMap<Integer, ArrayList<String>>(peptideAmbiguousSites.size());
+                                ambiguousSites.put(proteinRepresentativeSite, proteinAmbiguousSites);
                             }
-                            int representativeSiteOnProtein = peptideTempStart + representativeSite - 2;
-                            proteinScores.addAmbiguousModificationSites(representativeSiteOnProtein, proteinAmbiguousSites);
+                            for (int peptideSite : peptideAmbiguousSites.keySet()) {
+                                int siteOnProtein = peptideTempStart + peptideSite - 2;
+                                proteinAmbiguousSites.put(siteOnProtein, peptideAmbiguousSites.get(peptideSite));
+                            }
                         }
                     }
                 }
             }
         }
 
+        PSPtmScores proteinScores = new PSPtmScores();
+        // Remove ambiguous sites where a confident was found and merge overlapping groups
+        ArrayList<Integer> representativeSites = new ArrayList<Integer>(ambiguousSites.keySet());
+        Collections.sort(representativeSites);
+        for (Integer representativeSite : representativeSites) {
+            HashMap<Integer, ArrayList<String>> secondarySitesMap = ambiguousSites.get(representativeSite);
+            ArrayList<Integer> secondarySites = new ArrayList<Integer>(secondarySitesMap.keySet());
+            for (int secondarySite : secondarySites) {
+                ArrayList<String> confidentPtms = confidentSites.get(secondarySite);
+                boolean removed = false;
+                if (confidentPtms != null) {
+                    boolean samePtm = false;
+                    for (String modification : confidentPtms) {
+                        PTM confidentPtm = ptmFactory.getPTM(modification);
+                        for (String secondaryModification : secondarySitesMap.get(secondarySite)) {
+                            PTM secondaryPtm = ptmFactory.getPTM(secondaryModification);
+                            if (secondaryPtm.getMass() == confidentPtm.getMass()) {
+                                samePtm = true;
+                                break;
+                            }
+                        }
+                        if (samePtm) {
+                            break;
+                        }
+                    }
+                    if (samePtm) {
+                        ambiguousSites.remove(representativeSite);
+                        removed = true;
+                    }
+                }
+                if (!removed && secondarySite != representativeSite) {
+                    for (Integer previousSite : representativeSites) {
+                        if (previousSite == representativeSite) {
+                            break;
+                        }
+                        if (previousSite == secondarySite) {
+                            HashMap<Integer, ArrayList<String>> previousSites = ambiguousSites.get(previousSite);
+                            ArrayList<String> previousPtms = previousSites.get(previousSite);
+                            boolean samePtm = false;
+                            for (String modification : previousPtms) {
+                                PTM previousPtm = ptmFactory.getPTM(modification);
+                                for (String secondaryModification : secondarySitesMap.get(secondarySite)) {
+                                    PTM secondaryPtm = ptmFactory.getPTM(secondaryModification);
+                                    if (secondaryPtm.getMass() == previousPtm.getMass()) {
+                                        samePtm = true;
+                                        break;
+                                    }
+                                }
+                                if (samePtm) {
+                                    break;
+                                }
+                            }
+                            if (samePtm) {
+                                for (int tempSecondarySite : secondarySitesMap.keySet()) {
+                                    if (!previousSites.containsKey(secondarySite)) {
+                                        previousSites.put(tempSecondarySite, secondarySitesMap.get(tempSecondarySite));
+                                    }
+                                }
+                                ambiguousSites.remove(representativeSite);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (int confidentSite : confidentSites.keySet()) {
+            for (String modificationName : confidentSites.get(confidentSite)) {
+                proteinScores.addConfidentModificationSite(modificationName, confidentSite);
+            }
+        }
+        for (int representativeSite : ambiguousSites.keySet()) {
+            proteinScores.addAmbiguousModificationSites(representativeSite, ambiguousSites.get(representativeSite));
+        }
         proteinMatch.addUrParam(proteinScores);
         identification.updateProteinMatch(proteinMatch);
     }

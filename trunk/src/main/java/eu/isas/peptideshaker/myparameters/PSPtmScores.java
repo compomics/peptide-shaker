@@ -105,8 +105,7 @@ public class PSPtmScores implements UrParameter {
     }
 
     /**
-     * Adds a confident modification site and removes the corresponding
-     * ambiguous modification site if found.
+     * Adds a confident modification site.
      *
      * @param ptmName the modification name
      * @param modificationSite the modification site
@@ -114,7 +113,7 @@ public class PSPtmScores implements UrParameter {
     public void addConfidentModificationSite(String ptmName, int modificationSite) {
 
         compatibilityCheck();
-        
+
         // add the PTM to the site map
         if (mainModificationSites == null) {
             mainModificationSites = new HashMap<Integer, ArrayList<String>>();
@@ -139,8 +138,6 @@ public class PSPtmScores implements UrParameter {
         if (!ptmSites.contains(modificationSite)) {
             ptmSites.add(modificationSite);
         }
-        // Check whether the site was already added as ambiguous and remove it if yes
-        removeFromAmbiguousSitesMaps(ptmName, modificationSite);
     }
 
     /**
@@ -150,7 +147,7 @@ public class PSPtmScores implements UrParameter {
      * @param modificationSite the site of interest
      */
     private void removeFromAmbiguousSitesMaps(String ptmName, int modificationSite) {
-            compatibilityCheck();
+        compatibilityCheck();
         if (ambiguousModificationsByPTM != null) {
             HashMap<Integer, ArrayList<Integer>> modificationSites = ambiguousModificationsByPTM.get(ptmName);
             if (modificationSites != null) {
@@ -188,8 +185,7 @@ public class PSPtmScores implements UrParameter {
     }
 
     /**
-     * Adds a group of modifications to the mapping of ambiguous sites if not
-     * already listed as confident site.
+     * Adds a group of modifications to the mapping of ambiguous sites.
      *
      * @param representativeSite the representative site of this modification
      * group
@@ -203,47 +199,52 @@ public class PSPtmScores implements UrParameter {
             ambiguousModificationsByPTM = new HashMap<String, HashMap<Integer, ArrayList<Integer>>>();
             compatibilityCheck();
         }
+
         HashMap<Integer, ArrayList<String>> modificationGroupsAtSite = ambiguousModificationsByRepresentativeSite.get(representativeSite);
+        if (modificationGroupsAtSite == null) {
+            modificationGroupsAtSite = new HashMap<Integer, ArrayList<String>>();
+            ambiguousModificationsByRepresentativeSite.put(representativeSite, modificationGroupsAtSite);
+        }
+
         for (int site : possibleModifications.keySet()) {
             for (String ptmName : possibleModifications.get(site)) {
-                if (!isConfidentModificationSite(site, ptmName)) {
-                    if (modificationGroupsAtSite == null) {
-                        modificationGroupsAtSite = new HashMap<Integer, ArrayList<String>>();
-                        ambiguousModificationsByRepresentativeSite.put(representativeSite, modificationGroupsAtSite);
-                    }
-                    ArrayList<String> modifications = modificationGroupsAtSite.get(site);
-                    if (modifications == null) {
-                        modifications = new ArrayList<String>();
-                        modificationGroupsAtSite.put(site, modifications);
-                    }
-                    if (!modifications.contains(ptmName)) {
-                        modifications.add(ptmName);
-                    }
+                ArrayList<String> modifications = modificationGroupsAtSite.get(site);
+                if (modifications == null) {
+                    modifications = new ArrayList<String>();
+                    modificationGroupsAtSite.put(site, modifications);
+                }
+                if (!modifications.contains(ptmName)) {
+                    modifications.add(ptmName);
+                }
 
-                    if (site != representativeSite) {
-                        ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
-                        if (representativeSites == null) {
-                            representativeSites = new ArrayList<Integer>();
-                            secondaryToRepresentativesSitesMap.put(site, representativeSites);
-                        }
-                        if (!representativeSites.contains(representativeSite)) {
-                            representativeSites.add(representativeSite);
-                        }
+                if (site != representativeSite) {
+                    ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
+                    if (representativeSites == null) {
+                        representativeSites = new ArrayList<Integer>();
+                        secondaryToRepresentativesSitesMap.put(site, representativeSites);
                     }
+                    if (!representativeSites.contains(representativeSite)) {
+                        representativeSites.add(representativeSite);
+                    }
+                }
+            }
+        }
 
-                    HashMap<Integer, ArrayList<Integer>> sites = ambiguousModificationsByPTM.get(ptmName);
-                    if (sites == null) {
-                        sites = new HashMap<Integer, ArrayList<Integer>>();
-                        ambiguousModificationsByPTM.put(ptmName, sites);
-                    }
-                    ArrayList<Integer> secondarySites = sites.get(representativeSite);
-                    if (secondarySites == null) {
-                        secondarySites = new ArrayList<Integer>();
-                        sites.put(representativeSite, secondarySites);
-                    }
-                    if (!secondarySites.contains(site)) {
-                        secondarySites.add(site);
-                    }
+        ArrayList<String> modifications = possibleModifications.get(representativeSite);
+        for (String modification : modifications) {
+            HashMap<Integer, ArrayList<Integer>> ptmSites = ambiguousModificationsByPTM.get(modification);
+            if (ptmSites == null) {
+                ptmSites = new HashMap<Integer, ArrayList<Integer>>();
+                ambiguousModificationsByPTM.put(modification, ptmSites);
+            }
+            ArrayList<Integer> secondarySites = ptmSites.get(representativeSite);
+            if (secondarySites == null) {
+                secondarySites = new ArrayList<Integer>();
+                ptmSites.put(representativeSite, secondarySites);
+            }
+            for (int site : possibleModifications.keySet()) {
+                if (!secondarySites.contains(site)) {
+                    secondarySites.add(site);
                 }
             }
         }
@@ -618,7 +619,7 @@ public class PSPtmScores implements UrParameter {
                     }
                     sites.add(site);
                 }
-        }
+            }
         }
     }
 
