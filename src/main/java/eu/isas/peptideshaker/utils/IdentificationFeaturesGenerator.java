@@ -1439,7 +1439,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 char aa = sequence.charAt(site);
                 int aaNumber = site + 1;
-                result.append(aa + aaNumber);
+            result.append(aa).append(aaNumber);
             }
             result.append(")");
         }
@@ -1492,7 +1492,7 @@ public class IdentificationFeaturesGenerator {
             }
             char aa = sequence.charAt(site);
             int aaNumber = site + 1;
-            result.append(aa + aaNumber);
+            result.append(aa).append(aaNumber);
         }
         return result.toString();
     }
@@ -1589,6 +1589,7 @@ public class IdentificationFeaturesGenerator {
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         StringBuilder result = new StringBuilder();
@@ -1609,7 +1610,9 @@ public class IdentificationFeaturesGenerator {
                 } else {
                     result.append(", ");
                 }
-                result.append(representativeSite).append("-{");
+                char aa = sequence.charAt(representativeSite);
+                int aaNumber = representativeSite + 1;
+                result.append(aa).append(aaNumber).append("-{");
                 ArrayList<Integer> secondarySites = sites.get(representativeSite);
                 Collections.sort(secondarySites);
                 boolean firstSecondarySite = true;
@@ -1619,7 +1622,9 @@ public class IdentificationFeaturesGenerator {
                     } else {
                         result.append(" ");
                     }
-                    result.append(secondarySite);
+                    aa = sequence.charAt(secondarySite);
+                    aaNumber = secondarySite + 1;
+                    result.append(aa).append(aaNumber);
                 }
                 result.append("}");
             }
@@ -1649,6 +1654,7 @@ public class IdentificationFeaturesGenerator {
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         HashMap<Integer, ArrayList<String>> reportPerSite = new HashMap<Integer, ArrayList<String>>();
@@ -1666,7 +1672,9 @@ public class IdentificationFeaturesGenerator {
                     reportAtSite.append(", ");
                 }
 
-                reportAtSite.append(representativeSite).append("-{");
+                char aa = sequence.charAt(representativeSite);
+                int aaNumber = representativeSite + 1;
+                reportAtSite.append(aa).append(aaNumber).append("-{");
                 ArrayList<Integer> secondarySites = sites.get(representativeSite);
                 Collections.sort(secondarySites);
                 boolean firstSecondarySite = true;
@@ -1677,7 +1685,9 @@ public class IdentificationFeaturesGenerator {
                     } else {
                         reportAtSite.append(" ");
                     }
-                    reportAtSite.append(secondarySite);
+                    aa = sequence.charAt(secondarySite);
+                    aaNumber = secondarySite + 1;
+                    reportAtSite.append(aa).append(aaNumber);
                 }
 
                 reportAtSite.append("}");
