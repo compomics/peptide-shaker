@@ -78,7 +78,7 @@ public class ProjectExport {
         }
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Compressing project. Please Wait...");
+            waitingHandler.setWaitingText("Compressing Project. Please Wait...");
             waitingHandler.setPrimaryProgressCounterIndeterminate(true);
             if (waitingHandler.isRunCanceled()) {
                 return;

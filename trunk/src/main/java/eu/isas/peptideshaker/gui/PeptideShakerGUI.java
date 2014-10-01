@@ -6182,18 +6182,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             }
 
                             try {
-
                                 ProjectExport.exportProjectAsZip(zipFile, fastaFile, spectrumFiles, cpsFile, progressDialog);
-
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-
                                 progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             } catch (IOException e) {
                                 e.printStackTrace();
-
                                 progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
@@ -6206,7 +6202,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 // get the size (in MB) of the zip file
                                 final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                                 double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
-
                                 JOptionPane.showMessageDialog(PeptideShakerGUI.this, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
                                         "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
                             }
