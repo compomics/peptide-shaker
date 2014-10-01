@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -225,6 +226,12 @@ public class MatchesValidator {
         psmMap.resetDoubtfulMatchesFilters();
         peptideMap.resetDoubtfulMatchesFilters();
         proteinMap.resetDoubtfulMatchesFilters();
+        
+        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
+        if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
+            spectrumKeysMap = metrics.getGroupedSpectrumKeys();
+        }
 
         // validate the spectrum matches
         if (inputMap != null) {
@@ -237,9 +244,9 @@ public class MatchesValidator {
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             ArrayList<Integer> charges = new ArrayList<Integer>();
 
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            for (String spectrumKey : spectrumKeysMap.get(spectrumFileName)) {
 
-                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, psmMap, spectrumKey);
+                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, peptideSpectrumAnnotator, psmMap, spectrumKey);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -303,7 +310,7 @@ public class MatchesValidator {
                             for (SpectrumIdentificationAssumption spectrumIdAssumption : assumptions.get(eValue)) {
                                 if (spectrumIdAssumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
-                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, peptideAssumption);
+                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator);
                                 } else if (spectrumIdAssumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) spectrumIdAssumption;
                                     updateTagAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, tagAssumption);
@@ -364,7 +371,7 @@ public class MatchesValidator {
 
                     for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
-                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, psmMap, spectrumKey);
+                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, peptideSpectrumAnnotator, psmMap, spectrumKey);
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                         if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -851,6 +858,7 @@ public class MatchesValidator {
      * generator
      * @param searchParameters the settings used for the identification
      * @param spectrumKey the key of the spectrum match of interest
+     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      * @param annotationPreferences the spectrum annotation preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
@@ -861,7 +869,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, 
+            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
             PsmSpecificMap psmMap, String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -905,13 +913,13 @@ public class MatchesValidator {
                 boolean filterPassed = true;
 
                 for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
-                    boolean validated = filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                    boolean validated = filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
                     psParameter.setQcResult(filter.getName(), validated);
                     if (!validated) {
                         if (filter.getName().toLowerCase().contains("deviation")) {
-                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
                         } else if (filter.getName().toLowerCase().contains("coverage")) {
-                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences);
+                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
                         }
                         filterPassed = false;
                         if (reasonDoubtful == null) {
@@ -1088,6 +1096,7 @@ public class MatchesValidator {
      * @param inputMap the target decoy map of all search engine scores
      * @param spectrumKey the key of the inspected spectrum
      * @param peptideAssumption the peptide assumption of interest
+     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      *
      * @throws SQLException
      * @throws IOException
@@ -1096,7 +1105,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption)
+            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -1123,7 +1132,7 @@ public class MatchesValidator {
                 boolean filterPassed = true;
 
                 for (AssumptionFilter filter : inputMap.getDoubtfulMatchesFilters()) {
-                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences);
+                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
                     psParameter.setQcResult(filter.getName(), validated);
                     if (!validated) {
                         filterPassed = false;

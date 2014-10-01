@@ -40,6 +40,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
+import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -727,7 +728,7 @@ public class FileImporter {
                         fileReader.clearPeptidesMap();
                     }
                     // empty protein caches
-                    if (memoryUsed() > 0.8) {
+                    if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
                         ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(1, null);
                         sequenceFactory.reduceNodeCacheSize(1);
                     }
@@ -740,14 +741,14 @@ public class FileImporter {
                     while (!idFileSpectrumMatches.isEmpty()) {
 
                         // free memory if needed
-                        if (memoryUsed() > 0.9 && !peptideShaker.getCache().isEmpty()) {
+                        if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShaker.getCache().isEmpty()) {
                             peptideShaker.getCache().reduceMemoryConsumption(0.5, null);
                         }
                         // free memory if needed
-                        if (memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                        if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
                             ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
                         }
-                        if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                             sequenceFactory.reduceNodeCacheSize(0.5);
                         }
 
@@ -1273,7 +1274,7 @@ public class FileImporter {
                     }
 
                     // Free at least 0.5GB for the next parser if not anymore available
-                    if (!halfGbFree() && !peptideShaker.getCache().isEmpty()) {
+                    if (!MemoryConsumptionStatus.halfGbFree() && !peptideShaker.getCache().isEmpty()) {
                         waitingHandler.appendReport("PeptideShaker is encountering memory issues! "
                                 + "See http://peptide-shaker.googlecode.com for help.", true, true);
                         waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
@@ -1283,7 +1284,7 @@ public class FileImporter {
                         peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     }
-                    if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                    if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                         sequenceFactory.reduceNodeCacheSize(0.5);
                     }
                     projectDetails.addIdentificationFiles(idFile);
@@ -1378,27 +1379,6 @@ public class FileImporter {
                 }
             }
             xTandemPtmsCheck = true;
-        }
-
-        /**
-         * Indicates whether a GB of memory is free.
-         *
-         * @return a boolean indicating whether a GB of memory is free
-         */
-        public boolean halfGbFree() {
-            return Runtime.getRuntime().maxMemory() - (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) > 536870912;
-        }
-
-        /**
-         * Returns the share of memory being used.
-         *
-         * @return the share of memory being used
-         */
-        public double memoryUsed() {
-            long memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-            float memoryAvailable = Runtime.getRuntime().maxMemory();
-            double ratio = (double) (memoryUsed / memoryAvailable);
-            return ratio;
         }
 
         /**
@@ -1729,15 +1709,15 @@ public class FileImporter {
                         }
 
                         // free memory if needed
-                        if (memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
+                        if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
                             ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
                         }
-                        if (!halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
+                        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
                             sequenceFactory.reduceNodeCacheSize(0.5);
                         }
-                        if (memoryUsed() > 0.8) {
+                        if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
                             Runtime.getRuntime().gc();
-                            if (memoryUsed() > 0.8) {
+                            if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
                                 // all peptides/protein mappings cannot be kept in memory at the same time, abort
                                 System.out.println("Memory issue while mapping peptides. Revert to mapping peptides one by one."); // @TODO: handle this better??
                                 return;

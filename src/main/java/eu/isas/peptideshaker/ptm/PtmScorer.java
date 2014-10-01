@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
 import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -69,6 +70,10 @@ public class PtmScorer {
      * The PSM PTM localization conflict map.
      */
     private PsmPTMMap psmPTMMap;
+    /**
+     * A single spectrum annotator to annotate spectra
+     */
+    private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
     /**
      * Constructor.
@@ -260,12 +265,14 @@ public class PtmScorer {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences);
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses()
+                            , sequenceMatchingPreferences, peptideSpectrumAnnotator);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences);
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), 
+                            sequenceMatchingPreferences, peptideSpectrumAnnotator);
                 }
                 if (scores != null) {
                     // remap to searched PTMs
@@ -995,21 +1002,28 @@ public class PtmScorer {
      * @param annotationPreferences the spectrum annotation preferences
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param metrics the dataset metrics
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
     public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences,
+            Metrics metrics) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        
+        HashMap<String, ArrayList<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
+        if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
+            spectrumKeys = metrics.getGroupedSpectrumKeys();
+        }
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            for (String spectrumKey : spectrumKeys.get(spectrumFileName)) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);

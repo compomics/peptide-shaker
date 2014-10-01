@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.memory.MemoryConsumptionStatus;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;
@@ -324,6 +325,9 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+            metrics.clearSpectrumKeys();
+        }
 
         waitingHandler.appendReport("Computing PSM probabilities.", true, true);
         matchesValidator.getPsmMap().estimateProbabilities(waitingHandler);
@@ -337,10 +341,13 @@ public class PeptideShaker {
         }
         report += ")";
         waitingHandler.appendReport(report, true, true); // @TODO: this is very slow if memory is full!!
-        ptmScorer.scorePsmPtms(identification, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
+        ptmScorer.scorePsmPtms(identification, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences, metrics);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
+        }
+        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+            metrics.clearSpectrumKeys();
         }
 
         if (ptmScoringPreferences.isEstimateFlr()) {
@@ -362,6 +369,9 @@ public class PeptideShaker {
             return;
         }
 
+        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+            metrics.clearSpectrumKeys(); // @TODO: use other ways of releasing emmory?
+        }
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(sequenceMatchingPreferences, waitingHandler); // @TODO: this is very slow if memory is full!!
         waitingHandler.increasePrimaryProgressCounter();
@@ -434,6 +444,7 @@ public class PeptideShaker {
         matchesValidator.validateIdentifications(identification, metrics, waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(),
                 processingPreferences.getProteinFDR(), searchParameters, sequenceMatchingPreferences, annotationPreferences, identificationFeaturesGenerator, inputMap);
         waitingHandler.increasePrimaryProgressCounter();
+        metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -625,7 +636,18 @@ public class PeptideShaker {
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         boolean multiSE = inputMap.isMultipleAlgorithms();
 
+        // Keep a map of the spectrum keys grouped by peptide
+        HashMap<String, ArrayList<String>> orderedPsmMap = null;
+        if (MemoryConsumptionStatus.memoryUsed() < 0.8) {
+            orderedPsmMap = new HashMap<String, ArrayList<String>>(identification.getSpectrumIdentificationMap().size());
+        }
+
         for (String spectrumFileName : identification.getSpectrumFiles()) {
+
+            HashMap<String, ArrayList<String>> keysMap = null;
+            if (orderedPsmMap != null) {
+                keysMap = new HashMap<String, ArrayList<String>>();
+            }
 
             // batch load the spectrum matches
             identification.loadSpectrumMatches(spectrumFileName, null);
@@ -737,6 +759,7 @@ public class PeptideShaker {
                                         PeptideAssumption tempAssumption = assumptions.get(0);
                                         Peptide peptide = tempAssumption.getPeptide();
                                         int precursorCharge = tempAssumption.getIdentificationCharge().value;
+                                        annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
                                         double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
                                                 spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                         double coverage = nIons / peptide.getSequence().length();
@@ -747,6 +770,7 @@ public class PeptideShaker {
 
                                     Peptide peptide = peptideAssumption1.getPeptide();
                                     int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
+                                    annotationPreferences.setCurrentSettings(peptideAssumption1, true, sequenceMatchingPreferences);
                                     double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
                                             spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                     double coverage = nIons / peptide.getSequence().length();
@@ -926,6 +950,17 @@ public class PeptideShaker {
                         psPeptide.setParentProteins(psProteins);
                         PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.peptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
                         spectrumMatch.setBestPeptideAssumption(psAssumption);
+
+                        if (orderedPsmMap != null) {
+                            String peptideKey = psPeptide.getKey();
+                            ArrayList<String> spectrumKeys = keysMap.get(peptideKey);
+                            if (spectrumKeys == null) {
+                                spectrumKeys = new ArrayList<String>();
+                                keysMap.put(peptideKey, spectrumKeys);
+                            }
+                            spectrumKeys.add(spectrumKey);
+                        }
+
                         psParameter = new PSParameter();
                         psParameter.setSpectrumProbabilityScore(retainedP);
 
@@ -967,6 +1002,23 @@ public class PeptideShaker {
                     return;
                 }
             }
+
+            if (orderedPsmMap != null) {
+                ArrayList<String> orderedKeys = new ArrayList<String>(identification.getSpectrumIdentification(spectrumFileName).size());
+                for (ArrayList<String> keys : keysMap.values()) {
+                    orderedKeys.addAll(keys);
+                }
+                orderedPsmMap.put(spectrumFileName, orderedKeys);
+
+                if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+                    orderedPsmMap = null;
+                }
+            }
+
+        }
+
+        if (orderedPsmMap != null) {
+            metrics.setGroupedSpectrumKeys(orderedPsmMap);
         }
 
         // the protein count map is no longer needed
