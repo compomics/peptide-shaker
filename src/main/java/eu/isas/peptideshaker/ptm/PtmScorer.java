@@ -381,7 +381,7 @@ public class PtmScorer {
             PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
-
+        
         if (scoringPreferences.isProbabilitsticScoreCalculation()) {
             attachProbabilisticScore(identification, spectrumMatch, searchParameters, annotationPreferences, scoringPreferences, sequenceMatchingPreferences);
         }
@@ -643,7 +643,7 @@ public class PtmScorer {
                         int psmValidationLevel = psmScoring.getLocalizationConfidence(site);
                         int peptideValidationLevel = peptideScoring.getLocalizationConfidence(site);
                         if (peptideValidationLevel < psmValidationLevel) {
-                            peptideScoring.setSiteConfidence(site, validationLevel);
+                            peptideScoring.setSiteConfidence(site, psmValidationLevel);
                         }
                     }
                 }
@@ -912,7 +912,6 @@ public class PtmScorer {
             ArrayList<Integer> secondarySites = new ArrayList<Integer>(secondarySitesMap.keySet());
             for (int secondarySite : secondarySites) {
                 ArrayList<String> confidentPtms = confidentSites.get(secondarySite);
-                boolean removed = false;
                 if (confidentPtms != null) {
                     boolean samePtm = false;
                     for (String modification : confidentPtms) {
@@ -930,12 +929,14 @@ public class PtmScorer {
                     }
                     if (samePtm) {
                         ambiguousSites.remove(representativeSite);
-                        removed = true;
+                        break;
                     }
                 }
-                if (!removed && secondarySite != representativeSite) {
-                    for (Integer previousSite : representativeSites) {
-                        if (previousSite == representativeSite) {
+                if (secondarySite != representativeSite) {
+                    ArrayList<Integer> tempRepresentativeSites = new ArrayList<Integer>(ambiguousSites.keySet());
+                    Collections.sort(tempRepresentativeSites);
+                    for (Integer previousSite : tempRepresentativeSites) {
+                        if (previousSite >= representativeSite) {
                             break;
                         }
                         if (previousSite == secondarySite) {

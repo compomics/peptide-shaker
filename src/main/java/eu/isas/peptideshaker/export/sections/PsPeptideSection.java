@@ -272,7 +272,7 @@ public class PsPeptideSection {
                     return "0";
                 }
             case localization_confidence:
-                return getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, searchParameters.getModificationProfile()) + "";
+                return getPeptideModificationLocations(peptideMatch, searchParameters.getModificationProfile()) + "";
             case pi:
                 return psParameter.getProteinInferenceClassAsString();
             case position:
@@ -381,6 +381,68 @@ public class PsPeptideSection {
                 return psParameter.getMatchValidationLevel().toString();
             case validated_psms:
                 return identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatch.getKey()) + "";
+            case probabilistic_score:
+                PSPtmScores ptmScores = new PSPtmScores();
+                ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                if (ptmScores != null) {
+                    StringBuilder result = new StringBuilder();
+                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    Collections.sort(modList);
+                    for (String mod : modList) {
+                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getProbabilisticSites());
+                        if (!sites.isEmpty()) {
+                            Collections.sort(sites);
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(mod).append(" (");
+                            boolean firstSite = true;
+                            for (int site : sites) {
+                                if (firstSite) {
+                                    firstSite = false;
+                                } else {
+                                    result.append(", ");
+                                }
+                                result.append(site).append(": ").append(ptmScoring.getProbabilisticScore(site));
+                            }
+                            result.append(")");
+                        }
+                    }
+                    return result.toString();
+                }
+                return "";
+            case d_score:
+                StringBuilder result = new StringBuilder();
+                ptmScores = new PSPtmScores();
+                ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                if (ptmScores != null) {
+                    ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
+                    Collections.sort(modList);
+                    for (String mod : modList) {
+                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        ArrayList<Integer> sites = new ArrayList<Integer>(ptmScoring.getDSites());
+                        if (!sites.isEmpty()) {
+                            Collections.sort(sites);
+                            if (result.length() > 0) {
+                                result.append(", ");
+                            }
+                            result.append(mod).append(" (");
+                            boolean firstSite = true;
+                            for (int site : sites) {
+                                if (firstSite) {
+                                    firstSite = false;
+                                } else {
+                                    result.append(", ");
+                                }
+                                result.append(site).append(": ").append(ptmScoring.getDeltaScore(site));
+                            }
+                            result.append(")");
+                        }
+                    }
+                    return result.toString();
+                }
+                return "";
             default:
                 return "Not implemented";
         }
@@ -439,38 +501,27 @@ public class PsPeptideSection {
     /**
      * Returns the peptide modification location confidence as a string.
      *
-     * @param peptide the peptide
      * @param peptideMatch the peptide match
      * @param ptmProfile the PTM profile
      * @return the peptide modification location confidence as a string.
      */
-    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
+    public static String getPeptideModificationLocations(PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
 
-        PTMFactory ptmFactory = PTMFactory.getInstance();
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);
 
-        ArrayList<String> modList = new ArrayList<String>();
+        if (psPtmScores != null) {
+            ArrayList<String> modList = psPtmScores.getScoredPTMs();
 
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (modificationMatch.isVariable()) {
-                PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
-                    if (!modList.contains(equivalentPtm)) {
-                        modList.add(equivalentPtm);
-                    }
+            StringBuilder result = new StringBuilder();
+            Collections.sort(modList);
+
+            for (String mod : modList) {
+                if (result.length() > 0) {
+                    result.append(", ");
                 }
-            }
-        }
-
-        StringBuilder result = new StringBuilder();
-        Collections.sort(modList);
-
-        for (String mod : modList) {
-            if (result.length() > 0) {
-                result.append(", ");
-            }
-            PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
-            result.append(mod).append(" (");
-            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+                result.append(mod).append(" (");
                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                 boolean firstSite = true;
                 for (int site : ptmScoring.getOrderedPtmLocations()) {
@@ -481,7 +532,7 @@ public class PsPeptideSection {
                     }
                     int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
                     if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                        result.append(site).append(": Not Scored"); // Well this should not happen
+                        result.append(site).append(": Not Scored");
                     } else if (ptmConfidence == PtmScoring.RANDOM) {
                         result.append(site).append(": Random");
                     } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
@@ -492,13 +543,12 @@ public class PsPeptideSection {
                         result.append(site).append(": Very Confident");
                     }
                 }
-            } else {
-                result.append("Not Scored");
+                result.append(")");
             }
-            result.append(")");
-        }
 
-        return result.toString();
+            return result.toString();
+        }
+        return "";
     }
 
     /**

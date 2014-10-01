@@ -2,14 +2,12 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.waiting.WaitingHandler;
@@ -294,10 +292,10 @@ public class PsPsmSection {
         switch (psmFeature) {
             case probabilistic_score:
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    StringBuilder result = new StringBuilder();
                     PSPtmScores ptmScores = new PSPtmScores();
                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
                     if (ptmScores != null) {
+                        StringBuilder result = new StringBuilder();
                         ArrayList<String> modList = new ArrayList<String>(ptmScores.getScoredPTMs());
                         Collections.sort(modList);
                         for (String mod : modList) {
@@ -321,8 +319,8 @@ public class PsPsmSection {
                                 result.append(")");
                             }
                         }
+                        return result.toString();
                     }
-                    return result.toString();
                 }
                 return "";
             case d_score:
@@ -360,66 +358,59 @@ public class PsPsmSection {
                 return "";
             case localization_confidence:
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    ArrayList<String> modList = new ArrayList<String>(getModMap(spectrumMatch.getBestPeptideAssumption().getPeptide(), true).keySet());
-                    Collections.sort(modList);
                     PSPtmScores ptmScores = new PSPtmScores();
-                    StringBuilder result = new StringBuilder();
-                    for (String mod : modList) {
+                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                    if (ptmScores != null) {
+                        StringBuilder result = new StringBuilder();
+                        ArrayList<String> modList = ptmScores.getScoredPTMs();
+                        Collections.sort(modList);
+                        for (String mod : modList) {
 
-                        PTM ptm = PTMFactory.getInstance().getPTM(mod);
+                            PTM ptm = PTMFactory.getInstance().getPTM(mod);
 
-                        if (ptm.getType() == PTM.MODAA) {
+                            if (ptm.getType() == PTM.MODAA) {
 
-                            if (result.length() > 0) {
-                                result.append(", ");
-                            }
-                            result.append(mod);
+                                if (result.length() > 0) {
+                                    result.append(", ");
+                                }
+                                result.append(mod);
 
-                            result.append(" (");
-                            if (spectrumMatch.getUrParam(ptmScores) != null) {
-                                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                result.append(" (");
+                                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                boolean firstSite = true;
 
-                                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
-                                    boolean firstSite = true;
+                                ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
+                                if (sites.isEmpty()) {
+                                    result.append("Not Scored");
+                                } else {
+                                    for (int site : ptmScoring.getOrderedPtmLocations()) {
 
-                                    ArrayList<Integer> sites = ptmScoring.getOrderedPtmLocations();
-                                    if (sites.isEmpty()) {
-                                        result.append("Not Scored");
-                                    } else {
-                                        for (int site : ptmScoring.getOrderedPtmLocations()) {
+                                        if (firstSite) {
+                                            firstSite = false;
+                                        } else {
+                                            result.append(", ");
+                                        }
+                                        int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
 
-                                            if (firstSite) {
-                                                firstSite = false;
-                                            } else {
-                                                result.append(", ");
-                                            }
-                                            int ptmConfidence = ptmScoring.getLocalizationConfidence(site);
-
-                                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                                result.append(site).append(": Not Scored");
-                                            } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                                result.append(site).append(": Random");
-                                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                                result.append(site).append(": Doubtfull");
-                                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                                result.append(site).append(": Confident");
-                                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                                result.append(site).append(": Very Confident");
-                                            }
+                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                            result.append(site).append(": Not Scored");
+                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                            result.append(site).append(": Random");
+                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                            result.append(site).append(": Doubtfull");
+                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                            result.append(site).append(": Confident");
+                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                            result.append(site).append(": Very Confident");
                                         }
                                     }
-                                } else {
-                                    result.append("Not Scored");
                                 }
 
-                            } else {
-                                result.append("Not Scored");
+                                result.append(")");
                             }
-                            result.append(")");
                         }
+                        return result.toString();
                     }
-                    return result.toString();
                 }
                 return "";
             case algorithm_score:
@@ -475,30 +466,6 @@ public class PsPsmSection {
     }
 
     /**
-     * Returns a map of the modifications in a peptide. Modification name ->
-     * sites.
-     *
-     * @param peptide
-     * @param variablePtms if true, only variable PTMs are shown, false return
-     * only the fixed PTMs
-     * @return the map of the modifications on a peptide sequence
-     */
-    private static HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
-
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
-                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                }
-                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
-            }
-        }
-
-        return modMap;
-    }
-
-    /**
      * Writes the header of this section.
      *
      * @throws IOException
@@ -510,20 +477,20 @@ public class PsPsmSection {
         }
         boolean firstColumn = true;
         for (ExportFeature exportFeature : identificationAlgorithmMatchesFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(exportFeature.getTitle());
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
+            }
+            writer.writeHeaderText(exportFeature.getTitle());
         }
         for (ExportFeature exportFeature : psmFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.addSeparator();
-                }
-                writer.writeHeaderText(exportFeature.getTitle());
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.addSeparator();
+            }
+            writer.writeHeaderText(exportFeature.getTitle());
         }
         writer.newLine();
     }
