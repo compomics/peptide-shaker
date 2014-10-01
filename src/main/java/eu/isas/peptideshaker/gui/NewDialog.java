@@ -1648,7 +1648,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                             searchParameters.setFastaFile(fastaFile);
                             found = true;
                         } else {
-                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() 
+                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
                                     + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                         }
                     }
@@ -1931,6 +1931,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         ArrayList<File> dataFolders = new ArrayList<File>();
         ArrayList<File> inputFiles = new ArrayList<File>();
 
+        boolean loadCanceled = false;
+
         for (File newFile : selectedFiles) {
             if (newFile.isDirectory()) {
 
@@ -1955,7 +1957,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 for (File file : tempFiles) {
                     String lowerCaseName = file.getName().toLowerCase();
                     if (lowerCaseName.endsWith("zip")) {
-                        loadZipFile(file, parameterFiles, dataFolders, inputFiles);
+                        loadCanceled = !loadZipFile(file, parameterFiles, dataFolders, inputFiles);
+                        if (loadCanceled) {
+                            break;
+                        }
                     } else {
                         loadIdFile(file, parameterFiles, inputFiles);
                     }
@@ -1981,7 +1986,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
                 String lowerCaseName = newFile.getName().toLowerCase();
                 if (lowerCaseName.endsWith("zip")) {
-                    loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
+                    loadCanceled = !loadZipFile(newFile, parameterFiles, dataFolders, inputFiles);
+                    if (loadCanceled) {
+                        break;
+                    }
                 } else {
                     loadIdFile(newFile, parameterFiles, inputFiles);
                 }
@@ -2001,49 +2009,60 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                 }
             }
+
             peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+
+            if (loadCanceled) {
+                break;
+            }
         }
 
-        File parameterFile = null;
-        if (parameterFiles.size() == 1) {
-            parameterFile = parameterFiles.get(0);
-        } else if (parameterFiles.size() > 1) {
+        if (!loadCanceled) {
 
-            boolean equalParameters = true;
+            File parameterFile = null;
+            if (parameterFiles.size() == 1) {
+                parameterFile = parameterFiles.get(0);
+            } else if (parameterFiles.size() > 1) {
 
-            try {
-                for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
-                    for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
-                        equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
+                boolean equalParameters = true;
+
+                try {
+                    for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
+                        for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
+                            equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    equalParameters = false;
+                } catch (IOException e) {
+                    equalParameters = false;
+                }
+
+                if (equalParameters) {
+                    // all parameters are equal, just select one of them
+                    parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
+                } else {
+                    FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
+                    if (!fileSelection.isCanceled()) {
+                        parameterFile = fileSelection.getSelectedFile();
                     }
                 }
-            } catch (ClassNotFoundException e) {
-                equalParameters = false;
-            } catch (IOException e) {
-                equalParameters = false;
             }
 
-            if (equalParameters) {
-                // all parameters are equal, just select one of them
-                parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
-            } else {
-                FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
-                if (!fileSelection.isCanceled()) {
-                    parameterFile = fileSelection.getSelectedFile();
-                }
+            loadMgfs(inputFiles, dataFolders);
+
+            idFilesTxt.setText(idFiles.size() + " file(s) selected");
+
+            if (parameterFile != null) {
+                importSearchParameters(parameterFile, dataFolders, progressDialog);
             }
+
+            progressDialog.setRunFinished();
+            validateInput();
+        } else {
+            progressDialog.setRunFinished();
+            validateInput();
         }
-
-        loadMgfs(inputFiles, dataFolders);
-
-        idFilesTxt.setText(idFiles.size() + " file(s) selected");
-
-        if (parameterFile != null) {
-            importSearchParameters(parameterFile, dataFolders, progressDialog);
-        }
-
-        progressDialog.setRunFinished();
-        validateInput();
     }
 
     /**
@@ -2052,11 +2071,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      *
      * @param file the zip file to load
      * @param parameterFiles list of the parameters file found
-     * @param dataFolders list of the folders where the mgf and fasta files
+     * @param dataFolders list of the folders where the mgf and FASTA files
      * could possibly be
      * @param inputFiles list of the input files found
+     * @return true of the zipping completed withoth any issues
      */
-    private void loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
+    private boolean loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
 
         String newName = FileImporter.getTempFolderName(file.getName());
         File destinationFolder = new File(file.getParentFile(), newName);
@@ -2092,11 +2112,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             e.printStackTrace();
             idFiles.clear();
             modificationFiles.clear();
-            return;
+            return false;
         }
 
         progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Files. Please Wait...");
+
+        return !progressDialog.isRunCanceled();
     }
 
     /**
