@@ -45,16 +45,15 @@ public class ProjectExport {
         dataFiles.add(fastaFile.getAbsolutePath());
 
         File indexFile = new File(fastaFile.getParentFile(), SequenceFactory.getIndexName(fastaFile.getName()));
-
         if (indexFile.exists()) {
             dataFiles.add(indexFile.getAbsolutePath());
         }
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");
-            waitingHandler.setPrimaryProgressCounterIndeterminate(false);
-            waitingHandler.setPrimaryProgressCounter(0);
-            waitingHandler.setMaxPrimaryProgressCounter(spectrumFiles.size());
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+            waitingHandler.setSecondaryProgressCounter(0);
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumFiles.size());
         }
 
         for (File spectrumFile : spectrumFiles) {
@@ -63,14 +62,12 @@ public class ProjectExport {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.increasePrimaryProgressCounter();
+                waitingHandler.increaseSecondaryProgressCounter();
             }
 
             if (spectrumFile.exists()) {
                 dataFiles.add(spectrumFile.getAbsolutePath());
-
                 indexFile = new File(spectrumFile.getParentFile(), SpectrumFactory.getIndexName(spectrumFile.getName()));
-
                 if (indexFile.exists()) {
                     dataFiles.add(indexFile.getAbsolutePath());
                 }
@@ -78,8 +75,8 @@ public class ProjectExport {
         }
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Compressing Project. Please Wait...");
-            waitingHandler.setPrimaryProgressCounterIndeterminate(true);
+            waitingHandler.setWaitingText("Zipping Project. Please Wait...");
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
@@ -92,17 +89,22 @@ public class ProjectExport {
             try {
                 ZipOutputStream out = new ZipOutputStream(bos);
                 try {
-
-                    // add the cps file
-                    ZipUtils.addFileToZip(cpsFile, out, waitingHandler);
-
+                    // get the total uncompressed size
+                    long totalUncompressedSize = 0;
+                    totalUncompressedSize += cpsFile.length();
+                    for (String dataFilePath : dataFiles) {
+                        totalUncompressedSize += new File(dataFilePath).length();
+                    }
+                    
                     // add the data files
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Compressing FASTA and Spectrum Files. Please Wait...");
-                        waitingHandler.setPrimaryProgressCounterIndeterminate(false);
-                        waitingHandler.setPrimaryProgressCounter(0);
-                        waitingHandler.setMaxPrimaryProgressCounter(dataFiles.size());
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                        waitingHandler.setSecondaryProgressCounter(0);
+                        waitingHandler.setMaxSecondaryProgressCounter(100);
                     }
+                    
+                    // add the cps file
+                    ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
 
                     // create the data folder in the zip file
                     ZipUtils.addFolderToZip(defaultDataFolder, out);
@@ -114,16 +116,15 @@ public class ProjectExport {
                             if (waitingHandler.isRunCanceled()) {
                                 return;
                             }
-                            waitingHandler.increasePrimaryProgressCounter();
+                            waitingHandler.increaseSecondaryProgressCounter();
                         }
 
                         File dataFile = new File(dataFilePath);
-
-                        ZipUtils.addFileToZip(defaultDataFolder, dataFile, out, waitingHandler);
+                        ZipUtils.addFileToZip(defaultDataFolder, dataFile, out, waitingHandler, totalUncompressedSize);
                     }
 
                     if (waitingHandler != null) {
-                        waitingHandler.setPrimaryProgressCounterIndeterminate(true);
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     }
 
                 } finally {
