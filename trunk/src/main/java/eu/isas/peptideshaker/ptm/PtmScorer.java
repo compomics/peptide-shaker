@@ -71,7 +71,7 @@ public class PtmScorer {
      */
     private PsmPTMMap psmPTMMap;
     /**
-     * A single spectrum annotator to annotate spectra
+     * A single spectrum annotator to annotate spectra.
      */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
