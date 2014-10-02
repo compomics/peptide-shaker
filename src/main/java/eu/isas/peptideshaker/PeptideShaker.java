@@ -1014,7 +1014,6 @@ public class PeptideShaker {
                     orderedPsmMap = null;
                 }
             }
-
         }
 
         if (orderedPsmMap != null) {
