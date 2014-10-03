@@ -358,6 +358,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * The cps parent used to manage the data.
      */
     private CpsParent cpsBean = new CpsParent();
+    /**
+     * True if an existing project is currently in the process of being opened.
+     */
+    private boolean openingExistingProject = false;
 
     /**
      * The main method used to start PeptideShaker.
@@ -4375,7 +4379,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * not
      */
     public void setDataSaved(boolean dataSaved) {
-        this.dataSaved = dataSaved;
+        if (!openingExistingProject) {
+            this.dataSaved = dataSaved;
+        }
     }
 
     /**
@@ -5034,7 +5040,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         } else {
                             clearData(true, true);
                             clearPreferences();
-
                             importPeptideShakerFile(new File(filePath));
                             cpsBean.getUserPreferences().addRecentProject(filePath);
                             lastSelectedFolder = new File(filePath).getAbsolutePath();
@@ -5165,6 +5170,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     setDefaultPreferences();
                     setCurentNotes(new ArrayList<String>());
                     updateNotesNotificationCounter();
+                    openingExistingProject = true;
 
                     cpsBean.loadCpsFile(progressDialog);
 
@@ -5204,6 +5210,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
+                        openingExistingProject = false;
                         return;
                     }
 
@@ -5224,6 +5231,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
+                        openingExistingProject = false;
                         return;
                     }
 
@@ -5231,6 +5239,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         clearData(true, true);
                         clearPreferences();
                         progressDialog.setRunFinished();
+                        openingExistingProject = false;
                         return;
                     }
 
@@ -5306,6 +5315,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     clearData(true, true);
                                     clearPreferences();
                                     progressDialog.setRunFinished();
+                                    openingExistingProject = false;
                                     return;
                                 }
                             }
@@ -5315,6 +5325,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             clearData(true, true);
                             clearPreferences();
                             progressDialog.setRunFinished();
+                            openingExistingProject = false;
                             return;
                         }
                     }
@@ -5325,6 +5336,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.updateFrameTitle();
                     dataSaved = !genesRemapped;
+
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            openingExistingProject = false;
+                        }
+                    });
 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -6121,6 +6138,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         }
     }
 
+    /**
+     * Update the filter settings field. (Interface method: not implemented in
+     * this class as it is not needed.)
+     *
+     * @param text the text to set
+     */
     public void updateFilterSettingsField(String text) {
         // interface method: not implemented in this class as it is not needed
     }
@@ -6131,13 +6154,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void exportProjectAsZip() {
 
         if (!dataSaved) {
-            JOptionPane.showMessageDialog(this, "You first need to save the project.", "Unsaved Data", JOptionPane.INFORMATION_MESSAGE);
 
-            // save the data first
-            if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().exists()) {
-                saveProject(false, true);
-            } else {
-                saveProjectAs(false, true);
+            int option = JOptionPane.showConfirmDialog(this, "You first need to save the project.", "Unsaved Data", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                // save the data first
+                if (cpsBean.getCpsFile() != null && cpsBean.getCpsFile().exists()) {
+                    saveProject(false, true);
+                } else {
+                    saveProjectAs(false, true);
+                }
             }
 
         } else {
