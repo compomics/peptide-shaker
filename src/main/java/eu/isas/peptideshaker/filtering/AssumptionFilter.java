@@ -27,6 +27,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class AssumptionFilter extends MatchFilter {
 
     /**
+     * Serial number for backward compatibility
+     */
+    static final long serialVersionUID = 5082744251034128558L;
+    /**
      * The charges allowed.
      */
     private ArrayList<Integer> charges = null;
@@ -366,7 +370,8 @@ public class AssumptionFilter extends MatchFilter {
      * @param assumptionFilter the assumption filter to use
      * @param searchParameters the identification parameters
      * @param annotationPreferences the spectrum annotation preferences
-     * @param peptideSpectrumAnnotator a spectrum annotator to annotate the spectrum, can be null
+     * @param peptideSpectrumAnnotator a spectrum annotator to annotate the
+     * spectrum, can be null
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter

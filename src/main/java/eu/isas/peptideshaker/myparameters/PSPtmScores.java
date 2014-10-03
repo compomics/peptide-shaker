@@ -259,6 +259,9 @@ public class PSPtmScores implements UrParameter {
      * @param newRepresentativeSite the new representative site
      */
     public void changeRepresentativeSite(String ptmName, Integer originalRepresentativeSite, Integer newRepresentativeSite) {
+        if (ambiguousModificationsByRepresentativeSite == null) {
+            int debug = 1;
+        }
         HashMap<Integer, ArrayList<String>> ambiguousSites = ambiguousModificationsByRepresentativeSite.get(originalRepresentativeSite);
         if (ambiguousSites != null) {
             HashMap<Integer, ArrayList<String>> newSites = new HashMap<Integer, ArrayList<String>>();
