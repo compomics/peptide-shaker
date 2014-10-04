@@ -27,7 +27,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class AssumptionFilter extends MatchFilter {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = 5082744251034128558L;
     /**
