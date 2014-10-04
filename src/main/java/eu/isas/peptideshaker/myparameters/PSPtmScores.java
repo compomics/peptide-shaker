@@ -259,24 +259,31 @@ public class PSPtmScores implements UrParameter {
      * @param newRepresentativeSite the new representative site
      */
     public void changeRepresentativeSite(String ptmName, Integer originalRepresentativeSite, Integer newRepresentativeSite) {
-        if (ambiguousModificationsByRepresentativeSite == null) {
-            int debug = 1;
-        }
+
         HashMap<Integer, ArrayList<String>> ambiguousSites = ambiguousModificationsByRepresentativeSite.get(originalRepresentativeSite);
+
         if (ambiguousSites != null) {
+
             HashMap<Integer, ArrayList<String>> newSites = new HashMap<Integer, ArrayList<String>>();
             HashSet<Integer> sites = new HashSet<Integer>(ambiguousSites.keySet());
+
             for (Integer site : sites) {
+
                 ArrayList<String> modifications = ambiguousSites.get(site);
+
                 if (modifications.contains(ptmName)) {
+
                     ArrayList<String> newModifications = new ArrayList<String>();
                     newModifications.add(ptmName);
                     newSites.put(site, newModifications);
                     modifications.remove(ptmName);
+
                     if (modifications.isEmpty()) {
                         ambiguousSites.remove(site);
                     }
+
                     ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
+
                     if (site == originalRepresentativeSite) {
                         if (representativeSites == null) {
                             representativeSites = new ArrayList<Integer>();
@@ -294,10 +301,13 @@ public class PSPtmScores implements UrParameter {
                     }
                 }
             }
+
             if (ambiguousSites.isEmpty()) {
                 ambiguousModificationsByRepresentativeSite.remove(originalRepresentativeSite);
             }
+
             ambiguousSites = ambiguousModificationsByRepresentativeSite.get(newRepresentativeSite);
+
             if (ambiguousSites == null) {
                 ambiguousModificationsByRepresentativeSite.put(newRepresentativeSite, newSites);
             } else {
@@ -311,8 +321,10 @@ public class PSPtmScores implements UrParameter {
                 }
             }
         }
+
         HashMap<Integer, ArrayList<Integer>> ptmSiteMap = ambiguousModificationsByPTM.get(ptmName);
         ArrayList<Integer> secondarySites = ptmSiteMap.get(originalRepresentativeSite);
+
         if (secondarySites != null) {
             ptmSiteMap.remove(originalRepresentativeSite);
             ptmSiteMap.put(newRepresentativeSite, secondarySites);

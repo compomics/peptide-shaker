@@ -2074,7 +2074,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param dataFolders list of the folders where the mgf and FASTA files
      * could possibly be
      * @param inputFiles list of the input files found
-     * @return true of the zipping completed withoth any issues
+     * @return true of the zipping completed without any issues
      */
     private boolean loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
 
