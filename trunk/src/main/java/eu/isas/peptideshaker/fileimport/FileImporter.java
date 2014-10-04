@@ -32,6 +32,7 @@ import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
+import com.compomics.util.experiment.io.identifications.idfilereaders.PepxmlIdfileReader;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -675,15 +676,11 @@ public class FileImporter {
                 peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
             }
 
-            // set the search engine name and version for this file
-            HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
-            projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
-
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
-                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);//@TODO: make the remapping of the Xs a user option?
+                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
@@ -692,6 +689,10 @@ public class FileImporter {
                 e.printStackTrace();
             }
             fileReader.close();
+
+            // set the search engine name and version for this file
+            HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
+            projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
 
             if (idFileSpectrumMatches != null) {
 
@@ -852,7 +853,8 @@ public class FileImporter {
                                                             } else if (fileReader instanceof MascotIdfileReader
                                                                     || fileReader instanceof XTandemIdfileReader
                                                                     || fileReader instanceof MsAmandaIdfileReader
-                                                                    || fileReader instanceof MzIdentMLIdfileReader) {
+                                                                    || fileReader instanceof MzIdentMLIdfileReader
+                                                                    || fileReader instanceof PepxmlIdfileReader) {
                                                                 String[] parsedName = sePTM.split("@");
                                                                 double seMass = 0;
                                                                 try {
@@ -1428,6 +1430,13 @@ public class FileImporter {
             if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                 String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 Integer spectrumNumber = spectrumMatch.getSpectrumNumber();
+                if (spectrumNumber == null) {
+                try {
+                  spectrumNumber = new Integer(oldTitle);  
+                } catch (Exception e) {
+                    // ignore
+                }
+                }
                 if (spectrumNumber == null) {
                     String errorMessage = "Spectrum \'" + oldTitle + "\' not found in file " + fileName + ".";
                     waitingHandler.appendReport(errorMessage, true, true);

@@ -951,6 +951,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
                 return myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("t.xml")
+                        || myFile.getName().toLowerCase().endsWith("pep.xml")
                         || myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("mzid")
                         || myFile.getName().toLowerCase().endsWith("csv")
@@ -961,7 +962,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
+                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
             }
         };
 
@@ -1007,6 +1008,21 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             @Override
             public String getDescription() {
                 return "X!Tandem (.xml)";
+            }
+        };
+
+        // filter for PepXML only
+        FileFilter pepXMLFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("pep.xml")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "PepXML (.pep.xml)";
             }
         };
 
