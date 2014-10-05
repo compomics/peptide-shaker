@@ -688,11 +688,12 @@ public class FileImporter {
                         + " See resources/PeptideShaker.log for details.", true, true);
                 e.printStackTrace();
             }
-            fileReader.close();
 
             // set the search engine name and version for this file
             HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
             projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
+            
+            fileReader.close();
 
             if (idFileSpectrumMatches != null) {
 
@@ -1728,7 +1729,7 @@ public class FileImporter {
                             Runtime.getRuntime().gc();
                             if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
                                 // all peptides/protein mappings cannot be kept in memory at the same time, abort
-                                System.out.println("Memory issue while mapping peptides. Revert to mapping peptides one by one."); // @TODO: handle this better??
+                                System.out.println("Memory issue while mapping peptides. Revert to mapping peptides one by one.");
                                 return;
                             }
                         }
