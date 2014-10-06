@@ -692,7 +692,7 @@ public class FileImporter {
             // set the search engine name and version for this file
             HashMap<String, ArrayList<String>> software = fileReader.getSoftwareVersions();
             projectDetails.setIdentificationAlgorithmsForFile(Util.getFileName(idFile), software);
-            
+
             fileReader.close();
 
             if (idFileSpectrumMatches != null) {
@@ -1432,11 +1432,11 @@ public class FileImporter {
                 String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 Integer spectrumNumber = spectrumMatch.getSpectrumNumber();
                 if (spectrumNumber == null) {
-                try {
-                  spectrumNumber = new Integer(oldTitle);  
-                } catch (Exception e) {
-                    // ignore
-                }
+                    try {
+                        spectrumNumber = new Integer(oldTitle);
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
                 if (spectrumNumber == null) {
                     String errorMessage = "Spectrum \'" + oldTitle + "\' not found in file " + fileName + ".";
