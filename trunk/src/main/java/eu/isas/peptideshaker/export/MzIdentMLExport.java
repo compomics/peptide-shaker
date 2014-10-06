@@ -1468,9 +1468,13 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
+                } else if (tempAdvocate == Advocate.comet.getIndex()) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
                 } else {
-                    writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue); // @TODO: add cv params for the other new advocates
+                    writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue);
                 }
+                
+                // @TODO: add scores for MyriMatch!
 
                 // @TODO: add generic e-value for user algorithms?
             }
@@ -1575,6 +1579,10 @@ public class MzIdentMLExport {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1002073", "mzIdentML format", null));
                     } else if (advocateIndex == Advocate.msAmanda.getIndex()) {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
+                    } else if (advocateIndex == Advocate.comet.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1001421", "pepXML format", null));
+                    } else if (advocateIndex == Advocate.myriMatch.getIndex()) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null));
                     } else {
                         // @TODO: add support for the new advocates!!
                         writeUserParam("Unknown"); // @TODO: add cv term?
