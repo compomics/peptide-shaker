@@ -609,10 +609,14 @@ public class PrideXmlExport {
                                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001328", "OMSSA:evalue", Double.toString(eValue)));
                             } else if (tempAdvocate == Advocate.xtandem.getIndex()) {
                                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
+                            } else if (tempAdvocate == Advocate.comet.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
                             } else {
                                 br.write(getCurrentTabSpace() + "<userParam name=\"" + Advocate.getAdvocate(tempAdvocate).getName()
                                         + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));  // @TODO: add cv params for the other new advocates
                             }
+                            
+                            // @TODO: add scores for MyriMatch!
 
                             // @TODO: add generic e-value for user algorithms?
                         }
