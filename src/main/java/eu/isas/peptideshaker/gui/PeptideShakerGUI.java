@@ -3635,6 +3635,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
+     * Set the sequence matching preferences.
+     *
+     * @param sequenceMatchingPreferences the sequence matching preferences to
+     * set
+     */
+    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
+        cpsBean.setSequenceMatchingPreferences(sequenceMatchingPreferences);
+    }
+
+    /**
      * Return the filter preferences to use.
      *
      * @return the filter preferences to use

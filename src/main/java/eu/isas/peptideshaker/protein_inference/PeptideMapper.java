@@ -19,37 +19,37 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class can be used to map peptides to proteins
+ * This class can be used to map peptides to proteins.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PeptideMapper {
 
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private final SequenceMatchingPreferences sequenceMatchingPreferences;
 
     /**
-     * The import filter
+     * The import filter.
      */
     private final IdFilter idFilter;
 
     /**
-     * A waiting handler
+     * A waiting handler.
      */
     private final WaitingHandler waitingHandler;
     /**
-     * Boolean indicating whether the mapping was canceled for memory issues
+     * Boolean indicating whether the mapping was canceled for memory issues.
      */
     private boolean canceled = false;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
-     * Constuctor
+     * Constructor.
      *
      * @param idFilter The import filter
      * @param sequenceMatchingPreferences The sequence matching preferences
@@ -75,8 +75,11 @@ public class PeptideMapper {
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
+     * @throws java.util.concurrent.ExecutionException
      */
-    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, SequenceMatchingPreferences sequenceMatchingPreferences, IdFilter idFilter, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
+    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, SequenceMatchingPreferences sequenceMatchingPreferences, 
+            IdFilter idFilter, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, 
+            ClassNotFoundException, ExecutionException {
         if (nThreads == 1) {
             mapPeptidesSingleThreaded(peptideMap, waitingHandler);
         } else {
@@ -98,7 +101,8 @@ public class PeptideMapper {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void mapPeptidesSingleThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
+    private void mapPeptidesSingleThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, WaitingHandler waitingHandler) 
+            throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
@@ -131,7 +135,8 @@ public class PeptideMapper {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void mapPeptidesMultiThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
+    private void mapPeptidesMultiThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, 
+            WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
@@ -208,22 +213,22 @@ public class PeptideMapper {
     }
 
     /**
-     * private runnable to map peptides
+     * Private runnable to map peptides.
      */
     private class PeptideMapperRunnable implements Runnable {
 
         /**
-         * The peptide to map
+         * The peptide to map.
          */
         private Peptide peptide;
 
         /**
-         * Boolean indicating whether the progress bar should be increased
+         * Boolean indicating whether the progress bar should be increased.
          */
         private boolean increaseProgressBar;
 
         /**
-         * Constructor
+         * Constructor.
          */
         public PeptideMapperRunnable() {
 
