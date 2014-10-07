@@ -294,8 +294,8 @@ public class ProteinInference {
         ProteinMatch sharedMatch = identification.getProteinMatch(sharedGroup);
         ProteinMatch uniqueMatch = identification.getProteinMatch(uniqueGroup);
 
-        for (String peptideKey : sharedMatch.getPeptideMatches()) {
-            uniqueMatch.addPeptideMatch(peptideKey);
+        for (String peptideKey : sharedMatch.getPeptideMatchesKeys()) {
+            uniqueMatch.addPeptideMatchKey(peptideKey);
         }
 
         if (!keysToDelete.contains(sharedGroup)) {
@@ -355,8 +355,8 @@ public class ProteinInference {
                             double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                             ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
                             ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
-                            for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
-                                proteinUnique.addPeptideMatch(sharedPeptideKey);
+                            for (String sharedPeptideKey : proteinShared.getPeptideMatchesKeys()) {
+                                proteinUnique.addPeptideMatchKey(sharedPeptideKey);
                             }
                             identification.updateProteinMatch(proteinUnique);
                             if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
@@ -402,7 +402,7 @@ public class ProteinInference {
             if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                 double score = probabilities.getProteinProbabilityScore();
-                int nPeptides = -proteinMatch.getPeptideMatches().size();
+                int nPeptides = -proteinMatch.getPeptideMatchesKeys().size();
                 int nSpectra = 0;
 
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
@@ -414,8 +414,8 @@ public class ProteinInference {
                     }
                 }
 
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
+                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     nSpectra -= peptideMatch.getSpectrumCount();
                 }
@@ -482,8 +482,8 @@ public class ProteinInference {
                     nLeft++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
+                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
@@ -495,8 +495,8 @@ public class ProteinInference {
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
+                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
@@ -509,9 +509,9 @@ public class ProteinInference {
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                     String mainMatch = proteinMatch.getMainMatch();
-                    identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
+                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean unrelated = false;
@@ -533,10 +533,10 @@ public class ProteinInference {
                 }
             } else {
                 String mainMatch = proteinMatch.getMainMatch();
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
+                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
 
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     boolean unrelated = false;

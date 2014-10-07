@@ -6323,7 +6323,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             } catch (Exception e) {
                 try {
                     // try without order
-                    peptideKeys = proteinMatch.getPeptideMatches();
+                    peptideKeys = proteinMatch.getPeptideMatchesKeys();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     peptideKeys = new ArrayList<String>();

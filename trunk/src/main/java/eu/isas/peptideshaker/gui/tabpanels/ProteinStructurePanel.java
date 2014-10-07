@@ -2604,7 +2604,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     peptideShakerGUI.catchException(e);
                     try {
                         // Let's try without order
-                        peptideKeys = proteinMatch.getPeptideMatches();
+                        peptideKeys = proteinMatch.getPeptideMatchesKeys();
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
                         // ok you are really unlucky... Just hope the GUI holds...
@@ -3411,7 +3411,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                    if (proteinMatch != null && proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                    if (proteinMatch != null && proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = possibleKey;
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;

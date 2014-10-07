@@ -186,12 +186,12 @@ public class ProgenesisExcelExport {
             createPeptideHeader();
 
             // batch load the peptides
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
 
             int proteinStartRow = currentRow;
 
             // print the peptide details
-            for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 // insert peptide data
                 insertPeptideData(peptideKey);

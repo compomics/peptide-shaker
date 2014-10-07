@@ -1133,8 +1133,8 @@ public class FindDialog extends javax.swing.JDialog {
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         int cpt = 0;
                         PeptideMatch peptideMatch;
-                        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
+                        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             cpt += peptideMatch.getSpectrumCount();
                         }
