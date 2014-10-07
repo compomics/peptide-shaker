@@ -342,19 +342,19 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.6.10</version>
+            <version>1.6.11</version>
         </dependency>
         
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.7.14</version>
+            <version>1.7.15</version>
         </dependency>
         
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.26</version>
+            <version>3.4.27</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>
