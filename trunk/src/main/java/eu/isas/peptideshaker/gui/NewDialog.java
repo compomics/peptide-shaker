@@ -112,6 +112,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
     /**
+     * The sequence matching preferences.
+     */
+    private SequenceMatchingPreferences sequenceMatchingPreferences = new SequenceMatchingPreferences();
+    /**
      * The filter to use for matches filtering.
      */
     private IdFilter idFilter = new IdFilter();
@@ -139,18 +143,18 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     /**
      * Creates a new open dialog.
      *
-     * @param peptideShaker a reference to the main frame
+     * @param peptideShakerGui a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
      */
-    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
-        super(peptideShaker, modal);
-        this.peptideShakerGUI = peptideShaker;
+    public NewDialog(PeptideShakerGUI peptideShakerGui, boolean modal) {
+        super(peptideShakerGui, modal);
+        this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-        this.genePreferences = peptideShaker.getGenePreferences();
+        this.genePreferences = peptideShakerGui.getGenePreferences();
         currentFastaFile = sequenceFactory.getCurrentFastaFile();
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-        this.setLocationRelativeTo(peptideShaker);
+        this.setLocationRelativeTo(peptideShakerGui);
         setVisible(true);
     }
 
@@ -158,14 +162,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * Creates a new open dialog.
      *
      * @param welcomeDialog the welcome dialog parent frame
-     * @param peptideShaker a reference to the main frame
+     * @param peptideShakerGui a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
      */
-    public NewDialog(WelcomeDialog welcomeDialog, PeptideShakerGUI peptideShaker, boolean modal) {
+    public NewDialog(WelcomeDialog welcomeDialog, PeptideShakerGUI peptideShakerGui, boolean modal) {
         super(welcomeDialog, modal);
-        this.peptideShakerGUI = peptideShaker;
+        this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-        this.genePreferences = peptideShaker.getGenePreferences();
+        this.genePreferences = peptideShakerGui.getGenePreferences();
         currentFastaFile = sequenceFactory.getCurrentFastaFile();
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -697,6 +701,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             peptideShakerGUI.setVisible(true);
             peptideShakerGUI.clearData(true, false);
             peptideShakerGUI.setDefaultPreferences();
+            sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+            peptideShakerGUI.setSequenceMatchingPreferences(sequenceMatchingPreferences);
             peptideShakerGUI.setGenePreferences(genePreferences);
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
@@ -1530,7 +1536,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
                 processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(),
-                SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters), true);
+                sequenceMatchingPreferences, true);
     }
 
     /**

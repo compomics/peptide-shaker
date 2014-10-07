@@ -382,7 +382,7 @@ public class FileImporter {
          */
         private boolean xTandemPtmsCheck = false;
         /**
-         * A peptide to protein mapper
+         * A peptide to protein mapper.
          */
         private PeptideMapper peptideMapper;
 
