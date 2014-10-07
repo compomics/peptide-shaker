@@ -448,7 +448,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     peptideShakerGUI.catchException(e);
                     try {
                         // Let's try without order
-                        peptideKeys = proteinMatch.getPeptideMatches();
+                        peptideKeys = proteinMatch.getPeptideMatchesKeys();
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
                         // ok you are really unlucky... Just hope the GUI holds...
@@ -844,7 +844,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                    if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                    if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = possibleKey;
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;

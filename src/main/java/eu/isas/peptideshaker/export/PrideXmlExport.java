@@ -396,10 +396,10 @@ public class PrideXmlExport {
                 br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
 
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
+                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), peptideProbabilities, null);
 
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                     if (waitingHandler.isRunCanceled()) {
                         break;

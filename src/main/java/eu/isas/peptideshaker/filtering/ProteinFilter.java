@@ -672,19 +672,19 @@ public class ProteinFilter extends MatchFilter {
 
             if (proteinFilter.getnPeptides() != null) {
                 if (proteinFilter.getnPeptidesComparison() == ComparisonType.AFTER) {
-                    if (proteinMatch.getPeptideMatches().size() <= proteinFilter.getnPeptides()) {
+                    if (proteinMatch.getPeptideMatchesKeys().size() <= proteinFilter.getnPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.BEFORE) {
-                    if (proteinMatch.getPeptideMatches().size() >= proteinFilter.getnPeptides()) {
+                    if (proteinMatch.getPeptideMatchesKeys().size() >= proteinFilter.getnPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.EQUAL) {
-                    if (proteinMatch.getPeptideMatches().size() != proteinFilter.getnPeptides()) {
+                    if (proteinMatch.getPeptideMatchesKeys().size() != proteinFilter.getnPeptides()) {
                         return false;
                     }
                 } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.NOT_EQUAL) {
-                    if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnPeptides()) {
+                    if (proteinMatch.getPeptideMatchesKeys().size() == proteinFilter.getnPeptides()) {
                         return false;
                     }
                 }

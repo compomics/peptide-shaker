@@ -425,7 +425,7 @@ public class OutputGenerator {
                                             }
                                             if (showNonEnzymaticPeptidesColumn) {
 
-                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
+                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatchesKeys();
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;
 
@@ -782,7 +782,7 @@ public class OutputGenerator {
                                                                 if (!possibleProteins.contains(proteinKey)) {
                                                                     try {
                                                                         proteinMatch = identification.getProteinMatch(proteinKey);
-                                                                        if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                                                                        if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                                                                             possibleProteins.add(proteinKey);
                                                                         }
                                                                     } catch (Exception e) {
@@ -2791,7 +2791,7 @@ public class OutputGenerator {
                                             }
                                             if (showNonEnzymaticPeptidesColumn) {
 
-                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
+                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatchesKeys();
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;
 

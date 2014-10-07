@@ -598,6 +598,8 @@ public class PtmScorer {
                         }
                         ptmInferredSites.add(modificationMatch.getModificationSite());
                     }
+                } else {
+                    newModificationMatches.add(modificationMatch);
                 }
             } else {
                 newModificationMatches.add(modificationMatch);
@@ -785,13 +787,17 @@ public class PtmScorer {
                         if (ambiguousSitesScores == null) {
                             throw new IllegalArgumentException("Not enough site possibilities found in PSMs for PTM of mass " + ptmMass + " in peptide " + peptideMatch.getKey() + ".");
                         }
-                        HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSitesScores, nRepresentatives, inferredSites.get(ptmMass));
+                        ArrayList<Integer> ptmInferredSites = inferredSites.get(ptmMass);
+                        HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSitesScores, nRepresentatives, ptmInferredSites);
                         for (int representativeSite : representativeToSecondaryMap.keySet()) {
                             HashMap<Integer, ArrayList<String>> siteToPtmMap = representativeToSecondaryMap.get(representativeSite);
                             peptideScores.addAmbiguousModificationSites(representativeSite, siteToPtmMap);
                             for (String ptmName : siteToPtmMap.get(representativeSite)) {
                                 ModificationMatch newMatch = new ModificationMatch(ptmName, true, representativeSite);
                                 newMatch.setConfident(false);
+                                if (ptmInferredSites != null && ptmInferredSites.contains(representativeSite)) {
+                                    newMatch.setInferred(true);
+                                }
                                 newPtmMatches.add(newMatch);
                                 if (newPtmMatches.size() > variableModifications.get(ptmMass)) {
                                     throw new IllegalArgumentException("More sites than PTMs on peptide " + peptideMatch.getKey() + " for PTM of mass " + ptmMass + ".");
@@ -805,10 +811,17 @@ public class PtmScorer {
             for (ArrayList<ModificationMatch> modificationMatches : newMatches.values()) {
                 newModificationMatches.addAll(modificationMatches);
             }
+            String originalKey = peptide.getKey();
             peptide.setModificationMatches(newModificationMatches);
 
             peptideMatch.addUrParam(peptideScores);
-            identification.updatePeptideMatch(peptideMatch);
+
+            String newKey = peptide.getKey();
+            if (!newKey.equals(originalKey)) {
+                identification.updatePeptideMatch(originalKey, peptideMatch);
+            } else {
+                identification.updatePeptideMatch(peptideMatch);
+            }
         }
     }
 
@@ -931,13 +944,14 @@ public class PtmScorer {
 
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
 
         HashMap<Integer, ArrayList<String>> confidentSites = new HashMap<Integer, ArrayList<String>>();
         HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousSites = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
 
-        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+        ArrayList<String> peptideKeys = new ArrayList<String>(proteinMatch.getPeptideMatchesKeys());
+        for (String peptideKey : peptideKeys) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
@@ -1142,7 +1156,8 @@ public class PtmScorer {
 
         identification.loadPeptideMatches(null);
 
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        ArrayList<String> peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
+        for (String peptideKey : peptideKeys) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             scorePTMs(identification, peptideMatch, searchParameters, annotationPreferences, ptmScoringPreferences);
             waitingHandler.increaseSecondaryProgressCounter();

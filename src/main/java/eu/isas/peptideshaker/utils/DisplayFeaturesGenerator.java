@@ -768,9 +768,9 @@ public class DisplayFeaturesGenerator {
         }
 
         // batch load the required data
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
 
-        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
             boolean enzymaticPeptide = true;

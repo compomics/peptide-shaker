@@ -4633,7 +4633,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.catchException(e);
                     try {
                         // Let's try without order
-                        peptideKeys = proteinMatch.getPeptideMatches();
+                        peptideKeys = proteinMatch.getPeptideMatchesKeys();
                     } catch (Exception e1) {
                         peptideShakerGUI.catchException(e1);
                         // ok you are really unlucky... Just hope the GUI holds...
@@ -5374,7 +5374,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) { // @TODO: batch selection??
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                    if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                    if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
                         proteinKey = possibleKey;
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;

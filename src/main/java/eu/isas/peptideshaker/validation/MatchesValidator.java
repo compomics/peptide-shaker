@@ -532,7 +532,7 @@ public class MatchesValidator {
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
             HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
-            ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatches();
+            ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
             identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
 
             for (String currentPeptideKey : peptideKeys) {
@@ -1375,8 +1375,8 @@ public class MatchesValidator {
             }
 
             // get the fraction scores
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null); // @TODO: already covered by the loadPeptideMatchParameters call above?
-            for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null); // @TODO: already covered by the loadPeptideMatchParameters call above?
+            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                 probaScore = probaScore * psParameter.getPeptideProbability();

@@ -92,10 +92,10 @@ public class InclusionListExport {
                     if (!proteinFilters.contains(psParameter.getProteinInferenceClass())) {
 
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
                         ArrayList<String> peptideMatches = new ArrayList<String>();
 
-                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             if (psParameter.getMatchValidationLevel().isValidated()) {
                                 boolean passesFilter = true;

@@ -1119,7 +1119,7 @@ public class MzIdentMLExport {
                         + "\" passThreshold=\"" + psParameter.getMatchValidationLevel().isValidated() + "\">" + System.getProperty("line.separator"));
                 tabCounter++;
 
-                ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatches();
+                ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatchesKeys();
                 identification.loadPeptideMatches(peptideMatches, null);
 
                 for (String peptideKey : peptideMatches) {
