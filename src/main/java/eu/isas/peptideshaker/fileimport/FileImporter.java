@@ -52,6 +52,7 @@ import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.protein_inference.PeptideMapper;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import org.xml.sax.SAXException;
@@ -380,6 +381,10 @@ public class FileImporter {
          * Indicates whether the check for X!Tandem modifications was done.
          */
         private boolean xTandemPtmsCheck = false;
+        /**
+         * A peptide to protein mapper
+         */
+        private PeptideMapper peptideMapper;
 
         /**
          * Constructor for a worker importing matches from a list of files.
@@ -438,6 +443,8 @@ public class FileImporter {
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
             }
+
+            peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler);
         }
 
         @Override
@@ -451,7 +458,7 @@ public class FileImporter {
          *
          * @return 0 if success, 1 if not
          */
-        public synchronized int importFiles() {
+        public int importFiles() {
 
             try {
                 importSequences(waitingHandler, fastaFile);
@@ -680,7 +687,11 @@ public class FileImporter {
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
-                idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);
+                if (!peptideMapper.isCanceled()) {
+                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);
+                } else {
+                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, null, true);
+                }
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
@@ -724,7 +735,12 @@ public class FileImporter {
 
                     // Map the peptides on protein sequences
                     try {
-                        mapPeptides(fileReader);
+                        if (!peptideMapper.isCanceled()) {
+                            peptideMapper.mapPeptides(fileReader.getPeptidesMap(), sequenceMatchingPreferences, idFilter, processingPreferences.getnThreads(), waitingHandler);
+                        }
+                        if (peptideMapper.isCanceled()) {
+                            fileReader.clearPeptidesMap();
+                        }
                     } catch (OutOfMemoryError e) {
                         e.printStackTrace();
                         fileReader.clearPeptidesMap();
@@ -1693,48 +1709,6 @@ public class FileImporter {
                             }
                         }
                     }
-                    waitingHandler.increaseSecondaryProgressCounter();
-                }
-            }
-        }
-
-        /**
-         * Maps the peptides found to the proteins.
-         *
-         * @param idfileReader the id file reader
-         */
-        private void mapPeptides(IdfileReader idfileReader) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
-            HashMap<String, LinkedList<Peptide>> peptideMap = idfileReader.getPeptidesMap();
-            if (peptideMap != null && !peptideMap.isEmpty()) {
-                waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
-                waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
-                HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
-                for (String key : keys) {
-                    LinkedList<Peptide> peptides = peptideMap.get(key);
-                    for (Peptide peptide : peptides) {
-                        if (idFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
-                            if (peptide.getParentProteins(sequenceMatchingPreferences).isEmpty()) {
-                                throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + " using the selected matching settings.");
-                            }
-                        }
-
-                        // free memory if needed
-                        if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
-                            ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
-                        }
-                        if (!MemoryConsumptionStatus.halfGbFree() && sequenceFactory.getNodesInCache() > 0) {
-                            sequenceFactory.reduceNodeCacheSize(0.5);
-                        }
-                        if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
-                            Runtime.getRuntime().gc();
-                            if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
-                                // all peptides/protein mappings cannot be kept in memory at the same time, abort
-                                System.out.println("Memory issue while mapping peptides. Revert to mapping peptides one by one.");
-                                return;
-                            }
-                        }
-                    }
-                    peptideMap.remove(key);
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
             }
