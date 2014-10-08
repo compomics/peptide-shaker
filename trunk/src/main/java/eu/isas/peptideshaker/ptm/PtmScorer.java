@@ -562,12 +562,17 @@ public class PtmScorer {
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
      * @param scoringPreferences the PTM scoring preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+
+        if (peptideMatch.getKey().equals("ESTSTETK_phosphorylation of s_phosphorylation of t")) {
+            int debug = 1;
+        }
 
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
@@ -811,13 +816,17 @@ public class PtmScorer {
             for (ArrayList<ModificationMatch> modificationMatches : newMatches.values()) {
                 newModificationMatches.addAll(modificationMatches);
             }
-            String originalKey = peptide.getKey();
+            String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
             peptide.setModificationMatches(newModificationMatches);
 
             peptideMatch.addUrParam(peptideScores);
 
-            String newKey = peptide.getKey();
+            String newKey = peptide.getMatchingKey(sequenceMatchingPreferences);
             if (!newKey.equals(originalKey)) {
+                peptideMatch.setKey(newKey);
+                if (identification.getPeptideIdentification().contains(newKey)) {
+                    throw new IllegalArgumentException("Attempting to create duplicate peptide key: " + newKey + ".");
+                }
                 identification.updatePeptideMatch(originalKey, peptideMatch);
             } else {
                 identification.updatePeptideMatch(peptideMatch);
@@ -878,13 +887,13 @@ public class PtmScorer {
                             if (modifications == null) {
                                 modifications = new ArrayList<String>();
                                 representativeSites.put(site, modifications);
+                                if (!preferential) {
+                                    nSelected++;
+                                }
                             }
                             if (!modifications.contains(ptmName)) {
                                 modifications.add(ptmName);
                             }
-                        }
-                        if (!preferential) {
-                            nSelected++;
                         }
                     } else {
                         for (String ptmName : siteMap.get(site)) {
@@ -953,11 +962,14 @@ public class PtmScorer {
         ArrayList<String> peptideKeys = new ArrayList<String>(proteinMatch.getPeptideMatchesKeys());
         for (String peptideKey : peptideKeys) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+            if (psParameter == null) {
+                int debug = 1;
+            }
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 if (peptideMath.getUrParam(new PSPtmScores()) == null || scorePeptides) {
-                    scorePTMs(identification, peptideMath, searchParameters, annotationPreferences, ptmScoringPreferences);
+                    scorePTMs(identification, peptideMath, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
                 }
                 PSPtmScores peptideScores = (PSPtmScores) peptideMath.getUrParam(new PSPtmScores());
                 if (peptideScores != null) {
@@ -1141,12 +1153,13 @@ public class PtmScorer {
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
      * @param ptmScoringPreferences the PTM scoring preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
     public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
 
@@ -1159,7 +1172,7 @@ public class PtmScorer {
         ArrayList<String> peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
         for (String peptideKey : peptideKeys) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            scorePTMs(identification, peptideMatch, searchParameters, annotationPreferences, ptmScoringPreferences);
+            scorePTMs(identification, peptideMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
