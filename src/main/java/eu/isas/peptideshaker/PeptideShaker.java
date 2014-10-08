@@ -450,7 +450,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
-        ptmScorer.scorePeptidePtms(identification, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences);
+        ptmScorer.scorePeptidePtms(identification, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;

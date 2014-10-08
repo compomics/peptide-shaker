@@ -77,8 +77,8 @@ public class PeptideMapper {
      * @throws java.lang.ClassNotFoundException
      * @throws java.util.concurrent.ExecutionException
      */
-    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, SequenceMatchingPreferences sequenceMatchingPreferences, 
-            IdFilter idFilter, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, 
+    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, SequenceMatchingPreferences sequenceMatchingPreferences,
+            IdFilter idFilter, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
             ClassNotFoundException, ExecutionException {
         if (nThreads == 1) {
             mapPeptidesSingleThreaded(peptideMap, waitingHandler);
@@ -101,7 +101,7 @@ public class PeptideMapper {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void mapPeptidesSingleThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, WaitingHandler waitingHandler) 
+    private void mapPeptidesSingleThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, WaitingHandler waitingHandler)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
@@ -135,7 +135,7 @@ public class PeptideMapper {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void mapPeptidesMultiThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, 
+    private void mapPeptidesMultiThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
             WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
@@ -252,9 +252,10 @@ public class PeptideMapper {
             try {
                 mapPeptide(peptide, increaseProgressBar);
             } catch (Exception e) {
-                System.err.println("An error occurred while mapping peptides to proteins.");
-                e.printStackTrace();
-
+                if (!canceled && !waitingHandler.isRunCanceled()) {
+                    System.err.println("An error occurred while mapping peptides to proteins.");
+                    e.printStackTrace();
+                }
             }
         }
     }
