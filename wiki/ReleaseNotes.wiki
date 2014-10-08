@@ -3,6 +3,30 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.0 (coming soon...):*
+ 
+ * NEW FEATURE: Comet (or more generally pep.xml) is now supported.
+ * NEW FEATURE: Export features as Excel files.
+ * NEW FEATURE: Added progress bar when zipping.
+
+ * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 77, adding Vervet-AGM (Chlorocebus sabaeus).
+ * FEATURE IMPROVEMENT: Improved the PTM annotation in tables and tooltips.
+ * FEATURE IMPROVEMENT: Improved the handling of ambiguously localized PTMs.
+ * FEATURE IMPROVEMENT: Improved the mapping of PTM scores at the peptide and protein level.
+ * FEATURE IMPROVEMENT: Sped up the unzipping of projects in the New Project dialog.
+ * FEATURE IMPROVEMENT: Sped up the PTM scoring.
+ * FEATURE IMPROVEMENT: Sped up the peptide to protein mapping using multithreading.
+ * FEATURE IMPROVEMENT: Added an OK/Cancel option to the save dialog appearing when exporting as zipping and the project is not saved.
+
+ * BUG FIX: Fixed a bug in the New Project Dialog where canceling the unzipping still loaded the files.
+ * BUG FIX: Fixed a bug in the Spectrum IDs tab where the fixed PTMs where always shown in the Spectrum Identification Results table.
+ * BUG FIX: Fixed a bug that resulted in asking if the user wanted to save projects even though nothing had actually changed.
+ * BUG FIX: Made sure that the correct sequence matching preferences are set when loading PeptideShaker projects.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.39.10.
+
+----
+
 *Changes in PeptideShaker 0.34.0 (September 19. 2014):*
 
  * FEATURE IMPROVEMENT: Improved the memory handling when loading data.
