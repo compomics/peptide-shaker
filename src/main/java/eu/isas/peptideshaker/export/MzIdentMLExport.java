@@ -175,9 +175,10 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, 
+            SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, 
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, 
+            File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
