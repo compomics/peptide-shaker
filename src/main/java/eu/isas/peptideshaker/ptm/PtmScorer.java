@@ -570,10 +570,6 @@ public class PtmScorer {
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
-        if (peptideMatch.getKey().equals("ESTSTETK_phosphorylation of s_phosphorylation of t")) {
-            int debug = 1;
-        }
-
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
@@ -962,9 +958,6 @@ public class PtmScorer {
         ArrayList<String> peptideKeys = new ArrayList<String>(proteinMatch.getPeptideMatchesKeys());
         for (String peptideKey : peptideKeys) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-            if (psParameter == null) {
-                int debug = 1;
-            }
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
                 String peptideSequence = Peptide.getSequence(peptideKey);

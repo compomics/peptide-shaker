@@ -317,6 +317,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
         peptideShakerJTable.getColumn("ID").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, softwareAgreementColorMap, idSoftwareTooltipMap));
+        peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -2449,7 +2450,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 fileSelected = (String) fileNamesCmb.getSelectedItem();
                 double maxMz = spectrumFactory.getMaxMz(fileSelected);
                 try {
-                    progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait...");
+                    progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait..."); // @TODO: problem with progress bar??
                     identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog);
                     identification.loadSpectrumMatches(fileSelected, progressDialog);
                 } catch (Exception e) {
