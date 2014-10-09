@@ -819,11 +819,10 @@ public class PtmScorer {
 
             String newKey = peptide.getMatchingKey(sequenceMatchingPreferences);
             if (!newKey.equals(originalKey)) {
-                peptideMatch.setKey(newKey);
                 if (identification.getPeptideIdentification().contains(newKey)) {
                     throw new IllegalArgumentException("Attempting to create duplicate peptide key: " + newKey + ".");
                 }
-                identification.updatePeptideMatch(originalKey, peptideMatch);
+                identification.updatePeptideMatch(originalKey, newKey, peptideMatch);
             } else {
                 identification.updatePeptideMatch(peptideMatch);
             }
