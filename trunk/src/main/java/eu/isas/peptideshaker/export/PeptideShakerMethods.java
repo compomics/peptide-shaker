@@ -140,12 +140,12 @@ public class PeptideShakerMethods {
         }
         text += " complement of the ";
 
-        String dbType = fastaIndex.getDatabaseType().getFullName();
+        String dbType = fastaIndex.getMainDatabaseType().getFullName();
         if (dbType == null) {
             dbType = "[add database full name]";
         }
 
-        String dbRef = fastaIndex.getDatabaseType().getPmid();
+        String dbRef = fastaIndex.getMainDatabaseType().getPmid();
         if (dbRef == null) {
             dbRef = "add reference";
         } else {

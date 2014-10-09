@@ -1802,11 +1802,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     }
 
     /**
-     * Checks whether the FASTA file loaded is UniProt concatenated target
-     * decoy.
+     * Checks whether the FASTA file loaded contains mainly UniProt concatenated
+     * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getDatabaseType() != DatabaseType.UniProt) {
+        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != DatabaseType.UniProt) {
             showDataBaseHelpDialog();
         }
         if (!sequenceFactory.concatenatedTargetDecoy()) {

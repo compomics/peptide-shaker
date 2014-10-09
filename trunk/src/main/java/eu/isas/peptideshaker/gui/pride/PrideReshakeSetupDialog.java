@@ -1474,11 +1474,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Checks whether the FASTA file loaded is UniProt concatenated target
-     * decoy.
+     * Checks whether the FASTA file loaded contains mainly UniProt concatenated
+     * target decoy.
      */
     public void checkFastaFile() {
-        if (sequenceFactory.getCurrentFastaIndex().getDatabaseType() != Header.DatabaseType.UniProt) {
+        if (sequenceFactory.getCurrentFastaIndex().getMainDatabaseType() != Header.DatabaseType.UniProt) {
             showDataBaseHelpDialog();
         }
         if (!sequenceFactory.concatenatedTargetDecoy()) {
