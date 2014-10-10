@@ -523,7 +523,6 @@ public class PtmScorer {
         if (waitingHandler != null) {
             waitingHandler.increaseSecondaryProgressCounter();
         }
-
     }
 
     /**
@@ -573,10 +572,6 @@ public class PtmScorer {
      */
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
-
-        if (peptideMatch.getKey().startsWith("IESGMQNMSIHTK_")) {
-            int debug = 1;
-        }
 
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
