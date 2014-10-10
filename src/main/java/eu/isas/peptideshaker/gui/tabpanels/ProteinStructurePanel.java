@@ -2782,6 +2782,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     updateProteinTableCellRenderers();
 
+                    // enable the contextual export options
+                    exportProteinsJButton.setEnabled(true);
+                    exportPdbMatchesJButton.setEnabled(true);
+                    exportPdbChainsJButton.setEnabled(true);
+                    exportPeptidesJButton.setEnabled(true);
+                    exportPdbStructureJButton.setEnabled(true);
+
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
 
                     progressDialog.setPrimaryProgressCounterIndeterminate(true);

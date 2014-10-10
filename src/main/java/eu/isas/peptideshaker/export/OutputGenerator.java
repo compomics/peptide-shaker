@@ -1186,7 +1186,6 @@ public class OutputGenerator {
                                 if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                                     writer.write(ptmScoringPreferences.getSelectedProbabilisticScore().getName() + SEPARATOR);
                                 }
-                                writer.write("A-score" + SEPARATOR);
                                 writer.write("D-score" + SEPARATOR);
                             }
                             if (file) {
