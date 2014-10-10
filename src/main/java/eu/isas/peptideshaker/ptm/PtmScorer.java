@@ -357,11 +357,10 @@ public class PtmScorer {
 
         PSParameter psParameter = new PSParameter();
         for (String spectrumKey : inspectedSpectra) {
-            waitingHandler.increaseSecondaryProgressCounter();
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
+                scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences, waitingHandler);
             }
         }
 
@@ -384,7 +383,7 @@ public class PtmScorer {
      * reading/writing the an identification match
      */
     public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+            PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler) throws Exception {
 
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
 
@@ -520,6 +519,11 @@ public class PtmScorer {
                 }
             }
         }
+
+        if (waitingHandler != null) {
+            waitingHandler.increaseSecondaryProgressCounter();
+        }
+
     }
 
     /**
@@ -570,6 +574,10 @@ public class PtmScorer {
     public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
 
+        if (peptideMatch.getKey().startsWith("IESGMQNMSIHTK_")) {
+            int debug = 1;
+        }
+
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
@@ -611,31 +619,21 @@ public class PtmScorer {
 
         if (variableModifications.size() > 0) {
 
-            int validationLevel = MatchValidationLevel.not_validated.getIndex();
-            double bestConfidence = 0;
             ArrayList<String> bestKeys = new ArrayList<String>();
 
             identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
             identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
 
+            boolean validated = false;
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                int tempValidationLevel = psParameter.getMatchValidationLevel().getIndex();
-                if (tempValidationLevel >= validationLevel) {
-                    if (tempValidationLevel != validationLevel) {
-                        bestKeys.clear();
-                        validationLevel = tempValidationLevel;
-                    }
-                    bestKeys.add(spectrumKey);
-                } else if (tempValidationLevel == MatchValidationLevel.not_validated.getIndex()) {
-                    if (psParameter.getPsmConfidence() > bestConfidence) {
-                        bestConfidence = psParameter.getPsmConfidence();
-                        bestKeys.clear();
-                        bestKeys.add(spectrumKey);
-                    } else if (psParameter.getPsmConfidence() == bestConfidence) {
-                        bestKeys.add(spectrumKey);
-                    }
+                MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
+                if (matchValidationLevel.isValidated() && !validated) {
+                    bestKeys.clear();
+                    validated = true;
                 }
+                bestKeys.add(spectrumKey);
             }
 
             identification.loadSpectrumMatches(bestKeys, null);
@@ -1122,11 +1120,7 @@ public class PtmScorer {
             for (String spectrumKey : spectrumKeys.get(spectrumFileName)) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
-                }
-                waitingHandler.increaseSecondaryProgressCounter();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                    scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences, waitingHandler);
                 }
             }
         }
@@ -1322,7 +1316,7 @@ public class PtmScorer {
                         }
                     }
                     if (variableAA) {
-                        ptmInference(spectrumMatch, ptmScoringPreferences, searchParameters, sequenceMatchingPreferences);
+                        ptmSiteInference(spectrumMatch, ptmScoringPreferences, searchParameters, sequenceMatchingPreferences);
                         boolean confident = true;
                         for (ModificationMatch modMatch : spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches()) {
                             if (modMatch.isVariable()) {
@@ -1396,10 +1390,12 @@ public class PtmScorer {
                     ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, modification);
                     ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>();
 
-                    if (confidentPeptideInference.containsKey(modification)) {
+                    HashMap<String, ArrayList<String>> ptmConfidentPeptides = confidentPeptideInference.get(modification);
+
+                    if (ptmConfidentPeptides != null) {
 
                         // See if we can explain this peptide by another already identified peptide with the same number of modifications (the two peptides will be merged)
-                        ArrayList<String> keys = confidentPeptideInference.get(modification).get(sequence);
+                        ArrayList<String> keys = ptmConfidentPeptides.get(sequence);
 
                         if (keys != null) {
                             for (String tempKey : keys) {
@@ -1499,11 +1495,11 @@ public class PtmScorer {
                                         throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm()
                                                 + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
                                     }
-                                    modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
                                     PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                     psmScores.changeRepresentativeSite(modification, oldLocalization, newLocalization);
                                 }
+                                modificationMatch.setInferred(true);
                             }
                         }
                         identification.updateSpectrumMatch(spectrumMatch);
@@ -1538,7 +1534,7 @@ public class PtmScorer {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private void ptmSiteInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
