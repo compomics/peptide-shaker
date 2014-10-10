@@ -1760,11 +1760,10 @@ public class MzIdentMLExport {
     /**
      * Convenience method writing a user parameter.
      *
-     * @param name the name of the user param
-     * @param value the value of the user param
+     * @param name the name of the user parameter
+     * @param value the value of the user parameter
      */
     private void writeUserParam(String name, String value) throws IOException {
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + "\"/>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + " e-value\" value=\"" + value + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<userParam name=\"" + name + "\" value=\"" + value + "\" />" + System.getProperty("line.separator"));
     }
 }
