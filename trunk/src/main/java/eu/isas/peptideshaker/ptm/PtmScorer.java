@@ -253,7 +253,7 @@ public class PtmScorer {
                 modificationMatches.put(ptmMass, modificationMatch);
             }
         }
-
+        
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
