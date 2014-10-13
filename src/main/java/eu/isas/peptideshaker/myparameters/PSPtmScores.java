@@ -48,11 +48,6 @@ public class PSPtmScores implements UrParameter {
      */
     private HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousModificationsByRepresentativeSite = null;
     /**
-     * Map of the representative sites a secondary site can map to: secondary
-     * site -> representative sites.
-     */
-    private HashMap<Integer, ArrayList<Integer>> secondaryToRepresentativesSitesMap = null;
-    /**
      * A map of all ambiguous modifications in a sequence indexed by PTM: PTM
      * name -> representative site -> secondary sites.
      */
@@ -163,13 +158,6 @@ public class PSPtmScores implements UrParameter {
                             ptmList.remove(ptmName);
                             if (ptmList.isEmpty()) {
                                 secondarySitesAtAa.remove(site);
-                                ArrayList<Integer> representativeSitesList = secondaryToRepresentativesSitesMap.get(site);
-                                if (representativeSitesList != null) {
-                                    representativeSitesList.remove(representativeSite);
-                                    if (representativeSitesList.isEmpty()) {
-                                        secondaryToRepresentativesSitesMap.remove(site);
-                                    }
-                                }
                             }
                         }
                         if (secondarySitesAtAa.isEmpty()) {
@@ -195,7 +183,6 @@ public class PSPtmScores implements UrParameter {
     public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, ArrayList<String>> possibleModifications) {
         if (ambiguousModificationsByRepresentativeSite == null) {
             ambiguousModificationsByRepresentativeSite = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
-            secondaryToRepresentativesSitesMap = new HashMap<Integer, ArrayList<Integer>>();
             ambiguousModificationsByPTM = new HashMap<String, HashMap<Integer, ArrayList<Integer>>>();
             compatibilityCheck();
         }
@@ -215,17 +202,6 @@ public class PSPtmScores implements UrParameter {
                 }
                 if (!modifications.contains(ptmName)) {
                     modifications.add(ptmName);
-                }
-
-                if (site != representativeSite) {
-                    ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
-                    if (representativeSites == null) {
-                        representativeSites = new ArrayList<Integer>();
-                        secondaryToRepresentativesSitesMap.put(site, representativeSites);
-                    }
-                    if (!representativeSites.contains(representativeSite)) {
-                        representativeSites.add(representativeSite);
-                    }
                 }
             }
         }
@@ -281,24 +257,7 @@ public class PSPtmScores implements UrParameter {
                     if (modifications.isEmpty()) {
                         ambiguousSites.remove(site);
                     }
-
-                    ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
-
-                    if (site == originalRepresentativeSite) {
-                        if (representativeSites == null) {
-                            representativeSites = new ArrayList<Integer>();
-                            secondaryToRepresentativesSitesMap.put(site, representativeSites);
-                        }
-                        representativeSites.add(newRepresentativeSite);
-                    } else if (site == newRepresentativeSite) {
-                        representativeSites.remove(originalRepresentativeSite);
-                        if (representativeSites.isEmpty()) {
-                            secondaryToRepresentativesSitesMap.remove(site);
-                        }
-                    } else {
-                        representativeSites.remove(originalRepresentativeSite);
-                        representativeSites.add(newRepresentativeSite);
-                    }
+                    
                 }
             }
 
@@ -437,39 +396,6 @@ public class PSPtmScores implements UrParameter {
     }
 
     /**
-     * Returns the ambiguous PTM assignments registered at the given site in a
-     * map: representative site -> secondary site -> PTMs.
-     *
-     * @param site the site of interest
-     *
-     * @return the ambiguous PTM assignments registered at the given
-     * representative site
-     */
-    public HashMap<Integer, HashMap<Integer, ArrayList<String>>> getAmbiguousPtmsAtSite(int site) {
-        compatibilityCheck();
-        HashMap<Integer, HashMap<Integer, ArrayList<String>>> results = null;
-        if (ambiguousModificationsByRepresentativeSite != null) {
-            HashMap<Integer, ArrayList<String>> resultsAtSite = ambiguousModificationsByRepresentativeSite.get(site);
-            if (resultsAtSite != null) {
-                results.put(site, resultsAtSite);
-            }
-            ArrayList<Integer> representativeSites = secondaryToRepresentativesSitesMap.get(site);
-            if (representativeSites != null) {
-                for (int representativeSite : representativeSites) {
-                    resultsAtSite = ambiguousModificationsByRepresentativeSite.get(representativeSite);
-                    if (resultsAtSite != null) {
-                        results.put(representativeSite, resultsAtSite);
-                    }
-                }
-            }
-        }
-        if (results == null) {
-            results = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
-        }
-        return results;
-    }
-
-    /**
      * Returns the ambiguous modification sites registered for the given PTM.
      *
      * @param ptmName the name of the PTM of interest
@@ -517,20 +443,6 @@ public class PSPtmScores implements UrParameter {
         }
         if (result == null) {
             result = new ArrayList<Integer>();
-        }
-        return result;
-    }
-
-    /**
-     * Returns a list of all sites of ambiguously localized PTMs.
-     *
-     * @return a list of all sites of ambiguously localized PTMs
-     */
-    public ArrayList<Integer> getAmbiguousSites() {
-        compatibilityCheck();
-        ArrayList<Integer> result = getRepresentativeSites();
-        if (secondaryToRepresentativesSitesMap != null) {
-            result.addAll(secondaryToRepresentativesSitesMap.keySet());
         }
         return result;
     }
