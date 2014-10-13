@@ -367,8 +367,14 @@ public class IdentificationFeaturesGenerator {
         Distribution peptideLengthDistribution = metrics.getPeptideLengthDistribution();
         Enzyme enzyme = searchParameters.getEnzyme();
 
+        // special case for no cleavage searches
+        if (enzyme.isWholeProtein()) {
+            return result; // @TODO: not sure what probability should be in this case?
+        }
+
         int lastCleavage = -1;
         char previousChar = sequence.charAt(0), nextChar;
+
         for (int i = 0; i < sequence.length() - 1; i++) {
             double p = 1;
             if (!enzyme.isSemiSpecific()) {
@@ -393,7 +399,9 @@ public class IdentificationFeaturesGenerator {
                 result[i] = p;
             }
         }
+
         double p = 1;
+
         if (!enzyme.isSemiSpecific()) {
             int length = sequence.length() - lastCleavage + 1;
             if (peptideLengthDistribution == null) { //backward compatibility check
@@ -410,6 +418,7 @@ public class IdentificationFeaturesGenerator {
         } else {
             result[sequence.length() - 1] = p;
         }
+
         return result;
     }
 

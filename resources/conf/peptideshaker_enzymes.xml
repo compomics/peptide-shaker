@@ -7,6 +7,7 @@
 		<aminoAcidAfter>  </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 1 </id>
@@ -16,6 +17,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 2 </id>
@@ -25,6 +27,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 3 </id>
@@ -34,6 +37,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 4 </id>
@@ -43,6 +47,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 5 </id>
@@ -52,6 +57,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 6 </id>
@@ -61,6 +67,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 7 </id>
@@ -70,6 +77,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 8 </id>
@@ -79,6 +87,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter> <!-- should ideally be only after RK, not after M -->
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 9 </id>
@@ -88,6 +97,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 10 </id>
@@ -97,6 +107,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 11 </id>
@@ -106,6 +117,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> X </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> yes </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 12 </id>
@@ -115,6 +127,7 @@
 		<aminoAcidAfter> D </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 13 </id>
@@ -124,6 +137,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 14 </id>
@@ -133,6 +147,7 @@
 		<aminoAcidAfter> D </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 15 </id>
@@ -142,6 +157,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> X </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> yes </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 16 </id>
@@ -151,6 +167,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 17 </id>
@@ -160,6 +177,7 @@
 		<aminoAcidAfter> X </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 18 </id>
@@ -169,6 +187,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 19 </id>
@@ -178,6 +197,7 @@
 		<aminoAcidAfter> DE </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 20 </id>
@@ -187,6 +207,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 21 </id>
@@ -196,6 +217,7 @@
 		<aminoAcidAfter> K </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 22 </id>
@@ -205,6 +227,7 @@
 		<aminoAcidAfter> AFILMV </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 23 </id>
@@ -214,6 +237,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 	<enzyme>
 		<id> 24 </id>
@@ -223,6 +247,7 @@
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> P </restrictionAfter>
 		<semiSpecific> yes </semiSpecific>
+		<wholeProtein> no </wholeProtein>
 	</enzyme>
 </xml>
 
