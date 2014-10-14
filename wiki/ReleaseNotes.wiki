@@ -17,13 +17,21 @@
  * FEATURE IMPROVEMENT: Sped up the PTM scoring.
  * FEATURE IMPROVEMENT: Sped up the peptide to protein mapping using multithreading.
  * FEATURE IMPROVEMENT: Added an OK/Cancel option to the save dialog appearing when exporting as zipping and the project is not saved.
+ * FEATURE IMPROVEMENT: The list of database types and their occurrences is now included in the FASTA index.
+ * FEATURE IMPROVEMENT: The "not a UniProt database" warning is now only shown if the main database type is not UniProt (hence adding custom headers from other databases is no longer an issue.)
 
+ * BUG FIX: Corrected a bug impairing the import of results without decoys sequences.
  * BUG FIX: Fixed a bug in the New Project Dialog where canceling the unzipping still loaded the files.
  * BUG FIX: Fixed a bug in the Spectrum IDs tab where the fixed PTMs where always shown in the Spectrum Identification Results table.
  * BUG FIX: Fixed a bug that resulted in asking if the user wanted to save projects even though nothing had actually changed.
  * BUG FIX: Made sure that the correct sequence matching preferences are set when loading PeptideShaker projects.
+ * BUG FIX: The PeptideShaker table in the Spectrum IDs tab now has the correct color for the links even when the row is selected.
+ * BUG FIX: Fixed a minor bug in the table to file export for the PSM tables.
+ * BUG FIX: The table to file exports now work again for the 3D Structures tab.
+ * BUG FIX: Fixed a bug in writing of user parameters with values in the mzid export.
+ * BUG FIX: Fixed a bug in the protein coverage panel where the whole protein and top down enzymes were not supported correctly. 
 
- * LIBRARY UPDATE: Updated utilities to version 3.39.10.
+ * LIBRARY UPDATE: Updated utilities to version 3.39.16.
 
 ----
 
