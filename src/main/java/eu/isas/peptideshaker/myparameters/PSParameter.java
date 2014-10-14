@@ -376,7 +376,7 @@ public class PSParameter implements UrParameter {
      * the next best peptide assumption with sequence difference across all
      * search engines
      */
-    public void setDeltaPEP(double deltaPEP) {
+    public void setDeltaPEP(Double deltaPEP) {
         this.deltaPEP = deltaPEP;
     }
 
