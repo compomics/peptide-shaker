@@ -870,7 +870,7 @@ public class PeptideShaker {
                         }
                     }
                     if (bestPeptideAssumption != null) {
-
+                        
                         if (multiSE) {
 
                             // try to find the most likely modification localization based on the search engine results
