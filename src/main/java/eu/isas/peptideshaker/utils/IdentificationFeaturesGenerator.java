@@ -369,7 +369,10 @@ public class IdentificationFeaturesGenerator {
 
         // special case for no cleavage searches
         if (enzyme.isWholeProtein()) {
-            return result; // @TODO: not sure what probability should be in this case?
+            for (int i = 0; i < result.length; i++) {
+                result[i] = 1.0;
+            }
+            return result;
         }
 
         int lastCleavage = -1;
