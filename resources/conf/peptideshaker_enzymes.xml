@@ -171,7 +171,7 @@
 	</enzyme>
 	<enzyme>
 		<id> 17 </id>
-		<name> No Enzyme </name> <!-- note: cleaves at every residue! -->
+		<name> Unspecific </name> <!-- note: cleaves at every residue! -->
 		<aminoAcidBefore> X </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> X </aminoAcidAfter>
