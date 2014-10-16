@@ -49,42 +49,36 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 /**
  * This class can be used to map tags to proteins.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class TagMapper {
 
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
-
     /**
-     * The protein tree to use for the mapping
+     * The protein tree to use for the mapping.
      */
     private ProteinTree proteinTree;
-
     /**
-     * The search parameters to use
+     * The search parameters to use.
      */
     private SearchParameters searchParameters;
-
     /**
-     * The sequence matching preferences
+     * The sequence matching preferences.
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
-
     /**
-     * The annotation preferences to use
+     * The annotation preferences to use.
      */
     private AnnotationPreferences annotationPreferences;
-
     /**
-     * Exception handler
+     * Exception handler.
      */
     private ExceptionHandler exceptionHandler;
     /**
@@ -101,7 +95,8 @@ public class TagMapper {
      * @param annotationPreferences the annotation parameters
      * @param exceptionHandler an exception handler
      */
-    public TagMapper(ProteinTree proteinTree, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, ExceptionHandler exceptionHandler) {
+    public TagMapper(ProteinTree proteinTree, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, 
+            AnnotationPreferences annotationPreferences, ExceptionHandler exceptionHandler) {
         this.proteinTree = proteinTree;
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
@@ -124,9 +119,10 @@ public class TagMapper {
      * @throws SQLException
      * @throws MzMLUnmarshallerException
      */
-    public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, 
+            InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 //        if (nThreads == 1) {
-            mapTagsSingleThread(idfileReader, waitingHandler);
+        mapTagsSingleThread(idfileReader, waitingHandler);
 //        } else {
 //            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
 //        }
@@ -397,7 +393,7 @@ public class TagMapper {
     }
 
     /**
-     * Private runnable to map tags of a spectrumMAtch.
+     * Private runnable to map tags of a spectrum match.
      */
     private class TagMapperRunnable implements Runnable {
 
@@ -407,16 +403,16 @@ public class TagMapper {
         private final SpectrumMatch spectrumMatch;
 
         /**
-         * The tree key
+         * The tree key.
          */
         private final String key;
 
         /**
-         * The waiting handler to display progress and cancel the process
+         * The waiting handler to display progress and cancel the process.
          */
         private final WaitingHandler waitingHandler;
         /**
-         * boolean indicating whether the progress bar should be increased
+         * boolean indicating whether the progress bar should be increased.
          */
         private final boolean increaseProgress;
 
