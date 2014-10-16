@@ -1375,9 +1375,6 @@ public class PtmScorer {
                 identification.loadSpectrumMatches(spectrumKeys, null);
 
                 for (String spectrumKey : spectrumKeys) {
-                if (spectrumKey.contains("53.1136333333333")) {
-                    int debug = 1;
-                }
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();

@@ -49,7 +49,7 @@ public class PeptideMapper {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * Exception handler used to catch exceptions
+     * Exception handler used to catch exceptions.
      */
     private ExceptionHandler exceptionHandler;
 

@@ -83,7 +83,7 @@ public class FileImporter {
      */
     private WaitingHandler waitingHandler;
     /**
-     * An exception handler to handle exceptions
+     * An exception handler to handle exceptions.
      */
     private ExceptionHandler exceptionHandler;
     /**
@@ -786,9 +786,6 @@ public class FileImporter {
                             String spectrumKey = match.getKey();
                             String fileName = Spectrum.getSpectrumFile(spectrumKey);
                             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
-                            if (spectrumKey.contains("4111")) {
-                                int debug = 1;
-                            }
 
                             for (SpectrumIdentificationAssumption assumption : match.getAllAssumptions()) {
                                 if (assumption instanceof PeptideAssumption) {
