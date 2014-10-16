@@ -621,7 +621,6 @@ public class PtmScorer {
 
             boolean validated = false;
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
                 if (matchValidationLevel.isValidated() && !validated) {
@@ -1376,6 +1375,9 @@ public class PtmScorer {
                 identification.loadSpectrumMatches(spectrumKeys, null);
 
                 for (String spectrumKey : spectrumKeys) {
+                if (spectrumKey.contains("53.1136333333333")) {
+                    int debug = 1;
+                }
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();

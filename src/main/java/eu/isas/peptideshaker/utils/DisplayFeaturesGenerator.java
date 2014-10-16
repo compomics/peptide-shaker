@@ -16,7 +16,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
-import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -49,7 +49,7 @@ public class DisplayFeaturesGenerator {
     /**
      * The exception handler used to catch exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private FrameExceptionHandler exceptionHandler;
     /**
      * List of PTMs to display.
      */
@@ -70,7 +70,7 @@ public class DisplayFeaturesGenerator {
      * of the ptms
      * @param exceptionHandler an exception handler to catch exceptions
      */
-    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
+    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, FrameExceptionHandler exceptionHandler) {
         this.modificationProfile = modificationProfile;
         this.exceptionHandler = exceptionHandler;
     }

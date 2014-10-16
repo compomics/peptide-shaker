@@ -273,8 +273,10 @@ public class PSPtmScores implements UrParameter {
                 for (int site : newSites.keySet()) {
                     ArrayList<String> modifications = ambiguousSites.get(site);
                     if (modifications == null) {
+                        modifications = new ArrayList<String>(2);
                         ambiguousSites.put(site, modifications);
-                    } else {
+                    }
+                    if (!modifications.contains(ptmName)) {
                         modifications.add(ptmName);
                     }
                 }

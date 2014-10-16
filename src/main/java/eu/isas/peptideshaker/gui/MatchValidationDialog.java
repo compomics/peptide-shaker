@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -72,7 +72,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     /**
      * The exception handler.
      */
-    private ExceptionHandler exceptionHandler;
+    private FrameExceptionHandler exceptionHandler;
     /**
      * Indicates whether the validation status of the match changed.
      */
@@ -141,7 +141,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws java.lang.ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
@@ -192,7 +192,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
@@ -249,7 +249,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public MatchValidationDialog(java.awt.Frame parent, ExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+    public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
