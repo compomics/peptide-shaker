@@ -277,17 +277,21 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="importFilterTxt" max="32767" attributes="3"/>
                           <Component id="preferencesTxt" max="32767" attributes="3"/>
                           <Component id="searchTxt" alignment="1" max="32767" attributes="1"/>
+                          <Component id="importFilterTxt" alignment="1" max="32767" attributes="3"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="editPreferencesButton" pref="145" max="32767" attributes="1"/>
-                          <Component id="editSearchButton" alignment="1" pref="145" max="32767" attributes="1"/>
                           <Component id="editImportFilterButton" alignment="1" pref="145" max="32767" attributes="1"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="browseSearchSettingsButton" linkSize="6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="editSearchButton" linkSize="6" min="-2" pref="60" max="-2" attributes="1"/>
+                          </Group>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -299,6 +303,7 @@
                           <Component id="searchParamsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="searchTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSearchButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="browseSearchSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -376,6 +381,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPreferencesButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="browseSearchSettingsButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Browse"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="browseSearchSettingsButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
