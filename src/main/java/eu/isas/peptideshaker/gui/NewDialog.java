@@ -225,6 +225,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         importFiltersLabel1 = new javax.swing.JLabel();
         preferencesTxt = new javax.swing.JTextField();
         editPreferencesButton = new javax.swing.JButton();
+        browseSearchSettingsButton = new javax.swing.JButton();
         inputFilesPanel = new javax.swing.JPanel();
         idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -403,6 +404,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             }
         });
 
+        browseSearchSettingsButton.setText("Browse");
+        browseSearchSettingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseSearchSettingsButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout processingParametersPanelLayout = new javax.swing.GroupLayout(processingParametersPanel);
         processingParametersPanel.setLayout(processingParametersPanelLayout);
         processingParametersPanelLayout.setHorizontalGroup(
@@ -416,16 +424,22 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addComponent(importFiltersLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(importFilterTxt)
                     .addComponent(preferencesTxt)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(importFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(editPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, processingParametersPanelLayout.createSequentialGroup()
+                        .addComponent(browseSearchSettingsButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(editSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+
+        processingParametersPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseSearchSettingsButton, editSearchButton});
+
         processingParametersPanelLayout.setVerticalGroup(
             processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
@@ -433,7 +447,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchParamsLabel)
                     .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editSearchButton))
+                    .addComponent(editSearchButton)
+                    .addComponent(browseSearchSettingsButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importFiltersLabel)
@@ -1341,10 +1356,91 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         }
     }//GEN-LAST:event_spectrumFilesTxtMouseClicked
 
+    /**
+     * Opens a file chooser where the user can select the search settings file
+     * to use.
+     *
+     * @param evt
+     */
+    private void browseSearchSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSearchSettingsButtonActionPerformed
+        // First check whether a file has already been selected.
+        // If so, start from that file's parent.
+        File startLocation = new File(getLastSelectedFolder());
+        if (searchParameters.getParametersFile() != null 
+                && !searchTxt.getText().trim().equals("")
+                && !searchTxt.getText().trim().equals("Default")
+                && !searchTxt.getText().trim().equals("User Defined")) {
+            startLocation = searchParameters.getParametersFile().getParentFile();
+        }
+        JFileChooser fc = new JFileChooser(startLocation);
+
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith(".properties")
+                        || myFile.getName().toLowerCase().endsWith(".parameters")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "SearchGUI settings file (.parameters)";
+            }
+        };
+        fc.setFileFilter(filter);
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            String fileName = file.getName();
+            setLastSelectedFolder(file.getAbsolutePath());
+
+            if (fileName.endsWith(".parameters") || fileName.endsWith(".properties")) {
+
+                try {
+                    searchParameters = SearchParameters.getIdentificationParameters(file);
+                    PeptideShaker.loadModifications(searchParameters);
+                } catch (Exception e) {
+                    try {
+                        // Old school format, overwrite old file
+                        Properties props = loadProperties(file);
+                        // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
+                        File userMods = new File(file.getParent(), "usermods.xml");
+                        if (!userMods.exists()) {
+                            userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
+                        }
+                        searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
+
+                        if (fileName.endsWith(".properties")) {
+                            String newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".parameters";
+                            try {
+                                file.delete();
+                            } catch (Exception deleteException) {
+                                deleteException.printStackTrace();
+                            }
+                            file = new File(file.getParentFile(), newName);
+                        }
+                        SearchParameters.saveIdentificationParameters(searchParameters, file);
+                    } catch (Exception saveException) {
+                        e.printStackTrace();
+                        saveException.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                searchTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
+                validateInput();
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a valid search settings file (.parameters).", "File Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_browseSearchSettingsButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
+    private javax.swing.JButton browseSearchSettingsButton;
     private javax.swing.JButton browseSpectra;
     private javax.swing.JButton clearDbButton;
     private javax.swing.JButton clearId;
