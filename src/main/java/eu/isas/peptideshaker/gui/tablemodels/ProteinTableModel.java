@@ -1,16 +1,14 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -72,7 +70,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * The exception handler catches exceptions.
      */
-    private FrameExceptionHandler exceptionHandler;
+    private ExceptionHandler exceptionHandler;
     /**
      * The list of the keys of the protein matches being displayed.
      */
@@ -102,7 +100,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param proteinKeys the keys of the protein matches to display
      */
     public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
-            FrameExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
@@ -125,7 +123,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param proteinKeys the keys of the protein matches to display
      */
     public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
-            FrameExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;

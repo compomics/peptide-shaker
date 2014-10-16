@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -16,7 +17,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
-import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -49,7 +49,7 @@ public class DisplayFeaturesGenerator {
     /**
      * The exception handler used to catch exceptions.
      */
-    private FrameExceptionHandler exceptionHandler;
+    private ExceptionHandler exceptionHandler;
     /**
      * List of PTMs to display.
      */
@@ -70,7 +70,7 @@ public class DisplayFeaturesGenerator {
      * of the ptms
      * @param exceptionHandler an exception handler to catch exceptions
      */
-    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, FrameExceptionHandler exceptionHandler) {
+    public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
         this.modificationProfile = modificationProfile;
         this.exceptionHandler = exceptionHandler;
     }
