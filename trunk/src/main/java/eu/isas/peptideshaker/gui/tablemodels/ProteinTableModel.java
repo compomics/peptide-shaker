@@ -6,7 +6,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
@@ -72,7 +72,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     /**
      * The exception handler catches exceptions.
      */
-    private ExceptionHandler exceptionHandler;
+    private FrameExceptionHandler exceptionHandler;
     /**
      * The list of the keys of the protein matches being displayed.
      */
@@ -102,7 +102,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param proteinKeys the keys of the protein matches to display
      */
     public ProteinTableModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
-            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+            FrameExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;
@@ -125,7 +125,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @param proteinKeys the keys of the protein matches to display
      */
     public void updateDataModel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, DisplayFeaturesGenerator displayFeaturesGenerator,
-            ExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
+            FrameExceptionHandler exceptionHandler, ArrayList<String> proteinKeys) {
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.displayFeaturesGenerator = displayFeaturesGenerator;

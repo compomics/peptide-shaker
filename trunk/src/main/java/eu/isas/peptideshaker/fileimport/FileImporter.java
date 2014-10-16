@@ -13,30 +13,21 @@ import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.AminoAcid;
-import com.compomics.util.experiment.biology.AminoAcidPattern;
-import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.Ion;
+import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.ions.TagFragmentIon;
-import com.compomics.util.experiment.identification.identification_parameters.PepnovoParameters;
 import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
-import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
-import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
-import com.compomics.util.experiment.identification.tags.Tag;
-import com.compomics.util.experiment.identification.tags.TagComponent;
-import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.PepxmlIdfileReader;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.WaitingDialogExceptionHandler;
 import com.compomics.util.gui.JOptionEditorPane;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
@@ -53,6 +44,7 @@ import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
+import eu.isas.peptideshaker.protein_inference.TagMapper;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import org.xml.sax.SAXException;
@@ -91,6 +83,10 @@ public class FileImporter {
      */
     private WaitingHandler waitingHandler;
     /**
+     * An exception handler to handle exceptions
+     */
+    private ExceptionHandler exceptionHandler;
+    /**
      * The modification factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
@@ -120,15 +116,11 @@ public class FileImporter {
     /**
      * The protein tree used to map peptides on protein sequences.
      */
-    public ProteinTree proteinTree;
+    private ProteinTree proteinTree;
     /**
      * Suffix for folders where the content of zip files should be extracted.
      */
     public final static String tempFolderName = "PeptideShaker_temp";
-    /**
-     * A spectrum annotator for the tags.
-     */
-    private TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
 
     /**
      * Constructor for the importer.
@@ -146,6 +138,11 @@ public class FileImporter {
         this.proteomicAnalysis = proteomicAnalysis;
         this.idFilter = idFilter;
         this.metrics = metrics;
+        if (waitingHandler instanceof WaitingDialog) {
+            exceptionHandler = new WaitingDialogExceptionHandler((WaitingDialog) waitingHandler, "http://code.google.com/p/peptide-shaker/issues/list");
+        } else {
+            exceptionHandler = new CommandLineExceptionHandler();
+        }
     }
 
     /**
@@ -385,6 +382,10 @@ public class FileImporter {
          * A peptide to protein mapper.
          */
         private PeptideMapper peptideMapper;
+        /**
+         * A tag to protein mapper.
+         */
+        private TagMapper tagMapper = null;
 
         /**
          * Constructor for a worker importing matches from a list of files.
@@ -444,7 +445,8 @@ public class FileImporter {
                 this.spectrumFiles.put(file.getName(), file);
             }
 
-            peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler);
+            tagMapper = new TagMapper(proteinTree, searchParameters, sequenceMatchingPreferences, annotationPreferences, exceptionHandler);
+            peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler, exceptionHandler);
         }
 
         @Override
@@ -596,7 +598,7 @@ public class FileImporter {
                 if (e instanceof NullPointerException) {
                     waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
                     waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
-                } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
+                } else if (FrameExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
                     waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                     waitingHandler.appendReport("Please see http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
@@ -731,7 +733,7 @@ public class FileImporter {
                             ptmIssue = 0;
 
                     // Map spectrum sequencing matches on protein sequences
-                    mapTags(fileReader);
+                    tagMapper.mapTags(fileReader, waitingHandler, processingPreferences.getnThreads());
 
                     // Map the peptides on protein sequences
                     try {
@@ -784,6 +786,9 @@ public class FileImporter {
                             String spectrumKey = match.getKey();
                             String fileName = Spectrum.getSpectrumFile(spectrumKey);
                             String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+                            if (spectrumKey.contains("4111")) {
+                                int debug = 1;
+                            }
 
                             for (SpectrumIdentificationAssumption assumption : match.getAllAssumptions()) {
                                 if (assumption instanceof PeptideAssumption) {
@@ -802,7 +807,6 @@ public class FileImporter {
                                 if (match.hasAssumption(advocateId)) {
 
                                     // Check whether there is a potential first hit which does not belong to the target and the decoy database
-                                    boolean targetOrDecoy = false;
                                     ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(advocateId).keySet());
                                     Collections.sort(eValues);
 
@@ -1201,26 +1205,22 @@ public class FileImporter {
                                                                 }
                                                             }
                                                         }
+                                                    }
 
-                                                        if (idFilter.validateModifications(peptide, sequenceMatchingPreferences, searchParameters.getModificationProfile())) {
-                                                            // Estimate the theoretic mass with the new modifications
-                                                            peptide.estimateTheoreticMass();
-                                                            if (!idFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
-                                                                match.removeAssumption(assumption);
-                                                                precursorIssue++;
-                                                            } else if (!targetOrDecoy) {
-                                                                // Check whether there is a potential first hit which does not belong to both the target and the decoy database
-                                                                if (!idFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
-                                                                    match.removeAssumption(assumption);
-                                                                    proteinIssue++;
-                                                                } else {
-                                                                    targetOrDecoy = true;
-                                                                }
-                                                            }
-                                                        } else {
+                                                    if (idFilter.validateModifications(peptide, sequenceMatchingPreferences, searchParameters.getModificationProfile())) {
+                                                        // Estimate the theoretic mass with the new modifications
+                                                        peptide.estimateTheoreticMass();
+                                                        if (!idFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
                                                             match.removeAssumption(assumption);
-                                                            ptmIssue++;
+                                                            precursorIssue++;
+                                                        } else if (!idFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                                                            // Check whether there is a potential first hit which does not belong to both the target and the decoy database
+                                                            match.removeAssumption(assumption);
+                                                            proteinIssue++;
                                                         }
+                                                    } else {
+                                                        match.removeAssumption(assumption);
+                                                        ptmIssue++;
                                                     }
                                                 }
                                             }
@@ -1561,213 +1561,6 @@ public class FileImporter {
             } catch (Exception e) {
                 waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".", true, true);
                 e.printStackTrace();
-            }
-        }
-
-        /**
-         * Remaps the PTMs for a given tag based on the search parameters.
-         *
-         * @param tag the tag with original algorithm PTMs
-         * @param searchParameters the parameters used for the identification
-         * @param sequenceMatchingPreferences the sequence matching preferences
-         * @param advocateId the ID of the advocate
-         *
-         * @throws IOException
-         * @throws InterruptedException
-         * @throws FileNotFoundException
-         * @throws ClassNotFoundException
-         * @throws SQLException
-         */
-        private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
-
-            // add the fixed PTMs
-            ptmFactory.checkFixedModifications(searchParameters.getModificationProfile(), tag, sequenceMatchingPreferences);
-
-            // rename the variable modifications
-            for (TagComponent tagComponent : tag.getContent()) {
-                if (tagComponent instanceof AminoAcidPattern) {
-
-                    AminoAcidPattern aminoAcidPattern = (AminoAcidPattern) tagComponent;
-
-                    for (int aa : aminoAcidPattern.getModificationIndexes()) {
-                        for (ModificationMatch modificationMatch : aminoAcidPattern.getModificationsAt(aa)) {
-                            if (modificationMatch.isVariable()) {
-                                if (advocateId == Advocate.pepnovo.getIndex()) {
-                                    String pepnovoPtmName = modificationMatch.getTheoreticPtm();
-                                    PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
-                                    String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
-                                    if (utilitiesPtmName == null) {
-                                        throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
-                                    }
-                                    modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                } else if (advocateId == Advocate.direcTag.getIndex()) {
-                                    Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
-                                    String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
-                                    if (utilitiesPtmName == null) {
-                                        throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
-                                    }
-                                    modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                    PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                    ArrayList<AminoAcid> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                    if (aaAtTarget.size() > 1) {
-                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
-                                    }
-                                    int aaIndex = aa - 1;
-                                    aminoAcidPattern.setTargeted(aaIndex, aaAtTarget);
-                                } else {
-                                    Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                    if (notImplemented == null) {
-                                        throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                    }
-                                    throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
-                                }
-                            }
-                        }
-                    }
-                } else if (tagComponent instanceof AminoAcidSequence) {
-
-                    AminoAcidSequence aminoAcidSequence = (AminoAcidSequence) tagComponent;
-
-                    for (int aa : aminoAcidSequence.getModificationIndexes()) {
-                        for (ModificationMatch modificationMatch : aminoAcidSequence.getModificationsAt(aa)) {
-                            if (modificationMatch.isVariable()) {
-                                if (advocateId == Advocate.pepnovo.getIndex()) {
-                                    String pepnovoPtmName = modificationMatch.getTheoreticPtm();
-                                    PepnovoParameters pepnovoParameters = (PepnovoParameters) searchParameters.getIdentificationAlgorithmParameter(advocateId);
-                                    String utilitiesPtmName = pepnovoParameters.getUtilitiesPtmName(pepnovoPtmName);
-                                    if (utilitiesPtmName == null) {
-                                        throw new IllegalArgumentException("PepNovo+ PTM " + pepnovoPtmName + " not recognized.");
-                                    }
-                                    modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                } else if (advocateId == Advocate.direcTag.getIndex()) {
-                                    Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
-                                    String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
-                                    if (utilitiesPtmName == null) {
-                                        throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
-                                    }
-                                    modificationMatch.setTheoreticPtm(utilitiesPtmName);
-                                    PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                    ArrayList<AminoAcid> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
-                                    if (aaAtTarget.size() > 1) {
-                                        throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
-                                    }
-                                    int aaIndex = aa - 1;
-                                    aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0).singleLetterCode.charAt(0));
-                                } else {
-                                    Advocate notImplemented = Advocate.getAdvocate(advocateId);
-                                    if (notImplemented == null) {
-                                        throw new IllegalArgumentException("Advocate of id " + advocateId + " not recognized.");
-                                    }
-                                    throw new IllegalArgumentException("PTM mapping not implemented for " + Advocate.getAdvocate(advocateId).getName() + ".");
-                                }
-                            }
-                        }
-                    }
-                } else if (tagComponent instanceof MassGap) {
-                    // no PTM there
-                } else {
-                    throw new UnsupportedOperationException("PTM mapping not implemeted for tag component " + tagComponent.getClass() + ".");
-                }
-            }
-        }
-
-        /**
-         * Maps tags onto the protein database.
-         *
-         * @param idfileReader the id file reader
-         *
-         * @throws IOException
-         * @throws InterruptedException
-         * @throws ClassNotFoundException
-         * @throws SQLException
-         * @throws MzMLUnmarshallerException
-         */
-        private void mapTags(IdfileReader idfileReader) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-
-            HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
-            if (tagMap != null && !tagMap.isEmpty()) {
-                waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
-                waitingHandler.appendReport("Mapping tags to peptides.", true, true);
-                MSnSpectrum currentSpectrum = null;
-                ArrayList<Integer> tempCharges = new ArrayList<Integer>(1);
-                tempCharges.add(1);
-                for (String key : tagMap.keySet()) {
-                    int keySize = key.length();
-                    for (SpectrumMatch spectrumMatch : tagMap.get(key)) {
-
-                        String spectrumKey = spectrumMatch.getKey();
-                        HashMap<Integer, HashMap<String, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap(keySize, sequenceMatchingPreferences);
-                        for (int advocateId : tagAssumptionsMap.keySet()) {
-                            HashMap<String, ArrayList<TagAssumption>> algorithmTags = tagAssumptionsMap.get(advocateId);
-                            ArrayList<TagAssumption> tagAssumptions = algorithmTags.get(key);
-                            if (tagAssumptions != null) {
-                                ArrayList<String> inspectedTags = new ArrayList<String>();
-                                ArrayList<String> peptidesFound = new ArrayList<String>();
-                                for (TagAssumption tagAssumption : tagAssumptions) {
-                                    String tagSequence = tagAssumption.getTag().asSequence();
-                                    if (!inspectedTags.contains(tagSequence)) {
-                                        mapPtmsForTag(tagAssumption.getTag(), advocateId);
-                                        ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
-                                        extendedTagList.add(tagAssumption);
-                                        if (currentSpectrum == null) {
-                                            currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                                        }
-                                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                                new NeutralLossesMap(),
-                                                tempCharges,
-                                                tagAssumption.getIdentificationCharge().value,
-                                                currentSpectrum, tagAssumption.getTag(),
-                                                0,
-                                                annotationPreferences.getFragmentIonAccuracy(),
-                                                false, annotationPreferences.isHighResolutionAnnotation());
-                                        int nB = 0, nY = 0;
-                                        for (IonMatch ionMatch : annotations) {
-                                            Ion ion = ionMatch.ion;
-                                            if (ion instanceof TagFragmentIon) {
-                                                int ionType = ion.getSubType();
-                                                if (ionType == TagFragmentIon.A_ION
-                                                        || ionType == TagFragmentIon.B_ION
-                                                        || ionType == TagFragmentIon.C_ION) {
-                                                    nB++;
-                                                } else {
-                                                    nY++;
-                                                }
-                                            }
-                                        }
-                                        if (nB < 3) {
-                                            extendedTagList.addAll(tagAssumption.getPossibleTags(false, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
-                                        }
-                                        if (nY < 3) {
-                                            extendedTagList.addAll(tagAssumption.getPossibleTags(true, searchParameters.getMinChargeSearched().value, searchParameters.getMaxChargeSearched().value, 2));
-                                        }
-                                        if (tagAssumption.getTag().canReverse()) {
-                                            extendedTagList.add(tagAssumption.reverse(nY >= nB));
-                                        }
-                                        for (TagAssumption extendedAssumption : extendedTagList) {
-                                            try {
-                                                HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), false);
-                                                for (Peptide peptide : proteinMapping.keySet()) {
-                                                    String peptideKey = peptide.getKey();
-                                                    if (!peptidesFound.contains(peptideKey)) {
-                                                        PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
-                                                        peptideAssumption.addUrParam(tagAssumption);
-                                                        spectrumMatch.addHit(advocateId, peptideAssumption, true);
-                                                        peptidesFound.add(peptideKey);
-                                                    }
-                                                }
-                                                String extendedSequence = extendedAssumption.getTag().asSequence();
-                                                inspectedTags.add(extendedSequence);
-                                            } catch (Exception e) {
-                                                waitingHandler.appendReport("An error occurred while mapping tag " + extendedAssumption.getTag().asSequence() + " of spectrum " + Spectrum.getSpectrumTitle(spectrumKey) + " of file " + Spectrum.getSpectrumFile(spectrumKey) + " onto the database.", true, true);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    waitingHandler.increaseSecondaryProgressCounter();
-                }
             }
         }
     }

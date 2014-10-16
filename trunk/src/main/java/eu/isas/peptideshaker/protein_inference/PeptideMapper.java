@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.protein_inference;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
@@ -47,6 +48,10 @@ public class PeptideMapper {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * Exception handler used to catch exceptions
+     */
+    private ExceptionHandler exceptionHandler;
 
     /**
      * Constructor.
@@ -55,10 +60,11 @@ public class PeptideMapper {
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param waitingHandler A waiting handler
      */
-    public PeptideMapper(SequenceMatchingPreferences sequenceMatchingPreferences, IdFilter idFilter, WaitingHandler waitingHandler) {
+    public PeptideMapper(SequenceMatchingPreferences sequenceMatchingPreferences, IdFilter idFilter, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
         this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         this.idFilter = idFilter;
         this.waitingHandler = waitingHandler;
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -252,11 +258,12 @@ public class PeptideMapper {
         public void run() {
 
             try {
-                mapPeptide(peptide, increaseProgressBar);
+                if (!canceled && !waitingHandler.isRunCanceled()) {
+                    mapPeptide(peptide, increaseProgressBar);
+                }
             } catch (Exception e) {
                 if (!canceled && !waitingHandler.isRunCanceled()) {
-                    System.err.println("An error occurred while mapping peptides to proteins.");
-                    e.printStackTrace();
+                    exceptionHandler.catchException(e);
                 }
             }
         }

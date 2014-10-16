@@ -34,7 +34,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
-import com.compomics.util.general.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.PrivacySettingsDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
@@ -288,7 +288,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The exception handler
      */
-    private ExceptionHandler exceptionHandler = new ExceptionHandler(this, "http://code.google.com/p/peptide-shaker/issues/list");
+    private FrameExceptionHandler exceptionHandler = new FrameExceptionHandler(this, "http://code.google.com/p/peptide-shaker/issues/list");
     /**
      * The spectrum annotator.
      */
@@ -4544,7 +4544,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @return the exception handler
      */
-    public ExceptionHandler getExceptionHandler() {
+    public FrameExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
 
