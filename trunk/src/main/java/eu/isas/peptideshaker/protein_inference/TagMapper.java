@@ -59,11 +59,6 @@ public class TagMapper {
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
-     * The spectrum annotator to use
-     */
-    private TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
-
-    /**
      * The PTM factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
@@ -130,11 +125,11 @@ public class TagMapper {
      * @throws MzMLUnmarshallerException
      */
     public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        if (nThreads == 1) {
+//        if (nThreads == 1) {
             mapTagsSingleThread(idfileReader, waitingHandler);
-        } else {
-            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
-        }
+//        } else {
+//            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
+//        }
     }
 
     /**
@@ -202,7 +197,7 @@ public class TagMapper {
     }
 
     /**
-     * Maps tags onto the protein database.
+     * Maps tags in the protein database.
      *
      * @param idfileReader the id file reader
      *
@@ -214,6 +209,7 @@ public class TagMapper {
      */
     private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
+        TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();
         ArrayList<Integer> charges = new ArrayList<Integer>(1);
         charges.add(1); //@TODO: use other charges?
@@ -264,22 +260,18 @@ public class TagMapper {
                             extendedTagList.add(tagAssumption.reverse(nY >= nB));
                         }
                         for (TagAssumption extendedAssumption : extendedTagList) {
-                            try {
-                                HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), false);
-                                for (Peptide peptide : proteinMapping.keySet()) {
-                                    String peptideKey = peptide.getKey();
-                                    if (!peptidesFound.contains(peptideKey)) {
-                                        PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
-                                        peptideAssumption.addUrParam(tagAssumption);
-                                        spectrumMatch.addHit(advocateId, peptideAssumption, true);
-                                        peptidesFound.add(peptideKey);
-                                    }
+                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), false);
+                            for (Peptide peptide : proteinMapping.keySet()) {
+                                String peptideKey = peptide.getKey();
+                                if (!peptidesFound.contains(peptideKey)) {
+                                    PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
+                                    peptideAssumption.addUrParam(tagAssumption);
+                                    spectrumMatch.addHit(advocateId, peptideAssumption, true);
+                                    peptidesFound.add(peptideKey);
                                 }
-                                String extendedSequence = extendedAssumption.getTag().asSequence();
-                                inspectedTags.add(extendedSequence);
-                            } catch (Exception e) {
-                                waitingHandler.appendReport("An error occurred while mapping tag " + extendedAssumption.getTag().asSequence() + " of spectrum " + Spectrum.getSpectrumTitle(spectrumKey) + " of file " + Spectrum.getSpectrumFile(spectrumKey) + " onto the database.", true, true);
                             }
+                            String extendedSequence = extendedAssumption.getTag().asSequence();
+                            inspectedTags.add(extendedSequence);
                         }
                     }
                 }
@@ -453,6 +445,7 @@ public class TagMapper {
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
                     exceptionHandler.catchException(e);
+                    waitingHandler.setRunCanceled();
                 }
             }
         }
