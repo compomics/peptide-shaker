@@ -123,7 +123,7 @@ public class FollowUpCLI extends CpsParent {
             return 1;
         }
 
-        loadGeneMappings(waitingHandler);
+        loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
