@@ -3062,7 +3062,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Imports the gene mapping.
      */
     private void loadGeneMappings() {
-        if (!cpsBean.loadGeneMappings(progressDialog)) {
+        if (!cpsBean.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
             JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -4706,7 +4706,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                 // @TODO: pass the current project to the new instance of PeptideShaker.
                 new PeptideShakerWrapper();
-                System.exit(0); // have to closeFiles the current java process (as a new one is started on the line above)
+                System.exit(0); // have to close the current java process (as a new one is started on the line above)
             }
         }.start();
     }

@@ -123,7 +123,7 @@ public class MzidCLI extends CpsParent {
             return 1;
         }
 
-        loadGeneMappings(waitingHandler);
+        loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
         // Export mzid file
         try {

@@ -124,7 +124,7 @@ public class ReportCLI extends CpsParent {
             return 1;
         }
 
-        loadGeneMappings(waitingHandler);
+        loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
         // Export report(s)
         if (reportCLIInputBean.exportNeeded()) {

@@ -415,10 +415,11 @@ public class CpsParent extends UserPreferencesParent {
      * Imports the gene mapping.
      *
      * @param waitingHandler the waiting handler
+     * @param jarFilePath the path to the jar file
      * @return a boolean indicating whether the loading was successful
      */
-    public boolean loadGeneMappings(WaitingHandler waitingHandler) {
-        return genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
+    public boolean loadGeneMappings(String jarFilePath, WaitingHandler waitingHandler) {
+        return genePreferences.loadGeneMappings(jarFilePath, waitingHandler);
     }
 
     /**

@@ -1822,7 +1822,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_exportReportButtonActionPerformed
 
     /**
-     * Enable/disable the export and delete buttons.
+     * Export the given report or show its details.
      *
      * @param evt
      */
