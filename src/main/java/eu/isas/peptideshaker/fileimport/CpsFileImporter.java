@@ -37,16 +37,17 @@ public class CpsFileImporter {
      * Constructor.
      * 
      * @param cpsFile the cps file
+     * @param jarFilePath the path to the jar file
      * @param waitingHandler the waiting handler
      * 
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public CpsFileImporter(File cpsFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        File matchFolderParent = PeptideShaker.getMatchesDirectoryParent(getJarFilePath());
-        File matchFolder = PeptideShaker.getSerializationDirectory(getJarFilePath());
+        File matchFolderParent = PeptideShaker.getMatchesDirectoryParent(jarFilePath);
+        File matchFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
 
         // empty the existing files in the matches folder
         if (matchFolder.exists()) {

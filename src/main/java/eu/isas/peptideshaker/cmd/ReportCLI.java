@@ -81,7 +81,7 @@ public class ReportCLI extends CpsParent {
         cpsFile = reportCLIInputBean.getCpsFile();
 
         try {
-            loadCpsFile(waitingHandler);
+            loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
         } catch (SQLException e) {
             waitingHandler.appendReport("An error occured while reading: " + cpsFile.getAbsolutePath() + ". "
                     + "It looks like another instance of PeptideShaker is still connected to the file. "

@@ -5182,7 +5182,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     updateNotesNotificationCounter();
                     openingExistingProject = true;
 
-                    cpsBean.loadCpsFile(progressDialog);
+                    cpsBean.loadCpsFile(getJarFilePath(), progressDialog);
 
                     // Resets the display features generator according to the new project
                     resetDisplayFeaturesGenerator();

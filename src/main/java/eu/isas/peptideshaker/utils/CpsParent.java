@@ -126,8 +126,9 @@ public class CpsParent extends UserPreferencesParent {
     protected File cpsFile = null;
 
     /**
-     * Loads the information from a cps file
+     * Loads the information from a cps file.
      *
+     * @param jarFilePath the path to the jar file
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      * @throws FileNotFoundException
@@ -135,9 +136,9 @@ public class CpsParent extends UserPreferencesParent {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public void loadCpsFile(WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
+    public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
 
-        CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, waitingHandler);
+        CpsFileImporter cpsFileImporter = new CpsFileImporter(cpsFile, jarFilePath, waitingHandler);
 
         // close any open connection to an identification database
         if (identification != null) {
@@ -232,7 +233,7 @@ public class CpsParent extends UserPreferencesParent {
         }
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
-        String dbFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath()).getAbsolutePath();
+        String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
         identification.establishConnection(dbFolder, false, objectsCache);
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
