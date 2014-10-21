@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -253,7 +254,7 @@ public class PtmScorer {
                 modificationMatches.put(ptmMass, modificationMatch);
             }
         }
-        
+
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
@@ -378,6 +379,8 @@ public class PtmScorer {
      * @param annotationPreferences the spectrum annotation preferences
      * @param scoringPreferences the PTM scoring preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param waitingHandler waiting handler to display progress and allow
+     * cancelling
      *
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
@@ -578,6 +581,10 @@ public class PtmScorer {
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
 
         Peptide peptide = peptideMatch.getTheoreticPeptide();
+        String tempKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+        if (tempKey.equals("IKISSPATIN_42.010565-ATAA-1_56.026215-ATAA-2_79.966331-ATAA-4")) {
+            int debug = 1;
+        }
 
         ArrayList<ModificationMatch> originalMatches = peptide.getModificationMatches();
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
@@ -720,6 +727,7 @@ public class PtmScorer {
 
                     for (int representativeSite : psmScores.getRepresentativeSites()) {
                         HashMap<Integer, ArrayList<String>> ambiguousMappingAtSite = psmScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
+                        int mappingSize = ambiguousMappingAtSite.size();
                         for (int site : ambiguousMappingAtSite.keySet()) {
                             for (String ptmName : ambiguousMappingAtSite.get(site)) {
                                 PTM ptm = ptmFactory.getPTM(ptmName);
@@ -733,25 +741,25 @@ public class PtmScorer {
                                         probabilisticScore = ptmScoring.getProbabilisticScore(site);
                                         dScore = ptmScoring.getDeltaScore(site);
                                     }
-                                    HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> ptmScoreMap = ambiguousSites.get(ptmMass);
-                                    if (ptmScoreMap == null) {
-                                        ptmScoreMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>();
-                                        ambiguousSites.put(ptmMass, ptmScoreMap);
-                                    }
-                                    HashMap<Double, HashMap<Integer, ArrayList<String>>> pScoreMap = ptmScoreMap.get(probabilisticScore);
+                                    HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreMap = ambiguousSites.get(probabilisticScore);
                                     if (pScoreMap == null) {
-                                        pScoreMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
-                                        ptmScoreMap.put(probabilisticScore, pScoreMap);
+                                        pScoreMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(mappingSize);
+                                        ambiguousSites.put(probabilisticScore, pScoreMap);
                                     }
-                                    HashMap<Integer, ArrayList<String>> dScoreMap = pScoreMap.get(dScore);
+                                    HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreMap = pScoreMap.get(dScore);
                                     if (dScoreMap == null) {
-                                        dScoreMap = new HashMap<Integer, ArrayList<String>>();
+                                        dScoreMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(mappingSize);
                                         pScoreMap.put(dScore, dScoreMap);
                                     }
-                                    ArrayList<String> modifications = dScoreMap.get(site);
+                                    HashMap<Integer, ArrayList<String>> ptmMap = dScoreMap.get(ptmMass);
+                                    if (ptmMap == null) {
+                                        ptmMap = new HashMap<Integer, ArrayList<String>>(1);
+                                        dScoreMap.put(ptmMass, ptmMap);
+                                    }
+                                    ArrayList<String> modifications = ptmMap.get(site);
                                     if (modifications == null) {
-                                        modifications = new ArrayList<String>();
-                                        dScoreMap.put(site, modifications);
+                                        modifications = new ArrayList<String>(1);
+                                        ptmMap.put(site, modifications);
                                     }
                                     if (!modifications.contains(ptmName)) {
                                         modifications.add(ptmName);
@@ -762,6 +770,7 @@ public class PtmScorer {
                     }
                 }
 
+                HashMap<Double, Integer> nRepresentativesMap = new HashMap<Double, Integer>();
                 for (double ptmMass : variableModifications.keySet()) {
                     int nPtm = variableModifications.get(ptmMass);
                     int nConfident = 0;
@@ -770,31 +779,35 @@ public class PtmScorer {
                         nConfident = ptmConfidentSites.size();
                     }
                     if (nConfident < nPtm) {
-                        ArrayList<ModificationMatch> newPtmMatches = newMatches.get(ptmMass);
-                        if (newPtmMatches == null) {
-                            newPtmMatches = new ArrayList<ModificationMatch>();
-                            newMatches.put(ptmMass, newPtmMatches);
-                        }
                         int nRepresentatives = nPtm - nConfident;
-                        HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> ambiguousSitesScores = ambiguousSites.get(ptmMass);
-                        if (ambiguousSitesScores == null) {
-                            throw new IllegalArgumentException("Not enough site possibilities found in PSMs for PTM of mass " + ptmMass + " in peptide " + peptideMatch.getKey() + ".");
+                        if (nRepresentatives > 0) {
+                            nRepresentativesMap.put(ptmMass, nRepresentatives);
                         }
-                        ArrayList<Integer> ptmInferredSites = inferredSites.get(ptmMass);
-                        HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSitesScores, nRepresentatives, ptmInferredSites);
-                        for (int representativeSite : representativeToSecondaryMap.keySet()) {
-                            HashMap<Integer, ArrayList<String>> siteToPtmMap = representativeToSecondaryMap.get(representativeSite);
-                            peptideScores.addAmbiguousModificationSites(representativeSite, siteToPtmMap);
-                            for (String ptmName : siteToPtmMap.get(representativeSite)) {
-                                ModificationMatch newMatch = new ModificationMatch(ptmName, true, representativeSite);
-                                newMatch.setConfident(false);
-                                if (ptmInferredSites != null && ptmInferredSites.contains(representativeSite)) {
-                                    newMatch.setInferred(true);
-                                }
-                                newPtmMatches.add(newMatch);
-                                if (newPtmMatches.size() > variableModifications.get(ptmMass)) {
-                                    throw new IllegalArgumentException("More sites than PTMs on peptide " + peptideMatch.getKey() + " for PTM of mass " + ptmMass + ".");
-                                }
+                    }
+                }
+
+                HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSites, nRepresentativesMap, inferredSites);
+
+                for (Double ptmMass : representativeToSecondaryMap.keySet()) {
+                    HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativesAtMass = representativeToSecondaryMap.get(ptmMass);
+                    ArrayList<Integer> ptmInferredSites = inferredSites.get(ptmMass);
+                    for (int representativeSite : representativesAtMass.keySet()) {
+                        HashMap<Integer, ArrayList<String>> siteToPtmMap = representativesAtMass.get(representativeSite);
+                        peptideScores.addAmbiguousModificationSites(representativeSite, siteToPtmMap);
+                        for (String ptmName : siteToPtmMap.get(representativeSite)) {
+                            ModificationMatch newMatch = new ModificationMatch(ptmName, true, representativeSite);
+                            newMatch.setConfident(false);
+                            if (ptmInferredSites != null && ptmInferredSites.contains(representativeSite)) {
+                                newMatch.setInferred(true);
+                            }
+                            ArrayList<ModificationMatch> newPtmMatches = newMatches.get(ptmMass);
+                            if (newPtmMatches == null) {
+                                newPtmMatches = new ArrayList<ModificationMatch>();
+                                newMatches.put(ptmMass, newPtmMatches);
+                            }
+                            newPtmMatches.add(newMatch);
+                            if (newPtmMatches.size() > variableModifications.get(ptmMass)) {
+                                throw new IllegalArgumentException("More sites than PTMs on peptide " + peptideMatch.getKey() + " for PTM of mass " + ptmMass + ".");
                             }
                         }
                     }
@@ -831,8 +844,8 @@ public class PtmScorer {
      *
      * @return a representative to secondary sites map
      */
-    private HashMap<Integer, HashMap<Integer, ArrayList<String>>> getRepresentativeToSecondaryMap(HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> ambiguousSitesScores, int nRepresentatives) {
-        return getRepresentativeToSecondaryMap(ambiguousSitesScores, nRepresentatives, null);
+    private HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> getRepresentativeToSecondaryMap(HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap, HashMap<Double, Integer> nRepresentatives) {
+        return getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentatives, null);
     }
 
     /**
@@ -847,74 +860,217 @@ public class PtmScorer {
      *
      * @return a representative to secondary sites map
      */
-    private HashMap<Integer, HashMap<Integer, ArrayList<String>>> getRepresentativeToSecondaryMap(HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> ambiguousSitesScores, int nRepresentatives, ArrayList<Integer> preferentialSites) {
+    private HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> getRepresentativeToSecondaryMap(HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap, HashMap<Double, Integer> nRepresentativesMap, HashMap<Double, ArrayList<Integer>> preferentialSites) {
 
-        int nPreferential = 0;
-        if (preferentialSites != null) {
-            nPreferential = preferentialSites.size();
+        int nMasses = nRepresentativesMap.size();
+        HashMap<Double, Integer> nToSelectMap = new HashMap<Double, Integer>(nMasses);
+        HashMap<Double, Integer> nSelectedMap = new HashMap<Double, Integer>(nMasses);
+        for (Double ptmMass : nRepresentativesMap.keySet()) {
+            int nRepresentatives = nRepresentativesMap.get(ptmMass);
+            int nPreferential = 0;
+            if (preferentialSites != null) {
+                ArrayList<Integer> sites = preferentialSites.get(ptmMass);
+                if (sites != null) {
+                    nPreferential = sites.size();
+                }
+            }
+            int toSelect = Math.max(nRepresentatives - nPreferential, 0);
+            nToSelectMap.put(ptmMass, toSelect);
+            nSelectedMap.put(ptmMass, 0);
         }
-        int nSelected = 0, toSelect = nRepresentatives - nPreferential;
-        HashMap<Integer, ArrayList<String>> representativeSites = new HashMap<Integer, ArrayList<String>>();
-        HashMap<Integer, ArrayList<String>> secondarySites = new HashMap<Integer, ArrayList<String>>();
-        ArrayList<Double> pScores = new ArrayList<Double>(ambiguousSitesScores.keySet());
-        Collections.sort(pScores, Collections.reverseOrder());
+
+        HashMap<Double, HashSet<Integer>> possibleSites = new HashMap<Double, HashSet<Integer>>(nMasses);
+        for (HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> mapAtPscore : ambiguousScoreToSiteMap.values()) {
+            for (HashMap<Double, HashMap<Integer, ArrayList<String>>> mapAtDScore : mapAtPscore.values()) {
+                for (Double ptmMass : mapAtDScore.keySet()) {
+                    HashSet<Integer> ptmSites = possibleSites.get(ptmMass);
+                    if (ptmSites == null) {
+                        ptmSites = new HashSet<Integer>();
+                        possibleSites.put(ptmMass, ptmSites);
+                    }
+                    Set<Integer> sitesAtScore = mapAtDScore.get(ptmMass).keySet();
+                    ptmSites.addAll(sitesAtScore);
+                }
+            }
+        }
+
+        HashMap<Double, HashMap<Integer, ArrayList<String>>> representativeSites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(nMasses);
+        HashMap<Double, HashMap<Integer, ArrayList<String>>> secondarySites = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(nMasses);
+        ArrayList<Double> pScores = new ArrayList<Double>(ambiguousScoreToSiteMap.keySet());
+        if (pScores.size() > 1) {
+            Collections.sort(pScores, Collections.reverseOrder());
+        }
         for (double pScore : pScores) {
-            HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoresMap = ambiguousSitesScores.get(pScore);
+            HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> dScoresMap = ambiguousScoreToSiteMap.get(pScore);
             ArrayList<Double> dScores = new ArrayList<Double>(dScoresMap.keySet());
-            Collections.sort(dScores, Collections.reverseOrder());
+            if (dScores.size() > 1) {
+                Collections.sort(dScores, Collections.reverseOrder());
+            }
             for (double dScore : dScores) {
-                HashMap<Integer, ArrayList<String>> siteMap = dScoresMap.get(dScore);
-                ArrayList<Integer> sites = new ArrayList<Integer>(siteMap.keySet());
-                Collections.sort(sites);
-                for (int site : sites) {
-                    boolean preferential = preferentialSites != null && preferentialSites.contains(site);
-                    if (preferential || nSelected < toSelect) {
-                        for (String ptmName : siteMap.get(site)) {
-                            ArrayList<String> modifications = representativeSites.get(site);
-                            if (modifications == null) {
-                                modifications = new ArrayList<String>();
-                                representativeSites.put(site, modifications);
-                                if (!preferential) {
-                                    nSelected++;
-                                }
-                            }
-                            if (!modifications.contains(ptmName)) {
-                                modifications.add(ptmName);
+                HashMap<Double, HashMap<Integer, ArrayList<String>>> ptmMap = dScoresMap.get(dScore);
+                ArrayList<Double> ptmMasses = new ArrayList<Double>(ptmMap.keySet());
+                if (ptmMasses.size() > 1) {
+                    Collections.sort(ptmMasses);
+                }
+                for (double ptmMass : ptmMasses) {
+                    ArrayList<Integer> preferentialSitesForPtm = null;
+                    if (preferentialSites != null) {
+                        preferentialSitesForPtm = preferentialSites.get(ptmMass);
+                    }
+                    Integer toSelect = nToSelectMap.get(ptmMass);
+                    if (toSelect == null) {
+                        toSelect = 0;
+                    }
+                    Integer nSelected = nSelectedMap.get(ptmMass);
+                    if (nSelected == null) {
+                        nSelected = 0;
+                    }
+                    int nNeeded = toSelect - nSelected;
+                    if (nNeeded > 0) {
+                        HashSet<Integer> ptmSites = possibleSites.get(ptmMass);
+                        if (ptmSites == null || ptmSites.size() < nNeeded) {
+                            throw new IllegalArgumentException("Not enough sites (" + possibleSites.size() + " where " + nNeeded + " needed) found for ptm mass " + ptmMass + ".");
+                        }
+                    }
+
+                    HashMap<Integer, ArrayList<String>> siteMap = ptmMap.get(ptmMass);
+                    ArrayList<Integer> sites = new ArrayList<Integer>(siteMap.keySet());
+                    if (sites.size() > 1) {
+                        Collections.sort(sites);
+                    }
+                    for (int site : sites) {
+                        boolean referenceOtherPtm = false;
+                        for (Double tempMass : representativeSites.keySet()) {
+                            if (representativeSites.get(tempMass).keySet().contains(site)) {
+                                referenceOtherPtm = true;
+                                break;
                             }
                         }
-                    } else {
-                        for (String ptmName : siteMap.get(site)) {
-                            ArrayList<String> modifications = secondarySites.get(site);
-                            if (modifications == null) {
-                                modifications = new ArrayList<String>();
-                                secondarySites.put(site, modifications);
+                        boolean preferentialForPtm;
+                        boolean preferentialSiteOtherPtm = false;
+                        preferentialForPtm = preferentialSitesForPtm != null && preferentialSitesForPtm.contains(site);
+                        if (!preferentialSiteOtherPtm && preferentialSites != null) {
+                            for (Double tempMass : preferentialSites.keySet()) {
+                                if (tempMass != ptmMass) {
+                                    ArrayList<Integer> preferentialSitesOtherPtm = preferentialSites.get(ptmMass);
+                                    if (preferentialSitesOtherPtm != null && preferentialSitesOtherPtm.contains(site)) {
+                                        preferentialSiteOtherPtm = true;
+                                        break;
+                                    }
+                                }
                             }
-                            if (!modifications.contains(ptmName)) {
-                                modifications.add(ptmName);
+                        }
+                        boolean blockingOtherPtm = false;
+                        HashSet<Double> tempMasses = new HashSet<Double>(possibleSites.keySet());
+                        for (Double tempMass : tempMasses) {
+                            if (tempMass != ptmMass) {
+                                Integer tempToSelect = nToSelectMap.get(tempMass);
+                                Integer tempSelected = nSelectedMap.get(tempMass);
+                                if (tempToSelect != null && tempSelected != null) {
+                                    int toMapForPtm = tempToSelect - tempSelected;
+                                    if (toMapForPtm > 0) {
+                                        HashSet<Integer> tempSites = possibleSites.get(tempMass);
+                                        if (tempSites == null) {
+                                            throw new IllegalArgumentException("No sites found for PTM of mass " + ptmMass + ".");
+                                        }
+                                        if (tempSites.size() == toMapForPtm && tempSites.contains(site)) {
+                                            blockingOtherPtm = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (!referenceOtherPtm && !blockingOtherPtm
+                                && (preferentialForPtm || !preferentialSiteOtherPtm && nSelected < toSelect)) {
+                            HashMap<Integer, ArrayList<String>> representativeSitesForPtmMass = representativeSites.get(ptmMass);
+                            if (representativeSitesForPtmMass == null) {
+                                representativeSitesForPtmMass = new HashMap<Integer, ArrayList<String>>(nRepresentativesMap.get(ptmMass));
+                                representativeSites.put(ptmMass, representativeSitesForPtmMass);
+                            }
+                            for (String ptmName : siteMap.get(site)) {
+                                ArrayList<String> modifications = representativeSitesForPtmMass.get(site);
+                                if (modifications == null) {
+                                    modifications = new ArrayList<String>(1);
+                                    representativeSitesForPtmMass.put(site, modifications);
+                                    if (!preferentialForPtm) {
+                                        nSelected++;
+                                    }
+                                }
+                                if (!modifications.contains(ptmName)) {
+                                    modifications.add(ptmName);
+                                }
+                            }
+                            for (Double tempMass : tempMasses) {
+                                HashSet<Integer> tempSites = possibleSites.get(tempMass);
+                                tempSites.remove(site);
+                                if (tempSites.isEmpty()) {
+                                    possibleSites.remove(tempMass);
+                                }
+                            }
+                        } else {
+                            HashMap<Integer, ArrayList<String>> secondarySitesForPtmMass = secondarySites.get(ptmMass);
+                            if (secondarySitesForPtmMass == null) {
+                                int size = 1;
+                                HashSet<Integer> ptmSites = possibleSites.get(ptmMass);
+                                if (ptmSites != null) {
+                                    size = ptmSites.size() - toSelect + nSelected;
+                                }
+                                secondarySitesForPtmMass = new HashMap<Integer, ArrayList<String>>(size);
+                                secondarySites.put(ptmMass, siteMap);
+                            }
+                            for (String ptmName : siteMap.get(site)) {
+                                ArrayList<String> modifications = secondarySitesForPtmMass.get(site);
+                                if (modifications == null) {
+                                    modifications = new ArrayList<String>(1);
+                                    secondarySitesForPtmMass.put(site, modifications);
+                                }
+                                if (!modifications.contains(ptmName)) {
+                                    modifications.add(ptmName);
+                                }
                             }
                         }
                     }
+                    nSelectedMap.put(ptmMass, nSelected);
                 }
             }
         }
-        HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativeToSecondaryMap = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
-        for (int representativeSite : representativeSites.keySet()) {
-            HashMap<Integer, ArrayList<String>> siteMap = new HashMap<Integer, ArrayList<String>>();
-            siteMap.put(representativeSite, representativeSites.get(representativeSite));
-            representativeToSecondaryMap.put(representativeSite, siteMap);
+        for (double ptmMass : nToSelectMap.keySet()) {
+            Integer nSelected = nSelectedMap.get(ptmMass);
+            Integer nToSelect = nToSelectMap.get(ptmMass);
+            if (nSelected == null || nSelected < nToSelect) {
+                throw new IllegalArgumentException("Not enough representative ptm sites found.");
+            } else if (nSelected > nToSelect) {
+                throw new IllegalArgumentException("Selected more representative sites than necessary.");
+            }
         }
-        for (int secondarySite : secondarySites.keySet()) {
-            Integer distance = null;
-            Integer representativeSite = null;
-            for (int tempRepresentativeSite : representativeToSecondaryMap.keySet()) {
-                int tempDistance = Math.abs(secondarySite - tempRepresentativeSite);
-                if (representativeSite == null || tempDistance < distance || tempDistance == distance && tempRepresentativeSite < representativeSite) {
-                    representativeSite = tempRepresentativeSite;
-                    distance = tempDistance;
+        HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>(representativeSites.size());
+        for (Double ptmMass : representativeSites.keySet()) {
+            HashMap<Integer, HashMap<Integer, ArrayList<String>>> mapAtMass = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
+            representativeToSecondaryMap.put(ptmMass, mapAtMass);
+            HashMap<Integer, ArrayList<String>> representativeSitesAtMass = representativeSites.get(ptmMass);
+            for (int representativeSite : representativeSitesAtMass.keySet()) {
+                HashMap<Integer, ArrayList<String>> siteMap = new HashMap<Integer, ArrayList<String>>();
+                siteMap.put(representativeSite, representativeSitesAtMass.get(representativeSite));
+                mapAtMass.put(representativeSite, siteMap);
+            }
+            HashMap<Integer, ArrayList<String>> secondarySitesAtMass = secondarySites.get(ptmMass);
+            if (secondarySitesAtMass != null) {
+                for (int secondarySite : secondarySitesAtMass.keySet()) {
+                    Integer distance = null;
+                    Integer representativeSite = null;
+                    for (int tempRepresentativeSite : representativeSitesAtMass.keySet()) {
+                        int tempDistance = Math.abs(secondarySite - tempRepresentativeSite);
+                        if (representativeSite == null || tempDistance < distance || tempDistance == distance && tempRepresentativeSite < representativeSite) {
+                            representativeSite = tempRepresentativeSite;
+                            distance = tempDistance;
+                        }
+                    }
+                    HashMap<Integer, ArrayList<String>> representativeSiteMap = mapAtMass.get(representativeSite);
+                    representativeSiteMap.put(secondarySite, secondarySitesAtMass.get(secondarySite));
                 }
             }
-            HashMap<Integer, ArrayList<String>> representativeSiteMap = representativeToSecondaryMap.get(representativeSite);
-            representativeSiteMap.put(secondarySite, secondarySites.get(secondarySite));
+
         }
         return representativeToSecondaryMap;
     }
@@ -1290,8 +1446,10 @@ public class PtmScorer {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        HashMap<String, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
-        HashMap<String, HashMap<String, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
+        // PSMs with confidently localized PTMs in a map: PTM mass -> peptide sequence -> spectrum keys
+        HashMap<Double, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, ArrayList<String>>>();
+        // PSMs with ambiguously localized PTMs in a map: File -> PTM mass -> spectrum keys
+        HashMap<String, HashMap<Double, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, ArrayList<String>>>();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             identification.loadSpectrumMatches(spectrumFileName, null);
@@ -1316,25 +1474,26 @@ public class PtmScorer {
                             if (modMatch.isVariable()) {
                                 String modName = modMatch.getTheoreticPtm();
                                 PTM ptm = ptmFactory.getPTM(modName);
+                                double ptmMass = ptm.getMass();
                                 if (ptm.getType() == PTM.MODAA) {
                                     if (!modMatch.isConfident()) {
-                                        HashMap<String, ArrayList<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
+                                        HashMap<Double, ArrayList<String>> fileMap = notConfidentPeptideInference.get(spectrumFileName);
                                         if (fileMap == null) {
-                                            fileMap = new HashMap<String, ArrayList<String>>();
+                                            fileMap = new HashMap<Double, ArrayList<String>>();
                                             notConfidentPeptideInference.put(spectrumFileName, fileMap);
                                         }
-                                        ArrayList<String> spectra = fileMap.get(modName);
+                                        ArrayList<String> spectra = fileMap.get(ptmMass);
                                         if (spectra == null) {
                                             spectra = new ArrayList<String>();
-                                            fileMap.put(modName, spectra);
+                                            fileMap.put(ptmMass, spectra);
                                         }
                                         spectra.add(spectrumKey);
                                         confident = false;
                                     } else {
-                                        HashMap<String, ArrayList<String>> modMap = confidentPeptideInference.get(modName);
+                                        HashMap<String, ArrayList<String>> modMap = confidentPeptideInference.get(ptmMass);
                                         if (modMap == null) {
                                             modMap = new HashMap<String, ArrayList<String>>();
-                                            confidentPeptideInference.put(modName, modMap);
+                                            confidentPeptideInference.put(ptmMass, modMap);
                                         }
                                         String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
                                         ArrayList<String> spectra = modMap.get(sequence);
@@ -1367,10 +1526,11 @@ public class PtmScorer {
         for (String spectrumFile : notConfidentPeptideInference.keySet()) {
 
             HashSet<String> progress = new HashSet<String>();
+            HashMap<Double, ArrayList<String>> peptidesOfFile = notConfidentPeptideInference.get(spectrumFile);
 
-            for (String modification : notConfidentPeptideInference.get(spectrumFile).keySet()) {
+            for (Double ptmMass : peptidesOfFile.keySet()) {
 
-                ArrayList<String> spectrumKeys = notConfidentPeptideInference.get(spectrumFile).get(modification);
+                ArrayList<String> spectrumKeys = peptidesOfFile.get(ptmMass);
 
                 identification.loadSpectrumMatches(spectrumKeys, null);
 
@@ -1379,12 +1539,12 @@ public class PtmScorer {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String sequence = peptide.getSequence();
-                    String notConfidentKey = peptide.getKey();
-                    int nMod = Peptide.getModificationCount(notConfidentKey, modification);
-                    ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, modification);
+                    String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+                    int nMod = Peptide.getModificationCount(notConfidentKey, ptmMass);
+                    ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, ptmMass);
                     ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>();
 
-                    HashMap<String, ArrayList<String>> ptmConfidentPeptides = confidentPeptideInference.get(modification);
+                    HashMap<String, ArrayList<String>> ptmConfidentPeptides = confidentPeptideInference.get(ptmMass);
 
                     if (ptmConfidentPeptides != null) {
 
@@ -1394,9 +1554,9 @@ public class PtmScorer {
                         if (keys != null) {
                             for (String tempKey : keys) {
                                 SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getKey();
-                                if (Peptide.getModificationCount(secondaryKey, modification) == nMod) {
-                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                if (Peptide.getModificationCount(secondaryKey, ptmMass) == nMod) {
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
                                     for (int localization : tempLocalizations) {
                                         if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
                                             newLocalizationCandidates.add(localization);
@@ -1408,8 +1568,8 @@ public class PtmScorer {
                                 // we cannot merge this peptide, see whether we can explain the remaining modifications using peptides with the same sequence but other modification profile
                                 for (String tempKey : keys) {
                                     SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                    String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getKey();
-                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                    String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
                                     for (int localization : tempLocalizations) {
                                         if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
                                             newLocalizationCandidates.add(localization);
@@ -1420,12 +1580,13 @@ public class PtmScorer {
                         }
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help.
-                            for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
+                            HashMap<String, ArrayList<String>> confidentAtMass = confidentPeptideInference.get(ptmMass);
+                            for (String otherSequence : confidentAtMass.keySet()) {
                                 if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
-                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                    for (String tempKey : confidentAtMass.get(otherSequence)) {
                                         SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getKey();
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
                                         int tempIndex, ref = 0;
                                         String tempSequence = sequence;
                                         while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
@@ -1433,10 +1594,16 @@ public class PtmScorer {
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = ref + localization;
                                                 if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    newLocalizationCandidates.add(shiftedLocalization);
-                                                    PTM ptm = ptmFactory.getPTM(modification);
-                                                    if (!peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(shiftedLocalization)) {
-                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                    boolean candidatePtm = false;
+                                                    for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                                        if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(shiftedLocalization)) {
+                                                            candidatePtm = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (candidatePtm) {
+                                                        newLocalizationCandidates.add(shiftedLocalization);
                                                     }
                                                 }
                                             }
@@ -1445,10 +1612,10 @@ public class PtmScorer {
                                         }
                                     }
                                 } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
-                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                    for (String tempKey : confidentAtMass.get(otherSequence)) {
                                         SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getKey();
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                        String secondaryKey = secondaryMatch.getBestPeptideAssumption().getPeptide().getMatchingKey(sequenceMatchingPreferences);
+                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, ptmMass);
                                         int tempIndex, ref = 0;
                                         String tempSequence = otherSequence;
                                         while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
@@ -1457,10 +1624,16 @@ public class PtmScorer {
                                                 int shiftedLocalization = localization - ref;
                                                 if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
                                                         && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    newLocalizationCandidates.add(shiftedLocalization);
-                                                    PTM ptm = ptmFactory.getPTM(modification);
-                                                    if (!peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(shiftedLocalization)) {
-                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                    boolean candidatePtm = false;
+                                                    for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                                                        PTM ptm = ptmFactory.getPTM(ptmName);
+                                                        if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(shiftedLocalization)) {
+                                                            candidatePtm = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (candidatePtm) {
+                                                        newLocalizationCandidates.add(shiftedLocalization);
                                                     }
                                                 }
                                             }
@@ -1475,7 +1648,9 @@ public class PtmScorer {
                         if (!newLocalizationCandidates.isEmpty()) {
                             HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
                             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                                if (modificationMatch.getTheoreticPtm().equals(modification) && !modificationMatch.isConfident()) {
+                                String ptmName = modificationMatch.getTheoreticPtm();
+                                PTM ptm = ptmFactory.getPTM(ptmName);
+                                if (ptm.getMass() == ptmMass && !modificationMatch.isConfident()) {
                                     nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
                                 }
                             }
@@ -1483,17 +1658,28 @@ public class PtmScorer {
                             for (Integer oldLocalization : mapping.keySet()) {
                                 ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
                                 Integer newLocalization = mapping.get(oldLocalization);
-                                if (modificationMatch != null && newLocalization != null && newLocalization != oldLocalization) {
-                                    PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                    if (!peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(newLocalization)) {
-                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm()
-                                                + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
-                                    }
-                                    modificationMatch.setModificationSite(newLocalization);
-                                    PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                    psmScores.changeRepresentativeSite(modification, oldLocalization, newLocalization);
+                                if (modificationMatch == null) {
+                                    throw new IllegalArgumentException("No modification match found at site " + oldLocalization + " in spectrum " + spectrumKey + ".");
                                 }
-                                modificationMatch.setInferred(true);
+                                if (newLocalization != null) {
+                                    if (newLocalization != oldLocalization) {
+                                        PTM ptmCandidate = null;
+                                        for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                                            PTM ptm = ptmFactory.getPTM(ptmName);
+                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences).contains(newLocalization)) {
+                                                ptmCandidate = ptm;
+                                                break;
+                                            }
+                                        }
+                                        if (ptmCandidate == null) {
+                                            throw new IllegalArgumentException("No PTM found for site " + newLocalization + " on  peptide " + peptide.getSequence() + " in spectrum " + spectrumKey + ".");
+                                        }
+                                        modificationMatch.setModificationSite(newLocalization);
+                                        PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                        psmScores.changeRepresentativeSite(ptmCandidate.getName(), oldLocalization, newLocalization);
+                                    }
+                                    modificationMatch.setInferred(true);
+                                }
                             }
                         }
                         identification.updateSpectrumMatch(spectrumMatch);
@@ -1568,13 +1754,15 @@ public class PtmScorer {
             }
         }
 
-        for (double ptmMass : modMatchesMap.keySet()) {
+        Set<Double> ptmMasses = modMatchesMap.keySet();
+        HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>(ptmMasses.size()); // p score -> d-score -> Map PTM mass -> site -> list of modifications
+        HashMap<Double, Integer> nRepresentativesMap = new HashMap<Double, Integer>();
+        for (double ptmMass : ptmMasses) {
             ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
             HashMap<Integer, String> ptmPotentialSites = possiblePositions.get(ptmMass);
-            HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> ambiguousSitesMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>();
             HashMap<Integer, String> confidentSites = new HashMap<Integer, String>();
-            int nPTMs = ptmMatches.size();
-            if (ptmPotentialSites.size() < ptmMatches.size()) {
+            int nPTMs = ptmMatches.size(), nPotentialSites = ptmPotentialSites.size();
+            if (nPotentialSites < nPTMs) {
                 throw new IllegalArgumentException("The occurence of modification of mass " + ptmMass + " (" + ptmMatches.size()
                         + ") is higher than the number of possible sites (" + ptmPotentialSites.size() + ") on sequence " + psPeptide.getSequence()
                         + " in spectrum " + spectrumMatch.getKey() + ".");
@@ -1610,20 +1798,25 @@ public class PtmScorer {
                                 confidentSites.put(site, modName);
                             }
                             if (!modificationMatch.isConfident()) {
-                                HashMap<Double, HashMap<Integer, ArrayList<String>>> pScoreAmbiguousMap = ambiguousSitesMap.get(pScore);
+                                HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
                                 if (pScoreAmbiguousMap == null) {
-                                    pScoreAmbiguousMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
-                                    ambiguousSitesMap.put(pScore, pScoreAmbiguousMap);
+                                    pScoreAmbiguousMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(1);
+                                    ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
                                 }
-                                HashMap<Integer, ArrayList<String>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
+                                HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
                                 if (dScoreAmbiguousMap == null) {
-                                    dScoreAmbiguousMap = new HashMap<Integer, ArrayList<String>>();
+                                    dScoreAmbiguousMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(nPotentialSites);
                                     pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
                                 }
-                                ArrayList<String> modifications = dScoreAmbiguousMap.get(site);
+                                HashMap<Integer, ArrayList<String>> massAmbiguousMap = dScoreAmbiguousMap.get(ptmMass);
+                                if (massAmbiguousMap == null) {
+                                    massAmbiguousMap = new HashMap<Integer, ArrayList<String>>(nPotentialSites);
+                                    dScoreAmbiguousMap.put(ptmMass, massAmbiguousMap);
+                                }
+                                ArrayList<String> modifications = massAmbiguousMap.get(site);
                                 if (modifications == null) {
-                                    modifications = new ArrayList<String>();
-                                    dScoreAmbiguousMap.put(site, modifications);
+                                    modifications = new ArrayList<String>(1);
+                                    massAmbiguousMap.put(site, modifications);
                                 }
                                 modifications.add(modName);
                             }
@@ -1631,7 +1824,7 @@ public class PtmScorer {
                     }
                 }
             } else {
-                HashMap<Double, HashMap<Double, ArrayList<Integer>>> scoreToSiteMap = new HashMap<Double, HashMap<Double, ArrayList<Integer>>>();
+                HashMap<Double, HashMap<Double, ArrayList<Integer>>> scoreToSiteMap = new HashMap<Double, HashMap<Double, ArrayList<Integer>>>(nPotentialSites);
                 for (int site : ptmPotentialSites.keySet()) {
                     String modName = ptmPotentialSites.get(site);
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
@@ -1643,12 +1836,12 @@ public class PtmScorer {
                     }
                     HashMap<Double, ArrayList<Integer>> pScoreMap = scoreToSiteMap.get(pScore);
                     if (pScoreMap == null) {
-                        pScoreMap = new HashMap<Double, ArrayList<Integer>>();
+                        pScoreMap = new HashMap<Double, ArrayList<Integer>>(1);
                         scoreToSiteMap.put(pScore, pScoreMap);
                     }
                     ArrayList<Integer> dScoreSites = pScoreMap.get(dScore);
                     if (dScoreSites == null) {
-                        dScoreSites = new ArrayList<Integer>();
+                        dScoreSites = new ArrayList<Integer>(1);
                         pScoreMap.put(dScore, dScoreSites);
                     }
                     dScoreSites.add(site);
@@ -1710,22 +1903,28 @@ public class PtmScorer {
                                 confidentSites.put(site, modName);
                             }
                             if (modificationMatch == null || !modificationMatch.isConfident()) {
-                                HashMap<Double, HashMap<Integer, ArrayList<String>>> pScoreAmbiguousMap = ambiguousSitesMap.get(pScore);
+                                HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
                                 if (pScoreAmbiguousMap == null) {
-                                    pScoreAmbiguousMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
-                                    ambiguousSitesMap.put(pScore, pScoreAmbiguousMap);
+                                    pScoreAmbiguousMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(nPotentialSites);
+                                    ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
                                 }
-                                HashMap<Integer, ArrayList<String>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
+                                HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
                                 if (dScoreAmbiguousMap == null) {
-                                    dScoreAmbiguousMap = new HashMap<Integer, ArrayList<String>>();
+                                    dScoreAmbiguousMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(1);
                                     pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
                                 }
-                                ArrayList<String> modifications = dScoreAmbiguousMap.get(site);
+                                HashMap<Integer, ArrayList<String>> massAmbiguousMap = dScoreAmbiguousMap.get(ptmMass);
+                                if (massAmbiguousMap == null) {
+                                    massAmbiguousMap = new HashMap<Integer, ArrayList<String>>(nPotentialSites);
+                                    dScoreAmbiguousMap.put(ptmMass, massAmbiguousMap);
+                                }
+                                ArrayList<String> modifications = massAmbiguousMap.get(site);
                                 if (modifications == null) {
-                                    modifications = new ArrayList<String>();
-                                    dScoreAmbiguousMap.put(site, modifications);
+                                    modifications = new ArrayList<String>(1);
+                                    massAmbiguousMap.put(site, modifications);
                                 }
                                 modifications.add(modName);
+
                             }
                             cpt++;
                         }
@@ -1740,9 +1939,17 @@ public class PtmScorer {
             int nConfident = ptmConfidentSites.size();
             if (nConfident < nPTMs) {
                 int nRepresentatives = nPTMs - nConfident;
-                HashMap<Integer, HashMap<Integer, ArrayList<String>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousSitesMap, nRepresentatives);
-                for (int representativeSite : representativeToSecondaryMap.keySet()) {
-                    ptmScores.addAmbiguousModificationSites(representativeSite, representativeToSecondaryMap.get(representativeSite));
+                if (nRepresentatives > 0) {
+                    nRepresentativesMap.put(ptmMass, nRepresentatives);
+                }
+            }
+        }
+        if (!nRepresentativesMap.isEmpty()) {
+            HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
+            for (Double ptmMass : representativeToSecondaryMap.keySet()) {
+                HashMap<Integer, HashMap<Integer, ArrayList<String>>> massMap = representativeToSecondaryMap.get(ptmMass);
+                for (int representativeSite : massMap.keySet()) {
+                    ptmScores.addAmbiguousModificationSites(representativeSite, massMap.get(representativeSite));
                 }
             }
         }

@@ -875,7 +875,7 @@ public class PeptideShaker {
 
                             // try to find the most likely modification localization based on the search engine results
                             HashMap<PeptideAssumption, ArrayList<Double>> assumptions = new HashMap<PeptideAssumption, ArrayList<Double>>();
-                            String bestAssumptionKey = bestPeptideAssumption.getPeptide().getKey();
+                            String bestAssumptionKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
 
                             for (int searchEngine1 : spectrumMatch.getAdvocates()) {
 
@@ -890,7 +890,7 @@ public class PeptideShaker {
 
                                             PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
 
-                                            if (peptideAssumption.getPeptide().getKey().equals(bestAssumptionKey)) {
+                                            if (peptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences).equals(bestAssumptionKey)) {
 
                                                 found = true;
                                                 boolean found2 = false;
@@ -952,7 +952,7 @@ public class PeptideShaker {
                         spectrumMatch.setBestPeptideAssumption(psAssumption);
 
                         if (orderedPsmMap != null) {
-                            String peptideKey = psPeptide.getKey();
+                            String peptideKey = psPeptide.getMatchingKey(sequenceMatchingPreferences);
                             ArrayList<String> spectrumKeys = keysMap.get(peptideKey);
                             if (spectrumKeys == null) {
                                 spectrumKeys = new ArrayList<String>();
