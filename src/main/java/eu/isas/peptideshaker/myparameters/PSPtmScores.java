@@ -257,7 +257,7 @@ public class PSPtmScores implements UrParameter {
                     if (modifications.isEmpty()) {
                         ambiguousSites.remove(site);
                     }
-                    
+
                 }
             }
 
@@ -283,12 +283,13 @@ public class PSPtmScores implements UrParameter {
             }
         }
 
-        HashMap<Integer, ArrayList<Integer>> ptmSiteMap = ambiguousModificationsByPTM.get(ptmName);
-        ArrayList<Integer> secondarySites = ptmSiteMap.get(originalRepresentativeSite);
-
-        if (secondarySites != null) {
-            ptmSiteMap.remove(originalRepresentativeSite);
-            ptmSiteMap.put(newRepresentativeSite, secondarySites);
+        for (String originalPtmName : ambiguousModificationsByPTM.keySet()) {
+            HashMap<Integer, ArrayList<Integer>> ptmSiteMap = ambiguousModificationsByPTM.get(originalPtmName);
+            ArrayList<Integer> secondarySites = ptmSiteMap.get(originalRepresentativeSite);
+            if (secondarySites != null) {
+                ptmSiteMap.remove(originalRepresentativeSite);
+                ptmSiteMap.put(newRepresentativeSite, secondarySites);
+            }
         }
     }
 

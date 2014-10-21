@@ -28,6 +28,7 @@ import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -2365,7 +2366,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                        if (peptideAssumption.getPeptide().getKey().equals(currentPeptideMatch.getTheoreticPeptide().getKey())) {
+                        if (peptideAssumption.getPeptide().getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences()).equals(currentPeptideMatch.getTheoreticPeptide().getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences()))) {
                             String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(currentPeptideMatch);
                             psmTable.setToolTipText(tooltip);
                         } else {
