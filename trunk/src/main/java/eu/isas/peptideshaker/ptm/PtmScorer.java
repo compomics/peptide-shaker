@@ -581,11 +581,6 @@ public class PtmScorer {
         HashMap<Double, Integer> variableModifications = new HashMap<Double, Integer>();
 
         Peptide peptide = peptideMatch.getTheoreticPeptide();
-        String tempKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-        if (tempKey.equals("IKISSPATIN_42.010565-ATAA-1_56.026215-ATAA-2_79.966331-ATAA-4")) {
-            int debug = 1;
-        }
-
         ArrayList<ModificationMatch> originalMatches = peptide.getModificationMatches();
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
         HashMap<Double, ArrayList<Integer>> inferredSites = new HashMap<Double, ArrayList<Integer>>();
