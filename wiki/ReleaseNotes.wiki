@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.35.0 (coming soon...):*
+*Changes in PeptideShaker 0.35.0 (October 23. 2014):*
  
  * NEW FEATURE: Comet (or more generally pep.xml) is now supported.
  * NEW FEATURE: Export features as Excel files.
@@ -12,6 +12,7 @@
  * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 77, adding Vervet-AGM (Chlorocebus sabaeus).
  * FEATURE IMPROVEMENT: Improved the PTM annotation in tables and tooltips.
  * FEATURE IMPROVEMENT: Improved the handling of ambiguously localized PTMs.
+ * FEATURE IMPROVEMENT: Improved the handling of complex PTM combinations.
  * FEATURE IMPROVEMENT: Improved the mapping of PTM scores at the peptide and protein level.
  * FEATURE IMPROVEMENT: Sped up the unzipping of projects in the New Project dialog.
  * FEATURE IMPROVEMENT: Sped up the PTM scoring.
@@ -19,7 +20,11 @@
  * FEATURE IMPROVEMENT: Added an OK/Cancel option to the save dialog appearing when exporting as zipping and the project is not saved.
  * FEATURE IMPROVEMENT: The list of database types and their occurrences is now included in the FASTA index.
  * FEATURE IMPROVEMENT: The "not a UniProt database" warning is now only shown if the main database type is not UniProt (hence adding custom headers from other databases is no longer an issue.)
+ * FEATURE IMPROVEMENT: Renamed "no enzyme" to the more understandable "unspecific".
+ * FEATURE IMPROVEMENT: Added support for unspecific cleavage for X!Tandem.
+ * FEATURE IMPROVEMENT: Added a button for selecting search settings files in the New Project dialog.
 
+ * BUG FIX: Fixed a bug in the use of the Ensembl gene mappings where a field had been renamed in the Ensembl web service.
  * BUG FIX: Corrected a bug impairing the import of results without decoys sequences.
  * BUG FIX: Fixed a bug in the New Project Dialog where canceling the unzipping still loaded the files.
  * BUG FIX: Fixed a bug in the Spectrum IDs tab where the fixed PTMs where always shown in the Spectrum Identification Results table.
@@ -31,7 +36,7 @@
  * BUG FIX: Fixed a bug in writing of user parameters with values in the mzid export.
  * BUG FIX: Fixed a bug in the protein coverage panel where the whole protein and top down enzymes were not supported correctly. 
 
- * LIBRARY UPDATE: Updated utilities to version 3.39.16.
+ * LIBRARY UPDATE: Updated utilities to version 3.40.0.
 
 ----
 
