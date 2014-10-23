@@ -501,44 +501,37 @@ public class PSPtmScores implements UrParameter {
                     PTM ptm = ptmFactory.getPTM(ptmName);
                     double ptmMass = ptm.getMass();
                     Integer lastSite = lastSites.get(ptmMass);
+                    HashMap<Integer, ArrayList<String>> ambiguityGroups = currentAmbiguityGroups.get(ptmMass);
                     if (lastSite != null && lastSite < site - 10) {
-                        HashMap<Integer, ArrayList<String>> ambiguityGroups = currentAmbiguityGroups.get(ptmMass);
-                        if (ambiguityGroups == null) {
-                            ambiguityGroups = new HashMap<Integer, ArrayList<String>>();
-                            currentAmbiguityGroups.put(ptmMass, ambiguityGroups);
-                        }
-                        ArrayList<String> modifications = ambiguityGroups.get(site);
-                        if (modifications == null) {
-                            modifications = new ArrayList<String>();
-                            ambiguityGroups.put(site, modifications);
-                        }
-                        modifications.add(ptmName);
                         addAmbiguousModificationSites(lastSite, ambiguityGroups);
-                        currentAmbiguityGroups.remove(ptmMass);
-                    } else {
+                        ambiguityGroups.clear();
                         lastSites.put(ptmMass, site);
-                        HashMap<Integer, ArrayList<String>> ambiguityGroups = currentAmbiguityGroups.get(ptmMass);
-                        if (ambiguityGroups == null) {
-                            ambiguityGroups = new HashMap<Integer, ArrayList<String>>();
-                            currentAmbiguityGroups.put(ptmMass, ambiguityGroups);
-                        }
-                        ArrayList<String> modifications = ambiguityGroups.get(site);
-                        if (modifications == null) {
-                            modifications = new ArrayList<String>();
-                            ambiguityGroups.put(site, modifications);
-                        }
-                        modifications.add(ptmName);
+                    } else if (lastSite == null) {
+                        lastSites.put(ptmMass, site);
                     }
+                    if (ambiguityGroups == null) {
+                        ambiguityGroups = new HashMap<Integer, ArrayList<String>>();
+                        currentAmbiguityGroups.put(ptmMass, ambiguityGroups);
+                    }
+                    ArrayList<String> modifications = ambiguityGroups.get(site);
+                    if (modifications == null) {
+                        modifications = new ArrayList<String>();
+                        ambiguityGroups.put(site, modifications);
+                    }
+                    modifications.add(ptmName);
                 }
             }
             for (double ptmMass : currentAmbiguityGroups.keySet()) {
                 Integer lastSite = lastSites.get(ptmMass);
                 HashMap<Integer, ArrayList<String>> ambiguityGroups = currentAmbiguityGroups.get(ptmMass);
-                addAmbiguousModificationSites(lastSite, ambiguityGroups);
+                if (ambiguityGroups != null && !ambiguityGroups.isEmpty()) {
+                    addAmbiguousModificationSites(lastSite, ambiguityGroups);
+                }
             }
             secondaryModificationSites = null;
         }
-        if (confidentModificationsByPTM == null && mainModificationSites != null) {
+        if (confidentModificationsByPTM == null && mainModificationSites
+                != null) {
             confidentModificationsByPTM = new HashMap<String, ArrayList<Integer>>();
             for (int site : mainModificationSites.keySet()) {
                 for (String ptmName : mainModificationSites.get(site)) {
