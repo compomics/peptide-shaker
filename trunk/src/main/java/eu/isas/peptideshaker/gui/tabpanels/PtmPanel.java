@@ -41,7 +41,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.*;
@@ -4025,7 +4024,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> getSelectedPsm() {
         return getSelectedPsm(relatedSelected);
-
     }
 
     /**
