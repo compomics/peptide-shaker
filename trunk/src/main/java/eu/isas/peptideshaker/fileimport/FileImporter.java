@@ -445,7 +445,6 @@ public class FileImporter {
                 this.spectrumFiles.put(file.getName(), file);
             }
 
-            tagMapper = new TagMapper(proteinTree, searchParameters, sequenceMatchingPreferences, annotationPreferences, exceptionHandler);
             peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler, exceptionHandler);
         }
 
@@ -681,8 +680,13 @@ public class FileImporter {
             }
 
             // Clear cache for sequencing files. TODO: make something more generic?
-            if (idFile.getName().endsWith("tags") && !peptideShaker.getCache().isEmpty()) {
-                peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
+            if (idFile.getName().endsWith("tags")) {
+                if (tagMapper == null) {
+                    tagMapper = new TagMapper(proteinTree, searchParameters, sequenceMatchingPreferences, annotationPreferences, exceptionHandler);
+                }
+                if (!peptideShaker.getCache().isEmpty()) {
+                    peptideShaker.getCache().reduceMemoryConsumption(0.9, waitingHandler);
+                }
             }
 
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);

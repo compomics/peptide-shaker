@@ -119,11 +119,11 @@ public class TagMapper {
      */
     public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, 
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-//        if (nThreads == 1) {
+        if (nThreads == 1) {
         mapTagsSingleThread(idfileReader, waitingHandler);
-//        } else {
-//            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
-//        }
+        } else {
+            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
+        }
     }
 
     /**
