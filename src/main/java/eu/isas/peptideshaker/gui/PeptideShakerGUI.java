@@ -5602,10 +5602,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 double mass = ptm.getMass();
 
                 if (ptm.getType() == PTM.MODAA) {
-                    for (AminoAcid aa : ptmPattern.getAminoAcidsAtTarget()) {
-                        if (!knownMassDeltas.containsValue((String) aa.singleLetterCode + "<" + shortName + ">")) {
-                            knownMassDeltas.put(mass + aa.monoisotopicMass,
-                                    (String) aa.singleLetterCode + "<" + shortName + ">");
+                    for (Character aa : ptmPattern.getAminoAcidsAtTarget()) {
+                        if (!knownMassDeltas.containsValue(aa + "<" + shortName + ">")) {
+                            AminoAcid aminoAcid = AminoAcid.getAminoAcid(aa);
+                            knownMassDeltas.put(mass + aminoAcid.monoisotopicMass,
+                                    aa + "<" + shortName + ">");
                         }
                     }
                 }
