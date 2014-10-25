@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.Ion;
@@ -93,7 +92,7 @@ public class TagMapper {
      * @param annotationPreferences the annotation parameters
      * @param exceptionHandler an exception handler
      */
-    public TagMapper(ProteinTree proteinTree, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, 
+    public TagMapper(ProteinTree proteinTree, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences,
             AnnotationPreferences annotationPreferences, ExceptionHandler exceptionHandler) {
         this.proteinTree = proteinTree;
         this.searchParameters = searchParameters;
@@ -117,13 +116,13 @@ public class TagMapper {
      * @throws SQLException
      * @throws MzMLUnmarshallerException
      */
-    public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, 
+    public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException,
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        if (nThreads == 1) {
-        mapTagsSingleThread(idfileReader, waitingHandler);
-        } else {
-            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
-        }
+//        if (nThreads == 1) {
+            mapTagsSingleThread(idfileReader, waitingHandler);
+//        } else {
+//            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
+//        }
     }
 
     /**
@@ -327,7 +326,7 @@ public class TagMapper {
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                                 PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                ArrayList<AminoAcid> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
+                                ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
                                 if (aaAtTarget.size() > 1) {
                                     throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
                                 }
@@ -366,12 +365,12 @@ public class TagMapper {
                                 }
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                                 PTM ptm = ptmFactory.getPTM(utilitiesPtmName);
-                                ArrayList<AminoAcid> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
+                                ArrayList<Character> aaAtTarget = ptm.getPattern().getAminoAcidsAtTarget();
                                 if (aaAtTarget.size() > 1) {
                                     throw new IllegalArgumentException("More than one amino acid can be targeted by the modification " + ptm + ", tag duplication required.");
                                 }
                                 int aaIndex = aa - 1;
-                                aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0).singleLetterCode.charAt(0));
+                                aminoAcidSequence.setAaAtIndex(aaIndex, aaAtTarget.get(0));
                             } else {
                                 Advocate notImplemented = Advocate.getAdvocate(advocateId);
                                 if (notImplemented == null) {

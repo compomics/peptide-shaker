@@ -720,8 +720,8 @@ public class MzIdentMLExport {
                     || currentPtm.getType() == PTM.MODCP) {
                 aminoAcidsAtTarget = ".";
             } else {
-                for (AminoAcid aa : currentPtm.getPattern().getAminoAcidsAtTarget()) {
-                    aminoAcidsAtTarget += aa.singleLetterCode;
+                for (Character aa : currentPtm.getPattern().getAminoAcidsAtTarget()) {
+                    aminoAcidsAtTarget += aa;
                 }
             }
 
