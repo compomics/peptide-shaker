@@ -1367,7 +1367,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         // First check whether a file has already been selected.
         // If so, start from that file's parent.
         File startLocation = new File(getLastSelectedFolder());
-        if (searchParameters.getParametersFile() != null 
+        if (searchParameters.getParametersFile() != null
                 && !searchTxt.getText().trim().equals("")
                 && !searchTxt.getText().trim().equals("Default")
                 && !searchTxt.getText().trim().equals("User Defined")) {
@@ -1673,10 +1673,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
                 SearchParameters.saveIdentificationParameters(searchParameters, file);
             } catch (Exception saveException) {
-            e.printStackTrace();
+                e.printStackTrace();
                 saveException.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
-        }
+            }
         }
 
         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
