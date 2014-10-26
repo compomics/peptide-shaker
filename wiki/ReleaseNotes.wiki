@@ -3,6 +3,16 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.1 (October 26. 2014):*
+
+ * BUG FIX: Fixed a bug in the auto update feature.
+ * BUG FIX: Fixed some backward compatibility issues. 
+ * BUG FIX: Corrected a bug in the tag mapping.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.41.1.
+
+----
+
 *Changes in PeptideShaker 0.35.0 (October 23. 2014):*
  
  * NEW FEATURE: Comet (or more generally pep.xml) is now supported.
