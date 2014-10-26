@@ -1109,6 +1109,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         fileChooser.setFileFilter(allFilter);
         fileChooser.addChoosableFileFilter(zipFilter);
+        fileChooser.addChoosableFileFilter(pepXMLFilter);
         fileChooser.addChoosableFileFilter(mzidFilter);
         fileChooser.addChoosableFileFilter(omssaFilter);
         fileChooser.addChoosableFileFilter(tandemFilter);
@@ -1672,10 +1673,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
                 SearchParameters.saveIdentificationParameters(searchParameters, file);
             } catch (Exception saveException) {
-                e.printStackTrace();
+            e.printStackTrace();
                 saveException.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
-            }
+        }
         }
 
         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
