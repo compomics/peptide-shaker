@@ -27,6 +27,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
+import com.compomics.util.experiment.identification.tags.matchers.TagMatcher;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -142,11 +143,12 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping tags to peptides.", true, true);
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications());
             for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    mapTagsForSpectrumMatch(spectrumMatch, key, waitingHandler, !matchIterator.hasNext());
+                    mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                 }
             }
         }
@@ -170,11 +172,12 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping tags to peptides.", true, true);
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications());
             for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    TagMapperRunnable tagMapperRunnable = new TagMapperRunnable(spectrumMatch, key, waitingHandler, !matchIterator.hasNext());
+                    TagMapperRunnable tagMapperRunnable = new TagMapperRunnable(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                     pool.submit(tagMapperRunnable);
                     if (waitingHandler.isRunCanceled()) {
                         pool.shutdownNow();
@@ -200,7 +203,7 @@ public class TagMapper {
      * @throws SQLException
      * @throws MzMLUnmarshallerException
      */
-    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();
@@ -253,7 +256,7 @@ public class TagMapper {
                             extendedTagList.add(tagAssumption.reverse(nY >= nB));
                         }
                         for (TagAssumption extendedAssumption : extendedTagList) {
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getVariableModifications(), false);
+                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), false);
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
@@ -412,6 +415,10 @@ public class TagMapper {
          * boolean indicating whether the progress bar should be increased.
          */
         private final boolean increaseProgress;
+        /**
+         * The tag to protein matcher.
+         */
+        private final TagMatcher tagMatcher;
 
         /**
          * Constructor.
@@ -421,11 +428,12 @@ public class TagMapper {
          * @param waitingHandler waiting handler to display progress and cancel
          * the process
          */
-        public TagMapperRunnable(SpectrumMatch spectrumMatch, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
+        public TagMapperRunnable(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
             this.spectrumMatch = spectrumMatch;
             this.key = key;
             this.waitingHandler = waitingHandler;
             this.increaseProgress = increaseProgress;
+            this.tagMatcher = tagMatcher;
         }
 
         @Override
@@ -433,7 +441,7 @@ public class TagMapper {
 
             try {
                 if (!waitingHandler.isRunCanceled()) {
-                    mapTagsForSpectrumMatch(spectrumMatch, key, waitingHandler, increaseProgress);
+                    mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, increaseProgress);
                 }
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
