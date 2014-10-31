@@ -1,13 +1,10 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
@@ -15,15 +12,8 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.identification.identification_parameters.XtandemParameters;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
-import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
-import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
-import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
-import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
-import com.compomics.util.experiment.io.identifications.idfilereaders.PepxmlIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
@@ -34,13 +24,10 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
-import de.proteinms.omxparser.util.OMSSAIdfileReader;
-import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.protein_inference.PeptideMapper;
@@ -446,7 +433,10 @@ public class FileImporter {
                 this.spectrumFiles.put(file.getName(), file);
             }
 
-            peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler, exceptionHandler);
+            UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            if (userPreferences.getMemoryPreference() > 2000) {
+                peptideMapper = new PeptideMapper(sequenceMatchingPreferences, idFilter, waitingHandler, exceptionHandler);
+            }
         }
 
         @Override
@@ -693,7 +683,7 @@ public class FileImporter {
 
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
-                if (!peptideMapper.isCanceled()) {
+                if (peptideMapper != null && !peptideMapper.isCanceled()) {
                     idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, sequenceMatchingPreferences, true);
                 } else {
                     idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, null, true);
@@ -735,16 +725,18 @@ public class FileImporter {
                     }
 
                     // Map the peptides on protein sequences
-                    try {
-                        if (!peptideMapper.isCanceled()) {
-                            peptideMapper.mapPeptides(fileReader.getPeptidesMap(), sequenceMatchingPreferences, idFilter, processingPreferences.getnThreads(), waitingHandler);
-                        }
-                        if (peptideMapper.isCanceled()) {
+                    if (peptideMapper != null) {
+                        try {
+                            if (!peptideMapper.isCanceled()) {
+                                peptideMapper.mapPeptides(fileReader.getPeptidesMap(), sequenceMatchingPreferences, idFilter, processingPreferences.getnThreads(), waitingHandler);
+                            }
+                            if (peptideMapper.isCanceled()) {
+                                fileReader.clearPeptidesMap();
+                            }
+                        } catch (OutOfMemoryError e) {
+                            e.printStackTrace();
                             fileReader.clearPeptidesMap();
                         }
-                    } catch (OutOfMemoryError e) {
-                        e.printStackTrace();
-                        fileReader.clearPeptidesMap();
                     }
                     // empty protein caches
                     if (MemoryConsumptionStatus.memoryUsed() > 0.8) {
@@ -755,14 +747,14 @@ public class FileImporter {
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                    PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), idFilter, sequenceMatchingPreferences, searchParameters, processingPreferences, fileReader, idFile, identification, 
+                    PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), idFilter, sequenceMatchingPreferences, searchParameters, processingPreferences, fileReader, idFile, identification,
                             inputMap, proteinCount, singleProteinList, exceptionHandler);
                     psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
 
                     nPSMs += psmImporter.getnPSMs();
                     nSecondary += psmImporter.getnSecondary();
                     nRetained += psmImporter.getnRetained();
-                    
+
                     metrics.addFoundCharges(psmImporter.getCharges());
                     if (psmImporter.getMaxPeptideErrorDa() > metrics.getMaxPeptidePrecursorErrorDa()) {
                         metrics.setMaxPeptidePrecursorErrorDa(psmImporter.getMaxPeptideErrorDa());
