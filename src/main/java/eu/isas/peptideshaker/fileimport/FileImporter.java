@@ -200,7 +200,7 @@ public class FileImporter {
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
             long fileSize = fastaFile.length();
-            int fileSizeInMb = (int) fileSize / 1048576;
+            int fileSizeInMb = Math.max((int) fileSize / 1048576, 1);
             long nSequences;
             if (!sequenceFactory.isDefaultReversed() || fileSizeInMb < memoryPreference / 4) {
                 nSequences = sequenceFactory.getNSequences();
