@@ -8,6 +8,7 @@
     <version>0.35.1</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
+    <description>Interpretation of proteomics identification results</description>
 
     <!-- Licence -->
     <licenses>
