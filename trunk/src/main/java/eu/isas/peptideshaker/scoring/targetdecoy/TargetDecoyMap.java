@@ -103,14 +103,16 @@ public class TargetDecoyMap implements Serializable {
      * @param score The given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public void put(double score, boolean isDecoy) {
-        if (!hitMap.containsKey(score)) {
-            hitMap.put(score, new TargetDecoyPoint());
+    public synchronized void put(double score, boolean isDecoy) {
+        TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
+        if (targetDecoyPoint == null) {
+            targetDecoyPoint = new TargetDecoyPoint();
+            hitMap.put(score, targetDecoyPoint);
         }
         if (isDecoy) {
-            hitMap.get(score).nDecoy++;
+            targetDecoyPoint.nDecoy++;
         } else {
-            hitMap.get(score).nTarget++;
+            targetDecoyPoint.nTarget++;
         }
     }
 
