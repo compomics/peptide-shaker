@@ -4,6 +4,7 @@ import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDist
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * This class contains metrics from the dataset for later use.
@@ -154,7 +155,7 @@ public class Metrics implements Serializable {
      *
      * @param foundCharges the new charge to add
      */
-    public void addFoundCharges(ArrayList<Integer> foundCharges) {
+    public void addFoundCharges(HashSet<Integer> foundCharges) {
         for (int newCharge : foundCharges) {
             if (!this.foundCharges.contains(newCharge)) {
                 this.foundCharges.add(newCharge);

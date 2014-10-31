@@ -1047,7 +1047,7 @@ public class PeptideShaker {
             identification.loadSpectrumMatches(spectrumFileName, null);
 
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-
+                
                 waitingHandler.increaseSecondaryProgressCounter();
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);

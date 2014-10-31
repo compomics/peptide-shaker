@@ -238,7 +238,7 @@ public class InputMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit was decoy or target
      * (resp. true/false)
      */
-    public void addEntry(int searchEngine, String spectrumFileName, double eValue, boolean isDecoy) {
+    public synchronized void addEntry(int searchEngine, String spectrumFileName, double eValue, boolean isDecoy) {
         TargetDecoyMap targetDecoyMap = inputMap.get(searchEngine);
         if (targetDecoyMap == null) {
             targetDecoyMap = new TargetDecoyMap();
@@ -364,7 +364,7 @@ public class InputMap implements Serializable {
      * @param unique boolean indicating whether the advocate was the only
      * advocate for the considered assumption
      */
-    public void addAdvocateContribution(Integer advocateId, String fileName, boolean unique) {
+    public synchronized void addAdvocateContribution(Integer advocateId, String fileName, boolean unique) {
         HashMap<String, Integer> advocateContributions = advocateContribution.get(advocateId);
         if (advocateContributions == null) {
             advocateContributions = new HashMap<String, Integer>();
@@ -504,7 +504,7 @@ public class InputMap implements Serializable {
      * @param decoy indicates whether the match maps to a target or a decoy
      * protein
      */
-    public void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy) {
+    public synchronized void setIntermediateScore(String fileName, int advocateIndex, int scoreIndex, double score, boolean decoy) {
         HashMap<Integer, HashMap<Integer, TargetDecoyMap>> advocateMap = intermediateScores.get(fileName);
         if (advocateMap == null) {
             advocateMap = new HashMap<Integer, HashMap<Integer, TargetDecoyMap>>();
