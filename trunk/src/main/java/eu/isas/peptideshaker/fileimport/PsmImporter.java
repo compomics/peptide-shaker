@@ -51,26 +51,26 @@ import java.util.concurrent.TimeUnit;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class can be used to import PSMs from search engine results
+ * This class can be used to import PSMs from search engine results.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PsmImporter {
 
     /**
-     * The protein sequence factory
+     * The protein sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The object cache to use when encountering memory issues
+     * The object cache to use when encountering memory issues.
      */
     private ObjectsCache peptideShakerCache;
     /**
@@ -102,27 +102,27 @@ public class PsmImporter {
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The progress of the import
+     * The progress of the import.
      */
     int progress = 0;
     /**
-     * The number of PSMs which did not pass the import filters
+     * The number of PSMs which did not pass the import filters.
      */
     int psmsRejected = 0;
     /**
-     * The number of PSMs which were rejected due to a protein issue
+     * The number of PSMs which were rejected due to a protein issue.
      */
     int proteinIssue = 0;
     /**
-     * The number of PSMs which were rejected due to a peptide issue
+     * The number of PSMs which were rejected due to a peptide issue.
      */
     int peptideIssue = 0;
     /**
-     * The number of PSMs which were rejected due to a precursor issue
+     * The number of PSMs which were rejected due to a precursor issue.
      */
     int precursorIssue = 0;
     /**
-     * The number of PSMs which were rejected due to a PTM issue
+     * The number of PSMs which were rejected due to a PTM issue.
      */
     int ptmIssue = 0;
     /**
@@ -130,35 +130,35 @@ public class PsmImporter {
      */
     private int nRetained = 0;
     /**
-     * The id file reader where the PSMs are from
+     * The id file reader where the PSMs are from.
      */
     private IdfileReader fileReader;
     /**
-     * The identification file where the PSMs are from
+     * The identification file where the PSMs are from.
      */
     private File idFile;
     /**
-     * List of ignored omssa modifications
+     * List of ignored OMSSA modifications.
      */
     private ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
     /**
-     * The maximal peptide mass error found in ppm
+     * The maximal peptide mass error found in ppm.
      */
     double maxPeptideErrorPpm = 0;
     /**
-     * The maximal peptide mass error found in Da
+     * The maximal peptide mass error found in Da.
      */
     double maxPeptideErrorDa = 0;
     /**
-     * The maximal tag mass error found in ppm
+     * The maximal tag mass error found in ppm.
      */
     double maxTagErrorPpm = 0;
     /**
-     * The maximal tag mass error found in Da
+     * The maximal tag mass error found in Da.
      */
     double maxTagErrorDa = 0;
     /**
-     * List of charges found
+     * List of charges found.
      */
     HashSet<Integer> charges = new HashSet<Integer>();
     /**
@@ -179,12 +179,12 @@ public class PsmImporter {
      */
     private InputMap inputMap;
     /**
-     * The exception handler
+     * The exception handler.
      */
     private ExceptionHandler exceptionHandler;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param peptideShakerCache the cache to use when memory issues are
      * encountered
@@ -202,8 +202,10 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences, SearchParameters searchParameters, ProcessingPreferences processingPreferences,
-            IdfileReader fileReader, File idFile, Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList, ExceptionHandler exceptionHandler) {
+    public PsmImporter(ObjectsCache peptideShakerCache, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences,
+            SearchParameters searchParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+            Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
+            ExceptionHandler exceptionHandler) {
         this.peptideShakerCache = peptideShakerCache;
         this.idFilter = idFilter;
         this.sequenceMatchingPreferences = sequenceMatchingPreferences;
@@ -221,10 +223,10 @@ public class PsmImporter {
     /**
      * Imports PSMs.
      *
-     * @param idFileSpectrumMatches the psms to import
+     * @param idFileSpectrumMatches the PSMs to import
      * @param nThreads the number of threads to use
      * @param waitingHandler waiting handler to display progress and allow
-     * cancelling the import
+     * canceling the import
      *
      * @throws IOException
      * @throws SQLException
@@ -233,7 +235,8 @@ public class PsmImporter {
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler) throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
+            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
         if (nThreads == 1) {
             importPsmsSingleThread(idFileSpectrumMatches, waitingHandler);
         } else {
@@ -244,10 +247,10 @@ public class PsmImporter {
     /**
      * Imports PSMs using multiple threads.
      *
-     * @param idFileSpectrumMatches the psms to import
+     * @param idFileSpectrumMatches the PSMs to import
      * @param nThreads the number of threads to use
      * @param waitingHandler waiting handler to display progress and allow
-     * cancelling the import
+     * canceling the import
      *
      * @throws IOException
      * @throws SQLException
@@ -256,7 +259,8 @@ public class PsmImporter {
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    public void importPsmsMultipleThreads(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler) throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void importPsmsMultipleThreads(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
+            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         while (!idFileSpectrumMatches.isEmpty()) {
@@ -277,9 +281,9 @@ public class PsmImporter {
     /**
      * Imports PSMs using a single thread
      *
-     * @param idFileSpectrumMatches the psms to import
+     * @param idFileSpectrumMatches the PSMs to import
      * @param waitingHandler waiting handler to display progress and allow
-     * cancelling the import
+     * canceling the import
      *
      * @throws IOException
      * @throws SQLException
@@ -288,7 +292,8 @@ public class PsmImporter {
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler) throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
+            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         while (!idFileSpectrumMatches.isEmpty()) {
             SpectrumMatch match = idFileSpectrumMatches.pollLast();
@@ -297,11 +302,11 @@ public class PsmImporter {
     }
 
     /**
-     * Imports a psm.
+     * Imports a PSM.
      *
      * @param spectrumMatch the spectrum match to import
      * @param waitingHandler waiting handler to display progress and allow
-     * cancelling the import
+     * canceling the import
      *
      * @throws IOException
      * @throws SQLException
@@ -310,7 +315,8 @@ public class PsmImporter {
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    private void importPsm(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler) throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    private void importPsm(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler)
+            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         // free memory if needed
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
@@ -834,7 +840,7 @@ public class PsmImporter {
     }
 
     /**
-     * Saves the peptide maximal mass error and found charge
+     * Saves the peptide maximal mass error and found charge.
      *
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption
@@ -845,7 +851,8 @@ public class PsmImporter {
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption) throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+    private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption)
+            throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
         double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
         double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, true));
@@ -884,7 +891,7 @@ public class PsmImporter {
     }
 
     /**
-     * Saves the maximal precursor error and charge
+     * Saves the maximal precursor error and charge.
      *
      * @param spectrumKey the key of the spectrum match
      * @param tagAssumption the tag assumption
@@ -944,12 +951,12 @@ public class PsmImporter {
 
     /**
      * Returns the mass indicated by the identification algorithm for the given
-     * ptm. 0 if not found.
+     * PTM. 0 if not found.
      *
      * @param sePtmName the name according to the identification algorithm
      * @param modificationProfile the modification profile of the identification
      *
-     * @return the mass of the ptm
+     * @return the mass of the PTM
      */
     private double getRefMass(String sePtmName, ModificationProfile modificationProfile) {
         Double refMass = 0.0;
@@ -1126,7 +1133,7 @@ public class PsmImporter {
          *
          * @param spectrumMatch the match to import
          * @param waitingHandler a waiting handler to display progress and allow
-         * cancelling the process
+         * canceling the process
          */
         public PsmImporterRunnable(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler) {
             this.spectrumMatch = spectrumMatch;
@@ -1147,5 +1154,4 @@ public class PsmImporter {
             }
         }
     }
-
 }
