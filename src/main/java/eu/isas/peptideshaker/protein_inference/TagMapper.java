@@ -142,7 +142,7 @@ public class TagMapper {
         HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
-            waitingHandler.appendReport("Mapping tags to peptides.", true, true);
+            waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
             TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications());
             for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
@@ -274,6 +274,7 @@ public class TagMapper {
             }
         }
         if (increaseProgress) {
+            tagMatcher.clearCache();
             waitingHandler.increaseSecondaryProgressCounter();
         }
         // free memory if needed bzw possible
