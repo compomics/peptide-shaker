@@ -122,7 +122,7 @@ public class TagMapper {
         if (nThreads == 1) {
             mapTagsSingleThread(idfileReader, waitingHandler);
         } else {
-            mapTagsMultipleThreads(idfileReader, waitingHandler, nThreads);
+            mapTagsThreadingPerKey(idfileReader, waitingHandler, nThreads);
         }
     }
 
@@ -143,7 +143,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications());
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
             for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
@@ -165,24 +165,60 @@ public class TagMapper {
      * @throws SQLException
      * @throws MzMLUnmarshallerException
      */
-    private void mapTagsMultipleThreads(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsThreadingPerMatch(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
-            waitingHandler.appendReport("Mapping tags to peptides.", true, true);
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications());
+            waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
+            tagMatcher.setSynchronizedIndexing(true);
             for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    TagMapperRunnable tagMapperRunnable = new TagMapperRunnable(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    SpectrumMatchTagMapperRunnable tagMapperRunnable = new SpectrumMatchTagMapperRunnable(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                     pool.submit(tagMapperRunnable);
                     if (waitingHandler.isRunCanceled()) {
                         pool.shutdownNow();
                         return;
                     }
+                }
+            }
+        }
+        pool.shutdown();
+        if (!pool.awaitTermination(1, TimeUnit.DAYS)) {
+            waitingHandler.appendReport("Mapping tags timed out. Please contact the developers.", true, true);
+        }
+    }
+
+    /**
+     * Maps tags in the protein database.
+     *
+     * @param idfileReader the id file reader
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws MzMLUnmarshallerException
+     */
+    private void mapTagsThreadingPerKey(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+
+        ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+        HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
+        if (tagMap != null && !tagMap.isEmpty()) {
+            waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
+            waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
+            for (String key : tagMap.keySet()) {
+                LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
+                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, tagMatcher, key, waitingHandler);
+                pool.submit(tagMapperRunnable);
+                if (waitingHandler.isRunCanceled()) {
+                    pool.shutdownNow();
+                    return;
                 }
             }
         }
@@ -256,7 +292,7 @@ public class TagMapper {
                             extendedTagList.add(tagAssumption.reverse(nY >= nB));
                         }
                         for (TagAssumption extendedAssumption : extendedTagList) {
-                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy(), false);
+                            HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
@@ -394,9 +430,68 @@ public class TagMapper {
     }
 
     /**
+     * Private runnable to map tags of all spectrum matches of a key.
+     */
+    private class KeyTagMapperRunnable implements Runnable {
+
+        /**
+         * The spectrum matches to process.
+         */
+        private final LinkedList<SpectrumMatch> spectrumMatches;
+
+        /**
+         * The tree key.
+         */
+        private final String key;
+
+        /**
+         * The waiting handler to display progress and cancel the process.
+         */
+        private final WaitingHandler waitingHandler;
+        /**
+         * The tag to protein matcher.
+         */
+        private final TagMatcher tagMatcher;
+
+        /**
+         * Constructor.
+         *
+         * @param spectrumMatches the spectrum matches to process
+         * @param key the key of tags to map
+         * @param waitingHandler waiting handler to display progress and cancel
+         * the process
+         */
+        public KeyTagMapperRunnable(LinkedList<SpectrumMatch> spectrumMatches, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler) {
+            this.spectrumMatches = spectrumMatches;
+            this.key = key;
+            this.waitingHandler = waitingHandler;
+            this.tagMatcher = tagMatcher;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                Iterator<SpectrumMatch> matchIterator = spectrumMatches.iterator();
+                while (matchIterator.hasNext()) {
+                    SpectrumMatch spectrumMatch = matchIterator.next();
+                    if (!waitingHandler.isRunCanceled()) {
+                        mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    }
+                }
+            } catch (Exception e) {
+                if (!waitingHandler.isRunCanceled()) {
+                    exceptionHandler.catchException(e);
+                    waitingHandler.setRunCanceled();
+                }
+            }
+        }
+    }
+
+    /**
      * Private runnable to map tags of a spectrum match.
      */
-    private class TagMapperRunnable implements Runnable {
+    private class SpectrumMatchTagMapperRunnable implements Runnable {
 
         /**
          * The spectrum match to process.
@@ -429,7 +524,7 @@ public class TagMapper {
          * @param waitingHandler waiting handler to display progress and cancel
          * the process
          */
-        public TagMapperRunnable(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
+        public SpectrumMatchTagMapperRunnable(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
             this.spectrumMatch = spectrumMatch;
             this.key = key;
             this.waitingHandler = waitingHandler;

@@ -89,7 +89,7 @@ public class PeptideMapper {
         if (nThreads == 1) {
             mapPeptidesSingleThreaded(peptideMap, waitingHandler);
         } else {
-            mapPeptidesMultiThreaded(peptideMap, nThreads, waitingHandler);
+            mapPeptidesThreadingPerKey(peptideMap, nThreads, waitingHandler);
         }
     }
 
@@ -141,7 +141,51 @@ public class PeptideMapper {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void mapPeptidesMultiThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
+    private void mapPeptidesThreadingPerKey(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
+            WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
+
+        if (peptideMap != null && !peptideMap.isEmpty()) {
+            waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
+            waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
+            HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
+            ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+            for (String key : keys) {
+                LinkedList<Peptide> peptides = peptideMap.get(key);
+                PeptideListMapperRunnable peptideMapperRunnable = new PeptideListMapperRunnable(peptides);
+                pool.submit(peptideMapperRunnable);
+                if (canceled || waitingHandler.isRunCanceled()) {
+                    pool.shutdownNow();
+                    return;
+                }
+                peptideMap.remove(key);
+                if (canceled || waitingHandler.isRunCanceled()) {
+                    pool.shutdownNow();
+                    return;
+                }
+            }
+            pool.shutdown();
+            if (!pool.awaitTermination(1, TimeUnit.HOURS)) {
+                waitingHandler.appendReport("Mapping peptides timed out. Please contact the developers.", true, true);
+            }
+        }
+    }
+
+    /**
+     * Maps the peptides found to the proteins.
+     *
+     * @param peptideMap a map of the peptides to map: start of the sequence ->
+     * list of peptides
+     * @param sequenceMatchingPreferences The sequence matching preferences
+     * @param idFilter The import filter
+     * @param nThreads The number of threads to use
+     * @param waitingHandler A waiting handler
+     *
+     * @throws java.io.IOException
+     * @throws java.lang.InterruptedException
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    private void mapPeptidesThreadingPerPeptide(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
             WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
@@ -221,7 +265,45 @@ public class PeptideMapper {
     }
 
     /**
-     * Private runnable to map peptides.
+     * Private runnable to map peptides from a list.
+     */
+    private class PeptideListMapperRunnable implements Runnable {
+
+        /**
+         * The peptides to map.
+         */
+        private LinkedList<Peptide> peptideList;
+
+        /**
+         * Constructor.
+         *
+         * @param peptideList the peptides to map
+         */
+        public PeptideListMapperRunnable(LinkedList<Peptide> peptideList) {
+            this.peptideList = peptideList;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                Iterator<Peptide> peptideIterator = peptideList.iterator();
+                while (peptideIterator.hasNext()) {
+                    Peptide peptide = peptideIterator.next();
+                    if (!canceled && !waitingHandler.isRunCanceled()) {
+                        mapPeptide(peptide, !peptideIterator.hasNext());
+                    }
+                }
+            } catch (Exception e) {
+                if (!canceled && !waitingHandler.isRunCanceled()) {
+                    exceptionHandler.catchException(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Private runnable to map a peptide.
      */
     private class PeptideMapperRunnable implements Runnable {
 
