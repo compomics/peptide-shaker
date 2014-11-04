@@ -200,7 +200,7 @@ public class FastaExport {
             b.write(accession);
             b.newLine();
         } else {
-            b.write(sequenceFactory.getHeader(accession).toString());
+            b.write(sequenceFactory.getHeader(accession).getRawHeader());
             b.newLine();
             b.write(sequenceFactory.getProtein(accession).getSequence());
             b.newLine();
