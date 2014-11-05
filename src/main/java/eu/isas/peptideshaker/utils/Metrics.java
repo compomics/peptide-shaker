@@ -117,7 +117,7 @@ public class Metrics implements Serializable {
      */
     private NonSymmetricalNormalDistribution peptideLengthDistribution = null;
     /**
-     * Map of the spectrum keys grouped per peptide. Spectrum file name -> list
+     * Map of the spectrum keys grouped per peptide. Spectrum file name &gt; list
      * of keys.
      */
     private HashMap<String, ArrayList<String>> groupedSpectrumKeys;

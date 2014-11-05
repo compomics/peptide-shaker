@@ -84,11 +84,11 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private TargetDecoySeries targetDecoySeries;
     /**
-     * The PSMs map: # in the list -> map key.
+     * The PSMs map: # in the list &gt; map key.
      */
     private HashMap<Integer, HashMap<Integer, String>> psmMap = new HashMap<Integer, HashMap<Integer, String>>();
     /**
-     * The peptide map: # in the list -> map key.
+     * The peptide map: # in the list &gt; map key.
      */
     private HashMap<Integer, String> peptideMap = new HashMap<Integer, String>();
     /**
@@ -96,7 +96,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private XYPlot confidencePlot = new XYPlot();
     /**
-     * The fdr fnr plot.
+     * The FDR/FNR plot.
      */
     private XYPlot fdrFnrPlot = new XYPlot();
     /**
@@ -116,7 +116,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, Double> lastThresholds = new HashMap<Integer, Double>();
     /**
-     * The last threshold type 0 -> confidence 1 -> FDR 2 -> FNR
+     * The last threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR
      */
     private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<Integer, Integer>();
     /**
@@ -124,7 +124,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, Double> originalThresholds = new HashMap<Integer, Double>();
     /**
-     * The original threshold type 0 -> confidence 1 -> FDR 2 -> FNR.
+     * The original threshold type 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      */
     private HashMap<Integer, Integer> originalThresholdTypes = new HashMap<Integer, Integer>();
     /**

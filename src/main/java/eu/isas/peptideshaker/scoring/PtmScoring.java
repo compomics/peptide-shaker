@@ -392,7 +392,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the map of the localization. site -> confidence level.
+     * Returns the map of the localization. site &gt; confidence level.
      *
      * @return the map of the localization
      */

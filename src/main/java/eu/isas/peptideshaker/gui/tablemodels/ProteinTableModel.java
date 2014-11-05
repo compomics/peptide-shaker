@@ -555,8 +555,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * Set up the properties of the protein table. Warning: when changing this
      * method please update reporter as well!
      *
-     * @TODO: really did not know where to put this...
-     *
      * @param proteinTable the protein table
      * @param sparklineColor the sparkline color to use
      * @param sparklineColorNotValidated the sparkline color for not validated
@@ -571,6 +569,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     public static void setProteinTableProperties(JTable proteinTable, Color sparklineColor, Color sparklineColorNotValidated,
             Color sparklineColorNotFound, Color sparklineColorDoubtful, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
 
+        // @TODO: find a better location for this method?
+        
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);

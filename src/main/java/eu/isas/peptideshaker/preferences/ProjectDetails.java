@@ -36,7 +36,7 @@ public class ProjectDetails implements Serializable {
     private HashMap<String, String> identificationFileSearchEngineVersion = new HashMap<String, String>();
     /**
      * Map of the identification algorithms names and versions used to generate
-     * the identification files. identification file name -> Advocate Ids ->
+     * the identification files. identification file name &gt; Advocate Ids &gt;
      * identification algorithm versions used.
      */
     private HashMap<String, HashMap<String, ArrayList<String>>> identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
@@ -521,7 +521,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the different identification algorithm versions used in a map:
-     * algorithm name -> versions.
+     * algorithm name &gt; versions.
      *
      * @return the different identification algorithm versions used
      */
@@ -553,7 +553,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the identification algorithms used to create the id file in map:
-     * algorithm name -> algorithm version.
+     * algorithm name &gt; algorithm version.
      *
      * @param idFileName the identification file name
      *
@@ -574,7 +574,7 @@ public class ProjectDetails implements Serializable {
      *
      * @param idFileName the name of the identification file
      * @param fileIdentificationAlgorithms the identification algorithms used to
-     * create this file in a map: algorithm name -> versions
+     * create this file in a map: algorithm name &gt; versions
      */
     public void setIdentificationAlgorithmsForFile(String idFileName, HashMap<String, ArrayList<String>> fileIdentificationAlgorithms) {
         if (identificationAlgorithms == null) {
