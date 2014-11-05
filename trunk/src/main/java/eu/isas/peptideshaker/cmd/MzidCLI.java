@@ -59,6 +59,8 @@ public class MzidCLI extends CpsParent {
 
     /**
      * Calling this method will run the configured PeptideShaker process.
+     *
+     * @return returns 1 if the process was canceled
      */
     public Object call() {
 
@@ -139,9 +141,9 @@ public class MzidCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-        
+
         waitingHandler.appendReport("MzIdentML export completed.", true, true);
-        
+
         System.exit(0);
 
         return null;
@@ -160,8 +162,8 @@ public class MzidCLI extends CpsParent {
     /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
-     * @throws IOException
-     * @throws SQLException
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
      */
     public void closePeptideShaker() throws IOException, SQLException {
 

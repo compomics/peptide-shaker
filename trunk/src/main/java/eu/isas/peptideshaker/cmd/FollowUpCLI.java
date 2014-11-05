@@ -59,6 +59,8 @@ public class FollowUpCLI extends CpsParent {
 
     /**
      * Calling this method will run the configured PeptideShaker process.
+     *
+     * @return returns 1 if the process was canceled
      */
     public Object call() {
 
@@ -229,8 +231,8 @@ public class FollowUpCLI extends CpsParent {
     /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
-     * @throws IOException
-     * @throws SQLException
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
      */
     public void closePeptideShaker() throws IOException, SQLException {
 

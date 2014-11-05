@@ -46,11 +46,12 @@ public class CLIMethods {
      * @param annotationPreferences the annotation preferences
      * @param waitingHandler a waiting handler to display progress
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
             AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
@@ -76,11 +77,12 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
@@ -100,10 +102,10 @@ public class CLIMethods {
      * generator
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
@@ -124,11 +126,11 @@ public class CLIMethods {
      * generator
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
-     * 
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getFastaExportFile();
@@ -147,10 +149,10 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
@@ -169,11 +171,12 @@ public class CLIMethods {
      * @param annotationPreferences the annotation preferences
      * @param waitingHandler a waiting handler to display progress
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
@@ -194,11 +197,12 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param filterPreferences the filter preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<InclusionListExport.PeptideFilterType>();
@@ -236,13 +240,16 @@ public class CLIMethods {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
-     * @throws org.apache.commons.math.MathException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IllegalArgumentException thrown if IllegalArgumentException
+     * occurs
+     * @throws org.apache.commons.math.MathException thrown if MathException
+     * occurs
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
@@ -250,11 +257,11 @@ public class CLIMethods {
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
-        
+
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
-        
+
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
                 searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, sequenceMatchingPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
@@ -268,13 +275,13 @@ public class CLIMethods {
      * @param reportType the type of report of interest
      * @param waitingHandler waiting handler displaying feedback to the user
      *
-     * @throws IOException
+     * @throws IOException thrown of IOException occurs
      */
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultDocumentation(reportType));
-        
+
         //@TODO: allow format selection
         PSExportFactory.writeDocumentation(exportScheme, ExportFormat.text, reportFile);
     }
@@ -288,11 +295,12 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler allowing display of progress and
      * interruption of the export
      *
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
-     * @throws InterruptedException
-     * @throws SQLException
+     * @throws IOException thrown of IOException occurs
+     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     * @throws InterruptedException thrown if InterruptedException occurs
      */
     public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
 

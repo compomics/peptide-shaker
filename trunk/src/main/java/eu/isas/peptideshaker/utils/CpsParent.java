@@ -131,10 +131,12 @@ public class CpsParent extends UserPreferencesParent {
      * @param jarFilePath the path to the jar file
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * 
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      */
     public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
 
@@ -246,10 +248,11 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler waiting handler displaying feedback to the user.
      * can be null.
      * @param emptyCache if true the cache will be emptied
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws ArchiveException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ArchiveException thrown if ArchiveException occurs
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, searchParameters,
@@ -266,10 +269,11 @@ public class CpsParent extends UserPreferencesParent {
      * Loads the FASTA file in the sequence factory.
      *
      * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * Can be null.
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -284,9 +288,10 @@ public class CpsParent extends UserPreferencesParent {
      * instance, can be null
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadFastaFile(File folder, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -321,9 +326,10 @@ public class CpsParent extends UserPreferencesParent {
      * Loads the spectra in the spectrum factory.
      *
      * @param waitingHandler a waiting handler displaying progress to the user.
-     * Can be null
-     * @throws FileNotFoundException
-     * @throws IOException
+     * Can be null.
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -338,8 +344,9 @@ public class CpsParent extends UserPreferencesParent {
      * instance, can be null
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -379,8 +386,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param spectrumFileName the name of the spectrum file to load
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException
+     * occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -597,7 +605,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the identification feature generator.
      *
-     * @param identificationFeaturesGenerator
+     * @param identificationFeaturesGenerator the identification feature generator
      */
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -606,7 +614,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the ID filter.
      *
-     * @param idFilter
+     * @param idFilter the ID filter
      */
     public void setIdFilter(IdFilter idFilter) {
         this.idFilter = idFilter;
@@ -615,7 +623,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the annotation preferences.
      *
-     * @param annotationPreferences
+     * @param annotationPreferences the annotation preferences
      */
     public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
         this.annotationPreferences = annotationPreferences;
@@ -624,7 +632,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the spectrum counting preferences.
      *
-     * @param spectrumCountingPreferences
+     * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -633,7 +641,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the PTM scoring preferences.
      *
-     * @param ptmScoringPreferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      */
     public void setPtmScoringPreferences(PTMScoringPreferences ptmScoringPreferences) {
         this.ptmScoringPreferences = ptmScoringPreferences;
@@ -642,7 +650,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the project details.
      *
-     * @param projectDetails
+     * @param projectDetails the project details
      */
     public void setProjectDetails(ProjectDetails projectDetails) {
         this.projectDetails = projectDetails;
@@ -651,7 +659,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the search parameters.
      *
-     * @param searchParameters
+     * @param searchParameters the search parameters
      */
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
@@ -660,7 +668,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the processing preferences.
      *
-     * @param processingPreferences
+     * @param processingPreferences the processing preferences
      */
     public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
         this.processingPreferences = processingPreferences;
@@ -687,7 +695,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the metrics.
      *
-     * @param metrics
+     * @param metrics the metrics
      */
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
@@ -696,7 +704,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the gene preferences.
      *
-     * @param genePreferences
+     * @param genePreferences the gene preferences
      */
     public void setGenePreferences(GenePreferences genePreferences) {
         this.genePreferences = genePreferences;
@@ -705,7 +713,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the objects cache.
      *
-     * @param objectsCache
+     * @param objectsCache the objects cache
      */
     public void setObjectsCache(ObjectsCache objectsCache) {
         this.objectsCache = objectsCache;
@@ -714,7 +722,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the filter preferences.
      *
-     * @param filterPreferences
+     * @param filterPreferences the filter preferences
      */
     public void setFilterPreferences(FilterPreferences filterPreferences) {
         this.filterPreferences = filterPreferences;
@@ -723,7 +731,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the display preferences.
      *
-     * @param displayPreferences
+     * @param displayPreferences the display preferences
      */
     public void setDisplayPreferences(DisplayPreferences displayPreferences) {
         this.displayPreferences = displayPreferences;
@@ -732,7 +740,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the cps file.
      *
-     * @param cpsFile
+     * @param cpsFile the cps file
      */
     public void setCpsFile(File cpsFile) {
         this.cpsFile = cpsFile;
@@ -750,7 +758,7 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the identification object.
      *
-     * @param identification
+     * @param identification the identification object
      */
     public void setIdentification(Identification identification) {
         this.identification = identification;

@@ -97,7 +97,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
     /**
      * Calling this method will run the configured PeptideShaker process.
      *
-     * @throws java.lang.Exception
+     * @throws Exception thrown if an exception occurs
      */
     public Object call() throws Exception {
 
@@ -406,7 +406,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Creates the PeptideShaker project based on the identification files
      * provided in the command line input
      *
-     * @throws java.io.IOException
+     * @throws IOException thrown if an exception occurs
      */
     public void createProject() throws IOException {
 
@@ -694,8 +694,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
      * @param identification the identification to close
-     * @throws IOException
-     * @throws SQLException
+     * @throws IOException thrown of IOException occurs
+     * @throws SQLException thrown if SQLException occurs
      */
     public void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
