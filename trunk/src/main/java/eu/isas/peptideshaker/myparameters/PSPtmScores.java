@@ -28,12 +28,12 @@ public class PSPtmScores implements UrParameter {
     private HashMap<String, PtmScoring> ptmMap = new HashMap<String, PtmScoring>();
     /**
      * A list of all modification sites confidently localized on a sequence in a
-     * map: site -> PTM names.
+     * map: site &gt; PTM names.
      */
     private HashMap<Integer, ArrayList<String>> mainModificationSites = null;
     /**
      * A map of all confident modifications in a sequence indexed by ptm: PTM
-     * name -> sites.
+     * name &gt; sites.
      */
     private HashMap<String, ArrayList<Integer>> confidentModificationsByPTM = null;
     /**
@@ -44,12 +44,12 @@ public class PSPtmScores implements UrParameter {
     private HashMap<Integer, ArrayList<String>> secondaryModificationSites = null;
     /**
      * A list of all ambiguous modifications in a sequence: representative site
-     * -> secondary site -> PTM names.
+     * &gt; secondary site &gt; PTM names.
      */
     private HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousModificationsByRepresentativeSite = null;
     /**
      * A map of all ambiguous modifications in a sequence indexed by PTM: PTM
-     * name -> representative site -> secondary sites.
+     * name &gt; representative site &gt; secondary sites.
      */
     private HashMap<String, HashMap<Integer, ArrayList<Integer>>> ambiguousModificationsByPTM = null;
 
@@ -177,7 +177,7 @@ public class PSPtmScores implements UrParameter {
      *
      * @param representativeSite the representative site of this modification
      * group
-     * @param possibleModifications the possible modifications in a map: site ->
+     * @param possibleModifications the possible modifications in a map: site &gt;
      * PTM name
      */
     public void addAmbiguousModificationSites(int representativeSite, HashMap<Integer, ArrayList<String>> possibleModifications) {
@@ -379,7 +379,7 @@ public class PSPtmScores implements UrParameter {
 
     /**
      * Returns the ambiguous PTM assignments registered at the given
-     * representative site in a map: secondary site -> PTMs.
+     * representative site in a map: secondary site &gt; PTMs.
      *
      * @param representativeSite the representative site of interest
      *

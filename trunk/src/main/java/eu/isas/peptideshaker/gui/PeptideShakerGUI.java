@@ -322,18 +322,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * The horizontal padding used before and after the text in the titled
      * borders. (Needed to make it look as good in Java 7 as it did in Java
      * 6...)
-     *
-     * @TODO: move to utilities?
      */
-    public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
+    public static String TITLED_BORDER_HORIZONTAL_PADDING = ""; // @TODO: move to utilities?
     /**
      * The horizontal padding used before and after the text in the titled
      * borders. (Needed to make it look as good in Java 7 as it did in Java
      * 6...)
-     *
-     * @TODO: move to utilities?
      */
-    public static String TITLED_BORDER_HORIZONTAL_PADDING_HTML = "";
+    public static String TITLED_BORDER_HORIZONTAL_PADDING_HTML = ""; // @TODO: move to utilities?
     /**
      * The list of the default modifications.
      */

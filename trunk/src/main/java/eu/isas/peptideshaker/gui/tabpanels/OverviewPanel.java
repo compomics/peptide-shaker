@@ -28,7 +28,6 @@ import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.MatchValidationDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -103,8 +102,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private String currentSpectrumKey = "";
     /**
-     * The current sequence coverage in a map: likelihood to find the peptide ->
-     * start end indexes -> validation level
+     * The current sequence coverage in a map: likelihood to find the peptide &gt;
+     * start end indexes &gt; validation level
      */
     private HashMap<Double, HashMap<int[], Integer>> coverage;
     /**
@@ -2227,7 +2226,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // check if we ought to show a tooltip with mod details
                 String sequence = (String) peptideTable.getValueAt(row, column);
 
-                if (sequence.indexOf("<span") != -1) {
+                if (sequence.contains("<span")) {
                     try {
                         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
                         String peptideKey = peptideKeys.get(tableModel.getViewIndex(row));
@@ -2354,7 +2353,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // check if we ought to show a tooltip with mod details
                 String sequence = (String) psmTable.getValueAt(row, column);
 
-                if (sequence.indexOf("<span") != -1) {
+                if (sequence.contains("<span")) {
                     try {
                         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
                         int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
@@ -5611,13 +5610,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // show popup menu
             JPopupMenu peptidesPopupMenu = new JPopupMenu();
 
-            for (int i = 0; i < allAnnotation.size(); i++) {
-
-                if (allAnnotation.get(i).isClickable()) {
-
-                    String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + allAnnotation.get(i).getAnnotation() + "</html>";
-                    final String peptideKey = allAnnotation.get(i).getIdentifier();
-
+            for (ResidueAnnotation currentAnnotation : allAnnotation) {
+                if (currentAnnotation.isClickable()) {
+                    String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + currentAnnotation.getAnnotation() + "</html>";
+                    final String peptideKey = currentAnnotation.getIdentifier();
                     JMenuItem menuItem = new JMenuItem(text);
                     menuItem.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -5652,7 +5648,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             });
                         }
                     });
-
                     peptidesPopupMenu.add(menuItem);
                 }
             }

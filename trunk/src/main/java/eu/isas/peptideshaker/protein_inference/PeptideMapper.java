@@ -70,7 +70,7 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence ->
+     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
      * list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param idFilter The import filter
@@ -96,7 +96,7 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence ->
+     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
      * list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param idFilter The import filter
@@ -129,7 +129,7 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence ->
+     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
      * list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param idFilter The import filter
@@ -173,7 +173,7 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence ->
+     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
      * list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param idFilter The import filter

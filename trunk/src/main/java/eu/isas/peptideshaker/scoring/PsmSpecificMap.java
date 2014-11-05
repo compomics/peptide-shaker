@@ -51,8 +51,8 @@ public class PsmSpecificMap implements Serializable {
      */
     private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
     /**
-     * The filters to use to flag doubtful matches in a map: charge -> file name
-     * -> list of filters.
+     * The filters to use to flag doubtful matches in a map: charge &gt; file name
+     * &gt; list of filters.
      */
     private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>>();
 

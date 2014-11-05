@@ -165,7 +165,7 @@ public class PSParameter implements UrParameter {
      */
     private HashMap<String, Boolean> qcFilters = new HashMap<String, Boolean>();
     /**
-     * Map of the intermediate scores. Score index -> value
+     * Map of the intermediate scores. Score index &gt; value
      */
     private HashMap<Integer, Double> intermediateScores;
 

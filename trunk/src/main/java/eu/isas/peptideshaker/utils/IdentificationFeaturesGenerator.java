@@ -192,7 +192,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Estimates the sequence coverage for the given protein match according to
-     * the validation level: validation level -> share of the sequence uniquely
+     * the validation level: validation level &gt; share of the sequence uniquely
      * covered by this validation level.
      *
      * @param proteinMatchKey the key of the protein match
@@ -353,7 +353,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns an array of the probability to cover the sequence of the given
-     * protein. aa index -> probability, 0 is the first amino acid
+     * protein. aa index &gt; probability, 0 is the first amino acid
      *
      * @param proteinMatchKey the key of the protein of interest
      * @return an array of boolean indicating whether the amino acids of given

@@ -28,12 +28,12 @@ public class InputMap implements Serializable {
      */
     private HashMap<Integer, TargetDecoyMap> inputMap = new HashMap<Integer, TargetDecoyMap>();
     /**
-     * Map of the hits per file as imported. advocate index -> file name ->
+     * Map of the hits per file as imported. advocate index &gt; file name &gt;
      * target decoy map
      */
     private HashMap<Integer, HashMap<String, TargetDecoyMap>> inputSpecificMap = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
     /**
-     * Map of the intermediate scores. Name of the file -> advocate index ->
+     * Map of the intermediate scores. Name of the file &gt; advocate index &gt;
      * score index
      */
     private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>>();
@@ -42,13 +42,13 @@ public class InputMap implements Serializable {
      */
     private ArrayList<AssumptionFilter> doubtfulMatchesFilters = getDefaultAssumptionFilters();
     /**
-     * Map of the search engine contribution. Advocate Id -> Spectrum file name
-     * -> number of validated hits.
+     * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
+     * &gt; number of validated hits.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateContribution;
     /**
-     * Map of the search engine contribution. Advocate Id -> Spectrum file name
-     * -> number of validated hits found by this advocate only.
+     * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
+     * &gt; number of validated hits found by this advocate only.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateUniqueContribution;
 

@@ -99,6 +99,7 @@ public class CLIMethods {
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param waitingHandler a waiting handler to display progress
+     * @param filteringPreferences the filtering preferences
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException

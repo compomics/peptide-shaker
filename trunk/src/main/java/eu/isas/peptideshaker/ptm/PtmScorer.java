@@ -830,9 +830,9 @@ public class PtmScorer {
     }
 
     /**
-     * Returns a representative to secondary sites map (representative site ->
-     * secondary site -> list of ptm names) based on an ambiguous sites scores
-     * map (probabilistic score -> delta score -> site -> list of ptm names).
+     * Returns a representative to secondary sites map (representative site &gt;
+     * secondary site &gt; list of PTM names) based on an ambiguous sites scores
+     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM names).
      *
      * @param ambiguousSitesScores a map of the ambiguous sites scores
      * @param nRepresentatives the number of representative sites allowed
@@ -844,9 +844,9 @@ public class PtmScorer {
     }
 
     /**
-     * Returns a representative to secondary sites map (representative site ->
-     * secondary site -> list of ptm names) based on an ambiguous sites scores
-     * map (probabilistic score -> delta score -> site -> list of ptm names).
+     * Returns a representative to secondary sites map (representative site &gt;
+     * secondary site &gt; list of PTM names) based on an ambiguous sites scores
+     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM names).
      *
      * @param ambiguousSitesScores a map of the ambiguous sites scores
      * @param nRepresentatives the number of representative sites allowed

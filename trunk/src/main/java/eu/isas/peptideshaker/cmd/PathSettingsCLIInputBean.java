@@ -56,7 +56,7 @@ public class PathSettingsCLIInputBean {
     }
 
     /**
-     * Returns the specific paths provided by the user in a map: Path id ->
+     * Returns the specific paths provided by the user in a map: Path id &gt;
      * path.
      *
      * @return the specific paths provided by the user

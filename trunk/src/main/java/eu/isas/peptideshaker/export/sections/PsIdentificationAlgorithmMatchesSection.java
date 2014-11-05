@@ -250,7 +250,7 @@ public class PsIdentificationAlgorithmMatchesSection {
     }
 
     /**
-     * Returns a map of the modifications in a peptide. Modification name ->
+     * Returns a map of the modifications in a peptide. Modification name &gt;
      * sites.
      *
      * @param peptide

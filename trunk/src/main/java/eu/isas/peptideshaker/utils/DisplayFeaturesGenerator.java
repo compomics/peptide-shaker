@@ -559,7 +559,7 @@ public class DisplayFeaturesGenerator {
     /**
      * Filters the modification map according to the user's display preferences.
      *
-     * @param modificationMap the map of modifications to filter (amino acid ->
+     * @param modificationMap the map of modifications to filter (amino acid &gt;
      * list of modifications, 1 is the first amino acid)
      * @param displayedPtms list of PTMs to display
      *
@@ -582,7 +582,7 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Exports the confidently localized modification sites in a map: site ->
+     * Exports the confidently localized modification sites in a map: site &gt;
      * mapped modifications.
      *
      * @param ptmScores the PeptideShaker PTM scores
@@ -608,7 +608,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Exports the ambiguously localized modification representative sites in a
-     * map: site -> mapped modifications.
+     * map: site &gt; mapped modifications.
      *
      * @param ptmScores the PeptideShaker PTM scores
      * @param displayedPtms list of PTMs to display
@@ -635,7 +635,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Exports the ambiguously localized modification secondary sites in a map:
-     * site -> mapped modifications.
+     * site &gt; mapped modifications.
      *
      * @param ptmScores the PeptideShaker PTM scores
      * @param displayedPtms list of PTMs to display
@@ -701,7 +701,7 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the residue annotation for a given protein in a map for enzymatic
-     * or not enzymatic peptides only. Residue number -> annotations. 0 is the
+     * or not enzymatic peptides only. Residue number &gt; annotations. 0 is the
      * first amino acid.
      *
      * @param proteinMatchKey the key of the match of interest

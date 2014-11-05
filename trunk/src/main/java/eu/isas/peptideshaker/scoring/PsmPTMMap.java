@@ -114,7 +114,7 @@ public class PsmPTMMap implements Serializable {
 
     /**
      * Returns a map of keys from maps presenting a suspicious input.
-     * modification mass -> charge.
+     * modification mass &gt; charge.
      *
      * @return a list of keys from maps presenting a suspicious input
      */
@@ -165,11 +165,11 @@ public class PsmPTMMap implements Serializable {
     }
 
     /**
-     * Returns a map of the keys: charge -> group name for the given
+     * Returns a map of the keys: charge &gt; group name for the given
      * modification.
      *
      * @param ptmMass the modification mass of interest
-     * @return a map of the keys: charge -> group name
+     * @return a map of the keys: charge &gt; group name
      */
     public HashMap<Integer, String> getKeys(Double ptmMass) {
         HashMap<Integer, String> result = new HashMap<Integer, String>();

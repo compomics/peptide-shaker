@@ -60,7 +60,7 @@ public class TargetDecoyResults implements Serializable {
      */
     private Double userInput;
     /**
-     * The type of input 0 -> confidence 1 -> FDR 2 -> FNR.
+     * The type of input 0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      */
     private Integer inputType;
 
@@ -266,7 +266,7 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the type of input.  0 -> confidence 1 -> FDR 2 -> FNR.
+     * Returns the type of input.  0 &gt; confidence 1 &gt; FDR 2 &gt; FNR.
      *
      * @return the type of input
      */
