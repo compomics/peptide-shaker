@@ -57,10 +57,10 @@ public class CpsExporter {
      * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws ArchiveException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
+     * @throws SQLException thrown of SQLException occurs
+     * @throws ArchiveException thrown of ArchiveException occurs
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
@@ -95,10 +95,10 @@ public class CpsExporter {
      * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws ArchiveException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
+     * @throws SQLException thrown of SQLException occurs
+     * @throws ArchiveException thrown of ArchiveException occurs
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,

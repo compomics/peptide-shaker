@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Ion.IonType;
@@ -206,9 +205,9 @@ public class MzIdentMLExport {
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
-     * @throws SQLException
+     * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
+     * @throws InterruptedException thrown if FileNotFoundException occurs
+     * @throws SQLException thrown of SQLException occurs 
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 

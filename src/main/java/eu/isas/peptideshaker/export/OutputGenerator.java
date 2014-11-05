@@ -559,28 +559,46 @@ public class OutputGenerator {
      * provided in arguments) to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
-     * @param aPeptideKeys
-     * @param aPeptidePdbArray
-     * @param aIndexes
-     * @param aOnlyValidated
-     * @param aAccession
-     * @param aProteinDescription
-     * @param aProteinInferenceType
-     * @param aLocation
-     * @param aSurroundings
-     * @param aSequence
-     * @param aModifications
-     * @param aPtmLocations
-     * @param aCharges
-     * @param aNSpectra
-     * @param aScore
-     * @param aConfidence
-     * @param aIncludeHeader
-     * @param aOnlyStarred
-     * @param aIncludeHidden
-     * @param aUniqueOnly
-     * @param aProteinKey
-     * @param aEnzymatic
+     * @param aPeptideKeys the peptide keys
+     * @param aPeptidePdbArray the peptide PDB array
+     * @param aIndexes boolean indicating whether the indexes shall be output
+     * @param aOnlyValidated boolean indicating whether only validated are to to
+     * exported
+     * @param aAccession boolean indicating whether the protein accession is to
+     * be exported
+     * @param aProteinDescription boolean indicating whether the protein
+     * descriptions is to be exported
+     * @param aProteinInferenceType boolean indicating whether the protein
+     * inference is to be exported
+     * @param aLocation boolean indicating whether the location details is to be
+     * exported
+     * @param aSurroundings boolean indicating whether the peptide surrounding
+     * details are to be exported
+     * @param aSequence boolean indicating whether the peptide sequence is to be
+     * exported
+     * @param aModifications boolean indicating whether the peptide
+     * modifications are to be exported
+     * @param aPtmLocations boolean indicating whether the PTM localizations are
+     * to be exported
+     * @param aCharges boolean indicating whether the precursor charges is to be
+     * exported
+     * @param aNSpectra boolean indicating whether the number of spectra is to
+     * be exported
+     * @param aScore boolean indicating whether the peptide score is to be
+     * exported
+     * @param aConfidence boolean indicating whether the peptide confidence is
+     * to be exported
+     * @param aIncludeHeader boolean indicating whether the header should be
+     * included
+     * @param aOnlyStarred boolean indicating whether only starred peptide is to
+     * be exported
+     * @param aIncludeHidden boolean indicating whether the hidden peptides are
+     * to be exported
+     * @param aUniqueOnly boolean indicating whether the unique peptides only
+     * are to be exported
+     * @param aProteinKey the protein key
+     * @param aEnzymatic boolean indicating whether the peptide enzymatic
+     * details are to be exported
      */
     public void getPeptidesOutput(JDialog parentDialog, ArrayList<String> aPeptideKeys,
             ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aProteinDescription,

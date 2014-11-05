@@ -141,9 +141,9 @@ public class PeptideShakerCLIInputBean {
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
      *
      * @param aLine the command line
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
+     * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
      */
     public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
 
@@ -708,7 +708,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * Returns true of the species is to be auto updated to the latest version.
      *
-     * @return rue of the species is to be auto updated to the latest versio
+     * @return rue of the species is to be auto updated to the latest version
      */
     public boolean updateSpecies() {
         return autoUpdateSpecies;
@@ -717,16 +717,16 @@ public class PeptideShakerCLIInputBean {
     /**
      * Set if the species is to be auto updated to the latest version.
      *
-     * @param autoUpdateSpecies
+     * @param autoUpdateSpecies auto update species_ 
      */
     public void setUpdateSpecies(boolean autoUpdateSpecies) {
         this.autoUpdateSpecies = autoUpdateSpecies;
     }
 
     /**
-     * Returns the ptm score to use.
+     * Returns the PTM score to use.
      *
-     * @return the ptm score to use
+     * @return the PTM score to use
      */
     public PtmScore getPtmScore() {
         return ptmScore;

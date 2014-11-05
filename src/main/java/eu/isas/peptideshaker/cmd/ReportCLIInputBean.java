@@ -86,7 +86,7 @@ public class ReportCLIInputBean {
     /**
      * Set the report output folder.
      *
-     * @param outputFolder
+     * @param outputFolder the report output folder
      */
     public void setReportOutputFolder(File outputFolder) {
         this.reportOutputFolder = outputFolder;
