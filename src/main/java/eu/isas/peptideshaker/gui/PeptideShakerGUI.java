@@ -2460,7 +2460,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             "File Saved", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "An error occured while saving " + selectedFile.getPath() + ".\n"
+                    JOptionPane.showMessageDialog(this, "An error occurred while saving " + selectedFile.getPath() + ".\n"
                             + "See resources/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
                 }
             }
@@ -2668,7 +2668,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "An error occurred when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
@@ -3138,7 +3138,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             e.printStackTrace();
             catchException(e);
-            JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
+            JOptionPane.showMessageDialog(null, "A problem occurred when loading the data.\n"
                     + "See /resources/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -3336,7 +3336,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 System.err.println("Java version: " + System.getProperty("java.version") + ".");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
-                        null, "An error occured when trying to create the PeptideShaker log file.",
+                        null, "An error occurred when trying to create the PeptideShaker log file.",
                         "Error Creating Log File", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -3518,15 +3518,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
+            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
+            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         } catch (ClassCastException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
+            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -3804,7 +3804,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
-                    + "occured when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE) + ".",
+                    + "occurred when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE) + ".",
                     "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -3813,7 +3813,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
-                    + "occured when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE) + ".",
+                    + "occurred when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE) + ".",
                     "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -5231,7 +5231,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     if (!fileFound && !locateFastaFileManually()) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + getSearchParameters().getFastaFile() + "."
+                                "An error occurred while reading:\n" + getSearchParameters().getFastaFile() + "."
                                 + "\n\nOpen canceled.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                         clearData(true, true);
@@ -5351,7 +5351,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                             + "It looks like another instance of PeptideShaker is still connected to the file.\n"
                             + "Please close all instances of PeptideShaker and try again.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
@@ -5377,13 +5377,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     progressDialog.setRunFinished();
                     if (e.eof) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                                "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                                 + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
                                 + "be opened. If the file is a copy, make sure that it is identical to the original file.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                                "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                                 + "Please verify that the version used to create the file\n"
                                 + "is compatible with your version of PeptideShaker.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
@@ -5392,7 +5392,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 } catch (EOFException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                             + "The end of the file was reached unexpectedly. The file seems to be corrupt and cannot\n"
                             + "be opened. If the file is a copy, make sure that it is identical to the original file.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
@@ -5400,7 +5400,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 } catch (Exception e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
+                            "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                             + "Please verify that the version used to create the file\n"
                             + "is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);

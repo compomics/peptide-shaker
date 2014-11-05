@@ -2418,7 +2418,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     PrideReshakeGUI.this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(PrideReshakeGUI.this,
-                            "An error occured when processing the PRIDE project: \n"
+                            "An error occurred when processing the PRIDE project: \n"
                             + e.getMessage() + "."
                             + "See resources/PeptideShaker.log for details.",
                             "PRIDE Error", JOptionPane.INFORMATION_MESSAGE);

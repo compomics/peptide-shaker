@@ -500,7 +500,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }.start();
@@ -839,7 +839,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
-                                    "An error occured during exporting. See resources/PeptideShaker.log for details.",
+                                    "An error occurred during exporting. See resources/PeptideShaker.log for details.",
                                     "Export Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -985,7 +985,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occurred when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }.start();

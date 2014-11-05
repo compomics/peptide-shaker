@@ -1425,7 +1425,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     } catch (Exception saveException) {
                         e.printStackTrace();
                         saveException.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search parameters.", "File error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
 
@@ -1675,7 +1675,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             } catch (Exception saveException) {
                 e.printStackTrace();
                 saveException.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
             }
         }
 

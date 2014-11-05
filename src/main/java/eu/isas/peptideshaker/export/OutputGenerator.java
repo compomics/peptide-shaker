@@ -199,7 +199,7 @@ public class OutputGenerator {
                     proteinKeys = aProteinKeys;
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
             }
@@ -640,7 +640,7 @@ public class OutputGenerator {
             try {
                 writer = new BufferedWriter(new FileWriter(selectedFile));
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
             }
@@ -1134,7 +1134,7 @@ public class OutputGenerator {
             try {
                 writer = new BufferedWriter(new FileWriter(selectedFile));
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
             }
@@ -1617,7 +1617,7 @@ public class OutputGenerator {
                             File outputFile = new File(selectedFile.getParent(), reducedName + "_PSMs_phospho.txt");
                             writer = new BufferedWriter(new FileWriter(outputFile));
                         } catch (IOException e) {
-                            JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                             return;
                         }
@@ -1872,7 +1872,7 @@ public class OutputGenerator {
                             File outputFile = new File(selectedFile.getParent(), reducedName + "_Proteins_phospho.txt");
                             writer = new BufferedWriter(new FileWriter(outputFile));
                         } catch (IOException e) {
-                            JOptionPane.showMessageDialog(null, "An error occured when saving the protein details.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "An error occurred when saving the protein details.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                             return;
                         }
@@ -2024,7 +2024,7 @@ public class OutputGenerator {
 //                        try {
 //                            writer = new BufferedWriter(new FileWriter(new File(selectedFile.getParent(), "reduced.mgf")));
 //                        } catch (IOException e) {
-//                            JOptionPane.showMessageDialog(null, "An error occured when saving the mgf file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+//                            JOptionPane.showMessageDialog(null, "An error occurred when saving the mgf file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
 //                            e.printStackTrace();
 //                            return;
 //                        }
@@ -2154,7 +2154,7 @@ public class OutputGenerator {
             try {
                 writer = new BufferedWriter(new FileWriter(selectedFile));
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
             }
@@ -2509,7 +2509,7 @@ public class OutputGenerator {
                     proteinKeys = aProteinKeys;
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
             }
