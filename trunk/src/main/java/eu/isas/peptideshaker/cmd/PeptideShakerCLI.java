@@ -110,7 +110,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 try {
                     setPathConfiguration();
                 } catch (Exception e) {
-                    System.out.println("An error occured when setting path configuration. Default will be used.");
+                    System.out.println("An error occurred when setting path configuration. Default will be used.");
                     e.printStackTrace();
                 }
             }

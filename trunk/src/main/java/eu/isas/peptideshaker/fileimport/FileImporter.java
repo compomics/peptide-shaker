@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
@@ -73,10 +72,6 @@ public class FileImporter {
      * An exception handler to handle exceptions.
      */
     private ExceptionHandler exceptionHandler;
-    /**
-     * The modification factory.
-     */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
      * The spectrum factory.
      */
@@ -231,33 +226,33 @@ public class FileImporter {
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.", true, true);
         } catch (IOException e) {
-            System.err.println("An error occured while indexing " + fastaFile + ".");
+            System.err.println("An error occurred while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ": " + e.getMessage(), true, true);
+            waitingHandler.appendReport("An error occurred while indexing " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (SQLException e) {
-            System.err.println("An error occured while indexing " + fastaFile + ".");
+            System.err.println("An error occurred while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ": " + e.getMessage(), true, true);
+            waitingHandler.appendReport("An error occurred while indexing " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (InterruptedException e) {
-            System.err.println("An error occured while loading " + fastaFile + ".");
+            System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while loading " + fastaFile + ": " + e.getMessage(), true, true);
+            waitingHandler.appendReport("An error occurred while loading " + fastaFile + ": " + e.getMessage(), true, true);
         } catch (IllegalArgumentException e) {
-            System.err.println("An error occured while loading " + fastaFile + ".");
+            System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport(e.getLocalizedMessage() + " Please refer to http://code.google.com/p/peptide-shaker/#Troubleshooting", true, true);
         } catch (ClassNotFoundException e) {
-            System.err.println("An error occured while loading " + fastaFile + ".");
+            System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry. "
                     + "If the error occurs again please report bug using our issue tracker: http://code.google.com/p/peptide-shaker/issues/list.", true, true);
         } catch (NullPointerException e) {
-            System.err.println("An error occured while loading " + fastaFile + ".");
+            System.err.println("An error occurred while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("An error occurred when importing the sequences. "
@@ -586,14 +581,14 @@ public class FileImporter {
                 System.out.println("<CompomicsError>PeptideShaker processing failed. See the PeptideShaker log for details.</CompomicsError>");
 
                 if (e instanceof NullPointerException) {
-                    waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
+                    waitingHandler.appendReport("An error occurred while loading the identification files.", true, true);
                     waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
                 } else if (FrameExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
-                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                    waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                     waitingHandler.appendReport("Please see http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
                 } else {
-                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                    waitingHandler.appendReport("An error occurred while loading the identification files:", true, true);
                     waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                 }
 

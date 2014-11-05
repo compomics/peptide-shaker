@@ -72,7 +72,7 @@ public class MzidCLI extends CpsParent {
             try {
                 setPathConfiguration();
             } catch (Exception e) {
-                System.out.println("An error occured when setting path configuration. Default will be used.");
+                System.out.println("An error occurred when setting path configuration. Default will be used.");
                 e.printStackTrace();
             }
         }
@@ -84,13 +84,13 @@ public class MzidCLI extends CpsParent {
         try {
             loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
         } catch (SQLException e) {
-            waitingHandler.appendReport("An error occured while reading: " + cpsFile.getAbsolutePath() + ". "
+            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ". "
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
             waitingHandler.appendReport(cpsFile.getAbsolutePath() + " successfuly loaded.", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occured while reading: " + cpsFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ".", true, true);
             e.printStackTrace();
             return 1;
         }

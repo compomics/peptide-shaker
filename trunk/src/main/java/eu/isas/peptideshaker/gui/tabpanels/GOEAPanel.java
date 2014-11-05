@@ -52,7 +52,6 @@ import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRendere
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.jfree.chart.ChartFactory;
@@ -1674,7 +1673,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
                         } catch (IOException e) {
                             progressDialog.setRunFinished();
-                            JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "An error occurred when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                         }
                     }

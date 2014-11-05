@@ -361,7 +361,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                             } catch (Exception e) {
                                 progressDialog.setRunFinished();
                                 e.printStackTrace();
-                                JOptionPane.showMessageDialog(followupPreferencesDialog, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(followupPreferencesDialog, "An error occurred when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     }.start();

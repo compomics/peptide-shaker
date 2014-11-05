@@ -601,7 +601,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Processes the identifications if a change occured in the protein map.
+     * Processes the identifications if a change occurred in the protein map.
      *
      * @param waitingHandler the waiting handler
      * @param processingPreferences
@@ -870,7 +870,7 @@ public class PeptideShaker {
                         }
                     }
                     if (bestPeptideAssumption != null) {
-                        
+
                         if (multiSE) {
 
                             // try to find the most likely modification localization based on the search engine results
@@ -930,9 +930,11 @@ public class PeptideShaker {
                                     bestSeP = sep;
                                     nSe = assumptions.get(peptideAssumption).size();
                                     bestPeptideAssumption = peptideAssumption;
-                                } else if (sep == bestSeP && assumptions.get(peptideAssumption).size() > nSe) {
-                                    nSe = assumptions.get(peptideAssumption).size();
-                                    bestPeptideAssumption = peptideAssumption;
+                                } else if (assumptions.get(peptideAssumption).size() > nSe) {
+                                    if (sep != null && bestSeP != null && (Math.abs(sep - bestSeP) <= 1e-10)) {
+                                        nSe = assumptions.get(peptideAssumption).size();
+                                        bestPeptideAssumption = peptideAssumption;
+                                    }
                                 }
                             }
                         }
@@ -1047,7 +1049,7 @@ public class PeptideShaker {
             identification.loadSpectrumMatches(spectrumFileName, null);
 
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                
+
                 waitingHandler.increaseSecondaryProgressCounter();
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
