@@ -143,8 +143,8 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
             for (String key : tagMap.keySet()) {
+            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
@@ -172,9 +172,9 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+            for (String key : tagMap.keySet()) {
             TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
             tagMatcher.setSynchronizedIndexing(true);
-            for (String key : tagMap.keySet()) {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
@@ -211,10 +211,9 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
-                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, tagMatcher, key, waitingHandler);
+                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences, key, waitingHandler);
                 pool.submit(tagMapperRunnable);
                 if (waitingHandler.isRunCanceled()) {
                     pool.shutdownNow();
@@ -292,6 +291,11 @@ public class TagMapper {
                             extendedTagList.add(tagAssumption.reverse(nY >= nB));
                         }
                         for (TagAssumption extendedAssumption : extendedTagList) {
+                            // free memory if needed and possible
+                            if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+                                tagMatcher.setUseCache(false);
+                                tagMatcher.clearCache();
+                            }
                             HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
@@ -313,9 +317,12 @@ public class TagMapper {
             tagMatcher.clearCache();
             waitingHandler.increaseSecondaryProgressCounter();
         }
-        // free memory if needed bzw possible
         if (MemoryConsumptionStatus.memoryUsed() > 0.8 && !ProteinTreeComponentsFactory.getInstance().getCache().isEmpty()) {
             ProteinTreeComponentsFactory.getInstance().getCache().reduceMemoryConsumption(0.5, null);
+        }
+        // free memory if needed and possible
+        if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+            tagMatcher.clearCache();
         }
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && sequenceFactory.getNodesInCache() > 0) {
             sequenceFactory.reduceNodeCacheSize(0.5);
@@ -461,11 +468,11 @@ public class TagMapper {
          * @param waitingHandler waiting handler to display progress and cancel
          * the process
          */
-        public KeyTagMapperRunnable(LinkedList<SpectrumMatch> spectrumMatches, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler) {
+        public KeyTagMapperRunnable(LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
             this.spectrumMatches = spectrumMatches;
             this.key = key;
             this.waitingHandler = waitingHandler;
-            this.tagMatcher = tagMatcher;
+            this.tagMatcher = new TagMatcher(fixedModifications, variableModifications, sequenceMatchingPreferences);
         }
 
         @Override
