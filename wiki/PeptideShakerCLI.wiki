@@ -180,7 +180,8 @@ To add custom reports see Export > Identification Features > Custom in PeptideSh
 ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker:
 
 {{{
-java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0, 3"
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI 
+-in "C:\my folder\myCpsFile.cps" -out_reports "C:\my folder" -reports "0, 3"
 }}}
 
 [#PeptideShaker_Command_Line_Interface Go to top of page]
@@ -297,7 +298,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 FollowUpCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 
 {{{
-java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum_folder "C:\my folder" -psm_type 0
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -in "C:\my folder\myCpsFile.cps" -spectrum_folder "C:\my folder" -psm_type 0
 }}}
 
 [#PeptideShaker_Command_Line_Interface Go to top of page]
