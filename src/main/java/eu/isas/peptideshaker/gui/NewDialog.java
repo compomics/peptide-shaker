@@ -10,6 +10,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.MutationMatrix;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -717,6 +718,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             peptideShakerGUI.clearData(true, false);
             peptideShakerGUI.setDefaultPreferences();
             sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+//            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
+//            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
             peptideShakerGUI.setSequenceMatchingPreferences(sequenceMatchingPreferences);
             peptideShakerGUI.setGenePreferences(genePreferences);
             peptideShakerGUI.setSearchParameters(searchParameters);

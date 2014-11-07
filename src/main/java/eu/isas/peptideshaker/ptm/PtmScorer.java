@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import no.uib.jsparklines.renderers.util.Util;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -75,6 +76,11 @@ public class PtmScorer {
      * A single spectrum annotator to annotate spectra.
      */
     private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+    /**
+     * The number of decimals to which scores should be rounded. Ignored if
+     * null.
+     */
+    public static final Integer roundingDecimal = null;
 
     /**
      * Constructor.
@@ -199,6 +205,9 @@ public class PtmScorer {
                     }
 
                     double deltaScore = (secondaryP - refP) * 100;
+                    if (roundingDecimal != null) {
+                        deltaScore = Util.roundDouble(deltaScore, roundingDecimal);
+                    }
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
 
@@ -266,13 +275,13 @@ public class PtmScorer {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator);
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, roundingDecimal);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(),
-                            sequenceMatchingPreferences, peptideSpectrumAnnotator);
+                            sequenceMatchingPreferences, peptideSpectrumAnnotator, roundingDecimal);
                 }
                 if (scores != null) {
                     // remap to searched PTMs
@@ -585,6 +594,8 @@ public class PtmScorer {
         ArrayList<ModificationMatch> newModificationMatches = new ArrayList<ModificationMatch>(originalMatches.size());
         HashMap<Double, ArrayList<Integer>> inferredSites = new HashMap<Double, ArrayList<Integer>>();
 
+        String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+
         for (ModificationMatch modificationMatch : originalMatches) {
             if (modificationMatch.isVariable()) {
                 PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
@@ -597,12 +608,15 @@ public class PtmScorer {
                         variableModifications.put(ptmMass, nPtm + 1);
                     }
                     if (modificationMatch.isInferred()) {
+                        Integer modificationSite = modificationMatch.getModificationSite();
                         ArrayList<Integer> ptmInferredSites = inferredSites.get(ptmMass);
                         if (ptmInferredSites == null) {
                             ptmInferredSites = new ArrayList<Integer>();
                             inferredSites.put(ptmMass, ptmInferredSites);
+                            ptmInferredSites.add(modificationSite);
+                        } else if (!ptmInferredSites.contains(modificationSite)) {
+                            ptmInferredSites.add(modificationSite);
                         }
-                        ptmInferredSites.add(modificationMatch.getModificationSite());
                     }
                 } else {
                     newModificationMatches.add(modificationMatch);
@@ -669,7 +683,7 @@ public class PtmScorer {
                     }
                 }
 
-                for (int confidentSite : psmScores.getConfidentSites()) {
+                for (Integer confidentSite : psmScores.getConfidentSites()) {
                     for (String ptmName : psmScores.getConfidentModificationsAt(confidentSite)) {
                         PTM ptm = ptmFactory.getPTM(ptmName);
                         Double ptmMass = ptm.getMass();
@@ -692,7 +706,15 @@ public class PtmScorer {
                             if (newPtmMatches.size() > variableModifications.get(ptmMass)) {
                                 throw new IllegalArgumentException("More sites than PTMs on peptide " + peptideMatch.getKey() + " for PTM of mass " + ptmMass + ".");
                             }
+                            ArrayList<Integer> ptmInferredSites = inferredSites.get(ptmMass);
+                            if (ptmInferredSites != null) {
+                                ptmInferredSites.remove(confidentSite);
+                                if (ptmInferredSites.isEmpty()) {
+                                    inferredSites.remove(ptmMass);
+                                }
+                            }
                         }
+
                     }
                 }
             }
@@ -812,7 +834,6 @@ public class PtmScorer {
             for (ArrayList<ModificationMatch> modificationMatches : newMatches.values()) {
                 newModificationMatches.addAll(modificationMatches);
             }
-            String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
             peptide.setModificationMatches(newModificationMatches);
 
             peptideMatch.addUrParam(peptideScores);
@@ -832,7 +853,8 @@ public class PtmScorer {
     /**
      * Returns a representative to secondary sites map (representative site &gt;
      * secondary site &gt; list of PTM names) based on an ambiguous sites scores
-     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM names).
+     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM
+     * names).
      *
      * @param ambiguousSitesScores a map of the ambiguous sites scores
      * @param nRepresentatives the number of representative sites allowed
@@ -846,7 +868,8 @@ public class PtmScorer {
     /**
      * Returns a representative to secondary sites map (representative site &gt;
      * secondary site &gt; list of PTM names) based on an ambiguous sites scores
-     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM names).
+     * map (probabilistic score &gt; delta score &gt; site &gt; list of PTM
+     * names).
      *
      * @param ambiguousSitesScores a map of the ambiguous sites scores
      * @param nRepresentatives the number of representative sites allowed
