@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import com.compomics.util.Util;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,6 +43,10 @@ public class TargetDecoyMap implements Serializable {
      * The results computed on this map.
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
+    /**
+     * The number of decimals to which scores should be rounded. Ignored if null.
+     */
+    public static final Integer roundingDecimal = null;
 
     /**
      * Constructs a target/decoy map.
@@ -104,6 +109,9 @@ public class TargetDecoyMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public synchronized void put(double score, boolean isDecoy) {
+        if (roundingDecimal != null) {
+        score = Util.roundDouble(score, roundingDecimal);
+        }
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = new TargetDecoyPoint();
