@@ -214,13 +214,9 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         helpTextLabel = new javax.swing.JLabel();
         fileTableScrollPane = new javax.swing.JScrollPane();
         fileTable = new javax.swing.JTable();
-        fileTableScrollPane = new javax.swing.JScrollPane();
-        fileTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
-        filessScrollPane = new javax.swing.JScrollPane();
-        fileList = new javax.swing.JList();
-        filessScrollPane = new javax.swing.JScrollPane();
+        fileListScrollPane = new javax.swing.JScrollPane();
         fileList = new javax.swing.JList();
         folderLabel = new javax.swing.JLabel();
         browseButton = new javax.swing.JButton();
@@ -234,9 +230,6 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
         helpTextLabel.setText("Spectrum files missing. Please select them manually:");
-
-        fileTable.setModel(new FileTable());
-        fileTableScrollPane.setViewportView(fileTable);
 
         fileTable.setModel(new FileTable());
         fileTableScrollPane.setViewportView(fileTable);
@@ -256,10 +249,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         });
 
         fileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        filessScrollPane.setViewportView(fileList);
-
-        fileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        filessScrollPane.setViewportView(fileList);
+        fileListScrollPane.setViewportView(fileList);
 
         folderLabel.setText("Folder:");
 
@@ -313,7 +303,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(filessScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                    .addComponent(fileListScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -332,9 +322,10 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addComponent(addButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(removeButton))
-                    .addComponent(filessScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(fileListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                     .addComponent(fileTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -462,9 +453,9 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     private javax.swing.JButton browseButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JList fileList;
+    private javax.swing.JScrollPane fileListScrollPane;
     private javax.swing.JTable fileTable;
     private javax.swing.JScrollPane fileTableScrollPane;
-    private javax.swing.JScrollPane filessScrollPane;
     private javax.swing.JLabel folderLabel;
     private javax.swing.JTextField folderTxt;
     private javax.swing.JLabel helpTextLabel;
