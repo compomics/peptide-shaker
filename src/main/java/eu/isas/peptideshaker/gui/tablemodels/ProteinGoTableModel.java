@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tablemodels;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.ArrrayListDataPoints;
-import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRenderer;
 
 /**

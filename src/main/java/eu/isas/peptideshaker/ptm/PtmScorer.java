@@ -332,7 +332,6 @@ public class PtmScorer {
                         }
 
                         ptmScoring.setProbabilisticScore(site, scores.get(site));
-
                     }
                 }
             }
@@ -714,7 +713,6 @@ public class PtmScorer {
                                 }
                             }
                         }
-
                     }
                 }
             }

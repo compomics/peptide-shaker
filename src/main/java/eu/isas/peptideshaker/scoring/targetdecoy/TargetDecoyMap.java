@@ -44,7 +44,8 @@ public class TargetDecoyMap implements Serializable {
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
     /**
-     * The number of decimals to which scores should be rounded. Ignored if null.
+     * The number of decimals to which scores should be rounded. Ignored if
+     * null.
      */
     public static final Integer roundingDecimal = null;
 
@@ -110,7 +111,7 @@ public class TargetDecoyMap implements Serializable {
      */
     public synchronized void put(double score, boolean isDecoy) {
         if (roundingDecimal != null) {
-        score = Util.roundDouble(score, roundingDecimal);
+            score = Util.roundDouble(score, roundingDecimal);
         }
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
@@ -146,7 +147,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Estimates the metrics of the map: Nmax and NtargetOnly. Scores of 1 and above will be skipped.
+     * Estimates the metrics of the map: Nmax and NtargetOnly. Scores of 1 and
+     * above will be skipped.
      */
     private void estimateNs() {
         if (scores == null) {
@@ -170,7 +172,7 @@ public class TargetDecoyMap implements Serializable {
             } else {
                 if (point.nDecoy > 0) {
                     targetCpt += point.nTarget / 2 + point.nTarget % 2;
-                    if (targetCpt > nmax  
+                    if (targetCpt > nmax
                             && peptideP < 1.0
                             && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
                         nmax = targetCpt;
@@ -261,7 +263,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the Nmax metric.
-     * 
+     *
      * @return the Nmax metric
      */
     public int getnMax() {
@@ -273,7 +275,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the minimal detectable PEP variation in percent.
-     * 
+     *
      * @return the minimal detectable PEP variation in percent
      */
     public double getResolution() {
@@ -335,7 +337,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns a boolean indicating if a suspicious input was detected.
-     * 
+     *
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput() {
@@ -370,7 +372,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the window size used for pep estimation.
-     * 
+     *
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
