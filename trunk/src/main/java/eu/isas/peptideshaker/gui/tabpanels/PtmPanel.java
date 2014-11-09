@@ -3904,7 +3904,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.addAutomaticDeNovoSequencing(peptide, annotations,
                         forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                         annotationPreferences.showForwardIonDeNovoTags(),
-                        annotationPreferences.showRewindIonDeNovoTags());
+                        annotationPreferences.showRewindIonDeNovoTags(), false);
 
                 spectrumChartJPanel.add(spectrum);
                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, peptide.getModificationMatches());

@@ -2739,7 +2739,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         tempSpectrumPanel.addAutomaticDeNovoSequencing(peptide, annotations,
                                                 forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                                                 annotationPreferences.showForwardIonDeNovoTags(),
-                                                annotationPreferences.showRewindIonDeNovoTags());
+                                                annotationPreferences.showRewindIonDeNovoTags(), false);
 
                                         peptideShakerGUI.updateAnnotationMenus(currentPeptideAssumption.getIdentificationCharge().value, peptide.getModificationMatches());
 
@@ -2778,7 +2778,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         tempSpectrumPanel.addAutomaticDeNovoSequencing(tagAssumption.getTag(), annotations,
                                                 forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                                                 annotationPreferences.showForwardIonDeNovoTags(),
-                                                annotationPreferences.showRewindIonDeNovoTags());
+                                                annotationPreferences.showRewindIonDeNovoTags(), false);
 
                                         // get the modifications for the tag
                                         ArrayList<ModificationMatch> modificationMatches = new ArrayList<ModificationMatch>();
