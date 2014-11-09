@@ -4403,7 +4403,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.addAutomaticDeNovoSequencing(currentPeptide, annotations,
                                     forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
                                     annotationPreferences.showForwardIonDeNovoTags(),
-                                    annotationPreferences.showRewindIonDeNovoTags());
+                                    annotationPreferences.showRewindIonDeNovoTags(), false);
 
                             // add the spectrum panel to the frame
                             spectrumJPanel.removeAll();
