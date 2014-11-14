@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.35.2 (coming soon...):*
+*Changes in PeptideShaker 0.35.2 (November 14. 2014):*
  
  * FEATURE IMPROVEMENT: Multithreaded the import of PSMs.
  * FEATURE IMPROVEMENT: Minor speed improvements to the tag and peptide mapping.
@@ -12,7 +12,7 @@
  * BUG FIX: Fixed a bug in the appending of decoy sequence which in some cases altered the FASTA headers.
  * BUG FIX: Corrected a bug when working with very small databases.
 
- * LIBRARY UPDATE: Updated utilities to version 3.43.1.
+ * LIBRARY UPDATE: Updated utilities to version 3.43.10.
 
 ----
 
