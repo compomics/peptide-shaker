@@ -132,6 +132,7 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <!--<mainClass>eu.isas.peptideshaker.PeptideShakerZipFileChecker</mainClass>-->
                             <mainClass>eu.isas.peptideshaker.PeptideShakerWrapper</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
@@ -315,7 +316,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.43.8</version>
+            <version>3.43.10</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -486,6 +487,7 @@
         <dependency>
             <groupId>uk.ac.ebi.pride.archive</groupId>
             <artifactId>web-service-model</artifactId>
+            <!--<version>0.2.7</version-->
             <version>0.2.4</version>
         </dependency>
 
