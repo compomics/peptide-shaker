@@ -7,8 +7,7 @@
 
  * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 24, adding Zootermopsis nevadensis.
  * FEATURE IMPROVEMENT: Added a check for if SearchGUI is started from within a zip file.
- * FEATURE IMPROVEMENT: Added project tags to the project table in PRIDE
-Reshake.
+ * FEATURE IMPROVEMENT: Added project tags to the project table in PRIDE Reshake.
  * FEATURE IMPROVEMENT: PRIDE Reshake: added sparkline for the file size column.
 
  * BUG FIX: Fixed a bug that resulted in all keys released when the PSM table had focus resulted in the spectrum annotation disappearing.
