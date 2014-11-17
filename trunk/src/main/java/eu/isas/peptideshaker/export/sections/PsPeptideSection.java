@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.export.sections;
 
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -182,7 +180,8 @@ public class PsPeptideSection {
                             first = false;
                         }
                         PsPeptideFeature peptideFeature = (PsPeptideFeature) exportFeature;
-                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
+                        writer.write(getfeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, 
+                                keys, nSurroundingAA, linePrefix, peptideMatch, psParameter, peptideFeature, validatedOnly, decoys, waitingHandler));
                     }
                     writer.newLine();
                     if (psmSection != null) {
@@ -192,7 +191,8 @@ public class PsPeptideSection {
                         }
                         psmSectionPrefix += line + ".";
                         writer.increaseDepth();
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, 
+                                sequenceMatchingPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
                         writer.decreseDepth();
                     }
                     line++;
