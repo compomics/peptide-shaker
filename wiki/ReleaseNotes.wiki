@@ -3,6 +3,24 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.3 (November 17. 2014):*
+
+ * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 24, adding Zootermopsis nevadensis.
+ * FEATURE IMPROVEMENT: Added a check for if SearchGUI is started from within a zip file.
+ * FEATURE IMPROVEMENT: Added project tags to the project table in PRIDE
+Reshake.
+ * FEATURE IMPROVEMENT: PRIDE Reshake: added sparkline for the file size column.
+
+ * BUG FIX: Fixed a bug that resulted in all keys released when the PSM table had focus resulted in the spectrum annotation disappearing.
+ * BUG FIX: Fixed a bug in the download of gene mappings for non-vertebrate species.
+ * BUG FIX: Fixed some special case Derby shutdown and restart issues.
+
+ * LIBRARY UPDATE: Added Jung2 dependencies.
+ * LIBRARY UPDATE: Updated web-service-model to version 0.2.7.
+ * LIBRARY UPDATE: Updated utilities to version 3.43.13.
+
+----
+
 *Changes in PeptideShaker 0.35.2 (November 14. 2014):*
  
  * FEATURE IMPROVEMENT: Multithreaded the import of PSMs.
