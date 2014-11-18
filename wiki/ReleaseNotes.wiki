@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.4 (November 18. 2014):*
+
+ * BUG FIX: Fixed a bug in addition of decoy sequences to FASTA files containing headers without descriptions.
+
+----
+
 *Changes in PeptideShaker 0.35.3 (November 17. 2014):*
 
  * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 24, adding Zootermopsis nevadensis.
