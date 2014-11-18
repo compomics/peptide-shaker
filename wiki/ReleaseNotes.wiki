@@ -5,7 +5,7 @@
 
 *Changes in PeptideShaker 0.35.4 (November 18. 2014):*
 
- * BUG FIX: Fixed a bug in addition of decoy sequences to FASTA files containing headers without descriptions.
+ * BUG FIX: Fixed a bug in adding decoy sequences to FASTA files containing headers without descriptions.
 
 ----
 
