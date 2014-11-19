@@ -102,7 +102,7 @@ public class ReportCLI extends CpsParent {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + searchParameters.getFastaFile().getName() + ".", true, true);
+            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -133,7 +133,7 @@ public class ReportCLI extends CpsParent {
             int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
             for (String reportType : reportCLIInputBean.getReportTypes()) {
                 try {
-                    CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
+                    CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
                 } catch (Exception e) {
                     waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                     e.printStackTrace();

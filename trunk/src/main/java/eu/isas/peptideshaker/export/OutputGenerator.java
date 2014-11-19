@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -20,8 +21,10 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -441,8 +444,8 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                                peptideShakerGUI.getSequenceMatchingPreferences());
+                                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;
@@ -759,7 +762,10 @@ public class OutputGenerator {
                         int peptideCounter = 0;
                         HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
-                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                        ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
 
                         // @TODO: try to batch load the spectra? as this would speed up the export...
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
@@ -782,7 +788,7 @@ public class OutputGenerator {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-                            if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences()) || !onlyValidated) {
+                            if (!peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences) || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !peptidePSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
@@ -793,7 +799,7 @@ public class OutputGenerator {
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
-                                                    for (String parentProtein : peptide.getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    for (String parentProtein : peptide.getParentProteins(sequenceMatchingPreferences)) {
                                                         ArrayList<String> parentProteins = identification.getProteinMap().get(parentProtein);
                                                         if (parentProteins != null) {
                                                             for (String proteinKey : parentProteins) {
@@ -862,7 +868,7 @@ public class OutputGenerator {
                                                     }
 
                                                     first = true;
-                                                    ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences()));
+                                                    ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins(sequenceMatchingPreferences));
                                                     Collections.sort(peptideAccessions);
                                                     for (String key : peptideAccessions) {
                                                         if (shared || !accessions.contains(key)) {
@@ -899,7 +905,7 @@ public class OutputGenerator {
                                                         surroundingAAs.put(proteinAccession,
                                                                 sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
                                                                         peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                                                        peptideShakerGUI.getSequenceMatchingPreferences()));
+                                                                        sequenceMatchingPreferences));
                                                     }
                                                 }
 
@@ -930,7 +936,7 @@ public class OutputGenerator {
 
                                                 if (sequence) {
                                                     writer.write(peptide.getSequence() + SEPARATOR);
-                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(),
+                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(),
                                                             false, false, true) + SEPARATOR);
                                                 }
 
@@ -960,7 +966,7 @@ public class OutputGenerator {
 
                                                 if (enzymatic) {
                                                     boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
-                                                            peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getSequenceMatchingPreferences());
+                                                            shotgunProtocol.getEnzyme(), sequenceMatchingPreferences);
 
                                                     writer.write(isEnzymatic + SEPARATOR);
                                                 }
@@ -1040,7 +1046,7 @@ public class OutputGenerator {
                                                         writer.write(" (" + peptidePSParameter.getReasonDoubtful() + ")");
                                                     }
                                                     writer.write(SEPARATOR);
-                                                    if (peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    if (peptideMatch.getTheoreticPeptide().isDecoy(sequenceMatchingPreferences)) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1173,8 +1179,9 @@ public class OutputGenerator {
                     try {
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
-                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
-                        PTMScoringPreferences ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         if (psmKeys != null) {
@@ -1219,7 +1226,7 @@ public class OutputGenerator {
                                 writer.write("Precursor Retention Time" + SEPARATOR);
                                 writer.write("Peptide Theoretical Mass" + SEPARATOR);
 
-                                if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                                if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
                                     writer.write("Mass Error [ppm]" + SEPARATOR);
                                 } else {
                                     writer.write("Mass Error [Da]" + SEPARATOR);
@@ -1287,7 +1294,7 @@ public class OutputGenerator {
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
                                 PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                                if (!bestAssumption.getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences()) || !onlyValidated) {
+                                if (!bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences()) || !onlyValidated) {
                                     if ((onlyValidated && psParameter.getMatchValidationLevel().isValidated()) || !onlyValidated) {
                                         if ((!includeHidden && !psParameter.isHidden()) || includeHidden) {
                                             if ((onlyStarred && psParameter.isStarred()) || !onlyStarred) {
@@ -1302,7 +1309,7 @@ public class OutputGenerator {
                                                     String proteinDescriptions = "";
 
                                                     boolean first = true;
-                                                    for (String protein : bestAssumption.getPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    for (String protein : bestAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                                                         if (first) {
                                                             first = false;
                                                         } else {
@@ -1492,7 +1499,7 @@ public class OutputGenerator {
                                                     writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
                                                     writer.write(prec.getRt() + SEPARATOR);
                                                     writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                                    writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                                    writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                                     writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                 }
                                                 if (score) {
@@ -1509,7 +1516,7 @@ public class OutputGenerator {
                                                     }
                                                     writer.write(SEPARATOR);
 
-                                                    if (bestAssumption.getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1552,7 +1559,7 @@ public class OutputGenerator {
      */
     public void getPhosphoOutput(JDialog parentDialog) {
 
-        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Result File");
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1623,8 +1630,9 @@ public class OutputGenerator {
                         }
 
                         PTMFactory ptmFactory = PTMFactory.getInstance();
-                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
-                        PTMScoringPreferences ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                        ModificationProfile ptmProfile = identificationParameters.getSearchParameters().getModificationProfile();
+                        PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
                         ProjectDetails projectDetails = peptideShakerGUI.getProjectDetails();
                         ArrayList<Integer> algorithms = projectDetails.getIdentificationAlgorithms();
@@ -1653,7 +1661,7 @@ public class OutputGenerator {
                         writer.write("Precursor Charge" + SEPARATOR);
                         writer.write("Precursor Retention Time" + SEPARATOR);
                         writer.write("Peptide Theoretical Mass" + SEPARATOR);
-                        if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                        if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
                             writer.write("Mass Error [ppm]" + SEPARATOR);
                         } else {
                             writer.write("Mass Error [Da]" + SEPARATOR);
@@ -1697,7 +1705,7 @@ public class OutputGenerator {
                                 String proteinAccessions = "";
                                 String proteinDescriptions = "";
 
-                                for (String protein : bestAssumption.getPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                for (String protein : bestAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                                     if (!proteinAccessions.equals("")) {
                                         proteinAccessions += ", ";
                                         proteinDescriptions += "; ";
@@ -1812,7 +1820,7 @@ public class OutputGenerator {
                                         }
                                         if (mascotAssumption != null) {
                                             Peptide mascotPeptide = mascotAssumption.getPeptide();
-                                            Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames, peptideShakerGUI.getSequenceMatchingPreferences());
+                                            Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames, identificationParameters.getSequenceMatchingPreferences());
                                             if (score != null) {
                                                 mdScore = score.toString();
                                             }
@@ -1849,7 +1857,7 @@ public class OutputGenerator {
                                 writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
                                 writer.write(prec.getRt() + SEPARATOR);
                                 writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                 writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                 MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
@@ -1858,7 +1866,7 @@ public class OutputGenerator {
                                     writer.write(" (" + psParameter.getReasonDoubtful() + ")");
                                 }
                                 writer.write(SEPARATOR);
-                                if (bestAssumption.getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                if (bestAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
                                     writer.write(0 + SEPARATOR);
@@ -2227,7 +2235,7 @@ public class OutputGenerator {
                                 writer.write("Precursor RT" + SEPARATOR);
                                 writer.write("Peptide Theoretical Mass" + SEPARATOR);
 
-                                if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                                if (peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) {
                                     writer.write("Mass Error [ppm]" + SEPARATOR);
                                 } else {
                                     writer.write("Mass Error [Da]" + SEPARATOR);
@@ -2247,6 +2255,8 @@ public class OutputGenerator {
                             writer.write("Decoy" + SEPARATOR);
                             writer.write(System.getProperty("line.separator"));
                         }
+                        
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
 
                         PSParameter psParameter = new PSParameter();
                         int rank, progress = 0;
@@ -2303,7 +2313,7 @@ public class OutputGenerator {
                                                         String proteinDescriptions = "";
 
                                                         boolean first = true;
-                                                        for (String protein : peptideAssumption.getPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                        for (String protein : peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                                                             if (first) {
                                                                 first = false;
                                                             } else {
@@ -2359,7 +2369,7 @@ public class OutputGenerator {
                                                         writer.write(prec.getRt() + SEPARATOR);
                                                         writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
                                                         writer.write(peptideAssumption.getDeltaMass(prec.getMz(),
-                                                                peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                                         writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                     }
                                                     if (scores) {
@@ -2374,12 +2384,12 @@ public class OutputGenerator {
                                                         psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
                                                         writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
                                                     }
-                                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
                                                     }
-                                                    if (peptideAssumption.getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                                                    if (peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -2751,7 +2761,7 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
 
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges
-                                                                = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                                = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
@@ -2783,7 +2793,7 @@ public class OutputGenerator {
                                                             && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
 
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges
-                                                                = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                                = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
 
                                                         if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
@@ -2824,8 +2834,8 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                                peptideShakerGUI.getSequenceMatchingPreferences());
+                                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;

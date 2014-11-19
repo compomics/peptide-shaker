@@ -3,12 +3,15 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -112,11 +115,18 @@ public class CpsFileImporter {
             tempPTMScoringPreferences.setaScoreNeutralLosses(tempSettings.getPTMScoringPreferences().isaScoreNeutralLosses());
             tempPTMScoringPreferences.setFlrThreshold(tempSettings.getPTMScoringPreferences().getFlrThreshold());
 
-            experimentSettings = new PeptideShakerSettings(tempSettings.getSearchParameters(), tempSettings.getAnnotationPreferences(),
+            SearchParameters searchParameters = tempSettings.getSearchParameters();
+            
+            IdentificationParameters identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
+            identificationParameters.setAnnotationPreferences(tempSettings.getAnnotationPreferences());
+            identificationParameters.setPtmScoringPreferences(tempPTMScoringPreferences);
+            
+            ShotgunProtocol shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
+            
+            experimentSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters,
                     tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
                     tempSettings.getDisplayPreferences(),
-                    tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
-                    tempPTMScoringPreferences, new GenePreferences(), new IdFilter(), SequenceMatchingPreferences.getDefaultSequenceMatching(tempSettings.getSearchParameters()));
+                    tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache());
 
         } else {
             experimentSettings = (PeptideShakerSettings) experiment.getUrParam(experimentSettings);

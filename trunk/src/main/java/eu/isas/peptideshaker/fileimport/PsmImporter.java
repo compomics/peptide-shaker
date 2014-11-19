@@ -28,6 +28,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -86,45 +87,33 @@ public class PsmImporter {
      */
     private long nSecondary = 0;
     /**
-     * The identification filter.
-     */
-    private IdFilter idFilter;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
-    /**
-     * The search parameters.
-     */
-    private SearchParameters searchParameters;
-    /**
      * The processing preferences.
      */
     private ProcessingPreferences processingPreferences;
     /**
      * The progress of the import.
      */
-    int progress = 0;
+    private int progress = 0;
     /**
      * The number of PSMs which did not pass the import filters.
      */
-    int psmsRejected = 0;
+    private int psmsRejected = 0;
     /**
      * The number of PSMs which were rejected due to a protein issue.
      */
-    int proteinIssue = 0;
+    private int proteinIssue = 0;
     /**
      * The number of PSMs which were rejected due to a peptide issue.
      */
-    int peptideIssue = 0;
+    private int peptideIssue = 0;
     /**
      * The number of PSMs which were rejected due to a precursor issue.
      */
-    int precursorIssue = 0;
+    private int precursorIssue = 0;
     /**
      * The number of PSMs which were rejected due to a PTM issue.
      */
-    int ptmIssue = 0;
+    private int ptmIssue = 0;
     /**
      * The number of retained first hits.
      */
@@ -144,23 +133,23 @@ public class PsmImporter {
     /**
      * The maximal peptide mass error found in ppm.
      */
-    double maxPeptideErrorPpm = 0;
+    private double maxPeptideErrorPpm = 0;
     /**
      * The maximal peptide mass error found in Da.
      */
-    double maxPeptideErrorDa = 0;
+    private double maxPeptideErrorDa = 0;
     /**
      * The maximal tag mass error found in ppm.
      */
-    double maxTagErrorPpm = 0;
+    private double maxTagErrorPpm = 0;
     /**
      * The maximal tag mass error found in Da.
      */
-    double maxTagErrorDa = 0;
+    private double maxTagErrorDa = 0;
     /**
      * List of charges found.
      */
-    HashSet<Integer> charges = new HashSet<Integer>();
+    private HashSet<Integer> charges = new HashSet<Integer>();
     /**
      * List of one hit wonders.
      */
@@ -182,15 +171,17 @@ public class PsmImporter {
      * The exception handler.
      */
     private ExceptionHandler exceptionHandler;
+    /**
+     * The identification parameters
+     */
+    private IdentificationParameters identificationParameters;
 
     /**
      * Constructor.
      *
      * @param peptideShakerCache the cache to use when memory issues are
      * encountered
-     * @param idFilter the id import filter to use
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param searchParameters the search parameters
+     * @param identificationParameters the identification parameters
      * @param processingPreferences the processing preferences
      * @param fileReader the reader of the file which the matches are imported
      * from
@@ -202,14 +193,11 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences,
-            SearchParameters searchParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+    public PsmImporter(ObjectsCache peptideShakerCache, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
             ExceptionHandler exceptionHandler) {
         this.peptideShakerCache = peptideShakerCache;
-        this.idFilter = idFilter;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
-        this.searchParameters = searchParameters;
+        this.identificationParameters = identificationParameters;
         this.processingPreferences = processingPreferences;
         this.fileReader = fileReader;
         this.idFile = idFile;
@@ -318,6 +306,10 @@ public class PsmImporter {
     private void importPsm(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler)
             throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
+        IdFilter idFilter = identificationParameters.getIdFilter();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        
         // free memory if needed
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
             peptideShakerCache.reduceMemoryConsumption(0.5, null);
@@ -873,7 +865,7 @@ public class PsmImporter {
             charges.add(currentCharge);
         }
 
-        ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
+        ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
         for (String protein : accessions) {
             Integer count = proteinCount.get(protein);
             if (count != null) {
@@ -927,6 +919,7 @@ public class PsmImporter {
      */
     private synchronized void verifyXTandemPtms() {
         if (!xTandemPtmsCheck) {
+            SearchParameters searchParameters = identificationParameters.getSearchParameters();
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
             IdentificationAlgorithmParameter algorithmParameter = searchParameters.getIdentificationAlgorithmParameter(Advocate.xtandem.getIndex());
             if (algorithmParameter != null) {

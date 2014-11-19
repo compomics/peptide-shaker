@@ -4,7 +4,9 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.JOptionEditorPane;
+import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
@@ -314,7 +316,16 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      */
     private void browseDatabaseSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDatabaseSettingsActionPerformed
 
-        File startLocation = new File(peptideShakerGUI.getLastSelectedFolder());
+        LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
+        File startLocation = null;
+        File utilitiesDbFolder = peptideShakerGUI.getUtilitiesUserPreferences().getDbFolder();
+            if (utilitiesDbFolder != null && utilitiesDbFolder.exists()) {
+                startLocation = utilitiesDbFolder;
+            }
+            if (startLocation == null) {
+            startLocation = new File(getLastSelectedFolder(lastSelectedFolder));
+            }
+        
         UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
         if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
             startLocation = utilitiesUserPreferences.getDbFolder();
@@ -355,7 +366,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 databaseSettingsTxt.setText(file.getAbsolutePath());
             }
 
-            peptideShakerGUI.setLastSelectedFolder(file.getAbsolutePath());
+            lastSelectedFolder.setLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey, file.getAbsolutePath());
             targetDecoySettingsButton.setEnabled(true);
 
             // check if the database contains decoys
@@ -721,5 +732,24 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         okButton.setEnabled(valid);
 
         return valid;
+    }
+
+    /**
+     * Returns the last selected folder.
+     *
+     * @param lastSelectedFolder the last selected folder
+     * 
+     * @return the last selected folder
+     */
+    public String getLastSelectedFolder(LastSelectedFolder lastSelectedFolder) {
+        String result = null;
+        if (result == null) {
+            return null;
+        }
+        String folder = lastSelectedFolder.getLastSelectedFolder(SequenceDbDetailsDialog.lastFolderKey);
+        if (folder == null) {
+            folder = lastSelectedFolder.getLastSelectedFolder();
+        }
+        return folder;
     }
 }

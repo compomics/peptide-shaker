@@ -30,6 +30,8 @@ import com.compomics.util.experiment.identification.protein_inference.proteintre
 import com.compomics.util.experiment.identification.tags.matchers.TagMatcher;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.FileNotFoundException;
@@ -64,17 +66,9 @@ public class TagMapper {
      */
     private ProteinTree proteinTree;
     /**
-     * The search parameters to use.
+     * The identification parameters
      */
-    private SearchParameters searchParameters;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
-    /**
-     * The annotation preferences to use.
-     */
-    private AnnotationPreferences annotationPreferences;
+    private IdentificationParameters identificationParameters;
     /**
      * Exception handler.
      */
@@ -88,17 +82,12 @@ public class TagMapper {
      * Constructor.
      *
      * @param proteinTree the protein tree to use for the mapping
-     * @param searchParameters the search parameters
-     * @param sequenceMatchingPreferences the sequence matching parameters
-     * @param annotationPreferences the annotation parameters
+     * @param identificationParameters the identification parameters
      * @param exceptionHandler an exception handler
      */
-    public TagMapper(ProteinTree proteinTree, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences,
-            AnnotationPreferences annotationPreferences, ExceptionHandler exceptionHandler) {
+    public TagMapper(ProteinTree proteinTree, IdentificationParameters identificationParameters, ExceptionHandler exceptionHandler) {
         this.proteinTree = proteinTree;
-        this.searchParameters = searchParameters;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+        this.identificationParameters = identificationParameters;
         this.exceptionHandler = exceptionHandler;
     }
 
@@ -143,8 +132,9 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
+            TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
@@ -172,8 +162,9 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
-            TagMatcher tagMatcher = new TagMatcher(searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences);
+            TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
             tagMatcher.setSynchronizedIndexing(true);
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
@@ -211,9 +202,10 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
+                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
-                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, searchParameters.getModificationProfile().getFixedModifications(), searchParameters.getModificationProfile().getAllNotFixedModifications(), sequenceMatchingPreferences, key, waitingHandler);
+                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);
                 pool.submit(tagMapperRunnable);
                 if (waitingHandler.isRunCanceled()) {
                     pool.shutdownNow();
@@ -246,7 +238,10 @@ public class TagMapper {
         charges.add(1); //@TODO: use other charges?
         String spectrumKey = spectrumMatch.getKey();
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-        HashMap<Integer, HashMap<String, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap(keySize, sequenceMatchingPreferences);
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        HashMap<Integer, HashMap<String, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap(keySize, identificationParameters.getSequenceMatchingPreferences());
         for (int advocateId : tagAssumptionsMap.keySet()) {
             HashMap<String, ArrayList<TagAssumption>> algorithmTags = tagAssumptionsMap.get(advocateId);
             ArrayList<TagAssumption> tagAssumptions = algorithmTags.get(key);
@@ -345,8 +340,10 @@ public class TagMapper {
      */
     private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
         // add the fixed PTMs
-        ptmFactory.checkFixedModifications(searchParameters.getModificationProfile(), tag, sequenceMatchingPreferences);
+        ptmFactory.checkFixedModifications(modificationProfile, tag, identificationParameters.getSequenceMatchingPreferences());
 
         // rename the variable modifications
         for (TagComponent tagComponent : tag.getContent()) {
@@ -367,7 +364,7 @@ public class TagMapper {
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                             } else if (advocateId == Advocate.direcTag.getIndex()) {
                                 Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
-                                String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
+                                String utilitiesPtmName = modificationProfile.getVariableModifications().get(directagIndex);
                                 if (utilitiesPtmName == null) {
                                     throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
                                 }
@@ -406,7 +403,7 @@ public class TagMapper {
                                 modificationMatch.setTheoreticPtm(utilitiesPtmName);
                             } else if (advocateId == Advocate.direcTag.getIndex()) {
                                 Integer directagIndex = new Integer(modificationMatch.getTheoreticPtm());
-                                String utilitiesPtmName = searchParameters.getModificationProfile().getVariableModifications().get(directagIndex);
+                                String utilitiesPtmName = modificationProfile.getVariableModifications().get(directagIndex);
                                 if (utilitiesPtmName == null) {
                                     throw new IllegalArgumentException("DirecTag PTM " + directagIndex + " not recognized.");
                                 }

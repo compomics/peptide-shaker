@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.InclusionListExport.ExportFormat;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -277,7 +279,12 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
         if (validateInput()) {
 
-            final JFileChooser fileChooser = new JFileChooser(followupPreferencesDialog.getPeptideShakerGUI().getLastSelectedFolder());
+        LastSelectedFolder lastSelectedFolder = followupPreferencesDialog.getPeptideShakerGUI().getLastSelectedFolder();
+        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+        if (folder == null) {
+            folder = lastSelectedFolder.getLastSelectedFolder();
+        }
+            final JFileChooser fileChooser = new JFileChooser(folder);
             fileChooser.setDialogTitle("Select Destination File");
             fileChooser.setMultiSelectionEnabled(false);
 
@@ -349,7 +356,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                                 PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
                                 InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), 
                                         peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), 
-                                        exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog, peptideShakerGUI.getFilterPreferences());
+                                        exportFormat, peptideShakerGUI.getIdentificationParameters().getSearchParameters(), WIDTH, progressDialog, peptideShakerGUI.getFilterPreferences());
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();

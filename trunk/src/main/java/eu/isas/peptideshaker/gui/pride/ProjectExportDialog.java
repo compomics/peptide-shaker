@@ -22,6 +22,8 @@ import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.ToolTipComboBoxRenderer;
+import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.pride.validation.PrideXmlValidator;
@@ -66,6 +68,10 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
      * schema.
      */
     private boolean validatePrideXml = true;
+    /**
+     * The last selected folder
+     */
+    private LastSelectedFolder lastSelectedFolder;
 
     /**
      * Create a new PrideExportDialog.
@@ -76,6 +82,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     public ProjectExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
+        lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
 
         // reset the pride object factory
         resetPrideObjectFactory();
@@ -161,13 +168,29 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
+    
+    /**
+     * Returns the last selected folder.
+     * 
+     * @return the last selected folder
+     */
+    private String getLastSelectedFolder() {
+        String result = null;
+        if (lastSelectedFolder != null) {
+            result = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+            if (result == null) {
+                result = lastSelectedFolder.getLastSelectedFolder();
+            }
+        }
+        return result;
+    }
 
     /**
      * Update the PTM map.
      */
     private void updatePtmMap() {
 
-        SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+        SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
         PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
         try {
             ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
@@ -206,7 +229,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     private ArrayList<String> checkModifications() {
         ArrayList<String> missingTerm = new ArrayList<String>();
         PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-        for (String modification : peptideShakerGUI.getSearchParameters().getModificationProfile().getAllModifications()) {
+        for (String modification : peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllModifications()) {
             if (!modification.equals(PtmPanel.NO_MODIFICATION) && ptmToPrideMap.getCVTerm(modification) == null) {
                 missingTerm.add(modification);
             }
@@ -805,11 +828,11 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     private void browseOutputFolderJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseOutputFolderJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", getLastSelectedFolder(), "Output Folder", "Select", false);
 
         if (selectedFolder != null) {
             String path = selectedFolder.getAbsolutePath();
-            peptideShakerGUI.setLastSelectedFolder(path);
+            lastSelectedFolder.setLastSelectedFolder(ExportWriter.lastFolderKey, path);
             outputFolderJTextField.setText(path);
         }
 
@@ -1077,8 +1100,8 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
 
                 try {
                     PrideXmlExport prideExport = new PrideXmlExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                            peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(),
-                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(),
+                            peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(),
+                            peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSpectrumAnnotator(),
                             selectedSample, selectedSample, selectedProtocol, selectedProtocol, referenceGroup, contactGroup, sample, protocol, instrument,
                             new File(outputFolderJTextField.getText()), outputFileName, progressDialog);
 

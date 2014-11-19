@@ -9,8 +9,8 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.MutationMatrix;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -23,23 +23,25 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
-import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.fileimport.FileImporter;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.Tips;
 
 import javax.swing.*;
@@ -58,7 +60,7 @@ import java.util.Properties;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class NewDialog extends javax.swing.JDialog implements SearchSettingsDialogParent {
+public class NewDialog extends javax.swing.JDialog {
 
     /**
      * The compomics PTM factory.
@@ -105,41 +107,33 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private PeptideShaker peptideShaker;
     /**
-     * The processing preferences.
-     */
-    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
-    /**
-     * The PTM scoring preferences.
-     */
-    private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences = new SequenceMatchingPreferences();
-    /**
-     * The filter to use for matches filtering.
-     */
-    private IdFilter idFilter = new IdFilter();
-    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
     /**
-     * The search parameters corresponding to the files selected.
+     * The parameters to use when loading the files
      */
-    private SearchParameters searchParameters = new SearchParameters();
+    private IdentificationParameters identificationParameters = new IdentificationParameters();
     /**
-     * The gene preferences.
+     * The processing preferences
      */
-    private GenePreferences genePreferences;
+    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
+    /**
+     * Information on the protocol
+     */
+    private ShotgunProtocol shotgunProtocol = null;
     /*
      * The welcome dialog parent, can be null.
      */
     private WelcomeDialog welcomeDialog;
     /**
-     * The FASTA file of the currently loaded project if any.
+     * The spectrum counting preferences
      */
-    private File currentFastaFile = null;
+    private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+    /**
+     * The project details
+     */
+    private ProjectDetails projectDetails = new ProjectDetails();
 
     /**
      * Creates a new open dialog.
@@ -151,8 +145,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-        this.genePreferences = peptideShakerGui.getGenePreferences();
-        currentFastaFile = sequenceFactory.getCurrentFastaFile();
+loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(peptideShakerGui);
@@ -170,8 +163,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-        this.genePreferences = peptideShakerGui.getGenePreferences();
-        currentFastaFile = sequenceFactory.getCurrentFastaFile();
+loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(welcomeDialog);
@@ -186,11 +178,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        if (genePreferences.getCurrentSpecies() != null) {
-            speciesTextField.setText(genePreferences.getCurrentSpecies());
-        } else {
-            speciesTextField.setText("(not selected)");
-        }
+        speciesTextField.setText("(not selected)");
         validateInput();
         GuiUtilities.installEscapeCloseOperation(this);
     }
@@ -205,7 +193,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void initComponents() {
 
         sampleDetailsPanel = new javax.swing.JPanel();
-        openButton = new javax.swing.JButton();
+        loadButton = new javax.swing.JButton();
         projectDetailsPanel = new javax.swing.JPanel();
         replicateNumberIdtxt = new javax.swing.JTextField();
         projectNameIdTxt = new javax.swing.JTextField();
@@ -254,14 +242,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         sampleDetailsPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        openButton.setBackground(new java.awt.Color(0, 153, 0));
-        openButton.setFont(openButton.getFont().deriveFont(openButton.getFont().getStyle() | java.awt.Font.BOLD));
-        openButton.setForeground(new java.awt.Color(255, 255, 255));
-        openButton.setText("Load Data!");
-        openButton.setEnabled(false);
-        openButton.addActionListener(new java.awt.event.ActionListener() {
+        loadButton.setBackground(new java.awt.Color(0, 153, 0));
+        loadButton.setFont(loadButton.getFont().deriveFont(loadButton.getFont().getStyle() | java.awt.Font.BOLD));
+        loadButton.setForeground(new java.awt.Color(255, 255, 255));
+        loadButton.setText("Load Data!");
+        loadButton.setEnabled(false);
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openButtonActionPerformed(evt);
+                loadButtonActionPerformed(evt);
             }
         });
 
@@ -646,7 +634,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         .addGap(71, 71, 71)
                         .addComponent(peptideShakerHomePageLabel)
                         .addGap(44, 44, 44)
-                        .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22))
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inputFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -666,7 +654,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aboutButton)
                     .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -690,22 +678,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      *
      * @param evt
      */
-    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-
-        // check if default search parameters are used
-        if (searchTxt.getText().equalsIgnoreCase("Default")) {
-            int value = JOptionPane.showConfirmDialog(this,
-                    "It seems like you are using the default search parameters without any PTMs.\nContinue anyway?",
-                    "Default Search Parameters?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-
-            if (value != JOptionPane.YES_OPTION) {
-                editSearchButtonActionPerformed(null);
-                return;
-            } else {
-                // set the default enzyme
-                searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            }
-        }
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
 
         if (validateUserInput()) {
 
@@ -716,18 +689,20 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
             peptideShakerGUI.clearData(true, false);
-            peptideShakerGUI.setDefaultPreferences();
-            sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+
 //            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
 //            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
-            peptideShakerGUI.setSequenceMatchingPreferences(sequenceMatchingPreferences);
-            peptideShakerGUI.setGenePreferences(genePreferences);
-            peptideShakerGUI.setSearchParameters(searchParameters);
-            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
+            peptideShakerGUI.setIdentificationParameters(identificationParameters);
+            if (shotgunProtocol == null) {
+                shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(identificationParameters.getSearchParameters());
+            }
+            peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
             peptideShakerGUI.setProjectDetails(getProjectDetails());
             peptideShakerGUI.setCurentNotes(new ArrayList<String>());
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
+            peptideShakerGUI.setProjectDetails(projectDetails);
+            peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
@@ -770,10 +745,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             boolean needDialog = false;
 
             // load the identification files
-            if (idFiles.size() > 0
-                    || searchParameters != null
-                    || searchParameters.getFastaFile() != null
-                    || spectrumFiles.size() > 0) {
+            if (idFiles.size() > 0) {
                 needDialog = true;
                 importIdentificationFiles(waitingDialog);
             }
@@ -799,15 +771,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                 }
 
-                peptideShakerGUI.setProcessingPreferences(processingPreferences);
-                peptideShakerGUI.setPtmScoringPreferences(ptmScoringPreferences);
-                peptideShakerGUI.setIdFilter(idFilter);
-                peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setIdentificationFeaturesGenerator(peptideShaker.getIdentificationFeaturesGenerator());
                 peptideShakerGUI.setCache(peptideShaker.getCache());
-                peptideShakerGUI.setUpInitialFilters();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
@@ -825,7 +792,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
             }
         }
-}//GEN-LAST:event_openButtonActionPerformed
+}//GEN-LAST:event_loadButtonActionPerformed
 
     /**
      * Clear the database field.
@@ -854,27 +821,28 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
-        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        if (identificationParameters == null) {
+            editSearchButtonActionPerformed(null);
+        } else {
 
-        boolean success = sequenceDbDetailsDialog.selectDB(true);
-        if (success) {
-            sequenceDbDetailsDialog.setVisible(true);
-        }
+            SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-        peptideShakerGUI.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
-
-        if (sequenceFactory.getCurrentFastaFile() != null) {
-            fastaFileTxt.setText(sequenceFactory.getFileName());
-            checkFastaFile();
-            if (searchParameters == null) {
-                searchParameters = new SearchParameters();
-                searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+            boolean success = sequenceDbDetailsDialog.selectDB(true);
+            if (success) {
+                sequenceDbDetailsDialog.setVisible(true);
             }
-            searchParameters.setFastaFile(sequenceFactory.getCurrentFastaFile());
+
+            File fastaFile = sequenceFactory.getCurrentFastaFile();
+            if (fastaFile != null) {
+                fastaFileTxt.setText(sequenceFactory.getFileName());
+                identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                checkFastaFile();
+            }
+
+            validateInput();
         }
-        validateInput();
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
     /**
@@ -897,7 +865,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
 
         // @TODO: implement mzML support
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Spectrum File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setMultiSelectionEnabled(true);
@@ -947,7 +915,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
-        searchParameters = new SearchParameters();
+        identificationParameters = null;
         validateInput();
 }//GEN-LAST:event_clearIdActionPerformed
 
@@ -958,7 +926,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
 
-        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Identification File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setMultiSelectionEnabled(true);
@@ -1158,14 +1126,24 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
 
-        // set the default enzyme if not set
-        if (searchParameters.getEnzyme() == null) {
+        SearchParameters searchParameters;
+
+        if (identificationParameters != null) {
+            searchParameters = identificationParameters.getSearchParameters();
+        } else {
+            searchParameters = new SearchParameters();
             searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         }
 
-        new SearchSettingsDialog(peptideShakerGUI, this, searchParameters,
+        SearchSettingsDialog searchSettingsDialog = new SearchSettingsDialog(peptideShakerGUI, searchParameters,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true, true);
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true, true, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getLastSelectedFolder());
+
+        if (!searchSettingsDialog.isCanceled()) {
+            identificationParameters.setSearchParameters(searchSettingsDialog.getSearchParameters());
+        }
+
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
@@ -1174,11 +1152,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, peptideShakerGUI.getIdFilter(), true);
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getIdFilter(), true);
         IdFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
             importFilterTxt.setText("User Defined");
-            idFilter = newFilter;
+            identificationParameters.setIdFilter(newFilter);
         }
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
@@ -1188,23 +1166,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (currentFastaFile == null) {
-            try {
-                sequenceFactory.clearFactory();
-                genePreferences.setCurrentSpeciesType(null);
-                genePreferences.setCurrentSpecies(null);
-                TempFilesManager.deleteTempFolders();
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Failed to clear the database.", "File Error", JOptionPane.WARNING_MESSAGE);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Failed to clear the database.", "File Error", JOptionPane.WARNING_MESSAGE);
-            }
-        } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile()) && currentFastaFile.exists()) {
-            loadFastaFile(currentFastaFile, null);
-        }
-        this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
 
@@ -1241,10 +1202,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences, ptmScoringPreferences);
-        if (processingPreferences.getProteinFDR() != 1
-                || processingPreferences.getPeptideFDR() != 1
-                || processingPreferences.getPsmFDR() != 1
+        new ProcessingPreferencesDialog(peptideShakerGUI, true, identificationParameters, processingPreferences);
+        IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
+        PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+        if (idMatchValidationPreferences.getDefaultProteinFDR() != 1
+                || idMatchValidationPreferences.getDefaultPeptideFDR() != 1
+                || idMatchValidationPreferences.getDefaultPsmFDR() != 1
                 || ptmScoringPreferences.getFlrThreshold() != 1
                 || ptmScoringPreferences.isProbabilisticScoreNeutralLosses()
                 || !ptmScoringPreferences.isEstimateFlr()) {
@@ -1262,6 +1225,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param evt
      */
     private void editSpeciesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpeciesButtonActionPerformed
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        if (genePreferences == null) {
+            genePreferences = new GenePreferences();
+            identificationParameters.setGenePreferences(genePreferences);
+        }
         new SpeciesDialog(this, peptideShakerGUI, genePreferences, true, peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getNormalIcon());
         if (genePreferences.getCurrentSpecies() != null) {
             speciesTextField.setText(genePreferences.getCurrentSpecies());
@@ -1369,12 +1337,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private void browseSearchSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSearchSettingsButtonActionPerformed
         // First check whether a file has already been selected.
         // If so, start from that file's parent.
-        File startLocation = new File(getLastSelectedFolder());
-        if (searchParameters.getParametersFile() != null
-                && !searchTxt.getText().trim().equals("")
-                && !searchTxt.getText().trim().equals("Default")
-                && !searchTxt.getText().trim().equals("User Defined")) {
-            startLocation = searchParameters.getParametersFile().getParentFile();
+        File startLocation = new File(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
+        if (identificationParameters != null) {
+            SearchParameters searchParameters = identificationParameters.getSearchParameters();
+            if (searchParameters != null && searchParameters.getParametersFile() != null) {
+                startLocation = searchParameters.getParametersFile().getParentFile();
+            }
         }
         JFileChooser fc = new JFileChooser(startLocation);
 
@@ -1397,13 +1365,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             String fileName = file.getName();
-            setLastSelectedFolder(file.getAbsolutePath());
 
             if (fileName.endsWith(".parameters") || fileName.endsWith(".properties")) {
 
+                SearchParameters tempParameters = null;
                 try {
-                    searchParameters = SearchParameters.getIdentificationParameters(file);
-                    PeptideShaker.loadModifications(searchParameters);
+                    tempParameters = SearchParameters.getIdentificationParameters(file);
+                    PeptideShaker.loadModifications(tempParameters);
                 } catch (Exception e) {
                     try {
                         // Old school format, overwrite old file
@@ -1413,7 +1381,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                         if (!userMods.exists()) {
                             userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
                         }
-                        searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
+                        tempParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
 
                         if (fileName.endsWith(".properties")) {
                             String newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".parameters";
@@ -1424,7 +1392,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                             }
                             file = new File(file.getParentFile(), newName);
                         }
-                        SearchParameters.saveIdentificationParameters(searchParameters, file);
+                        SearchParameters.saveIdentificationParameters(tempParameters, file);
                     } catch (Exception saveException) {
                         e.printStackTrace();
                         saveException.printStackTrace();
@@ -1432,8 +1400,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                 }
 
-                searchTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
-                validateInput();
+                if (tempParameters != null) {
+                    String name = Util.removeExtension(file.getName());
+                    searchTxt.setText(name);
+                    setSearchParameters(tempParameters);
+                }
+
             } else {
                 JOptionPane.showMessageDialog(this, "Please select a valid search settings file (.parameters).", "File Error", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -1461,7 +1433,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private javax.swing.JLabel importFiltersLabel;
     private javax.swing.JLabel importFiltersLabel1;
     private javax.swing.JPanel inputFilesPanel;
-    private javax.swing.JButton openButton;
+    private javax.swing.JButton loadButton;
     private javax.swing.JLabel peptideShakerHomePageLabel;
     private javax.swing.JTextField preferencesTxt;
     private javax.swing.JPanel processingParametersPanel;
@@ -1562,7 +1534,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         }
 
         // enable/disable the Create! button
-        openButton.setEnabled(allValid);
+        loadButton.setEnabled(allValid);
     }
 
     /**
@@ -1601,6 +1573,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             return false;
         }
 
+        if (identificationParameters == null) {
+            JOptionPane.showMessageDialog(null, "Please edit the search parameters.",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         if (searchParameters == null) {
             JOptionPane.showMessageDialog(null, "Please edit the search parameters.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1632,11 +1611,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        peptideShaker.importFiles(waitingDialog, idFilter, idFiles,
-                spectrumFiles, searchParameters,
-                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
-                processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(),
-                sequenceMatchingPreferences, true);
+        peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, shotgunProtocol,
+                identificationParameters, projectDetails, processingPreferences, spectrumCountingPreferences, true);
     }
 
     /**
@@ -1650,9 +1626,10 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
+        SearchParameters tempParameters = null;
         try {
-            searchParameters = SearchParameters.getIdentificationParameters(file);
-            PeptideShaker.loadModifications(searchParameters);
+            tempParameters = SearchParameters.getIdentificationParameters(file);
+            PeptideShaker.loadModifications(tempParameters);
         } catch (Exception e) {
             try {
                 // Old school format, overwrite old file
@@ -1662,7 +1639,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 if (!userMods.exists()) {
                     userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
                 }
-                searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
+                tempParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
 
                 String fileName = file.getName();
                 if (fileName.endsWith(".properties")) {
@@ -1674,116 +1651,118 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                     file = new File(file.getParentFile(), newName);
                 }
-                SearchParameters.saveIdentificationParameters(searchParameters, file);
+                tempParameters.saveIdentificationParameters(tempParameters, file);
             } catch (Exception saveException) {
                 e.printStackTrace();
                 saveException.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error occurred while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
             }
         }
+        if (tempParameters != null) {
 
-        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            ModificationProfile modificationProfile = tempParameters.getModificationProfile();
 
-        ArrayList<String> missing = new ArrayList<String>();
+            ArrayList<String> missing = new ArrayList<String>();
 
-        for (String name : modificationProfile.getAllNotFixedModifications()) {
-            if (!ptmFactory.containsPTM(name)) {
-                missing.add(name);
-            } else {
-                if (modificationProfile.getColor(name) == null) {
-                    searchParameters.getModificationProfile().setColor(name, Color.lightGray);
-                }
-            }
-        }
-        if (!missing.isEmpty()) {
-            // Might happen with old parameters files or when no parameter file is found
-            for (File modFile : modificationFiles) {
-                try {
-                    ptmFactory.importModifications(modFile, true);
-                } catch (Exception e) {
-                    // ignore error
-                }
-            }
-            ArrayList<String> missing2 = new ArrayList<String>();
-            for (String ptmName : missing) {
-                if (!ptmFactory.containsPTM(ptmName)) {
-                    missing2.add(ptmName);
-                }
-            }
-            if (!missing2.isEmpty()) {
-                if (missing2.size() == 1) {
-                    JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
-                            + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+            for (String name : modificationProfile.getAllNotFixedModifications()) {
+                if (!ptmFactory.containsPTM(name)) {
+                    missing.add(name);
                 } else {
-                    String output = "The following modifications are currently not recognized by PeptideShaker:\n";
-                    boolean first = true;
-                    for (String ptm : missing2) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            output += ", ";
-                        }
-                        output += ptm;
+                    if (modificationProfile.getColor(name) == null) {
+                        tempParameters.getModificationProfile().setColor(name, Color.lightGray);
                     }
-                    output += ".\nPlease import it by editing the search parameters.";
-                    JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
                 }
             }
-        }
-
-        File fastaFile = searchParameters.getFastaFile();
-        if (fastaFile != null) {
-            boolean found = false;
-            if (fastaFile.exists()) {
-                found = true;
-            } else {
-                // look in the database folder
-                try {
-                    UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-                    File dbFolder = utilitiesUserPreferences.getDbFolder();
-                    File newFile = new File(dbFolder, fastaFile.getName());
-                    if (newFile.exists()) {
-                        fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile);
-                        found = true;
+            if (!missing.isEmpty()) {
+                // Might happen with old parameters files or when no parameter file is found
+                for (File modFile : modificationFiles) {
+                    try {
+                        ptmFactory.importModifications(modFile, true);
+                    } catch (Exception e) {
+                        // ignore error
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                if (!found) {
-                    // look in the data folders
-                    for (File dataFolder : dataFolders) {
-                        File newFile = new File(dataFolder, fastaFile.getName());
+                ArrayList<String> missing2 = new ArrayList<String>();
+                for (String ptmName : missing) {
+                    if (!ptmFactory.containsPTM(ptmName)) {
+                        missing2.add(ptmName);
+                    }
+                }
+                if (!missing2.isEmpty()) {
+                    if (missing2.size() == 1) {
+                        JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
+                                + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                        boolean first = true;
+                        for (String ptm : missing2) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                output += ", ";
+                            }
+                            output += ptm;
+                        }
+                        output += ".\nPlease import it by editing the search parameters.";
+                        JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+
+            File fastaFile = tempParameters.getFastaFile();
+            if (fastaFile != null) {
+                boolean found = false;
+                if (fastaFile.exists()) {
+                    found = true;
+                } else {
+                    // look in the database folder
+                    try {
+                        UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                        File dbFolder = utilitiesUserPreferences.getDbFolder();
+                        File newFile = new File(dbFolder, fastaFile.getName());
                         if (newFile.exists()) {
                             fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFile);
+                            tempParameters.setFastaFile(fastaFile);
                             found = true;
-                            break;
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     if (!found) {
-                        // try to find it in the same folder as the SearchGUI.properties file
-                        File parentFolder = file.getParentFile();
-                        File newFile = new File(parentFolder, fastaFile.getName());
-                        if (newFile.exists()) {
-                            fastaFile = newFile;
-                            searchParameters.setFastaFile(fastaFile);
-                            found = true;
-                        } else {
-                            JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
-                                    + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                        // look in the data folders
+                        for (File dataFolder : dataFolders) {
+                            File newFile = new File(dataFolder, fastaFile.getName());
+                            if (newFile.exists()) {
+                                fastaFile = newFile;
+                                tempParameters.setFastaFile(fastaFile);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            // try to find it in the same folder as the SearchGUI.properties file
+                            File parentFolder = file.getParentFile();
+                            File newFile = new File(parentFolder, fastaFile.getName());
+                            if (newFile.exists()) {
+                                fastaFile = newFile;
+                                tempParameters.setFastaFile(fastaFile);
+                                found = true;
+                            } else {
+                                JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName()
+                                        + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                            }
                         }
                     }
                 }
+                if (found) {
+                    loadFastaFile(fastaFile, progressDialog);
+                    fastaFileTxt.setText(fastaFile.getName());
+                }
             }
-            if (found) {
-                loadFastaFile(fastaFile, progressDialog);
-                fastaFileTxt.setText(fastaFile.getName());
-            }
-        }
 
-        searchTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
-        importFilterTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
+            setSearchParameters(tempParameters);
+
+        }
     }
 
     /**
@@ -1997,41 +1976,28 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 "Database Information", JOptionPane.WARNING_MESSAGE);
     }
 
-    @Override
-    public String getLastSelectedFolder() {
-        return peptideShakerGUI.getLastSelectedFolder();
-    }
-
-    @Override
-    public void setLastSelectedFolder(String lastSelectedFolder) {
-        peptideShakerGUI.setLastSelectedFolder(lastSelectedFolder);
-    }
-
-    @Override
-    public File getUserModificationsFile() {
-        return new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
-    }
-
-    @Override
-    public SearchParameters getSearchParameters() {
-        return searchParameters;
-    }
-
-    @Override
-    public void setSearchParameters(SearchParameters searchParameters) {
-        this.searchParameters = searchParameters;
-        if (searchParameters.getParametersFile() != null) {
-            searchTxt.setText(searchParameters.getParametersFile().getName().substring(0, searchParameters.getParametersFile().getName().lastIndexOf(".")));
+    /**
+     * Sets the search parameters in the identification parameters and updates
+     * the GUI.
+     *
+     * @param searchParameters new search parameters
+     */
+    private void setSearchParameters(SearchParameters searchParameters) {
+        File parametersFile = searchParameters.getParametersFile();
+        identificationParameters.setParametersFromSearch(searchParameters);
+        if (parametersFile != null) {
+            String name = parametersFile.getName();
+            name = Util.removeExtension(name);
+            searchTxt.setText(name);
+            importFilterTxt.setText(name);
+            preferencesTxt.setText(name);
         } else {
+            // @TODO: is this possible?
             searchTxt.setText("User Defined");
         }
         fastaFileTxt.setText(searchParameters.getFastaFile().getName());
-        validateInput();
-    }
 
-    @Override
-    public ArrayList<String> getModificationUse() {
-        return peptideShakerGUI.getModificationUse();
+        validateInput();
     }
 
     @Override
@@ -2132,7 +2098,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 }
             }
 
-            peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+            peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(newFile.getAbsolutePath());
 
             if (loadCanceled) {
                 break;
@@ -2284,6 +2250,20 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             if (!found) {
                 parameterFiles.add(file);
             }
+        }
+    }
+
+    /**
+     * Imports the gene mapping.
+     */
+    private void loadGeneMappings() {
+        GenePreferences genePreferences = identificationParameters.getGenePreferences();
+        if (genePreferences == null) {
+            genePreferences = new GenePreferences();
+            identificationParameters.setGenePreferences(genePreferences);
+        }
+        if (!genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
+            JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

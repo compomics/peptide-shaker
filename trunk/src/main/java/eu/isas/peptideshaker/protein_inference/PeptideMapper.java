@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.IOException;
@@ -27,15 +28,9 @@ import java.util.concurrent.TimeUnit;
 public class PeptideMapper {
 
     /**
-     * The sequence matching preferences.
+     * The identification parameters
      */
-    private final SequenceMatchingPreferences sequenceMatchingPreferences;
-
-    /**
-     * The import filter.
-     */
-    private final IdFilter idFilter;
-
+    private final IdentificationParameters identificationParameters;
     /**
      * A waiting handler.
      */
@@ -56,13 +51,12 @@ public class PeptideMapper {
     /**
      * Constructor.
      *
-     * @param idFilter The import filter
-     * @param sequenceMatchingPreferences The sequence matching preferences
+     * @param identificationParameters the identification parameters
      * @param waitingHandler A waiting handler
+     * @param exceptionHandler an exception handler
      */
-    public PeptideMapper(SequenceMatchingPreferences sequenceMatchingPreferences, IdFilter idFilter, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
-        this.idFilter = idFilter;
+    public PeptideMapper(IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        this.identificationParameters = identificationParameters;
         this.waitingHandler = waitingHandler;
         this.exceptionHandler = exceptionHandler;
     }
@@ -72,8 +66,6 @@ public class PeptideMapper {
      *
      * @param peptideMap a map of the peptides to map: start of the sequence &gt;
      * list of peptides
-     * @param sequenceMatchingPreferences The sequence matching preferences
-     * @param idFilter The import filter
      * @param nThreads The number of threads to use
      * @param waitingHandler A waiting handler
      *
@@ -83,8 +75,7 @@ public class PeptideMapper {
      * @throws java.lang.ClassNotFoundException
      * @throws java.util.concurrent.ExecutionException
      */
-    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, SequenceMatchingPreferences sequenceMatchingPreferences,
-            IdFilter idFilter, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
+    public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
             ClassNotFoundException, ExecutionException {
         if (nThreads == 1) {
             mapPeptidesSingleThreaded(peptideMap, waitingHandler);
@@ -240,7 +231,8 @@ public class PeptideMapper {
      * @throws ClassNotFoundException
      */
     private void mapPeptide(Peptide peptide, boolean increaseProgressBar) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
-        if (idFilter.validatePeptide(peptide, sequenceMatchingPreferences)) {
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        if (identificationParameters.getIdFilter().validatePeptide(peptide, sequenceMatchingPreferences)) {
             if (peptide.getParentProteins(sequenceMatchingPreferences).isEmpty()) {
                 throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + " using the selected matching settings.");
             }

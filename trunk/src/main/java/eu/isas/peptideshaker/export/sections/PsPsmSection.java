@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Advocate;
@@ -14,6 +15,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -99,9 +101,8 @@ public class PsPsmSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param validatedOnly whether only validated matches should be exported
@@ -117,7 +118,7 @@ public class PsPsmSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -200,7 +201,7 @@ public class PsPsmSection {
 
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                    if (decoys || peptideAssumption == null || !peptideAssumption.getPeptide().isDecoy(sequenceMatchingPreferences)) {
+                    if (decoys || peptideAssumption == null || !peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
 
                         boolean first = true;
 
@@ -220,10 +221,10 @@ public class PsPsmSection {
                             String feature;
                             if (peptideAssumption != null) {
                                 peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, peptideAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getPeptideAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, peptideAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                             } else if (spectrumMatch.getBestTagAssumption() != null) {
                                 TagAssumption tagAssumption = spectrumMatch.getBestTagAssumption();
-                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, linePrefix, tagAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
+                                feature = PsIdentificationAlgorithmMatchesSection.getTagAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, tagAssumption, spectrumMatch.getKey(), psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                             } else {
                                 throw new IllegalArgumentException("No best match found for spectrum " + spectrumMatch.getKey() + ".");
                             }
@@ -235,7 +236,7 @@ public class PsPsmSection {
                             } else {
                                 first = false;
                             }
-                            writer.write(getFeature(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
+                            writer.write(getFeature(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, linePrefix, spectrumMatch, psParameter, psmFeature, validatedOnly, decoys, waitingHandler));
                         }
                         writer.newLine();
                         if (fragmentSection != null) {
@@ -245,7 +246,7 @@ public class PsPsmSection {
                             }
                             fractionPrefix += line + ".";
                             writer.increaseDepth();
-                            fragmentSection.writeSection(spectrumMatch, searchParameters, annotationPreferences, fractionPrefix, null);
+                            fragmentSection.writeSection(spectrumMatch, shotgunProtocol, identificationParameters, fractionPrefix, null);
                             writer.decreseDepth();
                         }
                         line++;
@@ -261,9 +262,8 @@ public class PsPsmSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param spectrumMatch the spectrum match inspected
@@ -286,7 +286,7 @@ public class PsPsmSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         switch (psmFeature) {
@@ -419,7 +419,7 @@ public class PsPsmSection {
                     for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getAllAssumptions()) {
                         if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
-                            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), sequenceMatchingPreferences)) {
+                            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                 int id = peptideAssumption.getAdvocate();
                                 double score = peptideAssumption.getScore();
                                 Double currentScore = scoreMap.get(id);

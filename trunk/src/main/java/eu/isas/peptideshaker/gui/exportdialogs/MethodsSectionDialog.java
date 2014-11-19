@@ -4,6 +4,7 @@ import com.compomics.util.gui.ExportFormatSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportScheme;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.export.PeptideShakerMethods;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -63,6 +64,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         waitingLabel.setVisible(true);
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
 
         String text = "";
         String tab = "          ";
@@ -91,7 +93,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             text += PeptideShakerMethods.getDecoyType();
         }
         if (idParametersCheck.isSelected()) {
-            text += PeptideShakerMethods.getIdentificationSettings(peptideShakerGUI.getSearchParameters());
+            text += PeptideShakerMethods.getIdentificationSettings(peptideShakerGUI.getIdentificationParameters().getSearchParameters());
         }
 
         if (proteinDbCkeck.isSelected() || decoyCheck.isSelected() || idParametersCheck.isSelected()) {
@@ -105,7 +107,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
             text += PeptideShakerMethods.getValidation(peptideShakerGUI.getProcessingPreferences());
         }
         if (ptmLocalizationCheck.isSelected()) {
-            text += PeptideShakerMethods.getPtmScoring(peptideShakerGUI.getPtmScoringPreferences());
+            text += PeptideShakerMethods.getPtmScoring(identificationParameters.getPtmScoringPreferences());
         }
 
         if (peptideShakerCheck.isSelected() || validationCheck.isSelected() || ptmLocalizationCheck.isSelected()) {
@@ -184,10 +186,10 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                             PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                     peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                     peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
-                                    null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                    peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(), peptideShakerGUI.getIdFilter(),
-                                    peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null, 
+                                    peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                    peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), 
+                                    peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
 
                             boolean processCancelled = progressDialog.isRunCanceled();
                             progressDialog.setRunFinished();

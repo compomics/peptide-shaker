@@ -101,7 +101,7 @@ public class MzidCLI extends CpsParent {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + searchParameters.getFastaFile().getName() + ".", true, true);
+            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();

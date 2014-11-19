@@ -2270,7 +2270,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         // update the profiles with the new colors
                         if (!((String) ptmJTable.getValueAt(row, ptmJTable.getColumn("PTM").getModelIndex())).equalsIgnoreCase("no modification")) {
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().setColor(
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().setColor(
                                     (String) ptmJTable.getValueAt(row, ptmJTable.getColumn("  ").getModelIndex()), newColor);
                             peptideShakerGUI.updatePtmColorCoding();
                         }
@@ -2340,7 +2340,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-        peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
+        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
@@ -2450,8 +2450,8 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
+        peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
@@ -2932,7 +2932,7 @@ public class PtmPanel extends javax.swing.JPanel {
             menuItem = new JMenuItem("Modification Profile Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
+                    new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, modificationProfileRelatedPeptideJPanel.getComponent(1), peptideShakerGUI.getLastSelectedFolder());
                 }
             });
 
@@ -2962,7 +2962,7 @@ public class PtmPanel extends javax.swing.JPanel {
         menuItem = new JMenuItem("Modification Profile Plot");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
+                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, modificationProfileSelectedPeptideJPanel.getComponent(1), peptideShakerGUI.getLastSelectedFolder());
             }
         });
 
@@ -3075,7 +3075,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<String> result = new ArrayList<String>();
         try {
             for (String peptideKey : getDisplayedPeptides()) {
-                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
+                ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                 for (String protein : proteins) {
                     for (String proteinMatchKey : identification.getProteinMap().get(protein)) {
                         if (!result.contains(proteinMatchKey) && identification.matchExists(proteinMatchKey)) {
@@ -3264,7 +3264,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     dm.getDataVector().removeAllElements();
                     dm.fireTableDataChanged();
 
-                    ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+                    ModificationProfile modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile();
 
                     for (String modification : modificationProfile.getAllNotFixedModifications()) {
                         if (!modification.equalsIgnoreCase(NO_MODIFICATION)) {
@@ -3277,7 +3277,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         NO_MODIFICATION});
 
                     // update the slider tooltips
-                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
                     accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
                     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
@@ -3328,7 +3328,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        selectedKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
+                        selectedKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -3491,7 +3491,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                    if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                    if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
                         double p = probabilities.getPeptideProbability();
@@ -3858,7 +3858,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
 
-            AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+            AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
@@ -3870,7 +3870,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         precursor.getMz(), spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString(),
                         "", 40, false, false, false, 2, false);
                 spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
-                spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
+                spectrum.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getFragmentIonAccuracy());
                 spectrum.setBorder(null);
                 spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
                 spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
@@ -3881,7 +3881,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                 Peptide peptide = peptideAssumption.getPeptide();
                 int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
-                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), peptideShakerGUI.getSequenceMatchingPreferences());
+                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
@@ -3896,7 +3896,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
-                SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+                SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                 int forwardIon = searchParameters.getIonSearched1();
                 int rewindIon = searchParameters.getIonSearched2();
 
@@ -3937,7 +3937,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ArrayList<com.compomics.util.gui.protein.ModificationProfile> profiles = new ArrayList<com.compomics.util.gui.protein.ModificationProfile>();
         if (scores != null) {
             for (String ptmName : scores.getScoredPTMs()) {
-                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
+                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(ptmName);
                 com.compomics.util.gui.protein.ModificationProfile tempProfile = new com.compomics.util.gui.protein.ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
                 for (int aa = 1; aa <= peptide.getSequence().length(); aa++) {
@@ -4412,7 +4412,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             + peptideMatch.getTheoreticPeptide().getSequence()
                             + "-" + peptideMatch.getTheoreticPeptide().getCTerminal(),
                             profiles, true, "D-score",
-                            peptideShakerGUI.getPtmScoringPreferences().getSelectedProbabilisticScore().getName());
+                            peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences().getSelectedProbabilisticScore().getName());
 
             if (selectedPeptideProfile) {
                 modificationProfileSelectedPeptideJPanel.removeAll();
@@ -4500,7 +4500,7 @@ public class PtmPanel extends javax.swing.JPanel {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         for (int i = 0; i < ptmJTable.getRowCount(); i++) {
-            ptmJTable.setValueAt(peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
+            ptmJTable.setValueAt(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(
                     (String) ptmJTable.getValueAt(i, ptmJTable.getColumn("PTM").getModelIndex())), i, ptmJTable.getColumn("  ").getModelIndex());
         }
 
@@ -4656,7 +4656,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Updates and displays the current spectrum slider tooltip.
      */
     private void updateSpectrumSliderToolTip() {
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();
 
         spectrumTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
                 + "Level: " + intensitySlider.getValue() + "%</html>");

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.ptm;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -22,7 +23,7 @@ import com.compomics.util.experiment.identification.spectrum_annotators.PeptideS
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -224,15 +225,17 @@ public class PtmScorer {
      * matches
      * @param spectrumMatch the spectrum match studied, the A-score will be
      * calculated for the best assumption
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws Exception exception thrown whenever an error occurred while
      * computing the score
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters) throws Exception {
+
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        PTMScoringPreferences scoringPreferences = identificationParameters.getPtmScoringPreferences();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
@@ -349,16 +352,11 @@ public class PtmScorer {
      * @param psmSpecificMap the PSM specific target/decoy scoring map
      * @param inspectedSpectra the spectra to inspect
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws Exception
      */
-    public void scorePSMPTMs(Identification identification, PsmSpecificMap psmSpecificMap, ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scorePSMPTMs(Identification identification, PsmSpecificMap psmSpecificMap, ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) throws Exception {
 
         int max = inspectedSpectra.size();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -369,7 +367,7 @@ public class PtmScorer {
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences, waitingHandler);
+                scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler);
             }
         }
 
@@ -382,24 +380,23 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param spectrumMatch The spectrum match of interest
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param scoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the parameters used for identification
      * @param waitingHandler waiting handler to display progress and allow
      * cancelling
      *
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler) throws Exception {
+    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws Exception {
+
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
 
+        PTMScoringPreferences scoringPreferences = identificationParameters.getPtmScoringPreferences();
+
         if (scoringPreferences.isProbabilitsticScoreCalculation()) {
-            attachProbabilisticScore(identification, spectrumMatch, searchParameters, annotationPreferences, scoringPreferences, sequenceMatchingPreferences);
+            attachProbabilisticScore(identification, spectrumMatch, identificationParameters);
         }
 
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
@@ -572,17 +569,14 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param peptideMatch the peptide match of interest
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param scoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
-    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, IdentificationParameters identificationParameters) throws Exception {
+
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
         PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
@@ -1097,18 +1091,13 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param proteinMatch the protein match
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param scorePeptides if true peptide scores will be recalculated
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
+     * @param scorePeptides boolean indicating whether peptides should be scored
      *
      * @throws Exception exception thrown whenever an error occurred while
      * deserilalizing a match
      */
-    public void scorePTMs(Identification identification, ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            boolean scorePeptides, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scorePTMs(Identification identification, ProteinMatch proteinMatch, IdentificationParameters identificationParameters, boolean scorePeptides) throws Exception {
 
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
@@ -1125,7 +1114,7 @@ public class PtmScorer {
                 PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 if (peptideMath.getUrParam(new PSPtmScores()) == null || scorePeptides) {
-                    scorePTMs(identification, peptideMath, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
+                    scorePTMs(identification, peptideMath, identificationParameters);
                 }
                 PSPtmScores peptideScores = (PSPtmScores) peptideMath.getUrParam(new PSPtmScores());
                 if (peptideScores != null) {
@@ -1134,7 +1123,7 @@ public class PtmScorer {
                         protein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     }
                     ArrayList<Integer> peptideStart = protein.getPeptideStart(peptideSequence,
-                            sequenceMatchingPreferences);
+                            identificationParameters.getSequenceMatchingPreferences());
                     for (int confidentSite : peptideScores.getConfidentSites()) {
                         for (int peptideTempStart : peptideStart) {
                             int siteOnProtein = peptideTempStart + confidentSite - 2;
@@ -1257,18 +1246,13 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      * @param metrics the dataset metrics
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences,
+    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters,
             Metrics metrics) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
@@ -1286,7 +1270,7 @@ public class PtmScorer {
             for (String spectrumKey : spectrumKeys.get(spectrumFileName)) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    scorePTMs(identification, spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences, waitingHandler);
+                    scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler);
                 }
             }
         }
@@ -1301,17 +1285,12 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scorePeptidePtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
 
@@ -1324,7 +1303,7 @@ public class PtmScorer {
         ArrayList<String> peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
         for (String peptideKey : peptideKeys) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            scorePTMs(identification, peptideMatch, searchParameters, annotationPreferences, ptmScoringPreferences, sequenceMatchingPreferences);
+            scorePTMs(identification, peptideMatch, identificationParameters);
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -1343,44 +1322,14 @@ public class PtmScorer {
      * @param metrics if provided, metrics on proteins will be saved while
      * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the protocol used
+     * @param identificationParameters the identification parameters
+     * @param spectrumCountingPreferences the spectrum counting preferences
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
-        scoreProteinPtms(identification, metrics, waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, new IdFilter(), null, sequenceMatchingPreferences);
-    }
-
-    /**
-     * Scores the PTMs of all protein matches contained in an identification
-     * object.
-     *
-     * @param identification identification object containing the identification
-     * matches
-     * @param metrics if provided, metrics on proteins will be saved while
-     * iterating the matches
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param idFilter the identification filter, needed only to get max values
-     * @param spectrumCountingPreferences the spectrum counting preferences. If
-     * not null, the maximum spectrum counting value will be stored in the
-     * Metrics.
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     *
-     * @throws Exception exception thrown whenever a problem occurred while
-     * deserializing a match
-     */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            PTMScoringPreferences ptmScoringPreferences, IdFilter idFilter, SpectrumCountingPreferences spectrumCountingPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
 
@@ -1395,12 +1344,12 @@ public class PtmScorer {
         int nConfidentProteins = 0;
         PSParameter psParameter = new PSParameter();
         double tempSpectrumCounting, maxSpectrumCounting = 0;
-        Enzyme enzyme = searchParameters.getEnzyme();
-        int maxPepLength = idFilter.getMaxPepLength();
+        Enzyme enzyme = shotgunProtocol.getEnzyme();
+        int maxPepLength = identificationParameters.getIdFilter().getMaxPepLength();
 
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            scorePTMs(identification, proteinMatch, searchParameters, annotationPreferences, false, ptmScoringPreferences, sequenceMatchingPreferences);
+            scorePTMs(identification, proteinMatch, identificationParameters, false);
 
             if (metrics != null) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
@@ -1412,7 +1361,7 @@ public class PtmScorer {
                 }
                 if (spectrumCountingPreferences != null) {
                     tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory,
-                            proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, sequenceMatchingPreferences);
+                            proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, identificationParameters.getSequenceMatchingPreferences());
                     if (tempSpectrumCounting > maxSpectrumCounting) {
                         maxSpectrumCounting = tempSpectrumCounting;
                     }
@@ -1439,9 +1388,7 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param waitingHandler waiting handler displaying progress to the user
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param searchParameters the search parameters used
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
@@ -1454,13 +1401,17 @@ public class PtmScorer {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void peptideInference(Identification identification, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+    public void peptideInference(Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Peptide Inference. Please Wait...");
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        
 
         // PSMs with confidently localized PTMs in a map: PTM mass -> peptide sequence -> spectrum keys
         HashMap<Double, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, ArrayList<String>>>();
@@ -1484,7 +1435,7 @@ public class PtmScorer {
                         }
                     }
                     if (variableAA) {
-                        ptmSiteInference(spectrumMatch, ptmScoringPreferences, searchParameters, sequenceMatchingPreferences);
+                        ptmSiteInference(spectrumMatch, identificationParameters);
                         boolean confident = true;
                         for (ModificationMatch modMatch : spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches()) {
                             if (modMatch.isVariable()) {
@@ -1678,7 +1629,7 @@ public class PtmScorer {
                                     throw new IllegalArgumentException("No modification match found at site " + oldLocalization + " in spectrum " + spectrumKey + ".");
                                 }
                                 if (newLocalization != null) {
-                                    if (newLocalization != oldLocalization) {
+                                    if (newLocalization.equals(oldLocalization)) {
                                         PTM ptmCandidate = null;
                                         for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                                             PTM ptm = ptmFactory.getPTM(ptmName);
@@ -1718,10 +1669,7 @@ public class PtmScorer {
      *
      * @param spectrumMatch the spectrum match inspected
      * @param ptmScorer the PTM scorer used to score PTM sites
-     * @param ptmScoringPreferences the PTM scoring preferences as set by the
-     * user
-     * @param searchParameters the identification parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param identificationParameters the identification parameters
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a protein sequence
@@ -1730,9 +1678,10 @@ public class PtmScorer {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmSiteInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
+    private void ptmSiteInference(SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters)
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
@@ -1758,7 +1707,7 @@ public class PtmScorer {
                     }
                     for (String similarPtmName : modificationProfile.getSimilarNotFixedModifications(ptmMass)) {
                         PTM similarPtm = ptmFactory.getPTM(similarPtmName);
-                        for (int pos : psPeptide.getPotentialModificationSites(similarPtm, sequenceMatchingPreferences)) {
+                        for (int pos : psPeptide.getPotentialModificationSites(similarPtm, identificationParameters.getSequenceMatchingPreferences())) {
                             ptmPossibleSites.put(pos, similarPtmName);
                         }
                     }
@@ -1770,6 +1719,7 @@ public class PtmScorer {
             }
         }
 
+        PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
         Set<Double> ptmMasses = modMatchesMap.keySet();
         HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousScoreToSiteMap = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>(ptmMasses.size()); // p score -> d-score -> Map PTM mass -> site -> list of modifications
         HashMap<Double, Integer> nRepresentativesMap = new HashMap<Double, Integer>();

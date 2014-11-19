@@ -7,6 +7,7 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
@@ -56,6 +57,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * True of a file is currently being downloaded.
      */
     private boolean isFileBeingDownloaded = false;
+    /**
+     * The last selected folder
+     */
+    private LastSelectedFolder lastSelectedFolder;
 
     /**
      * Creates a new PrideReshakeSetupDialog.
@@ -65,6 +70,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     public PrideReshakeSetupDialog(PrideReshakeGUI prideReShakeGUI, boolean modal) {
         super(prideReShakeGUI, modal);
+        lastSelectedFolder = prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder();
         initComponents();
         this.prideReShakeGUI = prideReShakeGUI;
         setUpGUI();
@@ -897,7 +903,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             sequenceDbDetailsDialog.setVisible(true);
         }
 
-        prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
+        lastSelectedFolder.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
 
         if (sequenceFactory.getCurrentFastaFile() != null) {
             databaseSettingsTxt.setText(sequenceFactory.getCurrentFastaFile().getAbsolutePath());
@@ -914,10 +920,10 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void browseWorkingFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseWorkingFolderButtonActionPerformed
-        File selectedFolder = Util.getUserSelectedFolder(this, "Select Working Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Working Folder", "Select", false);
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Working Folder", lastSelectedFolder.getLastSelectedFolder(), "Working Folder", "Select", false);
 
         if (selectedFolder != null) {
-            prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(selectedFolder.getAbsolutePath());
+            lastSelectedFolder.setLastSelectedFolder(selectedFolder.getAbsolutePath());
             workingFolderTxt.setText(selectedFolder.getAbsolutePath());
         }
 
@@ -966,11 +972,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             final String link = tempLink.substring(0, tempLink.indexOf("\""));
             final Double fileSize = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size").getModelIndex());
 
-            final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Download Folder", "Select", false);
+            final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
             if (downloadFolder != null) {
 
-                prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(downloadFolder.getAbsolutePath());
+                lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
                 progressDialog = new ProgressDialogX(prideReShakeGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -1090,11 +1096,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
                 final Double fileSize = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size").getModelIndex());
 
-                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", prideReShakeGUI.getPeptideShakerGUI().getLastSelectedFolder(), "Download Folder", "Select", false);
+                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
                 if (downloadFolder != null) {
 
-                    prideReShakeGUI.getPeptideShakerGUI().setLastSelectedFolder(downloadFolder.getAbsolutePath());
+                    lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
                     progressDialog = new ProgressDialogX(prideReShakeGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),

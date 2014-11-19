@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.BinaryArrayImpl;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -16,6 +17,7 @@ import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.pride.CvTerm;
@@ -145,13 +147,13 @@ public class PrideXmlExport {
      */
     private String peptideShakerVersion;
     /**
-     * The search parameters.
+     * Information about the protocol
      */
-    private SearchParameters searchParameters;
+    private ShotgunProtocol shotgunProtocol;
     /**
-     * The PTM scoring preferences.
+     * the identification parameters
      */
-    private PTMScoringPreferences ptmScoringPreferences;
+    private IdentificationParameters identificationParameters;
     /**
      * The spectrum counting preferences.
      */
@@ -164,14 +166,6 @@ public class PrideXmlExport {
      * The peptide spectrum annotator.
      */
     private PeptideSpectrumAnnotator spectrumAnnotator;
-    /**
-     * The annotation preferences.
-     */
-    private AnnotationPreferences annotationPreferences;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
 
     /**
      * Constructor.
@@ -180,16 +174,14 @@ public class PrideXmlExport {
      * @param identification the identification object which can be used to
      * retrieve identification matches and parameters
      * @param projectDetails the project details
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      * @param experimentTitle Title of the experiment
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param spectrumAnnotator the spectrum annotator to use
      * @param experimentLabel Label of the experiment
-     * @param ptmScoringPreferences the PTM scoring preferences
      * @param experimentDescription Description of the experiment
      * @param experimentProject project of the experiment
      * @param referenceGroup References for the experiment
@@ -209,21 +201,19 @@ public class PrideXmlExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public PrideXmlExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences,
+    public PrideXmlExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
-            AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
+             String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ReferenceGroup referenceGroup, ContactGroup contactGroup, Sample sample, Protocol protocol, Instrument instrument,
             File outputFolder, String fileName, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
-        this.searchParameters = searchParameters;
-        this.ptmScoringPreferences = ptmScoringPreferences;
+        this.shotgunProtocol = shotgunProtocol;
+        this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
         this.spectrumAnnotator = spectrumAnnotator;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         this.experimentTitle = experimentTitle;
         this.experimentLabel = experimentLabel;
         this.experimentDescription = experimentDescription;
@@ -379,6 +369,8 @@ public class PrideXmlExport {
             }
             identification.loadPeptideMatchParameters(peptideProbabilities, null);
             identification.loadProteinMatchParameters(proteinProbabilities, null);
+            
+            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
@@ -453,7 +445,7 @@ public class PrideXmlExport {
                                 for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                     if (assumption instanceof PeptideAssumption) {
                                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                        if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                                        if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                             if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
                                                 eValues.put(se, eValue);
                                                 if (se == Advocate.mascot.getIndex()) {
@@ -553,7 +545,7 @@ public class PrideXmlExport {
                         }
 
                         // @TODO: the line below uses the protein tree, which has to be rebuilt if not available...
-                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(sequenceMatchingPreferences);
+                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(identificationParameters.getSequenceMatchingPreferences());
                         String peptideProteins = "";
                         for (String accession : peptideParentProteins) {
                             if (!peptideProteins.equals("")) {
@@ -725,7 +717,8 @@ public class PrideXmlExport {
     private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, sequenceMatchingPreferences);
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, identificationParameters.getSequenceMatchingPreferences());
         MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
 
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
@@ -1099,6 +1092,8 @@ public class PrideXmlExport {
         br.write(getCurrentTabSpace() + "<processingMethod>" + System.getProperty("line.separator"));
         tabCounter++;
 
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        
         // fragment mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000161\" name=\"Fragment mass tolerance setting\" value=\""
                 + searchParameters.getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));

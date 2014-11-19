@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
@@ -24,6 +25,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
@@ -105,12 +107,11 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
@@ -121,7 +122,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -220,12 +221,12 @@ public class PsIdentificationAlgorithmMatchesSection {
                                 if (assumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                     feature = getPeptideAssumptionFeature(identification, identificationFeaturesGenerator,
-                                            searchParameters, annotationPreferences, sequenceMatchingPreferences, keys, linePrefix,
+                                            shotgunProtocol, identificationParameters, keys, linePrefix,
                                             peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
-                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, searchParameters,
-                                            annotationPreferences, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
+                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, 
+                                            identificationParameters, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
                                             identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else {
                                     throw new IllegalArgumentException("Spectrum identification assumption of type " + assumption.getClass() + " not supported.");
@@ -239,9 +240,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                                     fractionPrefix += linePrefix;
                                 }
                                 fractionPrefix += line + ".";
-                                fragmentSection.writeSection(spectrumMatch, searchParameters, annotationPreferences, fractionPrefix, null);
+                                fragmentSection.writeSection(spectrumMatch, shotgunProtocol, identificationParameters, fractionPrefix, null);
                             }
                             line++;
+                            writer.newLine();
                         }
                     }
                 }
@@ -303,9 +305,8 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param peptideAssumption the assumption for the match to inspect
@@ -326,7 +327,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, String linePrefix,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
             PeptideAssumption peptideAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -382,7 +383,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return result.toString();
             case accessions:
                 result = new StringBuilder();
-                ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
+                ArrayList<String> accessions = peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
                 for (String accession : accessions) {
                     if (result.length() > 0) {
                         result.append(", ");
@@ -393,7 +394,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case protein_description:
                 SequenceFactory sequenceFactory = SequenceFactory.getInstance();
                 StringBuilder descriptions = new StringBuilder();
-                accessions = peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
+                accessions = peptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
                 Collections.sort(accessions);
                 for (String accession : accessions) {
                     if (descriptions.length() > 0) {
@@ -419,7 +420,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                 delta *= 100;
                 return delta + "";
             case decoy:
-                if (peptideAssumption.getPeptide().isDecoy(sequenceMatchingPreferences)) {
+                if (peptideAssumption.getPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
                     return "1";
                 } else {
                     return "0";
@@ -448,18 +449,22 @@ public class PsIdentificationAlgorithmMatchesSection {
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 double coveredIntensity = 0;
                 Peptide peptide = peptideAssumption.getPeptide();
+                AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
                 ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value,
-                        (MSnSpectrum) spectrum, peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                        (MSnSpectrum) spectrum, peptide, 0, annotationPreferences.getFragmentIonAccuracy(), false, true);
                 for (IonMatch ionMatch : matches) {
                     coveredIntensity += ionMatch.peak.intensity;
                 }
                 double coverage = 100 * coveredIntensity / spectrum.getTotalIntensity();
                 return coverage + "";
-            case mz_error:
+            case mz_error_ppm:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return peptideAssumption.getDeltaMass(precursor.getMz(), true) + "";
+            case mz_error_da:
+                precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
+                return peptideAssumption.getDeltaMass(precursor.getMz(), false) + "";
             case rt:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getRt() + "";
@@ -471,9 +476,9 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return peptideAssumption.getPeptide().getSequence();
             case missed_cleavages:
                 String sequence = peptideAssumption.getPeptide().getSequence();
-                return Peptide.getNMissedCleavages(sequence, searchParameters.getEnzyme()) + "";
+                return Peptide.getNMissedCleavages(sequence, shotgunProtocol.getEnzyme()) + "";
             case modified_sequence:
-                return peptideAssumption.getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + "";
+                return peptideAssumption.getPeptide().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationProfile(), false, false, true) + "";
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";
@@ -495,24 +500,27 @@ public class PsIdentificationAlgorithmMatchesSection {
             case validated:
                 return psParameter.getMatchValidationLevel().toString();
             case fragment_mz_accuracy_score:
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(),
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey),
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        peptideAssumption.getIdentificationCharge().value, searchParameters, PsmScores.aa_ms2_mz_fidelity.index);
+                        peptideAssumption.getIdentificationCharge().value, shotgunProtocol, PsmScores.aa_ms2_mz_fidelity.index);
                 return score + "";
             case intensity_score:
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 score = PsmScores.getDecreasingScore(peptideAssumption.getPeptide(),
                         (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey),
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        peptideAssumption.getIdentificationCharge().value, searchParameters, PsmScores.aa_intensity.index);
+                        peptideAssumption.getIdentificationCharge().value, shotgunProtocol, PsmScores.aa_intensity.index);
                 return score + "";
             case sequence_coverage:
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value,
-                        (MSnSpectrum) spectrum, peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                        (MSnSpectrum) spectrum, peptide, 0, identificationParameters.getAnnotationPreferences().getFragmentIonAccuracy(), false, true);
                 int sequenceLength = peptide.getSequence().length();
                 boolean[] aaCoverage = new boolean[sequenceLength];
                 for (IonMatch ionMatch : matches) {
@@ -533,10 +541,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return coverage + "";
             case longest_amino_acid_sequence_annotated:
                 peptide = peptideAssumption.getPeptide();
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value,
-                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, annotationPreferences.getFragmentIonAccuracy(), false, true);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 boolean[] coverageForward = new boolean[sequenceLength];
@@ -590,10 +599,11 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return longestTag;
             case longest_amino_acid_sequence_annotated_single_serie:
                 peptide = peptideAssumption.getPeptide();
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value,
-                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                        (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey), peptide, 0, annotationPreferences.getFragmentIonAccuracy(), false, true);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 HashMap<Integer, boolean[]> ionCoverage = new HashMap<Integer, boolean[]>(6);
@@ -733,10 +743,11 @@ public class PsIdentificationAlgorithmMatchesSection {
             case amino_acids_annotated:
                 peptide = peptideAssumption.getPeptide();
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
+                annotationPreferences = identificationParameters.getAnnotationPreferences();
                 matches = peptideSpectrumAnnotator.getSpectrumAnnotation(
                         annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         peptideAssumption.getIdentificationCharge().value,
-                        (MSnSpectrum) spectrum, peptide, 0, searchParameters.getFragmentIonAccuracy(), false, true);
+                        (MSnSpectrum) spectrum, peptide, 0, annotationPreferences.getFragmentIonAccuracy(), false, true);
                 sequence = peptide.getSequence();
                 sequenceLength = sequence.length();
                 coverageForward = new boolean[sequenceLength];
@@ -800,8 +811,8 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param spectrumKey the key of the spectrum
@@ -822,7 +833,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @throws MzMLUnmarshallerException
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
             TagAssumption tagAssumption, String spectrumKey, PSParameter psParameter, PsIdentificationAlgorithmMatchesFeature exportFeature,
             WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -861,7 +872,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case max_intensity:
                 spectrum = SpectrumFactory.getInstance().getSpectrum(spectrumKey);
                 return spectrum.getMaxIntensity() + "";
-            case mz_error:
+            case mz_error_ppm:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return tagAssumption.getDeltaMass(precursor.getMz(), true) + "";
             case rt:
@@ -876,7 +887,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             case missed_cleavages:
                 return "";
             case modified_sequence:
-                return tagAssumption.getTag().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true, false);
+                return tagAssumption.getTag().getTaggedModifiedSequence(identificationParameters.getSearchParameters().getModificationProfile(), false, false, true, false);
             case spectrum_charge:
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 return precursor.getPossibleChargesAsString() + "";

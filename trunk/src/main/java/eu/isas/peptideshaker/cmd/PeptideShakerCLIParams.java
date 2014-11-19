@@ -38,7 +38,8 @@ public enum PeptideShakerCLIParams {
     SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
     SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false),
     SPECIES_UPDATE("species_update", "Check for new species information in Ensembl and update if possible. (1: true, 0: false, default is '0').", false),
-    ZIP("zip", "Exports the entire project as a zip file in the file specified.", false);
+    ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
+    CPUS("cpus", "The number of threads to use. The number of available cpus is used if not set.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -98,6 +99,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
         aOptions.addOption(SPECIES_UPDATE.id, true, SPECIES_UPDATE.description);
         aOptions.addOption(ZIP.id, true, ZIP.description);
+        aOptions.addOption(CPUS.id, true, CPUS.description);
 
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
@@ -125,24 +127,28 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, EXPERIMENT.id) + EXPERIMENT.description + "\n";
         output += "-" + String.format(formatter, SAMPLE.id) + SAMPLE.description + "\n";
         output += "-" + String.format(formatter, REPLICATE.id) + REPLICATE.description + "\n";
-        output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
         output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + IDENTIFICATION_FILES.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + PEPTIDESHAKER_OUTPUT.description + "\n";
         output += "-" + String.format(formatter, IDENTIFICATION_PARAMETERS.id) + IDENTIFICATION_PARAMETERS.description + "\n";
+
+        output += "\n\nOptional input parameter:\n\n";
+        output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
 
         output += "\n\nOptional gene annotation parameter:\n\n";
         output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";
         output += "-" + String.format(formatter, SPECIES_TYPE.id) + SPECIES_TYPE.description + "\n";
         output += "-" + String.format(formatter, SPECIES_UPDATE.id) + SPECIES_UPDATE.description + "\n";
 
-        output += "\n\nOptional processing parameters:\n\n";
+        output += "\n\nOptional validation parameters:\n\n";
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
         output += "-" + String.format(formatter, PSM_FDR.id) + PSM_FDR.description + "\n";
+        output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
+
+        output += "\n\nOptional PTM localization scoring parameters:\n\n";
         output += "-" + String.format(formatter, PTM_SCORE.id) + PTM_SCORE.description + "\n";
         output += "-" + String.format(formatter, PTM_THRESHOLD.id) + PTM_THRESHOLD.description + "\n";
         output += "-" + String.format(formatter, SCORE_NEUTRAL_LOSSES.id) + SCORE_NEUTRAL_LOSSES.description + "\n";
-        output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
 
         output += "\n\nOptional filtering parameters:\n\n";
         output += "-" + String.format(formatter, MIN_PEPTIDE_LENGTH.id) + MIN_PEPTIDE_LENGTH.description + "\n";
@@ -150,6 +156,9 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";
+
+        output += "\n\nOptional processing parameters:\n\n";
+        output += "-" + String.format(formatter, CPUS.id) + CPUS.description + "\n";
 
         output += "\n\nOptional Export:\n\n";
         output += "-" + String.format(formatter, ZIP.id) + ZIP.description + "\n";

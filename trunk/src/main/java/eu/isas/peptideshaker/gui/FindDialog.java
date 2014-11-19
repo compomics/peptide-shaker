@@ -11,7 +11,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -228,7 +227,7 @@ public class FindDialog extends javax.swing.JDialog {
             } else {
                 ((DefaultTableModel) modificationTable.getModel()).addRow(new Object[]{
                     true,
-                    peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptm),
+                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(ptm),
                     ptm});
             }
         }
@@ -487,10 +486,10 @@ public class FindDialog extends javax.swing.JDialog {
         ((JSparklinesIntervalChartTableCellRenderer) psmTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
         ((JSparklinesIntervalChartTableCellRenderer) psmTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
+                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(
-                peptideShakerGUI.getSearchParameters().getPrecursorAccuracy());
+                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy());
         psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -1414,14 +1413,14 @@ public class FindDialog extends javax.swing.JDialog {
                     case 4:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String accessions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             accessions += accession + " ";
                         }
                         return accessions;
                     case 5:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String descriptions = "";
-                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                        for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             descriptions += sequenceFactory.getHeader(accession).getSimpleProteinDescription() + " ";
                         }
                         return descriptions;
@@ -1717,9 +1716,9 @@ public class FindDialog extends javax.swing.JDialog {
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
                         }

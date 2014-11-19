@@ -485,19 +485,19 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                peptideShakerGUI.getSequenceMatchingPreferences());
+                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                peptideShakerGUI.getSequenceMatchingPreferences());
+                                                peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                                     }
 
                                     if (includePeptide && selectedRows.length == 1) {
 
                                         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
-                                        for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
-                                            int peptideTempStart = startIndex -1;
+                                        for (int startIndex : aminoAcidPattern.getIndexes(currentProteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                            int peptideTempStart = startIndex - 1;
                                             int peptideTempEnd = peptideTempStart + peptideSequence.length();
                                             for (int k = peptideTempStart; k < peptideTempEnd; k++) {
                                                 coverage[i][k]++;
@@ -614,7 +614,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // molecular mass plot
             DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
-            HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+            HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFractionMolecularWeightRanges();
             ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {
@@ -828,7 +828,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -1728,7 +1728,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         if (chartPanel != null) {
-            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, chartPanel);
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, chartPanel, peptideShakerGUI.getLastSelectedFolder());
         }
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 

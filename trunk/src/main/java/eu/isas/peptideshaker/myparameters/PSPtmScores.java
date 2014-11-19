@@ -451,9 +451,9 @@ public class PSPtmScores implements UrParameter {
     }
 
     /**
-     * Returns a list of PTMs presenting at least a confident site.
+     * Returns a list of ptms presenting at least a confident site.
      *
-     * @return a list of PTMs presenting at least a confident site
+     * @return a list of ptms presenting at least a confident site
      */
     public ArrayList<String> getConfidentlyLocalizedPtms() {
         compatibilityCheck();
@@ -468,9 +468,9 @@ public class PSPtmScores implements UrParameter {
     }
 
     /**
-     * Returns a list of PTMs presenting at least an ambiguous site.
+     * Returns a list of ptms presenting at least an ambiguous site.
      *
-     * @return a list of PTMs presenting at least an ambiguous site
+     * @return a list of ptms presenting at least an ambiguous site
      */
     public ArrayList<String> getAmbiguouslyLocalizedPtms() {
         compatibilityCheck();

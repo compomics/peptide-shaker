@@ -46,7 +46,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     public SpectrumColorsDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
-        iontypes = peptideShakerGUI.getAnnotationPreferences().getIonTypes();
+        iontypes = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getIonTypes();
         neutralLosses = peptideShakerGUI.getNeutralLosses();
         initComponents();
         setUpGui();

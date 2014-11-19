@@ -1,10 +1,10 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -554,8 +554,8 @@ public class ProteinFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String proteinKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        return isValidated(proteinKey, this, identification, identificationFeaturesGenerator, searchParameters);
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+        return isValidated(proteinKey, this, identification, identificationFeaturesGenerator, identificationParameters);
     }
 
     /**
@@ -567,7 +567,7 @@ public class ProteinFilter extends MatchFilter {
      * from
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
-     * @param searchParameters the identification parameters
+     * @param identificationParameters the identification parameters
      *
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
@@ -578,7 +578,7 @@ public class ProteinFilter extends MatchFilter {
      * @throws java.sql.SQLException
      */
     public static boolean isValidated(String proteinMatchKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            SearchParameters searchParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
+            IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
@@ -742,11 +742,11 @@ public class ProteinFilter extends MatchFilter {
                         return false;
                     }
                 } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey).intValue() != proteinFilter.getProteinNSpectra().intValue()) {
+                    if (!identificationFeaturesGenerator.getNSpectra(proteinMatchKey).equals(proteinFilter.getProteinNSpectra())) {
                         return false;
                     }
                 } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (identificationFeaturesGenerator.getNSpectra(proteinMatchKey).intValue() == proteinFilter.getProteinNSpectra().intValue()) {
+                    if (!identificationFeaturesGenerator.getNSpectra(proteinMatchKey).equals(proteinFilter.getProteinNSpectra())) {
                         return false;
                     }
                 }
@@ -763,11 +763,11 @@ public class ProteinFilter extends MatchFilter {
                         return false;
                     }
                 } else if (proteinFilter.getnValidatedSpectraComparison() == ComparisonType.EQUAL) {
-                    if (nValidatedSpectra != proteinFilter.getProteinNValidatedSpectra().intValue()) {
+                    if (nValidatedSpectra != proteinFilter.getProteinNValidatedSpectra()) {
                         return false;
                     }
                 } else if (proteinFilter.getnValidatedSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (nValidatedSpectra == proteinFilter.getProteinNValidatedSpectra().intValue()) {
+                    if (nValidatedSpectra == proteinFilter.getProteinNValidatedSpectra()) {
                         return false;
                     }
                 }
@@ -784,11 +784,11 @@ public class ProteinFilter extends MatchFilter {
                         return false;
                     }
                 } else if (proteinFilter.getnConfidentSpectraComparison() == ComparisonType.EQUAL) {
-                    if (nConfidentSpectra != proteinFilter.getProteinNConfidentSpectra().intValue()) {
+                    if (nConfidentSpectra != proteinFilter.getProteinNConfidentSpectra()) {
                         return false;
                     }
                 } else if (proteinFilter.getnConfidentSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (nConfidentSpectra == proteinFilter.getProteinNConfidentSpectra().intValue()) {
+                    if (nConfidentSpectra == proteinFilter.getProteinNConfidentSpectra()) {
                         return false;
                     }
                 }

@@ -44,7 +44,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
         this.peptideShakerGUI = peptideShakerGUI;
         this.spectrumCountingPreferences = peptideShakerGUI.getSpectrumCountingPreferences();
-        this.ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
+        this.ptmScoringPreferences = peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences();
 
         // centrally align the spinner  
         ((NumberEditor) nAASpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
@@ -362,20 +362,21 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
 
             // delta score threshold
-            if (peptideShakerGUI.getPtmScoringPreferences().getFlrThreshold() != new Double(flrThresholdTxt.getText())) {
-                peptideShakerGUI.getPtmScoringPreferences().setFlrThreshold(new Double(flrThresholdTxt.getText()));
+            PTMScoringPreferences currentPtmScoringPreferences = peptideShakerGUI.getIdentificationParameters().getPtmScoringPreferences();
+            if (currentPtmScoringPreferences.getFlrThreshold() != new Double(flrThresholdTxt.getText())) {
+                currentPtmScoringPreferences.setFlrThreshold(new Double(flrThresholdTxt.getText()));
                 ptmScoreThresholdChanged = true;
             }
 
-            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation()&& probabilitsticScoreCalculationCmb.getSelectedIndex() != 0
-                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilitsticScoreCalculation() && probabilitsticScoreCalculationCmb.getSelectedIndex() != 1) {
-                peptideShakerGUI.getPtmScoringPreferences().setProbabilitsticScoreCalculation(probabilitsticScoreCalculationCmb.getSelectedIndex() == 0);
+            if (currentPtmScoringPreferences.isProbabilitsticScoreCalculation()&& probabilitsticScoreCalculationCmb.getSelectedIndex() != 0
+                    || !currentPtmScoringPreferences.isProbabilitsticScoreCalculation() && probabilitsticScoreCalculationCmb.getSelectedIndex() != 1) {
+                currentPtmScoringPreferences.setProbabilitsticScoreCalculation(probabilitsticScoreCalculationCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
 
-            if (peptideShakerGUI.getPtmScoringPreferences().isProbabilisticScoreNeutralLosses()&& neutralLossesCmb.getSelectedIndex() != 0
-                    || !peptideShakerGUI.getPtmScoringPreferences().isProbabilisticScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
-                peptideShakerGUI.getPtmScoringPreferences().setProbabilisticScoreNeutralLosses(neutralLossesCmb.getSelectedIndex() == 0);
+            if (currentPtmScoringPreferences.isProbabilisticScoreNeutralLosses()&& neutralLossesCmb.getSelectedIndex() != 0
+                    || !currentPtmScoringPreferences.isProbabilisticScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
+                currentPtmScoringPreferences.setProbabilisticScoreNeutralLosses(neutralLossesCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
 

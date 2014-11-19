@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.io.export.ExportFormat;
@@ -9,6 +10,7 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
@@ -230,13 +232,10 @@ public class CLIMethods {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the protocol used
+     * @param identificationParameters the identification parameters used
      * @param nSurroundingAA the number of amino acids to export on the side of
      * peptide sequences
-     * @param idFilter the identification filter used when importing the files
-     * @param ptmcoringPreferences the PTM localization scoring preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
      *
@@ -253,8 +252,7 @@ public class CLIMethods {
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, int nSurroundingAA, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, int nSurroundingAA, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -264,7 +262,7 @@ public class CLIMethods {
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
-                searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, sequenceMatchingPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
+                null, null, null, null, nSurroundingAA, shotgunProtocol, identificationParameters, spectrumCountingPreferences, waitingHandler);
     }
 
     /**
@@ -317,9 +315,9 @@ public class CLIMethods {
         projectDetails.setPrideOutputFolder(mzidCLIInputBean.getOutputFile().getAbsolutePath());
 
         MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), cpsParent.getIdentification(), cpsParent.getProjectDetails(),
-                cpsParent.getProcessingPreferences(), cpsParent.getSearchParameters(), cpsParent.getPtmScoringPreferences(),
+                cpsParent.getProcessingPreferences(), cpsParent.getShotgunProtocol(), cpsParent.getIdentificationParameters(),
                 cpsParent.getSpectrumCountingPreferences(), cpsParent.getIdentificationFeaturesGenerator(),
-                cpsParent.getAnnotationPreferences(), cpsParent.getSequenceMatchingPreferences(), mzidCLIInputBean.getOutputFile(), waitingHandler);
+                mzidCLIInputBean.getOutputFile(), waitingHandler);
         mzIdentMLExport.createMzIdentMLFile(false);
     }
 }

@@ -1,12 +1,13 @@
 package eu.isas.peptideshaker.protein_inference;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -53,9 +54,8 @@ public class ProteinInference {
      *
      * @param identification the identification class containing all
      * identification matches
-     * @param searchParameters the search parameters used for the search
+     * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws IOException
      * @throws IllegalArgumentException
@@ -63,8 +63,7 @@ public class ProteinInference {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void removeRedundantGroups(Identification identification, SearchParameters searchParameters,
-            SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+    public void removeRedundantGroups(Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         ArrayList<String> toRemove = new ArrayList<String>();
@@ -84,7 +83,7 @@ public class ProteinInference {
         for (String proteinSharedKey : identification.getProteinIdentification()) {
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 if (!processedKeys.containsKey(proteinSharedKey)) {
-                    String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, searchParameters, sequenceMatchingPreferences);
+                    String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, shotgunProtocol, identificationParameters);
                     if (uniqueKey != null) {
                         mergeProteinGroups(identification, proteinSharedKey, uniqueKey, toDelete);
                         processedKeys.put(proteinSharedKey, uniqueKey);
@@ -149,8 +148,6 @@ public class ProteinInference {
      * @param processedKeys map of already processed keys and their best smaller
      * key
      * @param keysToDelete list of keys to delete
-     * @param searchParameters the search parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return the best smaller group, null if none found.
      *
@@ -160,7 +157,7 @@ public class ProteinInference {
      * @throws ClassNotFoundException
      */
     private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys,
-            HashSet<String> keysToDelete, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences)
+            HashSet<String> keysToDelete, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
@@ -173,7 +170,7 @@ public class ProteinInference {
                     if (ProteinMatch.getNProteins(uniqueGroupCandidate) > 1) {
                         String reducedGroup = processedKeys.get(uniqueGroupCandidate);
                         if (reducedGroup == null) {
-                            reducedGroup = getSubgroup(identification, uniqueGroupCandidate, processedKeys, keysToDelete, searchParameters, sequenceMatchingPreferences);
+                            reducedGroup = getSubgroup(identification, uniqueGroupCandidate, processedKeys, keysToDelete, shotgunProtocol, identificationParameters);
                             if (reducedGroup != null) {
                                 mergeProteinGroups(identification, uniqueGroupCandidate, reducedGroup, keysToDelete);
                                 processedKeys.put(uniqueGroupCandidate, reducedGroup);
@@ -213,7 +210,7 @@ public class ProteinInference {
                                         best = false;
                                     }
                                     for (String accession2 : ProteinMatch.getAccessions(key2)) {
-                                        int tempPrefernce = compareMainProtein(match, accession2, match, accession1, searchParameters, sequenceMatchingPreferences);
+                                        int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationParameters);
                                         if (tempPrefernce != 1) {
                                             best = false;
                                         } else {
@@ -229,7 +226,7 @@ public class ProteinInference {
                         if (best) {
                             ArrayList<String> accessions = ProteinMatch.getOtherProteins(sharedKey, key1);
                             for (String accession2 : accessions) {
-                                int tempPrefernce = compareMainProtein(match, accession2, match, accession1, searchParameters, sequenceMatchingPreferences);
+                                int tempPrefernce = compareMainProtein(match, accession2, match, accession1, shotgunProtocol, identificationParameters);
                                 if (tempPrefernce == 0) {
                                     best = false;
                                     break;
@@ -312,8 +309,8 @@ public class ProteinInference {
      * @param metrics if provided protein metrics will be loaded while iterating
      * the groups
      * @param proteinMap the protein matches scoring map
-     * @param searchParameters the identification parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
      * @throws IOException
@@ -323,7 +320,7 @@ public class ProteinInference {
      * @throws InterruptedException
      */
     public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
@@ -447,7 +444,7 @@ public class ProteinInference {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters, sequenceMatchingPreferences) > 0) {
+                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, shotgunProtocol, identificationParameters) > 0) {
                         mainKey = accession;
                     }
                 }
@@ -455,7 +452,7 @@ public class ProteinInference {
                     for (int j = i + 1; j < accessions.size(); j++) {
                         if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters, sequenceMatchingPreferences) > 0) {
+                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), shotgunProtocol, identificationParameters) > 0) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -515,7 +512,7 @@ public class ProteinInference {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean unrelated = false;
-                        for (String proteinAccession : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
+                        for (String proteinAccession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                             if (!proteinKey.contains(proteinAccession)) {
                                 if (!getSimilarity(mainMatch, proteinAccession)) {
                                     unrelated = true;
@@ -541,7 +538,7 @@ public class ProteinInference {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     boolean unrelated = false;
                     boolean otherProtein = false;
-                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
+                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                         if (!proteinKey.contains(protein)) {
                             otherProtein = true;
                             if (!getSimilarity(mainMatch, protein)) {
@@ -650,8 +647,6 @@ public class ProteinInference {
      * @param oldAccession the accession of the old protein
      * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
-     * @param searchParameters the parameters used for the identification
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return the product of the comparison: 1: better enzymaticity, 2: better
      * evidence, 3: better characterization, 0: equal or not better
@@ -661,9 +656,10 @@ public class ProteinInference {
      * @throws IllegalArgumentException
      */
     private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
-        Enzyme enzyme = searchParameters.getEnzyme();
+        Enzyme enzyme = shotgunProtocol.getEnzyme();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         if (enzyme != null && !enzyme.isSemiSpecific()) { // null enzymes should not occur, but could happen with old search param files
 
             // @TODO: could semi-specific, top-down, whole protein, and non enzyme be handled better??

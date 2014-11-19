@@ -3,16 +3,14 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -94,17 +92,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private static final Color orange = new Color(220, 110, 0);
     /**
-     * The settings used to identify the spectra.
+     * Information on the protocol
      */
-    private SearchParameters searchParameters;
+    private ShotgunProtocol shotgunProtocol;
     /**
-     * The spectrum annotation preferences.
+     * the identification parameters used
      */
-    private AnnotationPreferences annotationPreferences;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
+    private IdentificationParameters identificationParameters;
     /**
      * The filter table column header tooltips.
      */
@@ -131,9 +125,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * generator
      * @param proteinMap the protein map
      * @param proteinMatchKey the protein match key
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol identification on the protocol used
+     * @param identificationParameters the identification parameters used
      *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
@@ -142,7 +135,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ProteinMap proteinMap, String proteinMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ProteinMap proteinMap, String proteinMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -152,9 +145,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.searchParameters = searchParameters;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+        this.shotgunProtocol = shotgunProtocol;
+        this.identificationParameters = identificationParameters;
+
         type = Type.PROTEIN;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -180,11 +173,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param identification the identification where to get the match from
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the search parameters
      * @param peptideSpecificMap the peptide specific target decoy map
      * @param peptideMatchKey the peptide match key
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol identification on the protocol used
+     * @param identificationParameters the identification parameters used
      *
      * @throws SQLException
      * @throws IOException
@@ -193,7 +185,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -203,9 +195,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.searchParameters = searchParameters;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+        this.shotgunProtocol = shotgunProtocol;
+        this.identificationParameters = identificationParameters;
         type = Type.PEPTIDE;
 
         ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
@@ -217,7 +208,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(peptideSpecificMap.getCorrectedKey(peptideGroupKey));
         String groupName = "";
         if (peptideSpecificMap.getKeys().size() > 1) {
-            groupName += PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), peptideGroupKey) + " ";
+            groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationProfile(), peptideGroupKey) + " ";
         }
         groupName += "Peptides";
         populateGUI(identificationFeaturesGenerator, targetDecoyMap, filters, groupName);
@@ -237,11 +228,10 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param identification the identification where to get the match from
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the search parameters
      * @param psmSpecificMap the PSM specific target decoy map
      * @param psmMatchKey the spectrum match key
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol identification on the protocol used
+     * @param identificationParameters the identification parameters used
      *
      * @throws SQLException
      * @throws IOException
@@ -250,7 +240,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PsmSpecificMap psmSpecificMap, String psmMatchKey, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PsmSpecificMap psmSpecificMap, String psmMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -260,9 +250,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.exceptionHandler = exceptionHandler;
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.searchParameters = searchParameters;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+        this.shotgunProtocol = shotgunProtocol;
+        this.identificationParameters = identificationParameters;
         type = Type.PSM;
 
         String fileName = Spectrum.getSpectrumFile(psmMatchKey);
@@ -447,7 +436,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         // Backward compatibility check
         if (!psParameter.hasQcFilters()) {
             for (MatchFilter filter : filters) {
-                boolean validated = filter.isValidated(matchKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
+                boolean validated = filter.isValidated(matchKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
                 psParameter.setQcResult(filter.getName(), validated);
             }
         }
@@ -908,7 +897,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     ProteinMap proteinMap = pSMaps.getProteinMap();
                     PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
 
-                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
+                    for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
                         ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
 
@@ -924,7 +913,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                 if (proteinValidation.isValidated()) {
 
-                                    MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
+                                    MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, proteinMap, proteinMatchKey);
                                     proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                     MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
 
@@ -946,17 +935,17 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(matchKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
+                        String peptideKey = peptide.getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
                         identificationFeaturesGenerator.updateNConfidentSpectraForPeptide(peptideKey);
                         PSParameter peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
                         if (peptidePSParameter.getMatchValidationLevel().isValidated()) {
 
-                            MatchesValidator.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
+                            MatchesValidator.updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
                             identification.updateSpectrumMatchParameter(matchKey, psParameter);
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
+                            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
 
                                 ArrayList<String> proteinMatches = identification.getProteinMap().get(accession);
 
@@ -974,7 +963,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                                         if (proteinValidation.isValidated()) {
 
                                             MatchesValidator.updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator,
-                                                    searchParameters, annotationPreferences, proteinMap, proteinMatchKey);
+                                                    shotgunProtocol, identificationParameters, proteinMap, proteinMatchKey);
                                             proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, proteinPSParameter);
                                             MatchValidationLevel newValidation = proteinPSParameter.getMatchValidationLevel();
 

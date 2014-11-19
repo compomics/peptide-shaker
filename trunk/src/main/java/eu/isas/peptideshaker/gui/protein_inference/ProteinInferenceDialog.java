@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -11,7 +12,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -958,9 +959,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
+                        ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                         return inspectedMatch.hasEnzymaticPeptide(accessions.get(row),
-                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                peptideShakerGUI.getSequenceMatchingPreferences());
+                                shotgunProtocol.getEnzyme(),
+                                identificationParameters.getSequenceMatchingPreferences());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";

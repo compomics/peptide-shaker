@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -14,8 +15,10 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
@@ -53,29 +56,13 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The identification filter used.
-     */
-    protected IdFilter idFilter = new IdFilter();
-    /**
-     * The annotation preferences to use.
-     */
-    protected AnnotationPreferences annotationPreferences;
-    /**
      * The spectrum counting preferences.
      */
     protected SpectrumCountingPreferences spectrumCountingPreferences;
     /**
-     * The PTM scoring preferences.
-     */
-    protected PTMScoringPreferences ptmScoringPreferences;
-    /**
      * The project details.
      */
     protected ProjectDetails projectDetails;
-    /**
-     * The search parameters.
-     */
-    protected SearchParameters searchParameters;
     /**
      * The processing preferences.
      */
@@ -84,10 +71,6 @@ public class CpsParent extends UserPreferencesParent {
      * The metrics stored during processing.
      */
     protected Metrics metrics;
-    /**
-     * The gene preferences.
-     */
-    protected GenePreferences genePreferences = new GenePreferences();
     /**
      * The MS experiment class.
      */
@@ -117,9 +100,13 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
-     * The sequence matching preferences.
+     * Information on the protocol used
      */
-    protected SequenceMatchingPreferences sequenceMatchingPreferences;
+    protected ShotgunProtocol shotgunProtocol;
+    /**
+     * The identification parameters
+     */
+    protected IdentificationParameters identificationParameters;
     /**
      * The currently loaded cps file.
      */
@@ -131,10 +118,9 @@ public class CpsParent extends UserPreferencesParent {
      * @param jarFilePath the path to the jar file
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
-     * 
+     *
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      * @throws SQLException thrown if SQLException occurs
      * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      */
@@ -175,30 +161,18 @@ public class CpsParent extends UserPreferencesParent {
 
         // Get PeptideShaker settings
         PeptideShakerSettings experimentSettings = cpsFileImporter.getExperimentSettings();
-        idFilter = experimentSettings.getIdFilter();
-        annotationPreferences = experimentSettings.getAnnotationPreferences();
+        identificationParameters = experimentSettings.getIdentificationParameters();
         spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
-        ptmScoringPreferences = experimentSettings.getPTMScoringPreferences();
         projectDetails = experimentSettings.getProjectDetails();
         HashMap<Integer, Advocate> userAdvocateMapping = projectDetails.getUserAdvocateMapping();
         if (userAdvocateMapping != null) {
             Advocate.setUserAdvocates(userAdvocateMapping);
         }
-        searchParameters = experimentSettings.getSearchParameters();
         processingPreferences = experimentSettings.getProcessingPreferences();
         metrics = experimentSettings.getMetrics();
-        genePreferences = experimentSettings.getGenePreferences();
         filterPreferences = experimentSettings.getFilterPreferences();
         displayPreferences = experimentSettings.getDisplayPreferences();
-        sequenceMatchingPreferences = experimentSettings.getSequenceMatchingPreferences();
-
-        // backwards compatability for the gene preferences
-        if (genePreferences.getCurrentSpecies() == null) {
-            genePreferences = new GenePreferences();
-        }
-        if (genePreferences.getCurrentSpecies() != null && genePreferences.getCurrentSpeciesType() == null) {
-            genePreferences.setCurrentSpeciesType("Vertebrates");
-        }
+        shotgunProtocol = experimentSettings.getShotgunProtocol();
 
         // backwards compatability for the filter preferences
         if (filterPreferences == null) {
@@ -206,6 +180,7 @@ public class CpsParent extends UserPreferencesParent {
         }
 
         // backwards compatability for the display preferences
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         if (displayPreferences != null) {
             displayPreferences.compatibilityCheck(searchParameters.getModificationProfile());
         } else {
@@ -213,14 +188,14 @@ public class CpsParent extends UserPreferencesParent {
             displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
         }
 
-        // backwards compatability for the sequence matching preferences
-        if (sequenceMatchingPreferences == null) {
-            sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
-        }
-
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             waitingHandler.setRunFinished();
             return;
+        }
+
+        // Backward compatibility for the shotgun protocol
+        if (shotgunProtocol == null) {
+            shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
         }
 
         // Get identification details and set up caches
@@ -229,7 +204,7 @@ public class CpsParent extends UserPreferencesParent {
             // 0.18 version, needs update of the spectrum mapping
             identification.updateSpectrumMapping();
         }
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences, sequenceMatchingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
         if (experimentSettings.getIdentificationFeaturesCache() != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
         }
@@ -249,16 +224,15 @@ public class CpsParent extends UserPreferencesParent {
      * can be null.
      * @param emptyCache if true the cache will be emptied
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      * @throws SQLException thrown if SQLException occurs
      * @throws ArchiveException thrown if ArchiveException occurs
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, searchParameters,
-                annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
+        CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
+                spectrumCountingPreferences, projectDetails, metrics,
                 processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                ptmScoringPreferences, genePreferences, objectsCache, emptyCache, idFilter, sequenceMatchingPreferences, PeptideShaker.getJarFilePath());
+                objectsCache, emptyCache, PeptideShaker.getJarFilePath());
 
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
@@ -271,8 +245,7 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null.
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      *
      * @return a boolean indicating whether the loading was successful
@@ -289,8 +262,7 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      * @return a boolean indicating whether the loading was successful
      */
@@ -299,7 +271,8 @@ public class CpsParent extends UserPreferencesParent {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
         // Load fasta file
-        File providedFastaLocation = searchParameters.getFastaFile();
+        ProteinInferencePreferences proteinInferencePreferences = identificationParameters.getProteinInferencePreferences();
+        File providedFastaLocation = proteinInferencePreferences.getProteinSequenceDatabase();
         String fileName = providedFastaLocation.getName();
         File projectFolder = cpsFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
@@ -308,13 +281,13 @@ public class CpsParent extends UserPreferencesParent {
             sequenceFactory.loadFastaFile(providedFastaLocation, waitingHandler);
         } else if (folder != null && new File(folder, fileName).exists()) {
             sequenceFactory.loadFastaFile(new File(folder, fileName), waitingHandler);
-            searchParameters.setFastaFile(new File(folder, fileName));
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(folder, fileName));
         } else if (new File(projectFolder, fileName).exists()) {
             sequenceFactory.loadFastaFile(new File(projectFolder, fileName), waitingHandler);
-            searchParameters.setFastaFile(new File(projectFolder, fileName));
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(projectFolder, fileName));
         } else if (new File(dataFolder, fileName).exists()) {
             sequenceFactory.loadFastaFile(new File(dataFolder, fileName), waitingHandler);
-            searchParameters.setFastaFile(new File(dataFolder, fileName));
+            proteinInferencePreferences.setProteinSequenceDatabase(new File(dataFolder, fileName));
         } else {
             return false;
         }
@@ -328,8 +301,7 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null.
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -345,8 +317,7 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -387,8 +358,7 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
      * @throws IOException thrown of IOException occurs
-     * @throws FileNotFoundException thrown if FileNotFoundException
-     * occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
      *
      * @return a boolean indicating whether the loading was successful
      */
@@ -428,6 +398,12 @@ public class CpsParent extends UserPreferencesParent {
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadGeneMappings(String jarFilePath, WaitingHandler waitingHandler) {
+        GenePreferences genePreferences;
+        if (identificationParameters == null) {
+            genePreferences = new GenePreferences();
+        } else {
+            genePreferences = identificationParameters.getGenePreferences();
+        }
         return genePreferences.loadGeneMappings(jarFilePath, waitingHandler);
     }
 
@@ -450,24 +426,6 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the ID filter.
-     *
-     * @return the ID filter
-     */
-    public IdFilter getIdFilter() {
-        return idFilter;
-    }
-
-    /**
-     * Returns the annotation preferences.
-     *
-     * @return the annotation preferences
-     */
-    public AnnotationPreferences getAnnotationPreferences() {
-        return annotationPreferences;
-    }
-
-    /**
      * Returns the spectrum counting preferences.
      *
      * @return the spectrum counting preferences
@@ -477,30 +435,12 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the PTM scoring preferences.
-     *
-     * @return the PTM scoring preferences
-     */
-    public PTMScoringPreferences getPtmScoringPreferences() {
-        return ptmScoringPreferences;
-    }
-
-    /**
      * Returns the project details.
      *
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
         return projectDetails;
-    }
-
-    /**
-     * Returns the search parameters.
-     *
-     * @return the search parameters
-     */
-    public SearchParameters getSearchParameters() {
-        return searchParameters;
     }
 
     /**
@@ -519,15 +459,6 @@ public class CpsParent extends UserPreferencesParent {
      */
     public Metrics getMetrics() {
         return metrics;
-    }
-
-    /**
-     * Returns the gene preferences.
-     *
-     * @return the gene preferences
-     */
-    public GenePreferences getGenePreferences() {
-        return genePreferences;
     }
 
     /**
@@ -605,28 +536,11 @@ public class CpsParent extends UserPreferencesParent {
     /**
      * Set the identification feature generator.
      *
-     * @param identificationFeaturesGenerator the identification feature generator
+     * @param identificationFeaturesGenerator the identification feature
+     * generator
      */
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-    }
-
-    /**
-     * Set the ID filter.
-     *
-     * @param idFilter the ID filter
-     */
-    public void setIdFilter(IdFilter idFilter) {
-        this.idFilter = idFilter;
-    }
-
-    /**
-     * Set the annotation preferences.
-     *
-     * @param annotationPreferences the annotation preferences
-     */
-    public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
-        this.annotationPreferences = annotationPreferences;
     }
 
     /**
@@ -639,30 +553,12 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Set the PTM scoring preferences.
-     *
-     * @param ptmScoringPreferences the PTM scoring preferences
-     */
-    public void setPtmScoringPreferences(PTMScoringPreferences ptmScoringPreferences) {
-        this.ptmScoringPreferences = ptmScoringPreferences;
-    }
-
-    /**
      * Set the project details.
      *
      * @param projectDetails the project details
      */
     public void setProjectDetails(ProjectDetails projectDetails) {
         this.projectDetails = projectDetails;
-    }
-
-    /**
-     * Set the search parameters.
-     *
-     * @param searchParameters the search parameters
-     */
-    public void setSearchParameters(SearchParameters searchParameters) {
-        this.searchParameters = searchParameters;
     }
 
     /**
@@ -675,39 +571,12 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Returns the sequence matching preferences.
-     *
-     * @return the sequence matching preferences
-     */
-    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
-        return sequenceMatchingPreferences;
-    }
-
-    /**
-     * Sets the sequence matching preferences.
-     *
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     */
-    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
-    }
-
-    /**
      * Set the metrics.
      *
      * @param metrics the metrics
      */
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
-    }
-
-    /**
-     * Set the gene preferences.
-     *
-     * @param genePreferences the gene preferences
-     */
-    public void setGenePreferences(GenePreferences genePreferences) {
-        this.genePreferences = genePreferences;
     }
 
     /**
@@ -780,44 +649,58 @@ public class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Resets the preferences.
-     */
-    public void clearPreferences() {
-        annotationPreferences = new AnnotationPreferences();
-        spectrumCountingPreferences = new SpectrumCountingPreferences();
-        ptmScoringPreferences = new PTMScoringPreferences();
-        filterPreferences = new FilterPreferences();
-        displayPreferences = new DisplayPreferences();
-        searchParameters = new SearchParameters();
-        processingPreferences = new ProcessingPreferences();
-        genePreferences = new GenePreferences();
-        sequenceMatchingPreferences = null;
-        idFilter = new IdFilter();
-    }
-
-    /**
      * Set the default preferences.
      */
     public void setDefaultPreferences() {
-        searchParameters = new SearchParameters();
-        annotationPreferences = new AnnotationPreferences();
-        annotationPreferences.setAnnotationLevel(0.75);
-        annotationPreferences.useAutomaticAnnotation(true);
+        SearchParameters searchParameters = new SearchParameters();
+        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
         spectrumCountingPreferences = new SpectrumCountingPreferences();
         spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         spectrumCountingPreferences.setValidatedHits(true);
         processingPreferences = new ProcessingPreferences();
-        ptmScoringPreferences = new PTMScoringPreferences();
-        genePreferences = new GenePreferences();
-        sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
-        idFilter = new IdFilter();
     }
 
     /**
      * Resets the feature generator.
      */
     public void resetIdentificationFeaturesGenerator() {
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences, sequenceMatchingPreferences);
+        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
+    }
+
+    /**
+     * Returns the identification parameters.
+     *
+     * @return the identification parameters
+     */
+    public IdentificationParameters getIdentificationParameters() {
+        return identificationParameters;
+    }
+
+    /**
+     * Sets new identification parameters.
+     *
+     * @param identificationParameters the new identification parameters
+     */
+    public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+        this.identificationParameters = identificationParameters;
+    }
+
+    /**
+     * Returns information on the protocol used.
+     *
+     * @return information on the protocol used
+     */
+    public ShotgunProtocol getShotgunProtocol() {
+        return shotgunProtocol;
+    }
+
+    /**
+     * Sets the shotgun protocol.
+     *
+     * @param shotgunProtocol the shotgun protocol
+     */
+    public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
+        this.shotgunProtocol = shotgunProtocol;
     }
 
     /**
@@ -882,8 +765,11 @@ public class CpsParent extends UserPreferencesParent {
                 report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
             }
 
-            report += "<br><b>FASTA File:</b><br>";
-            report += getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
+            report += "<br><b>FASTA File used for search:</b><br>";
+            report += identificationParameters.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
+
+            report += "<br><b>FASTA File used for search:</b><br>";
+            report += identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";
             if (waitingHandlerReport == null) {

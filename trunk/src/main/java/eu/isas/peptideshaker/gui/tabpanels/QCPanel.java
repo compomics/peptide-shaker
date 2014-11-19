@@ -13,7 +13,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -786,7 +786,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPsmPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, psmQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, psmQCPlotPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_exportPsmPlotJButtonActionPerformed
 
     /**
@@ -877,7 +877,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPeptidesPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, peptideQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, peptideQCPlotPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_exportPeptidesPlotJButtonActionPerformed
 
     /**
@@ -967,7 +967,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportProteinsPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, proteinQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, proteinQCPlotPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_exportProteinsPlotJButtonActionPerformed
 
     /**
@@ -1405,8 +1405,9 @@ public class QCPanel extends javax.swing.JPanel {
 
                     } else if (peptideLengthJRadioButton.isSelected()) {
 
-                        int min = peptideShakerGUI.getIdFilter().getMinPepLength();
-                        int max = peptideShakerGUI.getIdFilter().getMaxPepLength();
+                        IdFilter idFilter = peptideShakerGUI.getIdentificationParameters().getIdFilter();
+                        int min = idFilter.getMinPepLength();
+                        int max = idFilter.getMaxPepLength();
 
                         for (int i = min; i < max; i++) {
                             bins.add(new Double(i));
@@ -1520,7 +1521,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
-                        double prec = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy();
+                        double prec = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getPrecursorAccuracy();
                         int nBins = 20;
                         for (int i = -nBins; i <= nBins; i++) {
                             double bin = i * prec / nBins;
@@ -1648,16 +1649,16 @@ public class QCPanel extends javax.swing.JPanel {
                 } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
                     value = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                 } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
-                        HashMap<Integer, Double> sequenceCoverage;
-                        try {
-                            sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                            sequenceCoverage = new HashMap<Integer, Double>();
-                        }
-                        Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                        Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                        value = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                    HashMap<Integer, Double> sequenceCoverage;
+                    try {
+                        sequenceCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        sequenceCoverage = new HashMap<Integer, Double>();
+                    }
+                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                    value = sequenceCoverageConfident + sequenceCoverageDoubtful;
                 } else if (proteinSequenceLengthJRadioButton.isSelected()) {
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                     Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
@@ -1742,7 +1743,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!peptideParameter.isHidden()) {
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1771,7 +1772,7 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedValues = new ArrayList<Double>();
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
-                Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
+                Enzyme enzyme = peptideShakerGUI.getShotgunProtocol().getEnzyme();
 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
 
@@ -1791,7 +1792,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(value);
@@ -1839,7 +1840,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                             if (peptideParameter.getMatchValidationLevel().isValidated()) {
                                 if (peptideParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                     validatedValues.add(length);
@@ -1906,12 +1907,12 @@ public class QCPanel extends javax.swing.JPanel {
                             Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                             double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
-                                    peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm());
+                                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm());
                             if (value > maxValue) {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);
@@ -1960,7 +1961,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                            if (!spectrumMatch.getBestPeptideAssumption().getPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                                 if (psmParameter.getMatchValidationLevel().isValidated()) {
                                     if (psmParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
                                         validatedValues.add(value);

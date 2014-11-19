@@ -1,15 +1,16 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -344,8 +345,8 @@ public class AssumptionFilter extends MatchFilter {
      *
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption to filter
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      *
      * @return a boolean indicating whether a spectrum match is validated by a
@@ -357,9 +358,9 @@ public class AssumptionFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, peptideAssumption, this, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+        return isValidated(spectrumKey, peptideAssumption, this, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
     }
 
     /**
@@ -367,9 +368,9 @@ public class AssumptionFilter extends MatchFilter {
      *
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption to filter
-     * @param assumptionFilter the assumption filter to use
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param assumptionFilter an assumption filter
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator to annotate the
      * spectrum, can be null
      *
@@ -382,7 +383,7 @@ public class AssumptionFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public static boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, AssumptionFilter assumptionFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public static boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, AssumptionFilter assumptionFilter, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (assumptionFilter.getExceptions().contains(spectrumKey)) {
@@ -443,7 +444,7 @@ public class AssumptionFilter extends MatchFilter {
             Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
 
             if (assumptionFilter.getPrecursorMzError() != null) {
-                double error = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm()));
+                double error = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm()));
                 if (assumptionFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getPrecursorMzError()) {
                         return false;
@@ -464,7 +465,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMinPrecursorMzError() != null) {
-                double error = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                double error = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
                 if (assumptionFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMinPrecursorMzError()) {
                         return false;
@@ -485,7 +486,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMaxPrecursorMzError() != null) {
-                double error = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                double error = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
                 if (assumptionFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMaxPrecursorMzError()) {
                         return false;
@@ -520,10 +521,11 @@ public class AssumptionFilter extends MatchFilter {
             if (peptideSpectrumAnnotator == null) {
                 peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
             }
+            AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
             HashMap<Integer, ArrayList<IonMatch>> ionMatches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
                     annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                     peptideAssumption.getIdentificationCharge().value, spectrum, peptide, spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    searchParameters.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                    shotgunProtocol.getMs2Resolution(), false, annotationPreferences.isHighResolutionAnnotation());
 
             double nCovered = 0;
             int nAA = peptide.getSequence().length();
@@ -559,7 +561,7 @@ public class AssumptionFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         throw new UnsupportedOperationException("Not implemented for Peptide Assumption filters.");
     }
 }

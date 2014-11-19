@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -204,7 +203,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void updateSequenceLabel() {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-            ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+            ModificationProfile modificationProfile = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
@@ -593,7 +592,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 identification.updatePeptideMatch(peptideMatch);
 
                 // update protein level PTM scoring
-                ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
+                ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                 PSMaps psMaps = new PSMaps();
                 psMaps = (PSMaps) identification.getUrParam(psMaps);
                 PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
@@ -610,7 +609,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
-                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
+                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getIdentificationParameters(), false);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }
