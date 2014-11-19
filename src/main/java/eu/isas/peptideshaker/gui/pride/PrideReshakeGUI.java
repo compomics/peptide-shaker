@@ -13,6 +13,7 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
@@ -168,17 +169,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private ArrayList<String> tissuesAll;
     /**
-     * The list of all found project tags.
-     */
-    private ArrayList<String> projectTagsAll;
-    /**
      * The list of all found PTMs.
      */
     private ArrayList<String> ptmsAll;
     /**
      * The current filter values.
      */
-    private String[] currentFilterValues = new String[9];
+    private String[] currentFilterValues = new String[8];
     /**
      * The assay number filter type. True means greater than, false means
      * smaller than.
@@ -266,42 +263,28 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         searchSettingsFiles.get("RESULT").add(".mzid");
         searchSettingsFiles.get("RESULT").add(".mzid.gz");
 
-        int fixedColumnWidth = 110;
-
-        projectsTable.getColumn("Accession").setMaxWidth(fixedColumnWidth);
-        projectsTable.getColumn("Accession").setMinWidth(fixedColumnWidth);
+        projectsTable.getColumn("Accession").setMaxWidth(90);
+        projectsTable.getColumn("Accession").setMinWidth(90);
         projectsTable.getColumn(" ").setMaxWidth(50);
         projectsTable.getColumn(" ").setMinWidth(50);
-        projectsTable.getColumn("#Assays").setMaxWidth(fixedColumnWidth);
-        projectsTable.getColumn("#Assays").setMinWidth(fixedColumnWidth);
-        projectsTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
-        projectsTable.getColumn("Type").setMinWidth(fixedColumnWidth);
-        projectsTable.getColumn("Date").setMaxWidth(fixedColumnWidth);
-        projectsTable.getColumn("Date").setMinWidth(fixedColumnWidth);
 
-        assaysTable.getColumn("Accession").setMaxWidth(fixedColumnWidth);
-        assaysTable.getColumn("Accession").setMinWidth(fixedColumnWidth);
+        assaysTable.getColumn("Accession").setMaxWidth(90);
+        assaysTable.getColumn("Accession").setMinWidth(90);
         assaysTable.getColumn(" ").setMaxWidth(50);
         assaysTable.getColumn(" ").setMinWidth(50);
-        assaysTable.getColumn("#Proteins").setMaxWidth(fixedColumnWidth);
-        assaysTable.getColumn("#Proteins").setMinWidth(fixedColumnWidth);
-        assaysTable.getColumn("#Peptides").setMaxWidth(fixedColumnWidth);
-        assaysTable.getColumn("#Peptides").setMinWidth(fixedColumnWidth);
-        assaysTable.getColumn("#Spectra").setMaxWidth(fixedColumnWidth);
-        assaysTable.getColumn("#Spectra").setMinWidth(fixedColumnWidth);
 
-        filesTable.getColumn("Assay").setMaxWidth(fixedColumnWidth);
-        filesTable.getColumn("Assay").setMinWidth(fixedColumnWidth);
+        filesTable.getColumn("Assay").setMaxWidth(90);
+        filesTable.getColumn("Assay").setMinWidth(90);
         filesTable.getColumn(" ").setMaxWidth(50);
         filesTable.getColumn(" ").setMinWidth(50);
         filesTable.getColumn("  ").setMaxWidth(30);
         filesTable.getColumn("  ").setMinWidth(30);
-        filesTable.getColumn("Download").setMaxWidth(fixedColumnWidth);
-        filesTable.getColumn("Download").setMinWidth(fixedColumnWidth);
-        filesTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
-        filesTable.getColumn("Type").setMinWidth(fixedColumnWidth);
-        filesTable.getColumn("Size").setMaxWidth(fixedColumnWidth);
-        filesTable.getColumn("Size").setMinWidth(fixedColumnWidth);
+        filesTable.getColumn("Download").setMaxWidth(90);
+        filesTable.getColumn("Download").setMinWidth(90);
+        filesTable.getColumn("Type").setMaxWidth(90);
+        filesTable.getColumn("Type").setMinWidth(90);
+        filesTable.getColumn("Size").setMaxWidth(90);
+        filesTable.getColumn("Size").setMinWidth(90);
 
         // make sure that the scroll panes are see-through
         projectsScrollPane.getViewport().setOpaque(false);
@@ -343,10 +326,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         projectsTableToolTips.add(null);
         projectsTableToolTips.add("Project Accession Number");
         projectsTableToolTips.add("Project Title");
-        projectsTableToolTips.add("Project Tags");
         projectsTableToolTips.add("Species");
         projectsTableToolTips.add("Tissue Types");
-        projectsTableToolTips.add("Post Translational Modifications");
+        projectsTableToolTips.add("Post-Translational Modifications");
         projectsTableToolTips.add("Instruments");
         projectsTableToolTips.add("Number of Assays");
         projectsTableToolTips.add("Project Type");
@@ -356,11 +338,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         assaysTableToolTips.add(null);
         assaysTableToolTips.add("Assay Accession Number");
         assaysTableToolTips.add("Assay Title");
-        assaysTableToolTips.add("Diseases");
         assaysTableToolTips.add("Species");
-        assaysTableToolTips.add("Tissues");
-        assaysTableToolTips.add("Post Translational Modifications");
-        assaysTableToolTips.add("Instruments");
+        assaysTableToolTips.add("Sample Details");
+        assaysTableToolTips.add("Post-Translational Modifications");
+        assaysTableToolTips.add("Diseases");
         assaysTableToolTips.add("Number of Proteins");
         assaysTableToolTips.add("Number of Peptides");
         assaysTableToolTips.add("Number of Spectra");
@@ -552,7 +533,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         browsePublicDataLabel = new javax.swing.JLabel();
         dataTypeSeparatorLabel = new javax.swing.JLabel();
         clearProjectFiltersLabel = new javax.swing.JLabel();
-        projectSearchLabel = new javax.swing.JLabel();
         assaysPanel = new javax.swing.JPanel();
         assayTableScrollPane = new javax.swing.JScrollPane();
         assaysTable = new JTable() {
@@ -608,14 +588,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Accession", "Title", "Tags", "Species", "Tissues", "PTMs", "Instruments", "#Assays", "Type", "Date"
+                " ", "Accession", "Title", "Species", "Tissues", "PTMs", "Instruments", "#Assays", "Type", "Date"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -627,17 +607,17 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
         projectsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        projectsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                projectsTableMouseMoved(evt);
-            }
-        });
         projectsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                projectsTableMouseReleased(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 projectsTableMouseExited(evt);
             }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                projectsTableMouseReleased(evt);
+        });
+        projectsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                projectsTableMouseMoved(evt);
             }
         });
         projectsTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -695,20 +675,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
 
-        projectSearchLabel.setText("<html><a href=\"dummy\">Project Search</a></html> ");
-        projectSearchLabel.setToolTipText("Open Project Search Dialog");
-        projectSearchLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                projectSearchLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                projectSearchLabelMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                projectSearchLabelMouseReleased(evt);
-            }
-        });
-
         javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
         projectsPanel.setLayout(projectsPanelLayout);
         projectsPanelLayout.setHorizontalGroup(
@@ -720,8 +686,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     .addGroup(projectsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(projectHelpLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -744,8 +708,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     .addComponent(projectHelpLabel)
                     .addComponent(browsePublicDataLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dataTypeSeparatorLabel)
-                    .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(clearProjectFiltersLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -757,14 +720,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Accession", "Title", "Diseases", "Species", "Tissues", "PTMs", "Instruments", "#Proteins", "#Peptides", "#Spectra"
+                " ", "Accession", "Title", "Species", "Sample", "PTMs", "Diseases", "#Proteins", "#Peptides", "#Spectra"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1244,11 +1207,12 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
                 final Double fileSize = (Double) filesTable.getValueAt(row, filesTable.getColumn("Size").getModelIndex());
 
-                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", peptideShakerGUI.getLastSelectedFolder(), "Download Folder", "Select", false);
+                LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
+                final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
                 if (downloadFolder != null) {
 
-                    peptideShakerGUI.setLastSelectedFolder(downloadFolder.getAbsolutePath());
+                    lastSelectedFolder.setLastSelectedFolder(downloadFolder.getAbsolutePath());
 
                     progressDialog = new ProgressDialogX(this,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -1416,7 +1380,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param evt
      */
     private void findMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMenuItemActionPerformed
-        new ProjectsFilterDialog(this, false, currentFilterValues, assaysGreaterThanFiler, true, speciesAll, tissuesAll, instrumentsAll, ptmsAll, projectTagsAll);
+        new ProjectsFilterDialog(this, false, currentFilterValues, assaysGreaterThanFiler, true, speciesAll, tissuesAll, instrumentsAll, ptmsAll);
     }//GEN-LAST:event_findMenuItemActionPerformed
 
     /**
@@ -1560,33 +1524,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_clearProjectFiltersLabelMouseExited
 
     /**
-     * Change the cursor to a hand icon.
-     *
-     * @param evt
-     */
-    private void projectSearchLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_projectSearchLabelMouseEntered
-
-    /**
-     * Change the cursor back to the default icon.
-     *
-     * @param evt
-     */
-    private void projectSearchLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_projectSearchLabelMouseExited
-
-    /**
-     * Open the search/filter dialog.
-     *
-     * @param evt
-     */
-    private void projectSearchLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseReleased
-        findMenuItemActionPerformed(null);
-    }//GEN-LAST:event_projectSearchLabelMouseReleased
-
-    /**
      * Update the file list based on the selected project.
      */
     private void updateProjectFileList() {
@@ -1601,7 +1538,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         String projectAccession = null;
         int selectedRow = projectsTable.getSelectedRow();
-        double maxFileSize = 0.0;
 
         if (selectedRow != -1) {
 
@@ -1670,20 +1606,14 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     if (!fileDetail.getFileName().toLowerCase().endsWith(".pride.mgf.gz")
                             && !fileDetail.getFileName().toLowerCase().endsWith(".pride.mztab.gz")) { // @TODO: allow the pride files as soon as they can be downloaded
 
-                        float fileSize = ((float) fileDetail.getFileSize()) / 1048576;
-
                         ((DefaultTableModel) filesTable.getModel()).addRow(new Object[]{
                             (filesTable.getRowCount() + 1),
                             assayAccession,
                             fileDetail.getFileType().getName(),
                             fileDetail.getFileName(),
                             fileDownloadLink,
-                            Util.roundDouble(fileSize, 2), // @TODO: better formatting!!
+                            Util.roundDouble(((float) fileDetail.getFileSize()) / 1048576, 2), // @TODO: better formatting!!
                             reshakeable});
-
-                        if (fileSize > maxFileSize) {
-                            maxFileSize = fileSize;
-                        }
                     }
                 }
 
@@ -1727,13 +1657,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         + "Please contact the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker developers</a>."),
                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
             }
-
-            // update the sparklines with the max values
-            filesTable.getColumn("Size").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxFileSize, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesBarChartTableCellRenderer) filesTable.getColumn("Size").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-            ((JSparklinesBarChartTableCellRenderer) filesTable.getColumn("Size").getCellRenderer()).setLogScale(true);
-            ((JSparklinesBarChartTableCellRenderer) filesTable.getColumn("Size").getCellRenderer()).setMinimumChartValue(1);
-
         } else {
             // update the border title
             if (projectAccession != null) {
@@ -1960,11 +1883,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         (assaysTable.getRowCount() + 1),
                         assayAccession,
                         assayDetail.getTitle(),
-                        setToString(assayDetail.getDiseases(), ", "),
                         setToString(assayDetail.getSpecies(), ", "),
                         setToString(assayDetail.getSampleDetails(), ", "),
                         setToString(assayDetail.getPtmNames(), "; "),
-                        setToString(assayDetail.getInstrumentNames(), ", "),
+                        setToString(assayDetail.getDiseases(), ", "),
                         assayDetail.getProteinCount(),
                         assayDetail.getPeptideCount(),
                         assayDetail.getTotalSpectrumCount()
@@ -2081,7 +2003,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             instrumentsAll = new ArrayList<String>();
             ptmsAll = new ArrayList<String>();
             tissuesAll = new ArrayList<String>();
-            projectTagsAll = new ArrayList<String>();
 
             // iterate the project and add them to the table
             for (ProjectDetail projectDetail : projectList.getBody().getList()) {
@@ -2092,7 +2013,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     + "\"><font color=\"" + TableProperties.getNotSelectedRowHtmlTagFontColor() + "\">"
                     + projectDetail.getAccession() + "</font></a><html>",
                     projectDetail.getTitle(),
-                    setToString(projectDetail.getProjectTags(), ", "),
                     setToString(projectDetail.getSpecies(), ", "),
                     setToString(projectDetail.getTissues(), ", "),
                     setToString(projectDetail.getPtmNames(), "; "),
@@ -2126,12 +2046,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         ptmsAll.add(ptm);
                     }
                 }
-
-                for (String tag : projectDetail.getProjectTags()) {
-                    if (!projectTagsAll.contains(tag)) {
-                        projectTagsAll.add(tag);
-                    }
-                }
             }
 
             // sort the lists
@@ -2139,13 +2053,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             Collections.sort(instrumentsAll);
             Collections.sort(tissuesAll);
             Collections.sort(ptmsAll);
-            Collections.sort(projectTagsAll);
 
             speciesAll.add(0, "");
             tissuesAll.add(0, "");
             instrumentsAll.add(0, "");
             ptmsAll.add(0, "");
-            projectTagsAll.add(0, "");
         } catch (HttpServerErrorException e) {
             System.out.println("project/count or project/list");
             e.printStackTrace();
@@ -2548,13 +2460,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             for (CvParam cvParam : processingMethods) {
                 if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000161")) { // fragment mass tolerance
                     String value = cvParam.getValue().trim();
-                    if (value.contains(" ")) { // escape Da or ppm
+                    if (value.indexOf(" ") != -1) { // escape Da or ppm
                         value = value.substring(0, value.indexOf(" "));
                     }
                     fragmentIonMassTolerance = new Double(value);
                 } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
                     String value = cvParam.getValue().trim();
-                    if (value.contains(" ")) { // escape Da or ppm
+                    if (value.indexOf(" ") != -1) { // escape Da or ppm
                         value = value.substring(0, value.indexOf(" "));
                     }
                     peptideIonMassTolerance = new Double(value);
@@ -3091,7 +3003,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         boolean filesSelected = false;
 
         for (int i = 0; i < filesTable.getRowCount() && !filesSelected; i++) {
-            if (((Boolean) filesTable.getValueAt(i, filesTable.getColumn("  ").getModelIndex()))) {
+            if (((Boolean) filesTable.getValueAt(i, filesTable.getColumn("  ").getModelIndex())).booleanValue()) {
                 filesSelected = true;
             }
         }
@@ -3257,7 +3169,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel peptideShakerHomePageLabel;
     private javax.swing.JLabel projectHelpLabel;
-    private javax.swing.JLabel projectSearchLabel;
     private javax.swing.JPanel projectsPanel;
     private javax.swing.JScrollPane projectsScrollPane;
     private javax.swing.JTable projectsTable;

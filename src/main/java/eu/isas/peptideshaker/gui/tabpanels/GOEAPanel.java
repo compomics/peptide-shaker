@@ -321,7 +321,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getIdentification() != null) {
 
-            GenePreferences genePreferences = peptideShakerGUI.getGenePreferences();
+            GenePreferences genePreferences = peptideShakerGUI.getIdentificationParameters().getGenePreferences();
             String selectedSpecies = genePreferences.getCurrentSpecies();
 
             if (selectedSpecies == null) {
@@ -464,8 +464,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         String goDomain;
 
-                                        if (peptideShakerGUI.getGenePreferences().getGoDomainMap().get(goTerm) != null) {
-                                            goDomain = peptideShakerGUI.getGenePreferences().getGoDomainMap().get(goTerm);
+                                        GenePreferences genePreferences = peptideShakerGUI.getIdentificationParameters().getGenePreferences();
+                                        if (genePreferences.getGoDomainMap().get(goTerm) != null) {
+                                            goDomain = genePreferences.getGoDomainMap().get(goTerm);
                                         } else {
 
                                             // URL a GO Term in OBO xml format
@@ -485,9 +486,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             // locate the domain
                                             goDomain = xpath.compile("/obo/term/namespace").evaluate(xml);
 
-                                            peptideShakerGUI.getGenePreferences().getGoDomainMap().put(goTerm, goDomain);
+                                            genePreferences.getGoDomainMap().put(goTerm, goDomain);
 
-                                            File goDomainsFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), "go_domains");
+                                            File goDomainsFile = new File(genePreferences.getGeneMappingFolder(), "go_domains");
 
                                             if (!goDomainsFile.exists()) {
                                                 JOptionPane.showMessageDialog(peptideShakerGUI, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
@@ -1627,10 +1628,10 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (index == 1) {
             // frequency plot
-            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, (ChartPanel) goFrequencyPlotPanel.getComponent(0));
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, (ChartPanel) goFrequencyPlotPanel.getComponent(0), peptideShakerGUI.getLastSelectedFolder());
         } else if (index == 2) {
             // significance plot
-            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, (ChartPanel) goSignificancePlotPanel.getComponent(0), peptideShakerGUI.getLastSelectedFolder());
         } else {
             // protein table
 
@@ -1994,16 +1995,17 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
 
-        String selectedSpecies = peptideShakerGUI.getGenePreferences().getCurrentSpecies();
-        String speciesDatabase = peptideShakerGUI.getGenePreferences().getAllSpeciesMap().get(peptideShakerGUI.getGenePreferences().getCurrentSpeciesType()).get(selectedSpecies);
+        GenePreferences genePreferences = peptideShakerGUI.getIdentificationParameters().getGenePreferences();
+        String selectedSpecies = genePreferences.getCurrentSpecies();
+        String speciesDatabase = genePreferences.getAllSpeciesMap().get(genePreferences.getCurrentSpeciesType()).get(selectedSpecies);
 
         if (speciesDatabase != null) {
 
             String databaseName = speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX;
-            File mappingFilesFolder = peptideShakerGUI.getGenePreferences().getGeneMappingFolder();
+            File mappingFilesFolder = genePreferences.getGeneMappingFolder();
             String[] mappingsFiles = mappingFilesFolder.list();
 
-            peptideShakerGUI.getGenePreferences().setCurrentSpecies(selectedSpecies);
+            genePreferences.setCurrentSpecies(selectedSpecies);
 
             clearOldResults();
 

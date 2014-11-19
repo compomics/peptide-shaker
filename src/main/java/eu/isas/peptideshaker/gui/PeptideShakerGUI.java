@@ -35,21 +35,19 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.PrivacySettingsDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
-import com.compomics.util.gui.export.graphics.ExportGraphicsDialogParent;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
-import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
@@ -68,12 +66,12 @@ import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.ProjectExportDialog;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
@@ -120,7 +118,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaMemoryDialogParent, SearchSettingsDialogParent, NotificationDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemoryDialogParent, NotificationDialogParent {
 
     /**
      * The path to the example dataset.
@@ -216,7 +214,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * The last folder opened by the user. Defaults to user.home.
      */
-    private String lastSelectedFolder = "user.home";
+    private LastSelectedFolder lastSelectedFolder;
     /**
      * The compomics PTM factory.
      */
@@ -330,14 +328,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * 6...)
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING_HTML = ""; // @TODO: move to utilities?
-    /**
-     * The list of the default modifications.
-     */
-    private ArrayList<String> modificationUse = new ArrayList<String>();
-    /**
-     * Default PeptideShaker modifications.
-     */
-    public static final String PEPTIDESHAKER_CONFIGURATION_FILE = "PeptideShaker_configuration.txt";
     /**
      * The list of already published tweets.
      */
@@ -546,11 +536,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             loadEnzymes();
             resetPtmFactory();
 
-            File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
-            File modUseFile = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
-            modificationUse = SearchSettingsDialog.loadModificationsUse(modUseFile);
-
-            //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
             IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
             IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
 
@@ -575,8 +560,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            lastSelectedFolder = utilitiesUserPreferences.getLastSelectedFolder();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (lastSelectedFolder == null) {
+            lastSelectedFolder = new LastSelectedFolder();
         }
         cpsBean.loadUserPreferences();
     }
@@ -638,7 +627,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @return the last selected folder
      */
-    public String getLastSelectedFolder() {
+    public LastSelectedFolder getLastSelectedFolder() {
+        if (lastSelectedFolder == null) {
+            lastSelectedFolder = new LastSelectedFolder();
+            utilitiesUserPreferences.setLastSelectedFolder(lastSelectedFolder);
+        }
         return lastSelectedFolder;
     }
 
@@ -647,7 +640,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      *
      * @param lastSelectedFolder the folder to set
      */
-    public void setLastSelectedFolder(String lastSelectedFolder) {
+    public void setLastSelectedFolder(LastSelectedFolder lastSelectedFolder) {
         this.lastSelectedFolder = lastSelectedFolder;
     }
 
@@ -1927,10 +1920,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
 
-        SearchParameters searchParameters = getSearchParameters();
+        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
         if (searchParameters == null) {
             setDefaultPreferences();
-            searchParameters = getSearchParameters();
+            searchParameters = getIdentificationParameters().getSearchParameters();
         }
 
         // set the default enzyme if not set
@@ -1938,9 +1931,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         }
 
-        new SearchSettingsDialog(this, this, searchParameters,
+        new SearchSettingsDialog(this, searchParameters,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true, true);
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true, true, PeptideShaker.getConfigurationFile(), getLastSelectedFolder());
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
     /**
@@ -2057,11 +2051,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSpectrum());
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSpectrum(), lastSelectedFolder);
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getSpectrum(), lastSelectedFolder);
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            new ExportGraphicsDialog(this, this, true, (Component) ptmPanel.getSpectrum());
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) ptmPanel.getSpectrum(), lastSelectedFolder);
         }
     }//GEN-LAST:event_exportSpectrumGraphicsJMenuItemActionPerformed
 
@@ -2157,15 +2151,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
 
                     // move the spectrum annotation menu bar and set the intensity slider value
+                    AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
                     if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                         overviewPanel.showSpectrumAnnotationMenu();
-                        overviewPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
+                        overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
                     } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
                         spectrumIdentificationPanel.showSpectrumAnnotationMenu();
-                        spectrumIdentificationPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
+                        spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
                     } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
                         ptmPanel.showSpectrumAnnotationMenu();
-                        ptmPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
+                        ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
                     }
 
                     if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
@@ -2204,7 +2199,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getBubblePlot());
+        new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
 
     /**
@@ -2281,7 +2276,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 getUserPreferences().addRecentProject(selectedFile);
                 updateRecentProjectsList();
                 importPeptideShakerFile(selectedFile);
-                lastSelectedFolder = selectedFile.getAbsolutePath();
+                lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
             }
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
@@ -2475,14 +2470,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
         if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
             adaptCheckBoxMenuItem.setSelected(true);
+            AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
             try {
-                getAnnotationPreferences().resetAutomaticAnnotation(getSequenceMatchingPreferences());
+                annotationPreferences.resetAutomaticAnnotation(getIdentificationParameters().getSequenceMatchingPreferences());
             } catch (Exception e) {
                 catchException(e);
             }
 
             for (int availableCharge : chargeMenus.keySet()) {
-                chargeMenus.get(availableCharge).setSelected(getAnnotationPreferences().getValidatedCharges().contains(availableCharge));
+                chargeMenus.get(availableCharge).setSelected(annotationPreferences.getValidatedCharges().contains(availableCharge));
             }
         }
 
@@ -2508,7 +2504,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSequenceFragmentationPlot());
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSequenceFragmentationPlot(), lastSelectedFolder);
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -2533,7 +2529,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
             tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
 
-            new ExportGraphicsDialog(this, this, true, tempChartPanel);
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -2559,7 +2555,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
                 tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
 
-                new ExportGraphicsDialog(this, this, true, tempChartPanel);
+                new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, tempChartPanel, lastSelectedFolder);
             } else {
                 JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -2579,10 +2575,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
-        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, getIdFilter(), true);
+        IdentificationParameters identificationParameters = getIdentificationParameters();
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, identificationParameters.getIdFilter(), true);
         IdFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
-            setIdFilter(newFilter);
+            identificationParameters.setIdFilter(newFilter);
         }
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
@@ -2725,7 +2722,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
-        new ProcessingPreferencesDialog(this, false, getProcessingPreferences(), getPtmScoringPreferences());
+        new ProcessingPreferencesDialog(this, false, getIdentificationParameters(), getProcessingPreferences());
     }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**
@@ -2871,11 +2868,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         // @TODO: replace by user select ptm visability
         if (fixedModsJCheckBoxMenuItem.isSelected()) {
-            for (String ptm : getSearchParameters().getModificationProfile().getFixedModifications()) {
+            for (String ptm : getIdentificationParameters().getSearchParameters().getModificationProfile().getFixedModifications()) {
                 getDisplayPreferences().setDisplayedPTM(ptm, true);
             }
         } else {
-            for (String ptm : getSearchParameters().getModificationProfile().getFixedModifications()) {
+            for (String ptm : getIdentificationParameters().getSearchParameters().getModificationProfile().getFixedModifications()) {
                 getDisplayPreferences().setDisplayedPTM(ptm, false);
             }
         }
@@ -2913,7 +2910,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSpectrumAndPlots());
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getSpectrumAndPlots(), lastSelectedFolder);
         }
     }//GEN-LAST:event_exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed
 
@@ -2942,7 +2939,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-        GenePreferences genePreferences = getGenePreferences();
+        GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
         String oldSpecies = genePreferences.getCurrentSpecies();
         new SpeciesDialog(this, genePreferences, true, getWaitingIcon(), getNormalIcon());
         String newSpecies = genePreferences.getCurrentSpecies();
@@ -3084,7 +3081,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
             // Display the variable modifications
-            getDisplayPreferences().setDefaultSelection(getSearchParameters().getModificationProfile());
+            getDisplayPreferences().setDefaultSelection(getIdentificationParameters().getSearchParameters().getModificationProfile());
             getDisplayFeaturesGenerator().setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
@@ -3344,15 +3341,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the gene preferences.
-     *
-     * @return the gene preferences
-     */
-    public GenePreferences getGenePreferences() {
-        return cpsBean.getGenePreferences();
-    }
-
-    /**
      * Returns the user preferences.
      *
      * @return the user preferences
@@ -3393,7 +3381,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void setDefaultPreferences() {
         cpsBean.setDefaultPreferences();
-        updateAnnotationPreferencesFromSearchSettings();
+        updateAnnotationMenu();
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
     }
@@ -3401,12 +3389,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * Updates the ions used for fragment annotation.
      */
-    public void updateAnnotationPreferencesFromSearchSettings() {
+    public void updateAnnotationMenu() {
 
-        SearchParameters searchParameters = getSearchParameters();
-        AnnotationPreferences annotationPreferences = new AnnotationPreferences();
-        annotationPreferences.setPreferencesFromSearchParameters(searchParameters);
-        setAnnotationPreferences(annotationPreferences);
+        IdentificationParameters identificationParameters = getIdentificationParameters();
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
@@ -3428,7 +3415,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
         rewindIonsDeNovoCheckBoxMenuItem.repaint();
 
-        if (getAnnotationPreferences().getDeNovoCharge() == 1) {
+        if (annotationPreferences.getDeNovoCharge() == 1) {
             deNovoChargeOneJRadioButtonMenuItem.isSelected();
         } else {
             deNovoChargeTwoJRadioButtonMenuItem.isSelected();
@@ -3442,7 +3429,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public ArrayList<Integer> getReporterIons() {
 
-        ArrayList<String> modifications = getSearchParameters().getModificationProfile().getAllModifications();
+        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
+        ArrayList<String> modifications = searchParameters.getModificationProfile().getAllModifications();
         ArrayList<Integer> reporterIonsSubtypes = new ArrayList<Integer>();
 
         for (String mod : modifications) {
@@ -3473,18 +3461,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void updateSpectrumAnnotations() {
 
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+        IdentificationParameters identificationParameters = getIdentificationParameters();
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            overviewPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
-            overviewPanel.setAccuracySliderValue((int) ((getAnnotationPreferences().getFragmentIonAccuracy() / getSearchParameters().getFragmentIonAccuracy()) * 100));
+            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / annotationPreferences.getFragmentIonAccuracy()) * 100));
             overviewPanel.updateSpectrum();
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            spectrumIdentificationPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
-            spectrumIdentificationPanel.setAccuracySliderValue((int) ((getAnnotationPreferences().getFragmentIonAccuracy() / getSearchParameters().getFragmentIonAccuracy()) * 100));
+            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            spectrumIdentificationPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / annotationPreferences.getFragmentIonAccuracy()) * 100));
             spectrumIdentificationPanel.updateSpectrum();
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            ptmPanel.setIntensitySliderValue((int) (getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
-            ptmPanel.setAccuracySliderValue((int) ((getAnnotationPreferences().getFragmentIonAccuracy() / getSearchParameters().getFragmentIonAccuracy()) * 100));
+            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             ptmPanel.updateGraphics(null);
         }
     }
@@ -3497,38 +3488,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         overviewPanel.updatePtmColors();
         spectrumIdentificationPanel.updatePtmColors();
         proteinStructurePanel.updatePtmColors();
-    }
-
-    /**
-     * Loads the modification profile from the given file.
-     *
-     * @param aFile the given file
-     */
-    private void loadModificationProfile(File aFile) {
-        try {
-            FileInputStream fis = new FileInputStream(aFile);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            ObjectInputStream in = new ObjectInputStream(bis);
-            ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
-            in.close();
-            bis.close();
-            fis.close();
-            getSearchParameters().setModificationProfile(modificationProfile);
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occurred while reading:\n" + aFile.getName() + ".\n\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        }
     }
 
     /**
@@ -3613,34 +3572,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the annotation preferences as set by the user.
-     *
-     * @return the annotation preferences as set by the user
-     */
-    public AnnotationPreferences getAnnotationPreferences() {
-        return cpsBean.getAnnotationPreferences();
-    }
-
-    /**
-     * Returns the sequence matching preferences as set by the user.
-     *
-     * @return the sequence matching preferences as set by the user
-     */
-    public SequenceMatchingPreferences getSequenceMatchingPreferences() {
-        return cpsBean.getSequenceMatchingPreferences();
-    }
-
-    /**
-     * Set the sequence matching preferences.
-     *
-     * @param sequenceMatchingPreferences the sequence matching preferences to
-     * set
-     */
-    public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {
-        cpsBean.setSequenceMatchingPreferences(sequenceMatchingPreferences);
-    }
-
-    /**
      * Return the filter preferences to use.
      *
      * @return the filter preferences to use
@@ -3695,24 +3626,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the PTM scoring preferences
-     *
-     * @return the PTM scoring preferences
-     */
-    public PTMScoringPreferences getPtmScoringPreferences() {
-        return cpsBean.getPtmScoringPreferences();
-    }
-
-    /**
-     * Sets the PTM scoring preferences
-     *
-     * @param ptmScoringPreferences the PTM scoring preferences
-     */
-    public void setPtmScoringPreferences(PTMScoringPreferences ptmScoringPreferences) {
-        cpsBean.setPtmScoringPreferences(ptmScoringPreferences);
-    }
-
-    /**
      * Returns the displayed proteomicAnalysis.
      *
      * @return the displayed proteomicAnalysis
@@ -3722,32 +3635,46 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the search parameters.
+     * Returns the identification parameters.
      *
-     * @return the search parameters
+     * @return the identification parameters
      */
-    public SearchParameters getSearchParameters() {
-        return cpsBean.getSearchParameters();
+    public IdentificationParameters getIdentificationParameters() {
+        return cpsBean.getIdentificationParameters();
     }
 
     /**
-     * Updates the search parameters.
+     * Sets the identification parameters.
      *
-     * @param searchParameters the new search parameters
+     * @param identificationParameters the identification parameters
      */
-    public void setSearchParameters(SearchParameters searchParameters) {
+    public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+        cpsBean.setIdentificationParameters(identificationParameters);
+        SearchParameters newSearchParameters = identificationParameters.getSearchParameters();
+        PeptideShaker.loadModifications(newSearchParameters);
+        loadGeneMappings();
+        setSelectedItems();
+        backgroundPanel.revalidate();
+        backgroundPanel.repaint();
+        dataSaved = false;
+    }
 
-        // update only if the new search settings are different from the old ones
-        if (!searchParameters.equals(cpsBean.getSearchParameters())) {
-            cpsBean.setSearchParameters(searchParameters);
-            PeptideShaker.loadModifications(getSearchParameters());
+    /**
+     * Returns information on the protocol used.
+     *
+     * @return information on the protocol used
+     */
+    public ShotgunProtocol getShotgunProtocol() {
+        return cpsBean.getShotgunProtocol();
+    }
 
-            updateAnnotationPreferencesFromSearchSettings();
-            setSelectedItems();
-            backgroundPanel.revalidate();
-            backgroundPanel.repaint();
-            dataSaved = false;
-        }
+    /**
+     * Sets information on the protocol used.
+     *
+     * @param shotgunProtocol information on the protocol used
+     */
+    public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
+        cpsBean.setShotgunProtocol(shotgunProtocol);
     }
 
     /**
@@ -3769,25 +3696,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
         cpsBean.setProcessingPreferences(new ProcessingPreferences());
-    }
-
-    /**
-     * Updates the annotation preferences.
-     *
-     * @param annotationPreferences the new annotation preferences
-     */
-    public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
-        cpsBean.setAnnotationPreferences(annotationPreferences);
-    }
-
-    /**
-     * Updates the gene preferences.
-     *
-     * @param genePreferences the new gene preferences
-     */
-    public void setGenePreferences(GenePreferences genePreferences) {
-        cpsBean.setGenePreferences(genePreferences);
-        loadGeneMappings();
     }
 
     /**
@@ -4118,8 +4026,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void clearPreferences() {
 
-        cpsBean.clearPreferences();
-
         // reset enzymes, ptms and preferences
         loadEnzymes();
         resetPtmFactory();
@@ -4369,7 +4275,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
             Identification identification = getIdentification();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
-            ptmScorer.scorePTMs(identification, proteinMatch, getSearchParameters(), getAnnotationPreferences(), false, getPtmScoringPreferences(), getSequenceMatchingPreferences());
+            ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false);
         } catch (Exception e) {
             catchException(e);
         }
@@ -4617,7 +4523,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         sequenceFactory.closeFile();
                         GOFactory.getInstance().closeFiles();
                         cpsBean.saveUserPreferences();
-                        saveModificationUsage();
                         TempFilesManager.deleteTempFolders();
                     }
 
@@ -4697,7 +4602,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     catchException(e);
                 }
                 progressDialog.setRunFinished();
-                saveModificationUsage();
                 PeptideShakerGUI.this.dispose();
 
                 // @TODO: pass the current project to the new instance of PeptideShaker.
@@ -4725,7 +4629,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         immoniumIonsCheckMenu.setSelected(false);
         reporterIonsCheckMenu.setSelected(false);
 
-        for (Ion.IonType ionType : getAnnotationPreferences().getIonTypes().keySet()) {
+        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+        for (Ion.IonType ionType : annotationPreferences.getIonTypes().keySet()) {
             if (ionType == IonType.IMMONIUM_ION) {
                 immoniumIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PRECURSOR_ION) {
@@ -4733,7 +4638,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             } else if (ionType == IonType.REPORTER_ION) {
                 reporterIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PEPTIDE_FRAGMENT_ION) {
-                for (int subtype : getAnnotationPreferences().getIonTypes().get(ionType)) {
+                for (int subtype : annotationPreferences.getIonTypes().get(ionType)) {
                     if (subtype == PeptideFragmentIon.A_ION) {
                         aIonCheckBoxMenuItem.setSelected(true);
                     } else if (subtype == PeptideFragmentIon.B_ION) {
@@ -4794,9 +4699,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } else {
             for (int i = 0; i < names.size(); i++) {
 
-                if (getAnnotationPreferences().areNeutralLossesSequenceDependant()) {
+                if (annotationPreferences.areNeutralLossesSequenceDependant()) {
                     selected = false;
-                    for (NeutralLoss neutralLoss : getAnnotationPreferences().getNeutralLosses().getAccountedNeutralLosses()) {
+                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
                         if (neutralLoss.isSameAs(neutralLoss)) {
                             selected = true;
                             break;
@@ -4810,8 +4715,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 lossMenuItem.setSelected(selected);
                 lossMenuItem.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        getAnnotationPreferences().useAutomaticAnnotation(false);
-                        getAnnotationPreferences().setNeutralLossesSequenceDependant(false);
+                        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                        annotationPreferences.useAutomaticAnnotation(false);
+                        annotationPreferences.setNeutralLossesSequenceDependant(false);
                         updateAnnotationPreferences();
                     }
                 });
@@ -4843,8 +4749,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
 
-            if (getAnnotationPreferences().useAutomaticAnnotation()) {
-                chargeMenuItem.setSelected(getAnnotationPreferences().getValidatedCharges().contains(charge));
+            if (annotationPreferences.useAutomaticAnnotation()) {
+                chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
             } else {
                 if (finalSelectedCharges.contains(charge + "+")) {
                     chargeMenuItem.setSelected(true);
@@ -4855,7 +4761,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    getAnnotationPreferences().useAutomaticAnnotation(false);
+                    AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+                    annotationPreferences.useAutomaticAnnotation(false);
                     updateAnnotationPreferences();
                 }
             });
@@ -4864,19 +4771,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             chargeMenu.add(chargeMenuItem);
         }
 
-        automaticAnnotationCheckBoxMenuItem.setSelected(getAnnotationPreferences().useAutomaticAnnotation());
-        adaptCheckBoxMenuItem.setSelected(getAnnotationPreferences().areNeutralLossesSequenceDependant());
-        highResAnnotationCheckBoxMenuItem.setSelected(getAnnotationPreferences().isHighResolutionAnnotation());
+        automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
+        adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.isHighResolutionAnnotation());
 
         // disable/enable the neutral loss options
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
-            lossMenuItem.setEnabled(!getAnnotationPreferences().areNeutralLossesSequenceDependant());
+            lossMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
         }
 
-        allCheckBoxMenuItem.setSelected(getAnnotationPreferences().showAllPeaks());
+        allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
-        barsCheckBoxMenuItem.setSelected(getAnnotationPreferences().showBars());
-        intensityIonTableRadioButtonMenuItem.setSelected(getAnnotationPreferences().useIntensityIonTable());
+        barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
+        intensityIonTableRadioButtonMenuItem.setSelected(annotationPreferences.useIntensityIonTable());
     }
 
     /**
@@ -4884,74 +4791,76 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void updateAnnotationPreferences() {
 
-        getAnnotationPreferences().clearIonTypes();
+        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+
+        annotationPreferences.clearIonTypes();
         if (aIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
         }
         if (bIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
         }
         if (cIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
         }
         if (xIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
         }
         if (yIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
         }
         if (zIonCheckBoxMenuItem.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
-            getAnnotationPreferences().addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
         }
         if (precursorCheckMenu.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.PRECURSOR_ION);
+            annotationPreferences.addIonType(IonType.PRECURSOR_ION);
         }
         if (immoniumIonsCheckMenu.isSelected()) {
-            getAnnotationPreferences().addIonType(IonType.IMMONIUM_ION);
+            annotationPreferences.addIonType(IonType.IMMONIUM_ION);
         }
         if (reporterIonsCheckMenu.isSelected()) {
             for (int subtype : getReporterIons()) {
-                getAnnotationPreferences().addIonType(IonType.REPORTER_ION, subtype);
+                annotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
             }
         }
 
-        getAnnotationPreferences().clearNeutralLosses();
+        annotationPreferences.clearNeutralLosses();
 
         for (NeutralLoss neutralLoss : lossMenus.keySet()) {
             if (lossMenus.get(neutralLoss).isSelected()) {
-                getAnnotationPreferences().addNeutralLoss(neutralLoss);
+                annotationPreferences.addNeutralLoss(neutralLoss);
             }
         }
 
-        getAnnotationPreferences().clearCharges();
+        annotationPreferences.clearCharges();
 
         for (int charge : chargeMenus.keySet()) {
             if (chargeMenus.get(charge).isSelected()) {
-                getAnnotationPreferences().addSelectedCharge(charge);
+                annotationPreferences.addSelectedCharge(charge);
             }
         }
 
-        getAnnotationPreferences().useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
-        getAnnotationPreferences().setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
-        getAnnotationPreferences().setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
+        annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
 
-        getAnnotationPreferences().setShowAllPeaks(allCheckBoxMenuItem.isSelected());
-        getAnnotationPreferences().setShowBars(barsCheckBoxMenuItem.isSelected());
-        getAnnotationPreferences().setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
+        annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
+        annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
+        annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
 
-        getAnnotationPreferences().setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
-        getAnnotationPreferences().setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
+        annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
+        annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
 
         if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
-            getAnnotationPreferences().setDeNovoCharge(1);
+            annotationPreferences.setDeNovoCharge(1);
         } else {
-            getAnnotationPreferences().setDeNovoCharge(2);
+            annotationPreferences.setDeNovoCharge(2);
         }
 
         updateSpectrumAnnotations();
@@ -5048,7 +4957,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             clearPreferences();
                             importPeptideShakerFile(new File(filePath));
                             cpsBean.getUserPreferences().addRecentProject(filePath);
-                            lastSelectedFolder = new File(filePath).getAbsolutePath();
+                            lastSelectedFolder.setLastSelectedFolder(new File(filePath).getAbsolutePath());
                         }
                         updateRecentProjectsList();
                     }
@@ -5100,7 +5009,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                         importPeptideShakerFile(new File(filePath));
                         cpsBean.getUserPreferences().addRecentProject(filePath);
-                        lastSelectedFolder = new File(filePath).getAbsolutePath();
+                        lastSelectedFolder.setLastSelectedFolder(new File(filePath).getAbsolutePath());
                     }
                     updateRecentProjectsList();
                 }
@@ -5188,11 +5097,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     // backwards compatibility fix for gene and go references using only latin names
                     boolean genesRemapped = false;
-                    String selectedSpecies = cpsBean.getGenePreferences().getCurrentSpecies();
+                    GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
+                    String selectedSpecies = genePreferences.getCurrentSpecies();
                     if (selectedSpecies != null) {
 
-                        HashMap<String, HashMap<String, String>> allSpecies = cpsBean.getGenePreferences().getAllSpeciesMap();
-                        HashMap<String, String> tempSpecies = allSpecies.get(cpsBean.getGenePreferences().getCurrentSpeciesType());
+                        HashMap<String, HashMap<String, String>> allSpecies = genePreferences.getAllSpeciesMap();
+                        HashMap<String, String> tempSpecies = allSpecies.get(genePreferences.getCurrentSpeciesType());
 
                         if (!tempSpecies.containsKey(selectedSpecies)) {
 
@@ -5202,7 +5112,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             while (iterator.hasNext() && !keyFound) {
                                 String tempSpeciesKey = iterator.next();
                                 if (tempSpeciesKey.contains(selectedSpecies)) {
-                                    cpsBean.getGenePreferences().setCurrentSpecies(tempSpeciesKey);
+                                    genePreferences.setCurrentSpecies(tempSpeciesKey);
                                     keyFound = true;
                                     loadGeneMappings(); // have to re-load the gene mappings now that we have the correct species name
                                     genesRemapped = true;
@@ -5224,14 +5134,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     boolean fileFound;
                     try {
-                        fileFound = cpsBean.loadFastaFile(new File(getLastSelectedFolder()), progressDialog);
+                        fileFound = cpsBean.loadFastaFile(new File(getLastSelectedFolder().getLastSelectedFolder()), progressDialog);
                     } catch (Exception e) {
                         fileFound = false;
                     }
 
                     if (!fileFound && !locateFastaFileManually()) {
+                        File fastaFile = getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occurred while reading:\n" + getSearchParameters().getFastaFile() + "."
+                                "An error occurred while reading:\n" + fastaFile.getAbsolutePath() + "."
                                 + "\n\nOpen canceled.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                         clearData(true, true);
@@ -5272,7 +5183,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     + "\nPlease select the spectrum file or the folder containing it manually.",
                                     "File Not Found", JOptionPane.ERROR_MESSAGE);
 
-                            JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+                            JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder().getLastSelectedFolder());
                             fileChooser.setDialogTitle("Open Spectrum File");
 
                             FileFilter filter = new FileFilter() {
@@ -5296,7 +5207,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 if (!mgfFolder.isDirectory()) {
                                     mgfFolder = mgfFolder.getParentFile();
                                 }
-                                setLastSelectedFolder(mgfFolder.getAbsolutePath());
+                                lastSelectedFolder.setLastSelectedFolder(mgfFolder.getAbsolutePath());
                                 found = false;
                                 for (File file : mgfFolder.listFiles()) {
                                     for (String spectrumFileName2 : getIdentification().getSpectrumFiles()) {
@@ -5418,12 +5329,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private boolean locateFastaFileManually() throws FileNotFoundException, ClassNotFoundException, IOException {
 
+        File fastaFile = getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
         JOptionPane.showMessageDialog(this,
-                "Fasta file " + getSearchParameters().getFastaFile() + " was not found."
+                "Fasta file " + fastaFile.getAbsolutePath() + " was not found."
                 + "\n\nPlease locate it manually.",
                 "File Input Error", JOptionPane.WARNING_MESSAGE);
 
-        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
+        LastSelectedFolder lastSelectedFolder = getLastSelectedFolder();
+        JFileChooser fileChooser = new JFileChooser(lastSelectedFolder.getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
         fileChooser.setDialogTitle("Open FASTA File");
 
         FileFilter filter = new FileFilter() {
@@ -5444,9 +5357,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         int returnVal = fileChooser.showDialog(this, "Open");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File fastaFile = fileChooser.getSelectedFile();
-            setLastSelectedFolder(fastaFile.getAbsolutePath());
-            return cpsBean.loadFastaFile(fastaFile.getParentFile(), progressDialog);
+            File selectedFastaFile = fileChooser.getSelectedFile();
+            lastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
+            return cpsBean.loadFastaFile(selectedFastaFile.getParentFile(), progressDialog);
         } else {
             return false;
         }
@@ -5525,24 +5438,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the identification filter used when loading the files.
-     *
-     * @return the identification filter
-     */
-    public IdFilter getIdFilter() {
-        return cpsBean.getIdFilter();
-    }
-
-    /**
-     * Sets the identification filter used when loading the files.
-     *
-     * @param idFilter the identification filter to set
-     */
-    public void setIdFilter(IdFilter idFilter) {
-        cpsBean.setIdFilter(idFilter);
-    }
-
-    /**
      * Get the current delta masses for use when annotating the spectra.
      *
      * @return the current delta masses
@@ -5583,7 +5478,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 //        knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
 //        knownMassDeltas.put(44d, "PEG"); // @TODO: should this be added to neutral losses??
         // add the modifications
-        ModificationProfile modificationProfile = getSearchParameters().getModificationProfile();
+        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
+        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
         ArrayList<String> modificationList = modificationProfile.getAllModifications();
         Collections.sort(modificationList);
 
@@ -5735,23 +5631,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Set up the initial filters.
-     */
-    public void setUpInitialFilters() {
-        Enzyme enzyme = getSearchParameters().getEnzyme();
-        ProteinFilter proteinFilter = new ProteinFilter(enzyme.getName());
-        proteinFilter.setIdentifierRegex(enzyme.getName());
-        proteinFilter.setDescription("Hides " + enzyme.getName() + " related proteins.");
-        proteinFilter.setActive(false);
-        getFilterPreferences().addHidingFilter(proteinFilter);
-        proteinFilter = new ProteinFilter("Keratin");
-        proteinFilter.setIdentifierRegex("keratin");
-        proteinFilter.setDescription("Hides keratin.");
-        proteinFilter.setActive(false);
-        getFilterPreferences().addHidingFilter(proteinFilter);
-    }
-
-    /**
      * Returns the variable modifications found in this project. (Consider using
      * the search parameters instead.)
      *
@@ -5857,7 +5736,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Resets the display features generator.
      */
     public void resetDisplayFeaturesGenerator() {
-        displayFeaturesGenerator = new DisplayFeaturesGenerator(getSearchParameters().getModificationProfile(), exceptionHandler);
+        SearchParameters searchParameters = getIdentificationParameters().getSearchParameters();
+        displayFeaturesGenerator = new DisplayFeaturesGenerator(searchParameters.getModificationProfile(), exceptionHandler);
         displayFeaturesGenerator.setDisplayedPTMs(getDisplayPreferences().getDisplayedPtms());
     }
 
@@ -5945,13 +5825,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
 
-        File selectedFile = Util.getUserSelectedFile(this, aFileEnding, aFileFormatDescription, aDialogTitle, lastSelectedFolder, openDialog);
+        File selectedFile = Util.getUserSelectedFile(this, aFileEnding, aFileFormatDescription, aDialogTitle, lastSelectedFolder.getLastSelectedFolder(), openDialog);
 
         if (selectedFile != null) {
             if (selectedFile.isDirectory()) {
-                lastSelectedFolder = selectedFile.getAbsolutePath();
+                lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
             } else {
-                lastSelectedFolder = selectedFile.getParentFile().getAbsolutePath();
+                lastSelectedFolder.setLastSelectedFolder(selectedFile.getParentFile().getAbsolutePath());
             }
         }
 
@@ -6094,16 +5974,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         return tweets;
     }
 
-    @Override
-    public void setSelectedExportFolder(String selectedFile) {
-        lastSelectedFolder = selectedFile;
-    }
-
-    @Override
-    public String getDefaultExportFolder() {
-        return lastSelectedFolder;
-    }
-
     /**
      * Open the PeptideShaker example dataset.
      */
@@ -6138,7 +6008,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                 importPeptideShakerFile(new File(filePath));
                 cpsBean.getUserPreferences().addRecentProject(filePath);
-                lastSelectedFolder = new File(filePath).getAbsolutePath();
             }
 
             updateRecentProjectsList();
@@ -6207,7 +6076,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         public void run() {
 
                             File cpsFile = cpsBean.getCpsFile();
-                            File fastaFile = PeptideShakerGUI.this.getSearchParameters().getFastaFile();
+                            File fastaFile = PeptideShakerGUI.this.getIdentificationParameters().getProteinInferencePreferences().getProteinSequenceDatabase();
                             ArrayList<File> spectrumFiles = new ArrayList<File>();
                             for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                                 File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
@@ -6245,12 +6114,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         }
     }
 
-    @Override
+    /**
+     * Returns the normal icon.
+     *
+     * @return the normal icon
+     */
     public Image getNormalIcon() {
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif"));
     }
 
-    @Override
+    /**
+     * Returns the waiting icon.
+     *
+     * @return the waiting icon
+     */
     public Image getWaitingIcon() {
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif"));
     }
@@ -6358,7 +6235,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } else {
             setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
 
-            GenePreferences genePreferences = getGenePreferences();
+            GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
             String selectedSpecies = genePreferences.getCurrentSpecies();
             String currentSpeciesType = genePreferences.getCurrentSpeciesType();
 
@@ -6409,42 +6286,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
                     }
                 }
-            }
-        }
-    }
-
-    @Override
-    public File getUserModificationsFile() {
-        return new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
-    }
-
-    @Override
-    public ArrayList<String> getModificationUse() {
-        return modificationUse;
-    }
-
-    /**
-     * This method saves the modification use in the conf folder.
-     */
-    private void saveModificationUsage() {
-
-        File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
-
-        if (!folder.exists()) {
-            JOptionPane.showMessageDialog(this, new String[]{"Unable to find folder: '" + folder.getAbsolutePath() + "'!",
-                "Could not save modification use."}, "Folder Not Found", JOptionPane.WARNING_MESSAGE);
-        } else {
-            File output = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
-            try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(output));
-                bw.write("Modification use:" + System.getProperty("line.separator"));
-                bw.write(SearchSettingsDialog.getModificationUseAsString(modificationUse) + System.getProperty("line.separator"));
-                bw.flush();
-                bw.close();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Unable to write file: '" + ioe.getMessage() + "'!\n"
-                        + "Could not save modification use.", "File Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

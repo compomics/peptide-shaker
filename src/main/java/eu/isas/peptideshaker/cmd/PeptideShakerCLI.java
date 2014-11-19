@@ -29,6 +29,8 @@ import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.messages.FeedBack;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -203,7 +205,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // recalibrate spectra
                 if (followUpCLIInputBean.recalibrationNeeded()) {
                     try {
-                        CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                        CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                         e.printStackTrace();
@@ -213,7 +215,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // export spectra
                 if (followUpCLIInputBean.spectrumExportNeeded()) {
                     try {
-                        CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
+                        CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                         e.printStackTrace();
@@ -243,7 +245,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // progenesis export
                 if (followUpCLIInputBean.progenesisExportNeeded()) {
                     try {
-                        CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
+                        CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                         waitingHandler.appendReport("Progenesis export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -254,7 +256,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // de novo training export
                 if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
                     try {
-                        CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                        CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
                         waitingHandler.appendReport("Pepnovo training export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
@@ -280,7 +282,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     int nSurroundingAAs = 2; //@TODO: this shall not be hard coded //peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()
                     for (String reportType : reportCLIInputBean.getReportTypes()) {
                         try {
-                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
+                            CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, nSurroundingAAs, spectrumCountingPreferences, waitingHandler);
                         } catch (Exception e) {
                             waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
                             e.printStackTrace();
@@ -311,7 +313,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.appendReport("An error occurred while creating folder " + parent.getAbsolutePath() + ".", true, true);
                 }
 
-                File fastaFile = searchParameters.getFastaFile();
+                File fastaFile = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
                 ArrayList<File> spectrumFiles = new ArrayList<File>();
                 for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
                     File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
@@ -425,14 +427,108 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         projectDetails.setPeptideShakerVersion(new Properties().getVersion());
 
         // Get the search parameters
-        searchParameters = cliInputBean.getIdentificationParameters();
+        SearchParameters searchParameters = cliInputBean.getSearchParameters();
         String error = PeptideShaker.loadModifications(searchParameters);
         if (error != null) {
             System.out.println(error);
         }
         
-        // Get the default sequence matching preferences
-        sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+        // Set the default identification parameters
+        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
+
+        // set the filtering import settings
+        IdFilter idFilter = new IdFilter();
+        idFilter.setMinPepLength(cliInputBean.getMinPepLength());
+        idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
+        idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
+        idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
+        idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
+        identificationParameters.setIdFilter(idFilter);
+        
+        // set the validation preferences
+        IdMatchValidationPreferences idMatchValidationPreferences = new IdMatchValidationPreferences();
+        idMatchValidationPreferences.setDefaultPsmFDR(cliInputBean.getPsmFDR());
+        idMatchValidationPreferences.setDefaultPeptideFDR(cliInputBean.getPeptideFDR());
+        idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
+        processingPreferences.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
+
+        // set the PTM scoring preferences
+        PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
+        if (cliInputBean.getPtmScore() != null) {
+            ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
+            ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
+            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
+            if (cliInputBean.getPtmScoreThreshold() != null) {
+                ptmScoringPreferences.setEstimateFlr(false);
+                ptmScoringPreferences.setProbabilisticScoreThreshold(cliInputBean.getPtmScoreThreshold());
+            } else {
+                ptmScoringPreferences.setEstimateFlr(true);
+            }
+        } else {
+            ptmScoringPreferences.setProbabilitsticScoreCalculation(false);
+        }
+        identificationParameters.setPtmScoringPreferences(ptmScoringPreferences);
+
+        // set the gene preferences
+        if (cliInputBean.getSpecies() != null) {
+            try {
+                GenePreferences genePreferences = new GenePreferences();
+                identificationParameters.setGenePreferences(genePreferences);
+                
+                genePreferences.loadSpeciesAndGoDomains();
+                genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
+                genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
+
+                // try to download gene and go information
+                GeneFactory geneFactory = GeneFactory.getInstance();
+
+                String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
+                if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
+                    currentEnsemblSpeciesType = "ensembl";
+                }
+
+                Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
+
+                String selectedSpecies = cliInputBean.getSpecies();
+                String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
+                String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
+
+                boolean downloadNewMappings;
+
+                if (currentEnsemblVersionAsString == null) {
+                    if (cliInputBean.updateSpecies()) {
+                        downloadNewMappings = true;
+                    } else {
+                        waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
+                        waitingHandler.setRunCanceled();
+                        downloadNewMappings = false;
+                    }
+                } else {
+                    if (cliInputBean.updateSpecies()) {
+                        downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
+                    } else {
+                        downloadNewMappings = false;
+                    }
+                }
+
+                // download mappings if needed
+                if (downloadNewMappings) {
+                    genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
+                    genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+                }
+
+            } catch (IOException e) {
+                System.out.println("Failed to load the species and GO domains!");
+                e.printStackTrace();
+            }
+        }
+
+        // set the spectrum counting prefrences
+        spectrumCountingPreferences = new SpectrumCountingPreferences();
+
+        // set the annotation preferences
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
 
         // Get the input files
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
@@ -550,105 +646,20 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // set the filtering import settings
-        idFilter = new IdFilter();
-        idFilter.setMinPepLength(cliInputBean.getMinPepLength());
-        idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
-        idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
-        idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
-        idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
-
         // set the processing settings
         processingPreferences = new ProcessingPreferences();
-        processingPreferences.setPsmFDR(cliInputBean.getPsmFDR());
-        processingPreferences.setPeptideFDR(cliInputBean.getPeptideFDR());
-        processingPreferences.setProteinFDR(cliInputBean.getProteinFDR());
-        processingPreferences.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
-
-        // set the PTM scoring preferences
-        ptmScoringPreferences = new PTMScoringPreferences();
-        if (cliInputBean.getPtmScore() != null) {
-            ptmScoringPreferences.setProbabilitsticScoreCalculation(true);
-            ptmScoringPreferences.setSelectedProbabilisticScore(cliInputBean.getPtmScore());
-            ptmScoringPreferences.setProbabilisticScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
-            if (cliInputBean.getPtmScoreThreshold() != null) {
-                ptmScoringPreferences.setEstimateFlr(false);
-                ptmScoringPreferences.setProbabilisticScoreThreshold(cliInputBean.getPtmScoreThreshold());
-            } else {
-                ptmScoringPreferences.setEstimateFlr(true);
-            }
-        } else {
-            ptmScoringPreferences.setProbabilitsticScoreCalculation(false);
+        Integer nThreads = cliInputBean.getnThreads();
+        if (nThreads != null) {
+            processingPreferences.setnThreads(nThreads);
         }
-
-        // set the gene preferences
-        if (cliInputBean.getSpecies() != null) {
-            try {
-                genePreferences = new GenePreferences();
-                genePreferences.loadSpeciesAndGoDomains();
-                genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
-                genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
-
-                // try to download gene and go information
-                GeneFactory geneFactory = GeneFactory.getInstance();
-
-                String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
-                if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
-                    currentEnsemblSpeciesType = "ensembl";
-                }
-
-                Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
-
-                String selectedSpecies = cliInputBean.getSpecies();
-                String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
-                String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
-
-                boolean downloadNewMappings;
-
-                if (currentEnsemblVersionAsString == null) {
-                    if (cliInputBean.updateSpecies()) {
-                        downloadNewMappings = true;
-                    } else {
-                        waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
-                        waitingHandler.setRunCanceled();
-                        downloadNewMappings = false;
-                    }
-                } else {
-                    if (cliInputBean.updateSpecies()) {
-                        downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
-                    } else {
-                        downloadNewMappings = false;
-                    }
-                }
-
-                // download mappings if needed
-                if (downloadNewMappings) {
-                    genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
-                    genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
-                }
-
-            } catch (IOException e) {
-                System.out.println("Failed to load the species and GO domains!");
-                e.printStackTrace();
-            }
-        }
-
-        // set the spectrum counting prefrences
-        spectrumCountingPreferences = new SpectrumCountingPreferences();
-
-        // set the annotation preferences
-        annotationPreferences = new AnnotationPreferences();
-        annotationPreferences.setPreferencesFromSearchParameters(searchParameters);
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
-        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
 
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
         // import the files
-        peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
-                annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
-                spectrumCountingPreferences, sequenceMatchingPreferences, false);
+        peptideShaker.importFiles(waitingHandler, identificationFiles, spectrumFiles,
+                shotgunProtocol, identificationParameters, projectDetails, processingPreferences,
+                spectrumCountingPreferences, false);
 
         // show the warnings
         Iterator<String> iterator = peptideShaker.getWarnings().keySet().iterator();

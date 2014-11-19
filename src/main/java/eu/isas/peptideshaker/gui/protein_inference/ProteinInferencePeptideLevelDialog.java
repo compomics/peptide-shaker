@@ -104,7 +104,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey));
         sequenceLabel.setToolTipText(tooltip);
 
-        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences());
+        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
         List<String> retainedProteins;
 
         if (proteinMatchKey != null) {

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.experiment.identification.Identification;
@@ -12,6 +13,7 @@ import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.export.writers.ExcelWriter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
@@ -237,8 +239,6 @@ public class PSExportFactory implements ExportFactory {
      * Peptide and PSM sections)
      * @param identificationFeaturesGenerator the identification features
      * generator (mandatory for the Protein, Peptide and PSM sections)
-     * @param searchParameters the search parameters (mandatory for the Protein,
-     * Peptide, PSM and search parameters sections)
      * @param proteinKeys the protein keys to export (mandatory for the Protein
      * section)
      * @param peptideKeys the peptide keys to export (mandatory for the Peptide
@@ -249,13 +249,8 @@ public class PSExportFactory implements ExportFactory {
      * a single protein match (optional for the Peptide sections)
      * @param nSurroundingAA the number of surrounding amino acids to export
      * (mandatory for the Peptide section)
-     * @param annotationPreferences the annotation preferences (mandatory for
-     * the Annotation section)
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param idFilter the identification filer (mandatory for the Input Filter
-     * section)
-     * @param ptmcoringPreferences the PTM scoring preferences (mandatory for
-     * the PTM scoring section)
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      * (mandatory for the spectrum counting section)
      * @param waitingHandler the waiting handler
@@ -270,9 +265,9 @@ public class PSExportFactory implements ExportFactory {
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
-            String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
+            ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
+            String proteinMatchKey, int nSurroundingAA, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         ExportWriter exportWriter = ExportWriter.getExportWriter(exportFormat, destinationFile, exportScheme.getSeparator(), exportScheme.getSeparationLines());
@@ -292,31 +287,31 @@ public class PSExportFactory implements ExportFactory {
             }
             if (sectionName.equals(PsAnnotationFeature.type)) {
                 PsAnnotationSection section = new PsAnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(annotationPreferences, waitingHandler);
+                section.writeSection(identificationParameters.getAnnotationPreferences(), waitingHandler);
             } else if (sectionName.equals(PsInputFilterFeature.type)) {
                 PsInputFilterSection section = new PsInputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(idFilter, waitingHandler);
+                section.writeSection(identificationParameters.getIdFilter(), waitingHandler);
             } else if (sectionName.equals(PsPeptideFeature.type)) {
                 PsPeptideSection section = new PsPeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideKeys, nSurroundingAA, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsProjectFeature.type)) {
                 PsProjectSection section = new PsProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
             } else if (sectionName.equals(PsProteinFeature.type)) {
                 PsProteinSection section = new PsProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, nSurroundingAA, exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsPsmFeature.type)) {
                 PsPsmSection section = new PsPsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", exportScheme.isValidatedOnly(), exportScheme.isIncludeDecoy(), waitingHandler);
             } else if (sectionName.equals(PsIdentificationAlgorithmMatchesFeature.type)) {
                 PsIdentificationAlgorithmMatchesSection section = new PsIdentificationAlgorithmMatchesSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, psmKeys, "", waitingHandler);
+                section.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, psmKeys, "", waitingHandler);
             } else if (sectionName.equals(PsPtmScoringFeature.type)) {
                 PsPtmScoringSection section = new PsPtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(ptmcoringPreferences, waitingHandler);
+                section.writeSection(identificationParameters.getPtmScoringPreferences(), waitingHandler);
             } else if (sectionName.equals(PsSearchFeature.type)) {
                 PsSearchParametersSection section = new PsSearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
-                section.writeSection(searchParameters, waitingHandler);
+                section.writeSection(identificationParameters.getSearchParameters(), waitingHandler);
             } else if (sectionName.equals(PsSpectrumCountingFeature.type)) {
                 PsSpectrumCountingSection section = new PsSpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.isIndexes(), exportScheme.isHeader(), exportWriter);
                 section.writeSection(spectrumCountingPreferences, waitingHandler);
@@ -537,7 +532,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
-        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error_ppm);
 
         // psm scores
         sectionContent.add(PsPsmFeature.confidence);
@@ -656,7 +651,7 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
-        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error_ppm);
 
         // psm scores
         sectionContent.add(PsPsmFeature.confidence);

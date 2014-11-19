@@ -1,13 +1,13 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -500,8 +500,8 @@ public class PsmFilter extends MatchFilter {
      * @param spectrumKey the key of the spectrum match
      * @param identification the identification object to get the information
      * from
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -512,9 +512,9 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isValidated(String spectrumKey, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences)
+    public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, identification, searchParameters, annotationPreferences, null);
+        return isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, null);
     }
 
     /**
@@ -523,8 +523,8 @@ public class PsmFilter extends MatchFilter {
      * @param spectrumKey the key of the spectrum match
      * @param identification the identification object to get the information
      * from
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      *
      * @return a boolean indicating whether a spectrum match is validated by a
@@ -536,9 +536,9 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public boolean isValidated(String spectrumKey, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, this, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+        return isValidated(spectrumKey, this, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
     }
 
     /**
@@ -548,8 +548,8 @@ public class PsmFilter extends MatchFilter {
      * @param psmFilter the filter
      * @param identification the identification object to get the information
      * from
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      *
      * @return a boolean indicating whether a spectrum match is validated by a
@@ -561,7 +561,7 @@ public class PsmFilter extends MatchFilter {
      * @throws java.lang.InterruptedException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (psmFilter.getExceptions().contains(spectrumKey)) {
@@ -671,7 +671,7 @@ public class PsmFilter extends MatchFilter {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         if (spectrumMatch.getBestPeptideAssumption() != null) {
-            return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+            return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
         } else if (spectrumMatch.getBestTagAssumption() != null) {
             //TODO: implement a tag assumption filter
             return true;
@@ -682,7 +682,7 @@ public class PsmFilter extends MatchFilter {
 
     @Override
     public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        return isValidated(matchKey, identification, searchParameters, annotationPreferences, null);
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+        return isValidated(matchKey, identification, shotgunProtocol, identificationParameters, null);
     }
 }

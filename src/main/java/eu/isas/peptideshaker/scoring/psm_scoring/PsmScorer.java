@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -13,7 +14,9 @@ import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -48,10 +51,9 @@ public class PsmScorer {
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
      * @param processingPreferences the processing preferences
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information on the protocol used
+     * @param identificationParameters identification parameters used
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the identification parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws SQLException
      * @throws IOException
@@ -59,13 +61,17 @@ public class PsmScorer {
      * @throws ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, AnnotationPreferences annotationPreferences,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
         HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
         NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
         ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
 
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        
+        PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
+        
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
@@ -81,6 +87,11 @@ public class PsmScorer {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                 for (int advocateIndex : spectrumMatch.getAdvocates()) {
+                    
+                    HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
+                    
+                    if (scoresForAdvocate != null) {
+                    
                     for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
 
@@ -91,7 +102,7 @@ public class PsmScorer {
                                 PSParameter psParameter = new PSParameter();
                                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
-                                for (int scoreIndex : processingPreferences.getScores(advocateIndex)) {
+                                for (int scoreIndex : scoresForAdvocate) {
 
                                     Peptide peptide = peptideAssumption.getPeptide();
                                     boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
@@ -101,7 +112,7 @@ public class PsmScorer {
                                         score = peptideAssumption.getScore();
                                     } else {
                                         score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
-                                                peptideAssumption.getIdentificationCharge().value, searchParameters, scoreIndex);
+                                                peptideAssumption.getIdentificationCharge().value, shotgunProtocol, scoreIndex);
                                     }
 
                                     psParameter.setIntermediateScore(scoreIndex, score);
@@ -132,6 +143,7 @@ public class PsmScorer {
                             }
                         }
                     }
+                }
                 }
 
                 identification.updateSpectrumMatch(spectrumMatch);
@@ -196,9 +208,9 @@ public class PsmScorer {
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
      * @param processingPreferences the processing preferences
+     * @param shotgunProtocol information on the protocol used
+     * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the identification parameters
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws SQLException
      * @throws IOException
@@ -207,11 +219,13 @@ public class PsmScorer {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, 
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, WaitingHandler waitingHandler)
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
 
         PSParameter psParameter = new PSParameter();
 
@@ -241,10 +255,10 @@ public class PsmScorer {
 
                                 double score = 1;
 
-                                ArrayList<Integer> scores = processingPreferences.getScores(advocateIndex);
+                                HashSet<Integer> scores = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
                                 if (scores.size() == 1 || !sequenceFactory.concatenatedTargetDecoy()) {
-                                    score = psParameter.getIntermediateScore(scores.get(0));
+                                    score = psParameter.getIntermediateScore(scores.iterator().next());
                                 } else {
                                     for (int scoreIndex : scores) {
                                         TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);

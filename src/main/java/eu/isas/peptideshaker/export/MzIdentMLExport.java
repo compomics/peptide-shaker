@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Ion.IonType;
@@ -20,6 +21,8 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -111,14 +114,6 @@ public class MzIdentMLExport {
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The search parameters.
-     */
-    private SearchParameters searchParameters;
-    /**
-     * The PTM scoring preferences.
-     */
-    private PTMScoringPreferences ptmScoringPreferences;
-    /**
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
@@ -131,14 +126,6 @@ public class MzIdentMLExport {
      */
     private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
     /**
-     * The annotation preferences.
-     */
-    private AnnotationPreferences annotationPreferences;
-    /**
-     * The sequence matching preferences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences;
-    /**
      * The waiting handler.
      */
     private WaitingHandler waitingHandler;
@@ -150,6 +137,14 @@ public class MzIdentMLExport {
      * The spectrum IDs.
      */
     private HashMap<String, String> spectrumIds = new HashMap<String, String>();
+    /**
+     * Information on the protocol
+     */
+    private ShotgunProtocol shotgunProtocol;
+    /**
+     * the identification parameters
+     */
+    private IdentificationParameters identificationParameters;
 
     /**
      * Constructor.
@@ -158,12 +153,10 @@ public class MzIdentMLExport {
      * @param identification the identification object which can be used to retrieve identification matches and parameters
      * @param projectDetails the project details
      * @param processingPreferences the processing preferences
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param identificationFeaturesGenerator the identification features generator
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the annotation preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
      * @param outputFile Output file
      * @param waitingHandler waiting handler used to display progress to the user and interrupt the process
      *
@@ -175,19 +168,17 @@ public class MzIdentMLExport {
      * occurred while deserializing a pride object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, 
-            SearchParameters searchParameters, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, 
-            IdentificationFeaturesGenerator identificationFeaturesGenerator, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, 
+            IdentificationFeaturesGenerator identificationFeaturesGenerator,
             File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
         this.processingPreferences = processingPreferences;
-        this.searchParameters = searchParameters;
-        this.ptmScoringPreferences = ptmScoringPreferences;
+        this.shotgunProtocol = shotgunProtocol;
+        this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
-        this.annotationPreferences = annotationPreferences;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
         this.waitingHandler = waitingHandler;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance(); // @TODO: should be renamed!!!
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
@@ -524,6 +515,7 @@ public class MzIdentMLExport {
             }
         }
 
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         int peptideEvidenceCounter = 0;
 
         // iterate the spectrum files
@@ -685,11 +677,13 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</SearchType>" + System.getProperty("line.separator"));
 
         // the search parameters
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
         br.write(getCurrentTabSpace() + "<AdditionalSearchParams>" + System.getProperty("line.separator"));
         tabCounter++;
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001211", "parent mass type mono", null));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
         if (mzidVersion1_2) {
+            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
             writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide-level scoring performed", null)); // @TODO: add correct cv term!
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "Group PSMs by distinct peptide sequence with taking modifications into account", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002489", "Modification localization scoring performed", null));
@@ -873,8 +867,10 @@ public class MzIdentMLExport {
         } else {
 
             // Initial global thresholds
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(processingPreferences.getPeptideFDR(), CONFIDENCE_DECIMALS))));
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(processingPreferences.getPsmFDR(), CONFIDENCE_DECIMALS))));
+            IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
+            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultProteinFDR(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
             }
@@ -1128,7 +1124,7 @@ public class MzIdentMLExport {
                     String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
                     ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
-                            peptideSequence, sequenceMatchingPreferences);
+                            peptideSequence, identificationParameters.getSequenceMatchingPreferences());
 
                     for (int start : peptideStarts) {
                         String pepEvidenceKey = accession + "_" + start + "_" + peptideKey;
@@ -1216,7 +1212,7 @@ public class MzIdentMLExport {
             String spectrumIdentificationItemKey = "SII_" + psmIndex + "_" + rank;
             spectrumIds.put(psmKey, spectrumIdentificationItemKey);
 
-            String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
+            String bestPeptideKey = bestPeptideAssumption.getPeptide().getMatchingKey(identificationParameters.getSequenceMatchingPreferences());
 
             br.write(getCurrentTabSpace() + "<SpectrumIdentificationItem "
                     + "passThreshold=\"" + psmParameter.getMatchValidationLevel().isValidated() + "\" "
@@ -1235,7 +1231,7 @@ public class MzIdentMLExport {
             //
             // add the peptide evidence references
             // get all the possible parent proteins
-            ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences);
+            ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
             String peptideSequence = bestPeptideAssumption.getPeptide().getSequence();
 
             // iterate all the possible protein parents for each peptide
@@ -1243,7 +1239,7 @@ public class MzIdentMLExport {
 
                 // get the start indexes and the surrounding amino acids
                 ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(tempProtein).getPeptideStart(
-                        peptideSequence, sequenceMatchingPreferences);
+                        peptideSequence, identificationParameters.getSequenceMatchingPreferences());
 
                 for (int start : peptideStarts) {
                     String pepEvidenceKey = tempProtein + "_" + start + "_" + bestPeptideKey;
@@ -1254,7 +1250,8 @@ public class MzIdentMLExport {
 
             // add the fragment ion annotation
             int identificationCharge = bestPeptideAssumption.getIdentificationCharge().value;
-            annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, sequenceMatchingPreferences);
+            AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+            annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, identificationParameters.getSequenceMatchingPreferences());
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
 
             // get all the fragment ion annotations
@@ -1362,6 +1359,7 @@ public class MzIdentMLExport {
 
             if (mzidVersion1_2) {
 
+                            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
                 PeptideMatch peptideMatch = identification.getPeptideMatch(bestPeptideKey);
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 if (psPtmScores != null) {
@@ -1438,7 +1436,7 @@ public class MzIdentMLExport {
                         if (currentAssumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                             if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(
-                                    bestPeptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
+                                    bestPeptideAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                 Double currentMinEvalue = scores.get(tempAdvocate);
                                 if (currentMinEvalue == null || eValue < currentMinEvalue) {
                                     scores.put(tempAdvocate, eValue);
@@ -1601,8 +1599,9 @@ public class MzIdentMLExport {
         }
 
         // add the database
+        File database = identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase();
         br.write(getCurrentTabSpace() + "<SearchDatabase numDatabaseSequences=\"" + sequenceFactory.getNSequences()
-                + "\" location=\"" + searchParameters.getFastaFile().getAbsolutePath() + "\" "
+                + "\" location=\"" + database.getAbsolutePath() + "\" "
                 + "id=\"" + "SearchDB_1\">" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));
@@ -1612,7 +1611,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<DatabaseName>" + System.getProperty("line.separator"));
         tabCounter++;
-        writeUserParam(searchParameters.getFastaFile().getName());
+        writeUserParam(database.getName());
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DatabaseName>" + System.getProperty("line.separator"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));

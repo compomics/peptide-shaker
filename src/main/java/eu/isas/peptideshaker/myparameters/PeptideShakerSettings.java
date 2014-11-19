@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.myparameters;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -7,6 +8,10 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.ProteinInferencePreferences;
+import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -24,24 +29,13 @@ public class PeptideShakerSettings implements UrParameter {
      */
     static final long serialVersionUID = -3531908843597367812L;
     /**
-     * The search parameters (versions older than 0.19) still present for
-     * backward compatibility.
-     *
-     * @deprecated use utilitiesSearchParamters
-     */
-    private eu.isas.peptideshaker.preferences.SearchParameters searchParameters;
-    /**
-     * The parameters linked to the search.
-     */
-    private SearchParameters utiltiesSearchParameters;
-    /**
      * The initial processing preferences.
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The utilities annotation preferences.
+     * The identification parameters
      */
-    private AnnotationPreferences utilitiesAnnotationPreferences = null;
+    private IdentificationParameters identificationParameters;
     /**
      * The spectrum counting preferences.
      */
@@ -55,10 +49,6 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private DisplayPreferences displayPreferences;
     /**
-     * The gene preferences.
-     */
-    private GenePreferences genePreferences;
-    /**
      * The project details.
      */
     private ProjectDetails projectDetails;
@@ -71,17 +61,52 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private IdentificationFeaturesCache identificationFeaturesCache;
     /**
+     * Information about the protocol used
+     */
+    private ShotgunProtocol shotgunProtocol;
+    /**
      * The PTM scoring preferences.
+     *
+     * @deprecated use identificationParameters instead
      */
     private PTMScoringPreferences ptmScoringPreferences;
     /**
+     * The gene preferences.
+     *
+     * @deprecated use identificationParameters instead
+     */
+    private GenePreferences genePreferences;
+    /**
      * The sequence matching preferences.
+     *
+     * @deprecated use identificationParameters instead
      */
     private SequenceMatchingPreferences sequenceMatchingPreferences;
     /**
      * The identification filters.
+     *
+     * @deprecated use identificationParameters instead
      */
     private IdFilter idFilter;
+    /**
+     * The utilities annotation preferences.
+     *
+     * @deprecated use identificationParameters instead
+     */
+    private AnnotationPreferences utilitiesAnnotationPreferences = null;
+    /**
+     * The search parameters (versions older than 0.19) still present for
+     * backward compatibility.
+     *
+     * @deprecated use utilitiesSearchParamters
+     */
+    private eu.isas.peptideshaker.preferences.SearchParameters searchParameters;
+    /**
+     * The parameters linked to the search.
+     *
+     * @deprecated use
+     */
+    private SearchParameters utiltiesSearchParameters;
 
     /**
      * Blank constructor.
@@ -92,8 +117,8 @@ public class PeptideShakerSettings implements UrParameter {
     /**
      * Constructor for a PeptideShaker Settings class.
      *
-     * @param searchParameters The parameters linked to the search
-     * @param annotationPreferences The annotation preferences
+     * @param shotgunProtocol information about the protocol used
+     * @param identificationParameters the parameters used for identification
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details
      * @param filterPreferences The filter preferences
@@ -101,26 +126,16 @@ public class PeptideShakerSettings implements UrParameter {
      * @param metrics The metrics saved when loading the files
      * @param processingPreferences The processing preferences
      * @param identificationFeaturesCache The identification features cache
-     * @param ptmScoringPreferences The PTM scoring preferences
-     * @param genePreferences the gene preferences
-     * @param idFilter the identification filters
-     * @param sequenceMatchingPreferences the sequence matching preferences
      */
-    public PeptideShakerSettings(SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences,
+    public PeptideShakerSettings(ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
             Metrics metrics,
             ProcessingPreferences processingPreferences,
-            IdentificationFeaturesCache identificationFeaturesCache,
-            PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences,
-            IdFilter idFilter,
-            SequenceMatchingPreferences sequenceMatchingPreferences) {
-        this.utiltiesSearchParameters = searchParameters;
-        this.utilitiesAnnotationPreferences = annotationPreferences;
+            IdentificationFeaturesCache identificationFeaturesCache) {
+        this.identificationParameters = identificationParameters;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterPreferences = filterPreferences;
@@ -128,14 +143,62 @@ public class PeptideShakerSettings implements UrParameter {
         this.metrics = metrics;
         this.processingPreferences = processingPreferences;
         this.identificationFeaturesCache = identificationFeaturesCache;
-        this.ptmScoringPreferences = ptmScoringPreferences;
-        this.genePreferences = genePreferences;
-        this.idFilter = idFilter;
-        this.sequenceMatchingPreferences = sequenceMatchingPreferences;
+    }
+
+    /**
+     * Returns the identification parameters.
+     *
+     * @return the identification parameters
+     */
+    public IdentificationParameters getIdentificationParameters() {
+        if (identificationParameters == null) {
+
+            identificationParameters = new IdentificationParameters();
+
+            SearchParameters searchParameters = getSearchParameters();
+            identificationParameters.setSearchParameters(searchParameters);
+            identificationParameters.setAnnotationPreferences(getAnnotationPreferences());
+            identificationParameters.setIdFilter(getIdFilter());
+            identificationParameters.setIdValidationPreferences(new IdMatchValidationPreferences());
+            ProteinInferencePreferences proteinInferencePreferences = new ProteinInferencePreferences();
+            proteinInferencePreferences.setProteinSequenceDatabase(searchParameters.getFastaFile());
+            identificationParameters.setProteinInferencePreferences(proteinInferencePreferences);
+            identificationParameters.setPsmScoringPreferences(new PsmScoringPreferences());
+            identificationParameters.setPtmScoringPreferences(getPTMScoringPreferences());
+
+            GenePreferences genePreferences = getGenePreferences();
+            // backwards compatability for the gene preferences
+            if (genePreferences.getCurrentSpecies() == null) {
+                genePreferences = new GenePreferences();
+            }
+            if (genePreferences.getCurrentSpecies() != null && genePreferences.getCurrentSpeciesType() == null) {
+                genePreferences.setCurrentSpeciesType("Vertebrates");
+            }
+            identificationParameters.setGenePreferences(genePreferences);
+
+            // backwards compatability for the sequence matching preferences
+            SequenceMatchingPreferences sequenceMatchingPreferences = getSequenceMatchingPreferences();
+            if (sequenceMatchingPreferences == null) {
+                sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+            }
+            identificationParameters.setSequenceMatchingPreferences(sequenceMatchingPreferences);
+        }
+        return identificationParameters;
+    }
+
+    /**
+     * Sets the identification parameters.
+     *
+     * @param identificationParameters the identification parameters
+     */
+    public void setIdentificationParameters(IdentificationParameters identificationParameters) {
+        this.identificationParameters = identificationParameters;
     }
 
     /**
      * Returns the annotation preferences.
+     *
+     * @deprecated use identificationParameters instead
      *
      * @return the annotation preferences
      */
@@ -149,6 +212,8 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Returns the parameters linked to the search.
+     *
+     * @deprecated use identificationParameters instead
      *
      * @return the parameters linked to the search
      */
@@ -196,7 +261,27 @@ public class PeptideShakerSettings implements UrParameter {
     }
 
     /**
+     * Returns information about the protocol used.
+     * 
+     * @return information about the protocol used
+     */
+    public ShotgunProtocol getShotgunProtocol() {
+        return shotgunProtocol;
+    }
+
+    /**
+     * Sets information about the protocol used.
+     * 
+     * @param shotgunProtocol information about the protocol used
+     */
+    public void setShotgunProtocol(ShotgunProtocol shotgunProtocol) {
+        this.shotgunProtocol = shotgunProtocol;
+    }
+
+    /**
      * Returns the gene preferences.
+     *
+     * @deprecated use identificationParameters instead
      *
      * @return the gene preferences
      */
@@ -209,6 +294,8 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Set the gene preferences.
+     *
+     * @deprecated use identificationParameters instead
      *
      * @param genePreferences
      */
@@ -263,6 +350,8 @@ public class PeptideShakerSettings implements UrParameter {
     /**
      * Returns the PTM scoring preferences.
      *
+     * @deprecated use identificationParameters instead
+     *
      * @return the PTM scoring preferences
      */
     public PTMScoringPreferences getPTMScoringPreferences() {
@@ -293,6 +382,8 @@ public class PeptideShakerSettings implements UrParameter {
     /**
      * Returns the ID filters.
      *
+     * @deprecated use identificationParameters instead
+     *
      * @return the idFilter
      */
     public IdFilter getIdFilter() {
@@ -302,6 +393,8 @@ public class PeptideShakerSettings implements UrParameter {
     /**
      * Sets the ID filter.
      *
+     * @deprecated use identificationParameters instead
+     *
      * @param idFilter the idFilter to set
      */
     public void setIdFilter(IdFilter idFilter) {
@@ -310,7 +403,9 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Returns the sequence matching preferences.
-     * 
+     *
+     * @deprecated use identificationParameters instead
+     *
      * @return the sequence matching preferences
      */
     public SequenceMatchingPreferences getSequenceMatchingPreferences() {
@@ -319,7 +414,9 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Sets the sequence matching preferences.
-     * 
+     *
+     * @deprecated use identificationParameters instead
+     *
      * @param sequenceMatchingPreferences the sequence matching preferences
      */
     public void setSequenceMatchingPreferences(SequenceMatchingPreferences sequenceMatchingPreferences) {

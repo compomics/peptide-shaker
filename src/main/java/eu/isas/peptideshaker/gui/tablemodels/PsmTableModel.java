@@ -156,7 +156,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getSequenceMatchingPreferences());
+                        return SpectrumIdentificationPanel.isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     case 3:
                         spectrumMatch = identification.getSpectrumMatch(psmKey, useDB && !isScrolling);
                         if (spectrumMatch == null) {
@@ -197,9 +197,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         }
                         Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
-                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            return Math.abs(spectrumMatch.getBestTagAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else {
                             throw new IllegalArgumentException("No best assumption found for spectrum " + psmKey + ".");
                         }

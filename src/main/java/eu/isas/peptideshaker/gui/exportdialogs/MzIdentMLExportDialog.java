@@ -3,6 +3,8 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.MzIdentMLExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -506,7 +508,12 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private void browseOutputFolderJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseOutputFolderJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        File selectedFile = Util.getUserSelectedFile(this, ".mzid", "(mzIdentML file) *.mzid", "Select Export File", peptideShakerGUI.getLastSelectedFolder(), false);
+        LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
+        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+        if (folder == null) {
+            folder = lastSelectedFolder.getLastSelectedFolder();
+        }
+        File selectedFile = Util.getUserSelectedFile(this, ".mzid", "(mzIdentML file) *.mzid", "Select Export File", folder, false);
 
         if (selectedFile != null) {
             String path = selectedFile.getAbsolutePath();
@@ -515,7 +522,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                 path += ".mzid";
             }
 
-            peptideShakerGUI.setLastSelectedFolder(selectedFile.getParentFile().getAbsolutePath());
+            lastSelectedFolder.setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
             outputFolderJTextField.setText(path);
         }
 
@@ -603,9 +610,8 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
 
                 try {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
-                            peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getPtmScoringPreferences(),
-                            peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
-                            peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences(), finalOutputFile, progressDialog);
+                            peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
+                            finalOutputFile, progressDialog);
                     mzIdentMLExport.createMzIdentMLFile(false);
 
                     // validate the mzidentml file

@@ -49,7 +49,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     public AnnotationPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
-        this.annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+        this.annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
         setUpData();
         initComponents();
         setUpGui();
@@ -602,7 +602,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         }
 
-        peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
+        peptideShakerGUI.getIdentificationParameters().setAnnotationPreferences(annotationPreferences);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         dispose();
@@ -715,7 +715,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private void updateGUI() {
 
         intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-        ((SpinnerNumberModel) accuracySpinner.getModel()).setMaximum(peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        ((SpinnerNumberModel) accuracySpinner.getModel()).setMaximum(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy());
         accuracySpinner.setValue(new Double(annotationPreferences.getFragmentIonAccuracy()));
 
         aBox.setSelected(false);

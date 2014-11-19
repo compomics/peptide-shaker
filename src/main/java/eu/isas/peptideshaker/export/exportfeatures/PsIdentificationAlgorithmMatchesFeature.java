@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
 
-    rank("Rank", "The rank assigned by the identification algorithm.", true),
+    rank("Rank", "The rank assigned by the identification algorithm.", false),
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached.", false),
     protein_description("Description(s)", "Description of the Protein(s) to which this peptide can be attached.", false),
     sequence("Sequence", "The identified sequence of amino acids.", false),
@@ -31,7 +31,8 @@ public enum PsIdentificationAlgorithmMatchesFeature implements ExportFeature {
     identification_charge("Identification Charge", "The charge as inferred by the search engine.", false),
     theoretical_mass("Theoretical Mass", "The theoretical mass of the peptide.", false),
     isotope("Isotope Number", "The isotope number targetted by the instrument.", false),
-    mz_error("Precursor m/z Error", "The precursor m/z matching error.", false),
+    mz_error_ppm("Precursor m/z Error [ppm]", "The precursor m/z matching error in ppm.", false),
+    mz_error_da("Precursor m/z Error [Da]", "The precursor m/z matching error in Da.", false),
     algorithm_score("Algorithm Score", "Score given by the identification algorithm to the hit.", false),
     algorithm_confidence("Algorithm Confidence [%]", "Confidence in percent associated to the algorithm score.", false),
     algorithm_delta_confidence("Algorithm Delta Confidence [%]", "Difference in percent between the match and the next best for a given identification algorithm without accounting for PTM localization.", true),

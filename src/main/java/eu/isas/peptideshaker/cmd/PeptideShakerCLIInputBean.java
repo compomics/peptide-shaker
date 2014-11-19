@@ -115,7 +115,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The identification parameters used for the search.
      */
-    private SearchParameters identificationParameters = null;
+    private SearchParameters searchParameters = null;
     /**
      * Boolean indicating whether a waiting dialog shall be used.
      */
@@ -136,6 +136,10 @@ public class PeptideShakerCLIInputBean {
      * File where to export the zipped folder.
      */
     private File zipExport = null;
+    /**
+     * The number of threads to use
+     */
+    private Integer nThreads = null;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -236,7 +240,7 @@ public class PeptideShakerCLIInputBean {
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_PARAMETERS.id);
             File tempSettingsFile = new File(filesTxt);
             if (tempSettingsFile.exists()) {
-                identificationParameters = SearchParameters.getIdentificationParameters(tempSettingsFile);
+                searchParameters = SearchParameters.getIdentificationParameters(tempSettingsFile);
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
@@ -266,6 +270,11 @@ public class PeptideShakerCLIInputBean {
         // zipped export
         if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
             zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
+        }
+        
+        // n threads
+        if (aLine.hasOption(PeptideShakerCLIParams.CPUS.id)) {
+            nThreads = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.CPUS.id));
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
@@ -611,17 +620,17 @@ public class PeptideShakerCLIInputBean {
      *
      * @return the identification parameters
      */
-    public SearchParameters getIdentificationParameters() {
-        return identificationParameters;
+    public SearchParameters getSearchParameters() {
+        return searchParameters;
     }
 
     /**
      * Sets the identification parameters.
      *
-     * @param identificationParameters the identification parameters
+     * @param searchParameters the identification parameters
      */
-    public void setIdentificationParameters(SearchParameters identificationParameters) {
-        this.identificationParameters = identificationParameters;
+    public void setSearchParameters(SearchParameters searchParameters) {
+        this.searchParameters = searchParameters;
     }
 
     /**
@@ -767,4 +776,15 @@ public class PeptideShakerCLIInputBean {
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
         return pathSettingsCLIInputBean;
     }
+
+    /**
+     * Returns the number of threads to use.
+     * 
+     * @return the number of threads to use
+     */
+    public Integer getnThreads() {
+        return nThreads;
+    }
+    
+    
 }

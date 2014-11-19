@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.io.Serializable;
@@ -217,8 +217,8 @@ public abstract class MatchFilter implements Serializable {
      * from
      * @param identificationFeaturesGenerator the identification features
      * generator providing identification features
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information on the protocol
+     * @param identificationParameters the identification parameters
      *
      * @return a boolean indicating whether a match is validated by a given
      * filter
@@ -230,5 +230,5 @@ public abstract class MatchFilter implements Serializable {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
     public abstract boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException;
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException;
 }

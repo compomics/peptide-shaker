@@ -2035,7 +2035,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                         MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
+                        matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
@@ -2473,7 +2473,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void pepPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, pepChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, pepChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_pepPlotExportJButtonActionPerformed
 
     /**
@@ -2500,7 +2500,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, fdrsChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, fdrsChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_fdrPlotExportJButtonActionPerformed
 
     /**
@@ -2527,7 +2527,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void confidencePlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidencePlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, confidenceChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, confidenceChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_confidencePlotExportJButtonActionPerformed
 
     /**
@@ -2554,7 +2554,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrFnrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrFnrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, fdrFnrChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, fdrFnrChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_fdrFnrPlotExportJButtonActionPerformed
 
     /**
@@ -2581,7 +2581,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void costBenefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_costBenefitPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, costBenefitChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, costBenefitChartPanel, peptideShakerGUI.getLastSelectedFolder());
     }//GEN-LAST:event_costBenefitPlotExportJButtonActionPerformed
 
     /**
@@ -3044,7 +3044,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         peptideMap.put(++cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
-                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getSearchParameters().getModificationProfile(), peptideKey);
+                        String title = PeptideSpecificMap.getKeyName(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), peptideKey);
                         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{cpt + 1, title + " Peptides"});
                     }
                 }
@@ -3649,39 +3649,36 @@ public class StatsPanel extends javax.swing.JPanel {
     private void updateFDRFNRChart() {
         DefaultXYDataset classicalFdrData = new DefaultXYDataset();
         double[][] classicalFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getClassicalFDR()};
-        
+
 //        for (int i=0; i<classicalFdrSeries[0].length; i++) {
 //            if (classicalFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
 //                classicalFdrSeries[0][i] = 0;
 //            }
 //        }
-        
         classicalFdrData.addSeries("Classical FDR ", classicalFdrSeries);
         fdrFnrPlot.setDataset(0, classicalFdrData);
         fdrFnrPlot.mapDatasetToRangeAxis(0, 0);
 
         DefaultXYDataset probaFdrData = new DefaultXYDataset();
         double[][] probaFdrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFDR()};
-        
+
 //        for (int i=0; i<probaFdrSeries[0].length; i++) {
 //            if (probaFdrSeries[0][i] < new Double("1E-200").doubleValue()) {
 //                probaFdrSeries[0][i] = 0;
 //            }
 //        }
-        
         probaFdrData.addSeries("Probabilistic FDR ", probaFdrSeries);
         fdrFnrPlot.setDataset(1, probaFdrData);
         fdrFnrPlot.mapDatasetToRangeAxis(1, 0);
 
         DefaultXYDataset probaFnrData = new DefaultXYDataset();
         double[][] probaFnrSeries = {targetDecoySeries.getScores(), targetDecoySeries.getProbaFNR()};
-        
+
 //        for (int i=0; i<probaFnrSeries[0].length; i++) {
 //            if (probaFnrSeries[0][i] < new Double("1E-200").doubleValue()) {
 //                probaFnrSeries[0][i] = 0;
 //            }
 //        }
-        
         probaFnrData.addSeries("Probabilistic FNR ", probaFnrSeries);
         fdrFnrPlot.setDataset(2, probaFnrData);
         fdrFnrPlot.mapDatasetToRangeAxis(2, 0);
@@ -3816,7 +3813,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
+                    miniShaker.spectrumMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"
@@ -3866,7 +3863,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceMatchingPreferences());
+                    miniShaker.peptideMapChanged(peptideShakerGUI.getIdentification(), progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, JOptionEditorPane.getJOptionEditorPane(
                             "An identification conflict occured. If you can reproduce the error <br>"

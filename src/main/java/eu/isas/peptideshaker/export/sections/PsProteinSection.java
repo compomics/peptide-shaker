@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -11,6 +12,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -97,9 +99,8 @@ public class PsProteinSection {
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
@@ -118,7 +119,7 @@ public class PsProteinSection {
      * @throws org.apache.commons.math.MathException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
@@ -197,12 +198,12 @@ public class PsProteinSection {
                             first = false;
                         }
                         PsProteinFeature tempProteinFeatures = (PsProteinFeature) exportFeature;
-                        writer.write(getFeature(identificationFeaturesGenerator, searchParameters, annotationPreferences, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
+                        writer.write(getFeature(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, keys, nSurroundingAas, proteinKey, proteinMatch, psParameter, tempProteinFeatures, waitingHandler));
                     }
                     writer.newLine();
                     if (peptideSection != null) {
                         writer.increaseDepth();
-                        peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
+                        peptideSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
                         writer.decreseDepth();
                     }
                     line++;
@@ -216,8 +217,8 @@ public class PsProteinSection {
      *
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
-     * @param searchParameters the search parameters of the project
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
@@ -241,7 +242,7 @@ public class PsProteinSection {
      * @throws org.apache.commons.math.MathException
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {
@@ -359,7 +360,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinKey);
             case confident_phosphosites:
                 ArrayList<String> modifications = new ArrayList<String>();
-                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -367,7 +368,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinKey, modifications);
             case confident_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -375,7 +376,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getConfidentPtmSitesNumber(proteinKey, modifications);
             case ambiguous_phosphosites:
                 modifications = new ArrayList<String>();
-                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -383,7 +384,7 @@ public class PsProteinSection {
                 return identificationFeaturesGenerator.getAmbiguousPtmSites(proteinKey, keys);
             case ambiguous_phosphosites_number:
                 modifications = new ArrayList<String>();
-                for (String ptm : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
                     if (ptm.contains("phospho")) {
                         modifications.add(ptm);
                     }
@@ -415,7 +416,7 @@ public class PsProteinSection {
                 Double proteinMW = SequenceFactory.getInstance().computeMolecularWeight(proteinMatch.getMainMatch());
                 return proteinMW.toString();
             case non_enzymatic:
-                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, searchParameters.getEnzyme());
+                ArrayList<String> nonEnzymatic = identificationFeaturesGenerator.getNonEnzymatic(proteinKey, shotgunProtocol.getEnzyme());
                 return nonEnzymatic.size() + "";
             case pi:
                 return psParameter.getProteinInferenceClassAsString();

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.validation;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -18,6 +19,8 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -93,31 +96,26 @@ public class MatchesValidator {
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
-     * @param aPSMFDR Accepted FDR at Peptide-Spectrum-Match level (e.g. '1.0'
-     * for 1% FDR)
-     * @param aPeptideFDR Accepted FDR at Peptide level (e.g. '1.0' for 1% FDR)
-     * @param aProteinFDR Accepted FDR at Protein level (e.g. '1.0' for 1% FDR)
-     * @param searchParameters the identification parameters used for this
-     * project
-     * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator the identification features
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
      */
     public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
-            double aPSMFDR, double aPeptideFDR, double aProteinFDR, SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences,
-            AnnotationPreferences annotationPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
 
+        IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
+        
         waitingHandler.setWaitingText("Finding FDR thresholds. Please Wait...");
 
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
         currentResults.setInputType(1);
-        currentResults.setUserInput(aProteinFDR);
+        currentResults.setUserInput(validationPreferences.getDefaultProteinFDR());
         currentResults.setClassicalEstimators(true);
         currentResults.setClassicalValidation(true);
-        currentResults.setFdrLimit(aProteinFDR);
+        currentResults.setFdrLimit(validationPreferences.getDefaultProteinFDR());
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
         ArrayList<TargetDecoyMap> psmMaps = psmMap.getTargetDecoyMaps(),
@@ -135,10 +133,10 @@ public class MatchesValidator {
             currentMap = peptideMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
             currentResults.setInputType(1);
-            currentResults.setUserInput(aPeptideFDR);
+            currentResults.setUserInput(validationPreferences.getDefaultPeptideFDR());
             currentResults.setClassicalEstimators(true);
             currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(aPeptideFDR);
+            currentResults.setFdrLimit(validationPreferences.getDefaultPeptideFDR());
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
@@ -149,10 +147,10 @@ public class MatchesValidator {
             waitingHandler.increaseSecondaryProgressCounter();
             currentResults = targetDecoyMap.getTargetDecoyResults();
             currentResults.setInputType(1);
-            currentResults.setUserInput(aPSMFDR);
+            currentResults.setUserInput(validationPreferences.getDefaultPsmFDR());
             currentResults.setClassicalEstimators(true);
             currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(aPSMFDR);
+            currentResults.setFdrLimit(validationPreferences.getDefaultPsmFDR());
             targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
@@ -163,10 +161,10 @@ public class MatchesValidator {
             waitingHandler.increaseSecondaryProgressCounter();
             currentResults = targetDecoyMap.getTargetDecoyResults();
             currentResults.setInputType(1);
-            currentResults.setUserInput(aPSMFDR);
+            currentResults.setUserInput(validationPreferences.getDefaultPsmFDR());
             currentResults.setClassicalEstimators(true);
             currentResults.setClassicalValidation(true);
-            currentResults.setFdrLimit(aPSMFDR);
+            currentResults.setFdrLimit(validationPreferences.getDefaultPsmFDR());
             targetDecoyMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
@@ -174,7 +172,7 @@ public class MatchesValidator {
 
         try {
             validateIdentifications(identification, metrics, inputMap, waitingHandler, 
-                    identificationFeaturesGenerator, searchParameters, annotationPreferences, sequenceMatchingPreferences);
+                    identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while validating the results.", true, true);
             waitingHandler.setRunCanceled();
@@ -196,9 +194,8 @@ public class MatchesValidator {
      * @param waitingHandler the progress bar
      * @param identificationFeaturesGenerator an identification features
      * generator computing information about the identification matches
-     * @param searchParameters the search parameters used for the search
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      *
      * @throws SQLException
      * @throws IOException
@@ -208,8 +205,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap, 
             WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
-            SequenceMatchingPreferences sequenceMatchingPreferences) 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
@@ -246,7 +242,7 @@ public class MatchesValidator {
 
             for (String spectrumKey : spectrumKeysMap.get(spectrumFileName)) {
 
-                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, peptideSpectrumAnnotator, psmMap, spectrumKey);
+                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -257,7 +253,7 @@ public class MatchesValidator {
                     if (peptideAssumption != null) {
 
                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                        double precursorMzError = peptideAssumption.getDeltaMass(precursor.getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                        double precursorMzError = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
                         precursorMzDeviations.add(precursorMzError);
                         Integer charge = peptideAssumption.getIdentificationCharge().value;
 
@@ -279,7 +275,7 @@ public class MatchesValidator {
                                 for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
                                     if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                                         Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-                                        if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, sequenceMatchingPreferences)) {
+                                        if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
                                             agreementAdvocates.add(advocateId);
                                             break;
                                         }
@@ -310,10 +306,10 @@ public class MatchesValidator {
                             for (SpectrumIdentificationAssumption spectrumIdAssumption : assumptions.get(eValue)) {
                                 if (spectrumIdAssumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
-                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator);
+                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator);
                                 } else if (spectrumIdAssumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) spectrumIdAssumption;
-                                    updateTagAssumptionValidationLevel(identificationFeaturesGenerator, searchParameters, annotationPreferences, inputMap, spectrumKey, tagAssumption);
+                                    updateTagAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, tagAssumption);
                                 }
                             }
                         }
@@ -338,10 +334,10 @@ public class MatchesValidator {
 
                 if (minDeviation < maxDeviation) {
                     String unit = "ppm";
-                    if (!searchParameters.isPrecursorAccuracyTypePpm()) {
+                    if (!shotgunProtocol.isMs1ResolutionPpm()) {
                         unit = "Da";
                     }
-                    if (minDeviation != Double.NaN && minDeviation > -searchParameters.getPrecursorAccuracy()) {
+                    if (minDeviation != Double.NaN && minDeviation > -shotgunProtocol.getMs1Resolution()) {
                         needSecondPass = true;
                         PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + Util.roundDouble(minDeviation, 2) + " " + unit);
                         psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
@@ -351,7 +347,7 @@ public class MatchesValidator {
                             psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
                         }
                     }
-                    if (minDeviation != Double.NaN && maxDeviation < searchParameters.getPrecursorAccuracy()) {
+                    if (minDeviation != Double.NaN && maxDeviation < shotgunProtocol.getMs1Resolution()) {
                         needSecondPass = true;
                         PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + Util.roundDouble(maxDeviation, 2) + " " + unit);
                         psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
@@ -371,7 +367,7 @@ public class MatchesValidator {
 
                     for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
-                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, sequenceMatchingPreferences, annotationPreferences, peptideSpectrumAnnotator, psmMap, spectrumKey);
+                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                         if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -387,7 +383,7 @@ public class MatchesValidator {
                                         for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
                                             if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
                                                 Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-                                                if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, sequenceMatchingPreferences)) {
+                                                if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
                                                     agreementAdvocates.add(advocateId);
                                                     break;
                                                 }
@@ -425,7 +421,7 @@ public class MatchesValidator {
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
 
-            updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, peptideMap, peptideKey);
+            updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
 
             // set the fraction details
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -522,7 +518,7 @@ public class MatchesValidator {
 
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences,
+            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
                     targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
 
             // set the fraction details
@@ -626,9 +622,9 @@ public class MatchesValidator {
      * @param proteinMap the protein level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the settings used for the identification
      * @param proteinKey the key of the protein match of interest
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      *
      * @throws SQLException
      * @throws IOException
@@ -637,7 +633,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProteinMap proteinMap, String proteinKey)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProteinMap proteinMap, String proteinKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
@@ -650,7 +646,7 @@ public class MatchesValidator {
         }
 
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
-        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences,
+        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
                 targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
     }
 
@@ -668,9 +664,9 @@ public class MatchesValidator {
      * @param doubtfulMatchFilters the filters to use for quality filtering
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the settings used for the identification
      * @param proteinKey the key of the protein match of interest
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      *
      * @throws SQLException
      * @throws IOException
@@ -679,7 +675,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, TargetDecoyMap targetDecoyMap, double scoreThreshold,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold,
             double confidenceThreshold, boolean noValidated, ArrayList<ProteinFilter> doubtfulMatchFilters,
             String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -696,7 +692,7 @@ public class MatchesValidator {
                     String reasonDoubtful = null;
                     boolean filterPassed = true;
                     for (ProteinFilter filter : doubtfulMatchFilters) {
-                        boolean validation = filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences);
+                        boolean validation = filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
                         psParameter.setQcResult(filter.getName(), validation);
                         if (!validation) {
                             filterPassed = false;
@@ -761,7 +757,8 @@ public class MatchesValidator {
      * @param peptideMap the peptide level target/decoy scoring map
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the settings used for the identification
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param peptideKey the key of the peptide match of interest
      *
      * @throws SQLException
@@ -771,7 +768,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, PeptideSpecificMap peptideMap, String peptideKey)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpecificMap peptideMap, String peptideKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -854,13 +851,12 @@ public class MatchesValidator {
      *
      * @param identification the identification object
      * @param psmMap the PSM level target/decoy scoring map
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the settings used for the identification
      * @param spectrumKey the key of the spectrum match of interest
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
-     * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws SQLException
      * @throws IOException
@@ -869,7 +865,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
             PsmSpecificMap psmMap, String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -898,6 +894,8 @@ public class MatchesValidator {
 
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
 
+                AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+                SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
                 String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -913,13 +911,13 @@ public class MatchesValidator {
                 boolean filterPassed = true;
 
                 for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
-                    boolean validated = filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+                    boolean validated = filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                     psParameter.setQcResult(filter.getName(), validated);
                     if (!validated) {
                         if (filter.getName().toLowerCase().contains("deviation")) {
-                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+                            filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                         } else if (filter.getName().toLowerCase().contains("coverage")) {
-                            filter.isValidated(spectrumKey, identification, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+                            filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                         }
                         filterPassed = false;
                         if (reasonDoubtful == null) {
@@ -986,8 +984,8 @@ public class MatchesValidator {
      *
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param inputMap the target decoy map of all search engine scores
      * @param spectrumKey the key of the inspected spectrum
      * @param tagAssumption the tag assumption of interest
@@ -998,8 +996,7 @@ public class MatchesValidator {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, TagAssumption tagAssumption)
+    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, TagAssumption tagAssumption)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -1091,12 +1088,12 @@ public class MatchesValidator {
      *
      * @param identificationFeaturesGenerator the identification features
      * generator
-     * @param searchParameters the identification parameters
-     * @param annotationPreferences the annotation preferences
      * @param inputMap the target decoy map of all search engine scores
      * @param spectrumKey the key of the inspected spectrum
      * @param peptideAssumption the peptide assumption of interest
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      *
      * @throws SQLException
      * @throws IOException
@@ -1104,8 +1101,7 @@ public class MatchesValidator {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -1132,7 +1128,7 @@ public class MatchesValidator {
                 boolean filterPassed = true;
 
                 for (AssumptionFilter filter : inputMap.getDoubtfulMatchesFilters()) {
-                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, searchParameters, annotationPreferences, peptideSpectrumAnnotator);
+                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                     psParameter.setQcResult(filter.getName(), validated);
                     if (!validated) {
                         filterPassed = false;
@@ -1199,8 +1195,9 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided fraction information and found modifications
      * will be saved while iterating the matches
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
-     * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
@@ -1208,7 +1205,7 @@ public class MatchesValidator {
      * @throws java.lang.InterruptedException
      */
     public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
-            SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+            IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
@@ -1266,7 +1263,7 @@ public class MatchesValidator {
             }
 
             identification.addPeptideMatchParameter(peptideKey, psParameter);
-            peptideMap.addPoint(probaScore, peptideMatch, sequenceMatchingPreferences);
+            peptideMap.addPoint(probaScore, peptideMatch, identificationParameters.getSequenceMatchingPreferences());
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -1292,6 +1289,7 @@ public class MatchesValidator {
      * @param identification the identification class containing the matches to
      * validate
      * @param waitingHandler the handler displaying feedback to the user
+     * 
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
@@ -1343,6 +1341,7 @@ public class MatchesValidator {
      * @param identification the identification class containing the matches to
      * validate
      * @param waitingHandler the handler displaying feedback to the user
+     * 
      * @throws java.lang.Exception
      */
     public void fillProteinMap(Identification identification, WaitingHandler waitingHandler) throws Exception {
@@ -1412,7 +1411,8 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
-     * @param processingPreferences
+     * @param processingPreferences the processing preferences
+     * 
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException

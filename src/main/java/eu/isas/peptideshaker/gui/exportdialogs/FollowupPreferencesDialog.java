@@ -9,6 +9,9 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.LastSelectedFolder;
 import eu.isas.peptideshaker.followup.ProgenesisExcelExport;
 import eu.isas.peptideshaker.followup.FastaExport;
 import eu.isas.peptideshaker.followup.InclusionListExport;
@@ -460,11 +463,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", getLastSelectedFolder(), "Output Folder", "Select", false);
 
         if (selectedFolder != null) {
 
-            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+            setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -489,7 +492,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                     try {
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getSequenceMatchingPreferences());
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -545,7 +548,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
@@ -571,15 +574,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             ProgenesisExcelExport progenesisExcelExport = new ProgenesisExcelExport(
                                     progressDialog,
                                     peptideShakerGUI.getIdentification().getProteinIdentification(),
-                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                    peptideShakerGUI.getSequenceMatchingPreferences(),
+                                    peptideShakerGUI.getShotgunProtocol().getEnzyme(),
+                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
                                     peptideShakerGUI.getIdentification(),
                                     finalOutputFile);
                             progenesisExcelExport.writeProgenesisExcelExport();
                         } else {
                             ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(),
                                     ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog, ptmSelection,
-                                    peptideShakerGUI.getSequenceMatchingPreferences());
+                                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                         }
 
                         boolean processCancelled = progressDialog.isRunCanceled();
@@ -666,11 +669,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void graphDatabasetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphDatabasetButtonActionPerformed
 
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Database Folder", "Save", false);
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", getLastSelectedFolder(), "Database Folder", "Save", false);
 
         if (selectedFolder != null) {
 
-            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+            setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             progressDialog = new ProgressDialogX(peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -755,15 +758,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false) + "', type:'Peptide'};\n");
+                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false) + "', type:'Peptide'};\n");
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
-                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
+                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false)
+                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes
-                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getSequenceMatchingPreferences())) {
+                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
                                 // write the protein node
                                 if (!proteinsAdded.contains(protein)) {
@@ -876,7 +879,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBoxSwath.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
@@ -898,8 +901,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                         SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice),
-                                progressDialog, ptmSelection, peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getSequenceMatchingPreferences());
+                                progressDialog, ptmSelection, identificationParameters.getAnnotationPreferences(), identificationParameters.getSequenceMatchingPreferences());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -998,11 +1002,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     public void recalibrateSpectra() {
 
-        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", getLastSelectedFolder(), "Output Folder", "Select", false);
 
         if (selectedFolder != null) {
 
-            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+            setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
             for (String fileName : spectrumFactory.getMgfFileNames()) {
@@ -1046,7 +1050,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder,
-                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), progressDialog);
+                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -1063,6 +1067,29 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
+    }
+    
+    /**
+     * Returns the last selected folder.
+     * 
+     * @return the last selected folder
+     */
+    private String getLastSelectedFolder() {
+        LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
+        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+        if (folder == null) {
+            folder = lastSelectedFolder.getLastSelectedFolder();
+        }
+        return folder;
+    }
+    
+    /**
+     * Sets the last selected folder.
+     * 
+     * @param folder the path to the folder
+     */
+    private void setLastSelectedFolder(String folder) {
+            peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
     }
 
     /**

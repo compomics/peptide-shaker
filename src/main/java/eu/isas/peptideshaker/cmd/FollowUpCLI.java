@@ -101,7 +101,7 @@ public class FollowUpCLI extends CpsParent {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
                 return 1;
             }
-            waitingHandler.appendReport("Protein database " + searchParameters.getFastaFile().getName() + ".", true, true);
+            waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class FollowUpCLI extends CpsParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
-                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
                 waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
@@ -141,7 +141,7 @@ public class FollowUpCLI extends CpsParent {
         // export spectra
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
-                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
+                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
@@ -174,7 +174,7 @@ public class FollowUpCLI extends CpsParent {
         // progenesis export
         if (followUpCLIInputBean.progenesisExportNeeded()) {
             try {
-                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, sequenceMatchingPreferences);
+                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler, identificationParameters.getSequenceMatchingPreferences());
                 waitingHandler.appendReport("Progenesis export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
@@ -185,7 +185,7 @@ public class FollowUpCLI extends CpsParent {
         // Pepnovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
-                CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
                 waitingHandler.appendReport("Pepnovo training export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
@@ -196,7 +196,7 @@ public class FollowUpCLI extends CpsParent {
         // Inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
-                CLIMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, searchParameters, waitingHandler, filterPreferences);
+                CLIMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
                 e.printStackTrace();

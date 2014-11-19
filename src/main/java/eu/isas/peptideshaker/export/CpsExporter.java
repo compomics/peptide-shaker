@@ -2,21 +2,17 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -41,20 +37,16 @@ public class CpsExporter {
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param experiment the experiment to save
      * @param identification the identification to save
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information about the protocol used
+     * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
      * @param metrics the dataset metrics
      * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
-     * @param ptmScoringPreferences the PTM scoring preferences
-     * @param genePreferences the gene preferences
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
-     * @param idFilter the identifications filter
-     * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
      * @throws IOException thrown of IOException occurs
@@ -62,12 +54,10 @@ public class CpsExporter {
      * @throws SQLException thrown of SQLException occurs
      * @throws ArchiveException thrown of ArchiveException occurs
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
-            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
-                null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, genePreferences, objectsCache, emptyCache, null, idFilter, sequenceMatchingPreferences, jarFilePath);
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
+            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences, projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
     }
 
     /**
@@ -77,8 +67,8 @@ public class CpsExporter {
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param experiment the experiment to save
      * @param identification the identification to save
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information about the protocol used
+     * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
      * @param filterPreferences the filtering preferences
@@ -86,13 +76,9 @@ public class CpsExporter {
      * @param metrics the dataset metrics
      * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
-     * @param genePreferences the gene preferences
-     * @param ptmScoringPreferences the PTM scoring preferences
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
-     * @param idFilter the identifications filter
-     * @param sequenceMatchingPreferences  the sequence matching preferences
      * @param jarFilePath the path to the jar file
      *
      * @throws IOException thrown of IOException occurs
@@ -100,10 +86,10 @@ public class CpsExporter {
      * @throws SQLException thrown of SQLException occurs
      * @throws ArchiveException thrown of ArchiveException occurs
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
-            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            GenePreferences genePreferences, ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter, SequenceMatchingPreferences sequenceMatchingPreferences, String jarFilePath)
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
+            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache,
+            ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, String jarFilePath)
             throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         
@@ -111,9 +97,8 @@ public class CpsExporter {
         projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
         
         // set the experiment parameters
-        experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
-                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
-                identificationFeaturesCache, ptmScoringPreferences, genePreferences, idFilter, sequenceMatchingPreferences));
+        PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
+        experiment.addUrParam(peptideShakerSettings);
         // Save the objects in cache
         objectsCache.saveCache(waitingHandler, emptyCache);
         // close connection

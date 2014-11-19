@@ -2483,7 +2483,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPdbStructureJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, pdbPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), true, pdbPanel, peptideShakerGUI.getLastSelectedFolder());
 
         // @TODO: use Jmol's export options...
     }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
@@ -3085,7 +3085,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             String peptideSequence = Peptide.getSequence(peptideKey);
             AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
@@ -3094,7 +3094,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getSequenceMatchingPreferences()).isEmpty()) {
+                if (!aminoAcidPattern.getIndexes(chainSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()).isEmpty()) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
                     peptidePdbArray.add(peptideKey);
                 }
@@ -3110,7 +3110,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         String peptideSequence = Peptide.getSequence(peptideKey);
         AminoAcidPattern aminoAcidPattern = new AminoAcidPattern(peptideSequence);
 
-        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
+        for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
             if (progressDialog.isRunCanceled()) {
                 break;
@@ -3143,7 +3143,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideShakerGUI.catchException(e);
             }
 
-            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getSequenceMatchingPreferences())) {
+            for (int peptideTempStart : aminoAcidPattern.getIndexes(proteinSequence, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
@@ -3157,7 +3157,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         if (displayPreferences.isDisplayedPTM(modName)) {
                             if (modMatch.getModificationSite() == peptideIndex) {
 
-                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modName);
+                                Color ptmColor = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getColor(modName);
 
                                 jmolPanel.getViewer().evalString(
                                         "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
@@ -3403,7 +3403,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getSequenceMatchingPreferences());
+                        peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);

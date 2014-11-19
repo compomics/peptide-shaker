@@ -13,6 +13,7 @@ import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
@@ -489,7 +490,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 peptideShakerGUI.importPeptideShakerFile(newFile);
                 peptideShakerGUI.getUserPreferences().addRecentProject(newFile);
                 peptideShakerGUI.updateRecentProjectsList();
-                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+                LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
+                lastSelectedFolder.setLastSelectedFolder(newFile.getAbsolutePath());
                 dispose();
             }
         }

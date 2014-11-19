@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -12,6 +13,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
@@ -80,8 +82,8 @@ public class PsFragmentSection {
      * Writes the desired section.
      *
      * @param spectrumMatch the spectrum match of interest
-     * @param searchParameters the search parameters
-     * @param annotationPreferences the annotation preferences
+     * @param shotgunProtocol information on the shotgun protocol
+     * @param identificationParameters the identification parameters
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
@@ -92,7 +94,7 @@ public class PsFragmentSection {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public void writeSection(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+    public void writeSection(SpectrumMatch spectrumMatch, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
             String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -106,7 +108,7 @@ public class PsFragmentSection {
 
         MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                 annotationPreferences.getNeutralLosses(),
                 annotationPreferences.getValidatedCharges(),
