@@ -177,7 +177,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
                            5-n: Your own custom reports.
 }}}
 
-To add custom reports see Export > Identification Features > Custom in PeptideShaker.
+To add custom reports see Export > Identification Features > Reports in PeptideShaker.
 
 *ReportCLI Example*
 
