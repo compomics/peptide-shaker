@@ -39,14 +39,14 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -replicate                 The replicate number.
 
+-identification_files      Identification files (X!Tandem .t.xml, mzIdentML .mzid, 
+                           MS Amanda .cvs, OMSSA .omx, Mascot .dat files, or .zip) 
+                           in a comma separated list or an entire folder.
+                           Example: "file1.omx, file1.dat, file1.t.xml".
+
 -spectrum_files            The spectrum files (mgf format) in a comma
                            separated list or an entire folder.
                            Example: "file1.mgf, file2.mgf".
-
--identification_files      The identification files (X!Tandem .t.xml, mzIdentML .mzid, 
-                           MS Amanda .cvs, OMSSA .omx and Mascot .dat files) 
-                           in a comma separated list or an entire folder.
-                           Example: "file1.omx, file1.dat, file1.t.xml".
 
 -out                       PeptideShaker output file. If the file already exists 
                            it will be silently overwritten.
@@ -71,7 +71,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 }}}
 
 
-*Optional processing parameters*
+*Optional validation parameters*
 
 {{{
 -protein_FDR               FDR at the protein level in percent 
@@ -83,6 +83,14 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 -psm_FDR                   FDR at the PSM level in percent (default 1%
                            FDR: '1').
 
+-protein_fraction_mw_confidence     
+                           Minimum confidence required for a protein in
+                           the fraction MW plot (default 95%: '95.0').
+}}}
+
+*Optional PTM localization scoring parameters*
+
+{{{
 -ptm_score                 The PTM probabilistic score to use if any (0: A-score, 1: phosphoRS).
 
 -ptm_threshold             The threshold to use for the PTM scores. If none set, 
@@ -91,10 +99,6 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 -score_neutral_losses      Include neutral losses of mass different from the PTM 
                            in spectrum annotation of the PTM score 
                            (1: true, 0: false, default is '0').
-
--protein_fraction_mw_confidence     
-                           Minimum confidence required for a protein in
-                           the fraction MW plot (default 95%: '95.0').
 }}}
 
 *Optional filtering parameters*
@@ -113,7 +117,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 -exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
 }}}
 
-*Optional output parameters*
+*Optional export parameters*
 
 {{{
 -zip                       Exports the entire project as a zip file in the file specified.
