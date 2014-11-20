@@ -39,7 +39,7 @@ public enum PeptideShakerCLIParams {
     SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species types are listed in the GUI.", false),
     SPECIES_UPDATE("species_update", "Check for new species information in Ensembl and update if possible. (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
-    CPUS("cpus", "The number of threads to use. The number of available cpus is used if not set.", false);
+    THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -99,7 +99,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
         aOptions.addOption(SPECIES_UPDATE.id, true, SPECIES_UPDATE.description);
         aOptions.addOption(ZIP.id, true, ZIP.description);
-        aOptions.addOption(CPUS.id, true, CPUS.description);
+        aOptions.addOption(THREADS.id, true, THREADS.description);
 
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
@@ -158,9 +158,9 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";
 
         output += "\n\nOptional processing parameters:\n\n";
-        output += "-" + String.format(formatter, CPUS.id) + CPUS.description + "\n";
+        output += "-" + String.format(formatter, THREADS.id) + THREADS.description + "\n";
 
-        output += "\n\nOptional Export:\n\n";
+        output += "\n\nOptional export parameters:\n\n";
         output += "-" + String.format(formatter, ZIP.id) + ZIP.description + "\n";
 
         output += "\n\nOptional temporary folder:\n\n";

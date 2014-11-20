@@ -23,11 +23,8 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.memory.MemoryConsumptionStatus;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -102,11 +99,11 @@ public class FileImporter {
      */
     public final static String tempFolderName = "PeptideShaker_temp";
     /**
-     * The shotgun protocol
+     * The shotgun protocol.
      */
     private ShotgunProtocol shotgunProtocol;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
 
@@ -121,7 +118,7 @@ public class FileImporter {
      * @param identificationParameters the identification parameters
      * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, ShotgunProtocol shotgunProtocol, 
+    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingHandler = waitingHandler;
@@ -347,14 +344,14 @@ public class FileImporter {
          * The number of secondary hits.
          */
         private long nSecondary = 0;
-    /**
-     * The shotgun protocol
-     */
-    private ShotgunProtocol shotgunProtocol;
-    /**
-     * The identification parameters
-     */
-    private IdentificationParameters identificationParameters;
+        /**
+         * The shotgun protocol.
+         */
+        private ShotgunProtocol shotgunProtocol;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
 
         /**
          * Constructor for a worker importing matches from a list of files.
@@ -372,7 +369,8 @@ public class FileImporter {
          * @param sequenceMatchingPreferences the sequence matching preferences
          * @param projectDetails the project details
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol, 
+                IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();
@@ -777,7 +775,7 @@ public class FileImporter {
                             waitingHandler.appendReport(psmsRejected + " PSMs (" + Util.roundDouble(sharePsmsRejected, 1) + "%) excluded by the import filters:", true, true);
 
                             String padding = "    ";
-                                IdFilter idFilter = identificationParameters.getIdFilter();
+                            IdFilter idFilter = identificationParameters.getIdFilter();
 
                             double share = 100 * ((double) proteinIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
@@ -792,7 +790,7 @@ public class FileImporter {
                             share = 100 * ((double) precursorIssue) / totalAssumptionsRejected;
                             if (share >= 1) {
                                 String unit;
-                                
+
                                 if (identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm()) {
                                     unit = "ppm";
                                 } else {

@@ -54,11 +54,11 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * True of a file is currently being downloaded.
+     * True if a file is currently being downloaded.
      */
     private boolean isFileBeingDownloaded = false;
     /**
-     * The last selected folder
+     * The last selected folder.
      */
     private LastSelectedFolder lastSelectedFolder;
 

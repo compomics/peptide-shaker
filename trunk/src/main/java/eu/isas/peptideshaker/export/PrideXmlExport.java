@@ -19,7 +19,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -147,11 +146,11 @@ public class PrideXmlExport {
      */
     private String peptideShakerVersion;
     /**
-     * Information about the protocol
+     * Information about the protocol.
      */
     private ShotgunProtocol shotgunProtocol;
     /**
-     * the identification parameters
+     * the identification parameters.
      */
     private IdentificationParameters identificationParameters;
     /**

@@ -36,10 +36,10 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
     /**
      * Creates a new InclusionListExportDialog.
-     * 
+     *
      * @param followupPreferencesDialog
      * @param exportFormat
-     * @param modal 
+     * @param modal
      */
     public InclusionListExportDialog(FollowupPreferencesDialog followupPreferencesDialog, ExportFormat exportFormat, boolean modal) {
         super(followupPreferencesDialog, modal);
@@ -279,11 +279,11 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
         if (validateInput()) {
 
-        LastSelectedFolder lastSelectedFolder = followupPreferencesDialog.getPeptideShakerGUI().getLastSelectedFolder();
-        String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
-        if (folder == null) {
-            folder = lastSelectedFolder.getLastSelectedFolder();
-        }
+            LastSelectedFolder lastSelectedFolder = followupPreferencesDialog.getPeptideShakerGUI().getLastSelectedFolder();
+            String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
+            if (folder == null) {
+                folder = lastSelectedFolder.getLastSelectedFolder();
+            }
             final JFileChooser fileChooser = new JFileChooser(folder);
             fileChooser.setDialogTitle("Select Destination File");
             fileChooser.setMultiSelectionEnabled(false);
@@ -354,8 +354,8 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
                             try {
                                 PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
-                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), 
-                                        peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), 
+                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(),
+                                        peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(),
                                         exportFormat, peptideShakerGUI.getIdentificationParameters().getSearchParameters(), WIDTH, progressDialog, peptideShakerGUI.getFilterPreferences());
 
                                 boolean processCancelled = progressDialog.isRunCanceled();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.6" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
@@ -171,6 +171,8 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                               <Component id="projectHelpLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="projectSearchLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="clearProjectFiltersLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -198,6 +200,7 @@
                           <Component id="browsePublicDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="dataTypeSeparatorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="clearProjectFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="projectSearchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -215,10 +218,11 @@
                 <Component class="javax.swing.JTable" name="projectsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="10" rowCount="0">
+                      <Table columnCount="11" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Title" type="java.lang.String"/>
+                        <Column editable="false" title="Tags" type="java.lang.String"/>
                         <Column editable="false" title="Species" type="java.lang.String"/>
                         <Column editable="false" title="Tissues" type="java.lang.String"/>
                         <Column editable="false" title="PTMs" type="java.lang.String"/>
@@ -293,6 +297,17 @@
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearProjectFiltersLabelMouseExited"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JLabel" name="projectSearchLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy\u005c&quot;&gt;Project Search&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open Project Search Dialog"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseExited"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseReleased"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="assaysPanel">
@@ -345,14 +360,15 @@
                 <Component class="javax.swing.JTable" name="assaysTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="10" rowCount="0">
+                      <Table columnCount="11" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Title" type="java.lang.String"/>
-                        <Column editable="false" title="Species" type="java.lang.String"/>
-                        <Column editable="false" title="Sample" type="java.lang.String"/>
-                        <Column editable="false" title="PTMs" type="java.lang.String"/>
                         <Column editable="false" title="Diseases" type="java.lang.String"/>
+                        <Column editable="false" title="Species" type="java.lang.String"/>
+                        <Column editable="false" title="Tissues" type="java.lang.String"/>
+                        <Column editable="false" title="PTMs" type="java.lang.String"/>
+                        <Column editable="false" title="Instruments" type="java.lang.String"/>
                         <Column editable="false" title="#Proteins" type="java.lang.Integer"/>
                         <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                         <Column editable="false" title="#Spectra" type="java.lang.Integer"/>

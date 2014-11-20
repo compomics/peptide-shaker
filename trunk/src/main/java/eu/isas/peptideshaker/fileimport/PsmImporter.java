@@ -172,7 +172,7 @@ public class PsmImporter {
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
 

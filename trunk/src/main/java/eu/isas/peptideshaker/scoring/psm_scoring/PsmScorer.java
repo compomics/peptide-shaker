@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -69,9 +68,8 @@ public class PsmScorer {
         ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        
         PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
-        
+
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
@@ -87,36 +85,36 @@ public class PsmScorer {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                 for (int advocateIndex : spectrumMatch.getAdvocates()) {
-                    
+
                     HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
-                    
+
                     if (scoresForAdvocate != null) {
-                    
-                    for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
-                        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
 
-                            if (assumption instanceof PeptideAssumption) {
+                        for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
+                            for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
 
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                annotationPreferences.setCurrentSettings(peptideAssumption, true, sequenceMatchingPreferences);
-                                PSParameter psParameter = new PSParameter();
-                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                                if (assumption instanceof PeptideAssumption) {
 
-                                for (int scoreIndex : scoresForAdvocate) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    annotationPreferences.setCurrentSettings(peptideAssumption, true, sequenceMatchingPreferences);
+                                    PSParameter psParameter = new PSParameter();
+                                    MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
-                                    Peptide peptide = peptideAssumption.getPeptide();
-                                    boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
-                                    double score;
+                                    for (int scoreIndex : scoresForAdvocate) {
 
-                                    if (scoreIndex == PsmScores.native_score.index) {
-                                        score = peptideAssumption.getScore();
-                                    } else {
-                                        score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
-                                                peptideAssumption.getIdentificationCharge().value, shotgunProtocol, scoreIndex);
-                                    }
+                                        Peptide peptide = peptideAssumption.getPeptide();
+                                        boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
+                                        double score;
 
-                                    psParameter.setIntermediateScore(scoreIndex, score);
-                                    inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
+                                        if (scoreIndex == PsmScores.native_score.index) {
+                                            score = peptideAssumption.getScore();
+                                        } else {
+                                            score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
+                                                    peptideAssumption.getIdentificationCharge().value, shotgunProtocol, scoreIndex);
+                                        }
+
+                                        psParameter.setIntermediateScore(scoreIndex, score);
+                                        inputMap.setIntermediateScore(spectrumFileName, advocateIndex, scoreIndex, score, decoy);
 
 //                                    try {
 //                                        BufferedWriter br = brs.get(scoreIndex);
@@ -137,13 +135,13 @@ public class PsmScorer {
 //                                    } catch (Exception e) {
 //                                        e.printStackTrace();
 //                                    }
-                                }
+                                    }
 
-                                assumption.addUrParam(psParameter);
+                                    assumption.addUrParam(psParameter);
+                                }
                             }
                         }
                     }
-                }
                 }
 
                 identification.updateSpectrumMatch(spectrumMatch);
@@ -208,7 +206,6 @@ public class PsmScorer {
      * @param identification the object containing the identification matches
      * @param inputMap the input map scores
      * @param processingPreferences the processing preferences
-     * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
@@ -218,7 +215,7 @@ public class PsmScorer {
      * @throws ClassNotFoundException
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
      */
-    public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, 
+    public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
             IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 

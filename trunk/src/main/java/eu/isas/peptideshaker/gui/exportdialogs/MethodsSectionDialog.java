@@ -64,7 +64,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         waitingLabel.setVisible(true);
-                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
 
         String text = "";
         String tab = "          ";
@@ -186,9 +186,9 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
                             PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                     peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                     peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null, 
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null,
                                     peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                    peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), 
+                                    peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
 
                             boolean processCancelled = progressDialog.isRunCanceled();

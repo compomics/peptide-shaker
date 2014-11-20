@@ -12,14 +12,10 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
@@ -100,11 +96,11 @@ public class CpsParent extends UserPreferencesParent {
      */
     protected DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
-     * Information on the protocol used
+     * Information on the protocol used.
      */
     protected ShotgunProtocol shotgunProtocol;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     protected IdentificationParameters identificationParameters;
     /**

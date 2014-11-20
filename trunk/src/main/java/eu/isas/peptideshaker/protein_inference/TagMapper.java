@@ -66,7 +66,7 @@ public class TagMapper {
      */
     private ProteinTree proteinTree;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
     /**

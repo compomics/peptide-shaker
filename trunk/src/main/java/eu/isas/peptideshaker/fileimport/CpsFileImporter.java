@@ -9,12 +9,9 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.compression.TarUtils;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
@@ -38,14 +35,14 @@ public class CpsFileImporter {
 
     /**
      * Constructor.
-     * 
+     *
      * @param cpsFile the cps file
      * @param jarFilePath the path to the jar file
      * @param waitingHandler the waiting handler
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
 
@@ -101,7 +98,6 @@ public class CpsFileImporter {
         if (experiment.getUrParam(experimentSettings) instanceof PSSettings) {
 
             // convert old settings files using utilities version 3.10.68 or older
-
             // convert the old ProcessingPreferences object
             PSSettings tempSettings = (PSSettings) experiment.getUrParam(experimentSettings);
             ProcessingPreferences tempProcessingPreferences = new ProcessingPreferences();
@@ -116,13 +112,13 @@ public class CpsFileImporter {
             tempPTMScoringPreferences.setFlrThreshold(tempSettings.getPTMScoringPreferences().getFlrThreshold());
 
             SearchParameters searchParameters = tempSettings.getSearchParameters();
-            
+
             IdentificationParameters identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
             identificationParameters.setAnnotationPreferences(tempSettings.getAnnotationPreferences());
             identificationParameters.setPtmScoringPreferences(tempPTMScoringPreferences);
-            
+
             ShotgunProtocol shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
-            
+
             experimentSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters,
                     tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
                     tempSettings.getDisplayPreferences(),
@@ -137,7 +133,7 @@ public class CpsFileImporter {
 
     /**
      * Returns the samples.
-     * 
+     *
      * @return the samples
      */
     public ArrayList<Sample> getSamples() {
@@ -146,7 +142,7 @@ public class CpsFileImporter {
 
     /**
      * Returns the replicates for a given sample.
-     * 
+     *
      * @param sample
      * @return the replicates
      */
@@ -156,7 +152,7 @@ public class CpsFileImporter {
 
     /**
      * Returns the experiment.
-     * 
+     *
      * @return the experiment
      */
     public MsExperiment getExperiment() {
@@ -165,7 +161,7 @@ public class CpsFileImporter {
 
     /**
      * Returns the path to the jar file.
-     * 
+     *
      * @return the path to the jar file
      */
     public String getJarFilePath() {

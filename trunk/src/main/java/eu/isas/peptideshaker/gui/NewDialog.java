@@ -115,11 +115,11 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private IdentificationParameters identificationParameters = new IdentificationParameters();
     /**
-     * The processing preferences
+     * The processing preferences.
      */
     private ProcessingPreferences processingPreferences = new ProcessingPreferences();
     /**
-     * Information on the protocol
+     * Information on the protocol.
      */
     private ShotgunProtocol shotgunProtocol = null;
     /*
@@ -127,11 +127,11 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private WelcomeDialog welcomeDialog;
     /**
-     * The spectrum counting preferences
+     * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
     /**
-     * The project details
+     * The project details.
      */
     private ProjectDetails projectDetails = new ProjectDetails();
 
@@ -1143,7 +1143,6 @@ loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         if (!searchSettingsDialog.isCanceled()) {
             identificationParameters.setSearchParameters(searchSettingsDialog.getSearchParameters());
         }
-
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
