@@ -69,7 +69,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
      */
     private boolean validatePrideXml = true;
     /**
-     * The last selected folder
+     * The last selected folder.
      */
     private LastSelectedFolder lastSelectedFolder;
 

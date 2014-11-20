@@ -33,7 +33,7 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
     /**
@@ -61,7 +61,7 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private IdentificationFeaturesCache identificationFeaturesCache;
     /**
-     * Information about the protocol used
+     * Information about the protocol used.
      */
     private ShotgunProtocol shotgunProtocol;
     /**

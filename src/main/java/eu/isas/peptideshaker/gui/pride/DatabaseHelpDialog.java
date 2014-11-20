@@ -319,13 +319,13 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
         File startLocation = null;
         File utilitiesDbFolder = peptideShakerGUI.getUtilitiesUserPreferences().getDbFolder();
-            if (utilitiesDbFolder != null && utilitiesDbFolder.exists()) {
-                startLocation = utilitiesDbFolder;
-            }
-            if (startLocation == null) {
+        if (utilitiesDbFolder != null && utilitiesDbFolder.exists()) {
+            startLocation = utilitiesDbFolder;
+        }
+        if (startLocation == null) {
             startLocation = new File(getLastSelectedFolder(lastSelectedFolder));
-            }
-        
+        }
+
         UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
         if (utilitiesUserPreferences.getDbFolder() != null && utilitiesUserPreferences.getDbFolder().exists()) {
             startLocation = utilitiesUserPreferences.getDbFolder();
@@ -359,7 +359,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
 
-            if (file.getName().indexOf(" ") != -1) {
+            if (file.getName().contains(" ")) {
                 renameFastaFileName(file);
             } else {
                 databaseSettingsTxt.setText(file.getAbsolutePath());
@@ -422,9 +422,8 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void downloadUniProtJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downloadUniProtJLabelMouseClicked
-        
+
         // @TODO: for "Mus musculus (Mouse)" get rid of "(Mouse)" before searching
-        
         if (downloadUniProtJLabel.isEnabled()) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/?query=%28organism%3A%22" + species + "%22%29&sort=score");
@@ -738,7 +737,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * Returns the last selected folder.
      *
      * @param lastSelectedFolder the last selected folder
-     * 
+     *
      * @return the last selected folder
      */
     public String getLastSelectedFolder(LastSelectedFolder lastSelectedFolder) {

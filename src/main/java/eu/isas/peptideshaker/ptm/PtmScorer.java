@@ -1408,10 +1408,9 @@ public class PtmScorer {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
-        
+
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        
 
         // PSMs with confidently localized PTMs in a map: PTM mass -> peptide sequence -> spectrum keys
         HashMap<Double, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<Double, HashMap<String, ArrayList<String>>>();

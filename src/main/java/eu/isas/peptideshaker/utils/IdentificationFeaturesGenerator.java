@@ -66,11 +66,11 @@ public class IdentificationFeaturesGenerator {
      */
     private Identification identification;
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
     /**
-     * Information on the protocol used
+     * Information on the protocol used.
      */
     private ShotgunProtocol shotgunProtocol;
     /**

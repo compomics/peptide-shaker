@@ -1068,10 +1068,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }.start();
         }
     }
-    
+
     /**
      * Returns the last selected folder.
-     * 
+     *
      * @return the last selected folder
      */
     private String getLastSelectedFolder() {
@@ -1082,14 +1082,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         }
         return folder;
     }
-    
+
     /**
      * Sets the last selected folder.
-     * 
+     *
      * @param folder the path to the folder
      */
     private void setLastSelectedFolder(String folder) {
-            peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
+        peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
     }
 
     /**

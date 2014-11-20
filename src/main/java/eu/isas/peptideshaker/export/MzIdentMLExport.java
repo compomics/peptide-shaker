@@ -138,11 +138,11 @@ public class MzIdentMLExport {
      */
     private HashMap<String, String> spectrumIds = new HashMap<String, String>();
     /**
-     * Information on the protocol
+     * Information on the protocol.
      */
     private ShotgunProtocol shotgunProtocol;
     /**
-     * the identification parameters
+     * the identification parameters.
      */
     private IdentificationParameters identificationParameters;
 
@@ -150,15 +150,18 @@ public class MzIdentMLExport {
      * Constructor.
      *
      * @param peptideShakerVersion the PeptideShaker version
-     * @param identification the identification object which can be used to retrieve identification matches and parameters
+     * @param identification the identification object which can be used to
+     * retrieve identification matches and parameters
      * @param projectDetails the project details
      * @param processingPreferences the processing preferences
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param outputFile Output file
-     * @param waitingHandler waiting handler used to display progress to the user and interrupt the process
+     * @param waitingHandler waiting handler used to display progress to the
+     * user and interrupt the process
      *
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
@@ -167,8 +170,8 @@ public class MzIdentMLExport {
      * @throws ClassNotFoundException Exception thrown whenever an error
      * occurred while deserializing a pride object
      */
-    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences, 
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, 
+    public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
             File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
@@ -198,7 +201,7 @@ public class MzIdentMLExport {
      * occurred while reading the mzML file
      * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
      * @throws InterruptedException thrown if FileNotFoundException occurs
-     * @throws SQLException thrown of SQLException occurs 
+     * @throws SQLException thrown of SQLException occurs
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
 
@@ -1359,7 +1362,7 @@ public class MzIdentMLExport {
 
             if (mzidVersion1_2) {
 
-                            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+                PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
                 PeptideMatch peptideMatch = identification.getPeptideMatch(bestPeptideKey);
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 if (psPtmScores != null) {
@@ -1471,9 +1474,8 @@ public class MzIdentMLExport {
                 } else {
                     writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue);
                 }
-                
-                // @TODO: add scores for MyriMatch!
 
+                // @TODO: add scores for MyriMatch!
                 // @TODO: add generic e-value for user algorithms?
             }
 

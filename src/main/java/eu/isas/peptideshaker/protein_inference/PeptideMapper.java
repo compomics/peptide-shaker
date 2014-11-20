@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
-import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -28,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class PeptideMapper {
 
     /**
-     * The identification parameters
+     * The identification parameters.
      */
     private final IdentificationParameters identificationParameters;
     /**

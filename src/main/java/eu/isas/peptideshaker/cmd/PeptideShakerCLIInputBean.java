@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * This class is a simple bean wrapping the CLI parameters provided in an
  * Options instance.
  *
- * @author Kenny Helsens
  * @author Marc Vaudel
  */
 public class PeptideShakerCLIInputBean {
@@ -137,7 +136,7 @@ public class PeptideShakerCLIInputBean {
      */
     private File zipExport = null;
     /**
-     * The number of threads to use
+     * The number of threads to use.
      */
     private Integer nThreads = null;
 
@@ -271,10 +270,10 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.ZIP.id)) {
             zipExport = new File(aLine.getOptionValue(PeptideShakerCLIParams.ZIP.id));
         }
-        
+
         // n threads
-        if (aLine.hasOption(PeptideShakerCLIParams.CPUS.id)) {
-            nThreads = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.CPUS.id));
+        if (aLine.hasOption(PeptideShakerCLIParams.THREADS.id)) {
+            nThreads = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.THREADS.id));
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
@@ -726,7 +725,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * Set if the species is to be auto updated to the latest version.
      *
-     * @param autoUpdateSpecies auto update species_ 
+     * @param autoUpdateSpecies auto update species_
      */
     public void setUpdateSpecies(boolean autoUpdateSpecies) {
         this.autoUpdateSpecies = autoUpdateSpecies;
@@ -779,12 +778,10 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns the number of threads to use.
-     * 
+     *
      * @return the number of threads to use
      */
     public Integer getnThreads() {
         return nThreads;
     }
-    
-    
 }

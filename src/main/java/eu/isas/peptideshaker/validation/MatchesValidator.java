@@ -6,7 +6,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
@@ -1195,7 +1194,6 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided fraction information and found modifications
      * will be saved while iterating the matches
-     * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *

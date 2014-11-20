@@ -92,11 +92,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      */
     private static final Color orange = new Color(220, 110, 0);
     /**
-     * Information on the protocol
+     * Information on the protocol,
      */
     private ShotgunProtocol shotgunProtocol;
     /**
-     * the identification parameters used
+     * the identification parameters used,
      */
     private IdentificationParameters identificationParameters;
     /**
