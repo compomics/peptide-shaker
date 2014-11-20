@@ -30,7 +30,6 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
@@ -145,7 +144,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
+        loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(peptideShakerGui);
@@ -163,7 +162,7 @@ loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
+        loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         this.setLocationRelativeTo(welcomeDialog);
