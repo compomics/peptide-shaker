@@ -4,18 +4,13 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.io.export.ExportFactory;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.io.export.writers.ExcelWriter;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsAnnotationFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
@@ -321,7 +316,7 @@ public class PSExportFactory implements ExportFactory {
                 psMaps = (PSMaps) identification.getUrParam(psMaps);
                 section.writeSection(psMaps, waitingHandler);
             } else {
-                throw new UnsupportedOperationException("Sectrion " + sectionName + " not implemented.");
+                throw new UnsupportedOperationException("Section " + sectionName + " not implemented.");
             }
         }
 
