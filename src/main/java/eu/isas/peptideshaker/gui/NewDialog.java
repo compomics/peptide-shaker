@@ -1201,7 +1201,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        new ProcessingPreferencesDialog(peptideShakerGUI, true, identificationParameters, processingPreferences);
+        new ProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
         IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
         PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
         if (idMatchValidationPreferences.getDefaultProteinFDR() != 1
