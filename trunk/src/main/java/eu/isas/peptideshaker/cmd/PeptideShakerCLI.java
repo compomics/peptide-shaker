@@ -5,6 +5,7 @@ import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
@@ -23,7 +24,6 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.gui.DummyFrame;
 import com.compomics.util.gui.filehandling.TempFilesManager;
@@ -34,7 +34,6 @@ import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.fileimport.FileImporter;
@@ -432,7 +431,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (error != null) {
             System.out.println(error);
         }
-        
+
         // Set the default identification parameters
         identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
 
@@ -444,13 +443,23 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
         idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
         identificationParameters.setIdFilter(idFilter);
-        
+
         // set the validation preferences
         IdMatchValidationPreferences idMatchValidationPreferences = new IdMatchValidationPreferences();
         idMatchValidationPreferences.setDefaultPsmFDR(cliInputBean.getPsmFDR());
         idMatchValidationPreferences.setDefaultPeptideFDR(cliInputBean.getPeptideFDR());
         idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
+
+        // set the processing settings
+        processingPreferences = new ProcessingPreferences();
+        Integer nThreads = cliInputBean.getnThreads();
+        if (nThreads != null) {
+            processingPreferences.setnThreads(nThreads);
+        }
         processingPreferences.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
+
+        // set up the shotgun protocol
+        shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
 
         // set the PTM scoring preferences
         PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
@@ -474,7 +483,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             try {
                 GenePreferences genePreferences = new GenePreferences();
                 identificationParameters.setGenePreferences(genePreferences);
-                
+
                 genePreferences.loadSpeciesAndGoDomains();
                 genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
                 genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
@@ -644,13 +653,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
                 }
             }
-        }
-
-        // set the processing settings
-        processingPreferences = new ProcessingPreferences();
-        Integer nThreads = cliInputBean.getnThreads();
-        if (nThreads != null) {
-            processingPreferences.setnThreads(nThreads);
         }
 
         // create a shaker which will perform the analysis
