@@ -1141,6 +1141,7 @@ public class NewDialog extends javax.swing.JDialog {
 
         if (!searchSettingsDialog.isCanceled()) {
             identificationParameters.setSearchParameters(searchSettingsDialog.getSearchParameters());
+            setSearchParameters(identificationParameters.getSearchParameters());
         }
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
@@ -1520,14 +1521,19 @@ public class NewDialog extends javax.swing.JDialog {
             allValid = false;
         }
 
-        if (fastaFileTxt.getText().length() > 0) {
+        if (fastaFileTxt.getText().length() > 0 && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
         } else {
             databaseLabel.setForeground(Color.RED);
-            databaseLabel.setToolTipText("Please select the database file used");
-            fastaFileTxt.setToolTipText("Please select the database file used");
+            if (fastaFileTxt.getText().length() > 0 && !identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
+                databaseLabel.setToolTipText("FASTA file not found!");
+                fastaFileTxt.setToolTipText("FASTA file not found!");
+            } else {
+                databaseLabel.setToolTipText("Please select the database file used");
+                fastaFileTxt.setToolTipText("Please select the database file used");
+            }
             allValid = false;
         }
 
@@ -1649,7 +1655,7 @@ public class NewDialog extends javax.swing.JDialog {
                     }
                     file = new File(file.getParentFile(), newName);
                 }
-                tempParameters.saveIdentificationParameters(tempParameters, file);
+                SearchParameters.saveIdentificationParameters(tempParameters, file);
             } catch (Exception saveException) {
                 e.printStackTrace();
                 saveException.printStackTrace();
@@ -1759,7 +1765,6 @@ public class NewDialog extends javax.swing.JDialog {
             }
 
             setSearchParameters(tempParameters);
-
         }
     }
 
