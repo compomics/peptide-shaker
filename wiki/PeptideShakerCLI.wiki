@@ -123,6 +123,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 -zip                       Exports the entire project as a zip file in the file specified.
 }}}
 
+*Optional processing parameters*
+
+{{{
+-threads                   The number of threads to use. Defaults to the number of available CPUs.
+}}}
+
+
 *PeptideShakerCLI Example*
 
 PeptideShakerCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
