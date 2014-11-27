@@ -7,6 +7,8 @@
 
  * BUG FIX: Corrected possible null pointers in the PRIDE XML and mzIdentML exports when processing Mascot scores.
 
+ * BUG FIX: Fixed a bug in the conversion of mgf files for use in Comet where scan numbers resulted in it being impossible to map back to the original mgf file.
+
  * LIBRARY UPDATE: Updated utilities to version 3.43.16. 
 
 ----
