@@ -447,8 +447,9 @@ public class PrideXmlExport {
                                         if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                             if (!eValues.containsKey(se) || eValues.get(se) > eValue) {
                                                 eValues.put(se, eValue);
-                                                if (se == Advocate.mascot.getIndex()) {
-                                                    mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                                                if (se == Advocate.mascot.getIndex()
+                                                        && peptideAssumption.getUrParam(new MascotScore()) != null) {
+                                                    mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore())).getScore();
                                                 } else if (se == Advocate.msAmanda.getIndex()
                                                         && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
                                                     msAmandaScore = ((MsAmandaScore) assumption.getUrParam(new MsAmandaScore())).getScore();

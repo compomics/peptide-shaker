@@ -1445,8 +1445,9 @@ public class MzIdentMLExport {
                                     scores.put(tempAdvocate, eValue);
 
                                     // save the special advocate scores
-                                    if (tempAdvocate == Advocate.mascot.getIndex()) {
-                                        mascotScore = ((MascotScore) peptideAssumption.getUrParam(new MascotScore(0))).getScore();
+                                    if (tempAdvocate == Advocate.mascot.getIndex()
+                                            && peptideAssumption.getUrParam(new MascotScore()) != null) {
+                                        mascotScore = ((MascotScore) peptideAssumption.getUrParam(new MascotScore())).getScore();
                                     } else if (tempAdvocate == Advocate.msAmanda.getIndex()
                                             && peptideAssumption.getUrParam(new MsAmandaScore()) != null) {
                                         msAmandaScore = ((MsAmandaScore) peptideAssumption.getUrParam(new MsAmandaScore())).getScore();
