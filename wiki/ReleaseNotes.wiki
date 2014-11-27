@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.5 (November 27. 2014):*
+
+ * BUG FIX: Corrected possible null pointers in the PRIDE XML and mzIdentML exports when processing Mascot scores.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.43.16. 
+
+----
+
 *Changes in PeptideShaker 0.35.4 (November 18. 2014):*
 
  * BUG FIX: Fixed a bug in adding decoy sequences to FASTA files containing headers without descriptions.
