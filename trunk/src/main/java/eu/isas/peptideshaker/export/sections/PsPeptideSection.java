@@ -1,22 +1,19 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -113,7 +110,7 @@ public class PsPeptideSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -129,20 +126,7 @@ public class PsPeptideSection {
             keys = identification.getPeptideIdentification();
         }
 
-        PSParameter psParameter = new PSParameter();
-        PeptideMatch peptideMatch;
         int line = 1;
-
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Peptides. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadPeptideMatches(keys, waitingHandler);
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Peptide Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadPeptideMatchParameters(keys, psParameter, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
@@ -150,7 +134,13 @@ public class PsPeptideSection {
             waitingHandler.setMaxSecondaryProgressCounter(keys.size());
         }
 
-        for (String peptideKey : keys) {
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, parameters, psmSection != null, parameters);
+
+        while (peptideMatchesIterator.hasNext()) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -159,11 +149,12 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
+
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
-
-                peptideMatch = identification.getPeptideMatch(peptideKey);
 
                 if (decoys || !peptideMatch.getTheoreticPeptide().isDecoy(identificationParameters.getSequenceMatchingPreferences())) {
 

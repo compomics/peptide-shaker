@@ -6,17 +6,16 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPsmFeature;
@@ -143,8 +142,6 @@ public class PsPsmSection {
             }
         }
 
-        PSParameter psParameter = new PSParameter();
-        SpectrumMatch spectrumMatch = null;
         int line = 1;
 
         int totalSize = 0;
@@ -165,26 +162,20 @@ public class PsPsmSection {
         }
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Spectra. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadSpectrumMatches(spectrumKeys, waitingHandler);
-
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Spectrum Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadSpectrumMatchParameters(spectrumKeys, psParameter, waitingHandler);
-
-        if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+
         for (String spectrumFile : psmMap.keySet()) {
 
-            for (String spectrumKey : psmMap.get(spectrumFile)) {
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, spectrumKeys, parameters);
+
+            while (psmIterator.hasNext()) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -193,11 +184,12 @@ public class PsPsmSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {
-
-                    spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
