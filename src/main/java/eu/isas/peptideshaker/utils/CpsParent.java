@@ -761,10 +761,10 @@ public class CpsParent extends UserPreferencesParent {
                 report += projectDetails.getSpectrumFile(mgfFileNames).getAbsolutePath() + "<br>";
             }
 
-            report += "<br><b>FASTA File used for search:</b><br>";
+            report += "<br><b>FASTA File (identification):</b><br>";
             report += identificationParameters.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
 
-            report += "<br><b>FASTA File used for search:</b><br>";
+            report += "<br><b>FASTA File (protein inference):</b><br>";
             report += identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";

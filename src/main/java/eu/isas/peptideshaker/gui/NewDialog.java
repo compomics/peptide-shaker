@@ -10,7 +10,6 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -36,6 +35,7 @@ import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
@@ -110,7 +110,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ProgressDialogX progressDialog;
     /**
-     * The parameters to use when loading the files
+     * The parameters to use when loading the files.
      */
     private IdentificationParameters identificationParameters = new IdentificationParameters();
     /**
@@ -144,6 +144,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
+        identificationParameters.setSearchParameters(new SearchParameters()); // set default search parameters
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -162,6 +163,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
+        identificationParameters.setSearchParameters(new SearchParameters()); // set default search parameters
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -836,6 +838,9 @@ public class NewDialog extends javax.swing.JDialog {
             File fastaFile = sequenceFactory.getCurrentFastaFile();
             if (fastaFile != null) {
                 fastaFileTxt.setText(sequenceFactory.getFileName());
+                if (identificationParameters.getProteinInferencePreferences() == null) {
+                    identificationParameters.setProteinInferencePreferences(new ProteinInferencePreferences());
+                }
                 identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
                 checkFastaFile();
             }
@@ -914,7 +919,6 @@ public class NewDialog extends javax.swing.JDialog {
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
-        identificationParameters = null;
         validateInput();
 }//GEN-LAST:event_clearIdActionPerformed
 
@@ -1124,17 +1128,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-
-        SearchParameters searchParameters;
-
-        if (identificationParameters != null) {
-            searchParameters = identificationParameters.getSearchParameters();
-        } else {
-            searchParameters = new SearchParameters();
-            searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-        }
-
-        SearchSettingsDialog searchSettingsDialog = new SearchSettingsDialog(peptideShakerGUI, searchParameters,
+        SearchSettingsDialog searchSettingsDialog = new SearchSettingsDialog(peptideShakerGUI, identificationParameters.getSearchParameters(),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true, true, PeptideShaker.getConfigurationFile(), peptideShakerGUI.getLastSelectedFolder());
@@ -1201,20 +1195,23 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        new ProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
-        IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
-        PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-        if (idMatchValidationPreferences.getDefaultProteinFDR() != 1
-                || idMatchValidationPreferences.getDefaultPeptideFDR() != 1
-                || idMatchValidationPreferences.getDefaultPsmFDR() != 1
-                || ptmScoringPreferences.getFlrThreshold() != 1
-                || ptmScoringPreferences.isProbabilisticScoreNeutralLosses()
-                || !ptmScoringPreferences.isEstimateFlr()) {
-            preferencesTxt.setText("User Defined");
-        } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-            preferencesTxt.setText("Reduced PTM Scoring");
-        } else {
-            preferencesTxt.setText("Default");
+        ProcessingPreferencesDialog processingPreferencesDialog = new ProcessingPreferencesDialog(this, true, identificationParameters, processingPreferences);
+
+        if (!processingPreferencesDialog.isCanceled()) {
+            IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
+            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+            if (idMatchValidationPreferences.getDefaultProteinFDR() != 1
+                    || idMatchValidationPreferences.getDefaultPeptideFDR() != 1
+                    || idMatchValidationPreferences.getDefaultPsmFDR() != 1
+                    || ptmScoringPreferences.getFlrThreshold() != 1
+                    || ptmScoringPreferences.isProbabilisticScoreNeutralLosses()
+                    || !ptmScoringPreferences.isEstimateFlr()) {
+                preferencesTxt.setText("User Defined");
+            } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                preferencesTxt.setText("Reduced PTM Scoring");
+            } else {
+                preferencesTxt.setText("Default");
+            }
         }
     }//GEN-LAST:event_editPreferencesButtonActionPerformed
 
@@ -1337,12 +1334,11 @@ public class NewDialog extends javax.swing.JDialog {
         // First check whether a file has already been selected.
         // If so, start from that file's parent.
         File startLocation = new File(peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder());
-        if (identificationParameters != null) {
-            SearchParameters searchParameters = identificationParameters.getSearchParameters();
-            if (searchParameters != null && searchParameters.getParametersFile() != null) {
-                startLocation = searchParameters.getParametersFile().getParentFile();
-            }
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+        if (searchParameters != null && searchParameters.getParametersFile() != null) {
+            startLocation = searchParameters.getParametersFile().getParentFile();
         }
+
         JFileChooser fc = new JFileChooser(startLocation);
 
         FileFilter filter = new FileFilter() {

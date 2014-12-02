@@ -1383,7 +1383,7 @@ public class PtmScorer {
 
     /**
      * Infers the PTM localization and its confidence for the best match of
-     * every spectrum
+     * every spectrum.
      *
      * @param identification identification object containing the identification
      * matches
