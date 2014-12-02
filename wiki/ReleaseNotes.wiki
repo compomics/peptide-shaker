@@ -3,10 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.35.6 (December 1. 2014):*
+
+ * BUG FIX: Fixed an issue in the retrieval of public PRIDE projects.
+ * BUG FIX: Fixed some possible issues in the Search Settings Dialog.
+ * BUG FIX: Improved the handling of canceling the Search Settings and Processing Preferences dialogs.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.43.17. 
+
+----
+
 *Changes in PeptideShaker 0.35.5 (November 27. 2014):*
 
  * BUG FIX: Corrected possible null pointers in the PRIDE XML and mzIdentML exports when processing Mascot scores.
-
  * BUG FIX: Fixed a bug in the conversion of mgf files for use in Comet where scan numbers resulted in it being impossible to map back to the original mgf file.
 
  * LIBRARY UPDATE: Updated utilities to version 3.43.16. 
