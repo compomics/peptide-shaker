@@ -5,15 +5,14 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsIdentificationAlgorithmMatchesFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsPeptideFeature;
@@ -134,32 +133,6 @@ public class PsProteinSection {
             keys = identification.getProteinIdentification();
         }
         int line = 1;
-        PSParameter psParameter = new PSParameter();
-        ProteinMatch proteinMatch = null;
-
-        if (peptideSection != null) {
-            if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Loading Peptides. Please Wait...");
-                waitingHandler.resetSecondaryProgressCounter();
-            }
-            identification.loadPeptideMatches(waitingHandler);
-            if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Loading Peptide Details. Please Wait...");
-                waitingHandler.resetSecondaryProgressCounter();
-            }
-            identification.loadPeptideMatchParameters(psParameter, waitingHandler);
-        }
-
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Proteins. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadProteinMatches(keys, waitingHandler);
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Protein Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadProteinMatchParameters(keys, psParameter, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
@@ -167,7 +140,12 @@ public class PsProteinSection {
             waitingHandler.setMaxSecondaryProgressCounter(keys.size());
         }
 
-        for (String proteinKey : keys) {
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters); // @TODO: find a better way to know if we need psms
+
+        while (proteinMatchesIterator.hasNext()) {
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -175,6 +153,9 @@ public class PsProteinSection {
                 }
                 waitingHandler.increaseSecondaryProgressCounter();
             }
+
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
 
@@ -188,8 +169,6 @@ public class PsProteinSection {
                         writer.write(line + "");
                         first = false;
                     }
-
-                    proteinMatch = identification.getProteinMatch(proteinKey);
 
                     for (ExportFeature exportFeature : proteinFeatures) {
                         if (!first) {
