@@ -118,7 +118,8 @@ public class PsProteinSection {
      * @throws org.apache.commons.math.MathException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, 
+            int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         if (waitingHandler != null) {
@@ -143,7 +144,8 @@ public class PsProteinSection {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters); // @TODO: find a better way to know if we need psms
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(
+                keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters); // @TODO: find a better way to know if we need psms
 
         while (proteinMatchesIterator.hasNext()) {
 
