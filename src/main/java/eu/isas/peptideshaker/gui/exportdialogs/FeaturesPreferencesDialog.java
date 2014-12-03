@@ -38,11 +38,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The export factory
+     * The export factory.
      */
     private PSExportFactory exportFactory = PSExportFactory.getInstance();
     /**
-     * List of the available export schemes
+     * List of the available export schemes.
      */
     private ArrayList<String> exportSchemesNames;
 
