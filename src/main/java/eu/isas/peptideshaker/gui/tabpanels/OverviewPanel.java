@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
@@ -5377,11 +5378,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
 
-            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) { // @TODO: batch selection??
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+                while(proteinMatchesIterator.hasNext()) {
                 try {
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                        proteinKey = possibleKey;
+                        proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }

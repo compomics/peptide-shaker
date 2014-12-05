@@ -11,8 +11,10 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.math.statistics.Distribution;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -1916,12 +1918,18 @@ public class IdentificationFeaturesGenerator {
             int nValidatedProteins = 0;
             int nConfidentProteins = 0;
 
-            for (String proteinKey : identification.getProteinIdentification()) {
+            PSParameter psParameter = new PSParameter();
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(psParameter);
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
+            while (proteinMatchesIterator.hasNext()) {
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                String proteinKey = proteinMatch.getKey();
 
                 if (!ProteinMatch.isDecoy(proteinKey)) {
                     probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                     if (!probabilities.isHidden()) {
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                         double score = probabilities.getProteinProbabilityScore();
                         int nPeptides = -proteinMatch.getPeptideMatchesKeys().size();
                         int nSpectra = -getNSpectra(proteinKey);

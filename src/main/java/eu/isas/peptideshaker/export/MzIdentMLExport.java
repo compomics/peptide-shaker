@@ -14,10 +14,14 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.SequenceFactory.ProteinIterator;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -450,13 +454,16 @@ public class MzIdentMLExport {
 
         iterator.close();
 
-        identification.loadPeptideMatches(null);
-        identification.loadPeptideMatchParameters(new PSParameter(), null);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
 
-        // iterate all the peptides
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        while (peptideMatchesIterator.hasNext()) {
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
+
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
 
@@ -524,13 +531,12 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null);
 
-            // iterate the psms
-            for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            while (psmIterator.hasNext()) {
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                SpectrumMatch spectrumMatch = psmIterator.next();
+
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                 if (bestPeptideAssumption != null) {
@@ -1045,16 +1051,20 @@ public class MzIdentMLExport {
 
         writeFragmentationTable();
 
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(new PSParameter());
         int psmCount = 0;
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
 
-            // iterate the psms
-            for (String psmKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                writeSpectrumIdentificationResult(psmKey, ++psmCount);
+            while (psmIterator.hasNext()) {
+
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+
+                writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
                 waitingHandler.increasePrimaryProgressCounter();
 
                 if (waitingHandler.isRunCanceled()) {
@@ -1095,17 +1105,19 @@ public class MzIdentMLExport {
         int groupCpt = 0;
 
         PSParameter psParameter = new PSParameter();
-        identification.loadProteinMatches(null);
-        identification.loadProteinMatchParameters(psParameter, null);
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
 
-        for (String proteinGroupKey : identification.getProteinIdentification()) {
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinGroupKey = proteinMatch.getKey();
 
             String proteinGroupId = "PAG_" + groupCpt++;
 
             br.write(getCurrentTabSpace() + "<ProteinAmbiguityGroup id=\"" + proteinGroupId + "\">" + System.getProperty("line.separator"));
             tabCounter++;
 
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinGroupKey);
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinGroupKey, psParameter);
 
             String mainAccession = proteinMatch.getMainMatch();

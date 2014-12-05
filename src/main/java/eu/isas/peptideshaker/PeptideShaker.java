@@ -2,6 +2,7 @@ package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.ObjectsCache;
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
@@ -10,11 +11,13 @@ import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import eu.isas.peptideshaker.fileimport.FileImporter;
@@ -257,18 +260,18 @@ public class PeptideShaker {
      *
      * @param inputMap The input map
      * @param waitingHandler the handler displaying feedback to the user
+     * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
      * @param shotgunProtocol information on the shotgun protocol
      * @param processingPreferences the processing preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
      *
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * @throws Exception
+     * @throws Exception exception thrown whenever an error occurred while
+     * loading the identification files
      */
-    public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
-            throws IllegalArgumentException, IOException, Exception {
+    public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
+            throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
@@ -342,8 +345,8 @@ public class PeptideShaker {
             report += " and " + ptmScoringPreferences.getSelectedProbabilisticScore().getName();
         }
         report += ")";
-        waitingHandler.appendReport(report, true, true); // @TODO: this is very slow if memory is full!!
-        ptmScorer.scorePsmPtms(identification, waitingHandler, identificationParameters, metrics);
+        waitingHandler.appendReport(report, true, true);
+        ptmScorer.scorePsmPtms(identification, waitingHandler, exceptionHandler, identificationParameters, metrics, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -444,7 +447,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
         }
-        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap);
+        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap);
         waitingHandler.increasePrimaryProgressCounter();
         metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
@@ -1188,11 +1191,17 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
+
+            while (psmIterator.hasNext()) {
+
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (sequenceFactory.concatenatedTargetDecoy()) {
@@ -1419,10 +1428,10 @@ public class PeptideShaker {
     public static String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath((new PeptideShaker()).getClass().getResource("PeptideShaker.class").getPath(), "PeptideShaker");
     }
-    
+
     /**
      * Returns the configuration file.
-     * 
+     *
      * @return the configuration file
      */
     public static ConfigurationFile getConfigurationFile() {

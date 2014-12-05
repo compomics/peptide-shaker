@@ -8,6 +8,7 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
@@ -841,11 +842,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+                while(proteinMatchesIterator.hasNext()) {
                 try {
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                        proteinKey = possibleKey;
+                        proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }

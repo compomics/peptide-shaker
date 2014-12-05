@@ -4,6 +4,8 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -80,26 +82,22 @@ public class StarHider {
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
 
-                    PSParameter psParameter = new PSParameter();
-
-                    identification.loadProteinMatches(null);
-                    identification.loadProteinMatchParameters(psParameter, null);
-
-                    // @TODO: implement better database batch interaction!!
-
                     HashMap<String, ArrayList<Double>> fractionMW = new HashMap<String, ArrayList<Double>>();
 
-                    for (String proteinKey : identification.getProteinIdentification()) {
+                    PSParameter psParameter = new PSParameter();
+                    ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                    parameters.add(psParameter);
+                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
+                    while (proteinMatchesIterator.hasNext()) {
+                        ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                        String proteinKey = proteinMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
                             break;
                         }
 
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                         boolean peptideSurvived = false;
-
-                        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
 
                         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
@@ -109,8 +107,6 @@ public class StarHider {
 
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             boolean psmSurvived = false;
-
-                            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
 
                             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
@@ -159,7 +155,6 @@ public class StarHider {
 
                         identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-
                         // update the observed fractional molecular weights per fraction
                         if (!psParameter.isHidden() && psParameter.getMatchValidationLevel().isValidated() && !proteinMatch.isDecoy()) {
 
@@ -200,7 +195,7 @@ public class StarHider {
      * Stars a protein match.
      *
      * @param match the key of the match
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -247,7 +242,7 @@ public class StarHider {
      * Unstars a protein match.
      *
      * @param match the key of the match
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -282,7 +277,7 @@ public class StarHider {
      * Hides a protein match.
      *
      * @param match the key of the match
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -330,7 +325,7 @@ public class StarHider {
      * Unhides a protein match.
      *
      * @param match the key of the match
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -659,10 +654,10 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -684,10 +679,10 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -710,10 +705,10 @@ public class StarHider {
      * filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -737,10 +732,10 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.sql.SQLException
@@ -764,10 +759,10 @@ public class StarHider {
      * implemented filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
@@ -790,10 +785,10 @@ public class StarHider {
      * filters.
      *
      * @param match the key of the match
-     * 
+     *
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException

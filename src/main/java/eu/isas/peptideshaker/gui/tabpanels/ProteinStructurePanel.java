@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
@@ -3415,11 +3416,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+                while(proteinMatchesIterator.hasNext()) {
                 try {
-                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                    if (proteinMatch != null && proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                        proteinKey = possibleKey;
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                    if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
+                        proteinKey = proteinMatch.getKey();
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                         break;
                     }

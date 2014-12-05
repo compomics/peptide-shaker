@@ -7,6 +7,8 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -323,21 +325,23 @@ public class ProteinInference {
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
-        waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
+        waitingHandler.setWaitingText("Simplifying Redundant Protein Groups. Please Wait...");
 
-        PSParameter psParameter = new PSParameter();
         ArrayList<String> toRemove = new ArrayList<String>();
         int maxProteinKeyLength = 0;
 
         int max = 3 * identification.getProteinIdentification().size();
-
-        identification.loadProteinMatchParameters(psParameter, null);
-        identification.loadProteinMatches(waitingHandler);
-
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        for (String proteinSharedKey : identification.getProteinIdentification()) {
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinSharedKey = proteinMatch.getKey();
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
 
@@ -392,9 +396,10 @@ public class ProteinInference {
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
 
-        identification.loadProteinMatches(null);
-        for (String proteinKey : identification.getProteinIdentification()) {
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
 
             if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);

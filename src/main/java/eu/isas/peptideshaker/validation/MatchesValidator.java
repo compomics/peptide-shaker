@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.validation;
 
 import com.compomics.util.Util;
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
@@ -12,10 +13,14 @@ import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
@@ -95,17 +100,29 @@ public class MatchesValidator {
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
      * @param waitingHandler the handler displaying feedback to the user
+     * @param exceptionHandler handler for exceptions
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param identificationFeaturesGenerator the identification features
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while getting a match from the database
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while getting a match from the database
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file
+     * @throws java.lang.InterruptedException exception thrown whenever an error
+     * occurred while getting a match from the database
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) {
+    public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
-        
+
         waitingHandler.setWaitingText("Finding FDR thresholds. Please Wait...");
 
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
@@ -169,14 +186,8 @@ public class MatchesValidator {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        try {
-            validateIdentifications(identification, metrics, inputMap, waitingHandler, 
-                    identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while validating the results.", true, true);
-            waitingHandler.setRunCanceled();
-            e.printStackTrace();
-        }
+        validateIdentifications(identification, metrics, inputMap, waitingHandler,
+                identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
@@ -202,13 +213,15 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      * @throws InterruptedException
      */
-    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap, 
-            WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+    public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
+            WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
         PSParameter psParameter2 = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Match Validation. Please Wait...");
@@ -221,7 +234,7 @@ public class MatchesValidator {
         psmMap.resetDoubtfulMatchesFilters();
         peptideMap.resetDoubtfulMatchesFilters();
         proteinMap.resetDoubtfulMatchesFilters();
-        
+
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
         if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
@@ -234,19 +247,23 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             ArrayList<Integer> charges = new ArrayList<Integer>();
 
-            for (String spectrumKey : spectrumKeysMap.get(spectrumFileName)) {
+            ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters);
+
+            while (psmIterator.hasNext()) {
+
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psParameter.getMatchValidationLevel().isValidated()) {
 
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                     if (peptideAssumption != null) {
@@ -295,7 +312,6 @@ public class MatchesValidator {
 
                 // go through the peptide assumptions
                 if (inputMap != null) { //backward compatibility check
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                     for (Integer advocateId : spectrumMatch.getAdvocates()) {
 
@@ -364,14 +380,18 @@ public class MatchesValidator {
                         inputMap.resetAdvocateContributions(spectrumFileName);
                     }
 
-                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+                    psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters);
+
+                    while (psmIterator.hasNext()) {
+
+                        SpectrumMatch spectrumMatch = psmIterator.next();
+                        String spectrumKey = spectrumMatch.getKey();
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                         if (psParameter.getMatchValidationLevel().isValidated()) {
 
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                             if (peptideAssumption != null) {
@@ -412,13 +432,14 @@ public class MatchesValidator {
         }
 
         HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
-
-        identification.loadPeptideMatches(null);
-        identification.loadPeptideMatchParameters(new PSParameter(), null);
         ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
 
         // validate the peptides
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
+        while (peptideMatchesIterator.hasNext()) {
+
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
 
             updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
 
@@ -512,11 +533,11 @@ public class MatchesValidator {
         double maxProteinAveragePrecursorIntensity = 0;
         double maxProteinSummedPrecursorIntensity = 0;
 
-        identification.loadProteinMatches(null);
-        identification.loadProteinMatchParameters(new PSParameter(), null);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters);
 
-        for (String proteinKey : identification.getProteinIdentification()) {
-
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
             updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
                     targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
 
@@ -864,7 +885,7 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
             PsmSpecificMap psmMap, String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
@@ -1202,12 +1223,10 @@ public class MatchesValidator {
      * @throws java.lang.ClassNotFoundException
      * @throws java.lang.InterruptedException
      */
-    public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
+    public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
-
-        PSParameter psParameter = new PSParameter();
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getPeptideIdentification().size() * 2);
@@ -1215,10 +1234,13 @@ public class MatchesValidator {
         ArrayList<String> foundModifications = new ArrayList<String>();
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
-        // load the peptides into memory
-        identification.loadPeptideMatches(identification.getPeptideIdentification(), waitingHandler);
+        PSParameter psParameter = new PSParameter();
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null);
 
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        while (peptideMatchesIterator.hasNext()) {
+
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
                     foundModifications.add(modification);
@@ -1227,7 +1249,6 @@ public class MatchesValidator {
 
             double probaScore = 1;
             HashMap<String, Double> fractionScores = new HashMap<String, Double>();
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
             // get the fraction scores
             identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
@@ -1287,25 +1308,29 @@ public class MatchesValidator {
      * @param identification the identification class containing the matches to
      * validate
      * @param waitingHandler the handler displaying feedback to the user
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.lang.InterruptedException
      */
-    public void attachPeptideProbabilities(Identification identification, WaitingHandler waitingHandler) 
+    public void attachPeptideProbabilities(Identification identification, WaitingHandler waitingHandler)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Peptide Probabilities. Please Wait...");
 
-        PSParameter psParameter = new PSParameter();
-
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getPeptideIdentification().size());
 
-        identification.loadPeptideMatchParameters(psParameter, null);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
 
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        while (peptideMatchesIterator.hasNext()) {
+
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
 
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
@@ -1339,24 +1364,26 @@ public class MatchesValidator {
      * @param identification the identification class containing the matches to
      * validate
      * @param waitingHandler the handler displaying feedback to the user
-     * 
+     *
      * @throws java.lang.Exception
      */
     public void fillProteinMap(Identification identification, WaitingHandler waitingHandler) throws Exception {
 
         waitingHandler.setWaitingText("Filling Protein Map. Please Wait...");
 
-        PSParameter psParameter = new PSParameter();
-
         int max = identification.getProteinIdentification().size();
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        identification.loadPeptideMatchParameters(psParameter, null);
-        identification.loadProteinMatches(null);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, parameters);
 
-        for (String proteinKey : identification.getProteinIdentification()) {
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
 
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
@@ -1365,14 +1392,12 @@ public class MatchesValidator {
 
             HashMap<String, Double> fractionScores = new HashMap<String, Double>();
             double probaScore = 1;
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
             if (proteinMatch == null) {
                 throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
             }
 
             // get the fraction scores
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null); // @TODO: already covered by the loadPeptideMatchParameters call above?
             for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
 
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -1395,7 +1420,7 @@ public class MatchesValidator {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
 
-            identification.addProteinMatchParameter(proteinKey, psParameter); // @TODO: batch insertion?
+            identification.addProteinMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
 
@@ -1410,13 +1435,13 @@ public class MatchesValidator {
      * @param metrics if provided fraction information
      * @param waitingHandler the handler displaying feedback to the user
      * @param processingPreferences the processing preferences
-     * 
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      * @throws java.lang.ClassNotFoundException
      * @throws java.lang.InterruptedException
      */
-    public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler, 
+    public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
             ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
@@ -1424,13 +1449,16 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
 
-        PSParameter psParameter = new PSParameter();
         HashMap<String, ArrayList<Double>> fractionMW = new HashMap<String, ArrayList<Double>>();
 
-        for (String proteinKey : identification.getProteinIdentification()) {
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
 
-            //@TODO: this molecular weigth stuff should not be done here!
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
