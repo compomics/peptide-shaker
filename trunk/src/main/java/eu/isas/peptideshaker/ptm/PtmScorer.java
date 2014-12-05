@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.ptm;
 
+import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -15,6 +16,8 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.identification.ptm.ptmscores.AScore;
@@ -22,10 +25,12 @@ import com.compomics.util.experiment.identification.ptm.ptmscores.PhosphoRS;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -47,6 +52,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import no.uib.jsparklines.renderers.util.Util;
 
 /**
@@ -73,10 +81,6 @@ public class PtmScorer {
      * The PSM PTM localization conflict map.
      */
     private PsmPTMMap psmPTMMap;
-    /**
-     * A single spectrum annotator to annotate spectra.
-     */
-    private final PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
     /**
      * The number of decimals to which scores should be rounded. Ignored if
      * null.
@@ -226,11 +230,12 @@ public class PtmScorer {
      * @param spectrumMatch the spectrum match studied, the A-score will be
      * calculated for the best assumption
      * @param identificationParameters the identification parameters
+     * @param peptideSpectrumAnnotator the peptide spectrum annotator
      *
      * @throws Exception exception thrown whenever an error occurred while
      * computing the score
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters) throws Exception {
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -353,10 +358,11 @@ public class PtmScorer {
      * @param inspectedSpectra the spectra to inspect
      * @param waitingHandler the handler displaying feedback to the user
      * @param identificationParameters the identification parameters
+     * @param peptideSpectrumAnnotator the peptide spectrum annotator
      *
      * @throws Exception
      */
-    public void scorePSMPTMs(Identification identification, PsmSpecificMap psmSpecificMap, ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, IdentificationParameters identificationParameters) throws Exception {
+    public void scorePSMPTMs(Identification identification, PsmSpecificMap psmSpecificMap, ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         int max = inspectedSpectra.size();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -367,7 +373,7 @@ public class PtmScorer {
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             if (spectrumMatch.getBestPeptideAssumption() != null) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler);
+                scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
             }
         }
 
@@ -383,11 +389,12 @@ public class PtmScorer {
      * @param identificationParameters the parameters used for identification
      * @param waitingHandler waiting handler to display progress and allow
      * cancelling
+     * @param peptideSpectrumAnnotator the spectrum annotator
      *
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws Exception {
+    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
@@ -396,7 +403,7 @@ public class PtmScorer {
         PTMScoringPreferences scoringPreferences = identificationParameters.getPtmScoringPreferences();
 
         if (scoringPreferences.isProbabilitsticScoreCalculation()) {
-            attachProbabilisticScore(identification, spectrumMatch, identificationParameters);
+            attachProbabilisticScore(identification, spectrumMatch, identificationParameters, peptideSpectrumAnnotator);
         }
 
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
@@ -1246,36 +1253,45 @@ public class PtmScorer {
      * @param identification identification object containing the identification
      * matches
      * @param waitingHandler the handler displaying feedback to the user
+     * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
      * @param metrics the dataset metrics
+     * @param processingPreferences the processing preferences
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, IdentificationParameters identificationParameters,
-            Metrics metrics) throws Exception {
+    public void scorePsmPtms(Identification identification, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationParameters identificationParameters,
+            Metrics metrics, ProcessingPreferences processingPreferences) throws Exception {
 
-        waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
+        waitingHandler.setWaitingText("Scoring PSM PTMs. Please Wait...");
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
-        HashMap<String, ArrayList<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
+        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
         if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
-            spectrumKeys = metrics.getGroupedSpectrumKeys();
+            spectrumKeysMap = metrics.getGroupedSpectrumKeys();
         }
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            for (String spectrumKey : spectrumKeys.get(spectrumFileName)) {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler);
-                }
+            ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null);
+            for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+                PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+                PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, peptideSpectrumAnnotator, identification, identificationParameters, waitingHandler, exceptionHandler);
+                pool.submit(runnable);
+            }
+            if (waitingHandler.isRunCanceled()) {
+                pool.shutdownNow();
+                return;
             }
         }
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        pool.shutdown();
+        if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+            throw new InterruptedException("PSM PTM scoring timed out. Please contact the developers.");
+        }
     }
 
     /**
@@ -1336,19 +1352,23 @@ public class PtmScorer {
         int max = identification.getProteinIdentification().size();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
-        identification.loadProteinMatches(null);
-        identification.loadProteinMatchParameters(new PSParameter(), null);
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
         int nValidatedProteins = 0;
         int nConfidentProteins = 0;
-        PSParameter psParameter = new PSParameter();
         double tempSpectrumCounting, maxSpectrumCounting = 0;
         Enzyme enzyme = shotgunProtocol.getEnzyme();
         int maxPepLength = identificationParameters.getIdFilter().getMaxPepLength();
 
-        for (String proteinKey : identification.getProteinIdentification()) {
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            String proteinKey = proteinMatch.getKey();
+
             scorePTMs(identification, proteinMatch, identificationParameters, false);
 
             if (metrics != null) {
@@ -1938,4 +1958,70 @@ public class PtmScorer {
         this.psmPTMMap = psmPTMMap;
     }
 
+    /**
+     * Runnable scoring PSM PTMs
+     *
+     * @author Marc
+     */
+    private class PsmPtmScorerRunnable implements Runnable {
+
+        /**
+         * An iterator for the psms
+         */
+        private PsmIterator psmIterator;
+        /**
+         * The identification
+         */
+        private Identification identification;
+        /**
+         * The identification parameters
+         */
+        private IdentificationParameters identificationParameters;
+
+        /**
+         * The waiting handler
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * The peptide spectrum annotator
+         */
+        private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
+
+        /**
+         * Constructor
+         *
+         * @param psmIterator a psm iterator
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         */
+        public PsmPtmScorerRunnable(PsmIterator psmIterator, PeptideSpectrumAnnotator peptideSpectrumAnnotator, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+            this.psmIterator = psmIterator;
+            this.identification = identification;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+            this.peptideSpectrumAnnotator = peptideSpectrumAnnotator;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                while (psmIterator.hasNext()) {
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+                    if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
+                        scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
+                    }
+                }
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+            }
+
+        }
+    }
 }

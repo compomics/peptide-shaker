@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -3171,10 +3172,13 @@ public class PtmPanel extends javax.swing.JPanel {
         identification.loadPeptideMatches(progressDialog);
 
         ArrayList<String> notModifiedPeptides = new ArrayList<String>();
+        
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null);
 
-        for (String peptideKey : identification.getPeptideIdentification()) {
+        while (peptideMatchesIterator.hasNext()) {
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
             modified = false;

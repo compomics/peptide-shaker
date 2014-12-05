@@ -516,7 +516,7 @@ public class FileImporter {
                     waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                     waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
                     peptideShaker.setProteinCountMap(proteinCount);
-                    peptideShaker.processIdentifications(inputMap, waitingHandler, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
+                    peptideShaker.processIdentifications(inputMap, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
                 }
             } catch (OutOfMemoryError error) {
 

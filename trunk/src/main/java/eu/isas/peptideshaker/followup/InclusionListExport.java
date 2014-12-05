@@ -6,8 +6,10 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -60,21 +62,6 @@ public class InclusionListExport {
             BufferedWriter b = new BufferedWriter(f);
             try {
                 SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-                ArrayList<String> validatedProteins = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
-                PSParameter psParameter = new PSParameter();
-
-                if (waitingHandler != null) {
-                    waitingHandler.setWaitingText("Inclusion List - Loading Proteins. Please Wait...");
-                }
-                identification.loadProteinMatches(validatedProteins, waitingHandler);
-
-                if (waitingHandler != null) {
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                    waitingHandler.setWaitingText("Inclusion List - Loading Protein Details. Please Wait...");
-                }
-                identification.loadProteinMatchParameters(validatedProteins, psParameter, waitingHandler);
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -85,14 +72,18 @@ public class InclusionListExport {
                     waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
                 }
 
-                for (String proteinMatchKey : identification.getProteinIdentification()) {
+                PSParameter psParameter = new PSParameter();
+                ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                parameters.add(psParameter);
+                ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+                while (proteinMatchesIterator.hasNext()) {
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                    String proteinMatchKey = proteinMatch.getKey();
 
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
 
                     if (!proteinFilters.contains(psParameter.getProteinInferenceClass())) {
 
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
                         ArrayList<String> peptideMatches = new ArrayList<String>();
 
                         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
@@ -132,11 +123,9 @@ public class InclusionListExport {
                         }
 
                         if (!peptideMatches.isEmpty()) {
-                            identification.loadPeptideMatches(peptideMatches, null);
                             for (String peptideKey : peptideMatches) {
                                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                                 ArrayList<String> validatedPsms = new ArrayList<String>();
-                                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -144,7 +133,6 @@ public class InclusionListExport {
                                     }
                                 }
                                 if (!validatedPsms.isEmpty()) {
-                                    identification.loadSpectrumMatches(validatedPsms, null);
                                     ArrayList<Double> retentionTimes = new ArrayList<Double>();
                                     for (String spectrumKey : validatedPsms) {
                                         retentionTimes.add(spectrumFactory.getPrecursor(spectrumKey).getRt());
