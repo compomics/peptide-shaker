@@ -29,6 +29,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import org.jfree.chart.plot.PlotOrientation;
 
 /**
  * Dialog for setting up the PRIDE Reshake.
@@ -99,34 +101,36 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         filesTableToolTips.add("File Type");
         filesTableToolTips.add("File");
         filesTableToolTips.add("Download File");
-        filesTableToolTips.add("File Size");
+        filesTableToolTips.add("File Size (MB)");
         filesTableToolTips.add("Selected");
 
-        spectrumTable.getColumn("Assay").setMaxWidth(90);
-        spectrumTable.getColumn("Assay").setMinWidth(90);
+        int fixedColumnWidth = 110;
+
+        spectrumTable.getColumn("Assay").setMaxWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Assay").setMinWidth(fixedColumnWidth);
         spectrumTable.getColumn(" ").setMaxWidth(50);
         spectrumTable.getColumn(" ").setMinWidth(50);
         spectrumTable.getColumn("  ").setMaxWidth(30);
         spectrumTable.getColumn("  ").setMinWidth(30);
-        spectrumTable.getColumn("Type").setMaxWidth(90);
-        spectrumTable.getColumn("Type").setMinWidth(90);
-        spectrumTable.getColumn("Download").setMaxWidth(90);
-        spectrumTable.getColumn("Download").setMinWidth(90);
-        spectrumTable.getColumn("Size").setMaxWidth(90);
-        spectrumTable.getColumn("Size").setMinWidth(90);
+        spectrumTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Type").setMinWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Download").setMaxWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Download").setMinWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Size (MB)").setMaxWidth(fixedColumnWidth);
+        spectrumTable.getColumn("Size (MB)").setMinWidth(fixedColumnWidth);
 
-        searchSettingsTable.getColumn("Assay").setMaxWidth(90);
-        searchSettingsTable.getColumn("Assay").setMinWidth(90);
+        searchSettingsTable.getColumn("Assay").setMaxWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Assay").setMinWidth(fixedColumnWidth);
         searchSettingsTable.getColumn(" ").setMaxWidth(50);
         searchSettingsTable.getColumn(" ").setMinWidth(50);
         searchSettingsTable.getColumn("  ").setMaxWidth(30);
         searchSettingsTable.getColumn("  ").setMinWidth(30);
-        searchSettingsTable.getColumn("Type").setMaxWidth(90);
-        searchSettingsTable.getColumn("Type").setMinWidth(90);
-        searchSettingsTable.getColumn("Download").setMaxWidth(90);
-        searchSettingsTable.getColumn("Download").setMinWidth(90);
-        searchSettingsTable.getColumn("Size").setMaxWidth(90);
-        searchSettingsTable.getColumn("Size").setMinWidth(90);
+        searchSettingsTable.getColumn("Type").setMaxWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Type").setMinWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Download").setMaxWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Download").setMinWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Size (MB)").setMaxWidth(fixedColumnWidth);
+        searchSettingsTable.getColumn("Size (MB)").setMinWidth(fixedColumnWidth);
 
         spectrumTable.getColumn("Assay").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         searchSettingsTable.getColumn("Assay").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
@@ -162,6 +166,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
         TableModel filesTableModel = prideReShakeGUI.getFilesTable().getRowSorter().getModel();
 
+        double maxFileSize = 0.0;
+
         for (int i = 0; i < filesTableModel.getRowCount(); i++) {
             ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
                 spectrumTable.getRowCount() + 1,
@@ -182,6 +188,12 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 filesTableModel.getValueAt(i, 5),
                 i == 0
             });
+
+            double tempFileSize = (Double) filesTableModel.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
+
+            if (tempFileSize > maxFileSize) {
+                maxFileSize = tempFileSize;
+            }
         }
 
         // filter the specturm table
@@ -237,6 +249,17 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         spectrumPanel.repaint();
         ((TitledBorder) searchSettingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Search Settings (" + searchSettingsTable.getRowCount() + ")");
         searchSettingsPanel.repaint();
+
+        // update the sparklines with the max values
+        spectrumTable.getColumn("Size (MB)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxFileSize, prideReShakeGUI.getPeptideShakerGUI().getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Size (MB)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Size (MB)").getCellRenderer()).setLogScale(true);
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Size (MB)").getCellRenderer()).setMinimumChartValue(1);
+
+        searchSettingsTable.getColumn("Size (MB)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxFileSize, prideReShakeGUI.getPeptideShakerGUI().getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) searchSettingsTable.getColumn("Size (MB)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchSettingsTable.getColumn("Size (MB)").getCellRenderer()).setLogScale(true);
+        ((JSparklinesBarChartTableCellRenderer) searchSettingsTable.getColumn("Size (MB)").getCellRenderer()).setMinimumChartValue(1);
     }
 
     /**
@@ -369,7 +392,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Assay", "Type", "File", "Download", "Size", "  "
+                " ", "Assay", "Type", "File", "Download", "Size (MB)", "  "
             }
         ) {
             Class[] types = new Class [] {
@@ -477,7 +500,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Assay", "Type", "File", "Download", "Size", "  "
+                " ", "Assay", "Type", "File", "Download", "Size (MB)", "  "
             }
         ) {
             Class[] types = new Class [] {
@@ -707,7 +730,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         .addComponent(aboutButton)
                         .addGap(44, 44, 44)
                         .addComponent(peptideShakerHomePageLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
                         .addComponent(reshakeButton)))
                 .addContainerGap())
         );
@@ -796,7 +819,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                         if (exists) {
                             selectedSpectrumFiles.add(link);
-                            fileSizes.add((Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size").getModelIndex()));
+                            fileSizes.add((Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex()));
                         } else {
                             JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                     "PRIDE web service access error. Cannot open:<br>"
@@ -832,7 +855,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                             if (exists) {
                                 selectedSearchSettingsFile = link;
-                                fileSizes.add((Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size").getModelIndex()));
+                                fileSizes.add((Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex()));
                             } else {
                                 JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                         "PRIDE web service access error. Cannot open:<br>"
@@ -970,7 +993,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             String tempLink = (String) searchSettingsTable.getValueAt(row, column);
             tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
             final String link = tempLink.substring(0, tempLink.indexOf("\""));
-            final Double fileSize = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size").getModelIndex());
+            final Double fileSize = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
 
             final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
@@ -1094,7 +1117,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 String tempLink = (String) spectrumTable.getValueAt(row, column);
                 tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
-                final Double fileSize = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size").getModelIndex());
+                final Double fileSize = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size (MB)").getModelIndex());
 
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 

@@ -59,7 +59,7 @@
                           <Component id="aboutButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                           <Component id="peptideShakerHomePageLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="175" max="32767" attributes="0"/>
+                          <EmptySpace pref="197" max="32767" attributes="0"/>
                           <Component id="reshakeButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -169,7 +169,7 @@
                         <Column editable="false" title="Type" type="java.lang.String"/>
                         <Column editable="false" title="File" type="java.lang.String"/>
                         <Column editable="false" title="Download" type="java.lang.String"/>
-                        <Column editable="false" title="Size" type="java.lang.Long"/>
+                        <Column editable="false" title="Size (MB)" type="java.lang.Long"/>
                         <Column editable="true" title="  " type="java.lang.Boolean"/>
                       </Table>
                     </Property>
@@ -282,7 +282,7 @@
                         <Column editable="false" title="Type" type="java.lang.String"/>
                         <Column editable="false" title="File" type="java.lang.String"/>
                         <Column editable="false" title="Download" type="java.lang.String"/>
-                        <Column editable="false" title="Size" type="java.lang.Long"/>
+                        <Column editable="false" title="Size (MB)" type="java.lang.Long"/>
                         <Column editable="true" title="  " type="java.lang.Boolean"/>
                       </Table>
                     </Property>

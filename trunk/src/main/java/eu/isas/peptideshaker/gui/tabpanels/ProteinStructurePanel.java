@@ -3416,8 +3416,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
-                while(proteinMatchesIterator.hasNext()) {
+            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+            while (proteinMatchesIterator.hasNext()) {
                 try {
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {

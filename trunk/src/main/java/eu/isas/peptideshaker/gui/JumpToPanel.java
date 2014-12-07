@@ -9,7 +9,6 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -583,8 +582,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                     peptideShakerGUI.catchException(e);
                 }
             }
-        }
-                .start();
+        }.start();
     }//GEN-LAST:event_inputTxtKeyReleased
 
     /**
