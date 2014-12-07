@@ -1959,47 +1959,47 @@ public class PtmScorer {
     }
 
     /**
-     * Runnable scoring PSM PTMs
+     * Runnable scoring PSM PTMs.
      *
-     * @author Marc
+     * @author Marc Vaudel
      */
     private class PsmPtmScorerRunnable implements Runnable {
 
         /**
-         * An iterator for the psms
+         * An iterator for the PSMs.
          */
         private PsmIterator psmIterator;
         /**
-         * The identification
+         * The identification.
          */
         private Identification identification;
         /**
-         * The identification parameters
+         * The identification parameters.
          */
         private IdentificationParameters identificationParameters;
-
         /**
-         * The waiting handler
+         * The waiting handler.
          */
         private WaitingHandler waitingHandler;
         /**
-         * Handler for the exceptions
+         * Handler for the exceptions.
          */
         private ExceptionHandler exceptionHandler;
         /**
-         * The peptide spectrum annotator
+         * The peptide spectrum annotator.
          */
         private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
 
         /**
-         * Constructor
+         * Constructor.
          *
-         * @param psmIterator a psm iterator
+         * @param psmIterator a PSM iterator
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmPtmScorerRunnable(PsmIterator psmIterator, PeptideSpectrumAnnotator peptideSpectrumAnnotator, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
+        public PsmPtmScorerRunnable(PsmIterator psmIterator, PeptideSpectrumAnnotator peptideSpectrumAnnotator, Identification identification,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.identificationParameters = identificationParameters;
@@ -2010,7 +2010,6 @@ public class PtmScorer {
 
         @Override
         public void run() {
-
             try {
                 while (psmIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = psmIterator.next();
@@ -2021,7 +2020,6 @@ public class PtmScorer {
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
             }
-
         }
     }
 }
