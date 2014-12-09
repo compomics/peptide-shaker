@@ -3902,15 +3902,20 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
                 spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
+                int identificationChargeFirstPsm = 0;
+                int identificationChargeSecondPsm = 0;
+                ArrayList<ModificationMatch> allModifications = new ArrayList<ModificationMatch>();
+
                 // get the spectrum annotations
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                 Peptide peptide = peptideAssumption.getPeptide();
-                int identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                identificationChargeFirstPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                allModifications.addAll(peptide.getModificationMatches());
                 annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
-                        identificationCharge,
+                        identificationChargeFirstPsm,
                         currentSpectrum, peptide,
                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                         annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
@@ -3943,17 +3948,18 @@ public class PtmPanel extends javax.swing.JPanel {
                         spectrum.addMirroredSpectrum(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesNormalizedAsArray(), precursor.getMz(),
                                 spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString(), "", false,
-                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(), 
+                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(),
                                 peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
 
                         // get the spectrum annotations
                         peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                         peptide = peptideAssumption.getPeptide();
-                        identificationCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        identificationChargeSecondPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        allModifications.addAll(peptide.getModificationMatches());
                         annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(),
                                 annotationPreferences.getValidatedCharges(),
-                                identificationCharge,
+                                identificationChargeSecondPsm,
                                 currentSpectrum, peptide,
                                 currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                 annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
@@ -3972,14 +3978,14 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
 
                 spectrumChartJPanel.add(spectrum);
-                peptideShakerGUI.updateAnnotationMenus(identificationCharge, peptide.getModificationMatches());
+                peptideShakerGUI.updateAnnotationMenus(Math.max(identificationChargeFirstPsm, identificationChargeSecondPsm), allModifications);
 
                 String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey), false, false, true);
-                
+
                 if (secondSpectrumKey != null) {
                     modifiedSequence += " vs. " + peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideShakerGUI.getIdentification().getSpectrumMatch(secondSpectrumKey), false, false, true);
                 }
-                
+
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                         + "Spectrum & Fragment Ions ("
