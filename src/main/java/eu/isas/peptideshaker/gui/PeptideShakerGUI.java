@@ -4883,10 +4883,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
      * @param showSpectrumOptions if true, the spectrum options are shown
      * @param showBubblePlotOptions if true, the bubble plot options are shown
      * @param showIonTableOptions if true, the ion table options are shown
-     * @param showPtmPlotOptions if true, the PTM plot option are shown
+     * @param showPtmPlotOptions if true, the PTM plot option is shown
+     * @param showSingleSpectrumExportOptions if true, the single spectrum export options are shown
      */
     public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions,
-            boolean showIonTableOptions, boolean showPtmPlotOptions) {
+            boolean showIonTableOptions, boolean showPtmPlotOptions, boolean showSingleSpectrumExportOptions) {
 
         // @TODO: replace boolean variables with an Enum
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
@@ -4894,12 +4895,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
         exportSpectrumMenu.setVisible(showSpectrumOptions);
         highResAnnotationCheckBoxMenuItem.setVisible(showSpectrumOptions || showBubblePlotOptions);
 
-        // @TODO: remove this when the other tabs also use the extended spectrum panel!
-        exportSpectrumAndPlotsGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
-        exportSequenceFragmentationGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
-        exportIntensityHistogramGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
-        exportMassErrorPlotGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
-        exportSpectrumGraphicsSeparator.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        // @TODO: update the other tabs support the spectrum sub plots
+        exportSpectrumAndPlotsGraphicsJMenuItem.setVisible(showSingleSpectrumExportOptions && allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportSpectrumGraphicsSeparator.setVisible(showSingleSpectrumExportOptions && allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportSequenceFragmentationGraphicsJMenuItem.setVisible(showSingleSpectrumExportOptions && allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportIntensityHistogramGraphicsJMenuItem.setVisible(showSingleSpectrumExportOptions && allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportMassErrorPlotGraphicsJMenuItem.setVisible(showSingleSpectrumExportOptions && allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportSpectrumValuesJMenuItem.setVisible(showSingleSpectrumExportOptions);
 
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
