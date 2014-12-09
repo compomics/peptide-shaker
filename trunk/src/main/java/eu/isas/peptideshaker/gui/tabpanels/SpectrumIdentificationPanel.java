@@ -218,7 +218,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void setUpGUI() {
         ((TitledBorder) idSoftwarePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Identification Overview" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-        ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+        ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide Spectrum Matches" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         ((TitledBorder) spectrumPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum & Fragment Ions" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Selection" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
 
@@ -368,7 +368,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         idSoftwareTableToolTips = new ArrayList<String>();
         idSoftwareTableToolTips.add(null);
         idSoftwareTableToolTips.add("Identification Software");
-        idSoftwareTableToolTips.add("Validated Peptide-Spectrum Matches");
+        idSoftwareTableToolTips.add("Validated Peptide Spectrum Matches");
         idSoftwareTableToolTips.add("Unique Pepttide-Spectrum Matches");
         idSoftwareTableToolTips.add("Unassigned Spectra");
         idSoftwareTableToolTips.add("Identificaiton Rate (%)");
@@ -383,7 +383,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTableToolTips.add("Precursor Retention Time");
         spectrumTableToolTips.add("Peptide Sequence");
         spectrumTableToolTips.add("Mapping Protein(s)");
-        spectrumTableToolTips.add("Peptide-Spectrum Match Confidence");
+        spectrumTableToolTips.add("Peptide Spectrum Match Confidence");
         spectrumTableToolTips.add("Validated");
 
         peptideShakerTableToolTips = new ArrayList<String>();
@@ -754,7 +754,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         psmsJPanel.setOpaque(false);
 
-        psmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches"));
+        psmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Spectrum Matches"));
         psmsPanel.setOpaque(false);
 
         peptideShakerJScrollPane.setOpaque(false);
@@ -1938,7 +1938,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         popupMenu.add(menuItem);
 
-        menuItem = new JMenuItem("Spectrum As MGF");
+        menuItem = new JMenuItem("Spectrum as MGF");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsMgf();
@@ -2696,6 +2696,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         tempSpectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
                         tempSpectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
                         tempSpectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
+                        
+                        // @TODO: add support for mirrored spectra!!
                     }
                 }
 
@@ -2882,7 +2884,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public void showSpectrumAnnotationMenu() {
         spectrumAnnotationMenuPanel.removeAll();
         spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-        peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
+        peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false, false);
     }
 
     /**
