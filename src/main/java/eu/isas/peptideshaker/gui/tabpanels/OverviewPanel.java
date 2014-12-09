@@ -3906,6 +3906,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
                 ArrayList<Peptide> peptides = new ArrayList<Peptide>();
 
+                int maxCharge = 1;
+                ArrayList<ModificationMatch> allModifications = new ArrayList<ModificationMatch>();
+
                 // iterate the selected psms
                 for (String spectrumKey : selectedPsmKeys) {
 
@@ -3928,6 +3931,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 annotationPreferences.isHighResolutionAnnotation());
                         allAnnotations.add(annotations);
                         allSpectra.add(currentSpectrum);
+
+                        int currentCharge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+                        if (currentCharge > maxCharge) {
+                            maxCharge = currentCharge;
+                        }
+
+                        allModifications.addAll(spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches());
 
                         currentSpectrumKey = spectrumKey;
                     }
@@ -3984,7 +3994,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     annotationPreferences.showRewindIonDeNovoTags(), false);
                         } else {
                             spectrumPanel.addMirroredSpectrum(allSpectra.get(i).getMzValuesAsArray(), allSpectra.get(i).getIntensityValuesNormalizedAsArray(),
-                                    500, "2", "", false, peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(), 
+                                    500, "2", "", false, peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(),
                                     peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
                             spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)));
 
@@ -3996,6 +4006,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     annotationPreferences.showRewindIonDeNovoTags(), true);
                         }
                     }
+
+                    peptideShakerGUI.updateAnnotationMenus(maxCharge, allModifications);
 
                     spectrumPanel.rescale(0.0, spectrumPanel.getMaxXAxisValue());
 
@@ -5310,19 +5322,19 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 2) + " m/z)"
                                 + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     } else if (psmTable.getSelectedRowCount() == 2) {
-                        
+
                         int[] selectedRows = psmTable.getSelectedRows();
-                        
+
                         psmIndex = psmTableModel.getViewIndex(selectedRows[0]);
                         spectrumKey = psmKeys.get(psmIndex);
                         SpectrumMatch firstSpectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         String firstModifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(firstSpectrumMatch, false, false, true);
-                        
+
                         psmIndex = psmTableModel.getViewIndex(selectedRows[1]);
                         spectrumKey = psmKeys.get(psmIndex);
                         SpectrumMatch secondSpectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         String secondModifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(secondSpectrumMatch, false, false, true);
-                        
+
                         ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                                 PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                                 + "Spectrum & Fragment Ions (" + firstModifiedSequence + " vs. " + secondModifiedSequence + ")"
@@ -5330,7 +5342,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     } else {
                         PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                         String peptideSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptideMatch, false, false, true);
-                        
+
                         ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                                 PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                                 + "Spectrum & Fragment Ions (" + peptideSequence + " " + psmTable.getSelectedRowCount() + " PSMs)"
