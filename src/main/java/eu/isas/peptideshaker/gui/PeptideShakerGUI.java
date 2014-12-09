@@ -2199,7 +2199,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
      * @param evt
      */
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
+
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) overviewPanel.getBubblePlot(), lastSelectedFolder);
+        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+            new ExportGraphicsDialog(this, getNormalIcon(), getWaitingIcon(), true, (Component) spectrumIdentificationPanel.getBubblePlot(), lastSelectedFolder);
+        }
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
 
     /**
@@ -4884,7 +4891,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
      * @param showBubblePlotOptions if true, the bubble plot options are shown
      * @param showIonTableOptions if true, the ion table options are shown
      * @param showPtmPlotOptions if true, the PTM plot option is shown
-     * @param showSingleSpectrumExportOptions if true, the single spectrum export options are shown
+     * @param showSingleSpectrumExportOptions if true, the single spectrum
+     * export options are shown
      */
     public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions,
             boolean showIonTableOptions, boolean showPtmPlotOptions, boolean showSingleSpectrumExportOptions) {

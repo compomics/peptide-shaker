@@ -135,7 +135,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private boolean relatedSelected = false;
     /**
-     * The current spectrum panel for the upper PSM.
+     * The current spectrum panel for the selected PSM.
      */
     private SpectrumPanel spectrum;
     /**
@@ -3943,7 +3943,8 @@ public class PtmPanel extends javax.swing.JPanel {
                         spectrum.addMirroredSpectrum(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesNormalizedAsArray(), precursor.getMz(),
                                 spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().toString(), "", false,
-                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor());
+                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(), 
+                                peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
 
                         // get the spectrum annotations
                         peptideAssumption = spectrumMatch.getBestPeptideAssumption();

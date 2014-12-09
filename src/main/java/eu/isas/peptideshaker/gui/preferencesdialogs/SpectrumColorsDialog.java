@@ -22,9 +22,8 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  * @author Harald Barsnes
  */
 public class SpectrumColorsDialog extends javax.swing.JDialog {
-    
-    // @TODO: this class should be generalized and moved to utilities
 
+    // @TODO: this class should be generalized and moved to utilities
     /**
      * The list of ion types.
      */
@@ -61,9 +60,10 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
         annotatedPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor());
         backgroundPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
+        mirroredPeakColorPanel.setBackground(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
 
         annotatedPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
-        backgroungPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
+        backgroundPeakWidthSpinner.setValue(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
         colorsTable.getTableHeader().setReorderingAllowed(false);
 
@@ -94,14 +94,16 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         colorsScrollPane = new javax.swing.JScrollPane();
         colorsTable = new javax.swing.JTable();
         peakColorsPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        annotatedLabel = new javax.swing.JLabel();
+        backgroundLabel = new javax.swing.JLabel();
         annotatedPeakColorPanel = new javax.swing.JPanel();
         backgroundPeakColorPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        annotatedWidthLabel = new javax.swing.JLabel();
+        backgroundWidthLabel = new javax.swing.JLabel();
         annotatedPeakWidthSpinner = new javax.swing.JSpinner();
-        backgroungPeakWidthSpinner = new javax.swing.JSpinner();
+        backgroundPeakWidthSpinner = new javax.swing.JSpinner();
+        mirroredPeakColorLabel = new javax.swing.JLabel();
+        mirroredPeakColorPanel = new javax.swing.JPanel();
         helpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -152,17 +154,17 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             annotationColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationColorsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         peakColorsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Colors"));
         peakColorsPanel.setOpaque(false);
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Annotated Peak Color");
+        annotatedLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        annotatedLabel.setText("Annotated Peak Color");
 
-        jLabel2.setText("Backgrond Peak Color");
+        backgroundLabel.setText("Backgrond Peak Color");
 
         annotatedPeakColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         annotatedPeakColorPanel.setForeground(new java.awt.Color(255, 255, 255));
@@ -214,9 +216,9 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             .addGap(0, 20, Short.MAX_VALUE)
         );
 
-        jLabel3.setText("Annotated Peak Width");
+        annotatedWidthLabel.setText("Annotated Peak Width");
 
-        jLabel4.setText("Background Peak Width");
+        backgroundWidthLabel.setText("Background Peak Width");
 
         annotatedPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
         annotatedPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -225,12 +227,40 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             }
         });
 
-        backgroungPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
-        backgroungPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+        backgroundPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
+        backgroundPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                backgroungPeakWidthSpinnerStateChanged(evt);
+                backgroundPeakWidthSpinnerStateChanged(evt);
             }
         });
+
+        mirroredPeakColorLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        mirroredPeakColorLabel.setText("Annotated Mirrored Peak Color");
+
+        mirroredPeakColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mirroredPeakColorPanel.setForeground(new java.awt.Color(255, 255, 255));
+        mirroredPeakColorPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mirroredPeakColorPanelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                mirroredPeakColorPanelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                mirroredPeakColorPanelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mirroredPeakColorPanelLayout = new javax.swing.GroupLayout(mirroredPeakColorPanel);
+        mirroredPeakColorPanel.setLayout(mirroredPeakColorPanelLayout);
+        mirroredPeakColorPanelLayout.setHorizontalGroup(
+            mirroredPeakColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 27, Short.MAX_VALUE)
+        );
+        mirroredPeakColorPanelLayout.setVerticalGroup(
+            mirroredPeakColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout peakColorsPanelLayout = new javax.swing.GroupLayout(peakColorsPanel);
         peakColorsPanel.setLayout(peakColorsPanelLayout);
@@ -240,47 +270,56 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
+                        .addComponent(backgroundLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(backgroundPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, peakColorsPanelLayout.createSequentialGroup()
+                        .addComponent(mirroredPeakColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
+                        .addComponent(mirroredPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, peakColorsPanelLayout.createSequentialGroup()
+                        .addComponent(annotatedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(annotatedPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(50, 50, 50)
                 .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addComponent(annotatedWidthLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(annotatedPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
+                        .addComponent(backgroundWidthLabel)
                         .addGap(18, 18, 18)
-                        .addComponent(backgroungPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(31, Short.MAX_VALUE))
+                        .addComponent(backgroundPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(21, 21, 21))
         );
 
-        peakColorsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3, jLabel4});
+        peakColorsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {annotatedLabel, annotatedWidthLabel, backgroundLabel, backgroundWidthLabel});
 
         peakColorsPanelLayout.setVerticalGroup(
             peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakColorsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel1)
+                    .addComponent(annotatedLabel)
                     .addComponent(annotatedPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
+                    .addComponent(annotatedWidthLabel)
                     .addComponent(annotatedPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backgroundPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(backgroungPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(backgroundWidthLabel)
+                        .addComponent(backgroundPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(backgroundLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(mirroredPeakColorLabel)
+                    .addComponent(mirroredPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        peakColorsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {annotatedPeakColorPanel, annotatedPeakWidthSpinner, backgroundPeakColorPanel, backgroungPeakWidthSpinner, jLabel1, jLabel2, jLabel3, jLabel4});
+        peakColorsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {annotatedLabel, annotatedPeakColorPanel, annotatedPeakWidthSpinner, annotatedWidthLabel, backgroundLabel, backgroundPeakColorPanel, backgroundPeakWidthSpinner, backgroundWidthLabel});
 
         helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         helpJButton.setToolTipText("Help");
@@ -328,7 +367,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(okButton)
                     .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -351,7 +390,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-            UtilitiesUserPreferences.saveUserPreferences(peptideShakerGUI.getUtilitiesUserPreferences());
+        UtilitiesUserPreferences.saveUserPreferences(peptideShakerGUI.getUtilitiesUserPreferences());
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -496,10 +535,10 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void backgroungPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_backgroungPeakWidthSpinnerStateChanged
-        peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumBackgroundPeakWidth((Float) backgroungPeakWidthSpinner.getValue());
+    private void backgroundPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_backgroundPeakWidthSpinnerStateChanged
+        peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumBackgroundPeakWidth((Float) backgroundPeakWidthSpinner.getValue());
         peptideShakerGUI.updateSpectrumAnnotations();
-    }//GEN-LAST:event_backgroungPeakWidthSpinnerStateChanged
+    }//GEN-LAST:event_backgroundPeakWidthSpinnerStateChanged
 
     /**
      * Change the cursor to a hand cursor.
@@ -532,20 +571,57 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
+
+    /**
+     * Update the color used for the annotated mirrored peaks.
+     *
+     * @param evt
+     */
+    private void mirroredPeakColorPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mirroredPeakColorPanelMouseClicked
+        Color newColor = JColorChooser.showDialog(this, "Pick a Color", mirroredPeakColorPanel.getBackground());
+
+        if (newColor != null) {
+            mirroredPeakColorPanel.setBackground(newColor);
+            peptideShakerGUI.getUtilitiesUserPreferences().setSpectrumAnnotatedMirroredPeakColor(mirroredPeakColorPanel.getBackground());
+            peptideShakerGUI.updateSpectrumAnnotations();
+            annotatedPeakColorPanel.repaint();
+        }
+    }//GEN-LAST:event_mirroredPeakColorPanelMouseClicked
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void mirroredPeakColorPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mirroredPeakColorPanelMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_mirroredPeakColorPanelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void mirroredPeakColorPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mirroredPeakColorPanelMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_mirroredPeakColorPanelMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel annotatedLabel;
     private javax.swing.JPanel annotatedPeakColorPanel;
     private javax.swing.JSpinner annotatedPeakWidthSpinner;
+    private javax.swing.JLabel annotatedWidthLabel;
     private javax.swing.JPanel annotationColorsPanel;
+    private javax.swing.JLabel backgroundLabel;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JPanel backgroundPeakColorPanel;
-    private javax.swing.JSpinner backgroungPeakWidthSpinner;
+    private javax.swing.JSpinner backgroundPeakWidthSpinner;
+    private javax.swing.JLabel backgroundWidthLabel;
     private javax.swing.JScrollPane colorsScrollPane;
     private javax.swing.JTable colorsTable;
     private javax.swing.JButton helpJButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel mirroredPeakColorLabel;
+    private javax.swing.JPanel mirroredPeakColorPanel;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel peakColorsPanel;
     // End of variables declaration//GEN-END:variables

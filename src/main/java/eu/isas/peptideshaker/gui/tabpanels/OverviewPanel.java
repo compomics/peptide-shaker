@@ -3984,7 +3984,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     annotationPreferences.showRewindIonDeNovoTags(), false);
                         } else {
                             spectrumPanel.addMirroredSpectrum(allSpectra.get(i).getMzValuesAsArray(), allSpectra.get(i).getIntensityValuesNormalizedAsArray(),
-                                    500, "2", "", false, Color.blue, Color.blue);
+                                    500, "2", "", false, peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(), 
+                                    peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
                             spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)));
 
                             int forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched1();
