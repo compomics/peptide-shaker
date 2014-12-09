@@ -146,7 +146,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 };
             }
         };
-        jPanel1 = new javax.swing.JPanel();
+        orderSettingsPanel = new javax.swing.JPanel();
         moveUpButton = new javax.swing.JButton();
         moveTopButton = new javax.swing.JButton();
         moveDownButton = new javax.swing.JButton();
@@ -154,7 +154,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         importFractionRangesButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        helpLabel = new javax.swing.JLabel();
         disclamierPanel = new javax.swing.JPanel();
         disclaimerLabel = new javax.swing.JLabel();
 
@@ -202,8 +202,8 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         });
         fractionJScrollPane.setViewportView(fractionTable);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jPanel1.setOpaque(false);
+        orderSettingsPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        orderSettingsPanel.setOpaque(false);
 
         moveUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrowUp_grey.png"))); // NOI18N
         moveUpButton.setToolTipText("Move Up");
@@ -253,21 +253,21 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout orderSettingsPanelLayout = new javax.swing.GroupLayout(orderSettingsPanel);
+        orderSettingsPanel.setLayout(orderSettingsPanelLayout);
+        orderSettingsPanelLayout.setHorizontalGroup(
+            orderSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, orderSettingsPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(orderSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(moveUpButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(moveDownButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(moveBottomButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(moveTopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        orderSettingsPanelLayout.setVerticalGroup(
+            orderSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, orderSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(moveTopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -296,7 +296,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(orderSettingsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(importFractionRangesButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -306,7 +306,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fractionsPanelLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(orderSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(importFractionRangesButton))
                     .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))
@@ -327,8 +327,8 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont((jLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel1.setText("Choose the order in which you want to display the fractions.");
+        helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        helpLabel.setText("Choose the order in which you want to display the fractions.");
 
         disclamierPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Disclaimer"));
         disclamierPanel.setOpaque(false);
@@ -362,7 +362,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                     .addComponent(fractionsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabel1)
+                        .addComponent(helpLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -384,7 +384,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton)
-                    .addComponent(jLabel1))
+                    .addComponent(helpLabel))
                 .addGap(4, 4, 4))
         );
 
@@ -596,14 +596,14 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane fractionJScrollPane;
     private javax.swing.JTable fractionTable;
     private javax.swing.JPanel fractionsPanel;
+    private javax.swing.JLabel helpLabel;
     private javax.swing.JButton importFractionRangesButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JButton moveBottomButton;
     private javax.swing.JButton moveDownButton;
     private javax.swing.JButton moveTopButton;
     private javax.swing.JButton moveUpButton;
     private javax.swing.JButton okButton;
+    private javax.swing.JPanel orderSettingsPanel;
     // End of variables declaration//GEN-END:variables
 
     /**
