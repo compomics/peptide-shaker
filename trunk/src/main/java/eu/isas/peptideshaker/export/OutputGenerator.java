@@ -1804,38 +1804,44 @@ public class OutputGenerator {
                                     }
                                 }
                                 if (algorithms.size() == 1 && algorithms.get(0) == Advocate.mascot.getIndex()) {
-                                    if (!phosphoNames.isEmpty() && spectrumMatch.hasAssumption(Advocate.mascot.getIndex())) {
+                                    if (!phosphoNames.isEmpty()) {
                                         PeptideAssumption mascotAssumption = null;
                                         double bestScore = 0;
-                                        for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.mascot.getIndex()).values()) {
-                                            for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
-                                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                                MascotScore mascotScore = new MascotScore();
-                                                mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
-                                                if (mascotScore.getScore() > bestScore) {
-                                                    mascotAssumption = peptideAssumption;
-                                                    bestScore = mascotScore.getScore();
+                                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> mascotMap = assumptions.get(Advocate.mascot.getIndex());
+                                        if (mascotMap != null) {
+                                            ArrayList<SpectrumIdentificationAssumption> mascotAssumptions = new ArrayList<SpectrumIdentificationAssumption>();
+                                            for (ArrayList<SpectrumIdentificationAssumption> peptideAssumptionList : mascotMap.values()) {
+                                                mascotAssumptions.addAll(peptideAssumptionList);
+                                                for (SpectrumIdentificationAssumption assumption : peptideAssumptionList) {
+                                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                                    MascotScore mascotScore = new MascotScore();
+                                                    mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
+                                                    if (mascotScore.getScore() > bestScore) {
+                                                        mascotAssumption = peptideAssumption;
+                                                        bestScore = mascotScore.getScore();
+                                                    }
                                                 }
                                             }
-                                        }
-                                        if (mascotAssumption != null) {
-                                            Peptide mascotPeptide = mascotAssumption.getPeptide();
-                                            Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames, identificationParameters.getSequenceMatchingPreferences());
-                                            if (score != null) {
-                                                mdScore = score.toString();
-                                            }
-                                            ArrayList<Integer> sites = new ArrayList<Integer>();
-                                            for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
-                                                if (modificationMatch.getTheoreticPtm().contains("phospho")) {
-                                                    sites.add(modificationMatch.getModificationSite());
+                                            if (mascotAssumption != null) {
+                                                Peptide mascotPeptide = mascotAssumption.getPeptide();
+                                                Double score = MDScore.getMDScore(mascotAssumptions, mascotPeptide, phosphoNames, identificationParameters.getSequenceMatchingPreferences(), 2);
+                                                if (score != null) {
+                                                    mdScore = score.toString();
                                                 }
-                                            }
-                                            Collections.sort(sites);
-                                            for (int site : sites) {
-                                                if (!mdLocation.equals("")) {
-                                                    mdLocation += ", ";
+                                                ArrayList<Integer> sites = new ArrayList<Integer>();
+                                                for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                                    if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                        sites.add(modificationMatch.getModificationSite());
+                                                    }
                                                 }
-                                                mdLocation += site;
+                                                Collections.sort(sites);
+                                                for (int site : sites) {
+                                                    if (!mdLocation.equals("")) {
+                                                        mdLocation += ", ";
+                                                    }
+                                                    mdLocation += site;
+                                                }
                                             }
                                         }
                                     }
@@ -2255,7 +2261,7 @@ public class OutputGenerator {
                             writer.write("Decoy" + SEPARATOR);
                             writer.write(System.getProperty("line.separator"));
                         }
-                        
+
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
 
                         PSParameter psParameter = new PSParameter();
@@ -2297,12 +2303,14 @@ public class OutputGenerator {
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                                 if (!onlyValidated || psParameter.getMatchValidationLevel().isValidated()) {
-                                    for (int se : spectrumMatch.getAdvocates()) {
-                                        ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
+                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                                    for (int se : assumptions.keySet()) {
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
+                                        ArrayList<Double> eValues = new ArrayList<Double>(seMap.keySet());
                                         Collections.sort(eValues);
                                         rank = 1;
                                         for (double eValue : eValues) {
-                                            for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                                            for (SpectrumIdentificationAssumption assumption : seMap.get(eValue)) {
                                                 if (assumption instanceof PeptideAssumption) {
                                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                                     writer.write(Advocate.getAdvocate(se).getName() + SEPARATOR);

@@ -173,7 +173,7 @@ public class PsPsmSection {
 
         for (String spectrumFile : psmMap.keySet()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, spectrumKeys, parameters);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, spectrumKeys, parameters, !identificationAlgorithmMatchesFeatures.isEmpty());
 
             while (psmIterator.hasNext()) {
 
@@ -408,15 +408,20 @@ public class PsPsmSection {
             case algorithm_score:
                 HashMap<Integer, Double> scoreMap = new HashMap<Integer, Double>();
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getAllAssumptions()) {
-                        if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
-                            PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
-                            if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
-                                int id = peptideAssumption.getAdvocate();
-                                double score = peptideAssumption.getScore();
-                                Double currentScore = scoreMap.get(id);
-                                if (currentScore == null || score < currentScore) {
-                                    scoreMap.put(id, score);
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumMatch.getKey());
+                    for (Integer id : assumptionsMap.keySet()) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmAssumptions = assumptionsMap.get(id);
+                        for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : algorithmAssumptions.values()) {
+                            for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : assumptionsAtScore) {
+                                if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
+                                    if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
+                                        double score = peptideAssumption.getScore();
+                                        Double currentScore = scoreMap.get(id);
+                                        if (currentScore == null || score < currentScore) {
+                                            scoreMap.put(id, score);
+                                        }
+                                    }
                                 }
                             }
                         }

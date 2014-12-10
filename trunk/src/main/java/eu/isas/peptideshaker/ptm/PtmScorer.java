@@ -119,15 +119,21 @@ public class PtmScorer {
         PSParameter psParameter = new PSParameter();
         double p1 = 1;
         Peptide psPeptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
-        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
-            if (assumption instanceof PeptideAssumption) {
-                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                Peptide sePeptide = peptideAssumption.getPeptide();
-                if (psPeptide.isSameSequence(sePeptide, sequenceMatchingPreferences) && psPeptide.sameModificationsAs(sePeptide)) {
-                    psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                    double ptemp = psParameter.getSearchEngineProbability();
-                    if (ptemp < p1) {
-                        p1 = ptemp;
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumMatch.getKey());
+        for (Integer id : assumptionsMap.keySet()) {
+            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmAssumptions = assumptionsMap.get(id);
+            for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : algorithmAssumptions.values()) {
+                for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : assumptionsAtScore) {
+                    if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                        PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
+                        Peptide sePeptide = peptideAssumption.getPeptide();
+                        if (psPeptide.isSameSequence(sePeptide, sequenceMatchingPreferences) && psPeptide.sameModificationsAs(sePeptide)) {
+                            psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                            double ptemp = psParameter.getSearchEngineProbability();
+                            if (ptemp < p1) {
+                                p1 = ptemp;
+                            }
+                        }
                     }
                 }
             }
@@ -157,42 +163,45 @@ public class PtmScorer {
 
                     double refP = 1, secondaryP = 1;
 
-                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions()) {
+                    for (Integer id : assumptionsMap.keySet()) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmAssumptions = assumptionsMap.get(id);
+                        for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : algorithmAssumptions.values()) {
+                            for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : assumptionsAtScore) {
+                                if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
 
-                        if (assumption instanceof PeptideAssumption) {
+                                    if (peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
 
-                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                        boolean modificationAtSite = false, modificationFound = false;
 
-                            if (peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
+                                        for (ModificationMatch modMatch : peptideAssumption.getPeptide().getModificationMatches()) {
 
-                                boolean modificationAtSite = false, modificationFound = false;
+                                            PTM ptm2 = ptmFactory.getPTM(modMatch.getTheoreticPtm());
 
-                                for (ModificationMatch modMatch : peptideAssumption.getPeptide().getModificationMatches()) {
+                                            if (ptm1.getMass() == ptm2.getMass()) {
 
-                                    PTM ptm2 = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+                                                modificationFound = true;
+                                                psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                                double p = psParameter.getSearchEngineProbability();
 
-                                    if (ptm1.getMass() == ptm2.getMass()) {
+                                                if (modMatch.getModificationSite() == modSite) {
 
-                                        modificationFound = true;
-                                        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                                        double p = psParameter.getSearchEngineProbability();
+                                                    modificationAtSite = true;
 
-                                        if (modMatch.getModificationSite() == modSite) {
-
-                                            modificationAtSite = true;
-
-                                            if (p < refP) {
-                                                refP = p;
+                                                    if (p < refP) {
+                                                        refP = p;
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                }
 
-                                if (!modificationAtSite && modificationFound) {
-                                    psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                                    double p = psParameter.getSearchEngineProbability();
-                                    if (p < secondaryP) {
-                                        secondaryP = p;
+                                        if (!modificationAtSite && modificationFound) {
+                                            psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                            double p = psParameter.getSearchEngineProbability();
+                                            if (p < secondaryP) {
+                                                secondaryP = p;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -347,37 +356,6 @@ public class PtmScorer {
             spectrumMatch.addUrParam(ptmScores);
             identification.updateSpectrumMatch(spectrumMatch);
         }
-    }
-
-    /**
-     * Attaches scores to possible PTM locations to spectrum matches.
-     *
-     * @param identification identification object containing the identification
-     * matches
-     * @param psmSpecificMap the PSM specific target/decoy scoring map
-     * @param inspectedSpectra the spectra to inspect
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param identificationParameters the identification parameters
-     * @param peptideSpectrumAnnotator the peptide spectrum annotator
-     *
-     * @throws Exception
-     */
-    public void scorePSMPTMs(Identification identification, PsmSpecificMap psmSpecificMap, ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
-
-        int max = inspectedSpectra.size();
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(max);
-
-        PSParameter psParameter = new PSParameter();
-        for (String spectrumKey : inspectedSpectra) {
-            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-            if (spectrumMatch.getBestPeptideAssumption() != null) {
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);
-            }
-        }
-
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**
@@ -1277,7 +1255,7 @@ public class PtmScorer {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true);
             for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, peptideSpectrumAnnotator, identification, identificationParameters, waitingHandler, exceptionHandler);

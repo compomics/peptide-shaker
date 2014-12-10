@@ -1922,7 +1922,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
 
                     while (psmIterator.hasNext()) {
 
@@ -1977,7 +1977,7 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
 
                     while (psmIterator.hasNext()) {
 

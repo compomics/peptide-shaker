@@ -192,13 +192,14 @@ public class PsIdentificationAlgorithmMatchesSection {
                 }
 
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
-                for (int advocateId : spectrumMatch.getAdvocates()) {
-                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptions = spectrumMatch.getAllAssumptions(advocateId);
-                    ArrayList<Double> scores = new ArrayList<Double>(assumptions.keySet());
+                for (int advocateId : assumptions.keySet()) {
+                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                    ArrayList<Double> scores = new ArrayList<Double>(advocateAssumptions.keySet());
                     Collections.sort(scores);
                     for (double score : scores) {
-                        for (SpectrumIdentificationAssumption assumption : assumptions.get(score)) {
+                        for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(score)) {
 
                             boolean firstFeature = true;
 
@@ -225,7 +226,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                                             peptideAssumption, spectrumKey, psParameter, identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else if (assumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) assumption;
-                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol, 
+                                    feature = getTagAssumptionFeature(identification, identificationFeaturesGenerator, shotgunProtocol,
                                             identificationParameters, keys, linePrefix, tagAssumption, spectrumKey, psParameter,
                                             identificationAlgorithmMatchesFeature, waitingHandler);
                                 } else {

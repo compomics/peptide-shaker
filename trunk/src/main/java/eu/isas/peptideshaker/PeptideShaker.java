@@ -674,13 +674,15 @@ public class PeptideShaker {
                 PSParameter psParameter = new PSParameter();
                 ArrayList<String> identifications = new ArrayList<String>();
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
-                for (int searchEngine1 : spectrumMatch.getAdvocates()) {
+                for (int searchEngine1 : assumptions.keySet()) {
 
-                    double bestEvalue = Collections.min(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
+                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocate1Map = assumptions.get(searchEngine1);
 
-                    for (SpectrumIdentificationAssumption assumption1 : spectrumMatch.getAllAssumptions(searchEngine1).get(bestEvalue)) {
+                    double bestEvalue = Collections.min(advocate1Map.keySet());
+
+                    for (SpectrumIdentificationAssumption assumption1 : advocate1Map.get(bestEvalue)) {
 
                         if (assumption1 instanceof PeptideAssumption) {
 
@@ -708,16 +710,18 @@ public class PeptideShaker {
                                     }
                                 }
 
-                                for (int searchEngine2 : spectrumMatch.getAdvocates()) {
+                                for (int searchEngine2 : assumptions.keySet()) {
 
                                     if (searchEngine1 != searchEngine2) {
 
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocate2Map = assumptions.get(searchEngine2);
+
                                         boolean found = false;
-                                        ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine2).keySet());
+                                        ArrayList<Double> eValues2 = new ArrayList<Double>(advocate2Map.keySet());
                                         Collections.sort(eValues2);
 
                                         for (double eValue2 : eValues2) {
-                                            for (SpectrumIdentificationAssumption assumption2 : spectrumMatch.getAllAssumptions(searchEngine2).get(eValue2)) {
+                                            for (SpectrumIdentificationAssumption assumption2 : advocate2Map.get(eValue2)) {
 
                                                 if (assumption2 instanceof PeptideAssumption) {
 
@@ -751,11 +755,11 @@ public class PeptideShaker {
                                 }
 
                                 if (!peptideAssumptions.get(p).get(proteinMax).containsKey(nSE)) {
-                                    ArrayList<PeptideAssumption> assumptions = new ArrayList<PeptideAssumption>();
-                                    assumptions.add(peptideAssumption1);
+                                    ArrayList<PeptideAssumption> assumptionList = new ArrayList<PeptideAssumption>();
+                                    assumptionList.add(peptideAssumption1);
                                     peptideAssumptions.get(p).get(proteinMax).put(nSE, new HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>());
                                     peptideAssumptions.get(p).get(proteinMax).get(nSE).put(-1.0, new HashMap<Double, ArrayList<PeptideAssumption>>());
-                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).put(-1.0, assumptions);
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).put(-1.0, assumptionList);
                                 } else {
                                     HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
                                     NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
@@ -765,8 +769,8 @@ public class PeptideShaker {
                                     boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
 
                                     if (peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(-1.0)) {
-                                        ArrayList<PeptideAssumption> assumptions = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).get(-1.0);
-                                        PeptideAssumption tempAssumption = assumptions.get(0);
+                                        ArrayList<PeptideAssumption> assumptionList = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).get(-1.0);
+                                        PeptideAssumption tempAssumption = assumptionList.get(0);
                                         Peptide peptide = tempAssumption.getPeptide();
                                         int precursorCharge = tempAssumption.getIdentificationCharge().value;
                                         annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
@@ -774,7 +778,7 @@ public class PeptideShaker {
                                                 spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation()).keySet().size();
                                         double coverage = nIons / peptide.getSequence().length();
                                         peptideAssumptions.get(p).get(proteinMax).get(nSE).put(coverage, new HashMap<Double, ArrayList<PeptideAssumption>>());
-                                        peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(-1.0, assumptions);
+                                        peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(-1.0, assumptionList);
                                         peptideAssumptions.get(p).get(proteinMax).get(nSE).remove(-1.0);
                                     }
 
@@ -788,42 +792,42 @@ public class PeptideShaker {
                                     HashMap<Double, ArrayList<PeptideAssumption>> coverageMap = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage);
                                     if (coverageMap == null) {
                                         coverageMap = new HashMap<Double, ArrayList<PeptideAssumption>>();
-                                        ArrayList<PeptideAssumption> assumptions = new ArrayList<PeptideAssumption>();
-                                        assumptions.add(peptideAssumption1);
-                                        coverageMap.put(-1.0, assumptions);
+                                        ArrayList<PeptideAssumption> assumptionList = new ArrayList<PeptideAssumption>();
+                                        assumptionList.add(peptideAssumption1);
+                                        coverageMap.put(-1.0, assumptionList);
                                         peptideAssumptions.get(p).get(proteinMax).get(nSE).put(coverage, coverageMap);
                                     } else {
-                                        ArrayList<PeptideAssumption> assumptions = coverageMap.get(-1.0);
-                                        if (assumptions != null) {
-                                            PeptideAssumption tempAssumption = assumptions.get(0);
+                                        ArrayList<PeptideAssumption> assumptionList = coverageMap.get(-1.0);
+                                        if (assumptionList != null) {
+                                            PeptideAssumption tempAssumption = assumptionList.get(0);
                                             double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
-                                            peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, assumptions);
+                                            peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, assumptionList);
                                             peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).remove(-1.0);
                                         }
 
                                         double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
-                                        assumptions = coverageMap.get(massError);
-
-                                        if (assumptions == null) {
-                                            assumptions = new ArrayList<PeptideAssumption>();
-                                            coverageMap.put(massError, assumptions);
+                                        assumptionList = coverageMap.get(massError);
+                                        if (assumptionList == null) {
+                                            assumptionList = new ArrayList<PeptideAssumption>(2);
+                                            coverageMap.put(massError, assumptionList);
                                         }
-
-                                        assumptions.add(peptideAssumption1);
+                                        assumptionList.add(peptideAssumption1);
                                     }
                                 }
                             }
                         } else if (assumption1 instanceof TagAssumption) {
                             TagAssumption tagAssumption = (TagAssumption) assumption1;
-                            ArrayList<TagAssumption> assumptions = tagAssumptions.get(bestEvalue);
-                            if (assumptions == null) {
-                                assumptions = new ArrayList<TagAssumption>();
-                                tagAssumptions.put(bestEvalue, assumptions);
+                            ArrayList<TagAssumption> assumptionList = tagAssumptions.get(bestEvalue);
+                            if (assumptionList == null) {
+                                assumptionList = new ArrayList<TagAssumption>();
+                                tagAssumptions.put(bestEvalue, assumptionList);
                             }
-                            assumptions.add(tagAssumption);
+                            assumptionList.add(tagAssumption);
                         }
                     }
                 }
+
+                SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumKey);
                 if (!peptideAssumptions.isEmpty()) {
 
                     PeptideAssumption bestPeptideAssumption = null;
@@ -884,17 +888,18 @@ public class PeptideShaker {
                         if (multiSE) {
 
                             // try to find the most likely modification localization based on the search engine results
-                            HashMap<PeptideAssumption, ArrayList<Double>> assumptions = new HashMap<PeptideAssumption, ArrayList<Double>>();
+                            HashMap<PeptideAssumption, ArrayList<Double>> assumptionPEPs = new HashMap<PeptideAssumption, ArrayList<Double>>();
                             String bestAssumptionKey = bestPeptideAssumption.getPeptide().getMatchingKey(sequenceMatchingPreferences);
 
-                            for (int searchEngine1 : spectrumMatch.getAdvocates()) {
+                            for (int searchEngine : assumptions.keySet()) {
 
                                 boolean found = false;
-                                ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
-                                Collections.sort(eValues2);
+                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMap = assumptions.get(searchEngine);
+                                ArrayList<Double> eValues = new ArrayList<Double>(advocateMap.keySet());
+                                Collections.sort(eValues);
 
-                                for (double eValue : eValues2) {
-                                    for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
+                                for (double eValue : eValues) {
+                                    for (SpectrumIdentificationAssumption assumption : advocateMap.get(eValue)) {
 
                                         if (assumption instanceof PeptideAssumption) {
 
@@ -905,19 +910,21 @@ public class PeptideShaker {
                                                 found = true;
                                                 boolean found2 = false;
 
-                                                for (PeptideAssumption assumption1 : assumptions.keySet()) {
+                                                for (PeptideAssumption assumption1 : assumptionPEPs.keySet()) {
                                                     if (assumption1.getPeptide().sameModificationsAs(peptideAssumption.getPeptide())) {
                                                         found2 = true;
                                                         psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                                        assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
+                                                        ArrayList<Double> peps = assumptionPEPs.get(assumption1);
+                                                        peps.add(psParameter.getSearchEngineProbability());
                                                         break;
                                                     }
                                                 }
 
                                                 if (!found2) {
-                                                    assumptions.put(peptideAssumption, new ArrayList<Double>());
+                                                    ArrayList<Double> peps = new ArrayList<Double>(1);
+                                                    assumptionPEPs.put(peptideAssumption, peps);
                                                     psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                                    assumptions.get(peptideAssumption).add(psParameter.getSearchEngineProbability());
+                                                    peps.add(psParameter.getSearchEngineProbability());
                                                 }
                                             }
                                         }
@@ -932,17 +939,18 @@ public class PeptideShaker {
                             Double bestSeP = null;
                             int nSe = -1;
 
-                            for (PeptideAssumption peptideAssumption : assumptions.keySet()) {
+                            for (PeptideAssumption peptideAssumption : assumptionPEPs.keySet()) {
 
-                                Double sep = Collections.min(assumptions.get(peptideAssumption));
+                                ArrayList<Double> peps = assumptionPEPs.get(peptideAssumption);
+                                Double sep = Collections.min(peps);
 
                                 if (bestSeP == null || bestSeP > sep) {
                                     bestSeP = sep;
-                                    nSe = assumptions.get(peptideAssumption).size();
+                                    nSe = peps.size();
                                     bestPeptideAssumption = peptideAssumption;
-                                } else if (assumptions.get(peptideAssumption).size() > nSe) {
-                                    if (sep != null && bestSeP != null && (Math.abs(sep - bestSeP) <= 1e-10)) {
-                                        nSe = assumptions.get(peptideAssumption).size();
+                                } else if (peps.size() > nSe) {
+                                    if (sep != null && (Math.abs(sep - bestSeP) <= 1e-10)) {
+                                        nSe = peps.size();
                                         bestPeptideAssumption = peptideAssumption;
                                     }
                                 }
@@ -961,6 +969,7 @@ public class PeptideShaker {
                         Peptide psPeptide = new Peptide(sePeptide.getSequence(), psModificationMatches);
                         psPeptide.setParentProteins(psProteins);
                         PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.peptideShaker.getIndex(), bestPeptideAssumption.getIdentificationCharge(), retainedP);
+
                         spectrumMatch.setBestPeptideAssumption(psAssumption);
 
                         if (orderedPsmMap != null) {
@@ -1050,25 +1059,27 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
+        }
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            // batch load the spectrum matches
-            identification.loadSpectrumMatches(spectrumFileName, null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true);
 
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            while (psmIterator.hasNext()) {
 
-                waitingHandler.increaseSecondaryProgressCounter();
-
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
 
                 HashMap<Double, ArrayList<PSParameter>> pepToParameterMap = new HashMap<Double, ArrayList<PSParameter>>();
 
-                for (int searchEngine : spectrumMatch.getAdvocates()) {
+                for (int searchEngine : assumptionsMap.keySet()) {
 
-                    ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
+                    HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMapping = assumptionsMap.get(searchEngine);
+                    ArrayList<Double> eValues = new ArrayList<Double>(seMapping.keySet());
                     Collections.sort(eValues);
                     double previousP = 0;
                     ArrayList<PSParameter> previousAssumptionsParameters = new ArrayList<PSParameter>();
@@ -1076,7 +1087,7 @@ public class PeptideShaker {
 
                     for (double eValue : eValues) {
 
-                        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
+                        for (SpectrumIdentificationAssumption assumption : seMapping.get(eValue)) {
                             PSParameter psParameter = new PSParameter();
                             psParameter = (PSParameter) assumption.getUrParam(psParameter);
                             if (psParameter == null) {
@@ -1163,14 +1174,20 @@ public class PeptideShaker {
                     previousParameter.setDeltaPEP(delta);
                 }
 
-                identification.updateSpectrumMatch(spectrumMatch);
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                identification.updateAssumptions(spectrumKey, assumptionsMap);
+
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressCounter();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
                 }
             }
         }
 
-        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        }
     }
 
     /**
@@ -1196,7 +1213,7 @@ public class PeptideShaker {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
 
             while (psmIterator.hasNext()) {
 
