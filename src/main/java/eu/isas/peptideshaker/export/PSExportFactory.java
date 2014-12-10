@@ -466,7 +466,6 @@ public class PSExportFactory implements ExportFactory {
         // molecular weight and spectrum counting
         sectionContent.add(PsProteinFeature.mw);
         sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
-        sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
         sectionContent.add(PsProteinFeature.confident_modification_sites);
@@ -567,7 +566,6 @@ public class PSExportFactory implements ExportFactory {
         // molecular weight and spectrum counting
         sectionContent.add(PsProteinFeature.mw);
         sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
-        sectionContent.add(PsProteinFeature.spectrum_counting_empai);
 
         // variable_ptms
         sectionContent.add(PsProteinFeature.confident_modification_sites);

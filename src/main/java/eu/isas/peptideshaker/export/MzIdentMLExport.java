@@ -531,7 +531,7 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
 
             while (psmIterator.hasNext()) {
 
@@ -1057,7 +1057,7 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, true);
 
             while (psmIterator.hasNext()) {
 
@@ -1444,10 +1444,11 @@ public class MzIdentMLExport {
             // add the individual search engine results
             Double mascotScore = null, msAmandaScore = null;
             HashMap<Integer, Double> scores = new HashMap<Integer, Double>();
-            for (Integer tempAdvocate : spectrumMatch.getAdvocates()) {
-                ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate).keySet());
-                for (double eValue : eValues) {
-                    for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(tempAdvocate).get(eValue)) {
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(psmKey);
+            for (Integer tempAdvocate : assumptions.keySet()) {
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMap = assumptions.get(tempAdvocate);
+                for (double eValue : advocateMap.keySet()) {
+                    for (SpectrumIdentificationAssumption currentAssumption : advocateMap.get(eValue)) {
                         if (currentAssumption instanceof PeptideAssumption) {
                             PeptideAssumption peptideAssumption = (PeptideAssumption) currentAssumption;
                             if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(

@@ -202,7 +202,7 @@ public class PrideXmlExport {
      */
     public PrideXmlExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             SpectrumCountingPreferences spectrumCountingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, PeptideSpectrumAnnotator spectrumAnnotator,
-             String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
+            String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ReferenceGroup referenceGroup, ContactGroup contactGroup, Sample sample, Protocol protocol, Instrument instrument,
             File outputFolder, String fileName, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
@@ -368,7 +368,7 @@ public class PrideXmlExport {
             }
             identification.loadPeptideMatchParameters(peptideProbabilities, null);
             identification.loadProteinMatchParameters(proteinProbabilities, null);
-            
+
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
             for (String proteinKey : identification.getProteinIdentification()) {
@@ -439,9 +439,11 @@ public class PrideXmlExport {
                         // Get scores
                         HashMap<Integer, Double> eValues = new HashMap<Integer, Double>();
                         Double mascotScore = null, msAmandaScore = null;
-                        for (int se : spectrumMatch.getAdvocates()) {
-                            for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
-                                for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                        for (int se : assumptions.keySet()) {
+                            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> seMap = assumptions.get(se);
+                            for (double eValue : seMap.keySet()) {
+                                for (SpectrumIdentificationAssumption assumption : seMap.get(eValue)) {
                                     if (assumption instanceof PeptideAssumption) {
                                         PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
                                         if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
@@ -607,9 +609,8 @@ public class PrideXmlExport {
                                 br.write(getCurrentTabSpace() + "<userParam name=\"" + Advocate.getAdvocate(tempAdvocate).getName()
                                         + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));  // @TODO: add cv params for the other new advocates
                             }
-                            
-                            // @TODO: add scores for MyriMatch!
 
+                            // @TODO: add scores for MyriMatch!
                             // @TODO: add generic e-value for user algorithms?
                         }
 
@@ -1093,7 +1094,7 @@ public class PrideXmlExport {
         tabCounter++;
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
-        
+
         // fragment mass accuracy
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000161\" name=\"Fragment mass tolerance setting\" value=\""
                 + searchParameters.getFragmentIonAccuracy() + "\" />" + System.getProperty("line.separator"));

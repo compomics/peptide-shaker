@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.TagComponent;
@@ -23,6 +24,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -2370,7 +2372,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
 
         int fileCounter = 1;
-        PSParameter probabilities = new PSParameter();
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         numberOfValidatedPsmsMap = new HashMap<String, Integer>();
 
@@ -2384,34 +2388,38 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             int numberOfValidatedPsms = 0;
             totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
 
-            progressDialog.setTitle("Loading Spectrum Information. Please Wait... (" + fileCounter + "/" + spectrumFiles.size() + ")");
-            identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
-            progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + fileCounter + "/" + spectrumFiles.size() + ")");
-            identification.loadSpectrumMatches(fileName, progressDialog);
             progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + spectrumFiles.size() + ") ");
+            PsmIterator psmIterator = identification.getPsmIterator(fileName, parameters, true);
 
-            for (String spectrumKey : identification.getSpectrumIdentification(fileName)) {
+            while (psmIterator.hasNext()) {
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    ArrayList<Integer> currentAdvocates = new ArrayList<Integer>();
-                    probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
-                    if (probabilities.getMatchValidationLevel().isValidated()) {
+                    ArrayList<Integer> currentAdvocates = new ArrayList<Integer>();
+                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                    if (psParameter.getMatchValidationLevel().isValidated()) {
 
                         totalPeptideShakerIds++;
                         numberOfValidatedPsms++;
 
+                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
                         for (Integer tempAdvocate : advocatesUsed) {
-                            if (spectrumMatch.getFirstHit(tempAdvocate) != null) {
-                                SpectrumIdentificationAssumption firstHit = spectrumMatch.getFirstHit(tempAdvocate);
-                                if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                        peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
-                                    currentAdvocates.add(tempAdvocate);
+                            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate);
+                            if (advocateAssumptions != null) {
+                                ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+                                Collections.sort(eValues);
+                                for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
+                                    if ((firstHit instanceof PeptideAssumption) && ((PeptideAssumption) firstHit).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                                        currentAdvocates.add(tempAdvocate);
+                                    }
                                 }
                             }
                         }
@@ -2618,9 +2626,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     } else {
                         throw new IllegalArgumentException("No best hit found for spectrum " + spectrumMatch.getKey());
                     }
+
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(key);
+
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
-                        isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()),
+                        isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()),
                         sequence,
                         proteins,
                         probabilities.getPsmConfidence(),
@@ -2631,11 +2642,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     // add the search results
                     for (Integer tempAdvocate : advocatesUsed) {
-                        if (spectrumMatch.getAllAssumptions(tempAdvocate) != null) {
-                            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(tempAdvocate).keySet());
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate);
+                        if (advocateAssumptions != null) {
+                            ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
                             Collections.sort(eValues);
                             for (double eValue : eValues) {
-                                for (SpectrumIdentificationAssumption currentAssumption : spectrumMatch.getAllAssumptions(tempAdvocate).get(eValue)) {
+                                for (SpectrumIdentificationAssumption currentAssumption : advocateAssumptions.get(eValue)) {
                                     addIdResultsToTable(currentAssumption, probabilities, tempAdvocate);
                                 }
                             }
@@ -3140,37 +3152,36 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * accounting for modification localization, false otherwise.
      *
      * @param spectrumMatch the PSM to check
+     * @param assumptions map of the assumptions for this spectrum
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return true if all the used id software agree on the top PSM
      */
-    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences) {
+    public static int isBestPsmEqualForAllIdSoftware(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, SequenceMatchingPreferences sequenceMatchingPreferences) {
 
-        // @TODO: the values should be stored and resued?
         HashMap<Integer, ArrayList<PeptideAssumption>> peptideAssumptions = new HashMap<Integer, ArrayList<PeptideAssumption>>();
         ArrayList<Integer> tempUsedAdvocates = new ArrayList<Integer>();
 
         for (Advocate tempAdvocate : Advocate.values()) {
             int advocateIndex = tempAdvocate.getIndex();
-            if (spectrumMatch.getAllAssumptions(advocateIndex) != null) {
-                ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocateIndex).keySet());
+            HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(tempAdvocate.getIndex());
+            if (advocateAssumptions != null) {
+                ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
                 Collections.sort(eValues);
 
-                if (eValues.size() > 0) {
-                    if (spectrumMatch.getAllAssumptions(advocateIndex).get(eValues.get(0)).size() > 0) {
-                        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValues.get(0))) {
-                            if (assumption instanceof PeptideAssumption) {
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                ArrayList<PeptideAssumption> advocatePeptides = peptideAssumptions.get(advocateIndex);
-                                if (advocatePeptides == null) {
-                                    advocatePeptides = new ArrayList<PeptideAssumption>();
-                                    peptideAssumptions.put(advocateIndex, advocatePeptides);
-                                }
-                                advocatePeptides.add(peptideAssumption);
+                for (double eValue : eValues) {
+                    for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
+                        if (assumption instanceof PeptideAssumption) {
+                            PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                            ArrayList<PeptideAssumption> advocatePeptides = peptideAssumptions.get(advocateIndex);
+                            if (advocatePeptides == null) {
+                                advocatePeptides = new ArrayList<PeptideAssumption>();
+                                peptideAssumptions.put(advocateIndex, advocatePeptides);
                             }
-                            if (!tempUsedAdvocates.contains(advocateIndex)) {
-                                tempUsedAdvocates.add(advocateIndex);
-                            }
+                            advocatePeptides.add(peptideAssumption);
+                        }
+                        if (!tempUsedAdvocates.contains(advocateIndex)) {
+                            tempUsedAdvocates.add(advocateIndex);
                         }
                     }
                 }
@@ -3301,7 +3312,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             idSoftwareAgreement = NO_ID;
                         } else {
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                            idSoftwareAgreement = isBestPsmEqualForAllIdSoftware(spectrumMatch, assumptions, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                         }
                         return idSoftwareAgreement;
                     case 2:

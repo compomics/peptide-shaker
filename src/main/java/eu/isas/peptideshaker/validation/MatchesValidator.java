@@ -45,6 +45,7 @@ import eu.isas.peptideshaker.utils.Metrics;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -252,7 +253,7 @@ public class MatchesValidator {
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
 
             while (psmIterator.hasNext()) {
 
@@ -287,13 +288,19 @@ public class MatchesValidator {
                             Peptide bestPeptide = peptideAssumption.getPeptide();
                             ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
 
-                            for (int advocateId : spectrumMatch.getAdvocates()) {
-                                for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
-                                    if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
-                                        Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-                                        if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                            agreementAdvocates.add(advocateId);
-                                            break;
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                            for (int advocateId : assumptions.keySet()) {
+                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                                if (advocateAssumptions != null) {
+                                    ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+                                    Collections.sort(eValues);
+                                    for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
+                                        if (firstHit instanceof PeptideAssumption) {
+                                            Peptide advocatePeptide = ((PeptideAssumption) firstHit).getPeptide();
+                                            if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
+                                                agreementAdvocates.add(advocateId);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -312,13 +319,11 @@ public class MatchesValidator {
 
                 // go through the peptide assumptions
                 if (inputMap != null) { //backward compatibility check
-
-                    for (Integer advocateId : spectrumMatch.getAdvocates()) {
-
-                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptions = spectrumMatch.getAllAssumptions(advocateId);
-
-                        for (double eValue : assumptions.keySet()) {
-                            for (SpectrumIdentificationAssumption spectrumIdAssumption : assumptions.get(eValue)) {
+                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                    for (int advocateId : assumptions.keySet()) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                        for (double eValue : advocateAssumptions.keySet()) {
+                            for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
                                 if (spectrumIdAssumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
                                     updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator);
@@ -380,7 +385,7 @@ public class MatchesValidator {
                         inputMap.resetAdvocateContributions(spectrumFileName);
                     }
 
-                    psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters);
+                    psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
 
                     while (psmIterator.hasNext()) {
 
@@ -398,13 +403,17 @@ public class MatchesValidator {
                                 if (inputMap != null) {
                                     Peptide bestPeptide = peptideAssumption.getPeptide();
                                     ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
-                                    for (int advocateId : spectrumMatch.getAdvocates()) {
-                                        for (SpectrumIdentificationAssumption spectrumIdentificationAssumption : spectrumMatch.getFirstHits(advocateId)) {
-                                            if (spectrumIdentificationAssumption instanceof PeptideAssumption) {
-                                                Peptide advocatePeptide = ((PeptideAssumption) spectrumIdentificationAssumption).getPeptide();
-                                                if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                                    agreementAdvocates.add(advocateId);
-                                                    break;
+                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                                    for (int advocateId : assumptions.keySet()) {
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                                        for (double eValue : advocateAssumptions.keySet()) {
+                                            for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
+                                                if (spectrumIdAssumption instanceof PeptideAssumption) {
+                                                    Peptide advocatePeptide = ((PeptideAssumption) spectrumIdAssumption).getPeptide();
+                                                    if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
+                                                        agreementAdvocates.add(advocateId);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }

@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -76,22 +77,25 @@ public class PsmScorer {
         //HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            // batch load the spectrum matches
-            identification.loadSpectrumMatches(spectrumFileName, null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
 
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            while (psmIterator.hasNext()) {
 
-                waitingHandler.increaseSecondaryProgressCounter();
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
-                for (int advocateIndex : spectrumMatch.getAdvocates()) {
+                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+
+                for (int advocateIndex : assumptions.keySet()) {
 
                     HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
                     if (scoresForAdvocate != null) {
 
-                        for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
-                            for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateIndex);
+
+                        for (double eValue : advocateAssumptions.keySet()) {
+                            for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
 
                                 if (assumption instanceof PeptideAssumption) {
 
@@ -144,8 +148,9 @@ public class PsmScorer {
                     }
                 }
 
-                identification.updateSpectrumMatch(spectrumMatch);
+                identification.updateAssumptions(spectrumKey, assumptions);
 
+                waitingHandler.increaseSecondaryProgressCounter();
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
@@ -231,48 +236,53 @@ public class PsmScorer {
 //        br.newLine();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            // batch load the spectrum matches
-            identification.loadSpectrumMatches(spectrumFileName, null);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
 
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
+            while (psmIterator.hasNext()) {
 
-                waitingHandler.increaseSecondaryProgressCounter();
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
-                for (int advocateIndex : spectrumMatch.getAdvocates()) {
+                for (int advocateIndex : assumptions.keySet()) {
 
-                    for (double eValue : spectrumMatch.getAllAssumptions(advocateIndex).keySet()) {
+                    HashSet<Integer> scoresForAdvocate = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
 
-                        for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateIndex).get(eValue)) {
+                    if (scoresForAdvocate != null) {
 
-                            if (assumption instanceof PeptideAssumption) {
+                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateIndex);
 
-                                psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                        for (double eValue : advocateAssumptions.keySet()) {
+                            for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(eValue)) {
 
-                                double score = 1;
+                                if (assumption instanceof PeptideAssumption) {
 
-                                HashSet<Integer> scores = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
+                                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
 
-                                if (scores.size() == 1 || !sequenceFactory.concatenatedTargetDecoy()) {
-                                    score = psParameter.getIntermediateScore(scores.iterator().next());
-                                } else {
-                                    for (int scoreIndex : scores) {
-                                        TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
-                                        Double intermediateScore = psParameter.getIntermediateScore(scoreIndex);
-                                        if (intermediateScore != null) {
-                                            double p = targetDecoyMap.getProbability(intermediateScore);
-                                            score *= p;
+                                    double score = 1;
+
+                                    HashSet<Integer> scores = psmScoringPreferences.getScoreForAlgorithm(advocateIndex);
+
+                                    if (scores.size() == 1 || !sequenceFactory.concatenatedTargetDecoy()) {
+                                        score = psParameter.getIntermediateScore(scores.iterator().next());
+                                    } else {
+                                        for (int scoreIndex : scores) {
+                                            TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
+                                            Double intermediateScore = psParameter.getIntermediateScore(scoreIndex);
+                                            if (intermediateScore != null) {
+                                                double p = targetDecoyMap.getProbability(intermediateScore);
+                                                score *= p;
+                                            }
                                         }
                                     }
-                                }
 
-                                assumption.setScore(score);
+                                    assumption.setScore(score);
 
-                                PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                Peptide peptide = peptideAssumption.getPeptide();
-                                boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
-                                inputMap.addEntry(advocateIndex, spectrumFileName, score, decoy);
+                                    PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
+                                    Peptide peptide = peptideAssumption.getPeptide();
+                                    boolean decoy = peptide.isDecoy(sequenceMatchingPreferences);
+                                    inputMap.addEntry(advocateIndex, spectrumFileName, score, decoy);
 
 //                                if (decoy) {
 //                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 1);
@@ -280,15 +290,17 @@ public class PsmScorer {
 //                                    br.write(Spectrum.getSpectrumTitle(spectrumKey) + "\t" + peptide.getKey() + "\t" + score + "\t" + 0);
 //                                }
 //                                br.newLine();
+                                }
                             }
                         }
                     }
                 }
 
-                identification.updateSpectrumMatch(spectrumMatch);
+                identification.updateAssumptions(spectrumKey, assumptions);
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
+                waitingHandler.increaseSecondaryProgressCounter();
             }
         }
 
