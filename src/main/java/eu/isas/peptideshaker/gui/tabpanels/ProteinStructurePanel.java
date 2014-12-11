@@ -1891,7 +1891,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 // check if we ought to show a tooltip with mod details
                 String sequence = (String) peptideTable.getValueAt(row, column);
 
-                if (sequence.indexOf("<span") != -1) {
+                if (sequence.contains("<span")) {
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey));

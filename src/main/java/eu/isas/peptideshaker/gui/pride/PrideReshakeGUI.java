@@ -2050,7 +2050,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      */
     private void loadPublicProjects() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
+        progressDialog = new ProgressDialogX(this,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
@@ -2095,11 +2095,11 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     int projectBatchSize = 100;
                     int numberOfPages = (int) Math.ceil(((double) numberOfProjects) / projectBatchSize);
-                    
+
                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
                     progressDialog.increasePrimaryProgressCounter();
-                    
+
                     // load the projects in batches
                     for (int currentPage = 0; currentPage < numberOfPages; currentPage++) {
 
@@ -2166,7 +2166,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
-                            
+
                             progressDialog.increasePrimaryProgressCounter();
                         }
 
@@ -2186,13 +2186,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         if (progressDialog.isRunCanceled()) {
                             break;
                         }
-                        
+
                         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
                         projectsPanel.repaint();
                     }
-                    
+
                     progressDialog.setRunFinished();
-                    
+
                 } catch (HttpServerErrorException e) {
                     System.out.println("project/count or project/list");
                     e.printStackTrace();
@@ -2240,7 +2240,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Assays").getCellRenderer()).setMinimumChartValue(2.0);
 
                 projectsTable.repaint();
-
             }
         }.start();
     }
@@ -2491,22 +2490,29 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                             allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
                                         }
 
+                                        // add details about the ptms
                                         prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
-
-                                        // save the report to disk
-                                        File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
-                                        String tempReport = "<html>" + prideSearchParametersReport;
-                                        tempReport += "<br></html>";
-                                        FileWriter fw = new FileWriter(searchSettingsReportFile);
-                                        BufferedWriter bw = new BufferedWriter(fw);
-                                        bw.write(tempReport);
-                                        bw.close();
-                                        fw.close();
-
-                                        prideSearchParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
-                                        prideSearchParametersReport += "<br></html>";
-                                        prideSearchParametersReport = "<html>" + prideSearchParametersReport;
                                     }
+
+                                    // add details about the files reprocessed
+                                    prideSearchParametersReport += "<br><b>Files used:</b><br>";
+                                    for (String tempFile : allFiles) {
+                                        prideSearchParametersReport += tempFile + "<br>";
+                                    }
+
+                                    // save the report to disk
+                                    File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
+                                    String tempReport = "<html>" + prideSearchParametersReport;
+                                    tempReport += "<br></html>";
+                                    FileWriter fw = new FileWriter(searchSettingsReportFile);
+                                    BufferedWriter bw = new BufferedWriter(fw);
+                                    bw.write(tempReport);
+                                    bw.close();
+                                    fw.close();
+
+                                    prideSearchParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
+                                    prideSearchParametersReport += "<br></html>";
+                                    prideSearchParametersReport = "<html>" + prideSearchParametersReport;
                                 }
                             }
                         } else {
@@ -2828,19 +2834,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         // map the ptms to utilities ptms
         String allPtms = (String) projectsTable.getValueAt(projectsTable.getSelectedRow(), projectsTable.getColumn("PTMs").getModelIndex());
         prideParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
-
-        // save the report to disk
-        File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
-        String tempReport = prideParametersReport;
-        tempReport += "<br></html>";
-        FileWriter fw = new FileWriter(searchSettingsReportFile);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(tempReport);
-        bw.close();
-        fw.close();
-
-        prideParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
-        prideParametersReport += "<br></html>";
 
         boolean debugOutput = false;
 

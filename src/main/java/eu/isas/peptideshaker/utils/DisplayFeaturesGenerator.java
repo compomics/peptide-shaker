@@ -101,6 +101,10 @@ public class DisplayFeaturesGenerator {
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
+                    } else if (databaseType == Header.DatabaseType.NextProt) {
+                        accessionNumberWithLink = "<html><a href=\"" + getNextProtAccessionLink(proteinAccession)
+                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
+                                + proteinAccession + "</font></a></html>";
                     } else if (databaseType == Header.DatabaseType.NCBI) {
                         accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
@@ -118,7 +122,7 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Transforms the protein accesion number into an HTML link to the
+     * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
      * href tags, where the main use is to include it in the protein tables.
      *
@@ -151,6 +155,14 @@ public class DisplayFeaturesGenerator {
                         if (database == DatabaseType.IPI || database == DatabaseType.UniProt) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
+                            accessionNumberWithLink.append("\"><font color=\"");
+                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
+                            accessionNumberWithLink.append("\">");
+                            accessionNumberWithLink.append(proteinAccession);
+                            accessionNumberWithLink.append("</font></a>, ");
+                        } else if (database == DatabaseType.NextProt) {
+                            accessionNumberWithLink.append("<a href=\"");
+                            accessionNumberWithLink.append(getNextProtAccessionLink(proteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
                             accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
                             accessionNumberWithLink.append("\">");
@@ -209,6 +221,18 @@ public class DisplayFeaturesGenerator {
      */
     public String getUniProtAccessionLink(String proteinAccession) {
         return "http://www.uniprot.org/uniprot/" + proteinAccession;
+    }
+
+    /**
+     * Returns the protein accession number as a web link to the given protein
+     * at http://www.nextprot.org.
+     *
+     * @param proteinAccession the protein accession number
+     * @return the protein accession web link
+     */
+    public String getNextProtAccessionLink(String proteinAccession) {
+        proteinAccession = proteinAccession.substring(0, proteinAccession.lastIndexOf("-")); // have to remove the isoform info
+        return "http://www.nextprot.org/db/entry/" + proteinAccession;
     }
 
     /**
@@ -559,8 +583,8 @@ public class DisplayFeaturesGenerator {
     /**
      * Filters the modification map according to the user's display preferences.
      *
-     * @param modificationMap the map of modifications to filter (amino acid &gt;
-     * list of modifications, 1 is the first amino acid)
+     * @param modificationMap the map of modifications to filter (amino acid
+     * &gt; list of modifications, 1 is the first amino acid)
      * @param displayedPtms list of PTMs to display
      *
      * @return a map of filtered modifications based on the user display

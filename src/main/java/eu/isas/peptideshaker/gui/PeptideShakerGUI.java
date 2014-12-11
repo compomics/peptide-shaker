@@ -4391,7 +4391,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
     /**
      * Opens one or more protein links in the default web browser.
      *
-     * @param links
+     * @param links the links to open
      */
     public void openProteinLinks(String links) {
 
@@ -4853,7 +4853,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
             }
         }
 
-        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected() && !adaptCheckBoxMenuItem.isSelected());
         annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
         annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
 

@@ -684,8 +684,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * will be just wide enough to show the column head and the widest cell in
      * the column. Margin pixels are added to the left and right (resulting in
      * an additional width of 2*margin pixels. Returns null if the max width
-     * cannot be set. Warning: when changing this method please update reporter
-     * as well!
+     * cannot be set.
      *
      * @param table the table
      * @param colIndex the colum index
@@ -709,7 +708,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         int width = comp.getPreferredSize().width;
 
         // get maximum width of column data
-        if (maxProteinKeyLength == null || maxProteinKeyLength > (table.getColumnName(colIndex).length() + margin)) {
+        if (maxProteinKeyLength == null || (maxProteinKeyLength + 5) > (table.getColumnName(colIndex).length() + margin)) {
             return null;
         }
 

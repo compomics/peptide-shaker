@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
 import com.compomics.util.experiment.biology.Peptide;
@@ -1560,7 +1559,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideShakerJTableMouseExited
 
     /**
-     * Opens the protein web links if the protein(s) column is selcted.
+     * Opens the protein web links if the protein(s) column is selected.
      *
      * @param evt
      */
@@ -1570,7 +1569,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int column = peptideShakerJTable.columnAtPoint(evt.getPoint());
 
         if (row != -1) {
-            if (column == 1) {
+            if (column == 3) {
 
                 // open protein links in web browser
                 if (evt.getButton() == MouseEvent.BUTTON1
@@ -2054,7 +2053,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_spectrumTableMouseExited
 
     /**
-     * Show the statisics popup menu.
+     * Show the statistics popup menu.
      *
      * @param evt
      */
@@ -2090,14 +2089,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             // open protein link in web browser
             if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
-
-                String link = (String) spectrumTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
-
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                peptideShakerGUI.openProteinLinks((String) spectrumTable.getValueAt(row, column));
             }
         }
 
