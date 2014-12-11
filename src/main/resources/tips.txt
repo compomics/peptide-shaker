@@ -38,8 +38,8 @@ Special requests for the design of the spectrum?<br><br>You can change peak colo
 Want to create your own report?<br><br>Try our <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
 Tired of writing <i>Materials and Methods</i>?<br><br>Check out our <i>Methods Section</i> export available in the <i>Export</i> menu.
 Need a report for your collaborators?<br><br> Try our <i>Certificate of Analysis</i> available in the <i>Custom Reports</i> via <i>Identification Features</i> in the <i>Export</i> menu.
-Reviewing a publication?<br><br>You can reprocess and inspect data from <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option!
-Want to search published data for new modifications?<br><br>You can reprocess and inspect data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option!
+Reviewing a publication?<br><br>You can reprocess and inspect data from <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>PRIDE Reshake</i> option in the Welcome Dialog!
+Want to search published data for new modifications?<br><br>You can reprocess and inspect data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option in the Welcome Dialog!
 Teaching bioinformatics?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Want to learn more?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 X's in your database?<br><br>X's in protein sequences make it difficult for <b>PeptideShaker</b> to interpret your results. Peptides with more than 75% X's will be ignored.
@@ -51,7 +51,7 @@ Interested in PTM localization?<br><br>Try our protein level PTM export via <i>I
 Interested in phosphorylation?<br><br>Try our phosphorylation export via <i>Identification Features</i> in the <i>Export</i> menu.
 Using large databases?<br><br>When using large databases the import of your files will be slower and the results will contain more false positives. Be sure to calibrate the database to your need.
 Need exports for algorithm training or spectral libraries?<br><br>Contact us at our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!
-PeptideShaker runs a lot faster on SSD discs!<br><br>Given that a lot of information is extracted from the mgf and FASTA files it is recommened to store these on an SSD disc!
+PeptideShaker runs a lot faster on SSD discs!<br><br>Given that a lot of information is extracted from the mgf and FASTA files it is recommended to store these on an SSD disc!
 Terminal modifications on degraded proteins?<br><br><b>PeptideShaker</b> excludes all protein terminal modifications which do not occur at the terminus of a protein sequence or on the second amino acid when the first is a methionine. If you need more flexible modification mapping use modifications at peptide termini.
 Doubtful matches?<br><br><b>PeptideShaker</b> flags low confidence validation with a yellow warning icon. Clicking on the icon will provide you all details!
 Using <b>PeptideShaker</b> without <b>SearchGUI</b>?<br><br>Don't forget to provide the identification parameters when creating a project!
