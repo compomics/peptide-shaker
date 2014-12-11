@@ -657,9 +657,9 @@ public class FileImporter {
             LinkedList<SpectrumMatch> idFileSpectrumMatches = null;
             try {
                 if (peptideMapper != null && !peptideMapper.isCanceled()) {
-                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSequenceMatchingPreferences(), true);
+                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), identificationParameters.getSequenceMatchingPreferences(), true);
                 } else {
-                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, null, true);
+                    idFileSpectrumMatches = fileReader.getAllSpectrumMatches(waitingHandler, identificationParameters.getSearchParameters(), null, true);
                 }
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"

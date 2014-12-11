@@ -4495,7 +4495,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
 
-                            if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey)) {
+                            if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey) && psmTable.getSelectedRowCount() == 1) {
                                 if (annotationPreferences.useAutomaticAnnotation()) {
                                     annotationPreferences.setNeutralLossesSequenceDependant(true);
                                 }
