@@ -4,8 +4,10 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
@@ -21,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -159,11 +162,90 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         ((TitledBorder) uniqueHitsJPanel.getBorder()).setTitle("Unique Hits (" + uniqueMatches.size() + ")");
         ((TitledBorder) relatedHitsJPanel.getBorder()).setTitle("Related Hits (" + associatedMatches.size() + ")");
 
-        // The index should be set in the design according to the PSParameter class static fields!
+        // the index should be set in the design according to the PSParameter class static fields!
         groupClassJComboBox.setSelectedIndex(psParameter.getProteinInferenceClass());
+
+        // set up the protein inference graph
+        drawGraph();
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
+    }
+
+    /**
+     * Draw the protein inference graph.
+     */
+    private void drawGraph() {
+
+        ArrayList<String> nodes = new ArrayList<String>();
+        HashMap<String, String> nodeProperties = new HashMap<String, String>();
+        HashMap<String, String> edgeProperties = new HashMap<String, String>();
+        HashMap<String, String> nodeToolTips = new HashMap<String, String>();
+        HashMap<String, ArrayList<String>> edges = new HashMap<String, ArrayList<String>>();
+        ArrayList<String> selectedNodes = new ArrayList<String>();
+
+        ArrayList<String> peptideKeys = inspectedMatch.getPeptideMatchesKeys();
+
+        for (String tempPeptideKey : peptideKeys) {
+
+            try {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(tempPeptideKey);
+                String peptideNodeName = "Peptide " + tempPeptideKey;
+                nodeToolTips.put(peptideNodeName, peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
+                nodes.add(peptideNodeName);
+
+                PSParameter peptideMatchParameter = (PSParameter) identification.getPeptideMatchParameter(tempPeptideKey, new PSParameter());
+                nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
+
+                ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+                for (String tempProteinAccession : possibleProteins) {
+
+                    String proteinNodeKey = "Protein " + tempProteinAccession;
+
+                    if (!nodes.contains(tempProteinAccession)) {
+                        nodes.add(proteinNodeKey);
+                        nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription() + "<html>");
+                        if (accessions.contains(tempProteinAccession)) {
+                            selectedNodes.add(proteinNodeKey);
+                        }
+
+                        PSParameter proteinMatchParameter = (PSParameter) identification.getProteinMatchParameter(tempProteinAccession, new PSParameter());
+                        String nodeProperty = "";
+                        if (proteinMatchParameter != null) {
+                            nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
+                        } else {
+                            nodeProperty += -1;
+                        }
+                        String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
+                        if (proteinEvidenceLevel != null) {
+                            nodeProperty += "|" + proteinEvidenceLevel;
+                        }
+                        nodeProperties.put(proteinNodeKey, nodeProperty);
+                    }
+
+                    ArrayList<String> tempEdges = edges.get(peptideNodeName);
+                    if (tempEdges == null) {
+                        tempEdges = new ArrayList<String>();
+                    }
+                    if (!tempEdges.contains(proteinNodeKey)) {
+                        tempEdges.add(proteinNodeKey);
+
+                        Protein protein = sequenceFactory.getProtein(tempProteinAccession);
+                        Boolean enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                                peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
+                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+                        edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
+                    }
+                    edges.put(peptideNodeName, tempEdges); // @TODO: not needed?
+                }
+            } catch (Exception e) {
+                e.printStackTrace(); // @TODO: better error handling!
+            }
+        }
+
+        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
     }
 
     /**
@@ -212,13 +294,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         // the score and confidence columns
         uniqueHitsTable.getColumn("Confidence").setMaxWidth(90);
         uniqueHitsTable.getColumn("Confidence").setMinWidth(90);
-        uniqueHitsTable.getColumn("Score").setMaxWidth(90);
-        uniqueHitsTable.getColumn("Score").setMinWidth(90);
 
         relatedHitsTable.getColumn("Confidence").setMaxWidth(90);
         relatedHitsTable.getColumn("Confidence").setMinWidth(90);
-        relatedHitsTable.getColumn("Score").setMaxWidth(90);
-        relatedHitsTable.getColumn("Score").setMinWidth(90);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
         proteinMatchTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
@@ -234,17 +312,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
                 TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         uniqueHitsTable.getColumn(" ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
-        uniqueHitsTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         uniqueHitsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
         ((JSparklinesBarChartTableCellRenderer) uniqueHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
 
         relatedHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
                 TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
         relatedHitsTable.getColumn(" ").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
-        relatedHitsTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         relatedHitsTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
         ((JSparklinesBarChartTableCellRenderer) relatedHitsTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
 
         // set up the table header tooltips
@@ -261,14 +335,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTableToolTips = new ArrayList<String>();
         uniqueHitsTableToolTips.add(null);
         uniqueHitsTableToolTips.add("Protein Accession(s)");
-        uniqueHitsTableToolTips.add("Protein Score");
         uniqueHitsTableToolTips.add("Protein Confidence");
         uniqueHitsTableToolTips.add("Validated");
 
         relatedHitsTableToolTips = new ArrayList<String>();
         relatedHitsTableToolTips.add(null);
         relatedHitsTableToolTips.add("Protein Accession(s)");
-        relatedHitsTableToolTips.add("Protein Score");
         relatedHitsTableToolTips.add("Protein Confidence");
         relatedHitsTableToolTips.add("Validated");
     }
@@ -335,10 +407,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         groupClassJComboBox = new javax.swing.JComboBox();
         helpJButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        graphPanel = new javax.swing.JPanel();
+        graphInnerPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Protein Level");
-        setMinimumSize(new java.awt.Dimension(700, 500));
+        setMinimumSize(new java.awt.Dimension(1000, 500));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -522,6 +596,30 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
         });
 
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
+        graphPanel.setOpaque(false);
+
+        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -529,14 +627,18 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(helpJButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 586, Short.MAX_VALUE)
+                        .addComponent(helpJButton))
+                    .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 238, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -546,13 +648,16 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpJButton)
@@ -842,6 +947,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel graphInnerPanel;
+    private javax.swing.JPanel graphPanel;
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JPanel groupDetalsJPanel;
     private javax.swing.JButton helpJButton;
@@ -1000,7 +1107,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -1012,10 +1119,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return "Protein(s)";
                 case 2:
-                    return "Score";
-                case 3:
                     return "Confidence";
-                case 4:
+                case 3:
                     return " ";
                 default:
                     return "";
@@ -1038,10 +1143,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
                 case 2:
-                    return pSParameter.getProteinScore();
-                case 3:
                     return pSParameter.getProteinConfidence();
-                case 4:
+                case 3:
                     return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
@@ -1071,7 +1174,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -1083,10 +1186,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return "Protein(s)";
                 case 2:
-                    return "Score";
-                case 3:
                     return "Confidence";
-                case 4:
+                case 3:
                     return " ";
                 default:
                     return "";
@@ -1108,10 +1209,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
                 case 2:
-                    return pSParameter.getProteinScore();
-                case 3:
                     return pSParameter.getProteinConfidence();
-                case 4:
+                case 3:
                     return pSParameter.getMatchValidationLevel().getIndex();
                 default:
                     return "";
