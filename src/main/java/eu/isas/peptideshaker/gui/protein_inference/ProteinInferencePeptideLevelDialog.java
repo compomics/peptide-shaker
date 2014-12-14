@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -17,7 +18,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
@@ -26,6 +29,7 @@ import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.data.Chromosome;
 import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 
 /**
  * A simple dialog for showing the list of proteins a given peptide can map to.
@@ -84,19 +88,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, psParameter);
         protInferenceTypeCmb.setSelectedIndex(psParameter.getProteinInferenceClass());
 
-        protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-
-        // make sure that the scroll panes are see-through
-        proteinsJScrollPane.getViewport().setOpaque(false);
-        otherProteinsJScrollPane.getViewport().setOpaque(false);
-
-        // set up the table properties
-        otherProteinJTable.getTableHeader().setReorderingAllowed(false);
-        otherProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-
-        retainedProteinJTable.getTableHeader().setReorderingAllowed(false);
-        retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-
         // insert the values
         sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
 
@@ -125,21 +116,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         int possibleCpt = 0, retainedCpt = 0;
 
-        for (String protein : possibleProteins) {
+        for (String proteinAccession : possibleProteins) {
 
             String description, geneName, proteinEvidenceLevel;
             Chromosome chromosome;
 
             try {
-                description = sequenceFactory.getHeader(protein).getSimpleProteinDescription();
+                description = sequenceFactory.getHeader(proteinAccession).getSimpleProteinDescription();
 
                 // if description is not set, return the accession instead - fix for home made fasta headers
                 if (description == null || description.trim().isEmpty()) {
-                    description = protein;
+                    description = proteinAccession;
                 }
 
-                geneName = sequenceFactory.getHeader(protein).getGeneName();
-                proteinEvidenceLevel = sequenceFactory.getHeader(protein).getProteinEvidence();
+                geneName = sequenceFactory.getHeader(proteinAccession).getGeneName();
+                proteinEvidenceLevel = sequenceFactory.getHeader(proteinAccession).getProteinEvidence();
 
                 if (proteinEvidenceLevel != null) {
                     try {
@@ -161,26 +152,131 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 chromosome = null;
             }
 
-            if (retainedProteins.contains(protein)) {
+            Protein protein = sequenceFactory.getProtein(proteinAccession);
+
+            if (retainedProteins.contains(proteinAccession)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                     (++retainedCpt),
-                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinAccession),
                     description,
                     geneName,
                     chromosome,
-                    proteinEvidenceLevel
+                    proteinEvidenceLevel,
+                    protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
+                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())
                 });
             } else {
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                     (++possibleCpt),
-                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinAccession),
                     description,
                     geneName,
                     chromosome,
-                    proteinEvidenceLevel
+                    proteinEvidenceLevel,
+                    protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                    peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
+                    peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())
                 });
             }
         }
+
+        // set up the gui
+        setUpGUI();
+
+        // set up the protein inference graph
+        drawGraph();
+
+        setLocationRelativeTo(peptideShakerGUI);
+        setVisible(true);
+    }
+
+    /**
+     * Draw the protein inference graph.
+     */
+    private void drawGraph() {
+
+        ArrayList<String> nodes = new ArrayList<String>();
+        HashMap<String, ArrayList<String>> edges = new HashMap<String, ArrayList<String>>();
+        HashMap<String, String> nodeProperties = new HashMap<String, String>();
+        HashMap<String, String> edgeProperties = new HashMap<String, String>();
+        HashMap<String, String> nodeToolTips = new HashMap<String, String>();
+        ArrayList<String> selectedNodes = new ArrayList<String>();
+
+        try {
+            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
+            ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+            String peptideNodeName = "Peptide " + peptideMatchKey;
+            nodeToolTips.put(peptideNodeName, peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
+            nodes.add(peptideNodeName);
+            selectedNodes.add(peptideNodeName);
+
+            PSParameter peptideMatchParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, new PSParameter());
+            nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
+
+            for (String tempProteinAccession : possibleProteins) {
+
+                String proteinNodeKey = "Protein " + tempProteinAccession;
+
+                if (!nodes.contains(tempProteinAccession)) {
+                    nodes.add(proteinNodeKey);
+                    nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription() + "<html>");
+
+                    PSParameter proteinMatchParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(tempProteinAccession, new PSParameter());
+                    String nodeProperty = "";
+                    if (proteinMatchParameter != null) {
+                        nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
+                    } else {
+                        nodeProperty += -1;
+                    }
+                    String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
+                    if (proteinEvidenceLevel != null) {
+                        nodeProperty += "|" + proteinEvidenceLevel;
+                    }
+                    nodeProperties.put(proteinNodeKey, nodeProperty);
+                }
+
+                ArrayList<String> tempEdges = edges.get(peptideNodeName);
+                if (tempEdges == null) {
+                    tempEdges = new ArrayList<String>();
+                }
+                if (!tempEdges.contains(proteinNodeKey)) {
+                    tempEdges.add(proteinNodeKey);
+
+                    Protein protein = sequenceFactory.getProtein(tempProteinAccession);
+                    Boolean enzymatic = protein.isEnzymaticPeptide(peptideMatch.getTheoreticPeptide().getSequence(),
+                            peptideShakerGUI.getIdentificationParameters().getSearchParameters().getEnzyme(),
+                            peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+
+                    edgeProperties.put(peptideNodeName + "|" + proteinNodeKey, enzymatic.toString());
+                }
+                edges.put(peptideNodeName, tempEdges);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // @TODO: better error handling!
+        }
+
+        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
+    }
+
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGUI() {
+
+        protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+
+        // make sure that the scroll panes are see-through
+        proteinsJScrollPane.getViewport().setOpaque(false);
+        otherProteinsJScrollPane.getViewport().setOpaque(false);
+
+        // set up the table properties
+        otherProteinJTable.getTableHeader().setReorderingAllowed(false);
+        otherProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
+
+        retainedProteinJTable.getTableHeader().setReorderingAllowed(false);
+        retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
 
         retainedProteinJTable.getColumn(" ").setMinWidth(50);
         retainedProteinJTable.getColumn(" ").setMaxWidth(50);
@@ -190,6 +286,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
         retainedProteinJTable.getColumn("Evidence").setMinWidth(90);
         retainedProteinJTable.getColumn("Evidence").setMaxWidth(90);
+        retainedProteinJTable.getColumn("Enz").setMinWidth(50);
+        retainedProteinJTable.getColumn("Enz").setMaxWidth(50);
 
         otherProteinJTable.getColumn(" ").setMinWidth(50);
         otherProteinJTable.getColumn(" ").setMaxWidth(50);
@@ -199,6 +297,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn("Chr").setMaxWidth(50);
         otherProteinJTable.getColumn("Evidence").setMinWidth(90);
         otherProteinJTable.getColumn("Evidence").setMaxWidth(90);
+        otherProteinJTable.getColumn("Enz").setMinWidth(50);
+        otherProteinJTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
         Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
@@ -211,6 +311,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         }
 
         otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        otherProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Enzymatic", "Not Enzymatic"));
 
         // set the preferred size of the accession column
         width = ProteinTableModel.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 2, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
@@ -223,6 +327,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         }
 
         retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        retainedProteinJTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Enzymatic", "Not Enzymatic"));
 
         // set up the table header tooltips
         retainedProteinsTableToolTips = new ArrayList<String>();
@@ -232,21 +340,20 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinsTableToolTips.add("Gene Name");
         retainedProteinsTableToolTips.add("Chromosome Number");
         retainedProteinsTableToolTips.add("Protein Evidence Level");
+        retainedProteinsTableToolTips.add("Enzymatic Peptide");
 
         otherProteinsTableToolTips = new ArrayList<String>();
         otherProteinsTableToolTips.add(null);
         otherProteinsTableToolTips.add("Protein Accession");
         otherProteinsTableToolTips.add("Protein Description");
         otherProteinsTableToolTips.add("Gene Name");
-        retainedProteinsTableToolTips.add("Chromosome Number");
+        otherProteinsTableToolTips.add("Chromosome Number");
         otherProteinsTableToolTips.add("Protein Evidence Level");
+        otherProteinsTableToolTips.add("Enzymatic Peptide");
 
         // update the panel border with the nubmer of rows in the table
         ((TitledBorder) retainedProteinsPanel.getBorder()).setTitle("Retained Proteins (" + retainedProteinJTable.getRowCount() + ")");
         ((TitledBorder) otherProteinsPanel.getBorder()).setTitle("Other Proteins (" + otherProteinJTable.getRowCount() + ")");
-
-        setLocationRelativeTo(peptideShakerGUI);
-        setVisible(true);
     }
 
     /**
@@ -295,9 +402,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         };
         okButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
+        graphPanel = new javax.swing.JPanel();
+        graphInnerPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Peptide Level");
+        setMinimumSize(new java.awt.Dimension(1000, 700));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -311,14 +421,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description", "Gene", "Chr", "Evidence"
+                " ", "Accession", "Description", "Gene", "Chr", "Evidence", "Enz"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -358,7 +468,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             otherProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(otherProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -416,14 +526,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description", "Gene", "Chr", "Evidence"
+                " ", "Accession", "Description", "Gene", "Chr", "Evidence", "Enz"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -462,7 +572,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(retainedProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -495,6 +605,30 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         });
 
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
+        graphPanel.setOpaque(false);
+
+        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -502,13 +636,17 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(otherProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                    .addComponent(otherProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(helpJButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 594, Short.MAX_VALUE)
+                        .addComponent(helpJButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -521,11 +659,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(otherProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(retainedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(otherProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpJButton)
@@ -542,7 +683,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         pack();
@@ -752,6 +895,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JPanel graphInnerPanel;
+    private javax.swing.JPanel graphPanel;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
