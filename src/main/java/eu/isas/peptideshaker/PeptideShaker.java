@@ -990,7 +990,7 @@ public class PeptideShaker {
                         psParameter.setAlgorithmDeltaPEP(matchParameter.getAlgorithmDeltaPEP());
                         psParameter.setDeltaPEP(matchParameter.getDeltaPEP());
 
-                        matchesValidator.getPsmMap().addPoint(retainedP, spectrumMatch, sequenceMatchingPreferences);
+                        matchesValidator.getPsmMap().addPoint(psParameter.getPsmProbabilityScore(), spectrumMatch, sequenceMatchingPreferences);
                         psParameter.setSpecificMapKey(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value + "");
                         identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                         identification.updateSpectrumMatch(spectrumMatch);

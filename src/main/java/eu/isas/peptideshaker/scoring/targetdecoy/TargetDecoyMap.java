@@ -43,11 +43,6 @@ public class TargetDecoyMap implements Serializable {
      * The results computed on this map.
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
-    /**
-     * The number of decimals to which scores should be rounded. Ignored if
-     * null.
-     */
-    public static final Integer roundingDecimal = 6;
 
     /**
      * Constructs a target/decoy map.
@@ -62,9 +57,6 @@ public class TargetDecoyMap implements Serializable {
      * @return the estimated posterior error probability
      */
     public Double getProbability(double score) {
-        if (roundingDecimal != null) {
-            score = Util.roundDouble(score, roundingDecimal);
-        }
         TargetDecoyPoint point = hitMap.get(score);
         if (point != null) {
             return point.p;
@@ -93,9 +85,6 @@ public class TargetDecoyMap implements Serializable {
      * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
-        if (roundingDecimal != null) {
-            score = Util.roundDouble(score, roundingDecimal);
-        }
         return hitMap.get(score).nTarget;
     }
 
@@ -106,9 +95,6 @@ public class TargetDecoyMap implements Serializable {
      * @return the number of decoy hits found at the given score
      */
     public int getNDecoy(double score) {
-        if (roundingDecimal != null) {
-            score = Util.roundDouble(score, roundingDecimal);
-        }
         return hitMap.get(score).nDecoy;
     }
 
@@ -119,9 +105,6 @@ public class TargetDecoyMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public synchronized void put(double score, boolean isDecoy) {
-        if (roundingDecimal != null) {
-            score = Util.roundDouble(score, roundingDecimal);
-        }
         TargetDecoyPoint targetDecoyPoint = hitMap.get(score);
         if (targetDecoyPoint == null) {
             targetDecoyPoint = new TargetDecoyPoint();
@@ -141,9 +124,6 @@ public class TargetDecoyMap implements Serializable {
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void remove(double score, boolean isDecoy) {
-        if (roundingDecimal != null) {
-            score = Util.roundDouble(score, roundingDecimal);
-        }
         if (!isDecoy) {
             hitMap.get(score).nTarget--;
         } else {
