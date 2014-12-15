@@ -1291,7 +1291,7 @@ public class MatchesValidator {
             }
 
             identification.addPeptideMatchParameter(peptideKey, psParameter);
-            peptideMap.addPoint(probaScore, peptideMatch, identificationParameters.getSequenceMatchingPreferences());
+            peptideMap.addPoint(psParameter.getPeptideProbabilityScore(), peptideMatch, identificationParameters.getSequenceMatchingPreferences());
 
             waitingHandler.increaseSecondaryProgressCounter();
 
@@ -1430,7 +1430,7 @@ public class MatchesValidator {
             }
 
             identification.addProteinMatchParameter(proteinKey, psParameter);
-            proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
+            proteinMap.addPoint(psParameter.getProteinProbabilityScore(), proteinMatch.isDecoy());
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);

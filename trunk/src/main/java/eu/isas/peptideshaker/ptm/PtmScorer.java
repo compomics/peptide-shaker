@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.ptm;
 
+import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Enzyme;
@@ -54,7 +55,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import no.uib.jsparklines.renderers.util.Util;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -81,10 +81,10 @@ public class PtmScorer {
      */
     private PsmPTMMap psmPTMMap;
     /**
-     * The number of decimals to which scores should be rounded. Ignored if
+     * The number of decimals to which scores should be floored. Ignored if
      * null.
      */
-    public static final Integer roundingDecimal = 2;
+    public static final Integer flooringDecimal = 2;
 
     /**
      * Constructor.
@@ -218,8 +218,8 @@ public class PtmScorer {
                     }
 
                     double deltaScore = (secondaryP - refP) * 100;
-                    if (roundingDecimal != null) {
-                        deltaScore = Util.roundDouble(deltaScore, roundingDecimal);
+                    if (flooringDecimal != null) {
+                        deltaScore = Util.floorDouble(deltaScore, flooringDecimal);
                     }
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
@@ -291,13 +291,13 @@ public class PtmScorer {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, roundingDecimal);
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, flooringDecimal);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(),
-                            sequenceMatchingPreferences, peptideSpectrumAnnotator, roundingDecimal);
+                            sequenceMatchingPreferences, peptideSpectrumAnnotator, flooringDecimal);
                 }
                 if (scores != null) {
                     // remap to searched PTMs

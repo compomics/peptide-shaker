@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
+import com.compomics.util.Util;
+import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
@@ -185,11 +187,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the peptide posterior error probability.
+     * Set the peptide posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param peptideProbability the new peptide posterior error probability
      */
     public void setPeptideProbability(double peptideProbability) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            peptideProbability = Util.floorDouble(peptideProbability, PsmScores.scoreFlooringDecimal);
+        }
         this.peptideProbability = peptideProbability;
     }
 
@@ -234,11 +239,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the peptide Probabilistic score.
+     * Set the peptide Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            peptideProbabilityScore = Util.floorDouble(peptideProbabilityScore, PsmScores.scoreFlooringDecimal);
+        }
         this.peptideProbabilityScore = peptideProbabilityScore;
     }
 
@@ -252,11 +260,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the protein posterior error probability.
+     * Set the protein posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param proteinProbability the new protein posterior error probability
      */
     public void setProteinProbability(double proteinProbability) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            proteinProbability = Util.floorDouble(proteinProbability, PsmScores.scoreFlooringDecimal);
+        }
         this.proteinProbability = proteinProbability;
     }
 
@@ -301,11 +312,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the protein Probabilistic score.
+     * Set the protein Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            proteinProbabilityScore = Util.floorDouble(proteinProbabilityScore, PsmScores.scoreFlooringDecimal);
+        }
         this.proteinProbabilityScore = proteinProbabilityScore;
     }
 
@@ -319,12 +333,15 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the search engine posterior error probability.
+     * Set the search engine posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param searchEngineProbability the new search engine posterior error
      * probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            searchEngineProbability = Util.floorDouble(searchEngineProbability, PsmScores.scoreFlooringDecimal);
+        }
         this.searchEngineProbability = searchEngineProbability;
     }
 
@@ -403,11 +420,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the the PSM posterior error probability.
+     * Set the the PSM posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param psmProbability the new the PSM posterior error probability
      */
     public void setPsmProbability(double psmProbability) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            psmProbability = Util.floorDouble(psmProbability, PsmScores.scoreFlooringDecimal);
+        }
         this.psmProbability = psmProbability;
     }
 
@@ -421,11 +441,14 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the PSM Probabilistic score.
+     * Set the PSM Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
      *
      * @param psmProbabilityScore the new PSM Probabilistic score
      */
     public void setSpectrumProbabilityScore(double psmProbabilityScore) {
+        if (PsmScores.scoreFlooringDecimal != null) {
+            psmProbabilityScore = Util.floorDouble(psmProbabilityScore, PsmScores.scoreFlooringDecimal);
+        }
         this.psmProbabilityScore = psmProbabilityScore;
     }
 
