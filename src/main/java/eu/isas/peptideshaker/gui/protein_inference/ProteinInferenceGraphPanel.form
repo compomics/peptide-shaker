@@ -145,14 +145,14 @@
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="allRadioButton" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="confidenceRadioButton" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="validationStatusRadioButton" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="evidenceRadioButton" linkSize="3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="noAnnotationRadioButton" linkSize="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="nodeTypeRadioButton" linkSize="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="uniqueRadioButton" linkSize="3" min="-2" max="-2" attributes="0"/>
@@ -160,7 +160,7 @@
                           <Component id="highlightCheckBox" linkSize="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="23" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -170,8 +170,8 @@
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="evidenceRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="confidenceRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="noAnnotationRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="validationStatusRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="nodeTypeRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -190,36 +190,39 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="annotationButtonGroup"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Evidence"/>
+            <Property name="text" type="java.lang.String" value="Protein Evidence"/>
+            <Property name="toolTipText" type="java.lang.String" value="Protein Evidence (from UniProt)"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="evidenceRadioButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="confidenceRadioButton">
+        <Component class="javax.swing.JRadioButton" name="validationStatusRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="annotationButtonGroup"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Confidence"/>
+            <Property name="text" type="java.lang.String" value="Validation Status"/>
+            <Property name="toolTipText" type="java.lang.String" value="Peptide and Protein Validation Status"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="confidenceRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validationStatusRadioButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="noAnnotationRadioButton">
+        <Component class="javax.swing.JRadioButton" name="nodeTypeRadioButton">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="annotationButtonGroup"/>
             </Property>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="None"/>
+            <Property name="text" type="java.lang.String" value="Molecule Type"/>
+            <Property name="toolTipText" type="java.lang.String" value="Peptide or Protein"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noAnnotationRadioButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeTypeRadioButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="allRadioButton">
@@ -229,6 +232,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="All Neighbors"/>
+            <Property name="toolTipText" type="java.lang.String" value="Select all neighbors"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -241,6 +245,7 @@
               <ComponentRef name="selectionButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Unique Only"/>
+            <Property name="toolTipText" type="java.lang.String" value="Select unique neighbors only"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -250,6 +255,7 @@
         <Component class="javax.swing.JCheckBox" name="highlightCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Highlight"/>
+            <Property name="toolTipText" type="java.lang.String" value="Highlight the selected peptides and proteins"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>

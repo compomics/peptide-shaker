@@ -414,8 +414,8 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         graphPanel = new javax.swing.JPanel();
         settingsPanel = new javax.swing.JPanel();
         evidenceRadioButton = new javax.swing.JRadioButton();
-        confidenceRadioButton = new javax.swing.JRadioButton();
-        noAnnotationRadioButton = new javax.swing.JRadioButton();
+        validationStatusRadioButton = new javax.swing.JRadioButton();
+        nodeTypeRadioButton = new javax.swing.JRadioButton();
         allRadioButton = new javax.swing.JRadioButton();
         uniqueRadioButton = new javax.swing.JRadioButton();
         highlightCheckBox = new javax.swing.JCheckBox();
@@ -492,7 +492,8 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         settingsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         annotationButtonGroup.add(evidenceRadioButton);
-        evidenceRadioButton.setText("Evidence");
+        evidenceRadioButton.setText("Protein Evidence");
+        evidenceRadioButton.setToolTipText("Protein Evidence (from UniProt)");
         evidenceRadioButton.setOpaque(false);
         evidenceRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -500,28 +501,31 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             }
         });
 
-        annotationButtonGroup.add(confidenceRadioButton);
-        confidenceRadioButton.setText("Confidence");
-        confidenceRadioButton.setOpaque(false);
-        confidenceRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        annotationButtonGroup.add(validationStatusRadioButton);
+        validationStatusRadioButton.setText("Validation Status");
+        validationStatusRadioButton.setToolTipText("Peptide and Protein Validation Status");
+        validationStatusRadioButton.setOpaque(false);
+        validationStatusRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confidenceRadioButtonActionPerformed(evt);
+                validationStatusRadioButtonActionPerformed(evt);
             }
         });
 
-        annotationButtonGroup.add(noAnnotationRadioButton);
-        noAnnotationRadioButton.setSelected(true);
-        noAnnotationRadioButton.setText("None");
-        noAnnotationRadioButton.setOpaque(false);
-        noAnnotationRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        annotationButtonGroup.add(nodeTypeRadioButton);
+        nodeTypeRadioButton.setSelected(true);
+        nodeTypeRadioButton.setText("Molecule Type");
+        nodeTypeRadioButton.setToolTipText("Peptide or Protein");
+        nodeTypeRadioButton.setOpaque(false);
+        nodeTypeRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                noAnnotationRadioButtonActionPerformed(evt);
+                nodeTypeRadioButtonActionPerformed(evt);
             }
         });
 
         selectionButtonGroup.add(allRadioButton);
         allRadioButton.setSelected(true);
         allRadioButton.setText("All Neighbors");
+        allRadioButton.setToolTipText("Select all neighbors");
         allRadioButton.setOpaque(false);
         allRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -531,6 +535,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
 
         selectionButtonGroup.add(uniqueRadioButton);
         uniqueRadioButton.setText("Unique Only");
+        uniqueRadioButton.setToolTipText("Select unique neighbors only");
         uniqueRadioButton.setOpaque(false);
         uniqueRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -539,6 +544,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         });
 
         highlightCheckBox.setText("Highlight");
+        highlightCheckBox.setToolTipText("Highlight the selected peptides and proteins");
         highlightCheckBox.setOpaque(false);
         highlightCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -554,21 +560,21 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
                 .addGap(5, 5, 5)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(allRadioButton)
-                    .addComponent(confidenceRadioButton))
+                    .addComponent(validationStatusRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(settingsPanelLayout.createSequentialGroup()
                         .addComponent(evidenceRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(noAnnotationRadioButton))
+                        .addComponent(nodeTypeRadioButton))
                     .addGroup(settingsPanelLayout.createSequentialGroup()
                         .addComponent(uniqueRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(highlightCheckBox)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        settingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {allRadioButton, confidenceRadioButton, evidenceRadioButton, highlightCheckBox, noAnnotationRadioButton, uniqueRadioButton});
+        settingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {allRadioButton, evidenceRadioButton, highlightCheckBox, nodeTypeRadioButton, uniqueRadioButton, validationStatusRadioButton});
 
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -576,8 +582,8 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(evidenceRadioButton)
-                    .addComponent(confidenceRadioButton)
-                    .addComponent(noAnnotationRadioButton))
+                    .addComponent(validationStatusRadioButton)
+                    .addComponent(nodeTypeRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(uniqueRadioButton)
@@ -630,9 +636,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void confidenceRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceRadioButtonActionPerformed
+    private void validationStatusRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationStatusRadioButtonActionPerformed
         this.repaint();
-    }//GEN-LAST:event_confidenceRadioButtonActionPerformed
+    }//GEN-LAST:event_validationStatusRadioButtonActionPerformed
 
     /**
      * Update the graph.
@@ -648,9 +654,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void noAnnotationRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noAnnotationRadioButtonActionPerformed
+    private void nodeTypeRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeTypeRadioButtonActionPerformed
         this.repaint();
-    }//GEN-LAST:event_noAnnotationRadioButtonActionPerformed
+    }//GEN-LAST:event_nodeTypeRadioButtonActionPerformed
 
     /**
      * Update the graph.
@@ -793,11 +799,10 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton allRadioButton;
     private javax.swing.ButtonGroup annotationButtonGroup;
-    private javax.swing.JRadioButton confidenceRadioButton;
     private javax.swing.JRadioButton evidenceRadioButton;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JCheckBox highlightCheckBox;
-    private javax.swing.JRadioButton noAnnotationRadioButton;
+    private javax.swing.JRadioButton nodeTypeRadioButton;
     private javax.swing.JLabel peptideCountLabel;
     private javax.swing.JLabel peptideCountValueLabel;
     private javax.swing.JLabel proteinCountLabel;
@@ -806,8 +811,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     private javax.swing.JPanel selectionPanel;
     private javax.swing.JPanel settingsPanel;
     private javax.swing.JRadioButton uniqueRadioButton;
+    private javax.swing.JRadioButton validationStatusRadioButton;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * The protein inference vertex renderer.
      */
@@ -821,13 +827,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             Color color = null;
 
             int alpha = 255;
-            boolean selectedAsNeighbor = false;
 
             // check if the node is selected or should be semi-transparent
             if (!selectedNeighborNodes.isEmpty()) {
-                if (selectedNeighborNodes.contains(vertex)) {
-                    selectedAsNeighbor = true;
-                }
                 if (!selectedNeighborNodes.contains(vertex) && !selectedNodes.contains(vertex)) {
                     alpha = 50;
                 }
@@ -839,46 +841,36 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
 
             // draw a highlight to indicate the selected nodes
             if (selectedNodes.contains(vertex) && highlightCheckBox.isSelected()) {
-                if (confidenceRadioButton.isSelected()) {
-                    shape = new Ellipse2D.Double(center.getX() - 18, center.getY() - 18, 36, 36);
-                    color = new Color(150, 150, 150);
-                    graphicsContext.setPaint(color);
-                    graphicsContext.draw(shape);
-                } else {
+                if (vertex.startsWith("Protein")) {
+                    shape = new Ellipse2D.Double(center.getX() - 22, center.getY() - 22, 44, 44);
+                } else if (vertex.startsWith("Peptide")) {
                     shape = new Ellipse2D.Double(center.getX() - 14, center.getY() - 14, 28, 28);
-                    color = new Color(150, 150, 150);
-                    graphicsContext.setPaint(color);
-                    graphicsContext.draw(shape);
                 }
+                graphicsContext.setPaint(Color.ORANGE);
+                graphicsContext.fill(shape);
             }
 
             // draw a highlight indicating the validation or evidence level
             boolean highlightAdded = false;
-            //if ((selectedNodes.contains(vertex) || selectedAsNeighbor) && !noAnnotationRadioButton.isSelected()) {
-            if (!noAnnotationRadioButton.isSelected()) {
-                shape = new Ellipse2D.Double(center.getX() - 14, center.getY() - 14, 28, 28);
+            if (!nodeTypeRadioButton.isSelected()) {
 
                 if (nodeProperties.get(vertex) != null) {
 
+                    highlightAdded = true;
                     String[] properties = nodeProperties.get(vertex).split("\\|");
 
-                    if (confidenceRadioButton.isSelected()) {
+                    if (validationStatusRadioButton.isSelected()) {
                         int validationLevel = Integer.parseInt(properties[0]);
 
-                        if (validationLevel == 0) {
+                        if (validationLevel == 0) { // not validated
                             color = new Color(255, 0, 0, alpha);
-                        } else if (validationLevel == 1) {
+                        } else if (validationLevel == 1) { // doubtful
                             color = new Color(255, 204, 0, alpha);
-                        } else if (validationLevel == 2) {
+                        } else if (validationLevel == 2) { // confident
                             color = new Color(110, 196, 97, alpha);
-                        } else {
+                        } else { // unknown...
                             color = new Color(200, 200, 200, alpha);
                         }
-
-                        graphicsContext.setPaint(color);
-                        graphicsContext.fill(shape);
-                        highlightAdded = true;
-
                     } else if (properties.length > 1) {
                         int evidenceLevel = Integer.parseInt(properties[1]);
 
@@ -895,34 +887,42 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
                         } else { // unknown...
                             color = new Color(200, 200, 200, alpha);
                         }
-
-                        graphicsContext.setPaint(color); // @TODO: check the colors used!
-                        graphicsContext.fill(shape);
-                        highlightAdded = true;
+                    } else {
+                        color = new Color(200, 200, 200, alpha);
                     }
                 }
             }
 
             // draw the actual vertex
             if (vertex.startsWith("Protein")) {
-                shape = new Ellipse2D.Double(center.getX() - 10, center.getY() - 10, 20, 20);
-                color = new Color(255, 0, 0, alpha);
+                shape = new Ellipse2D.Double(center.getX() - 18, center.getY() - 18, 36, 36);
+                if (!highlightAdded) {
+                    color = new Color(255, 0, 0, alpha);
+                }
             } else if (vertex.startsWith("Peptide")) {
                 shape = new Ellipse2D.Double(center.getX() - 10, center.getY() - 10, 20, 20);
-                color = new Color(0, 0, 255, alpha);
+                if (!highlightAdded) {
+                    color = new Color(0, 0, 255, alpha);
+                }
             }
+
             graphicsContext.setPaint(color);
             graphicsContext.fill(shape);
 
             // draw a thin border around the vertex
-            shape = new Ellipse2D.Double(center.getX() - 10, center.getY() - 10, 20, 20);
             color = new Color(150, 150, 150, alpha);
             graphicsContext.setPaint(color);
             graphicsContext.draw(shape);
 
             // draw a thin border around the highlight
-            if ((selectedNodes.contains(vertex) || selectedAsNeighbor) && !noAnnotationRadioButton.isSelected() && highlightAdded) {
-                shape = new Ellipse2D.Double(center.getX() - 14, center.getY() - 14, 28, 28);
+            if (selectedNodes.contains(vertex) && highlightCheckBox.isSelected()) {
+
+                if (vertex.startsWith("Protein")) {
+                    shape = new Ellipse2D.Double(center.getX() - 22, center.getY() - 22, 44, 44);
+                } else if (vertex.startsWith("Peptide")) {
+                    shape = new Ellipse2D.Double(center.getX() - 14, center.getY() - 14, 28, 28);
+                }
+
                 color = new Color(150, 150, 150, alpha);
                 graphicsContext.setPaint(color);
                 graphicsContext.draw(shape);
