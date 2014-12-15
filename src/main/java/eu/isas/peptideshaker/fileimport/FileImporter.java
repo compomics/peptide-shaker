@@ -369,7 +369,7 @@ public class FileImporter {
          * @param sequenceMatchingPreferences the sequence matching preferences
          * @param projectDetails the project details
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol, 
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, ShotgunProtocol shotgunProtocol,
                 IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences,
                 SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
@@ -595,16 +595,9 @@ public class FileImporter {
          *
          * @param identification
          */
-        private void connectToIdDb(Identification identification) {
-            try {
-                String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
-                identification.establishConnection(dbFolder, true, peptideShaker.getCache());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. "
-                        + "Please let us know using our issue tracker: http://code.google.com/p/peptide-shaker/issues/list.", true, true);
-                identification.setIsDB(false);
-            }
+        private void connectToIdDb(Identification identification) throws SQLException {
+            String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
+            identification.establishConnection(dbFolder, true, peptideShaker.getCache());
         }
 
         /**

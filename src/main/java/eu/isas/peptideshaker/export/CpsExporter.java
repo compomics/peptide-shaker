@@ -114,7 +114,7 @@ public class CpsExporter {
             ExperimentIO.save(experimentFile, experiment);
         }
 
-        identification.establishConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
+        identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
 
         // tar everything in the current cps file
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
