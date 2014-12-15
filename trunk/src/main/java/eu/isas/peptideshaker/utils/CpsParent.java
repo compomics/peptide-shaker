@@ -207,7 +207,8 @@ public class CpsParent extends UserPreferencesParent {
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
         String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
-        identification.establishConnection(dbFolder, false, objectsCache);
+        identification.restoreConnection(dbFolder, false, objectsCache);
+        identification.checkIdentificationDBTables(); // Backward compatibility check
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
