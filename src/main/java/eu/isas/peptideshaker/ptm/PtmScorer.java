@@ -38,7 +38,6 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
@@ -85,7 +84,7 @@ public class PtmScorer {
      * The number of decimals to which scores should be rounded. Ignored if
      * null.
      */
-    public static final Integer roundingDecimal = null;
+    public static final Integer roundingDecimal = 2;
 
     /**
      * Constructor.
