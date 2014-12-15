@@ -593,7 +593,8 @@ public class FileImporter {
         /**
          * Establishes a connection to the identification database.
          *
-         * @param identification
+         * @param identification the identifications
+         * @throws SQLException thrown if an SQL exception occurs
          */
         private void connectToIdDb(Identification identification) throws SQLException {
             String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
