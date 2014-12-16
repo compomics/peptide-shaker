@@ -84,7 +84,7 @@ public class PtmScorer {
      * The number of decimals to which scores should be floored. Ignored if
      * null.
      */
-    public static final Integer flooringDecimal = 2;
+    public static final Integer flooringDecimal = null;
 
     /**
      * Constructor.

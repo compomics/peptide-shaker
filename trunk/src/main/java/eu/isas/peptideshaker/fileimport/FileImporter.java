@@ -515,8 +515,7 @@ public class FileImporter {
                             + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
                     waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                     waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
-                    peptideShaker.setProteinCountMap(proteinCount);
-                    peptideShaker.processIdentifications(inputMap, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
+                    peptideShaker.processIdentifications(inputMap, proteinCount, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, processingPreferences, spectrumCountingPreferences, projectDetails);
                 }
             } catch (OutOfMemoryError error) {
 

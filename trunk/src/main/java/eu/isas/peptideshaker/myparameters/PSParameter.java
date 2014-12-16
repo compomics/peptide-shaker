@@ -192,9 +192,6 @@ public class PSParameter implements UrParameter {
      * @param peptideProbability the new peptide posterior error probability
      */
     public void setPeptideProbability(double peptideProbability) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            peptideProbability = Util.floorDouble(peptideProbability, PsmScores.scoreFlooringDecimal);
-        }
         this.peptideProbability = peptideProbability;
     }
 
@@ -244,9 +241,6 @@ public class PSParameter implements UrParameter {
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            peptideProbabilityScore = Util.floorDouble(peptideProbabilityScore, PsmScores.scoreFlooringDecimal);
-        }
         this.peptideProbabilityScore = peptideProbabilityScore;
     }
 
@@ -265,9 +259,6 @@ public class PSParameter implements UrParameter {
      * @param proteinProbability the new protein posterior error probability
      */
     public void setProteinProbability(double proteinProbability) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            proteinProbability = Util.floorDouble(proteinProbability, PsmScores.scoreFlooringDecimal);
-        }
         this.proteinProbability = proteinProbability;
     }
 
@@ -317,9 +308,6 @@ public class PSParameter implements UrParameter {
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            proteinProbabilityScore = Util.floorDouble(proteinProbabilityScore, PsmScores.scoreFlooringDecimal);
-        }
         this.proteinProbabilityScore = proteinProbabilityScore;
     }
 
@@ -339,9 +327,6 @@ public class PSParameter implements UrParameter {
      * probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            searchEngineProbability = Util.floorDouble(searchEngineProbability, PsmScores.scoreFlooringDecimal);
-        }
         this.searchEngineProbability = searchEngineProbability;
     }
 
@@ -425,9 +410,6 @@ public class PSParameter implements UrParameter {
      * @param psmProbability the new the PSM posterior error probability
      */
     public void setPsmProbability(double psmProbability) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            psmProbability = Util.floorDouble(psmProbability, PsmScores.scoreFlooringDecimal);
-        }
         this.psmProbability = psmProbability;
     }
 
@@ -446,9 +428,6 @@ public class PSParameter implements UrParameter {
      * @param psmProbabilityScore the new PSM Probabilistic score
      */
     public void setSpectrumProbabilityScore(double psmProbabilityScore) {
-        if (PsmScores.scoreFlooringDecimal != null) {
-            psmProbabilityScore = Util.floorDouble(psmProbabilityScore, PsmScores.scoreFlooringDecimal);
-        }
         this.psmProbabilityScore = psmProbabilityScore;
     }
 

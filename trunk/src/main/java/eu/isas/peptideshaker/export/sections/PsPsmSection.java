@@ -440,9 +440,9 @@ public class PsPsmSection {
             case confidence:
                 return psParameter.getPsmConfidence() + "";
             case score:
-                return -10 * FastMath.log10(psParameter.getPsmScore()) + "";
-            case raw_score:
                 return psParameter.getPsmScore() + "";
+            case raw_score:
+                return psParameter.getPsmProbabilityScore() + "";
             case validated:
                 return psParameter.getMatchValidationLevel().toString();
             case starred:

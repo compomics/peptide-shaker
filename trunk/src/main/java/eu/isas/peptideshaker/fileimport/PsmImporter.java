@@ -365,7 +365,7 @@ public class PsmImporter {
                             Peptide peptide = peptideAssumption.getPeptide();
                             String peptideSequence = peptide.getSequence();
 
-                                // map the algorithm specific modifications on utilities modifications
+                            // map the algorithm specific modifications on utilities modifications
                             // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                             // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
@@ -779,14 +779,15 @@ public class PsmImporter {
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateId).get(eValue)) {
                             if (assumption instanceof PeptideAssumption) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                firstPeptideHit = peptideAssumption;
                                 checkPeptidesMassErrorsAndCharges(spectrumKey, peptideAssumption);
-                                if (!processingPreferences.isScoringNeeded(advocateId)) {
-                                    inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
+                                if (firstPeptideHit == null) {
+                                    firstPeptideHit = peptideAssumption;
+                                    if (!processingPreferences.isScoringNeeded(advocateId)) {
+                                        inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
+                                    }
+                                    identification.addSpectrumMatch(spectrumMatch);
                                 }
-                                identification.addSpectrumMatch(spectrumMatch);
                                 nRetained++;
-                                break;
                             }
                         }
                         if (firstPeptideHit != null) {
