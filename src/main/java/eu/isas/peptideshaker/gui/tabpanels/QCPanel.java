@@ -1146,7 +1146,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
 
-                        double tempMaxValue = maxValue;
+                        double tempMaxValue = maxValue; // @TODO: support scientific x-axis for spectrum counting plot?
 
                         // try to find a suitable range
                         if (maxValue < 0.25) {

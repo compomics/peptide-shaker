@@ -356,13 +356,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 4d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1000d, peptideShakerGUI.getSparklineColor()));
-        spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d,
+        spectrumTable.getColumn("RT (min)").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d,
                 1000d, 10d, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
-        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
         spectrumTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -386,7 +386,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTableToolTips.add("Precursor m/z");
         spectrumTableToolTips.add("Precursor Charge");
         spectrumTableToolTips.add("Precursor Intensity");
-        spectrumTableToolTips.add("Precursor Retention Time");
+        spectrumTableToolTips.add("Precursor Retention Time in Minutes");
         spectrumTableToolTips.add("Peptide Sequence");
         spectrumTableToolTips.add("Mapping Protein(s)");
         spectrumTableToolTips.add("Peptide Spectrum Match Confidence");
@@ -421,7 +421,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
@@ -2243,13 +2243,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             (double) ((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
                     spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                             SpectrumFactory.getInstance().getMaxIntensity(), peptideShakerGUI.getSparklineColor()));
-                    spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
-                            SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
+                    spectrumTable.getColumn("RT (min)").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
+                            (SpectrumFactory.getInstance().getMaxRT() / 60), (SpectrumFactory.getInstance().getMaxRT() / 60) / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
                     ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() - 30);
-                    ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 20);
+                    if (SpectrumFactory.getInstance().getMaxIntensity() > 100000) {
+                        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 20, new DecimalFormat("0.00E00"));
+                    } else {
+                        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 20);
+                    }
                     ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Int").getCellRenderer()).setLogScale(true);
-                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth() + 5);
-                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
+                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
+                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT (min)").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) identification.getUrParam(pSMaps);
@@ -3274,7 +3278,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 case 5:
                     return "Int";
                 case 6:
-                    return "RT";
+                    return "RT (min)";
                 case 7:
                     return "Sequence";
                 case 8:
@@ -3334,7 +3338,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 6:
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
                         if (precursor != null) {
-                            return precursor.getRt();
+                            double rt = precursor.getRtInMinutes();
+                            if (rt < 0) {
+                                rt = -1;
+                            }
+                            return rt; // @TODO: what about retention time windows?
                         } else {
                             return null;
                         }
