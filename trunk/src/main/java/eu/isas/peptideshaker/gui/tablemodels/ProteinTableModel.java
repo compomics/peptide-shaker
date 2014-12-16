@@ -639,7 +639,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         proteinTable.getColumn("#Spectra").setCellRenderer(spectraCellRenderer);
 
         JSparklinesBarChartTableCellRenderer spectrumCountingCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
-        spectrumCountingCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth());
+        spectrumCountingCellRenderer.showNumberAndChart(true, TableProperties.getLabelWidth() + 20, new DecimalFormat("0.00E00"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(spectrumCountingCellRenderer);
 
         JSparklinesBarChartTableCellRenderer mwCellRenderer = new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor);
