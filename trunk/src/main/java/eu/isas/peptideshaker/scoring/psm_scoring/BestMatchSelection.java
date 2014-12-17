@@ -138,9 +138,9 @@ public class BestMatchSelection {
                 SpectrumMatch advocateMatch = psmIterator.next();
                 String spectrumKey = advocateMatch.getKey();
 
-                // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> sequence coverage annotated -> min mass deviation (unless you have a better idea?)
-                HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>> peptideAssumptions
-                        = new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>>();
+                // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence
+                HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>> peptideAssumptions
+                        = new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>>();
 
                 // map of the tag first hits: score -> assumptions
                 HashMap<Double, ArrayList<TagAssumption>> tagAssumptions = new HashMap<Double, ArrayList<TagAssumption>>();
@@ -181,9 +181,6 @@ public class BestMatchSelection {
                                         proteinMax = tempCount;
                                     }
                                 }
-                                if (spectrumKey.contains("5923.5923")) {
-                                    waitingHandler.appendReport(peptideAssumption1.getPeptide().getSequence() + " proteinMax: " + proteinMax, true, true);
-                                }
 
                                 for (int searchEngine2 : assumptions.keySet()) {
 
@@ -221,115 +218,78 @@ public class BestMatchSelection {
 
                                 identifications.add(id);
 
-                                HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
+                                HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
                                 if (pMap == null) {
-                                    pMap = new HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>>(advocate1Map.size());
+                                    pMap = new HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>>(advocate1Map.size());
                                     peptideAssumptions.put(p, pMap);
                                 }
 
-                                HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
+                                HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
                                 if (proteinMaxMap == null) {
-                                    proteinMaxMap = new HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>(1);
+                                    proteinMaxMap = new HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>(1);
                                     pMap.put(proteinMax, proteinMaxMap);
                                 }
 
-                                HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
+                                HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
                                 if (nSeMap == null) {
-                                    nSeMap = new HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>(1);
+                                    nSeMap = new HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>(1);
                                     proteinMaxMap.put(nSE, nSeMap);
-                                    HashMap<Double, ArrayList<PeptideAssumption>> coverageMap = new HashMap<Double, ArrayList<PeptideAssumption>>(1);
-                                    nSeMap.put(-1.0, coverageMap);
-                                    ArrayList<PeptideAssumption> assumptionList = new ArrayList<PeptideAssumption>(1);
-                                    coverageMap.put(-1.0, assumptionList);
-                                    assumptionList.add(peptideAssumption1);
+                                    HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = new HashMap<Double, HashMap<String, PeptideAssumption>>(1);
+                                    nSeMap.put(-1, coverageMap);
+                                    HashMap<String, PeptideAssumption> assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                    coverageMap.put(-1.0, assumptionMap);
+                                    assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
                                 } else {
-                                    HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
-                                    NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
-                                    ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
                                     MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                                     double mzTolerance = shotgunProtocol.getMs2Resolution();
                                     boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
 
-                                    HashMap<Double, ArrayList<PeptideAssumption>> coverageMap = nSeMap.get(-1.0);
+                                    HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = nSeMap.get(-1);
                                     if (coverageMap != null) {
-                                        ArrayList<PeptideAssumption> assumptionList = coverageMap.get(-1.0);
-                                        PeptideAssumption tempAssumption = assumptionList.get(0);
-                                        Peptide peptide = tempAssumption.getPeptide();
-                                        int precursorCharge = tempAssumption.getIdentificationCharge().value;
-                                        annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
-                                        HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
-                                                spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
-                                        int nIons = coveredAminoAcids.size();
-
-                                        double coverage = nIons / peptide.getSequence().length();
-                                        if (spectrumKey.contains("5923.5923")) {
-                                            String ions = "";
-                                            ArrayList<Integer> ionNumbers = new ArrayList<Integer>(coveredAminoAcids.keySet());
-                                            Collections.sort(ionNumbers);
-                                            for (Integer aa : ionNumbers) {
-                                                ions += aa + " (";
-                                                for (IonMatch ionMatch : coveredAminoAcids.get(aa)) {
-                                                    ions += ionMatch.getPeakAnnotation() + " ";
-                                                }
-                                                ions += ") ";
-                                            }
-                                            waitingHandler.appendReport(peptide.getSequence(), true, true);
-                                            waitingHandler.appendReport("ions: " + ions, true, true);
-                                            waitingHandler.appendReport("nIons: " + nIons, true, true);
-                                            waitingHandler.appendReport("length: " + peptide.getSequence().length(), true, true);
-                                            waitingHandler.appendReport("coverage: " + coverage, true, true);
+                                        HashMap<String, PeptideAssumption> assumptionMap = coverageMap.get(-1.0);
+                                        for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
+                                            Peptide peptide = tempAssumption.getPeptide();
+                                            int precursorCharge = tempAssumption.getIdentificationCharge().value;
+                                            annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
+                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
+                                                    spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
+                                            int nIons = coveredAminoAcids.size();
+                                            nSeMap.put(nIons, coverageMap);
                                         }
-                                        nSeMap.remove(-1.0);
-                                        nSeMap.put(coverage, coverageMap);
+                                        nSeMap.remove(-1);
                                     }
 
                                     Peptide peptide = peptideAssumption1.getPeptide();
                                     int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
                                     annotationPreferences.setCurrentSettings(peptideAssumption1, true, sequenceMatchingPreferences);
-                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge,
+                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
                                             spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
                                     int nIons = coveredAminoAcids.size();
-                                    double coverage = nIons / peptide.getSequence().length();
-                                    if (spectrumKey.contains("5923.5923")) {
-                                        String ions = "";
-                                        ArrayList<Integer> ionNumbers = new ArrayList<Integer>(coveredAminoAcids.keySet());
-                                        Collections.sort(ionNumbers);
-                                        for (Integer aa : ionNumbers) {
-                                            ions += aa + " (";
-                                            for (IonMatch ionMatch : coveredAminoAcids.get(aa)) {
-                                                ions += ionMatch.getPeakAnnotation() + " ";
-                                            }
-                                            ions += ") ";
-                                        }
-                                        waitingHandler.appendReport(peptide.getSequence(), true, true);
-                                        waitingHandler.appendReport("ions: " + ions, true, true);
-                                        waitingHandler.appendReport("nIons: " + nIons, true, true);
-                                        waitingHandler.appendReport("length: " + peptide.getSequence().length(), true, true);
-                                        waitingHandler.appendReport("coverage: " + coverage, true, true);
-                                    }
 
-                                    coverageMap = nSeMap.get(coverage);
+                                    coverageMap = nSeMap.get(nIons);
                                     if (coverageMap == null) {
-                                        coverageMap = new HashMap<Double, ArrayList<PeptideAssumption>>(1);
-                                        ArrayList<PeptideAssumption> assumptionList = new ArrayList<PeptideAssumption>(1);
-                                        assumptionList.add(peptideAssumption1);
-                                        coverageMap.put(-1.0, assumptionList);
+                                        coverageMap = new HashMap<Double, HashMap<String, PeptideAssumption>>(1);
+                                        HashMap<String, PeptideAssumption> assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                        assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
+                                        coverageMap.put(-1.0, assumptionMap);
+                                        nSeMap.put(nIons, coverageMap);
                                     } else {
-                                        ArrayList<PeptideAssumption> assumptionList = coverageMap.get(-1.0);
-                                        if (assumptionList != null) {
-                                            PeptideAssumption tempAssumption = assumptionList.get(0);
-                                            double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+                                        HashMap<String, PeptideAssumption> assumptionMap = coverageMap.get(-1.0);
+                                        if (assumptionMap != null) {
+                                            for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
+                                                double massError = Math.abs(tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+                                                coverageMap.put(massError, assumptionMap);
+                                            }
                                             coverageMap.remove(-1.0);
-                                            coverageMap.put(massError, assumptionList);
                                         }
 
                                         double massError = Math.abs(peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
-                                        assumptionList = coverageMap.get(massError);
-                                        if (assumptionList == null) {
-                                            assumptionList = new ArrayList<PeptideAssumption>(1);
-                                            coverageMap.put(massError, assumptionList);
+                                        assumptionMap = coverageMap.get(massError);
+                                        if (assumptionMap == null) {
+                                            assumptionMap = new HashMap<String, PeptideAssumption>(1);
+                                            coverageMap.put(massError, assumptionMap);
                                         }
-                                        assumptionList.add(peptideAssumption1);
+                                        assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
                                     }
                                 }
                             }
@@ -356,42 +316,38 @@ public class BestMatchSelection {
                     for (double p : ps) {
 
                         retainedP = p;
-                        HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
+                        HashMap<Integer, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>>> pMap = peptideAssumptions.get(p);
                         ArrayList<Integer> proteinMaxs = new ArrayList<Integer>(pMap.keySet());
                         Collections.sort(proteinMaxs, Collections.reverseOrder());
 
                         for (int proteinMax : proteinMaxs) {
 
-                            HashMap<Integer, HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
+                            HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>>> proteinMaxMap = pMap.get(proteinMax);
                             ArrayList<Integer> nSEs = new ArrayList<Integer>(proteinMaxMap.keySet());
                             Collections.sort(nSEs, Collections.reverseOrder());
 
                             for (int nSE : nSEs) {
 
-                                HashMap<Double, HashMap<Double, ArrayList<PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
-                                ArrayList<Double> coverages = new ArrayList<Double>(nSeMap.keySet());
-                                Collections.sort(coverages);
+                                HashMap<Integer, HashMap<Double, HashMap<String, PeptideAssumption>>> nSeMap = proteinMaxMap.get(nSE);
+                                ArrayList<Integer> coverages = new ArrayList<Integer>(nSeMap.keySet());
+                                Collections.sort(coverages, Collections.reverseOrder());
 
-                                for (double coverage : coverages) {
+                                for (Integer coverage : coverages) {
 
-                                    HashMap<Double, ArrayList<PeptideAssumption>> coverageMap = nSeMap.get(coverage);
+                                    HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = nSeMap.get(coverage);
                                     ArrayList<Double> minErrors = new ArrayList<Double>(coverageMap.keySet());
                                     Collections.sort(minErrors);
 
                                     for (double minError : minErrors) {
 
-                                        ArrayList<PeptideAssumption> bestPeptideAssumptions = coverageMap.get(minError);
-                                        if (spectrumMatch.getKey().contains("5923.5923")) {
-                                            waitingHandler.appendReport("ambiguity " + bestPeptideAssumptions.size(), true, true);
-                                        }
-                                        for (PeptideAssumption peptideAssumption : bestPeptideAssumptions) {
+                                        HashMap<String, PeptideAssumption> bestPeptideAssumptions = coverageMap.get(minError);
+                                        ArrayList<String> sequences = new ArrayList<String>(bestPeptideAssumptions.keySet());
+
+                                        for (String sequence : sequences) {
+                                            PeptideAssumption peptideAssumption = bestPeptideAssumptions.get(sequence);
                                             if (idFilter.validateProteins(peptideAssumption.getPeptide(), sequenceMatchingPreferences)) {
                                                 bestPeptideAssumption = peptideAssumption;
-                                                if (spectrumMatch.getKey().contains("5923.5923")) {
-                                                    waitingHandler.appendReport(p + " -> " + proteinMax + " -> " + nSE + " -> " + coverage + " -> " + minError + " -> " + peptideAssumption.getPeptide().getSequence() + ", " + peptideAssumption.getScore(), true, true);
-                                                } else {
-                                                    break;
-                                                }
+                                                break;
                                             }
                                         }
                                         if (bestPeptideAssumption != null) {
