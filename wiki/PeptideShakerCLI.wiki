@@ -104,7 +104,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 *Optional filtering parameters*
 
 {{{
--min_peptide_length        Minimim peptide length filter (default is '6').
+-min_peptide_length        Minimim peptide length filter (default is '4').
 
 -max_peptide_length        Maximum peptide length filter (default is '30').
 
@@ -127,6 +127,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 {{{
 -threads                   The number of threads to use. Defaults to the number of available CPUs.
+
+-gui                       Use a dialog to display the progress (1: true, 0: false, default is '0').
 }}}
 
 
