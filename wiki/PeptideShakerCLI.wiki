@@ -44,7 +44,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            in a comma separated list or an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
--spectrum_files            The spectrum files (mgf format) in a comma
+-spectrum_files (*)        The spectrum files (mgf format) in a comma
                            separated list or an entire folder.
                            Example: "file1.mgf, file2.mgf".
 
@@ -55,6 +55,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
                            Generated using SeachGUI or via IdentificationParametersCLI. 
                            This file is automatically saved by SearchGUI along with the 
                            identification files.
+
+(*) Not mandatory if the spectrum files are part of a zip file input for the identification files.
 }}}
 
 *Optional gene annotation parameter*
