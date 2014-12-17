@@ -59,7 +59,6 @@ import java.util.concurrent.Callable;
 /**
  * A Command line interface to run PeptideShaker
  *
- * @author Kenny Helsens
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
@@ -256,7 +255,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
                     try {
                         CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
-                        waitingHandler.appendReport("Pepnovo training export completed.", true, true);
+                        waitingHandler.appendReport("PepNovo training export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
                         e.printStackTrace();
@@ -305,6 +304,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             // Export as zip
             File zipFile = cliInputBean.getZipExport();
             if (zipFile != null) {
+
+                waitingHandler.appendReportEndLine();
+                waitingHandler.appendReport("Zipping project.", true, true);
+
                 File parent = zipFile.getParentFile();
                 try {
                     parent.mkdirs();
@@ -425,11 +428,147 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         projectDetails.setCreationDate(new Date());
         projectDetails.setPeptideShakerVersion(new Properties().getVersion());
 
+        // Get the input files
+        ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
+        ArrayList<File> dataFolders = new ArrayList<File>();
+        ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
+
+        // export data from zip files, try to find the search parameter and mgf files
+        ArrayList<File> identificationFiles = new ArrayList<File>();
+        SearchParameters tempSearchParameters = null;
+        for (File inputFile : identificationFilesInput) {
+
+            File parentFile = inputFile.getParentFile();
+            if (!dataFolders.contains(parentFile)) {
+                dataFolders.add(parentFile);
+            }
+            File dataFolder = new File(parentFile, "mgf");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, "fasta");
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+            dataFolder = new File(parentFile, PeptideShaker.DATA_DIRECTORY);
+            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                dataFolders.add(dataFolder);
+            }
+
+            String fileName = inputFile.getName();
+            if (fileName.toLowerCase().endsWith("zip")) {
+                waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
+                String newName = FileImporter.getTempFolderName(fileName);
+                File destinationFolder = new File(parentFile, newName);
+                destinationFolder.mkdir();
+                TempFilesManager.registerTempFolder(destinationFolder);
+                ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
+
+                dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "mgf");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                dataFolder = new File(destinationFolder, "fasta");
+                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
+                    dataFolders.add(dataFolder);
+                }
+                for (File zippedFile : destinationFolder.listFiles()) {
+                    String nameLowerCase = zippedFile.getName().toLowerCase();
+                    if (nameLowerCase.endsWith("dat")
+                            || nameLowerCase.endsWith("omx")
+                            || nameLowerCase.endsWith("xml")
+                            || nameLowerCase.endsWith("mzid")
+                            || nameLowerCase.endsWith("csv")
+                            || nameLowerCase.endsWith("tags")) {
+                        if (!nameLowerCase.endsWith("mods.xml")
+                                && !nameLowerCase.endsWith("usermods.xml")
+                                && !nameLowerCase.endsWith("settings.xml")) {
+                            identificationFiles.add(zippedFile);
+                        }
+                    } else if (nameLowerCase.endsWith(".parameters")
+                            || nameLowerCase.endsWith(".properties")) {
+                        try {
+                            tempSearchParameters = SearchParameters.getIdentificationParameters(zippedFile);
+                        } catch (Exception e) {
+                            waitingHandler.appendReport("Error processing search parameters.", true, true);
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else {
+                identificationFiles.add(inputFile);
+            }
+        }
+
+        // List the spectrum files found
+        ArrayList<String> names = new ArrayList<String>();
+        for (File spectrumFile : spectrumFiles) {
+            names.add(spectrumFile.getName());
+        }
+        for (File dataFolder : dataFolders) {
+            for (File file : dataFolder.listFiles()) {
+                String name = file.getName();
+                if (name.endsWith(".mgf") && !names.contains(name)) {
+                    spectrumFiles.add(file);
+                    names.add(name);
+                }
+            }
+        }
+
         // Get the search parameters
-        SearchParameters searchParameters = cliInputBean.getSearchParameters();
+        SearchParameters searchParameters = null;
+        if (cliInputBean.getSearchParameters() != null) {
+            searchParameters = cliInputBean.getSearchParameters();
+        } else if (tempSearchParameters != null) {
+            searchParameters = tempSearchParameters;
+        }
+
+        if (searchParameters == null) {
+            waitingHandler.appendReport("Search parameter settings not found!", true, true);
+            waitingHandler.setRunCanceled();
+        }
+
         String error = PeptideShaker.loadModifications(searchParameters);
         if (error != null) {
             System.out.println(error);
+        }
+
+        // try to locate the fasta file
+        File fastaFile = searchParameters.getFastaFile();
+        if (!fastaFile.exists()) {
+            boolean found = false;
+            // look in the database folder {
+            try {
+                UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+                File dbFolder = utilitiesUserPreferences.getDbFolder();
+                File newFile = new File(dbFolder, fastaFile.getName());
+                if (newFile.exists()) {
+                    fastaFile = newFile;
+                    searchParameters.setFastaFile(fastaFile);
+                    found = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!found) {
+                // look in the data folders
+                for (File dataFolder : dataFolders) {
+                    File newFile = new File(dataFolder, fastaFile.getName());
+                    if (newFile.exists()) {
+                        fastaFile = newFile;
+                        searchParameters.setFastaFile(fastaFile);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
+                }
+            }
         }
 
         // Set the default identification parameters
@@ -538,122 +677,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the annotation preferences
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-
-        // Get the input files
-        ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
-        ArrayList<File> dataFolders = new ArrayList<File>();
-        ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
-
-        // export data from zip files, try to find the mgf files
-        ArrayList<File> identificationFiles = new ArrayList<File>();
-        for (File inputFile : identificationFilesInput) {
-
-            File parentFile = inputFile.getParentFile();
-            if (!dataFolders.contains(parentFile)) {
-                dataFolders.add(parentFile);
-            }
-            File dataFolder = new File(parentFile, "mgf");
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-            dataFolder = new File(parentFile, "fasta");
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-            dataFolder = new File(parentFile, PeptideShaker.DATA_DIRECTORY);
-            if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                dataFolders.add(dataFolder);
-            }
-
-            String fileName = inputFile.getName();
-            if (fileName.toLowerCase().endsWith("zip")) {
-                waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
-                String newName = FileImporter.getTempFolderName(fileName);
-                File destinationFolder = new File(parentFile, newName);
-                destinationFolder.mkdir();
-                TempFilesManager.registerTempFolder(destinationFolder);
-                ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
-
-                dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
-                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                    dataFolders.add(dataFolder);
-                }
-                dataFolder = new File(destinationFolder, "mgf");
-                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                    dataFolders.add(dataFolder);
-                }
-                dataFolder = new File(destinationFolder, "fasta");
-                if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
-                    dataFolders.add(dataFolder);
-                }
-                for (File zippedFile : destinationFolder.listFiles()) {
-                    String nameLowerCase = zippedFile.getName().toLowerCase();
-                    if (nameLowerCase.endsWith("dat")
-                            || nameLowerCase.endsWith("omx")
-                            || nameLowerCase.endsWith("xml")
-                            || nameLowerCase.endsWith("mzid")
-                            || nameLowerCase.endsWith("csv")
-                            || nameLowerCase.endsWith("tags")) {
-                        if (!nameLowerCase.endsWith("mods.xml")
-                                && !nameLowerCase.endsWith("usermods.xml")
-                                && !nameLowerCase.endsWith("settings.xml")) {
-                            identificationFiles.add(zippedFile);
-                        }
-                    }
-                }
-            } else {
-                identificationFiles.add(inputFile);
-            }
-        }
-
-        // List the spectrum files found
-        ArrayList<String> names = new ArrayList<String>();
-        for (File spectrumFile : spectrumFiles) {
-            names.add(spectrumFile.getName());
-        }
-        for (File dataFolder : dataFolders) {
-            for (File file : dataFolder.listFiles()) {
-                String name = file.getName();
-                if (name.endsWith(".mgf") && !names.contains(name)) {
-                    spectrumFiles.add(file);
-                    names.add(name);
-                }
-            }
-        }
-
-        // try to locate the fasta file
-        File fastaFile = searchParameters.getFastaFile();
-        if (!fastaFile.exists()) {
-            boolean found = false;
-            // look in the database folder {
-            try {
-                UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-                File dbFolder = utilitiesUserPreferences.getDbFolder();
-                File newFile = new File(dbFolder, fastaFile.getName());
-                if (newFile.exists()) {
-                    fastaFile = newFile;
-                    searchParameters.setFastaFile(fastaFile);
-                    found = true;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (!found) {
-                // look in the data folders
-                for (File dataFolder : dataFolders) {
-                    File newFile = new File(dataFolder, fastaFile.getName());
-                    if (newFile.exists()) {
-                        fastaFile = newFile;
-                        searchParameters.setFastaFile(fastaFile);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    waitingHandler.appendReport("FASTA file \'" + fastaFile.getName() + "\' not found.", true, true);
-                }
-            }
-        }
 
         // create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);

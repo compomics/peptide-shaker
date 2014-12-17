@@ -92,7 +92,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The minimal peptide length allowed.
      */
-    private int minPepLength = 6;
+    private int minPepLength = 4;
     /**
      * The maximal peptide length allowed.
      */
