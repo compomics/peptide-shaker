@@ -30,7 +30,7 @@ public enum PeptideShakerCLIParams {
     PTM_THRESHOLD("ptm_threshold", "The threshold to use for the PTM scores. Automatic mode will be used if not set.", false),
     SCORE_NEUTRAL_LOSSES("score_neutral_losses", "Include neutral losses in spectrum annotation of the PTM score (1: true, 0: false, default is '0').", false),
     PROTEIN_FRACTION_MW_CONFIDENCE("protein_fraction_mw_confidence", "Minimum confidence required for a protein in the fraction MW plot (default 95%: '95.0').", false),
-    MIN_PEPTIDE_LENGTH("min_peptide_length", "Minimim peptide length filter (default is '6').", false),
+    MIN_PEPTIDE_LENGTH("min_peptide_length", "Minimim peptide length filter (default is '4').", false),
     MAX_PEPTIDE_LENGTH("max_peptide_length", "Maximum peptide length filter (default is '30').", false),
     MAX_PRECURSOR_ERROR("max_precursor_error", "Maximum precursor error filter (default '10'). See also max_precursor_error_type.", false),
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
