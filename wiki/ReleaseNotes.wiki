@@ -3,6 +3,37 @@
 
 ----
 
+*Changes in PeptideShaker 0.36.0 (coming soon...):*
+
+ * NEW FEATURE: Mirrored spectra support in the spectrum panels.
+ * NEW FEATURE: Protein inference graphs in the protein inference dialogs.
+ * NEW FEATURE: neXtProt FASTA headers can now be parsed.
+
+ * FEATURE IMPROVEMENT: Multithreaded the scoring of PTMs.
+ * FEATURE IMPROVEMENT: Iterating matches is now faster and requires less memory.
+ * FEATURE IMPROVEMENT: Updated the gene and GO mappings to Ensembl version 78.
+ * FEATURE IMPROVEMENT: Extended the file size columns in the PRIDE Reshake to "Size (MB)" and added sparklines.
+ * FEATURE IMPROVEMENT: The downloading of the PRIDE projects in the Reshake is now done in batches and with a progress bar.
+ * FEATURE IMPROVEMENT: Improved the way the selection of multiple PSMs are annotated in the spectrum panel border.
+ * FEATURE IMPROVEMENT: Multiple selection in the PTM tables in the Search Settings Dialog no longer requires the use of the Ctrl key.
+ * FEATURE IMPROVEMENT: Added the files reprocessed to the PRIDE Reshake report.
+ * FEATURE IMPROVEMENT: Added the Enzymatic column to the ProteinInferencePeptideLevelDialog.
+ * FEATURE IMPROVEMENT: Scientific notation is now used for the spectrum counting and intensity columns.
+ * FEATURE IMPROVEMENT: Retention time is now given in minutes instead of seconds.
+ * FEATURE IMPROVEMENT: The search parameters can now be extracted from the SearchGUI zip file.
+
+ * BUG FIX: Fixed a bug in the ExportGraphicsDialog where the last selected folder was not set.
+ * BUG FIX: Fixed a bug where the tool failed to start if less than 1GB of memory was the maximum value allowed by the system.
+ * BUG FIX: Fixed a bug in the Species Dialog where the text on the Update/Download button was not always correct. 
+ * BUG FIX: Fixed a minor GUI issue with the progress bar in the PRIDE Reshake.
+
+ * LIBRARY UPDATE: Updated omssa-parser to version 1.6.12.
+ * LIBRARY UPDATE: Updated xtandem-parser to version 1.7.17.
+ * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.28.
+ * LIBRARY UPDATE: Updated utilities to version 3.44.1. 
+
+----
+
 *Changes in PeptideShaker 0.35.6 (December 1. 2014):*
 
  * BUG FIX: Fixed an issue in the retrieval of public PRIDE projects.
