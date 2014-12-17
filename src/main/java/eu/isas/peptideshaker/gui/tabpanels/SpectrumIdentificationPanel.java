@@ -2087,7 +2087,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (evt.getButton() == MouseEvent.BUTTON1 && row != -1 && column != -1) {
 
             // open protein link in web browser
-            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
+            if (column == spectrumTable.getColumn("Protein(s)").getModelIndex()
+                    && evt.getButton() == MouseEvent.BUTTON1
+                    && spectrumTable.getValueAt(row, column) != null
                     && ((String) spectrumTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
                 peptideShakerGUI.openProteinLinks((String) spectrumTable.getValueAt(row, column));
             }
@@ -2608,7 +2610,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getSpectrumMatchParameter(key, probabilities);
 
-                    // fill peptide shaker table
+                    // fill peptideshaker table
                     DisplayFeaturesGenerator displayFeaturesGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     String proteins = "";
                     String sequence;
@@ -2949,6 +2951,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             + "Spectrum & Fragment Ions ("
                             + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 2) + " m/z)"
                             + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+
+                    spectrumChartPanel.add(spectrum);
                     spectrumPanel.repaint();
                 }
 
