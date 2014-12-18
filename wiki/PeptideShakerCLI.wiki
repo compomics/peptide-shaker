@@ -411,6 +411,10 @@ When using comma separated lists as input please pay attention to the quotes req
 -spectrum_files "C:\..\file_1.mgf, C:\..\file_2.mgf"
 }}}
 
+*Absolute Paths*
+
+In general it is recommended to use absolute paths.
+
 
 *Memory Settings*
 
