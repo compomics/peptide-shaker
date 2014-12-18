@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.BufferedOutputStream;
@@ -95,14 +96,14 @@ public class ProjectExport {
                     for (String dataFilePath : dataFiles) {
                         totalUncompressedSize += new File(dataFilePath).length();
                     }
-                    
+
                     // add the data files
                     if (waitingHandler != null) {
                         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                         waitingHandler.setSecondaryProgressCounter(0);
                         waitingHandler.setMaxSecondaryProgressCounter(100);
                     }
-                    
+
                     // add the cps file
                     ZipUtils.addFileToZip(cpsFile, out, waitingHandler, totalUncompressedSize);
 
@@ -135,6 +136,10 @@ public class ProjectExport {
             }
         } finally {
             fos.close();
+        }
+
+        if (waitingHandler instanceof WaitingHandlerCLIImpl) {
+            waitingHandler.appendReportEndLine();
         }
     }
 }
