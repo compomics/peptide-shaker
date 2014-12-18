@@ -346,7 +346,9 @@ public class PsmImporter {
                 }
             }
 
-            if (spectrumMatch.hasAssumption(advocateId)) {
+            if (!spectrumMatch.hasAssumption(advocateId)) {
+                psmsRejected++;
+            } else {
 
                 // Check whether there is a potential first hit which does not belong to the target and the decoy database
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocateId).keySet());
@@ -813,6 +815,8 @@ public class PsmImporter {
                             }
                         }
                     }
+                } else {
+                    psmsRejected++;
                 }
 
                 if (waitingHandler.isRunCanceled()) {
