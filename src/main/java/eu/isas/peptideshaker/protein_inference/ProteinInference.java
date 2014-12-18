@@ -9,7 +9,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
@@ -615,9 +614,6 @@ public class ProteinInference {
             metrics.setMaxProteinKeyLength(maxProteinKeyLength);
         }
 
-        if (waitingHandler instanceof WaitingHandlerCLIImpl) {
-            waitingHandler.appendReportEndLine();
-        }
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).", true, true);
     }
