@@ -463,6 +463,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 destinationFolder.mkdir();
                 TempFilesManager.registerTempFolder(destinationFolder);
                 ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
+                if (waitingHandler instanceof WaitingHandlerCLIImpl) {
+                    waitingHandler.appendReportEndLine();
+                }
 
                 dataFolder = new File(destinationFolder, PeptideShaker.DATA_DIRECTORY);
                 if (dataFolder.exists() && !dataFolders.contains(dataFolder)) {
