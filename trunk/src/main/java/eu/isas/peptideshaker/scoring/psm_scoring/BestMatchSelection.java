@@ -1,11 +1,9 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
@@ -32,13 +30,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class contains the method for PSM best hit selection.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class BestMatchSelection {
 
@@ -56,11 +53,11 @@ public class BestMatchSelection {
      */
     private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
     /**
-     * The identification object
+     * The identification object.
      */
     private Identification identification;
     /**
-     * the validator which will take care of the matches validation
+     * The validator which will take care of the matches validation.
      */
     private MatchesValidator matchesValidator;
     /**
@@ -103,7 +100,8 @@ public class BestMatchSelection {
      * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
      * whenever an error occurred while reading an mzML file
      */
-    public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public void selectBestHitAndFillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, 
+            IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
@@ -251,7 +249,9 @@ public class BestMatchSelection {
                                             Peptide peptide = tempAssumption.getPeptide();
                                             int precursorCharge = tempAssumption.getIdentificationCharge().value;
                                             annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
-                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
+                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = 
+                                                    spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), 
+                                                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
                                                     spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
                                             int nIons = coveredAminoAcids.size();
                                             nSeMap.put(nIons, coverageMap);
@@ -262,7 +262,9 @@ public class BestMatchSelection {
                                     Peptide peptide = peptideAssumption1.getPeptide();
                                     int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
                                     annotationPreferences.setCurrentSettings(peptideAssumption1, true, sequenceMatchingPreferences);
-                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
+                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = 
+                                            spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(), 
+                                                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
                                             spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
                                     int nIons = coveredAminoAcids.size();
 
@@ -533,5 +535,4 @@ public class BestMatchSelection {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
-
 }

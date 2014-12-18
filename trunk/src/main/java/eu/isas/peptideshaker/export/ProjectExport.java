@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.BufferedOutputStream;
@@ -136,10 +135,6 @@ public class ProjectExport {
             }
         } finally {
             fos.close();
-        }
-
-        if (waitingHandler instanceof WaitingHandlerCLIImpl) {
-            waitingHandler.appendReportEndLine();
         }
     }
 }
