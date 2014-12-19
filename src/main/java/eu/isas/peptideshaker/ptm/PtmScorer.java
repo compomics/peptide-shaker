@@ -1255,7 +1255,7 @@ public class PtmScorer {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true);
-            for (int i = 1; i <= processingPreferences.getnThreads(); i++) {
+            for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, peptideSpectrumAnnotator, identification, identificationParameters, waitingHandler, exceptionHandler);
                 pool.submit(runnable);

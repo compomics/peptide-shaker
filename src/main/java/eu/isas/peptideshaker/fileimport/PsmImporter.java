@@ -368,7 +368,7 @@ public class PsmImporter {
                             String peptideSequence = peptide.getSequence();
 
                             // map the algorithm specific modifications on utilities modifications
-                            // If there are not enough sites to put them all on the sequence, add an unknown modifcation
+                            // If there are not enough sites to put them all on the sequence, add an unknown modification
                             // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
