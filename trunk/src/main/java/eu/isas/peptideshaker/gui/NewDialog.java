@@ -2129,10 +2129,12 @@ public class NewDialog extends javax.swing.JDialog {
                     // all parameters are equal, just select one of them
                     parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
                 } else {
-                    FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
+                    setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    FileSelectionDialog fileSelection = new FileSelectionDialog(this, parameterFiles, "Select the wanted SearchGUI parameters file.");
                     if (!fileSelection.isCanceled()) {
                         parameterFile = fileSelection.getSelectedFile();
                     }
+                    setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                 }
             }
 
