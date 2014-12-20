@@ -5191,7 +5191,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "Spectrum file not found: \'" + spectrumFileName + "\'."
                                     + "\nPlease select the spectrum file or the folder containing it manually.",
-                                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+                                    "File Not Found", JOptionPane.WARNING_MESSAGE);
 
                             JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder().getLastSelectedFolder());
                             fileChooser.setDialogTitle("Open Spectrum File");
