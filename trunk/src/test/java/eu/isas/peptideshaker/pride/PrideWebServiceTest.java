@@ -29,7 +29,7 @@ public class PrideWebServiceTest extends TestCase {
      */
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     /**
-     * Test is escaped in offline mode
+     * Test is escaped in offline mode.
      */
     private static boolean offline = false;
 

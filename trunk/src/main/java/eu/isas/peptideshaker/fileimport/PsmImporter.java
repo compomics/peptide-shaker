@@ -372,9 +372,13 @@ public class PsmImporter {
                             // Note: this needs to be done for tag based assumptions as well since the protein mapping can return erroneous modifications for some pattern based PTMs
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
+                            // set the matching type to amino acid for the fixed ptms
+                            SequenceMatchingPreferences tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters); // @TODO: is there a simpler way?
+                            tempSequenceMatchingPreferences.setSequenceMatchingType(SequenceMatchingPreferences.MatchingType.aminoAcid);
+                            
                             boolean fixedPtmIssue = false;
                             try {
-                                ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences);
+                                ptmFactory.checkFixedModifications(modificationProfile, peptide, tempSequenceMatchingPreferences);
                             } catch (IllegalArgumentException e) {
                                 if (idFilter.removeUnknownPTMs()) {
                                     // Exclude peptides with aberrant PTM mapping
