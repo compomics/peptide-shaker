@@ -28,6 +28,10 @@ public class PrideWebServiceTest extends TestCase {
      * The data format.
      */
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * Test is escaped in offline mode
+     */
+    private static boolean offline = false;
 
     /**
      * Test the PRIDE web service access.
@@ -36,78 +40,81 @@ public class PrideWebServiceTest extends TestCase {
      */
     public void testPrideWebService() throws Exception {
 
-        // the test project
-        String projectTestAccession = "PXD001077";
-        String assayTestAccession  = "37809";
+        if (!offline) {
 
-        // test if the web service is online
-        RestTemplate template = new RestTemplate();
-        ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // can also use project/count/?q=*
-        Integer projectCount = projectCountResult.getBody();
-        Assert.assertTrue(projectCount > 0);
+            // the test project
+            String projectTestAccession = "PXD001077";
+            String assayTestAccession = "37809";
 
-        // test if the project details can be retrieved
-        ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL
-                + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
+            // test if the web service is online
+            RestTemplate template = new RestTemplate();
+            ResponseEntity<Integer> projectCountResult = template.getForEntity(projectServiceURL + "project/count", Integer.class); // can also use project/count/?q=*
+            Integer projectCount = projectCountResult.getBody();
+            Assert.assertTrue(projectCount > 0);
 
-        for (ProjectDetail projectDetail : projectList.getBody().getList()) {
-            String projectAccession = projectDetail.getAccession();
-            String projectTitle = projectDetail.getTitle();
-            String projectSpecies = setToString(projectDetail.getSpecies(), ", ");
-            String projectTissues = setToString(projectDetail.getTissues(), ", ");
-            String ptmNames = setToString(projectDetail.getPtmNames(), "; ");
-            String instrumentNames = setToString(projectDetail.getInstrumentNames(), ", ");
-            int numAssays = projectDetail.getNumAssays();
-            String submissionType = projectDetail.getSubmissionType();
-            String date = dateFormat.format(projectDetail.getPublicationDate());
-        }
+            // test if the project details can be retrieved
+            ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL
+                    + "project/list?show=" + projectCount + "&page=1&sort=publication_date&order=desc", ProjectDetailList.class);
 
-        // test if the assays for the PeptideShaker example dataset can be found
-        String url = projectServiceURL + "assay/list/project/" + projectTestAccession;
-        ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(url, AssayDetailList.class);
-
-        for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
-            String assayAccession = assayDetail.getAssayAccession();
-            String assayTitle = assayDetail.getTitle();
-            String species = setToString(assayDetail.getSpecies(), ", ");
-            String sampleDetails = setToString(assayDetail.getSampleDetails(), ", ");
-            String ptmNames = setToString(assayDetail.getPtmNames(), "; ");
-            String diseases = setToString(assayDetail.getDiseases(), ", ");
-            int proteinCount = assayDetail.getProteinCount();
-            int peptideCount = assayDetail.getPeptideCount();
-            int spectrumCount = assayDetail.getTotalSpectrumCount();
-        }
-
-        // test if the files for the PeptideShaker example dataset can be found
-        url = projectServiceURL + "file/list/project/" + projectTestAccession;
-        ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
-
-        for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
-
-            if (fileDetail.getDownloadLink() != null) {
-                String fileDownloadLink = fileDetail.getDownloadLink().toExternalForm();
+            for (ProjectDetail projectDetail : projectList.getBody().getList()) {
+                String projectAccession = projectDetail.getAccession();
+                String projectTitle = projectDetail.getTitle();
+                String projectSpecies = setToString(projectDetail.getSpecies(), ", ");
+                String projectTissues = setToString(projectDetail.getTissues(), ", ");
+                String ptmNames = setToString(projectDetail.getPtmNames(), "; ");
+                String instrumentNames = setToString(projectDetail.getInstrumentNames(), ", ");
+                int numAssays = projectDetail.getNumAssays();
+                String submissionType = projectDetail.getSubmissionType();
+                String date = dateFormat.format(projectDetail.getPublicationDate());
             }
 
-            String assayAccession = fileDetail.getAssayAccession();
-            String fileName = fileDetail.getFileName();
-            String fileType = fileDetail.getFileType().getName();
-            long fileSize = fileDetail.getFileSize();
-        }
-        
-        // test if the files for the PeptideShaker example dataset assay can be found
-        url = projectServiceURL + "file/list/assay/" + assayTestAccession;
-        fileDetailListResult = template.getForEntity(url, FileDetailList.class);
-        
-        for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
-            
-            if (fileDetail.getDownloadLink() != null) {
-                String fileDownloadLink = fileDetail.getDownloadLink().toExternalForm();
+            // test if the assays for the PeptideShaker example dataset can be found
+            String url = projectServiceURL + "assay/list/project/" + projectTestAccession;
+            ResponseEntity<AssayDetailList> assayDetailList = template.getForEntity(url, AssayDetailList.class);
+
+            for (AssayDetail assayDetail : assayDetailList.getBody().getList()) {
+                String assayAccession = assayDetail.getAssayAccession();
+                String assayTitle = assayDetail.getTitle();
+                String species = setToString(assayDetail.getSpecies(), ", ");
+                String sampleDetails = setToString(assayDetail.getSampleDetails(), ", ");
+                String ptmNames = setToString(assayDetail.getPtmNames(), "; ");
+                String diseases = setToString(assayDetail.getDiseases(), ", ");
+                int proteinCount = assayDetail.getProteinCount();
+                int peptideCount = assayDetail.getPeptideCount();
+                int spectrumCount = assayDetail.getTotalSpectrumCount();
             }
 
-            String assayAccession = fileDetail.getAssayAccession();
-            String fileName = fileDetail.getFileName();
-            String fileType = fileDetail.getFileType().getName();
-            long fileSize = fileDetail.getFileSize();
+            // test if the files for the PeptideShaker example dataset can be found
+            url = projectServiceURL + "file/list/project/" + projectTestAccession;
+            ResponseEntity<FileDetailList> fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+
+            for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+
+                if (fileDetail.getDownloadLink() != null) {
+                    String fileDownloadLink = fileDetail.getDownloadLink().toExternalForm();
+                }
+
+                String assayAccession = fileDetail.getAssayAccession();
+                String fileName = fileDetail.getFileName();
+                String fileType = fileDetail.getFileType().getName();
+                long fileSize = fileDetail.getFileSize();
+            }
+
+            // test if the files for the PeptideShaker example dataset assay can be found
+            url = projectServiceURL + "file/list/assay/" + assayTestAccession;
+            fileDetailListResult = template.getForEntity(url, FileDetailList.class);
+
+            for (FileDetail fileDetail : fileDetailListResult.getBody().getList()) {
+
+                if (fileDetail.getDownloadLink() != null) {
+                    String fileDownloadLink = fileDetail.getDownloadLink().toExternalForm();
+                }
+
+                String assayAccession = fileDetail.getAssayAccession();
+                String fileName = fileDetail.getFileName();
+                String fileType = fileDetail.getFileType().getName();
+                long fileSize = fileDetail.getFileSize();
+            }
         }
     }
 
