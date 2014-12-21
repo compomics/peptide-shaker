@@ -1988,7 +1988,7 @@ public class PtmScorer {
         @Override
         public void run() {
             try {
-                while (psmIterator.hasNext()) {
+                while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
                     SpectrumMatch spectrumMatch = psmIterator.next();
                     if (spectrumMatch != null && spectrumMatch.getBestPeptideAssumption() != null) {
                         scorePTMs(identification, spectrumMatch, identificationParameters, waitingHandler, peptideSpectrumAnnotator);

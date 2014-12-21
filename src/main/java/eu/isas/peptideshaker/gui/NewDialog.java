@@ -1872,8 +1872,8 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (!missing.equals("")) {
-            JOptionPane.showMessageDialog(this, "Input file(s) not found:\n" + missing
-                    + "\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Spectrum file(s) not found:\n" + missing
+                    + "\nPlease locate them manually.", "Spectrum File Not Found", JOptionPane.WARNING_MESSAGE);
         }
 
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
