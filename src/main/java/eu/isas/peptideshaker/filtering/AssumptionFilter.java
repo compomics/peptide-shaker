@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -441,10 +440,10 @@ public class AssumptionFilter extends MatchFilter {
                 || assumptionFilter.getMaxPrecursorMzError() != null) {
 
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+            double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
 
             if (assumptionFilter.getPrecursorMzError() != null) {
-                double error = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm()));
+                double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm()));
                 if (assumptionFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getPrecursorMzError()) {
                         return false;
@@ -465,7 +464,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMinPrecursorMzError() != null) {
-                double error = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
+                double error = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
                 if (assumptionFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMinPrecursorMzError()) {
                         return false;
@@ -486,7 +485,7 @@ public class AssumptionFilter extends MatchFilter {
             }
 
             if (assumptionFilter.getMaxPrecursorMzError() != null) {
-                double error = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
+                double error = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
                 if (assumptionFilter.getPrecursorMaxMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
                     if (error <= assumptionFilter.getMaxPrecursorMzError()) {
                         return false;

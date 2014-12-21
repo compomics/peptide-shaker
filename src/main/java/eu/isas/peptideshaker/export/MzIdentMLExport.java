@@ -1234,7 +1234,7 @@ public class MzIdentMLExport {
                     + "rank=\"" + rank + "\" "
                     + "peptide_ref=\"" + bestPeptideKey + "\" "
                     + "calculatedMassToCharge=\"" + bestPeptideAssumption.getTheoreticMz() + "\" "
-                    + "experimentalMassToCharge=\"" + spectrumFactory.getPrecursor(psmKey).getMz() + "\" "
+                    + "experimentalMassToCharge=\"" + spectrumFactory.getPrecursorMz(psmKey) + "\" "
                     + "chargeState=\"" + bestPeptideAssumption.getIdentificationCharge().value + "\" "
                     + "id=\"" + spectrumIdentificationItemKey + "\">" + System.getProperty("line.separator"));
             tabCounter++;

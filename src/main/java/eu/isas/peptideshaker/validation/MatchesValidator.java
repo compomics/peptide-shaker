@@ -17,7 +17,6 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
@@ -269,8 +268,8 @@ public class MatchesValidator {
 
                     if (peptideAssumption != null) {
 
-                        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                        double precursorMzError = peptideAssumption.getDeltaMass(precursor.getMz(), shotgunProtocol.isMs1ResolutionPpm());
+                        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+                        double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
                         precursorMzDeviations.add(precursorMzError);
                         Integer charge = peptideAssumption.getIdentificationCharge().value;
 
@@ -483,7 +482,7 @@ public class MatchesValidator {
                                 validatedPsmsPerFraction.put(fraction, 1);
                             }
 
-                            if (SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity() > 0) {
+                            if (SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity() > 0) { // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
                                 precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity());
                             }
                         }
