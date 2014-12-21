@@ -358,23 +358,23 @@ public class PtmScorer {
     }
 
     /**
-     * Scores PTM locations for a desired spectrumMatch.
+     * Scores PTM locations for a desired spectrum match.
      *
      * @param identification identification object containing the identification
      * matches
-     * @param spectrumMatch The spectrum match of interest
+     * @param spectrumMatch the spectrum match of interest
      * @param identificationParameters the parameters used for identification
      * @param waitingHandler waiting handler to display progress and allow
-     * cancelling
+     * canceling
      * @param peptideSpectrumAnnotator the spectrum annotator
      *
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
+    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, 
+            WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
 
         PTMScoringPreferences scoringPreferences = identificationParameters.getPtmScoringPreferences();
@@ -512,7 +512,7 @@ public class PtmScorer {
             }
         }
 
-        if (waitingHandler != null) {
+        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             waitingHandler.increaseSecondaryProgressCounter();
         }
     }
