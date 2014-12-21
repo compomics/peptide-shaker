@@ -327,7 +327,7 @@ public class PsmImporter {
         nSecondary += spectrumMatch.getAllAssumptions().size() - 1;
 
         String spectrumKey = spectrumMatch.getKey();
-        String fileName = Spectrum.getSpectrumFile(spectrumKey);
+        String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
         for (int advocateId : assumptions.keySet()) {
@@ -375,7 +375,7 @@ public class PsmImporter {
                             // set the matching type to amino acid for the fixed ptms
                             SequenceMatchingPreferences tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters); // @TODO: is there a simpler way?
                             tempSequenceMatchingPreferences.setSequenceMatchingType(SequenceMatchingPreferences.MatchingType.aminoAcid);
-                            
+
                             boolean fixedPtmIssue = false;
                             try {
                                 ptmFactory.checkFixedModifications(modificationProfile, peptide, tempSequenceMatchingPreferences);
@@ -430,14 +430,14 @@ public class PsmImporter {
                                                 seMass = new Double(parsedName[0]);
                                             } catch (Exception e) {
                                                 throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as a tagged modification.\n"
-                                                        + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file " + fileName + ".\n"
-                                                        + "Identification file: " + idFile.getName());
+                                                        + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
+                                                        + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
                                             }
                                             tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, sequenceMatchingPreferences);
                                         } else if (fileReader instanceof DirecTagIdfileReader) {
                                             PTM ptm = ptmFactory.getPTM(sePTM);
                                             if (ptm == PTMFactory.unknownPTM) {
-                                                throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + fileName + ".");
+                                                throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + spectrumFileName + ".");
                                             }
                                             tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, sequenceMatchingPreferences);
                                         } else {
@@ -789,7 +789,7 @@ public class PsmImporter {
                                 if (firstPeptideHit == null) {
                                     firstPeptideHit = peptideAssumption;
                                     if (!processingPreferences.isScoringNeeded(advocateId)) {
-                                        inputMap.addEntry(advocateId, fileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
+                                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
                                     }
                                     identification.addSpectrumMatch(spectrumMatch);
                                 }
@@ -847,7 +847,7 @@ public class PsmImporter {
     private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
-        double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
         double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, true));
 
         if (error > maxPeptideErrorPpm) {
@@ -894,7 +894,7 @@ public class PsmImporter {
      */
     private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
 
-        double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
         double error = Math.abs(tagAssumption.getDeltaMass(precursorMz, true));
 
         if (error > maxTagErrorPpm) {
