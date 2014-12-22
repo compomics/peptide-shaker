@@ -245,7 +245,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
         }
 
-        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
+        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), 
+                peptideShakerGUI.getLastSelectedFolder(), nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
     }
 
     /**

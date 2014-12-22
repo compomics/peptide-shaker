@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+    <HEAD>
+        <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+        <a name="#top"/>
+        <H2>Protein Inference Graphs</H2>
+
+        <p align="justify">
+            The protein inference graphs makes it easier to understand the complexity of protein inference and evaluate the evidence 
+            for the individual proteins.
+        </p>
+        <p align="justify">
+            There are three main versions of the protein inference graphs:
+        </p>
+        <ul>
+            <li><b>Molecule Type:</b> proteins in red and peptides in blue. <i>(default)</i></li>
+            <li><b>Protein Evidence:</b> proteins colored based on the protein evidence.</li>
+            <li><b>Validation Status:</b> colors based on the validation status.</li>
+        </ul>
+        <p align="justify">
+            <b>Lines:</b> A line between a peptide and a protein is drawn if the sequence of the given peptide can be found in the  
+            protein. A fully drawn line means that the peptide sequence is enzymatic in the protein, i.e., adhering to the cleavage rules of the 
+            enzyme used, while a dotted line represents a non-enzymatic peptide sequence.
+            <br><br>
+            <b>Selection:</b> By default the protein(s) if the currently selected group and its corresponding 
+            peptides are selected. Click a peptide or protein to select it and its nearest neighbors. To only show unique neighbors 
+            select the "Unique Only" option at the bottom. To visually indicate the selected peptides and proteins select the 
+            "Highlight" option. A list of all the currently selected peptides and proteins is shown by clicking the peptide and 
+            protein counts in the upper right corner. 
+            <br><br>
+            To select more than one peptide or protein, or to deselect a peptide or protein, 
+            hold down the "Alt" key when clicking the wanted peptide or protein. Clicking in an empty area of the graph will remove all 
+            selections, while "Ctrl+A" can be used to select all peptides and proteins.
+            <br><br>
+            <b>Layout:</b> Click and hold to move the currently selected peptides and proteins. The layout can always be reset by clicking the 
+            "Layout" option in the upper left corner.
+            <br><br>
+            <b>Export:</b> The protein inference graph can be exported to an image file via the "Export" option at the top.
+        </p>
+        <br><br>
+    </BODY>
+</HTML>
