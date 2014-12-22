@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
+import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
+import com.compomics.util.preferences.LastSelectedFolder;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -17,10 +20,13 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -96,12 +102,31 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      * The parent dialog.
      */
     private JDialog parentDialog;
+    /**
+     * The parent panel.
+     */
+    private JPanel parentPanel;
+    /**
+     * The normal icon.
+     */
+    private Image normalIcon;
+    /**
+     * The waiting icon.
+     */
+    private Image waitingIcon;
+    /**
+     * The last folder opened by the user.
+     */
+    private LastSelectedFolder lastSelectedFolder;
 
     /**
      * Creates a new ProteinInferenceGraphPanel.
      *
      * @param parentDialog the parent dialog
      * @param parentPanel the parent panel
+     * @param normalIcon the normal icon
+     * @param waitingIcon the waiting icon
+     * @param lastSelectedFolder the last selected folder
      * @param nodes the protein and peptide nodes
      * @param edges the edges, key is the starting node and the element is all
      * the ending nodes
@@ -110,11 +135,15 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      * @param nodeToolTips the node tooltips
      * @param selectedNodes the list of selected nodes
      */
-    public ProteinInferenceGraphPanel(JDialog parentDialog, JPanel parentPanel, ArrayList<String> nodes, HashMap<String, ArrayList<String>> edges,
+    public ProteinInferenceGraphPanel(JDialog parentDialog, JPanel parentPanel, Image normalIcon, Image waitingIcon, LastSelectedFolder lastSelectedFolder, ArrayList<String> nodes, HashMap<String, ArrayList<String>> edges,
             HashMap<String, String> nodeProperties, HashMap<String, String> edgeProperties, HashMap<String, String> nodeToolTips, ArrayList<String> selectedNodes) {
         initComponents();
 
         this.parentDialog = parentDialog;
+        this.parentPanel = parentPanel;
+        this.normalIcon = normalIcon;
+        this.waitingIcon = waitingIcon;
+        this.lastSelectedFolder = lastSelectedFolder;
         this.nodes = nodes;
         this.edges = edges;
         this.nodeProperties = nodeProperties;
@@ -134,6 +163,31 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
 
         ScalingControl scaler = new CrossoverScalingControl();
         scaler.scale(visualizationViewer, 0.9f, visualizationViewer.getCenter());
+    }
+
+    /**
+     * Redo the layout of the graph. Node selection is retained.
+     */
+    private void updateGraphLayout() {
+
+        visualizationViewer = setUpGraph(parentPanel);
+        graphPanel.removeAll();
+
+        ScalingControl scaler = new CrossoverScalingControl();
+        scaler.scale(visualizationViewer, 0.9f, visualizationViewer.getCenter());
+
+        // select the proteins part of the current protein group
+        for (String tempNode : nodes) {
+            if (selectedNodes != null && selectedNodes.contains(tempNode)) {
+                visualizationViewer.getPickedVertexState().pick(tempNode, true);
+            } else {
+                visualizationViewer.getPickedVertexState().pick(tempNode, false);
+            }
+        }
+
+        graphPanel.add(visualizationViewer);
+        graphPanel.revalidate();
+        graphPanel.repaint();
     }
 
     /**
@@ -411,6 +465,10 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         proteinCountValueLabel = new javax.swing.JLabel();
         peptideCountLabel = new javax.swing.JLabel();
         peptideCountValueLabel = new javax.swing.JLabel();
+        layoutLabel = new javax.swing.JLabel();
+        exportLabel = new javax.swing.JLabel();
+        legendLabel = new javax.swing.JLabel();
+        helpLabel = new javax.swing.JLabel();
         graphPanel = new javax.swing.JPanel();
         settingsPanel = new javax.swing.JPanel();
         evidenceRadioButton = new javax.swing.JRadioButton();
@@ -456,12 +514,77 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             }
         });
 
+        layoutLabel.setText("<html><a href>Layout</html>");
+        layoutLabel.setToolTipText("Redo the graph layout");
+        layoutLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                layoutLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                layoutLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                layoutLabelMouseReleased(evt);
+            }
+        });
+
+        exportLabel.setText("<html><a href>Export</html>");
+        exportLabel.setToolTipText("Export graph as image");
+        exportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportLabelMouseReleased(evt);
+            }
+        });
+
+        legendLabel.setText("<html><a href>Legend</html>");
+        legendLabel.setToolTipText("Show color legend (coming soon...)");
+        legendLabel.setEnabled(false);
+        legendLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                legendLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                legendLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                legendLabelMouseReleased(evt);
+            }
+        });
+
+        helpLabel.setText("<html><a href>Help</html>");
+        helpLabel.setToolTipText("Show graph help");
+        helpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                helpLabelMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout selectionPanelLayout = new javax.swing.GroupLayout(selectionPanel);
         selectionPanel.setLayout(selectionPanelLayout);
         selectionPanelLayout.setHorizontalGroup(
             selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(selectionPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(layoutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(exportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(proteinCountLabel)
                     .addComponent(peptideCountLabel))
@@ -479,7 +602,11 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(proteinCountLabel)
-                    .addComponent(proteinCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(proteinCountValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(layoutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(peptideCountLabel)
@@ -721,6 +848,114 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         new ProteinInferenceGraphSelectionDialog(parentDialog, true, getSelectedValuesAsString());
     }//GEN-LAST:event_peptideCountValueLabelMouseReleased
 
+    private void layoutLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_layoutLabelMouseReleased
+        updateGraphLayout();
+    }//GEN-LAST:event_layoutLabelMouseReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void layoutLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_layoutLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_layoutLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void layoutLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_layoutLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_layoutLabelMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportLabelMouseExited
+
+    /**
+     * Open the export graphics menu.
+     *
+     * @param evt
+     */
+    private void exportLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportLabelMouseReleased
+        new ExportGraphicsDialog(parentDialog, normalIcon, waitingIcon, true, (Component) graphPanel, lastSelectedFolder);
+    }//GEN-LAST:event_exportLabelMouseReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void helpLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void helpLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpLabelMouseExited
+
+    /**
+     * Open the protein inference graph help.
+     *
+     * @param evt
+     */
+    private void helpLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpLabelMouseReleased
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(parentDialog, getClass().getResource("/helpFiles/ProteinInferenceGraph.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpLabelMouseReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void legendLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_legendLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_legendLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void legendLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_legendLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_legendLabelMouseExited
+
+    /**
+     * Show the graph color legend.
+     *
+     * @param evt
+     */
+    private void legendLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_legendLabelMouseReleased
+        // @TODO: show color legend...
+    }//GEN-LAST:event_legendLabelMouseReleased
+
     /**
      * Get the selected node as an HTML string.
      *
@@ -800,8 +1035,12 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton allRadioButton;
     private javax.swing.ButtonGroup annotationButtonGroup;
     private javax.swing.JRadioButton evidenceRadioButton;
+    private javax.swing.JLabel exportLabel;
     private javax.swing.JPanel graphPanel;
+    private javax.swing.JLabel helpLabel;
     private javax.swing.JCheckBox highlightCheckBox;
+    private javax.swing.JLabel layoutLabel;
+    private javax.swing.JLabel legendLabel;
     private javax.swing.JRadioButton nodeTypeRadioButton;
     private javax.swing.JLabel peptideCountLabel;
     private javax.swing.JLabel peptideCountValueLabel;

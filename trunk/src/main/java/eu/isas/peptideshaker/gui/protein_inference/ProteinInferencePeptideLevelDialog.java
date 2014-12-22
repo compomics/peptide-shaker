@@ -257,7 +257,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             e.printStackTrace(); // @TODO: better error handling!
         }
 
-        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
+        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), 
+                peptideShakerGUI.getLastSelectedFolder(),nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
     }
 
     /**
