@@ -84,7 +84,7 @@ public class PtmScorer {
      * The number of decimals to which scores should be floored. Ignored if
      * null.
      */
-    public static final Integer flooringDecimal = null;
+    public static final Integer ptmScoreScale = 10;
 
     /**
      * Constructor.
@@ -218,8 +218,8 @@ public class PtmScorer {
                     }
 
                     double deltaScore = (secondaryP - refP) * 100;
-                    if (flooringDecimal != null) {
-                        deltaScore = Util.floorDouble(deltaScore, flooringDecimal);
+                    if (ptmScoreScale != null) {
+                        deltaScore = Util.floorDouble(deltaScore, ptmScoreScale);
                     }
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
@@ -291,13 +291,13 @@ public class PtmScorer {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, flooringDecimal);
+                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(),
-                            sequenceMatchingPreferences, peptideSpectrumAnnotator, flooringDecimal);
+                            sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
                 }
                 if (scores != null) {
                     // remap to searched PTMs
