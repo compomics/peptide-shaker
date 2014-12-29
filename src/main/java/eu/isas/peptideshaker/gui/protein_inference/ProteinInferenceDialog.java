@@ -100,9 +100,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     /**
      * Creates new form ProteinInferenceDialog.
      *
-     * @param peptideShakerGUI
-     * @param inspectedMatch
-     * @param identification
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param inspectedMatch the inspected match
+     * @param identification the identifications
      */
     public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, String inspectedMatch, Identification identification) {
         super(peptideShakerGUI, true);

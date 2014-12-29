@@ -107,11 +107,12 @@ public class IdentificationFeaturesGenerator {
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
      *
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public double[] getCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = (double[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey);
@@ -130,11 +131,12 @@ public class IdentificationFeaturesGenerator {
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
      *
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int[] getAACoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         int[] result = (int[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.AA_coverage, proteinMatchKey);
@@ -151,11 +153,13 @@ public class IdentificationFeaturesGenerator {
      * been altered.
      *
      * @param proteinMatchKey the key of the protein of interest
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void updateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = estimateCoverableAA(proteinMatchKey);
@@ -226,11 +230,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the identification coverage of the protein sequence
      *
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int[] estimateAACoverage(String proteinMatchKey, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -428,10 +433,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the sequence coverage
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public HashMap<Integer, Double> getSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         HashMap<Integer, Double> result = (HashMap<Integer, Double>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey);
@@ -461,10 +468,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a list of non-enzymatic peptides for a given protein match
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -485,10 +492,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a list of non-enzymatic peptides for a given protein match
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -532,10 +539,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein of interest
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public void updateSequenceCoverage(String proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -549,11 +556,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match of interest
      * @return the corresponding spectrum counting metric
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public Double getSpectrumCounting(String proteinMatchKey) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
         return getSpectrumCounting(proteinMatchKey, spectrumCountingPreferences.getSelectedMethod());
@@ -566,11 +575,13 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      * @param method the method to use
      * @return the corresponding spectrum counting metric
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
@@ -625,13 +636,14 @@ public class IdentificationFeaturesGenerator {
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
      * @param sequenceMatchingPreferences the sequence matching preferences
-     *
      * @return the spectrum counting index
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, SequenceMatchingPreferences sequenceMatchingPreferences)
@@ -741,12 +753,14 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      * @return the best protein coverage possible according to the given
      * cleavage settings
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws org.apache.commons.math.MathException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MathException thrown if a MathException occurs
      */
     public Double getObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
@@ -773,12 +787,14 @@ public class IdentificationFeaturesGenerator {
      * cleavage settings. Used when the main key for a protein has been altered.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws org.apache.commons.math.MathException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MathException thrown if a MathException occurs
      */
     public void updateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = estimateObservableCoverage(proteinMatchKey);
@@ -815,11 +831,13 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNValidatedProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (metrics.getnValidatedProteins() == -1) {
@@ -855,11 +873,13 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNConfidentProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (metrics.getnConfidentProteins() == -1) {
@@ -894,11 +914,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     private int estimateNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -927,11 +949,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of confident peptides
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     private int estimateNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -959,11 +982,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the match
      * @return the number of unique peptides
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey);
@@ -980,10 +1005,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @return the number of peptides unique to a protein match
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     private int estimateNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1005,11 +1033,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
@@ -1029,11 +1059,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of confident peptides
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey);
@@ -1051,11 +1082,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void updateNConfidentPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
@@ -1067,11 +1099,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void updateNConfidentSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentSpectra(proteinMatchKey);
@@ -1094,11 +1127,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the given protein match
      * @return the number of spectra for the given protein match
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public Integer getNSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
@@ -1148,11 +1183,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getMaxNSpectra() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         return identificationFeaturesCache.getMaxSpectrumCount();
@@ -1163,11 +1200,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated spectra
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNValidatedSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
@@ -1187,11 +1226,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of validated spectra
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNConfidentSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey);
@@ -1277,11 +1317,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param peptideMatchKey the key of the peptide match
      * @return the number of validated spectra
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNValidatedSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey);
@@ -1301,11 +1343,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the number of confident spectra
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public int getNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey);
@@ -1322,11 +1365,13 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void updateNConfidentSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
@@ -1409,11 +1454,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getConfidentPtmSites(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1465,11 +1511,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getConfidentPtmSites(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1512,11 +1559,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getConfidentPtmSitesNumber(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1553,11 +1601,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getConfidentPtmSitesNumber(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1587,11 +1636,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getAmbiguousPtmSites(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1652,11 +1702,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getAmbiguousPtmSites(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1737,11 +1788,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getAmbiguousPtmSiteNumber(String proteinKey)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1774,11 +1826,12 @@ public class IdentificationFeaturesGenerator {
      *
      * @return a PTM summary for the given protein
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getAmbiguousPtmSiteNumber(String proteinKey, ArrayList<String> targetedPtms)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1805,11 +1858,13 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match
      * @return the protein sequence annotated with modifications
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public String getModifiedSequence(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1846,10 +1901,11 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the list of validated protein keys
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1864,10 +1920,11 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the list of validated protein keys
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1884,11 +1941,11 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      * @param waitingHandler the waiting handler, can be null
      * @return the sorted list of protein keys
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2095,10 +2152,11 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler can be null
      * @param filterPreferences the filtering preferences used. can be null
      * @return the ordered protein keys to display when no filtering is applied.
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2113,10 +2171,11 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein of interest
      * @return a sorted list of the corresponding peptide keys
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getSortedPeptideKeys(String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
@@ -2177,10 +2236,11 @@ public class IdentificationFeaturesGenerator {
      *
      * @param peptideKey the key of the peptide of interest
      * @return the ordered list of spectrum keys
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * 
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public ArrayList<String> getSortedPsmKeys(String peptideKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null) {

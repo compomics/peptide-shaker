@@ -41,7 +41,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private ProjectExportDialog prideExportDialog;
     /**
-     * The NEWT taxonony root.
+     * The NEWT taxonomy root.
      */
     private String newtRoot = "NEWT UniProt Taxonomy Database [NEWT] / Root node of taxonomy";
     /**
@@ -68,8 +68,8 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     /**
      * Creates a new NewSampleDialog.
      *
-     * @param prideExportDialog
-     * @param modal
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewSampleDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
@@ -87,9 +87,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     /**
      * Creates a new NewSampleDialog.
      *
-     * @param prideExportDialog
-     * @param modal
-     * @param sample
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param sample the sample
      */
     public NewSampleDialog(ProjectExportDialog prideExportDialog, boolean modal, Sample sample) {
         super(prideExportDialog, modal);
@@ -615,7 +615,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         String ontology = (String) sampleCvTermsJTable.getValueAt(selectedRow, 1);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        if (newtRoot.indexOf(ontology) != -1) {
+        if (newtRoot.contains(ontology)) {
             ontology = newtRoot;
         }
 
@@ -835,7 +835,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Fixes the indices so that they are in accending order starting from one
+     * Fixes the indices so that they are in ascending order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) sampleCvTermsJTable.getModel()).getRowCount(); row++) {
@@ -898,9 +898,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     /**
      * Add a sample cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addSampleDetails(String name, String accession, String ontology, int modifiedRow) {
@@ -910,10 +910,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     /**
      * Add a sample cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
-     * @param value
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
+     * @param value the value
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addSampleDetails(String name, String accession, String ontology, String value, int modifiedRow) {

@@ -24,7 +24,7 @@ public class Tips {
      * Returns the tips of the day.
      *
      * @return the tips of the day in an ArrayList
-     * @throws java.io.IOException
+     * @throws IOException thrown if an IOException occurs
      */
     public static ArrayList<String> getTips() throws IOException {
 

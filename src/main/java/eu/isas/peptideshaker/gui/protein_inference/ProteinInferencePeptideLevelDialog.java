@@ -44,7 +44,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
@@ -71,7 +71,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      * @param peptideMatchKey the peptide match key
      * @param proteinMatchKey the protein match key
-     * @throws Exception
+     * @throws Exception if an exception occurs
      */
     public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideMatchKey, String proteinMatchKey) throws Exception {
 

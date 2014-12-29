@@ -114,7 +114,7 @@ public class QCPanel extends javax.swing.JPanel {
     /**
      * Creates a new QCPanel.
      *
-     * @param parent
+     * @param parent the PeptideShakerGUI parent
      */
     public QCPanel(PeptideShakerGUI parent) {
         this.peptideShakerGUI = parent;
@@ -1146,7 +1146,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
 
-                        double tempMaxValue = maxValue; // @TODO: support scientific x-axis for spectrum counting plot?
+                        double tempMaxValue; // @TODO: support scientific x-axis for spectrum counting plot?
 
                         // try to find a suitable range
                         if (maxValue < 0.25) {

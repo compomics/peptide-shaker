@@ -19,7 +19,7 @@ import no.uib.olsdialog.OLSDialog;
 import no.uib.olsdialog.OLSInputable;
 
 /**
- * A dialog for annotating protcols.
+ * A dialog for annotating protocols.
  *
  * @author Harald Barsnes
  */
@@ -41,8 +41,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     /**
      * Creates a new NewProtocolDialog.
      *
-     * @param prideExportDialog
-     * @param modal
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewProtocolDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
@@ -61,9 +61,9 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     /**
      * Creates a new NewProtocolDialog.
      *
-     * @param prideExportDialog
-     * @param modal
-     * @param protcol
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param protcol the protocol
      */
     public NewProtocolDialog(ProjectExportDialog prideExportDialog, boolean modal, Protocol protcol) {
         super(prideExportDialog, modal);
@@ -593,7 +593,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Fixes the indices so that they are in acceding order starting from one.
+     * Fixes the indices so that they are in ascending order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) protocolCvTermsJTable.getModel()).getRowCount(); row++) {
@@ -650,9 +650,9 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     /**
      * Add a protocol cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addProtocolDetails(String name, String accession, String ontology, int modifiedRow) {
@@ -662,10 +662,10 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     /**
      * Add a protocol cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
-     * @param value
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
+     * @param value the value
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addProtocolDetails(String name, String accession, String ontology, String value, int modifiedRow) {

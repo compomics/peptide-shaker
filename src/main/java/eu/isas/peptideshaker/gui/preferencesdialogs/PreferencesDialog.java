@@ -35,8 +35,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
     /**
      * Creates a new PreferencesDialog.
      *
-     * @param peptideShakerGUI
-     * @param modal
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param modal if the dialog is to be modal or not
      */
     public PreferencesDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);

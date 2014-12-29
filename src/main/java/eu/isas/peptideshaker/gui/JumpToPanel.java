@@ -126,7 +126,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Set the color for the hits.
      *
-     * @param color
+     * @param color the color
      */
     public void setColor(Color color) {
         indexLabel.setForeground(color);
@@ -165,10 +165,11 @@ public class JumpToPanel extends javax.swing.JPanel {
      * search.
      *
      * @return a list of descriptions
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws IOException
-     * @throws InterruptedException
+     *
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
      */
     public ArrayList<String> getPossibilitiesDescriptions() throws SQLException, ClassNotFoundException, IOException, InterruptedException {
 
@@ -210,11 +211,11 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param key the key of the item
      * @param itemType the type of the item
      * @return the description of an item
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * 
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
      */
     private String getItemDescription(String key, Type itemType) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Identification identification = peptideShakerGUI.getIdentification();
@@ -247,7 +248,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Returns the index of the selected item.
      *
-     * @return he index of the selected item
+     * @return the index of the selected item
      */
     public int getIndexOfSelectedItem() {
         return currentSelection.get(jumpType);
@@ -257,7 +258,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Sets the index of the selected item. Note: this does not update the
      * selection in tab and the GUI (see updateSelectionInTab()).
      *
-     * @param itemIndex
+     * @param itemIndex the item index
      */
     public void setSelectedItem(int itemIndex) {
         currentSelection.put(jumpType, itemIndex);
@@ -378,7 +379,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Update the jump to filter.
      *
-     * @param evt
+     * @param evt the key event
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
@@ -588,7 +589,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Display the previous match in the list.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
         if (currentSelection.get(jumpType) == 0) {
@@ -602,7 +603,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Display the next match in the list.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         if (currentSelection.get(jumpType) == possibilities.get(jumpType).size() - 1) {
@@ -616,7 +617,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Select all text in the search field.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
         if (inputTxt.getText().equals(welcomeText.get(jumpType))) {
@@ -627,7 +628,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Change the icon to a hand icon.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void previousButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousButtonMouseEntered
         if (previousButton.isEnabled()) {
@@ -638,7 +639,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Change the icon back to the default icon.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void previousButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -647,7 +648,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Change the icon back to the default icon.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void nextButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -656,7 +657,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * Change the icon to a hand icon.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void nextButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseEntered
         if (nextButton.isEnabled()) {

@@ -24,7 +24,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
     /**
      * Creates a dialog to display the project properties.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public ProjectDetailsDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);

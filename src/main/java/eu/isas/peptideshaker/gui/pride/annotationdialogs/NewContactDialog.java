@@ -28,8 +28,8 @@ public class NewContactDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewContactDialog.
      * 
-     * @param newContactGroupDialog
-     * @param modal 
+     * @param newContactGroupDialog the parent dialog
+     * @param modal if the dialog is to be modal or not
      */
     public NewContactDialog(NewContactGroupDialog newContactGroupDialog, boolean modal) {
         super(newContactGroupDialog, modal);
@@ -42,10 +42,10 @@ public class NewContactDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewContactDialog.
      * 
-     * @param newContactGroupDialog
-     * @param modal
-     * @param contact
-     * @param modifiedRow
+     * @param newContactGroupDialog the parent dialog
+     * @param modal if the dialog is to be modal or not
+     * @param contact the contact
+     * @param modifiedRow the modified row
      */
     public NewContactDialog(NewContactGroupDialog newContactGroupDialog, boolean modal, Contact contact, int modifiedRow) {
         super(newContactGroupDialog, modal);

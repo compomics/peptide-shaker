@@ -37,7 +37,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
     /**
      * Creates a new AnnotationPanel.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public AnnotationPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();

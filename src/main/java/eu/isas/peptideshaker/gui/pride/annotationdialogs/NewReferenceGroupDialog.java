@@ -30,8 +30,8 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewReferenceGroupDialog.
      *
-     * @param prideExportDialog
-     * @param modal
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewReferenceGroupDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
@@ -47,9 +47,9 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewReferenceGroupDialog.
      *
-     * @param prideExportDialog
-     * @param modal
-     * @param referenceGroup
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param referenceGroup the reference group
      */
     public NewReferenceGroupDialog(ProjectExportDialog prideExportDialog, boolean modal, ReferenceGroup referenceGroup) {
         super(prideExportDialog, modal);
@@ -566,7 +566,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
     /**
      * Add a new reference to the table.
      *
-     * @param reference
+     * @param reference the reference
      */
     public void insertReference(Reference reference) {
         ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
@@ -581,7 +581,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
     /**
      * Add a new reference to the table.
      *
-     * @param reference
+     * @param reference the reference
      * @param row the index of the row to edit 
      */
     public void editReference(Reference reference, int row) {

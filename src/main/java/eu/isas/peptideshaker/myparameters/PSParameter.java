@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.myparameters;
 
-import com.compomics.util.Util;
-import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.util.ArrayList;
@@ -187,7 +185,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the peptide posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the peptide posterior error probability. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param peptideProbability the new peptide posterior error probability
      */
@@ -236,7 +236,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the peptide Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the peptide Probabilistic score. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
@@ -254,7 +256,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the protein posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the protein posterior error probability. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param proteinProbability the new protein posterior error probability
      */
@@ -303,7 +307,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the protein Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the protein Probabilistic score. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
@@ -321,7 +327,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the search engine posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the search engine posterior error probability. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param searchEngineProbability the new search engine posterior error
      * probability
@@ -405,7 +413,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the the PSM posterior error probability. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the the PSM posterior error probability. Note: if
+     * PsmScores.scoreRoundingDecimal is not null the scored will be floored
+     * accordingly.
      *
      * @param psmProbability the new the PSM posterior error probability
      */
@@ -423,7 +433,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the PSM Probabilistic score. Note: if PsmScores.scoreRoundingDecimal is not null the scored will be floored accordingly.
+     * Set the PSM Probabilistic score. Note: if PsmScores.scoreRoundingDecimal
+     * is not null the scored will be floored accordingly.
      *
      * @param psmProbabilityScore the new PSM Probabilistic score
      */
@@ -641,7 +652,7 @@ public class PSParameter implements UrParameter {
     /**
      * Returns the fraction score. Null if not found.
      *
-     * @param fraction
+     * @param fraction the fraction
      * @return the fraction score
      */
     public double getFractionScore(String fraction) {
@@ -674,7 +685,7 @@ public class PSParameter implements UrParameter {
     /**
      * Returns the fraction pep. null if not found.
      *
-     * @param fraction
+     * @param fraction the fraction
      * @return the fraction pep
      */
     public double getFractionPEP(String fraction) {
@@ -684,7 +695,7 @@ public class PSParameter implements UrParameter {
     /**
      * Returns the fraction confidence.
      *
-     * @param fraction
+     * @param fraction the fraction
      * @return the fraction confidence
      */
     public double getFractionConfidence(String fraction) {
@@ -708,7 +719,8 @@ public class PSParameter implements UrParameter {
     /**
      * Get the number of validated peptides in the given fraction.
      *
-     * @param validatedPeptidesPerFraction
+     * @param validatedPeptidesPerFraction the validated peptides per fraction
+     * map
      */
     public void setFractionValidatedPeptides(HashMap<String, Integer> validatedPeptidesPerFraction) {
         this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
@@ -731,7 +743,7 @@ public class PSParameter implements UrParameter {
     /**
      * Get the number of validated spectra in the given fraction.
      *
-     * @param validatedSpectraPerFraction
+     * @param validatedSpectraPerFraction the validated spectra per fraction map
      */
     public void setFractionValidatedSpectra(HashMap<String, Integer> validatedSpectraPerFraction) {
         this.validatedSpectraPerFraction = validatedSpectraPerFraction;
@@ -754,7 +766,7 @@ public class PSParameter implements UrParameter {
     /**
      * Get the precursor intensity in the given fraction.
      *
-     * @param precursorIntensityPerFraction
+     * @param precursorIntensityPerFraction the precursor intensities per fraction map
      */
     public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
         this.precursorIntensityPerFraction = precursorIntensityPerFraction;

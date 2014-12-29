@@ -55,13 +55,18 @@ public class PsmScorer {
      * @param identificationParameters identification parameters used
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) 
+            throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
         HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
@@ -215,11 +220,14 @@ public class PsmScorer {
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void scorePsms(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
             IdentificationParameters identificationParameters, WaitingHandler waitingHandler)

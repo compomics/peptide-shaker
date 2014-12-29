@@ -138,13 +138,9 @@ public class DisplayFeaturesGenerator {
         StringBuilder accessionNumberWithLink = new StringBuilder();
         accessionNumberWithLink.append("<html>");
 
-        for (int i = 0; i < proteins.size(); i++) {
-
-            String proteinAccession = proteins.get(i);
-
+        for (String proteinAccession : proteins) {
             try {
-                if (!sequenceFactory.isDecoyAccession(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
-
+                if (!sequenceFactory.isDecoyAccession(proteinAccession) && sequenceFactory.getHeader(proteinAccession) != null) {
                     // try to find the database from the SequenceDatabase
                     DatabaseType database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
@@ -186,7 +182,7 @@ public class DisplayFeaturesGenerator {
                     accessionNumberWithLink.append(proteinAccession);
                     accessionNumberWithLink.append(", ");
                 }
-            } catch (Exception e) {
+            }catch (Exception e) {
                 accessionNumberWithLink.append(proteinAccession);
                 accessionNumberWithLink.append(", ");
             }
@@ -693,7 +689,7 @@ public class DisplayFeaturesGenerator {
      * Returns the GO accession number as a web link to the given GO term at
      * QuickGO.
      *
-     * @param goAccession
+     * @param goAccession the GO accession number
      * @return the GO accession number as a web link to the given GO term at
      * QuickGO
      */
@@ -741,13 +737,15 @@ public class DisplayFeaturesGenerator {
      *
      * @return the residue annotation for a given protein
      *
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences, 
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 

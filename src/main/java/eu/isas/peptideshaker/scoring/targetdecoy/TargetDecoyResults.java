@@ -280,7 +280,7 @@ public class TargetDecoyResults implements Serializable {
     /**
      * Sets the type of input.
      *
-     * @param inputType
+     * @param inputType the input type
      */
     public void setInputType(Integer inputType) {
         this.inputType = inputType;

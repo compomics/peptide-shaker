@@ -67,8 +67,8 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
     /**
      * Creates a new PrideReshakeSetupDialog.
      *
-     * @param prideReShakeGUI
-     * @param modal
+     * @param prideReShakeGUI the PrideReshakeGUI parent
+     * @param modal if the dialog is to be modal or not
      */
     public PrideReshakeSetupDialog(PrideReshakeGUI prideReShakeGUI, boolean modal) {
         super(prideReShakeGUI, modal);

@@ -41,7 +41,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param proteins
+     * @param proteins the proteins
      */
     public ProteinGoTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);
@@ -51,8 +51,8 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI
-     * @param proteins
+     * @param peptideShakerGUI instance of the main GUI class
+     * @param proteins the proteins
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);

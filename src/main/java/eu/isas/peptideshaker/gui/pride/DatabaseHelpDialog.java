@@ -52,9 +52,9 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
     /**
      * Creates a new DatabaseHelpDialog.
      *
-     * @param peptideShakerGUI
-     * @param searchParameters
-     * @param modal
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param searchParameters the search parameters
+     * @param modal if the dialog is to be modal or not
      * @param species the current species
      */
     public DatabaseHelpDialog(PeptideShakerGUI peptideShakerGUI, SearchParameters searchParameters, boolean modal, String species) {
@@ -504,7 +504,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
      * Copies the content of the FASTA file to a new file and replaces any white
      * space in the file name with '_' instead.
      *
-     * @param file
+     * @param file the FASTA file
      */
     public void renameFastaFileName(File file) {
 

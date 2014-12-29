@@ -37,9 +37,9 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     /**
      * Creates a new InclusionListExportDialog.
      *
-     * @param followupPreferencesDialog
-     * @param exportFormat
-     * @param modal
+     * @param followupPreferencesDialog the parent dialog
+     * @param exportFormat the export format
+     * @param modal if the dalog is to be modal or not
      */
     public InclusionListExportDialog(FollowupPreferencesDialog followupPreferencesDialog, ExportFormat exportFormat, boolean modal) {
         super(followupPreferencesDialog, modal);

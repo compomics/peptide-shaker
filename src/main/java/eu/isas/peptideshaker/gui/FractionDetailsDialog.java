@@ -40,8 +40,8 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Creates a new FractionDetailsDialog.
      *
-     * @param peptideShakerGUI
-     * @param modal
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param modal if the dialog is modal or not
      */
     public FractionDetailsDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
@@ -405,7 +405,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Close the dialog without saving the changes.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
@@ -414,7 +414,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Move the selected row to the top.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void moveTopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveTopButtonActionPerformed
         int[] selectedRows = fractionTable.getSelectedRows();
@@ -431,7 +431,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Move the selected row one row up.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void moveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpButtonActionPerformed
         int[] selectedRows = fractionTable.getSelectedRows();
@@ -448,7 +448,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Move the selected row one down.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void moveDownButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownButtonActionPerformed
         int[] selectedRows = fractionTable.getSelectedRows();
@@ -465,7 +465,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Move the selected row to the bottom.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void moveBottomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveBottomButtonActionPerformed
         int[] selectedRows = fractionTable.getSelectedRows();
@@ -482,7 +482,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Enable/disable the move options based on which row that is selected.
      *
-     * @param evt
+     * @param evt the key event
      */
     private void fractionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fractionTableKeyReleased
         fractionTableMouseReleased(null);
@@ -491,7 +491,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Save the order of the fractions and close the dialog.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         ArrayList<String> spectrumFiles = new ArrayList<String>();
@@ -521,7 +521,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Enable/disable the move options based on which rows that are selected.
      *
-     * @param evt
+     * @param evt the mouse event
      */
     private void fractionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fractionTableMouseReleased
         int selectedRows[] = fractionTable.getSelectedRows();
@@ -542,7 +542,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     /**
      * Import the fraction ranges from file.
      *
-     * @param evt
+     * @param evt the action event
      */
     private void importFractionRangesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFractionRangesButtonActionPerformed
 
@@ -618,22 +618,22 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
 
     /**
      * Moves all rows contained between the positions start and end to the
-     * position specified by dest.
+     * position specified by destination.
      *
-     * @param model
-     * @param start
-     * @param end
-     * @param dest
+     * @param model the model
+     * @param start the start index
+     * @param end the end index
+     * @param destination the destination index
      */
-    public static void moveRows(DefaultTableModel model, int start, int end, int dest) {
+    public static void moveRows(DefaultTableModel model, int start, int end, int destination) {
         int count = end - start;
         if (count <= 0) {
             return;
         }
-        if (dest > start) {
-            dest = Math.max(start, dest - count);
+        if (destination > start) {
+            destination = Math.max(start, destination - count);
         }
         end--;
-        model.moveRow(start, end, dest);
+        model.moveRow(start, end, destination);
     }
 }

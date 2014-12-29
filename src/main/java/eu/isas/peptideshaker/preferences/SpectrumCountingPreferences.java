@@ -52,7 +52,7 @@ public class SpectrumCountingPreferences implements Serializable {
     /**
      * Set the current spectrum counting method.
      *
-     * @param selectedMethod
+     * @param selectedMethod the spectral counting method
      */
     public void setSelectedMethod(SpectralCountingMethod selectedMethod) {
         this.selectedMethod = selectedMethod;
@@ -70,7 +70,7 @@ public class SpectrumCountingPreferences implements Serializable {
     /**
      * Set if only validated hits are to be counted.
      *
-     * @param validatedHits
+     * @param validatedHits if the only validated hits are to be counted
      */
     public void setValidatedHits(boolean validatedHits) {
         this.validatedHits = validatedHits;

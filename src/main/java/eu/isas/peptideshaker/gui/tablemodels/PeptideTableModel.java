@@ -53,13 +53,15 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param proteinAccession
-     * @param peptideKeys
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws IllegalArgumentException
-     * @throws SQLException
+     * @param proteinAccession the protein accession
+     * @param peptideKeys the peptide keys
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if an SQLException occurs
      */
     public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys)
             throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
@@ -73,9 +75,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI
-     * @param proteinAccession
-     * @param peptideKeys
+     * @param peptideShakerGUI instance of the main GUI class
+     * @param proteinAccession the protein accession
+     * @param peptideKeys the peptide keys
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
         this.peptideShakerGUI = peptideShakerGUI;

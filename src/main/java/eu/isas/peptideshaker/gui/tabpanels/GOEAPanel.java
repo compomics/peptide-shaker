@@ -122,7 +122,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     /**
      * Creates a new GOEAPanel.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public GOEAPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -335,8 +335,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                 if (speciesDatabase != null) {
 
-                    final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
-                    final File geneMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GENE_MAPPING_FILE_SUFFIX);
+                    final File goMappingsFile = new File(GenePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
+                    final File geneMappingsFile = new File(GenePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GENE_MAPPING_FILE_SUFFIX);
 
                     if (goMappingsFile.exists()) {
 
@@ -488,7 +488,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                             genePreferences.getGoDomainMap().put(goTerm, goDomain);
 
-                                            File goDomainsFile = new File(genePreferences.getGeneMappingFolder(), "go_domains");
+                                            File goDomainsFile = new File(GenePreferences.getGeneMappingFolder(), "go_domains");
 
                                             if (!goDomainsFile.exists()) {
                                                 JOptionPane.showMessageDialog(peptideShakerGUI, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
@@ -2002,7 +2002,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (speciesDatabase != null) {
 
             String databaseName = speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX;
-            File mappingFilesFolder = genePreferences.getGeneMappingFolder();
+            File mappingFilesFolder = GenePreferences.getGeneMappingFolder();
             String[] mappingsFiles = mappingFilesFolder.list();
 
             genePreferences.setCurrentSpecies(selectedSpecies);

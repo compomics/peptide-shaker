@@ -101,10 +101,10 @@ public class RunMzDeviation {
 
     /**
      * Returns an interpolation of the median error in the bins surrounding the
-     * given precursor m/z when recalibrating with mz only.
+     * given precursor m/z when recalibrating with m/z only.
      *
      * @param precursorMz the precursor m/z
-     * @param precursorRT
+     * @param precursorRT the precursor retention time
      * @return the median error
      */
     public double getPrecursorMzCorrection(Double precursorMz, Double precursorRT) {
@@ -225,8 +225,8 @@ public class RunMzDeviation {
     /**
      * Recalibrate a peak list.
      *
-     * @param precursorRT
-     * @param originalPeakList
+     * @param precursorRT the precursor retention time
+     * @param originalPeakList the original peak list
      * @return the recalibrated peak list
      */
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
@@ -250,11 +250,14 @@ public class RunMzDeviation {
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences,
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {

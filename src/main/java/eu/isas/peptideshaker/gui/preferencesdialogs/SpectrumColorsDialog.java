@@ -40,7 +40,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     /**
      * Creates a new SpectrumColorsDialog.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public SpectrumColorsDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);

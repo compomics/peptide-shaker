@@ -155,33 +155,33 @@ public class PeptideShakerSettings implements UrParameter {
 
             identificationParameters = new IdentificationParameters();
 
-            SearchParameters searchParameters = getSearchParameters();
-            identificationParameters.setSearchParameters(searchParameters);
+            SearchParameters tempSearchParameters = getSearchParameters();
+            identificationParameters.setSearchParameters(tempSearchParameters);
             identificationParameters.setAnnotationPreferences(getAnnotationPreferences());
             identificationParameters.setIdFilter(getIdFilter());
             identificationParameters.setIdValidationPreferences(new IdMatchValidationPreferences());
             ProteinInferencePreferences proteinInferencePreferences = new ProteinInferencePreferences();
-            proteinInferencePreferences.setProteinSequenceDatabase(searchParameters.getFastaFile());
+            proteinInferencePreferences.setProteinSequenceDatabase(tempSearchParameters.getFastaFile());
             identificationParameters.setProteinInferencePreferences(proteinInferencePreferences);
             identificationParameters.setPsmScoringPreferences(new PsmScoringPreferences());
             identificationParameters.setPtmScoringPreferences(getPTMScoringPreferences());
 
-            GenePreferences genePreferences = getGenePreferences();
+            GenePreferences tempGenePreferences = getGenePreferences();
             // backwards compatability for the gene preferences
-            if (genePreferences.getCurrentSpecies() == null) {
-                genePreferences = new GenePreferences();
+            if (tempGenePreferences.getCurrentSpecies() == null) {
+                tempGenePreferences = new GenePreferences();
             }
-            if (genePreferences.getCurrentSpecies() != null && genePreferences.getCurrentSpeciesType() == null) {
-                genePreferences.setCurrentSpeciesType("Vertebrates");
+            if (tempGenePreferences.getCurrentSpecies() != null && tempGenePreferences.getCurrentSpeciesType() == null) {
+                tempGenePreferences.setCurrentSpeciesType("Vertebrates");
             }
-            identificationParameters.setGenePreferences(genePreferences);
+            identificationParameters.setGenePreferences(tempGenePreferences);
 
             // backwards compatability for the sequence matching preferences
-            SequenceMatchingPreferences sequenceMatchingPreferences = getSequenceMatchingPreferences();
-            if (sequenceMatchingPreferences == null) {
-                sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
+            SequenceMatchingPreferences tempSequenceMatchingPreferences = getSequenceMatchingPreferences();
+            if (tempSequenceMatchingPreferences == null) {
+                tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(tempSearchParameters);
             }
-            identificationParameters.setSequenceMatchingPreferences(sequenceMatchingPreferences);
+            identificationParameters.setSequenceMatchingPreferences(tempSequenceMatchingPreferences);
         }
         return identificationParameters;
     }
@@ -297,7 +297,7 @@ public class PeptideShakerSettings implements UrParameter {
      *
      * @deprecated use identificationParameters instead
      *
-     * @param genePreferences
+     * @param genePreferences the gene preferences
      */
     public void setGenePreferences(GenePreferences genePreferences) {
         this.genePreferences = genePreferences;

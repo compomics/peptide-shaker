@@ -215,9 +215,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     private PrideReshakeSetupDialog prideReshakeSetupDialog;
 
     /**
-     * Creates a new PrideReShakeGUI2 frame.
+     * Creates a new PrideReShakeGUI frame.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public PrideReshakeGUI(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -2997,10 +2997,10 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * Writes the given spectrum to the buffered writer.
      *
-     * @param spectrum
-     * @param bw
+     * @param spectrum the spectrum 
+     * @param bw the buffered writer
      * @return true of the spectrum could be converted to mgf
-     * @throws IOException
+     * @throws IOException thrown if a problem occurs when writing to the file
      */
     public boolean asMgf(Spectrum spectrum, BufferedWriter bw) throws IOException {
 
@@ -3115,8 +3115,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * Set the current filter values.
      *
-     * @param currentFilterValues
-     * @param assaysGreaterThanFiler
+     * @param currentFilterValues the current filter values
+     * @param assaysGreaterThanFiler the assays greater than flter
      */
     public void setCurrentFilterValues(String[] currentFilterValues, boolean assaysGreaterThanFiler) {
         this.currentFilterValues = currentFilterValues;
@@ -3142,14 +3142,15 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * Save a file from a URL.
      *
-     * @param saveFile
-     * @param targetUrlAsString
+     * @param saveFile the file to save to
+     * @param targetUrlAsString the target URL as a string
      * @param fileSize the file size
-     * @param progressDialog
+     * @param progressDialog the progress dialog
      * @return the saved file
-     * @throws MalformedURLException
-     * @throws IOException
-     * @throws java.io.FileNotFoundException
+     *
+     * @throws MalformedURLException thrown if an MalformedURLException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
      */
     public File saveUrl(File saveFile, String targetUrlAsString, Double fileSize, ProgressDialogX progressDialog)
             throws MalformedURLException, IOException, FileNotFoundException {

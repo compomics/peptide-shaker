@@ -3286,7 +3286,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * Update the protein inference type for the currently selected peptide.
      *
-     * @param proteinInferenceType
+     * @param proteinInferenceType the protein inference type
      */
     public void updatePeptideProteinInference(int proteinInferenceType) {
         peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
@@ -3295,7 +3295,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     /**
      * Export the table contents to the clipboard.
      *
-     * @param index
+     * @param index the table index type
      */
     private void copyTableContentToClipboardOrFile(TableIndex index) {
 

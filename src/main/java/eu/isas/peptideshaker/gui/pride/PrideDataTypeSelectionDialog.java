@@ -17,8 +17,8 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
     /**
      * Creates a new PrideDataTypeSelectionDialog.
      *
-     * @param parent
-     * @param modal
+     * @param parent the parent frame
+     * @param modal if the dialog is to be modal or not
      */
     public PrideDataTypeSelectionDialog(JFrame parent, boolean modal) {
         super(parent, modal);

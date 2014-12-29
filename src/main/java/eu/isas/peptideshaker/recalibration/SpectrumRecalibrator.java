@@ -68,13 +68,16 @@ public class SpectrumRecalibrator {
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) 
+    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, annotationPreferences, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
@@ -90,8 +93,10 @@ public class SpectrumRecalibrator {
      * @param recalibrateFragmentIons boolean indicating whether fragment ions
      * shall be recalibrated
      * @return a recalibrated spectrum
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public MSnSpectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) throws IOException, MzMLUnmarshallerException {
 

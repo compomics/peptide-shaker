@@ -244,7 +244,8 @@ public class PeptideShaker {
      * maps.
      *
      * @param inputMap the input map
-     * @param proteinCount map of proteins found several times with the number of times they appeared as first hit
+     * @param proteinCount map of proteins found several times with the number
+     * of times they appeared as first hit
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
@@ -256,8 +257,8 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever an error occurred while
      * loading the identification files
      */
-    public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler, 
-            ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
+    public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler,
+            ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
@@ -553,7 +554,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, 
+    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         PeptideSpecificMap peptideMap = new PeptideSpecificMap();
         ProteinMap proteinMap = new ProteinMap();
@@ -584,7 +585,7 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, 
+    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setProteinMap(proteinMap);
@@ -601,10 +602,11 @@ public class PeptideShaker {
      *
      * @param waitingHandler the waiting handler
      * @param processingPreferences the processing preferences
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
      */
     public void proteinMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -949,7 +951,7 @@ public class PeptideShaker {
      * Sets the matches directory parent.
      *
      * @param matchesDirectoryParent the matches directory parent
-     * @throws java.io.IOException
+     * @throws IOException thrown of an exception occurs
      */
     public static void setMatchesDirectoryParent(String matchesDirectoryParent) throws IOException {
         PeptideShaker.SERIALIZATION_PARENT_DIRECTORY = matchesDirectoryParent;

@@ -115,8 +115,8 @@ public class PeptideShakerPathPreferences {
      *
      * @param inputFile the file to load the path preferences from
      *
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
      */
     public static void loadPathPreferencesFromFile(File inputFile) throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
@@ -137,7 +137,7 @@ public class PeptideShakerPathPreferences {
      * Loads a path to be set from a line.
      *
      * @param line the line where to read the path from
-     * @throws java.io.FileNotFoundException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void loadPathPreferenceFromLine(String line) throws FileNotFoundException, IOException {
         String id = UtilitiesPathPreferences.getPathID(line);
@@ -165,7 +165,7 @@ public class PeptideShakerPathPreferences {
      *
      * @param peptideShakerPathKey the key of the path
      * @param path the path to be set
-     * @throws java.io.IOException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void setPathPreference(PeptideShakerPathKey peptideShakerPathKey, String path) throws IOException {
         switch (peptideShakerPathKey) {
@@ -188,7 +188,7 @@ public class PeptideShakerPathPreferences {
      *
      * @param path the path of the folder where to redirect all paths.
      *
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void setAllPathsIn(String path) throws FileNotFoundException, IOException {
         for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
@@ -210,7 +210,7 @@ public class PeptideShakerPathPreferences {
      *
      * @param file the destination file
      *
-     * @throws IOException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void writeConfigurationToFile(File file) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
@@ -226,7 +226,7 @@ public class PeptideShakerPathPreferences {
      *
      * @param bw the writer to use for writing.
      *
-     * @throws IOException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void writeConfigurationToFile(BufferedWriter bw) throws IOException {
         for (PeptideShakerPathKey pathKey : PeptideShakerPathKey.values()) {
@@ -241,7 +241,7 @@ public class PeptideShakerPathPreferences {
      * @param bw the writer to use for writing
      * @param pathKey the key of the path of interest
      *
-     * @throws IOException
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void writePathToFile(BufferedWriter bw, PeptideShakerPathKey pathKey) throws IOException {
 

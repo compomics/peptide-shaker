@@ -77,7 +77,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
      * Create a new PrideExportDialog.
      *
      * @param peptideShakerGUI a reference to the main GUI frame
-     * @param modal
+     * @param modal if the dialog is to be modal or not
      */
     public ProjectExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
@@ -338,8 +338,8 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         Vector comboboxTooltips = new Vector();
         comboboxTooltips.add(null);
 
-        for (int i = 0; i < options.size(); i++) {
-            comboboxTooltips.add(options.get(i));
+        for (String option : options) {
+            comboboxTooltips.add(option);
         }
 
         comboboxTooltips.add(null);
@@ -1357,7 +1357,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     /**
      * Save the provided protocol to file and then select it in the list.
      *
-     * @param protocol
+     * @param protocol the protocol
      */
     public void setProtocol(Protocol protocol) {
         try {
@@ -1382,9 +1382,9 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     }
 
     /**
-     * Save the provided Instrument to file and then select it in the list.
+     * Save the provided instrument to file and then select it in the list.
      *
-     * @param instrument
+     * @param instrument the instrument
      */
     public void setInstrument(Instrument instrument) {
         try {
@@ -1411,7 +1411,7 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
     /**
      * Save the provided sample to file and then select it in the list.
      *
-     * @param sample
+     * @param sample the sample
      */
     public void setSample(Sample sample) {
         try {
