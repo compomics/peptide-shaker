@@ -40,9 +40,12 @@ public class CpsFileImporter {
      * @param jarFilePath the path to the jar file
      * @param waitingHandler the waiting handler
      *
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws FileNotFoundException thrown if the file to import cannot be
+     * found
+     * @throws IOException thrown if there is a problem extracting or loading
+     * the file
+     * @throws ClassNotFoundException thrown if there is a problem loading the
+     * experiment data
      */
     public CpsFileImporter(File cpsFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
 
@@ -143,7 +146,7 @@ public class CpsFileImporter {
     /**
      * Returns the replicates for a given sample.
      *
-     * @param sample
+     * @param sample the sample
      * @return the replicates
      */
     public ArrayList<Integer> getReplicates(Sample sample) {

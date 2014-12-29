@@ -8,7 +8,6 @@ import com.compomics.util.experiment.biology.ions.ElementaryIon;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -25,7 +24,6 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -62,13 +60,15 @@ public class SwathExport {
      * @param annotationPreferences the spectrum annotation preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences)
+    public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
+            ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -243,13 +243,17 @@ public class SwathExport {
      * @param spectrumKey the key of the PSM to export
      * @param identification the identification
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param annotationPreferences the annotation preferences to use for spectrum annotation
-     * 
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @param annotationPreferences the annotation preferences to use for
+     * spectrum annotation
+     *
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -266,15 +270,20 @@ public class SwathExport {
      * to protein inference. If null all proteins will be reported.
      * @param identification the identification
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @param annotationPreferences the annotation preferences to use for spectrum annotation
-     * 
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @param annotationPreferences the annotation preferences to use for
+     * spectrum annotation
+     *
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, 
+            SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);

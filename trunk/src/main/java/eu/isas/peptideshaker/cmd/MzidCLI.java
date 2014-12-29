@@ -95,7 +95,7 @@ public class MzidCLI extends CpsParent {
             return 1;
         }
 
-        // Load fasta file
+        // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
@@ -108,7 +108,7 @@ public class MzidCLI extends CpsParent {
             return 1;
         }
 
-        // Load the spectrum files
+        // load the spectrum files
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
                 if (identification.getSpectrumFiles().size() > 1) {
@@ -127,7 +127,7 @@ public class MzidCLI extends CpsParent {
 
         loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
-        // Export mzid file
+        // export mzid file
         try {
             CLIMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
         } catch (Exception e) {

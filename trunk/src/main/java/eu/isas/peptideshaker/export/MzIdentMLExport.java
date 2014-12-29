@@ -146,7 +146,7 @@ public class MzIdentMLExport {
      */
     private ShotgunProtocol shotgunProtocol;
     /**
-     * the identification parameters.
+     * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
 
@@ -296,7 +296,8 @@ public class MzIdentMLExport {
     /**
      * Write the software list.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeAnalysisSoftwareList() throws IOException {
 
@@ -340,7 +341,8 @@ public class MzIdentMLExport {
     /**
      * Write the provider details.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeProviderDetails() throws IOException {
 
@@ -366,7 +368,8 @@ public class MzIdentMLExport {
     /**
      * Write the audit collection.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeAuditCollection() throws IOException {
 
@@ -415,11 +418,15 @@ public class MzIdentMLExport {
     /**
      * Write the sequence collection.
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws IllegalArgumentException thrown whenever an error is encountered
+     * while reading the FASTA file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while retrieving the match
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a match from the database
+     * @throws SQLException exception thrown whenever an SQL error occurs
      */
     private void writeSequenceCollection() throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
 
@@ -624,7 +631,8 @@ public class MzIdentMLExport {
     /**
      * Write the analysis collection.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeAnalysisCollection() throws IOException {
 
@@ -666,7 +674,8 @@ public class MzIdentMLExport {
     /**
      * Write the analysis protocol.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeAnalysisProtocol() throws IOException {
 
@@ -1025,7 +1034,8 @@ public class MzIdentMLExport {
     /**
      * Write the data collection.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeDataCollection() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
@@ -1039,7 +1049,8 @@ public class MzIdentMLExport {
     /**
      * Write the data analysis section.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeDataAnalysis() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -1093,7 +1104,8 @@ public class MzIdentMLExport {
     /**
      * Write the protein groups.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeProteinDetectionList() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
@@ -1201,9 +1213,11 @@ public class MzIdentMLExport {
     /**
      * Write a spectrum identification result.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
-    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
@@ -1521,7 +1535,8 @@ public class MzIdentMLExport {
     /**
      * Write the fragmentation table. (Note: all hard coded.)
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeFragmentationTable() throws IOException {
 
@@ -1559,7 +1574,8 @@ public class MzIdentMLExport {
     /**
      * Write the input file details.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
     private void writeInputFileDetails() throws IOException {
 

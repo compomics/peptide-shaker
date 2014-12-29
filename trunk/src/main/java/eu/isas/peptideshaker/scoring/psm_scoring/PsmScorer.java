@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
@@ -20,7 +19,6 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
-import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -189,6 +187,7 @@ public class PsmScorer {
         }
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(totalProgress);
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {

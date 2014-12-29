@@ -6,7 +6,6 @@ import org.apache.commons.cli.Options;
 /**
  * Enum class specifying the Command Line Parameters for PeptideShaker.
  *
- * @author Kenny Helsens
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
@@ -40,6 +39,7 @@ public enum PeptideShakerCLIParams {
     SPECIES_UPDATE("species_update", "Check for new species information in Ensembl and update if possible. (1: true, 0: false, default is '0').", false),
     ZIP("zip", "Exports the entire project as a zip file in the file specified.", false),
     THREADS("threads", "The number of threads to use. Defaults to the number of available CPUs.", false);
+
     /**
      * Short Id for the CLI parameter.
      */
@@ -75,7 +75,7 @@ public enum PeptideShakerCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
 
-        // Standard options
+        // standard options
         aOptions.addOption(EXPERIMENT.id, true, EXPERIMENT.description);
         aOptions.addOption(SAMPLE.id, true, SAMPLE.description);
         aOptions.addOption(REPLICATE.id, true, REPLICATE.description);
@@ -101,13 +101,13 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(ZIP.id, true, ZIP.description);
         aOptions.addOption(THREADS.id, true, THREADS.description);
 
-        // Follow-up options
+        // follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
 
-        // Report options
+        // report options
         ReportCLIParams.createOptionsCLI(aOptions);
         
-        // Path setup
+        // path setup
         aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well

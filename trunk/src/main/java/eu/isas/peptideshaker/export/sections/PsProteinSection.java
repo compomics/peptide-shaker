@@ -109,16 +109,19 @@ public class PsProteinSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
-     * @throws org.apache.commons.math.MathException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     * @throws org.apache.commons.math.MathException thrown if an MathException
+     * occurs
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
             int nSurroundingAas, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
@@ -214,13 +217,16 @@ public class PsProteinSection {
      * @return the string to write
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
-     * @throws org.apache.commons.math.MathException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     * @throws org.apache.commons.math.MathException thrown if an MathException
+     * occurs
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
@@ -451,7 +457,8 @@ public class PsProteinSection {
     /**
      * Writes the header of the protein section.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file
      */
     public void writeHeader() throws IOException {
         if (indexes) {

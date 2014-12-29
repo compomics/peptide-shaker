@@ -112,12 +112,14 @@ public class PsIdentificationAlgorithmMatchesSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
@@ -254,7 +256,7 @@ public class PsIdentificationAlgorithmMatchesSection {
      * Returns a map of the modifications in a peptide. Modification name &gt;
      * sites.
      *
-     * @param peptide
+     * @param peptide the peptide
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
      *
@@ -278,7 +280,8 @@ public class PsIdentificationAlgorithmMatchesSection {
     /**
      * Writes the header of this section.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file
      */
     public void writeHeader() throws IOException {
         if (indexes) {
@@ -318,12 +321,14 @@ public class PsIdentificationAlgorithmMatchesSection {
      * section
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public static String getPeptideAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,
@@ -824,12 +829,14 @@ public class PsIdentificationAlgorithmMatchesSection {
      * section
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public static String getTagAssumptionFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix,

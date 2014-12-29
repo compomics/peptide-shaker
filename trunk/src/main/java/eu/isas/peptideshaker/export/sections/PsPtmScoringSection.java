@@ -62,7 +62,7 @@ public class PsPtmScoringSection {
      * @param ptmcoringPreferences the PTM scoring preferences of this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(PTMScoringPreferences ptmcoringPreferences, WaitingHandler waitingHandler) throws IOException {
 

@@ -15,7 +15,7 @@ import javax.swing.RowFilter.ComparisonType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * Protein Filter.
+ * Protein filter.
  *
  * @author Marc Vaudel
  */
@@ -572,10 +572,10 @@ public class ProteinFilter extends MatchFilter {
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
      * 
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static boolean isValidated(String proteinMatchKey, ProteinFilter proteinFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
             IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException {

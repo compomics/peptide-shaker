@@ -20,6 +20,7 @@ public enum MzidCLIParams {
     ORGANIZATION_ADDRESS("organization_address", "Organization address.", true, true),
     ORGANIZATION_URL("organization_url", "Organization URL.", true, false),
     OUTPUT_FILE("output_file", "Output file.", true, true);
+
     /**
      * Short Id for the CLI parameter.
      */

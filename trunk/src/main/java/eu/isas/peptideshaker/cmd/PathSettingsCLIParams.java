@@ -12,6 +12,7 @@ import org.apache.commons.cli.Options;
 public enum PathSettingsCLIParams {
 
     ALL("temp_folder", "A folder for temporary file storage. Use only if you encounter problems with the default configuration.");
+
     /**
      * The id of the command line option.
      */

@@ -72,6 +72,7 @@ public class ProteinMap implements Serializable {
         waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(proteinMatchMap.getMapSize());
 
         proteinMatchMap.estimateProbabilities(waitingHandler);

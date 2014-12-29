@@ -19,6 +19,7 @@ public enum PsProjectFeature implements ExportFeature, Serializable {
     replicate("Replicate Number", "Replicate number.", false),
     identification_algorithms("Identification Algorithms", "The identification algorithms used.", false),
     algorithms_versions("Identification Algorithms Version", "The identification algorithms used with version number.", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

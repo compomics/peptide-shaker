@@ -93,7 +93,7 @@ public class ReportCLIInputBean {
     }
 
     /**
-     * Returns the types of output required by the user
+     * Returns the types of output required by the user.
      *
      * @return the types of output
      */

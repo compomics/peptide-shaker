@@ -48,6 +48,7 @@ public enum PsProteinFeature implements ExportFeature {
     validated("Validation", "Indicates the validation level of the protein group.", false),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no).", false),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */
@@ -83,7 +84,7 @@ public enum PsProteinFeature implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.addAll(Arrays.asList(values()));
         if (includeSubFeatures) {
-        result.addAll(PsPeptideFeature.values()[0].getExportFeatures(includeSubFeatures));
+            result.addAll(PsPeptideFeature.values()[0].getExportFeatures(includeSubFeatures));
         }
         return result;
     }

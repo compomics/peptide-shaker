@@ -101,6 +101,7 @@ public class PeptideMapper {
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
+            waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
             waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
             HashSet<String> keys = new HashSet<String>(peptideMap.keySet());
@@ -135,6 +136,7 @@ public class PeptideMapper {
             WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
+            waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(peptideMap.size());
             waitingHandler.appendReport("Mapping peptides to proteins.", true, true);
             HashSet<String> keys = new HashSet<String>(peptideMap.keySet());

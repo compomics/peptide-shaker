@@ -54,9 +54,10 @@ public class CpsExporter {
      * @throws SQLException thrown of SQLException occurs
      * @throws ArchiveException thrown of ArchiveException occurs
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
-            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
+            IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, Metrics metrics,
+            ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath)
+            throws IOException, SQLException, FileNotFoundException, ArchiveException {
         saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences, projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
     }
 
@@ -86,21 +87,22 @@ public class CpsExporter {
      * @throws SQLException thrown of SQLException occurs
      * @throws ArchiveException thrown of ArchiveException occurs
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
-            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache,
-            ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, String jarFilePath)
-            throws IOException, SQLException, FileNotFoundException, ArchiveException {
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
+            IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
+            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
+            DisplayPreferences displayPreferences, String jarFilePath) throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
-        
-        // Save the user advocates
+        // save the user advocates
         projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
-        
+
         // set the experiment parameters
-        PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
+        PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
+                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
         experiment.addUrParam(peptideShakerSettings);
-        // Save the objects in cache
+
+        // save the objects in cache
         objectsCache.saveCache(waitingHandler, emptyCache);
+
         // close connection
         identification.close();
 

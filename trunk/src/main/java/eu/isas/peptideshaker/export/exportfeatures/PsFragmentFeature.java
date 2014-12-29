@@ -23,6 +23,7 @@ public enum PsFragmentFeature implements ExportFeature {
     intensity("Intensity", "The intensity of the peak.", false),
     error_Da("m/z Error (Da)", "The absolute m/z error.", false),
     error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

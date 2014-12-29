@@ -96,6 +96,7 @@ public class PeptideSpecificMap implements Serializable {
 
         int max = getNEntries();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (String modifications : peptideMaps.keySet()) {

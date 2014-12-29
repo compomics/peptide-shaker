@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 /**
- * A Command line interface to run PeptideShaker
+ * A command line interface to run PeptideShaker.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -115,7 +115,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             }
 
-            // Set up the waiting handler
+            // set up the waiting handler
             if (cliInputBean.isGUI()) {
 
                 // set the look and feel
@@ -130,7 +130,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     tips = Tips.getTips();
                 } catch (Exception e) {
                     tips = new ArrayList<String>();
-                    // Do something here?
+                    // do something here?
                 }
 
                 PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
@@ -191,11 +191,11 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 e.printStackTrace();
             }
 
-            // Finished
+            // finished
             waitingHandler.setPrimaryProgressCounterIndeterminate(false);
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-            // Follow up tasks if needed
+            // follow up tasks if needed
             FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
             if (followUpCLIInputBean.followUpNeeded()) {
                 waitingHandler.appendReport("Starting follow up tasks.", true, true);
@@ -264,7 +264,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
             }
 
-            // Report export if needed
+            // report export if needed
             ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
 
             // see if output folder is set, and if not set to the same folder as the cps file
@@ -288,7 +288,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     }
                 }
 
-                // Export documentation(s)
+                // export documentation(s)
                 if (reportCLIInputBean.documentationExportNeeded()) {
                     for (String reportType : reportCLIInputBean.getReportTypes()) {
                         try {
@@ -301,7 +301,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 }
             }
 
-            // Export as zip
+            // export as zip
             File zipFile = cliInputBean.getZipExport();
             if (zipFile != null) {
 
@@ -414,21 +414,21 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     public void createProject() throws IOException {
 
-        // Define new project references.
+        // define new project references
         experiment = new MsExperiment(cliInputBean.getiExperimentID());
         sample = new Sample(cliInputBean.getiSampleID());
         replicateNumber = cliInputBean.getReplicate();
 
-        // Create the analysis set of this PeptideShaker process
+        // create the analysis set of this PeptideShaker process
         SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(replicateNumber));
         experiment.addAnalysisSet(sample, analysisSet);
 
-        // Set the project details
+        // set the project details
         projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());
         projectDetails.setPeptideShakerVersion(new Properties().getVersion());
 
-        // Get the input files
+        // get the input files
         ArrayList<File> identificationFilesInput = cliInputBean.getIdFiles();
         ArrayList<File> dataFolders = new ArrayList<File>();
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
@@ -507,7 +507,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // List the spectrum files found
+        // list the spectrum files found
         ArrayList<String> names = new ArrayList<String>();
         for (File spectrumFile : spectrumFiles) {
             names.add(spectrumFile.getName());
@@ -522,7 +522,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // Get the search parameters
+        // get the search parameters
         SearchParameters searchParameters = null;
         if (cliInputBean.getSearchParameters() != null) {
             searchParameters = cliInputBean.getSearchParameters();
@@ -574,7 +574,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
         }
 
-        // Set the default identification parameters
+        // set the default identification parameters
         identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(searchParameters);
 
         // set the filtering import settings

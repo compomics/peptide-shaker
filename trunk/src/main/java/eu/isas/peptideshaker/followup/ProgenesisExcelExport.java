@@ -95,7 +95,8 @@ public class ProgenesisExcelExport {
      * @param identification the identifications
      * @param outputFile the file to export to
      */
-    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Enzyme enzyme, SequenceMatchingPreferences sequenceMatchingPreferences, Identification identification, File outputFile) {
+    public ProgenesisExcelExport(WaitingHandler waitingHandler, ArrayList<String> proteinKeys, Enzyme enzyme,
+            SequenceMatchingPreferences sequenceMatchingPreferences, Identification identification, File outputFile) {
         this.waitingHandler = waitingHandler;
         this.proteinKeys = proteinKeys;
         this.enzyme = enzyme;
@@ -106,7 +107,7 @@ public class ProgenesisExcelExport {
     /**
      * Write the data to an Excel file.
      *
-     * @throws java.lang.Exception
+     * @throws Exception thrown if an error occurs when exporting to Excel
      */
     public void writeProgenesisExcelExport() throws Exception {
 
@@ -216,8 +217,9 @@ public class ProgenesisExcelExport {
     /**
      * Insert the protein details.
      *
-     * @param proteinKey
-     * @throws Exception
+     * @param proteinKey the protein key
+     * @throws Exception thrown if an error occurs when getting the sequence
+     * details
      */
     private void insertProteinDetails(String proteinKey) throws Exception {
 
@@ -242,7 +244,7 @@ public class ProgenesisExcelExport {
     /**
      * Inserts the peptide data.
      *
-     * @param peptideKey
+     * @param peptideKey the peptide key
      */
     private void insertPeptideData(String peptideKey) throws Exception {
 
