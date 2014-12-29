@@ -223,11 +223,12 @@ public abstract class MatchFilter implements Serializable {
      * @return a boolean indicating whether a match is validated by a given
      * filter
      *
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public abstract boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException;

@@ -33,7 +33,8 @@ public class ProjectExport {
      * @param waitingHandler a waiting handler to display progress to the user
      * and cancel the process (can be null)
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing the file
      */
     public static void exportProjectAsZip(File zipFile, File fastaFile, ArrayList<File> spectrumFiles, File cpsFile, WaitingHandler waitingHandler) throws IOException {
 

@@ -14,6 +14,7 @@ public enum ReportCLIParams {
     EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false),
     DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false);
+
     /**
      * Short Id for the CLI parameter.
      */
@@ -53,7 +54,7 @@ public enum ReportCLIParams {
         aOptions.addOption(EXPORT_FOLDER.id, true, EXPORT_FOLDER.description);
         aOptions.addOption(REPORT_TYPE.id, true, REPORT_TYPE.description);
         aOptions.addOption(DOCUMENTATION_TYPE.id, true, DOCUMENTATION_TYPE.description);
-        
+
         // Path setup
         aOptions.addOption(PathSettingsCLIParams.ALL.id, true, PathSettingsCLIParams.ALL.description);
 

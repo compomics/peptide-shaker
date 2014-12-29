@@ -24,9 +24,9 @@ public class RecalibrationExporter {
 
     /**
      * Boolean indicating whether the exporter shall be used in debug mode.
-     *
+     * <br><br>
      * The debug mode exports the ion distributions and the titles of the
-     * processed spectra
+     * processed spectra.
      */
     private static boolean debug = false;
     /**
@@ -48,11 +48,12 @@ public class RecalibrationExporter {
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs 
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
             Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)

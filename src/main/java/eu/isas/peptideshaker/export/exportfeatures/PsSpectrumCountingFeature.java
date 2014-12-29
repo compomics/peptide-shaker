@@ -13,6 +13,7 @@ public enum PsSpectrumCountingFeature implements ExportFeature {
 
     method("Method", "The method used to establish the spectrum counting index.", false),
     validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

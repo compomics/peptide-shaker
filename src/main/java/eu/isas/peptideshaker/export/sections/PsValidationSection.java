@@ -66,7 +66,7 @@ public class PsValidationSection {
      * @param psMaps the target/decoy maps of this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(PSMaps psMaps, WaitingHandler waitingHandler) throws IOException {
 

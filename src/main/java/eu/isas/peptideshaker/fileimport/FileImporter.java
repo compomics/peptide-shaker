@@ -136,7 +136,7 @@ public class FileImporter {
     /**
      * Imports the identification from files.
      *
-     * @param idFiles the identification files to import the Ids from
+     * @param idFiles the identification files to import the IDs from
      * @param spectrumFiles the files where the corresponding spectra can be
      * imported
      * @param processingPreferences the processing preferences
@@ -677,6 +677,7 @@ public class FileImporter {
 
                     boolean allLoaded = true;
                     int numberOfMatches = idFileSpectrumMatches.size();
+                    waitingHandler.resetSecondaryProgressCounter();
                     waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                     waitingHandler.appendReport("Loading spectra for " + idFile.getName() + ".", true, true);
                     for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {

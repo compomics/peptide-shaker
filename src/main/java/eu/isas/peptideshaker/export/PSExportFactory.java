@@ -250,13 +250,13 @@ public class PSExportFactory implements ExportFactory {
      * (mandatory for the spectrum counting section)
      * @param waitingHandler the waiting handler
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
-     * @throws org.apache.commons.math.MathException
+     * @throws IOException thrown if an IOException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if an ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException occurs
+     * @throws org.apache.commons.math.MathException thrown if an MathException occurs
      */
     public static void writeExport(ExportScheme exportScheme, File destinationFile, ExportFormat exportFormat, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
@@ -331,7 +331,7 @@ public class PSExportFactory implements ExportFactory {
      * @param destinationFile the destination file where to write the
      * documentation
      *
-     * @throws IOException
+     * @throws IOException thrown if an IOException occurs
      */
     public static void writeDocumentation(ExportScheme exportScheme, ExportFormat exportFormat, File destinationFile) throws IOException {
 
@@ -735,5 +735,4 @@ public class PSExportFactory implements ExportFactory {
     public static void setSerializationFolder(String serializationFolder) {
         PSExportFactory.SERIALIZATION_FILE = serializationFolder + "/exportFactory.cus";
     }
-
 }

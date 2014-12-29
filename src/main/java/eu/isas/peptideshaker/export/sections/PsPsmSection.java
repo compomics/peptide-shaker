@@ -28,7 +28,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -109,12 +108,14 @@ public class PsPsmSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
@@ -270,12 +271,14 @@ public class PsPsmSection {
      * section
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
@@ -465,7 +468,8 @@ public class PsPsmSection {
     /**
      * Writes the header of this section.
      *
-     * @throws IOException
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file
      */
     public void writeHeader() throws IOException {
         if (indexes) {

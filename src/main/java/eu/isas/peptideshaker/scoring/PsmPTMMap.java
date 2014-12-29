@@ -40,6 +40,7 @@ public class PsmPTMMap implements Serializable {
 
         int max = getMapsSize();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (Double ptmMass : psmMaps.keySet()) {

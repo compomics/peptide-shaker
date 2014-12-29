@@ -31,7 +31,7 @@ public class FollowUpCLIInputBean {
      */
     private File spectrumExportFolder = null;
     /**
-     * the spectrum export type index. see SpectrumExporter.ExportType for
+     * The spectrum export type index. See SpectrumExporter.ExportType for
      * details.
      */
     private int spectrumExportTypeIndex = 0;
@@ -40,7 +40,7 @@ public class FollowUpCLIInputBean {
      */
     private File accessionsExportFile = null;
     /**
-     * the accessions export type index. see FastaExport.ExportType for details.
+     * The accessions export type index. see FastaExport.ExportType for details.
      */
     private int accessionsExportTypeIndex = 0;
     /**
@@ -48,7 +48,7 @@ public class FollowUpCLIInputBean {
      */
     private File fastaExportFile = null;
     /**
-     * the protein details export type index. see FastaExport.ExportType for
+     * The protein details export type index. See FastaExport.ExportType for
      * details.
      */
     private int fastaExportTypeIndex = 0;

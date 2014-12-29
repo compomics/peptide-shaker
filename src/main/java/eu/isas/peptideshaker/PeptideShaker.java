@@ -13,7 +13,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.io.ConfigurationFile;
 import com.compomics.util.memory.MemoryConsumptionStatus;
@@ -70,11 +69,11 @@ public class PeptideShaker {
      */
     private int replicateNumber;
     /**
-     * the validator which will take care of the matches validation
+     * The validator which will take care of the matches validation
      */
     private MatchesValidator matchesValidator;
     /**
-     * the ptm scorer responsible for scoring ptm localisation
+     * The PTM scorer responsible for scoring PTM localization.
      */
     private PtmScorer ptmScorer;
     /**
@@ -85,10 +84,6 @@ public class PeptideShaker {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The XML file containing the enzymes.
      */
@@ -159,9 +154,9 @@ public class PeptideShaker {
      * Constructor without mass specification. Calculation will be done on new
      * maps which will be retrieved as compomics utilities parameters.
      *
-     * @param experiment The experiment conducted
-     * @param sample The sample analyzed
-     * @param replicateNumber The replicate number
+     * @param experiment the experiment conducted
+     * @param sample the sample analyzed
+     * @param replicateNumber the replicate number
      */
     public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber) {
         this.experiment = experiment;
@@ -178,9 +173,9 @@ public class PeptideShaker {
     /**
      * Constructor with map specifications.
      *
-     * @param experiment The experiment conducted
-     * @param sample The sample analyzed
-     * @param replicateNumber The replicate number
+     * @param experiment the experiment conducted
+     * @param sample the sample analyzed
+     * @param replicateNumber the replicate number
      * @param psMaps the peptide shaker maps
      */
     public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber, PSMaps psMaps) {
@@ -195,12 +190,12 @@ public class PeptideShaker {
      * Method used to import identification from identification result files.
      *
      * @param waitingHandler the handler displaying feedback to the user
-     * @param idFiles The files to import
-     * @param spectrumFiles The corresponding spectra (can be empty: spectra
+     * @param idFiles the files to import
+     * @param spectrumFiles the corresponding spectra (can be empty: spectra
      * will not be loaded)
      * @param shotgunProtocol information about the protocol used
      * @param identificationParameters identification parameters
-     * @param projectDetails The project details
+     * @param projectDetails the project details
      * @param processingPreferences the initial processing preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param backgroundThread boolean indicating whether the import should be
@@ -248,8 +243,8 @@ public class PeptideShaker {
      * This method processes the identifications and fills the PeptideShaker
      * maps.
      *
-     * @param inputMap The input map
-     * @param proteinCount Map of proteins found several times with the number of times they appeared as first hit.
+     * @param inputMap the input map
+     * @param proteinCount map of proteins found several times with the number of times they appeared as first hit
      * @param waitingHandler the handler displaying feedback to the user
      * @param exceptionHandler handler for exceptions
      * @param identificationParameters the identification parameters
@@ -261,7 +256,9 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever an error occurred while
      * loading the identification files
      */
-    public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
+    public void processIdentifications(InputMap inputMap, HashMap<String, Integer> proteinCount, WaitingHandler waitingHandler, 
+            ExceptionHandler exceptionHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
+            ProcessingPreferences processingPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails)
             throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -553,10 +550,11 @@ public class PeptideShaker {
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      *
-     * @throws Exception Exception thrown whenever it is attempted to attach
+     * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
+    public void spectrumMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         PeptideSpecificMap peptideMap = new PeptideSpecificMap();
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setPeptideMap(peptideMap);
@@ -583,10 +581,11 @@ public class PeptideShaker {
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
      *
-     * @throws Exception Exception thrown whenever it is attempted to attach
+     * @throws Exception exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
+    public void peptideMapChanged(Identification identification, WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, 
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws Exception {
         ProteinMap proteinMap = new ProteinMap();
         matchesValidator.setProteinMap(proteinMap);
         matchesValidator.attachPeptideProbabilities(identification, waitingHandler);
@@ -601,7 +600,7 @@ public class PeptideShaker {
      * Processes the identifications if a change occurred in the protein map.
      *
      * @param waitingHandler the waiting handler
-     * @param processingPreferences
+     * @param processingPreferences the processing preferences
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException

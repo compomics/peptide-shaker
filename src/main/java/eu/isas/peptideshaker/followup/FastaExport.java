@@ -36,11 +36,12 @@ public class FastaExport {
      * @param exportType the export type (see enum below)
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process
+     * @param filterPreferences the filter preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void exportFasta(File destinationFile, Identification identification,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
@@ -63,10 +64,10 @@ public class FastaExport {
      * the process
      * @param filterPreferences the filter preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void exportAccessions(File destinationFile, Identification identification,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences)
@@ -91,10 +92,10 @@ public class FastaExport {
      * @param accessionOnly if true only the accession of the protein will be
      * exported, if false the entire information in FASTA format
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ExportType exportType, WaitingHandler waitingHandler, FilterPreferences filterPreferences, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
@@ -187,11 +188,11 @@ public class FastaExport {
      * @param accessionOnly indicate whether only the accession shall be written
      * or the entire protein details in FASTA format
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws InterruptedException
-     * @throws FileNotFoundException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly) 
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {

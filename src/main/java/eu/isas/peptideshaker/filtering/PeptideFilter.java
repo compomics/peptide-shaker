@@ -18,7 +18,7 @@ import javax.swing.RowFilter.ComparisonType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * Peptide Filter.
+ * Peptide filter.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -431,12 +431,13 @@ public class PeptideFilter extends MatchFilter {
      * @return a boolean indicating whether a peptide match is validated by a
      * given filter
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    public boolean isValidated(String peptideKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public boolean isValidated(String peptideKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         return isValidated(peptideKey, this, identification, identificationFeaturesGenerator);
     }
 
@@ -453,12 +454,13 @@ public class PeptideFilter extends MatchFilter {
      * @return a boolean indicating whether a peptide match is validated by a
      * given filter
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    public static boolean isValidated(String peptideMatchKey, PeptideFilter peptideFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public static boolean isValidated(String peptideMatchKey, PeptideFilter peptideFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 

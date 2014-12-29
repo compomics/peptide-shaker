@@ -63,7 +63,7 @@ public class PsSpectrumCountingSection {
      * this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException {
 

@@ -18,6 +18,7 @@ public enum PsAnnotationFeature implements ExportFeature {
     neutral_losses_sequence_dependence("Neutral Losses Sequence Dependence", "Indicates whether neutral losses consideration is sequence dependent (1: yes, 0: no).", false),
     selected_charges("Selected Charges", "The charges selected for fragment ion peak annotation.", false),
     fragment_ion_accuracy("Fragment Ion m/z Tolerance", "The m/z tolerance used for fragment ion annotation.", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

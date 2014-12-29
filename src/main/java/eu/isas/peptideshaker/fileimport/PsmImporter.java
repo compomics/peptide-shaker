@@ -216,12 +216,13 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
             throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -240,12 +241,13 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void importPsmsMultipleThreads(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
             throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -273,12 +275,13 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
             throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -296,12 +299,13 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     private void importPsm(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler)
             throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -838,11 +842,12 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -889,8 +894,9 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param tagAssumption the tag assumption
      *
-     * @throws MzMLUnmarshallerException
-     * @throws IOException
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     * @throws IOException thrown if an IOException occurs
      */
     private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
 
@@ -1113,17 +1119,17 @@ public class PsmImporter {
     private class PsmImporterRunnable implements Runnable {
 
         /**
-         * The spectrum match to import
+         * The spectrum match to import.
          */
         private SpectrumMatch spectrumMatch;
 
         /**
-         * The waiting handler
+         * The waiting handler.
          */
         private WaitingHandler waitingHandler;
 
         /**
-         * Constructor
+         * Constructor.
          *
          * @param spectrumMatch the match to import
          * @param waitingHandler a waiting handler to display progress and allow

@@ -67,7 +67,7 @@ public class PsProjectSection {
      * @param projectDetails the details of this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(String experiment, String sample, int replicateNumber, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
 

@@ -48,13 +48,16 @@ public class InclusionListExport {
      * @param filterPreferences the general filtering preferences of this
      * project
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow,
+            WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         FileWriter f = new FileWriter(destinationFile);
 
@@ -76,6 +79,7 @@ public class InclusionListExport {
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psParameter);
                 ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
                 while (proteinMatchesIterator.hasNext()) {
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
                     String proteinMatchKey = proteinMatch.getKey();
@@ -238,19 +242,19 @@ public class InclusionListExport {
     public enum ExportFormat {
 
         /**
-         * Thermo format
+         * Thermo format.
          */
         Thermo(0, "Thermo", "txt"),
         /**
-         * ABI format
+         * ABI format.
          */
         ABI(1, "ABI", "txt"),
         /**
-         * Bruker format
+         * Bruker format.
          */
         Bruker(2, "Bruker", "csv"),
         /**
-         * MassLynx format
+         * MassLynx format.
          */
         MassLynx(3, "MassLynx", "txt");
         /**
@@ -262,7 +266,7 @@ public class InclusionListExport {
          */
         public String description;
         /**
-         * The extension of the file
+         * The extension of the file.
          */
         public String extension;
 

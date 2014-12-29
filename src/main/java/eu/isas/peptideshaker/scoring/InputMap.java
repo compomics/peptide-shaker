@@ -169,6 +169,7 @@ public class InputMap implements Serializable {
 
         int max = getNEntries();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (TargetDecoyMap hitmap : inputMap.values()) {

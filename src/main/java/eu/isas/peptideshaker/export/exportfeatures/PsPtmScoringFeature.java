@@ -14,6 +14,7 @@ public enum PsPtmScoringFeature implements ExportFeature {
     aScore("A-score", "Indicates whether the A-score was computed for PTM localization.", false),
     neutral_losses("Accounting for Neutral Losses", "Indicates whether the neutral losses are accounted for in the A-score calculation.", false),
     flr("False Location Rate", "For peptides presenting a single modification of a kind and more than one modification site, the site is marked as confident if the A-score passes this estimated FLR.", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

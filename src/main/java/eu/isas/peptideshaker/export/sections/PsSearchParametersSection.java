@@ -64,7 +64,7 @@ public class PsSearchParametersSection {
      * @param searchParameters the search parameters of this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException {
 

@@ -123,7 +123,7 @@ public class MatchesValidator {
 
         IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
 
-        waitingHandler.setWaitingText("Finding FDR thresholds. Please Wait...");
+        waitingHandler.setWaitingText("Finding FDR Thresholds. Please Wait...");
 
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
@@ -139,6 +139,7 @@ public class MatchesValidator {
 
         int max = peptideMap.getKeys().size() + psmMaps.size() + inputMap.getNalgorithms();
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.resetSecondaryProgressCounter();
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (String mapKey : peptideMap.getKeys()) {
@@ -219,7 +220,6 @@ public class MatchesValidator {
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         // @TODO: should be multithreaded
-        
         PSParameter psParameter = new PSParameter();
         PSParameter psParameter2 = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
@@ -1446,10 +1446,16 @@ public class MatchesValidator {
      * @param waitingHandler the handler displaying feedback to the user
      * @param processingPreferences the processing preferences
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the matches database
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with the matches database or when an error is encountered
+     * while reading the FASTA file
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a match from the database
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while retrieving the match or when an error is encountered while
+     * reading the FASTA file
      */
     public void attachProteinProbabilities(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
             ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {

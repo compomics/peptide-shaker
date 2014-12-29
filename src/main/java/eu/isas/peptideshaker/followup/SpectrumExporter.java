@@ -57,11 +57,12 @@ public class SpectrumExporter {
      * @param exportType the type of PSM to export
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
@@ -183,12 +184,16 @@ public class SpectrumExporter {
      *
      * @return whether a spectrum shall be exported
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    private boolean shallExport(String spectrumKey, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private boolean shallExport(String spectrumKey, ExportType exportType, SequenceMatchingPreferences sequenceMatchingPreferences)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         PSParameter psParameter = new PSParameter();
+
         switch (exportType) {
             case non_validated_psms:
             case validated_psms:

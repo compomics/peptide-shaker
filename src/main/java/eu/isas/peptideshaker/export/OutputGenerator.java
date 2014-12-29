@@ -91,7 +91,7 @@ public class OutputGenerator {
     /**
      * Constructor.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI
      */
     public OutputGenerator(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -1091,25 +1091,38 @@ public class OutputGenerator {
      * arguments) to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
-     * @param aPsmKeys
-     * @param aIndexes
-     * @param aOnlyValidated
-     * @param aAccessions
-     * @param aProteinDescription
-     * @param aSequence
-     * @param aModification
-     * @param aLocation
-     * @param aFile
-     * @param aTitle
-     * @param aPrecursor
-     * @param aScore
-     * @param aConfidence
-     * @param aIncludeHeader
-     * @param aOnlyStarred
-     * @param aIncludeHidden
+     * @param aPsmKeys the PSM keys
+     * @param aIndexes boolean indicating whether the indexes shall be output
+     * @param aOnlyValidated boolean indicating whether only validated are to to
+     * exported
+     * @param aAccessions boolean indicating whether the protein accessions
+     * shall be output
+     * @param aProteinDescription boolean indicating whether the protein
+     * descriptions shall be output
+     * @param aSequence boolean indicating whether the peptide sequence shall be
+     * output
+     * @param aModification boolean indicating whether the peptide modification
+     * details shall be output
+     * @param aLocation boolean indicating whether the modification location
+     * details shall be output
+     * @param aFile boolean indicating whether the spectrum file name shall be
+     * output
+     * @param aTitle boolean indicating whether the spectrum title shall be
+     * output
+     * @param aPrecursor boolean indicating whether the precursor details name
+     * shall be output
+     * @param aScore boolean indicating whether the PSM score shall be output
+     * @param aConfidence boolean indicating whether the PSM confidence shall be
+     * output
+     * @param aIncludeHeader boolean indicating whether the column header shall
+     * be output
+     * @param aOnlyStarred boolean indicating whether only starred entries shall
+     * be output
+     * @param aIncludeHidden boolean indicating whether hidden entries shall be
+     * output
      */
-    public void getPSMsOutput(JDialog parentDialog, ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aProteinDescription, boolean aSequence, boolean aModification,
-            boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
+    public void getPSMsOutput(JDialog parentDialog, ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aProteinDescription,
+            boolean aSequence, boolean aModification, boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
             boolean aOnlyStarred, boolean aIncludeHidden) {
 
         // create final versions of all variables to use inside the export thread
@@ -1555,7 +1568,7 @@ public class OutputGenerator {
     /**
      * Sends the desired phosphorylation output to a user chosen file.
      *
-     * @param parentDialog the parent dialog, can be null.
+     * @param parentDialog the parent dialog, can be null
      */
     public void getPhosphoOutput(JDialog parentDialog) {
 
@@ -2127,18 +2140,29 @@ public class OutputGenerator {
      * provided in arguments) to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
-     * @param aPsmKeys
-     * @param aOnlyValidated
-     * @param aAccession
-     * @param aProteinDescription
-     * @param aSequence
-     * @param aModifications
-     * @param aFile
-     * @param aTitle
-     * @param aPrecursor
-     * @param aScores
-     * @param aConfidence
-     * @param aIncludeHeader
+     * @param aPsmKeys the PSM keys
+     * @param aOnlyValidated boolean indicating whether only validated shall be
+     * output
+     * @param aAccession boolean indicating whether protein accessions shall be
+     * output
+     * @param aProteinDescription boolean indicating whether protein
+     * descriptions shall be output
+     * @param aSequence boolean indicating whether the peptide sequence shall be
+     * output
+     * @param aModifications boolean indicating whether the modification details
+     * shall be output
+     * @param aFile boolean indicating whether the spectrum file name shall be
+     * output
+     * @param aTitle boolean indicating whether the spectrum title shall be
+     * output
+     * @param aPrecursor boolean indicating whether the precursor details shall
+     * be output
+     * @param aScores boolean indicating whether the assumption scores shall be
+     * output
+     * @param aConfidence boolean indicating whether the assumption confidences
+     * shall be output
+     * @param aIncludeHeader boolean indicating whether the column headers shall
+     * be output
      */
     public void getAssumptionsOutput(JDialog parentDialog, ArrayList<String> aPsmKeys, boolean aOnlyValidated,
             boolean aAccession, boolean aProteinDescription, boolean aSequence, boolean aModifications,

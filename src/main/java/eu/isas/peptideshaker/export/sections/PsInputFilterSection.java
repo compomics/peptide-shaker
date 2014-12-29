@@ -62,7 +62,7 @@ public class PsInputFilterSection {
      * @param idFilter the identification used for this project
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
+     * writing the file
      */
     public void writeSection(IdFilter idFilter, WaitingHandler waitingHandler) throws IOException {
 

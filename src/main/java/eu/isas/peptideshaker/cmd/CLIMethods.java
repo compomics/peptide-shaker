@@ -285,7 +285,7 @@ public class CLIMethods {
     }
 
     /**
-     * Exports the project in the mzidentml format.
+     * Exports the project in the mzIdentML format.
      *
      * @param mzidCLIInputBean the user input
      * @param cpsParent a cps file parent allowing accessing the information it
@@ -300,7 +300,8 @@ public class CLIMethods {
      * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
      * @throws InterruptedException thrown if InterruptedException occurs
      */
-    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
+    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler) 
+            throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
 
         ProjectDetails projectDetails = cpsParent.getProjectDetails();
         projectDetails.setContactFirstName(mzidCLIInputBean.getContactFirstName());

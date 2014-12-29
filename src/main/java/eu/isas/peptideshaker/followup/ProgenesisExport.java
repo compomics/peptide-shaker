@@ -46,12 +46,15 @@ public class ProgenesisExport {
      * otherwise.
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingPreferences sequenceMatchingPreferences)
+    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType,
+            WaitingHandler waitingHandler, ArrayList<String> targetedPTMs, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -220,11 +223,13 @@ public class ProgenesisExport {
      * @param spectrumKey the key of the PSM to export
      * @param identification the identification
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -241,12 +246,13 @@ public class ProgenesisExport {
      * to protein inference. If null all proteins will be reported.
      * @param identification the identification
      * @param sequenceMatchingPreferences the sequence matching preferences
-     * 
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {

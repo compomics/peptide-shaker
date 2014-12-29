@@ -23,6 +23,7 @@ public enum PsSearchFeature implements ExportFeature {
     variable_modifications("Variable Modifications", "The variable posttranslational modifications used for the search.", false),
     refinement_variable_modifications("Refinement Variable Modifications", "The refinement variable posttranslational modifications used for the search, typically a second pass search.", false),
     refinement_fixed_modifications("Refinement Fixed Modifications", "The refinement fixed posttranslational modifications used for the search, typically a second pass search.", false);
+
     /**
      * The title of the feature which will be used for column heading.
      */

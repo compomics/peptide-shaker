@@ -53,11 +53,13 @@ public class TrainingExport {
      * recalibrated
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
@@ -81,11 +83,13 @@ public class TrainingExport {
      * recalibrated
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, Double fdr, Double fnr,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
@@ -237,14 +241,14 @@ public class TrainingExport {
     }
 
     /**
-     * Returns the fdr threshold to be used
+     * Returns the FDR threshold to be used
      *
-     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param psmSpecificMap the PSM target/decoy scoring map
      * @param charge the charge of the inspected PSM
      * @param spectrumFileName the spectrum file name
      * @param fdr a user defined FDR, can be null
      *
-     * @return the fdr threshold to be used
+     * @return the FDR threshold to be used
      */
     private static double getFdrThreshold(PsmSpecificMap psmSpecificMap, int charge, String spectrumFileName, Double fdr) {
         double fdrThreshold;
@@ -264,10 +268,10 @@ public class TrainingExport {
     /**
      * Returns the high confidence threshold
      *
-     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param psmSpecificMap the PSM target/decoy scoring map
      * @param charge the charge of the inspected PSM
      * @param spectrumFileName the spectrum file name
-     * @param fdrThreshold the fdr threshold to be used
+     * @param fdrThreshold the FDR threshold to be used
      *
      * @return the confidence threshold corresponding to this match at the
      * desired FDR
@@ -285,11 +289,11 @@ public class TrainingExport {
     /**
      * Returns the low confidence threshold
      *
-     * @param psmSpecificMap the psm target/decoy scoring map
+     * @param psmSpecificMap the PSM target/decoy scoring map
      * @param charge the charge of the inspected PSM
      * @param spectrumFileName the spectrum file name
      * @param fnr a user defined FNR threshold, can be null
-     * @param fdrThreshold the fdr threshold used
+     * @param fdrThreshold the FDR threshold used
      *
      * @return the confidence threshold corresponding to this match at the
      * desired FNR

@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -87,14 +86,16 @@ public class PsFragmentSection {
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file.
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws MzMLUnmarshallerException
+     * writing the file
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws SQLException thrown if a SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
-    public void writeSection(SpectrumMatch spectrumMatch, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
+    public void writeSection(SpectrumMatch spectrumMatch, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -216,7 +217,7 @@ public class PsFragmentSection {
     /**
      * Writes the header of this section.
      *
-     * @throws IOException
+     * @throws IOException thrown if an IOException occurs
      */
     public void writeHeader() throws IOException {
         if (indexes) {

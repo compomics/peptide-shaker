@@ -95,7 +95,7 @@ public class FollowUpCLI extends CpsParent {
             return 1;
         }
 
-        // Load fasta file
+        // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
@@ -108,7 +108,7 @@ public class FollowUpCLI extends CpsParent {
             return 1;
         }
 
-        // Load the spectrum files
+        // load the spectrum files
         try {
             if (!loadSpectrumFiles(waitingHandler)) {
                 if (identification.getSpectrumFiles().size() > 1) {
@@ -182,7 +182,7 @@ public class FollowUpCLI extends CpsParent {
             }
         }
 
-        // Pepnovo training export
+        // PepNovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
                 CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
@@ -193,7 +193,7 @@ public class FollowUpCLI extends CpsParent {
             }
         }
 
-        // Inclusion list export
+        // inclusion list export
         if (followUpCLIInputBean.inclusionListNeeded()) {
             try {
                 CLIMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, identificationParameters.getSearchParameters(), waitingHandler, filterPreferences);
