@@ -352,7 +352,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
     /**
      * The main method used to start PeptideShaker.
      *
-     * @param args
+     * @param args the arguments
      */
     public static void main(String[] args) {
 
@@ -3368,7 +3368,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
     /**
      * Set the utilities user preferences.
      *
-     * @param utilitiesUserPreferences
+     * @param utilitiesUserPreferences the utilities user preferences
      */
     public void setUtilitiesUserPreferences(UtilitiesUserPreferences utilitiesUserPreferences) {
         this.utilitiesUserPreferences = utilitiesUserPreferences;
@@ -3555,9 +3555,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
      *
      * @param spectrumKey the key of the given spectrum
      * @return the precursor
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws IllegalArgumentException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws MzMLUnmarshallerException thrown if a MzMLUnmarshallerException
+     * occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public Precursor getPrecursor(String spectrumKey) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
         return getPrecursor(spectrumKey, false);
@@ -3570,9 +3573,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
      * @param save boolean indicating whether the precursor should be saved in
      * memory for later re-use
      * @return the precursor
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
-     * @throws IllegalArgumentException
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws MzMLUnmarshallerException thrown if a MzMLUnmarshallerException
+     * occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public Precursor getPrecursor(String spectrumKey, boolean save) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
         return spectrumFactory.getPrecursor(spectrumKey, save);
@@ -5345,8 +5351,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
                 + "\n\nPlease locate it manually.",
                 "File Input Error", JOptionPane.WARNING_MESSAGE);
 
-        LastSelectedFolder lastSelectedFolder = getLastSelectedFolder();
-        JFileChooser fileChooser = new JFileChooser(lastSelectedFolder.getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
+        LastSelectedFolder tempLastSelectedFolder = getLastSelectedFolder();
+        JFileChooser fileChooser = new JFileChooser(tempLastSelectedFolder.getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
         fileChooser.setDialogTitle("Open FASTA File");
 
         FileFilter filter = new FileFilter() {
@@ -5368,7 +5374,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File selectedFastaFile = fileChooser.getSelectedFile();
-            lastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
+            tempLastSelectedFolder.setLastSelectedFolder(selectedFastaFile.getAbsolutePath());
             return cpsBean.loadFastaFile(selectedFastaFile.getParentFile(), progressDialog);
         } else {
             return false;
@@ -5425,10 +5431,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
     /**
      * Update the display options for the overview tab.
      *
-     * @param displayProteins
-     * @param displayPeptidesAndPsms
-     * @param displayCoverage
-     * @param displaySpectrum
+     * @param displayProteins if the proteins panel is to be displayed
+     * @param displayPeptidesAndPsms if the peptides and PSMs panel is to be
+     * displayed
+     * @param displayCoverage if the protein coverage panel is to be displayed
+     * @param displaySpectrum if the spectrum panel is to be displayed
      */
     public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPsms,
             boolean displayCoverage, boolean displaySpectrum) {
@@ -6255,7 +6262,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaMemo
 
                 if (speciesDatabase != null) {
 
-                    final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
+                    final File goMappingsFile = new File(GenePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
 
                     if (goMappingsFile.exists()) {
 

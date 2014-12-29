@@ -45,7 +45,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param species the species for the project, can be null and also a list
      * of species
      * @param speciesType the species type
-     * @param modal
+     * @param modal if the dialog is to be modal or not
      */
     public PrideSearchParametersDialog(PrideReshakeGUI prideReShakeGUI, File prideSearchParametersFile,
             String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {

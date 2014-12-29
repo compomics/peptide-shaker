@@ -59,7 +59,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
      * Starts the launcher by calling the launch method. Use this as the main
      * class in the jar file.
      *
-     * @param args
+     * @param args the arguments
      */
     public static void main(String[] args) {
         new PeptideShakerWrapper(args);

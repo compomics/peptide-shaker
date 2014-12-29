@@ -128,14 +128,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param shotgunProtocol identification on the protocol used
      * @param identificationParameters the identification parameters used
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.lang.ClassNotFoundException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ProteinMap proteinMap, String proteinMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            ProteinMap proteinMap, String proteinMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -178,14 +180,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param shotgunProtocol identification on the protocol used
      * @param identificationParameters the identification parameters used
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -233,14 +237,16 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @param shotgunProtocol identification on the protocol used
      * @param identificationParameters the identification parameters used
      *
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PsmSpecificMap psmSpecificMap, String psmMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PsmSpecificMap psmSpecificMap, String psmMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
         setUpGui();
@@ -311,10 +317,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      *
      * @param identificationFeaturesGenerator
      * @param proteinMap
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * 
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     private void populateGUI(IdentificationFeaturesGenerator identificationFeaturesGenerator, TargetDecoyMap targetDecoyMap,
             ArrayList<MatchFilter> filters, String targetDecoyCategory) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -466,7 +475,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private class FiltersTableModel extends DefaultTableModel {
 
         /**
-         * The ordered QC criteria
+         * The ordered QC criteria.
          */
         private ArrayList<String> qcCriteria;
 

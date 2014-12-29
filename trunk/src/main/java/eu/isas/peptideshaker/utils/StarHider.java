@@ -196,10 +196,12 @@ public class StarHider {
      *
      * @param match the key of the match
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void starProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         try {
@@ -243,10 +245,12 @@ public class StarHider {
      *
      * @param match the key of the match
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void unStarProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
@@ -278,10 +282,12 @@ public class StarHider {
      *
      * @param match the key of the match
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void hideProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
@@ -326,10 +332,12 @@ public class StarHider {
      *
      * @param match the key of the match
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void unHideProtein(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
@@ -658,11 +666,13 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
     public boolean isProteinHidden(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -683,10 +693,10 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public boolean isPeptideHidden(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -709,11 +719,11 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
     public boolean isPsmHidden(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -736,11 +746,13 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.sql.SQLException
-     * @throws java.lang.InterruptedException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
     public boolean isProteinStarred(String match) throws IOException, ClassNotFoundException, SQLException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -763,10 +775,10 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
     public boolean isPeptideStarred(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -789,11 +801,13 @@ public class StarHider {
      * @return a boolean indicating whether a protein match should be hidden
      * according to the implemented filters
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException
-     * @throws java.lang.InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
     public boolean isPsmStarred(String match) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();

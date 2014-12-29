@@ -51,7 +51,6 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     
     /**
      * Constructor which sets a new empty table.
-     *
      */
     public PeptideFractionTableModel() {
     }
@@ -60,8 +59,8 @@ public class PeptideFractionTableModel extends DefaultTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI
-     * @param peptideKeys
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param peptideKeys the peptide keys
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> peptideKeys) {
         setUpTableModel(peptideShakerGUI, peptideKeys);
@@ -70,8 +69,8 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     /**
      * Set up the table model.
      *
-     * @param peptideShakerGUI
-     * @param peptideKeys
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param peptideKeys the peptide keys
      */
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> peptideKeys) {
         this.peptideShakerGUI = peptideShakerGUI;

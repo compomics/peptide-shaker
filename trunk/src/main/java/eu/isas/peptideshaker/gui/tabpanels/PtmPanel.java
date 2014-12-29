@@ -3470,7 +3470,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * Updates the peptide table.
      *
-     * @param progressDialog
+     * @param progressDialog the progress dialog
      */
     public void updatePeptideTable(ProgressDialogX progressDialog) {
 
@@ -3836,7 +3836,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * Updates the graphics components.
      *
-     * @param progressDialog
+     * @param progressDialog the progress dialog
      */
     public void updateGraphics(ProgressDialogX progressDialog) {
 
@@ -4590,7 +4590,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Redraws the modification profiles. For example if the PTM colors are
      * updated.
      *
-     * @param progressDialog
+     * @param progressDialog the progress dialog
      */
     public void updateModificationProfiles(ProgressDialogX progressDialog) {
 

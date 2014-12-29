@@ -54,7 +54,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     /**
      * Creates a new FollowupPreferencesDialog.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public FollowupPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);

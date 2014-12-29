@@ -11,7 +11,7 @@ import java.awt.Color;
 public class NewReferenceDialog extends javax.swing.JDialog {
 
     /**
-     * Reference to the reference group gui.
+     * Reference to the reference group GUI.
      */
     private NewReferenceGroupDialog referenceGroupDialog;
     /**
@@ -19,15 +19,15 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      */
     private int rowIndex = -1 ;
     /**
-     * The last valid input for contact name
+     * The last valid input for contact name.
      */
     private String lastNameInput = "";
 
     /**
      * Creates a new NewReferenceDialog dialog.
      *
-     * @param referenceGroupDialog
-     * @param modal
+     * @param referenceGroupDialog the NewReferenceGroupDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewReferenceDialog(NewReferenceGroupDialog referenceGroupDialog, boolean modal) {
         super(referenceGroupDialog, modal);
@@ -41,10 +41,10 @@ public class NewReferenceDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewReferenceDialog dialog.
      *
-     * @param referenceGroupDialog
-     * @param modal
-     * @param reference
-     * @param rowIndex  
+     * @param referenceGroupDialog the NewReferenceGroupDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param reference the reference
+     * @param rowIndex the row index
      */
     public NewReferenceDialog(NewReferenceGroupDialog referenceGroupDialog, boolean modal, Reference reference, int rowIndex) {
         super(referenceGroupDialog, modal);

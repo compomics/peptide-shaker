@@ -39,7 +39,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param psmKeys
+     * @param psmKeys the PSM keys
      */
     public PsmTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         setUpTableModel(peptideShakerGUI, psmKeys);
@@ -49,8 +49,8 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI
-     * @param psmKeys
+     * @param peptideShakerGUI the PeptideShakerGUI parent
+     * @param psmKeys the PSM keys
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         setUpTableModel(peptideShakerGUI, psmKeys);

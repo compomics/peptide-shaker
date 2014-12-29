@@ -28,8 +28,8 @@ public class PtmSelectionDialog extends javax.swing.JDialog {
     /**
      * Creates a new PtmSelectionDialog.
      *
-     * @param parent
-     * @param searchedModifications
+     * @param parent the parent frame
+     * @param searchedModifications the searched modifications
      */
     public PtmSelectionDialog(java.awt.Frame parent, ArrayList<String> searchedModifications) {
         super(parent, true);

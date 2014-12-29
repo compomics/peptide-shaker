@@ -46,7 +46,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * Create a new MzIdentMLExportDialog.
      *
      * @param peptideShakerGUI a reference to the main GUI frame
-     * @param modal
+     * @param modal if the dialog is to be modal or not
      */
     public MzIdentMLExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);

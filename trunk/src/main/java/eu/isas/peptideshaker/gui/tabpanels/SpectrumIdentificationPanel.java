@@ -2333,10 +2333,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     /**
      * Loads the tab content from the identification.
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
      */
     public void loadDataFromIdentification() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 

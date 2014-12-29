@@ -56,14 +56,16 @@ public class ProteinInference {
      *
      * @param identification the identification class containing all
      * identification matches
+     * @param shotgunProtocol the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void removeRedundantGroups(Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
@@ -315,11 +317,12 @@ public class ProteinInference {
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      */
     public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
@@ -789,16 +792,16 @@ public class ProteinInference {
 
             if (primaryDescription.size() > secondaryDescription.size()) {
                 int nMatch = 0;
-                for (int i = 0; i < secondaryDescription.size(); i++) {
-                    if (primaryDescription.contains(secondaryDescription.get(i))) {
+                for (String secondaryDescription1 : secondaryDescription) {
+                    if (primaryDescription.contains(secondaryDescription1)) {
                         nMatch++;
                     }
                 }
                 return nMatch >= secondaryDescription.size() / 2;
             } else {
                 int nMatch = 0;
-                for (int i = 0; i < primaryDescription.size(); i++) {
-                    if (secondaryDescription.contains(primaryDescription.get(i))) {
+                for (String primaryDescription1 : primaryDescription) {
+                    if (secondaryDescription.contains(primaryDescription1)) {
                         nMatch++;
                     }
                 }

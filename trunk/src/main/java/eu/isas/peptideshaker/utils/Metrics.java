@@ -438,7 +438,7 @@ public class Metrics implements Serializable {
     /**
      * Set the total number of peptides per fraction.
      *
-     * @param totalPeptidesPerFractions
+     * @param totalPeptidesPerFractions the total number of peptides per fraction map
      */
     public void setTotalPeptidesPerFraction(HashMap<String, Integer> totalPeptidesPerFractions) {
         this.totalPeptidesPerFractions = totalPeptidesPerFractions;

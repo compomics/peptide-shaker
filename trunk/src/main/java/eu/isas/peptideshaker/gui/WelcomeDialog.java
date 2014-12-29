@@ -892,7 +892,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     /**
      * Make sure that the dummy frame is hidden when the dialog is not visible.
      *
-     * @param visible
+     * @param visible if the dialog is to be visible or not
      */
     public void setVisible(boolean visible) {
         super.setVisible(visible);

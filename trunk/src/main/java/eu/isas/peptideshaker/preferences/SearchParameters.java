@@ -259,7 +259,7 @@ public class SearchParameters implements Serializable {
      *
      * @deprecated use
      * com.compomics.util.experiment.identification.SearchParameters instead
-     * @param fragmentIonMZTolerance
+     * @param fragmentIonMZTolerance the fragment ion mz tolerance
      */
     public void setFragmentIonAccuracy(double fragmentIonMZTolerance) {
         this.fragmentIonMZTolerance = fragmentIonMZTolerance;

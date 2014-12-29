@@ -41,8 +41,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Create a new NewInstrumentDialog.
      *
-     * @param prideExportDialog
-     * @param modal
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewInstrumentDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
@@ -58,9 +58,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Creates a new NewInstrumentDialog.
      *
-     * @param prideExportDialog
-     * @param modal
-     * @param instrument
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param instrument the instrument
      */
     public NewInstrumentDialog(ProjectExportDialog prideExportDialog, boolean modal, Instrument instrument) {
         super(prideExportDialog, modal);
@@ -763,9 +763,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Insert a new instrument source.
      *
-     * @param name
-     * @param accession
-     * @param ontology
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
      */
     public void setInstrumentSource(String name, String accession, String ontology) {
         instrumentSourceJTextField.setText(name + " [" + accession + "]");
@@ -776,9 +776,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Insert a new instrument detector.
      *
-     * @param name
-     * @param accession
-     * @param ontology
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
      */
     public void setInstrumentDetector(String name, String accession, String ontology) {
         instrumentDetectorJTextField.setText(name + " [" + accession + "]");
@@ -787,7 +787,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     }
 
     /**
-     * Fixes the indices so that they are in acceding order starting from one.
+     * Fixes the indices so that they are in ascending order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) analyzerCvTermsJTable.getModel()).getRowCount(); row++) {
@@ -849,9 +849,9 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Add an analyzer cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addAnalyzerDetails(String name, String accession, String ontology, int modifiedRow) {
@@ -861,10 +861,10 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     /**
      * Add an analyzer cv term to the table.
      *
-     * @param name
-     * @param accession
-     * @param ontology
-     * @param value
+     * @param name the name
+     * @param accession the accession
+     * @param ontology the ontology
+     * @param value the value
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
     public void addAnalyzerDetails(String name, String accession, String ontology, String value, int modifiedRow) {

@@ -63,7 +63,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI) {
         setUpTableModel(peptideShakerGUI);
@@ -72,7 +72,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     /**
      * Set up the table model.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;

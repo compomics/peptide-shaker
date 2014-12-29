@@ -100,11 +100,14 @@ public class TagMapper {
      * cancel the process
      * @param nThreads the number of threads to use
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
      */
     public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException,
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
@@ -132,9 +135,9 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
-            TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
+                TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
@@ -162,10 +165,10 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
-            TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
-            tagMatcher.setSynchronizedIndexing(true);
+                TagMatcher tagMatcher = new TagMatcher(modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences());
+                tagMatcher.setSynchronizedIndexing(true);
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
@@ -202,7 +205,7 @@ public class TagMapper {
         if (tagMap != null && !tagMap.isEmpty()) {
             waitingHandler.setMaxSecondaryProgressCounter(tagMap.size());
             waitingHandler.appendReport("Mapping de novo tags to peptides.", true, true);
-                ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
+            ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
                 KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);

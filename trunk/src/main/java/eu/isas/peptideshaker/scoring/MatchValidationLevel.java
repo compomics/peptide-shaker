@@ -86,7 +86,7 @@ public enum MatchValidationLevel {
 
     /**
      * Returns the implemented validation levels.
-     * 
+     *
      * @return the implemented validation levels
      */
     public static MatchValidationLevel[] getValidationLevels() {
@@ -97,9 +97,12 @@ public enum MatchValidationLevel {
         result[3] = MatchValidationLevel.none;
         return result;
     }
-    
+
     /**
-     * Returns an array of the validation level indexes in ascending order of confidence.
+     * Returns an array of the validation level indexes in ascending order of
+     * confidence.
+     *
+     * @return an array of the validation level indexes
      */
     public static int[] getValidationLevelIndexes() {
         int[] indexes = new int[4];
@@ -125,7 +128,7 @@ public enum MatchValidationLevel {
 
     /**
      * Returns a list of the names of the implemented validation levels.
-     * 
+     *
      * @return a list of the names of the implemented validation levels
      */
     public static String[] getValidationLevelsNames() {
@@ -136,12 +139,12 @@ public enum MatchValidationLevel {
         }
         return result;
     }
-    
+
     /**
      * Returns the match validation level associated to a given name.
-     * 
+     *
      * @param name the name
-     * 
+     *
      * @return the match validation level associated to a given name
      */
     public static MatchValidationLevel getMatchValidationLevel(String name) {
@@ -152,12 +155,12 @@ public enum MatchValidationLevel {
         }
         throw new IllegalArgumentException("No match validation level found for name " + name + ".");
     }
-    
+
     /**
      * Returns the match validation level associated to a given index.
-     * 
+     *
      * @param index the index
-     * 
+     *
      * @return the match validation level associated to a given index
      */
     public static MatchValidationLevel getMatchValidationLevel(int index) {

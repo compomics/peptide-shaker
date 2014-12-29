@@ -118,7 +118,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     /**
      * Creates a new ProteinFractionsPanel.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public ProteinFractionsPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
@@ -468,10 +468,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                     String fraction = fileNames.get(i);
 
-                    for (int j = 0; j < peptideKeys.size(); j++) {
-
-                        String peptideKey = peptideKeys.get(j);
-
+                    for (String peptideKey : peptideKeys) {
                         try {
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 

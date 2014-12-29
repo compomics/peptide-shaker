@@ -38,7 +38,7 @@ public class MethodsSectionDialog extends javax.swing.JDialog {
      * Creates a new MethodsSectionDialog.
      *
      * @param peptideShakerGUI the main frame
-     * @param modal
+     * @param modal if the dialog is to be modal or not
      */
     public MethodsSectionDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);

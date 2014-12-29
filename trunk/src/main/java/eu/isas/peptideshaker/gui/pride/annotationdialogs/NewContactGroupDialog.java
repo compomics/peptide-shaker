@@ -30,8 +30,8 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewContactDialog.
      *
-     * @param prideExportDialog
-     * @param modal
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
      */
     public NewContactGroupDialog(ProjectExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
@@ -47,9 +47,9 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewContactDialog.
      *
-     * @param prideExportDialog
-     * @param modal
-     * @param contactGroup
+     * @param prideExportDialog the ProjectExportDialog parent
+     * @param modal if the dialog is to be modal or not
+     * @param contactGroup the contact group
      */
     public NewContactGroupDialog(ProjectExportDialog prideExportDialog, boolean modal, ContactGroup contactGroup) {
         super(prideExportDialog, modal);
@@ -564,9 +564,9 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Add a new conctact to the table.
+     * Add a new contact to the table.
      *
-     * @param contact
+     * @param contact the contact
      */
     public void insertContact(Contact contact) {
         ((DefaultTableModel) contactsJTable.getModel()).addRow(new Object[]{
@@ -579,9 +579,9 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     }
     
     /**
-     * Add a new conctact to the table.
+     * Add a new contact to the table.
      *
-     * @param contact
+     * @param contact the contact
      * @param row the index of the row to edit 
      */
     public void editContact(Contact contact, int row) {

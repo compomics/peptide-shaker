@@ -68,11 +68,11 @@ public class PeptideMapper {
      * @param nThreads The number of threads to use
      * @param waitingHandler A waiting handler
      *
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
-     * @throws java.sql.SQLException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.util.concurrent.ExecutionException
+     * @throws IOException thrown if an IOException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws ExecutionException thrown if an ExecutionException occurs
      */
     public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
             ClassNotFoundException, ExecutionException {

@@ -38,7 +38,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI a reference to PeptideShakerGUI
      * @param welcomeDialog a reference to the WelcomeDialog, can be null
-     * @param modal
+     * @param modal if the dialog is to be modal or not
      */
     public GettingStartedDialog(PeptideShakerGUI peptideShakerGUI, WelcomeDialog welcomeDialog, boolean modal) {
         super(peptideShakerGUI, modal);

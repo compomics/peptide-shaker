@@ -3640,10 +3640,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * Updates the PSM panel title with the number of validated/confident
      * proteins.
      *
-     * @throws java.sql.SQLException
-     * @throws java.io.IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.lang.InterruptedException
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws IOException thrown if an IOException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
      */
     public void updatePsmPanelTitle() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
@@ -5378,7 +5378,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Update the protein inference type for the currently selected peptide.
      *
-     * @param proteinInferenceType
+     * @param proteinInferenceType the protein inference type
      */
     public void updatePeptideProteinInference(int proteinInferenceType) {
         peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
@@ -5387,7 +5387,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Export the table contents to the clipboard.
      *
-     * @param index
+     * @param index the index type
      */
     private void copyTableContentToClipboardOrFile(TableIndex index) {
 
