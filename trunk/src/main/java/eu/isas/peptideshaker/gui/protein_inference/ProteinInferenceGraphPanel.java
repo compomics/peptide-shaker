@@ -135,8 +135,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      * @param nodeToolTips the node tooltips
      * @param selectedNodes the list of selected nodes
      */
-    public ProteinInferenceGraphPanel(JDialog parentDialog, JPanel parentPanel, Image normalIcon, Image waitingIcon, LastSelectedFolder lastSelectedFolder, ArrayList<String> nodes, HashMap<String, ArrayList<String>> edges,
-            HashMap<String, String> nodeProperties, HashMap<String, String> edgeProperties, HashMap<String, String> nodeToolTips, ArrayList<String> selectedNodes) {
+    public ProteinInferenceGraphPanel(JDialog parentDialog, JPanel parentPanel, Image normalIcon, Image waitingIcon, LastSelectedFolder lastSelectedFolder, 
+            ArrayList<String> nodes, HashMap<String, ArrayList<String>> edges, HashMap<String, String> nodeProperties, HashMap<String, String> edgeProperties, 
+            HashMap<String, String> nodeToolTips, ArrayList<String> selectedNodes) {
         initComponents();
 
         this.parentDialog = parentDialog;

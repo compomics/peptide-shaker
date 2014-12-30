@@ -207,12 +207,24 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
             ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
+            // get the match validation level
+            PSParameter peptideMatchParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, new PSParameter());
+            String matchValidationLevel;
+            if (peptideMatchParameter != null) {
+                matchValidationLevel = "Validation: " + peptideMatchParameter.getMatchValidationLevel();
+            } else {
+                matchValidationLevel = "Validation: (not available)";
+            }
+
+            // get the peptide node tooltip
+            String peptideTooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, false, true);
+            peptideTooltip = "<html>" + peptideTooltip + "<br><br>" + matchValidationLevel + "</html>";
             String peptideNodeName = "Peptide " + peptideMatchKey;
-            nodeToolTips.put(peptideNodeName, peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true));
+            nodeToolTips.put(peptideNodeName, peptideTooltip);
+
+            // add the node
             nodes.add(peptideNodeName);
             selectedNodes.add(peptideNodeName);
-
-            PSParameter peptideMatchParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatchKey, new PSParameter());
             nodeProperties.put(peptideNodeName, "" + peptideMatchParameter.getMatchValidationLevel().getIndex());
 
             for (String tempProteinAccession : possibleProteins) {
@@ -220,21 +232,44 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 String proteinNodeKey = "Protein " + tempProteinAccession;
 
                 if (!nodes.contains(tempProteinAccession)) {
-                    nodes.add(proteinNodeKey);
-                    nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription() + "<html>");
 
+                    // add the node
+                    nodes.add(proteinNodeKey);
+
+                    // get the match validation level
                     PSParameter proteinMatchParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(tempProteinAccession, new PSParameter());
                     String nodeProperty = "";
                     if (proteinMatchParameter != null) {
                         nodeProperty += proteinMatchParameter.getMatchValidationLevel().getIndex();
+                        matchValidationLevel = "Validation: " + proteinMatchParameter.getMatchValidationLevel();
                     } else {
                         nodeProperty += -1;
+                        matchValidationLevel = "Validation: (not available)";
                     }
+
+                    // get the protein evidence level
                     String proteinEvidenceLevel = sequenceFactory.getHeader(tempProteinAccession).getProteinEvidence();
                     if (proteinEvidenceLevel != null) {
                         nodeProperty += "|" + proteinEvidenceLevel;
+                        try {
+                            Integer level = new Integer(proteinEvidenceLevel);
+                            proteinEvidenceLevel = "Evidence: " + GenePreferences.getProteinEvidencAsString(level);
+                        } catch (NumberFormatException e) {
+                            // ignore
+                        }
+                    } else {
+                        proteinEvidenceLevel = "Evidence: (not available)";
                     }
+
+                    // add the node property
                     nodeProperties.put(proteinNodeKey, nodeProperty);
+
+                    // add the tooltip
+                    nodeToolTips.put(proteinNodeKey, "<html>" + tempProteinAccession
+                            + "<br>" + sequenceFactory.getHeader(tempProteinAccession).getSimpleProteinDescription()
+                            + "<br><br>" + matchValidationLevel
+                            + "<br>" + proteinEvidenceLevel
+                            + "<html>");
                 }
 
                 ArrayList<String> tempEdges = edges.get(peptideNodeName);
@@ -257,8 +292,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             e.printStackTrace(); // @TODO: better error handling!
         }
 
-        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(), 
-                peptideShakerGUI.getLastSelectedFolder(),nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
+        graphInnerPanel.add(new ProteinInferenceGraphPanel(this, graphInnerPanel, peptideShakerGUI.getNormalIcon(), peptideShakerGUI.getWaitingIcon(),
+                peptideShakerGUI.getLastSelectedFolder(), nodes, edges, nodeProperties, edgeProperties, nodeToolTips, selectedNodes));
     }
 
     /**
