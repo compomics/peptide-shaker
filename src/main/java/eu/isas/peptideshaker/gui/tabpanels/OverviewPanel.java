@@ -4895,6 +4895,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         public void run() {
                             peptideShakerGUI.checkNewsFeed();
                             peptideShakerGUI.showNotesNotification();
+                            peptideShakerGUI.showTipsNotification();
                             updateSelection(true); // @TODO: this is sometimes too fast and results in Row index out of range...
                             proteinTable.requestFocus();
                         }

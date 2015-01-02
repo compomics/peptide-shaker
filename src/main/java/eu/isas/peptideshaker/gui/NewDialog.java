@@ -763,7 +763,7 @@ public class NewDialog extends javax.swing.JDialog {
                 while (iterator.hasNext()) {
                     FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
                     if (warning.getType() == FeedBack.FeedBackType.WARNING) {
-                        peptideShakerGUI.addNote("<b>" + ++counter + " " + warning.getTitle() + "</b><br><br>" + warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
+                        peptideShakerGUI.addNote("<b>" + ++counter + ") " + warning.getTitle() + "</b><br><br>" + warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
                     }
                 }
 

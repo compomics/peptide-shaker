@@ -634,7 +634,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
         });
 
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph (beta)"));
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
         graphPanel.setOpaque(false);
 
         graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));

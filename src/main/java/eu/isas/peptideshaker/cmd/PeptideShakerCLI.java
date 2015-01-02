@@ -694,7 +694,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         while (iterator.hasNext()) {
             FeedBack warning = peptideShaker.getWarnings().get(iterator.next());
             if (warning.getType() == FeedBack.FeedBackType.WARNING) {
-                System.out.println(warning.getMessage()); // @TODO: better interaction between notes and feedback objetcs...
+                System.out.println(warning.getMessage() + "\n"); // @TODO: better interaction between notes and feedback objetcs...
             }
         }
 
