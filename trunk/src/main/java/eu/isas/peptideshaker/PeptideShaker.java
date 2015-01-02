@@ -461,36 +461,36 @@ public class PeptideShaker {
         report = "Identification processing completed.";
 
         // get the detailed report
-//        ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
-//        ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
-//        ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
-//        boolean suspiciousProteins = proteinMap.suspicousInput();
-//
-//        if (suspiciousInput.size() > 0
-//                || suspiciousPsms.size() > 0
-//                || suspiciousPeptides.size() > 0
-//                || suspiciousProteins) {
-//
-//            String detailedReport = "";
-//
-//            boolean firstLine = true;
-//
-//            for (int searchEngine : suspiciousInput) {
-//                if (firstLine) {
-//                    firstLine = false;
-//                } else {
-//                    detailedReport += ", ";
-//                }
-//                detailedReport += Advocate.getAdvocate(searchEngine).getName();
-//            }
-//
-//            if (suspiciousInput.size() > 0) {
-//                detailedReport += " identifications.<br>";
-//            }
-//
-//            firstLine = true;
-//
-//            if (psmMap.getKeys().size() == 1) {
+        ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
+        //ArrayList<String> suspiciousPsms = matchesValidator.getPsmMap().suspiciousInput(); // @TODO: what happend to this one..?
+        ArrayList<String> suspiciousPeptides = matchesValidator.getPeptideMap().suspiciousInput();
+        boolean suspiciousProteins = matchesValidator.getProteinMap().suspicousInput();
+
+        if (suspiciousInput.size() > 0
+                //|| suspiciousPsms.size() > 0 // @TODO: re-add!
+                || suspiciousPeptides.size() > 0
+                || suspiciousProteins) {
+
+            String detailedReport = "";
+
+            boolean firstLine = true;
+
+            for (int searchEngine : suspiciousInput) {
+                if (firstLine) {
+                    firstLine = false;
+                } else {
+                    detailedReport += ", ";
+                }
+                detailedReport += Advocate.getAdvocate(searchEngine).getName();
+            }
+
+            if (suspiciousInput.size() > 0) {
+                detailedReport += " identifications.<br>";
+            }
+
+            firstLine = true;
+
+//            if (psmMap.getKeys().size() == 1) { // @TODO: re-add!
 //                detailedReport += "PSMs.<br>";
 //            } else {
 //                for (String fraction : suspiciousPsms) {
@@ -505,35 +505,36 @@ public class PeptideShaker {
 //                    detailedReport += " charged PSMs.<br>";
 //                }
 //            }
-//
-//            if (peptideMap.getKeys().size() == 1) {
-//                detailedReport += "Peptides.<br>";
-//            } else {
-//                firstLine = true;
-//                for (String fraction : suspiciousPeptides) {
-//                    if (firstLine) {
-//                        firstLine = false;
-//                    } else {
-//                        detailedReport += "<br>";
-//                    }
-//                    detailedReport += PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), fraction);
-//                    if (suspiciousPeptides.size() > 0) {
-//                        detailedReport += " peptides.<br>";
-//                    }
-//                }
-//            }
-//
-//            if (suspiciousProteins) {
-//                detailedReport += "Proteins.<br>";
-//            }
-//
-//            if (detailedReport.length() > 0) {
-//                detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
-//                        + detailedReport
-//                        + "<br>You can inspect this in the <i>Validation</i> tab.";
-//                //addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
-//            }
-//        }
+
+            if (matchesValidator.getPeptideMap().getKeys().size() == 1) {
+                detailedReport += "Peptides.<br>";
+            } else {
+                firstLine = true;
+                for (String fraction : suspiciousPeptides) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        detailedReport += "<br>";
+                    }
+                    detailedReport += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationProfile(), fraction);
+                    if (suspiciousPeptides.size() > 0) {
+                        detailedReport += " peptides.<br>";
+                    }
+                }
+            }
+
+            if (suspiciousProteins) {
+                detailedReport += "Proteins.<br>";
+            }
+
+            if (detailedReport.length() > 0) {
+                detailedReport = "The following identification classes resulted in non robust statistical estimators, the confidence estimation and validation will be inaccurate for these matches:<br><br>"
+                        + detailedReport
+                        + "<br>You can inspect this in the <i>Validation</i> tab.";
+                addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
+            }
+        }
+        
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This map will store target decoy informations about the psms grouped
+ * This map will store target decoy informations about the PSMs grouped
  * according to their precursor charge.
  *
  * @author Marc Vaudel
@@ -26,11 +26,11 @@ public class PsmSpecificMap implements Serializable {
      */
     static final long serialVersionUID = 746516685643358198L;
     /**
-     * The map of the psm target/decoy maps indexed by the psm charge.
+     * The map of the PSM target/decoy maps indexed by the PSM charge.
      */
     private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<Integer, TargetDecoyMap>();
     /**
-     * The map of the psm target/decoy maps indexed by the psm file and charge.
+     * The map of the PSM target/decoy maps indexed by the PSM file and charge.
      */
     private HashMap<Integer, HashMap<String, TargetDecoyMap>> fileSpecificPsmsMaps = new HashMap<Integer, HashMap<String, TargetDecoyMap>>();
     /**
