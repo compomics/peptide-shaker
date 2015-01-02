@@ -21,16 +21,20 @@
  * FEATURE IMPROVEMENT: Scientific notation is now used for the spectrum counting and intensity columns.
  * FEATURE IMPROVEMENT: Retention time is now given in minutes instead of seconds.
  * FEATURE IMPROVEMENT: The search parameters can now be extracted from the SearchGUI zip file.
+ * FEATURE IMPROVEMENT: Minor improvements to the command line progress display.
+ * FEATURE IMPROVEMENT: Made it possible to set the Java Home from the GUI.
 
  * BUG FIX: Fixed a bug in the ExportGraphicsDialog where the last selected folder was not set.
  * BUG FIX: Fixed a bug where the tool failed to start if less than 1GB of memory was the maximum value allowed by the system.
  * BUG FIX: Fixed a bug in the Species Dialog where the text on the Update/Download button was not always correct. 
  * BUG FIX: Fixed a minor GUI issue with the progress bar in the PRIDE Reshake.
+ * BUG FIX: The sequence matching type is now set to amino acid when checking the fixed modifications.
+ * BUG FIX: The PSM PTM mapping no longer ignores the user canceling the process in the waiting dialog.
 
  * LIBRARY UPDATE: Updated omssa-parser to version 1.6.12.
  * LIBRARY UPDATE: Updated xtandem-parser to version 1.7.17.
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.28.
- * LIBRARY UPDATE: Updated utilities to version 3.44.1. 
+ * LIBRARY UPDATE: Updated utilities to version 3.45.9. 
 
 ----
 
