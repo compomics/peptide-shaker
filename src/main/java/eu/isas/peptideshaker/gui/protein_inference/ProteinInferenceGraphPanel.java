@@ -544,8 +544,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         });
 
         legendLabel.setText("<html><a href>Legend</html>");
-        legendLabel.setToolTipText("Show color legend (coming soon...)");
-        legendLabel.setEnabled(false);
+        legendLabel.setToolTipText("Show graph legend");
         legendLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 legendLabelMouseEntered(evt);
@@ -954,7 +953,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void legendLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_legendLabelMouseReleased
-        // @TODO: show color legend...
+        new ProteinInferenceGraphLegendDialog(parentDialog, false);
     }//GEN-LAST:event_legendLabelMouseReleased
 
     /**
@@ -1121,7 +1120,7 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
                         } else if (evidenceLevel == 3) { // homology
                             color = new Color(110, 196, 197, alpha);
                         } else if (evidenceLevel == 4) { // predicted
-                            color = new Color(80, 106, 197, alpha);
+                            color = new Color(247, 53, 233, alpha);
                         } else if (evidenceLevel == 5) { // uncertain
                             color = new Color(255, 0, 0, alpha);
                         } else { // unknown...

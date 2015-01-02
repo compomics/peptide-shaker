@@ -157,8 +157,7 @@
         <Component class="javax.swing.JLabel" name="legendLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Legend&lt;/html&gt;"/>
-            <Property name="toolTipText" type="java.lang.String" value="Show color legend (coming soon...)"/>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show graph legend"/>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="legendLabelMouseEntered"/>
