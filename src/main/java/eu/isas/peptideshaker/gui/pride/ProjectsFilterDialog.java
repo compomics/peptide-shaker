@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
@@ -11,6 +12,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
@@ -189,6 +191,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
         tagsComboBox = new javax.swing.JComboBox();
         clearJButton = new javax.swing.JButton();
         okJButton = new javax.swing.JButton();
+        projectSearchLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Find");
@@ -320,7 +323,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                                 .addComponent(assaysComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(assaysJTextField))
-                            .addComponent(tissuesComboBox, javax.swing.GroupLayout.Alignment.CENTER, 0, 463, Short.MAX_VALUE)
+                            .addComponent(tissuesComboBox, javax.swing.GroupLayout.Alignment.CENTER, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ptmsComboBox, javax.swing.GroupLayout.Alignment.CENTER, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(instrumentsComboBox, javax.swing.GroupLayout.Alignment.CENTER, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(accessionJTextField)
@@ -392,17 +395,32 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
             }
         });
 
+        projectSearchLabel.setText("<html><a href=\\\"dummy\\\">Free Text Project Search</a></html>");
+        projectSearchLabel.setToolTipText("Open Free Text Project Search");
+        projectSearchLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                projectSearchLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                projectSearchLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                projectSearchLabelMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(filterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(filterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(20, 469, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
                         .addComponent(okJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearJButton)))
@@ -419,7 +437,8 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearJButton)
-                    .addComponent(okJButton))
+                    .addComponent(okJButton)
+                    .addComponent(projectSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -585,6 +604,33 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     private void tagsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagsComboBoxActionPerformed
         filter();
     }//GEN-LAST:event_tagsComboBoxActionPerformed
+
+    /**
+     * Change the cursor into a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void projectSearchLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_projectSearchLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void projectSearchLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_projectSearchLabelMouseExited
+
+    /**
+     * Open the PRIDE web page search.
+     * 
+     * @param evt 
+     */
+    private void projectSearchLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectSearchLabelMouseReleased
+        new PrideFreeTextSearchDialog(this, true);
+    }//GEN-LAST:event_projectSearchLabelMouseReleased
 
     /**
      * Make sure that the user is finished typing before applying the filters.
@@ -816,6 +862,7 @@ public class ProjectsFilterDialog extends javax.swing.JDialog {
     private javax.swing.JLabel instrumentLabel;
     private javax.swing.JComboBox instrumentsComboBox;
     private javax.swing.JButton okJButton;
+    private javax.swing.JLabel projectSearchLabel;
     private javax.swing.JComboBox ptmsComboBox;
     private javax.swing.JLabel ptmsLabel;
     private javax.swing.JComboBox speciesComboBox;

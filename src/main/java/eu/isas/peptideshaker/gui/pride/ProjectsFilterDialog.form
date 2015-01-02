@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="0"/>
     <Property name="title" type="java.lang.String" value="Find"/>
@@ -51,13 +51,13 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="filterPanel" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="filterPanel" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="20" pref="469" max="32767" attributes="0"/>
+                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                          <Component id="projectSearchLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="329" max="32767" attributes="0"/>
                           <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
@@ -72,10 +72,11 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="filterPanel" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="clearJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="okJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="projectSearchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -118,7 +119,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assaysJTextField" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="tissuesComboBox" alignment="2" pref="463" max="32767" attributes="0"/>
+                                  <Component id="tissuesComboBox" alignment="2" max="32767" attributes="0"/>
                                   <Component id="ptmsComboBox" alignment="2" max="32767" attributes="0"/>
                                   <Component id="instrumentsComboBox" alignment="2" max="32767" attributes="0"/>
                                   <Component id="accessionJTextField" max="32767" attributes="0"/>
@@ -364,6 +365,17 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okJButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="projectSearchLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy\u005c&quot;&gt;Free Text Project Search&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open Free Text Project Search"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseExited"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="projectSearchLabelMouseReleased"/>
           </Events>
         </Component>
       </SubComponents>
