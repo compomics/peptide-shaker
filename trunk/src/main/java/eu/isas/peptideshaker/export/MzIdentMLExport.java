@@ -1499,12 +1499,11 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
                 } else if (tempAdvocate == Advocate.comet.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
+                } else if (tempAdvocate == Advocate.myriMatch.getIndex()) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001589", "MyriMatch:MVH", Double.toString(eValue)));
                 } else {
                     writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue);
                 }
-
-                // @TODO: add scores for MyriMatch!
-                // @TODO: add generic e-value for user algorithms?
             }
 
             // add the additional search engine scores

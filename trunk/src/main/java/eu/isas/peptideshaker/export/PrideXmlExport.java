@@ -605,13 +605,12 @@ public class PrideXmlExport {
                                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001330", "X!Tandem:expect", Double.toString(eValue)));
                             } else if (tempAdvocate == Advocate.comet.getIndex()) {
                                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002257", "Comet:expectation value", Double.toString(eValue)));
+                            } else if (tempAdvocate == Advocate.myriMatch.getIndex()) {
+                                writeCvTerm(new CvTerm("PSI-MS", "MS:1001589", "MyriMatch:MVH", Double.toString(eValue)));
                             } else {
                                 br.write(getCurrentTabSpace() + "<userParam name=\"" + Advocate.getAdvocate(tempAdvocate).getName()
-                                        + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));  // @TODO: add cv params for the other new advocates
+                                        + " e-value\" value=\"" + eValue + "\" />" + System.getProperty("line.separator"));
                             }
-
-                            // @TODO: add scores for MyriMatch!
-                            // @TODO: add generic e-value for user algorithms?
                         }
 
                         // add the additional search engine scores
@@ -1396,7 +1395,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the experiment title.
-     * 
+     *
      * @return the experimentTitle
      */
     public String getExperimentTitle() {
@@ -1405,7 +1404,7 @@ public class PrideXmlExport {
 
     /**
      * Sets the experiment title.
-     * 
+     *
      * @param experimentTitle the experimentTitle to set
      */
     public void setExperimentTitle(String experimentTitle) {
@@ -1414,7 +1413,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the experiment label.
-     * 
+     *
      * @return the experimentLabel
      */
     public String getExperimentLabel() {
@@ -1423,7 +1422,7 @@ public class PrideXmlExport {
 
     /**
      * Sets the experiment label.
-     * 
+     *
      * @param experimentLabel the experimentLabel to set
      */
     public void setExperimentLabel(String experimentLabel) {
@@ -1432,7 +1431,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the experiment description.
-     * 
+     *
      * @return the experimentDescription
      */
     public String getExperimentDescription() {
@@ -1441,7 +1440,7 @@ public class PrideXmlExport {
 
     /**
      * Set the experiment description.
-     * 
+     *
      * @param experimentDescription the experimentDescription to set
      */
     public void setExperimentDescription(String experimentDescription) {
@@ -1450,7 +1449,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the experiment project.
-     * 
+     *
      * @return the experimentProject
      */
     public String getExperimentProject() {
@@ -1459,7 +1458,7 @@ public class PrideXmlExport {
 
     /**
      * Set the experiment project.
-     * 
+     *
      * @param experimentProject the experimentProject to set
      */
     public void setExperimentProject(String experimentProject) {
@@ -1468,7 +1467,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the references group.
-     * 
+     *
      * @return the reference group
      */
     public ReferenceGroup getReferenceGroup() {
@@ -1477,7 +1476,7 @@ public class PrideXmlExport {
 
     /**
      * Set the reference group.
-     * 
+     *
      * @param referenceGroup the references group to set
      */
     public void setReferenceGroup(ReferenceGroup referenceGroup) {
@@ -1486,7 +1485,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the contact group.
-     * 
+     *
      * @return the contact group
      */
     public ContactGroup getContactGroup() {
@@ -1495,7 +1494,7 @@ public class PrideXmlExport {
 
     /**
      * Sets the contact group.
-     * 
+     *
      * @param contactGroup the contact group to set
      */
     public void setContactGroup(ContactGroup contactGroup) {
@@ -1504,7 +1503,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the sample.
-     * 
+     *
      * @return the sample
      */
     public Sample getSample() {
@@ -1513,7 +1512,7 @@ public class PrideXmlExport {
 
     /**
      * Sets the sample.
-     * 
+     *
      * @param sample the sample to set
      */
     public void setSample(Sample sample) {
@@ -1522,7 +1521,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the protocol.
-     * 
+     *
      * @return the protocol
      */
     public Protocol getProtocol() {
@@ -1531,7 +1530,7 @@ public class PrideXmlExport {
 
     /**
      * Sets the protocol.
-     * 
+     *
      * @param protocol the protocol to set
      */
     public void setProtocol(Protocol protocol) {
@@ -1540,7 +1539,7 @@ public class PrideXmlExport {
 
     /**
      * Returns the instrument.
-     * 
+     *
      * @return the instrument
      */
     public Instrument getInstrument() {
@@ -1549,7 +1548,7 @@ public class PrideXmlExport {
 
     /**
      * Set the instrument.
-     * 
+     *
      * @param instrument the instrument to set
      */
     public void setInstrument(Instrument instrument) {
