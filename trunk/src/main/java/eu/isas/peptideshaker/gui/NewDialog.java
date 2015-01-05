@@ -129,6 +129,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+    /**
+     * The project details.
+     */
+    private ProjectDetails projectDetails = new ProjectDetails();
 
     /**
      * Creates a new open dialog.
@@ -698,6 +702,7 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.setCurentNotes(new ArrayList<String>());
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
+            peptideShakerGUI.setProjectDetails(projectDetails);
             peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
@@ -1607,7 +1612,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         peptideShaker.importFiles(waitingDialog, idFiles, spectrumFiles, shotgunProtocol,
-                identificationParameters, getProjectDetails(), processingPreferences, spectrumCountingPreferences, true);
+                identificationParameters, projectDetails, processingPreferences, spectrumCountingPreferences, true);
     }
 
     /**
