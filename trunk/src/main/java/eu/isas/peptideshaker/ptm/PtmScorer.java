@@ -371,7 +371,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, 
+    public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters,
             WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
@@ -1110,7 +1110,7 @@ public class PtmScorer {
                             identificationParameters.getSequenceMatchingPreferences());
                     for (int confidentSite : peptideScores.getConfidentSites()) {
                         for (int peptideTempStart : peptideStart) {
-                            int siteOnProtein = peptideTempStart + confidentSite - 2;
+                            int siteOnProtein = peptideTempStart + confidentSite - 1;
                             ArrayList<String> modificationsAtSite = confidentSites.get(siteOnProtein);
                             if (modificationsAtSite == null) {
                                 modificationsAtSite = new ArrayList<String>();
@@ -1126,14 +1126,14 @@ public class PtmScorer {
                     for (int representativeSite : peptideScores.getRepresentativeSites()) {
                         HashMap<Integer, ArrayList<String>> peptideAmbiguousSites = peptideScores.getAmbiguousPtmsAtRepresentativeSite(representativeSite);
                         for (int peptideTempStart : peptideStart) {
-                            int proteinRepresentativeSite = peptideTempStart + representativeSite - 2;
+                            int proteinRepresentativeSite = peptideTempStart + representativeSite - 1;
                             HashMap<Integer, ArrayList<String>> proteinAmbiguousSites = ambiguousSites.get(proteinRepresentativeSite);
                             if (proteinAmbiguousSites == null) {
                                 proteinAmbiguousSites = new HashMap<Integer, ArrayList<String>>(peptideAmbiguousSites.size());
                                 ambiguousSites.put(proteinRepresentativeSite, proteinAmbiguousSites);
                             }
                             for (int peptideSite : peptideAmbiguousSites.keySet()) {
-                                int siteOnProtein = peptideTempStart + peptideSite - 2;
+                                int siteOnProtein = peptideTempStart + peptideSite - 1;
                                 proteinAmbiguousSites.put(siteOnProtein, peptideAmbiguousSites.get(peptideSite));
                             }
                         }
@@ -1317,12 +1317,13 @@ public class PtmScorer {
      * @param waitingHandler the handler displaying feedback to the user
      * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters
-     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param identificationFeaturesGenerator identification features generator
+     * used to generate metrics which will be stored for later reuse
      *
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
+    public void scoreProteinPtms(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
 
@@ -1334,8 +1335,6 @@ public class PtmScorer {
         int nValidatedProteins = 0;
         int nConfidentProteins = 0;
         double tempSpectrumCounting, maxSpectrumCounting = 0;
-        Enzyme enzyme = shotgunProtocol.getEnzyme();
-        int maxPepLength = identificationParameters.getIdFilter().getMaxPepLength();
 
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
@@ -1356,9 +1355,8 @@ public class PtmScorer {
                         nConfidentProteins++;
                     }
                 }
-                if (spectrumCountingPreferences != null) {
-                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory,
-                            proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, identificationParameters.getSequenceMatchingPreferences());
+                if (identificationFeaturesGenerator != null) {
+                    tempSpectrumCounting = identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
                     if (tempSpectrumCounting > maxSpectrumCounting) {
                         maxSpectrumCounting = tempSpectrumCounting;
                     }

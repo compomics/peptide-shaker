@@ -460,6 +460,62 @@ public class PsPsmSection {
                 } else {
                     return "0";
                 }
+            case confident_modification_sites:
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                    return identificationFeaturesGenerator.getConfidentPtmSites(spectrumMatch, sequence);
+                }
+                return "";
+            case confident_modification_sites_number:
+                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(spectrumMatch);
+            case ambiguous_modification_sites:
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                    return identificationFeaturesGenerator.getAmbiguousPtmSites(spectrumMatch, sequence);
+                }
+                return "";
+            case ambiguous_modification_sites_number:
+                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(spectrumMatch);
+            case confident_phosphosites:
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                    ArrayList<String> modifications = new ArrayList<String>();
+                    for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                        if (ptm.contains("phospho")) {
+                            modifications.add(ptm);
+                        }
+                    }
+                    return identificationFeaturesGenerator.getConfidentPtmSites(spectrumMatch, sequence, modifications);
+                }
+                return "";
+            case confident_phosphosites_number:
+                ArrayList<String> modifications = new ArrayList<String>();
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getConfidentPtmSitesNumber(spectrumMatch, modifications);
+            case ambiguous_phosphosites:
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                    String sequence = spectrumMatch.getBestPeptideAssumption().getPeptide().getSequence();
+                    modifications = new ArrayList<String>();
+                    for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                        if (ptm.contains("phospho")) {
+                            modifications.add(ptm);
+                        }
+                    }
+                    return identificationFeaturesGenerator.getAmbiguousPtmSites(spectrumMatch, sequence, modifications);
+                }
+                return "";
+            case ambiguous_phosphosites_number:
+                modifications = new ArrayList<String>();
+                for (String ptm : identificationParameters.getSearchParameters().getModificationProfile().getAllNotFixedModifications()) {
+                    if (ptm.contains("phospho")) {
+                        modifications.add(ptm);
+                    }
+                }
+                return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(spectrumMatch, modifications);
             default:
                 return "Not implemented";
         }

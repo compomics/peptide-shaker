@@ -458,8 +458,9 @@ public class OutputGenerator {
                                             }
                                             if (ptmSummary) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getConfidentPtmSites(proteinKey) + SEPARATOR);
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getAmbiguousPtmSites(proteinKey) + SEPARATOR);
+                                                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getConfidentPtmSites(proteinMatch, currentProtein.getSequence()) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getAmbiguousPtmSites(proteinMatch, currentProtein.getSequence()) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
@@ -1996,13 +1997,14 @@ public class OutputGenerator {
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
+                            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getConfidentPtmSites(proteinKey, targetedPtms) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getConfidentPtmSites(proteinMatch, currentProtein.getSequence(), targetedPtms) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getAmbiguousPtmSites(proteinKey, targetedPtms) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getAmbiguousPtmSites(proteinMatch, currentProtein.getSequence(), targetedPtms) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }

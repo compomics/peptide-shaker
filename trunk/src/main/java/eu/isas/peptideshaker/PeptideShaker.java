@@ -437,7 +437,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
         }
-        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap);
+        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {
@@ -452,7 +452,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-        ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, shotgunProtocol, identificationParameters, spectrumCountingPreferences);
+        ptmScorer.scoreProteinPtms(identification, metrics, waitingHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;

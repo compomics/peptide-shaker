@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
@@ -106,6 +107,7 @@ public class MatchesValidator {
      * @param identificationFeaturesGenerator the identification features
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
+     * @param spectrumCountingPreferences the spectrum counting preferences
      *
      * @throws java.sql.SQLException exception thrown whenever an error occurred
      * while getting a match from the database
@@ -119,7 +121,8 @@ public class MatchesValidator {
      * occurred while getting a match from the database
      */
     public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
+            SpectrumCountingPreferences spectrumCountingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
 
@@ -188,7 +191,7 @@ public class MatchesValidator {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
         validateIdentifications(identification, metrics, inputMap, waitingHandler,
-                identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
+                identificationFeaturesGenerator, shotgunProtocol, identificationParameters, spectrumCountingPreferences);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
@@ -207,19 +210,25 @@ public class MatchesValidator {
      * generator computing information about the identification matches
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
+     * @param spectrumCountingPreferences the spectrum counting preferences
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while reading an mzML file
+     * @throws InterruptedException exception thrown whenever an error occurred
+     * while interacting with the database
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
+            SpectrumCountingPreferences spectrumCountingPreferences)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
-        // @TODO: should be multithreaded
         PSParameter psParameter = new PSParameter();
         PSParameter psParameter2 = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
@@ -239,7 +248,7 @@ public class MatchesValidator {
 
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
-        if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
+        if (metrics.getGroupedSpectrumKeys() != null) {
             spectrumKeysMap = metrics.getGroupedSpectrumKeys();
         }
 
@@ -540,8 +549,8 @@ public class MatchesValidator {
 
         int maxValidatedSpectraFractionLevel = 0;
         int maxValidatedPeptidesFractionLevel = 0;
-        double maxProteinAveragePrecursorIntensity = 0;
-        double maxProteinSummedPrecursorIntensity = 0;
+        double maxProteinAveragePrecursorIntensity = 0.0, maxProteinSummedPrecursorIntensity = 0.0;
+        double totalSpectrumCountingMass = 0.0;
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters);
 
@@ -553,6 +562,13 @@ public class MatchesValidator {
 
             // set the fraction details
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
+            if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
+                double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+                double massContribution = molecularWeight * tempSpectrumCounting;
+                totalSpectrumCountingMass += massContribution;
+            }
 
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
@@ -634,14 +650,13 @@ public class MatchesValidator {
             }
         }
 
-        if (metrics != null) {
-            // set the max values in the metrics
-            metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
-            metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
-            metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
-            metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
-            metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
-        }
+        // set the max values in the metrics
+        metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
+        metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
+        metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
+        metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
+        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
+        metrics.setTotalSpectrumCountingMass(totalSpectrumCountingMass);
     }
 
     /**

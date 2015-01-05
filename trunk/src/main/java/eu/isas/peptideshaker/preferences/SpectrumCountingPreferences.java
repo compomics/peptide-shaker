@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.preferences;
 
+import com.compomics.util.experiment.units.MetricsPrefix;
+import com.compomics.util.experiment.units.StandardUnit;
+import com.compomics.util.experiment.units.UnitOfMeasurement;
 import java.io.Serializable;
 
 /**
@@ -14,6 +17,18 @@ public class SpectrumCountingPreferences implements Serializable {
      * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -8925515082376046312L;
+    /**
+     * The reference total mass to use for normalization in μg.
+     */
+    private Double referenceMass = 2.0;
+    /**
+     * The unit to use for normalization
+     */
+    private UnitOfMeasurement unit = new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto);
+    /**
+     * Indicates whether the spectrum counting index should be normalized.
+     */
+    private Boolean normalize = true;
 
     /**
      * The spectrum counting methods.
@@ -38,6 +53,19 @@ public class SpectrumCountingPreferences implements Serializable {
         // Set default preferences
         selectedMethod = SpectralCountingMethod.NSAF;
         validatedHits = true;
+    }
+    
+    /**
+     * Creates new preferences based on other spectrum counting preferences.
+     * 
+     * @param otherSpectrumCountingPreferences the other spectrum counting preferences
+     */
+    public SpectrumCountingPreferences(SpectrumCountingPreferences otherSpectrumCountingPreferences) {
+        this.selectedMethod = otherSpectrumCountingPreferences.getSelectedMethod();
+        this.validatedHits = otherSpectrumCountingPreferences.isValidatedHits();
+        this.normalize = otherSpectrumCountingPreferences.getNormalize();
+        this.referenceMass = otherSpectrumCountingPreferences.getReferenceMass();
+        this.unit = otherSpectrumCountingPreferences.getUnit();
     }
 
     /**
@@ -88,4 +116,70 @@ public class SpectrumCountingPreferences implements Serializable {
         return anotherSpectrumCountingPreferences.getSelectedMethod() == selectedMethod
                 && anotherSpectrumCountingPreferences.isValidatedHits() == validatedHits;
     }
+
+    /**
+     * Returns the reference total mass to use for normalization.
+     * 
+     * @return the reference total mass to use for normalization in μg
+     */
+    public Double getReferenceMass() {
+        if (referenceMass == null) { // Backward compatibility
+            referenceMass = 2.0;
+        }
+        return referenceMass;
+    }
+
+    /**
+     * Sets the reference total mass to use for normalization.
+     * 
+     * @param referenceMass the reference total mass to use for normalization in μg
+     */
+    public void setReferenceMass(Double referenceMass) {
+        this.referenceMass = referenceMass;
+    }
+
+    /**
+     * Returns the unit used for normalization.
+     * 
+     * @return the unit used for normalization
+     */
+    public UnitOfMeasurement getUnit() {
+        if (unit == null) { // Backward compatibility
+            unit = new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto);
+        }
+        return unit;
+    }
+
+    /**
+     * Sets the unit used for normalization.
+     * 
+     * @param unit the unit used for normalization
+     */
+    public void setUnit(UnitOfMeasurement unit) {
+        this.unit = unit;
+    }
+
+    /**
+     * Indicates whether the spectrum counting index should be normalized.
+     * 
+     * @return true if the spectrum counting index should be normalized
+     */
+    public Boolean getNormalize() {
+        if (normalize == null) { // Backward compatibility
+            normalize = false;
+        }
+        return normalize;
+    }
+
+    /**
+     * Sets whether the spectrum counting index should be normalized.
+     * 
+     * @param normalize a boolean indicating whether the spectrum counting index should be normalized
+     */
+    public void setNormalize(Boolean normalize) {
+        this.normalize = normalize;
+    }
+    
+    
+    
 }

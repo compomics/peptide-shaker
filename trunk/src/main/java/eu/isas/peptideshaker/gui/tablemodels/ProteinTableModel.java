@@ -372,7 +372,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                             dataMissingAtRow(row);
                             return DisplayPreferences.LOADING_MESSAGE;
                         }
-                        return identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                        return identificationFeaturesGenerator.getNormalizedSpectrumCounting(proteinKey);
                     case 10:
                         if (isScrolling) {
                             return null;
