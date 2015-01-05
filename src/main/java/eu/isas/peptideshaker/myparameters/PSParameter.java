@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * PeptideShaker compomics utilities experiment customizable parameter. This
@@ -214,7 +215,7 @@ public class PSParameter implements UrParameter {
         if (peptideProbabilityScore < Math.pow(10, -100)) {
             score = 100;
         } else {
-            score = -10 * Math.log10(peptideProbabilityScore);
+            score = -10 * FastMath.log10(peptideProbabilityScore);
         }
         if (score <= 0) {
             score = 0;

@@ -488,9 +488,9 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsPeptideFeature.aaAfter);
 
         // variable_ptms
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
         sectionContent.add(PsPeptideFeature.variable_ptms);
         sectionContent.add(PsPeptideFeature.localization_confidence);
-        sectionContent.add(PsPeptideFeature.fixed_ptms);
 
         // psms
         sectionContent.add(PsPeptideFeature.validated_psms);
@@ -596,11 +596,11 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsPeptideFeature.sequence);
         sectionContent.add(PsPeptideFeature.aaAfter);
 
-        // variable_ptms
+        // ptms
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
         sectionContent.add(PsPeptideFeature.modified_sequence);
         sectionContent.add(PsPeptideFeature.variable_ptms);
         sectionContent.add(PsPeptideFeature.localization_confidence);
-        sectionContent.add(PsPeptideFeature.fixed_ptms);
 
         // psms
         sectionContent.add(PsPeptideFeature.validated_psms);
@@ -626,11 +626,11 @@ public class PSExportFactory implements ExportFactory {
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
 
         // ptms
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
         sectionContent.add(PsPsmFeature.d_score);
         sectionContent.add(PsPsmFeature.probabilistic_score);
         sectionContent.add(PsPsmFeature.localization_confidence);
-        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
 
         // spectrum file
         sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_file);
@@ -654,6 +654,134 @@ public class PSExportFactory implements ExportFactory {
         exportFeatures.put(PsPsmFeature.type, sectionContent);
 
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
+
+        ///////////////////////////
+        // Default protein phospho report
+        ///////////////////////////
+        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
+        sectionContent = new ArrayList<ExportFeature>();
+
+        // protein accessions and protein inferences 
+        sectionContent.add(PsProteinFeature.accession);
+        sectionContent.add(PsProteinFeature.protein_description);
+        sectionContent.add(PsProteinFeature.gene_name);
+        sectionContent.add(PsProteinFeature.chromosome);
+        sectionContent.add(PsProteinFeature.pi);
+        sectionContent.add(PsProteinFeature.other_proteins);
+        sectionContent.add(PsProteinFeature.protein_group);
+
+        // peptide and spectrum counts
+        sectionContent.add(PsProteinFeature.peptides);
+        sectionContent.add(PsProteinFeature.validated_peptides);
+        sectionContent.add(PsProteinFeature.unique_peptides);
+        sectionContent.add(PsProteinFeature.psms);
+        sectionContent.add(PsProteinFeature.validated_psms);
+
+        // protein coverage
+        sectionContent.add(PsProteinFeature.coverage);
+        sectionContent.add(PsProteinFeature.possible_coverage);
+
+        // molecular weight and spectrum counting
+        sectionContent.add(PsProteinFeature.mw);
+        sectionContent.add(PsProteinFeature.spectrum_counting_nsaf);
+
+        // phosphosites
+        sectionContent.add(PsProteinFeature.confident_phosphosites);
+        sectionContent.add(PsProteinFeature.confident_phosphosites_number);
+        sectionContent.add(PsProteinFeature.ambiguous_phosphosites);
+        sectionContent.add(PsProteinFeature.ambiguous_phosphosites_number);
+
+        // protein scores
+        sectionContent.add(PsProteinFeature.confidence);
+        sectionContent.add(PsProteinFeature.decoy);
+        sectionContent.add(PsProteinFeature.validated);
+
+        exportFeatures.put(PsProteinFeature.type, sectionContent);
+
+        ExportScheme proteinPhosphoReport = new ExportScheme("Default Protein Phosphorylation Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
+
+        ///////////////////////////
+        // Default peptide phosphorylation report
+        ///////////////////////////
+        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
+        sectionContent = new ArrayList<ExportFeature>();
+
+        // accessions
+        sectionContent.add(PsPeptideFeature.accessions);
+
+        // peptide sequence
+        sectionContent.add(PsPeptideFeature.aaBefore);
+        sectionContent.add(PsPeptideFeature.sequence);
+        sectionContent.add(PsPeptideFeature.aaAfter);
+
+        // ptms
+        sectionContent.add(PsPeptideFeature.fixed_ptms);
+        sectionContent.add(PsPeptideFeature.modified_sequence);
+        sectionContent.add(PsPeptideFeature.variable_ptms);
+        sectionContent.add(PsPeptideFeature.localization_confidence);
+        
+        // phosphorylation
+        sectionContent.add(PsPeptideFeature.confident_phosphosites);
+        sectionContent.add(PsPeptideFeature.confident_phosphosites_number);
+        sectionContent.add(PsPeptideFeature.ambiguous_phosphosites);
+        sectionContent.add(PsPeptideFeature.ambiguous_phosphosites_number);
+
+        // psms
+        sectionContent.add(PsPeptideFeature.validated_psms);
+        sectionContent.add(PsPeptideFeature.psms);
+
+        // peptide scores
+        sectionContent.add(PsPeptideFeature.confidence);
+        sectionContent.add(PsPeptideFeature.decoy);
+        sectionContent.add(PsPeptideFeature.validated);
+
+        exportFeatures.put(PsPeptideFeature.type, sectionContent);
+
+        ExportScheme peptidePhosphoReport = new ExportScheme("Default Peptide Phosphorylation Report", false, exportFeatures, "\t", true, true, 0, false, true, false);
+
+        ///////////////////////////
+        // Default PSM phosphorylation report
+        ///////////////////////////
+        exportFeatures = new HashMap<String, ArrayList<ExportFeature>>();
+        sectionContent = new ArrayList<ExportFeature>();
+
+        // protein accessions
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.accessions);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.sequence);
+
+        // ptms
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.fixed_ptms);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.variable_ptms);
+        sectionContent.add(PsPsmFeature.d_score);
+        sectionContent.add(PsPsmFeature.probabilistic_score);
+        sectionContent.add(PsPsmFeature.localization_confidence);
+        sectionContent.add(PsPsmFeature.confident_phosphosites);
+        sectionContent.add(PsPsmFeature.confident_phosphosites_number);
+        sectionContent.add(PsPsmFeature.ambiguous_phosphosites);
+        sectionContent.add(PsPsmFeature.ambiguous_phosphosites_number);
+
+        // spectrum file
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_file);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_title);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_scan_number);
+
+        // spectrum details
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.rt);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.spectrum_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.identification_charge);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.theoretical_mass);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.isotope);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.mz_error_ppm);
+
+        // psm scores
+        sectionContent.add(PsPsmFeature.confidence);
+        sectionContent.add(PsIdentificationAlgorithmMatchesFeature.decoy);
+        sectionContent.add(PsPsmFeature.validated);
+
+        exportFeatures.put(PsPsmFeature.type, sectionContent);
+
+        ExportScheme psmPhosphoReport = new ExportScheme("Default PSM Phosphorylation Report", false, exportFeatures, "\t", true, true, 1, false, true, false);
 
         ///////////////////////////
         // Certificate of analysis
@@ -703,6 +831,9 @@ public class PSExportFactory implements ExportFactory {
         defaultSchemes.put(proteinReport.getName(), proteinReport);
         defaultSchemes.put(peptideReport.getName(), peptideReport);
         defaultSchemes.put(psmReport.getName(), psmReport);
+        defaultSchemes.put(proteinPhosphoReport.getName(), proteinPhosphoReport);
+        defaultSchemes.put(peptidePhosphoReport.getName(), peptidePhosphoReport);
+        defaultSchemes.put(psmPhosphoReport.getName(), psmPhosphoReport);
         defaultSchemes.put(coa.getName(), coa);
         return defaultSchemes;
     }

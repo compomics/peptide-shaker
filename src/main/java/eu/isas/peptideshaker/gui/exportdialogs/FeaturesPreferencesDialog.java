@@ -190,9 +190,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         fractionsWarningLabel = new javax.swing.JLabel();
         fractionMwRange = new javax.swing.JCheckBox();
         nonEnzymaticPeptidesFractionTab = new javax.swing.JCheckBox();
-        projectPanel = new javax.swing.JPanel();
-        exportPhospoJButton = new javax.swing.JButton();
-        exportPhosphLabel = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -1207,43 +1204,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         tabbedPane.addTab("Fractions", fractionsPanel);
 
-        projectPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        exportPhospoJButton.setText("Export Phosphorylation Summary");
-        exportPhospoJButton.setToolTipText("Export phosphorylation summary to a text file");
-        exportPhospoJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportPhospoJButtonActionPerformed(evt);
-            }
-        });
-
-        exportPhosphLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        exportPhosphLabel.setText("Protein and PSM summaries for phosphorylation datasets.");
-        exportPhosphLabel.setToolTipText("Export all the identification results as four tab separated text files.");
-
-        javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
-        projectPanel.setLayout(projectPanelLayout);
-        projectPanelLayout.setHorizontalGroup(
-            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(projectPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportPhospoJButton)
-                .addGap(18, 18, 18)
-                .addComponent(exportPhosphLabel)
-                .addContainerGap(77, Short.MAX_VALUE))
-        );
-        projectPanelLayout.setVerticalGroup(
-            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(projectPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportPhospoJButton)
-                    .addComponent(exportPhosphLabel))
-                .addContainerGap(259, Short.MAX_VALUE))
-        );
-
-        tabbedPane.addTab("Advanced", projectPanel);
-
         javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
         featuresPanel.setLayout(featuresPanelLayout);
         featuresPanelLayout.setHorizontalGroup(
@@ -1804,15 +1764,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_fractionsDeselectAllLabelMouseExited
 
     /**
-     * Export a phosphorylation summary to a text file.
-     *
-     * @param evt
-     */
-    private void exportPhospoJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPhospoJButtonActionPerformed
-        outputGenerator.getPhosphoOutput(this);
-    }//GEN-LAST:event_exportPhospoJButtonActionPerformed
-
-    /**
      * Export the selected report to file.
      *
      * @param evt
@@ -1956,8 +1907,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JMenuItem editReportMenuItem;
     private javax.swing.JCheckBox enzymaticPeptide;
     private javax.swing.JButton exitButton;
-    private javax.swing.JLabel exportPhosphLabel;
-    private javax.swing.JButton exportPhospoJButton;
     private javax.swing.JButton exportReportButton;
     private javax.swing.JPanel featuresPanel;
     private javax.swing.JCheckBox fractionMwRange;
@@ -1992,7 +1941,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox peptidesPerFraction;
     private javax.swing.JCheckBox precursorCharges;
     private javax.swing.JCheckBox precursorIntensitiesPerFraction;
-    private javax.swing.JPanel projectPanel;
     private javax.swing.JCheckBox proteinAccession;
     private javax.swing.JCheckBox proteinConfidence;
     private javax.swing.JCheckBox proteinDescription;
@@ -2109,7 +2057,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
                                     peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                     peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null, 
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null,
                                     peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                     peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);

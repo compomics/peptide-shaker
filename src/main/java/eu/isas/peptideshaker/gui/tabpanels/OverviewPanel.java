@@ -4321,13 +4321,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 0; aa < sequence.length(); aa++) {
 
                     String ptmName = fixedPtms.get(aa);
-                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa)) {
+                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa+1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
                         }
                     }
-                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa)) {
+                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa+1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
