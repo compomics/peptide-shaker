@@ -11,7 +11,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
-import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -24,28 +23,22 @@ import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanelParent;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import no.uib.jsparklines.extra.HtmlLinksRenderer;
-import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
-import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesArrayListBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesIntegerIconTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartPanel;
@@ -206,101 +199,27 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     private void setProteinTableProperties() {
 
-        // the index column
-        proteinTable.getColumn(" ").setMaxWidth(50);
-        proteinTable.getColumn(" ").setMinWidth(50);
+        final int selectedRow = proteinTable.getSelectedRow();
 
-        proteinTable.getColumn("Chr").setMaxWidth(50);
-        proteinTable.getColumn("Chr").setMinWidth(50);
-
-        try {
-            proteinTable.getColumn("Confidence").setMaxWidth(90);
-            proteinTable.getColumn("Confidence").setMinWidth(90);
-        } catch (IllegalArgumentException w) {
-            proteinTable.getColumn("Score").setMaxWidth(90);
-            proteinTable.getColumn("Score").setMinWidth(90);
-        }
-
-        // the validated column
-        proteinTable.getColumn("").setMaxWidth(30);
-        proteinTable.getColumn("").setMinWidth(30);
-
-        // the selected columns
-        proteinTable.getColumn("  ").setMaxWidth(30);
-        proteinTable.getColumn("  ").setMinWidth(30);
-
-        // the protein inference column
-        proteinTable.getColumn("PI").setMaxWidth(37);
-        proteinTable.getColumn("PI").setMinWidth(37);
-
-        // set up the protein inference color map
-        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
-        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
-        proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
-        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
-        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
-
-        // set up the protein inference tooltip map
-        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
-        proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
-        proteinInferenceTooltipMap.put(PSParameter.RELATED, "Related Proteins");
-        proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Related and Unrelated Proteins");
-        proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
-
-        // use a gray color for no decoy searches
-        Color nonValidatedColor = peptideShakerGUI.getSparklineColorNonValidated();
-        if (!sequenceFactory.isClosed() && !sequenceFactory.concatenatedTargetDecoy()) {
-            nonValidatedColor = peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound();
-        }
-        ArrayList<Color> sparklineColors = new ArrayList<Color>();
-        sparklineColors.add(peptideShakerGUI.getSparklineColor());
-        sparklineColors.add(peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful());
-        sparklineColors.add(nonValidatedColor);
-
-        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(TableProperties.getSelectedRowHtmlTagFontColor(), TableProperties.getNotSelectedRowHtmlTagFontColor()));
-        proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
-        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesArrayListBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColors, JSparklinesArrayListBarChartTableCellRenderer.ValueDisplayType.sumOfNumbers));
-        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-        proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
-
-        proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
-
-        try {
-            proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                    true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        } catch (IllegalArgumentException e) {
-            proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
-                    true, TableProperties.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        }
-
-        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth(), new DecimalFormat("0.00"));
-        proteinTable.getColumn("").setCellRenderer(new JSparklinesIntegerIconTableCellRenderer(MatchValidationLevel.getIconMap(this.getClass()), MatchValidationLevel.getTooltipMap()));
-        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
-                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
-                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
-                "Starred", null, null));
-
-        // set the preferred size of the accession column
+        Integer maxProteinKeyLength = Integer.MAX_VALUE;
         if (peptideShakerGUI.getMetrics() != null) {
-            Integer width = ProteinTableModel.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6, peptideShakerGUI.getMetrics().getMaxProteinKeyLength());
+            maxProteinKeyLength = peptideShakerGUI.getMetrics().getMaxProteinKeyLength();
+        }
 
-            if (width != null) {
-                proteinTable.getColumn("Accession").setMinWidth(width);
-                proteinTable.getColumn("Accession").setMaxWidth(width);
-            } else {
-                proteinTable.getColumn("Accession").setMinWidth(15);
-                proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
-            }
+        ProteinTableModel.setProteinTableProperties(proteinTable, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(),
+                peptideShakerGUI.getSparklineColorNotFound(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorDoubtful(),
+                peptideShakerGUI.getScoreAndConfidenceDecimalFormat(), this.getClass(), maxProteinKeyLength);
+
+        if (selectedRow != -1) {
+            proteinTable.getModel().addTableModelListener(new TableModelListener() {
+                public void tableChanged(TableModelEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            proteinTable.setRowSelectionInterval(selectedRow, selectedRow);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -1841,7 +1760,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesArrayListBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
