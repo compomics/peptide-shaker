@@ -3573,40 +3573,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Returns the precursor of a given spectrum.
-     *
-     * @param spectrumKey the key of the given spectrum
-     * @return the precursor
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws MzMLUnmarshallerException thrown if a MzMLUnmarshallerException
-     * occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     */
-    public Precursor getPrecursor(String spectrumKey) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
-        return getPrecursor(spectrumKey, false);
-    }
-
-    /**
-     * Returns the precursor of a given spectrum.
-     *
-     * @param spectrumKey the key of the given spectrum
-     * @param save boolean indicating whether the precursor should be saved in
-     * memory for later re-use
-     * @return the precursor
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws MzMLUnmarshallerException thrown if a MzMLUnmarshallerException
-     * occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     */
-    public Precursor getPrecursor(String spectrumKey, boolean save) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
-        return spectrumFactory.getPrecursor(spectrumKey, save);
-    }
-
-    /**
      * Return the filter preferences to use.
      *
      * @return the filter preferences to use

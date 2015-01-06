@@ -3319,28 +3319,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     case 2:
                         return spectrumFactory.getSpectrumTitles(fileSelected).get(row);
                     case 3:
-                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                         if (precursor != null) {
                             return precursor.getMz();
                         } else {
                             return null;
                         }
                     case 4:
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        precursor = spectrumFactory.getPrecursor(spectrumKey);
                         Integer charge = null;
                         if (precursor != null && !precursor.getPossibleCharges().isEmpty()) {
                             charge = precursor.getPossibleCharges().get(0).value; // @TODO: find a way of displaying multiple charges!!!
                         }
                         return charge;
                     case 5:
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        precursor = spectrumFactory.getPrecursor(spectrumKey);
                         if (precursor != null) {
                             return precursor.getIntensity();
                         } else {
                             return null;
                         }
                     case 6:
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        precursor = spectrumFactory.getPrecursor(spectrumKey);
                         if (precursor != null) {
                             double rt = precursor.getRtInMinutes();
                             if (rt < 0) {

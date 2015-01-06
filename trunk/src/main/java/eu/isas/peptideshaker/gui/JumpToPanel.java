@@ -518,7 +518,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             types.get(jumpType).add(Type.SPECTRUM);
                                         } else {
                                             try {
-                                                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                                                Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                                                 doubleString = precursor.getMz() + "";
                                                 if (doubleString.startsWith(input)) {
                                                     possibilities.get(jumpType).add(spectrumKey);
