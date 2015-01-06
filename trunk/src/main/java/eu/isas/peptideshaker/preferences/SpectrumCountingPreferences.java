@@ -22,7 +22,7 @@ public class SpectrumCountingPreferences implements Serializable {
      */
     private Double referenceMass = 2.0;
     /**
-     * The unit to use for normalization
+     * The unit to use for normalization.
      */
     private UnitOfMeasurement unit = new UnitOfMeasurement(StandardUnit.mol, MetricsPrefix.femto);
     /**
@@ -54,11 +54,12 @@ public class SpectrumCountingPreferences implements Serializable {
         selectedMethod = SpectralCountingMethod.NSAF;
         validatedHits = true;
     }
-    
+
     /**
      * Creates new preferences based on other spectrum counting preferences.
-     * 
-     * @param otherSpectrumCountingPreferences the other spectrum counting preferences
+     *
+     * @param otherSpectrumCountingPreferences the other spectrum counting
+     * preferences
      */
     public SpectrumCountingPreferences(SpectrumCountingPreferences otherSpectrumCountingPreferences) {
         this.selectedMethod = otherSpectrumCountingPreferences.getSelectedMethod();
@@ -119,7 +120,7 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Returns the reference total mass to use for normalization.
-     * 
+     *
      * @return the reference total mass to use for normalization in μg
      */
     public Double getReferenceMass() {
@@ -131,8 +132,9 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Sets the reference total mass to use for normalization.
-     * 
-     * @param referenceMass the reference total mass to use for normalization in μg
+     *
+     * @param referenceMass the reference total mass to use for normalization in
+     * μg
      */
     public void setReferenceMass(Double referenceMass) {
         this.referenceMass = referenceMass;
@@ -140,7 +142,7 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Returns the unit used for normalization.
-     * 
+     *
      * @return the unit used for normalization
      */
     public UnitOfMeasurement getUnit() {
@@ -152,7 +154,7 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Sets the unit used for normalization.
-     * 
+     *
      * @param unit the unit used for normalization
      */
     public void setUnit(UnitOfMeasurement unit) {
@@ -161,7 +163,7 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Indicates whether the spectrum counting index should be normalized.
-     * 
+     *
      * @return true if the spectrum counting index should be normalized
      */
     public Boolean getNormalize() {
@@ -173,13 +175,11 @@ public class SpectrumCountingPreferences implements Serializable {
 
     /**
      * Sets whether the spectrum counting index should be normalized.
-     * 
-     * @param normalize a boolean indicating whether the spectrum counting index should be normalized
+     *
+     * @param normalize a boolean indicating whether the spectrum counting index
+     * should be normalized
      */
     public void setNormalize(Boolean normalize) {
         this.normalize = normalize;
     }
-    
-    
-    
 }

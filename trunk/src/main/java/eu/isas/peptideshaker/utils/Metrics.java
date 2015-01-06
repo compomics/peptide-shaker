@@ -117,12 +117,12 @@ public class Metrics implements Serializable {
      */
     private NonSymmetricalNormalDistribution peptideLengthDistribution = null;
     /**
-     * Map of the spectrum keys grouped per peptide. Spectrum file name &gt; list
-     * of keys.
+     * Map of the spectrum keys grouped per peptide. Spectrum file name &gt;
+     * list of keys.
      */
     private HashMap<String, ArrayList<String>> groupedSpectrumKeys;
     /**
-     * The sum of all spectrum counting masses
+     * The sum of all spectrum counting masses.
      */
     private Double totalSpectrumCountingMass = null;
 
@@ -442,7 +442,8 @@ public class Metrics implements Serializable {
     /**
      * Set the total number of peptides per fraction.
      *
-     * @param totalPeptidesPerFractions the total number of peptides per fraction map
+     * @param totalPeptidesPerFractions the total number of peptides per
+     * fraction map
      */
     public void setTotalPeptidesPerFraction(HashMap<String, Integer> totalPeptidesPerFractions) {
         this.totalPeptidesPerFractions = totalPeptidesPerFractions;
@@ -632,7 +633,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the total spectrum counting masses.
-     * 
+     *
      * @return the total spectrum counting masses
      */
     public Double getTotalSpectrumCountingMass() {
@@ -641,11 +642,11 @@ public class Metrics implements Serializable {
 
     /**
      * Sets the total spectrum counting value.
-     * 
+     *
      * @param totalSpectrumCountingMass the total spectrum counting masses
      */
     public void setTotalSpectrumCountingMass(double totalSpectrumCountingMass) {
         this.totalSpectrumCountingMass = totalSpectrumCountingMass;
     }
-    
+
 }
