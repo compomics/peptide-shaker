@@ -2522,7 +2522,7 @@ public class IdentificationFeaturesGenerator {
                     if (hasRT) {
                         try {
 
-                            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, true);
+                            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                             rt = precursor.getRt();
 
                             if (rt == -1) {

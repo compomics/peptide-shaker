@@ -3792,7 +3792,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 progressDialog.increasePrimaryProgressCounter();
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(i);
-                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
 
                 if (precursor != null) {
 
@@ -4399,7 +4399,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 5:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(relatedTable)).getSpectrumMatches().get(row);
                         try {
-                            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
+                            Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
 
                             if (precursor != null) {
                                 return precursor.getRt();

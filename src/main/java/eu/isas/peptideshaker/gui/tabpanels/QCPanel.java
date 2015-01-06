@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches_iterators.PeptideMat
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -1937,7 +1938,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                         if (!psmParameter.isHidden() && spectrumMatch.getBestPeptideAssumption() != null) {
 
-                            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                            Precursor precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                             double value = spectrumMatch.getBestPeptideAssumption().getDeltaMass(
                                     precursor.getMz(),
                                     peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm());

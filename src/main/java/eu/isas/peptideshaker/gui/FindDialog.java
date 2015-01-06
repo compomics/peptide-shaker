@@ -1688,10 +1688,10 @@ public class FindDialog extends javax.swing.JDialog {
                     case 4:
                         return Spectrum.getSpectrumTitle(spectrumKey);
                     case 5:
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                         return precursor.getRt();
                     case 6:
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                         return precursor.getMz();
                     case 7:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -1704,7 +1704,7 @@ public class FindDialog extends javax.swing.JDialog {
                         }
                     case 8:
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {

@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -199,7 +200,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                                 return DisplayPreferences.LOADING_MESSAGE;
                             }
                         }
-                        Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
+                        Precursor precursor = SpectrumFactory.getInstance().getPrecursor(psmKey);
                         if (spectrumMatch.getBestPeptideAssumption() != null) {
                             return Math.abs(spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getIdentificationParameters().getSearchParameters().isPrecursorAccuracyTypePpm()));
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
