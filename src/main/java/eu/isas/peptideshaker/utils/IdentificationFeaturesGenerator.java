@@ -112,7 +112,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -138,7 +138,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -163,7 +163,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -241,7 +241,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -269,7 +269,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -358,7 +358,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -454,7 +454,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -492,7 +492,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -520,7 +520,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -571,7 +571,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -597,7 +597,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -615,7 +615,7 @@ public class IdentificationFeaturesGenerator {
      * using the given spectrum counting preferences.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     * @param spectrumCountingPreferences the spetrum counting prefereneces
+     * @param spectrumCountingPreferences the spectrum counting preferences
      * @param metrics the metrics on the dataset
      *
      * @return the corresponding spectrum counting metric normalized in the
@@ -623,7 +623,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -640,7 +640,7 @@ public class IdentificationFeaturesGenerator {
      * using the preference settings normalized to the injected protein amount.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     * @param spectrumCountingPreferences the spetrum counting prefereneces
+     * @param spectrumCountingPreferences the spectrum counting preferences
      * @param metrics the metrics on the dataset
      * @param method the method to use
      * @param metricsPrefix the metrics prefix to use
@@ -650,7 +650,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -661,13 +661,13 @@ public class IdentificationFeaturesGenerator {
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         Double spectrumCounting = getSpectrumCounting(proteinMatchKey, method);
         if (spectrumCountingPreferences.getNormalize()) {
-            spectrumCounting *= 1000000;//10^6 offset
+            spectrumCounting *= 1000000; // 10^6 offset
             Double referenceMass = spectrumCountingPreferences.getReferenceMass();
             Double result = referenceMass * spectrumCounting;
             Double totalCounting = metrics.getTotalSpectrumCountingMass();
             result /= totalCounting;
-            int unitCorrection = 6 + 3 + 9 - 4 + metricsPrefix.power; //offset + kDaâ†’Da + kgâ†’Î¼ + Avogadro.amu exponents + metrics power
-            double constants = Constants.AvogadroNoExp * Constants.amuNoExp * Math.pow(10, unitCorrection);
+            int unitCorrection = 6 + 3 + 9 - 4 + metricsPrefix.POWER; // offset + kDaâ†’Da + kgâ†’Î¼ + Avogadro.AMU exponents + metrics POWER
+            double constants = Constants.AVOGADRO_NO_EXP * Constants.AMU_NO_EXP * Math.pow(10, unitCorrection);
             result /= constants;
             return result;
         } else {
@@ -685,7 +685,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -707,7 +707,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -755,7 +755,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -783,7 +783,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -902,7 +902,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -941,7 +941,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -966,7 +966,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -998,7 +998,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1017,7 +1017,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1051,7 +1051,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1070,7 +1070,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1104,7 +1104,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1140,7 +1140,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1177,7 +1177,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1203,7 +1203,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1234,7 +1234,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1261,7 +1261,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1286,7 +1286,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1305,7 +1305,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1338,7 +1338,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1376,7 +1376,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1407,7 +1407,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1427,7 +1427,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1454,7 +1454,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1494,7 +1494,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1532,7 +1532,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1570,7 +1570,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1597,7 +1597,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1622,7 +1622,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1655,7 +1655,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -1689,7 +1689,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2127,7 +2127,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2150,7 +2150,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2176,7 +2176,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2392,7 +2392,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2416,7 +2416,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
@@ -2486,7 +2486,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a file
-     * @throws InterruptedException exception thrown whenever a synchronisation
+     * @throws InterruptedException exception thrown whenever a synchronization
      * error occurred
      * @throws SQLException exception thrown whenever an error occurred while
      * interacting with the database
