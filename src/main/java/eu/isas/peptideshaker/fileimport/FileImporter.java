@@ -719,7 +719,7 @@ public class FileImporter {
                         waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                         waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
 
-                        PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), identificationParameters, processingPreferences, fileReader, idFile, identification,
+                        PsmImporter psmImporter = new PsmImporter(peptideShaker.getCache(), shotgunProtocol, identificationParameters, processingPreferences, fileReader, idFile, identification,
                                 inputMap, proteinCount, singleProteinList, exceptionHandler);
                         psmImporter.importPsms(idFileSpectrumMatches, processingPreferences.getnThreads(), waitingHandler);
 
