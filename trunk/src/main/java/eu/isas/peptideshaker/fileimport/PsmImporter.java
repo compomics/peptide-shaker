@@ -174,7 +174,7 @@ public class PsmImporter {
      */
     private ExceptionHandler exceptionHandler;
     /**
-     * Information on the protocol
+     * Information on the protocol.
      */
     private ShotgunProtocol shotgunProtocol;
     /**
@@ -810,7 +810,7 @@ public class PsmImporter {
                             inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
                             checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit); //@TODO: Not sure whether this is the right place to do it?
                             identification.addSpectrumMatch(spectrumMatch);
-                                nRetained++;
+                            nRetained++;
                             break;
                         }
                     }
