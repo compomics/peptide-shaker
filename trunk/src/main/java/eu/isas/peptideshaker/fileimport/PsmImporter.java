@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -37,6 +38,7 @@ import de.proteinms.omxparser.util.OMSSAIdfileReader;
 import de.proteinms.xtandemparser.parser.XTandemIdfileReader;
 import static eu.isas.peptideshaker.fileimport.FileImporter.ptmMassTolerance;
 import eu.isas.peptideshaker.scoring.InputMap;
+import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -172,6 +174,10 @@ public class PsmImporter {
      */
     private ExceptionHandler exceptionHandler;
     /**
+     * Information on the protocol
+     */
+    private ShotgunProtocol shotgunProtocol;
+    /**
      * The identification parameters.
      */
     private IdentificationParameters identificationParameters;
@@ -181,6 +187,7 @@ public class PsmImporter {
      *
      * @param peptideShakerCache the cache to use when memory issues are
      * encountered
+     * @param shotgunProtocol information on the shotgun protocol
      * @param identificationParameters the identification parameters
      * @param processingPreferences the processing preferences
      * @param fileReader the reader of the file which the matches are imported
@@ -193,10 +200,11 @@ public class PsmImporter {
      * @param singleProteinList list of one hit wonders for this project
      * @param exceptionHandler handler for exceptions
      */
-    public PsmImporter(ObjectsCache peptideShakerCache, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
+    public PsmImporter(ObjectsCache peptideShakerCache, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProcessingPreferences processingPreferences, IdfileReader fileReader, File idFile,
             Identification identification, InputMap inputMap, HashMap<String, Integer> proteinCount, HashSet<String> singleProteinList,
             ExceptionHandler exceptionHandler) {
         this.peptideShakerCache = peptideShakerCache;
+        this.shotgunProtocol = shotgunProtocol;
         this.identificationParameters = identificationParameters;
         this.processingPreferences = processingPreferences;
         this.fileReader = fileReader;
@@ -786,21 +794,23 @@ public class PsmImporter {
                     Collections.sort(eValues);
 
                     for (Double eValue : eValues) {
+                        ArrayList<PeptideAssumption> firstHits = new ArrayList<PeptideAssumption>(1);
                         for (SpectrumIdentificationAssumption assumption : spectrumMatch.getAllAssumptions(advocateId).get(eValue)) {
                             if (assumption instanceof PeptideAssumption) {
                                 PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                checkPeptidesMassErrorsAndCharges(spectrumKey, peptideAssumption);
-                                if (firstPeptideHit == null) {
-                                    firstPeptideHit = peptideAssumption;
-                                    if (!processingPreferences.isScoringNeeded(advocateId)) {
-                                        inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
-                                    }
-                                    identification.addSpectrumMatch(spectrumMatch);
+                                if (!processingPreferences.isScoringNeeded(advocateId)) {
+                                    firstHits.add(peptideAssumption);
                                 }
-                                nRetained++;
                             }
                         }
+                        if (!firstHits.isEmpty()) {
+                            firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters);
+                        }
                         if (firstPeptideHit != null) {
+                            inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
+                            checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit); //@TODO: Not sure whether this is the right place to do it?
+                            identification.addSpectrumMatch(spectrumMatch);
+                                nRetained++;
                             break;
                         }
                     }

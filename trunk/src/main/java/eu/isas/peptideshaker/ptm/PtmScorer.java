@@ -243,7 +243,7 @@ public class PtmScorer {
      * @throws Exception exception thrown whenever an error occurred while
      * computing the score
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
+    private synchronized void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();

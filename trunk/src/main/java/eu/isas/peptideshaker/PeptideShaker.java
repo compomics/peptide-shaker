@@ -505,7 +505,6 @@ public class PeptideShaker {
 //                    detailedReport += " charged PSMs.<br>";
 //                }
 //            }
-
             if (matchesValidator.getPeptideMap().getKeys().size() == 1) {
                 detailedReport += "Peptides.<br>";
             } else {
@@ -534,7 +533,7 @@ public class PeptideShaker {
                 addWarning(new FeedBack(FeedBack.FeedBackType.WARNING, "Non robust statistical estimations", new ArrayList<String>(), detailedReport)); // @TODO: re-add later
             }
         }
-        
+
         waitingHandler.appendReport(report, true, true);
         waitingHandler.appendReportEndLine();
         waitingHandler.appendReportEndLine();
@@ -675,7 +674,7 @@ public class PeptideShaker {
 
                                 ArrayList<PSParameter> pSParameters = pepToParameterMap.get(pep);
                                 if (pSParameters == null) {
-                                    pSParameters = new ArrayList<PSParameter>();
+                                    pSParameters = new ArrayList<PSParameter>(1);
                                     pepToParameterMap.put(pep, pSParameters);
                                 }
                                 pSParameters.add(psParameter);

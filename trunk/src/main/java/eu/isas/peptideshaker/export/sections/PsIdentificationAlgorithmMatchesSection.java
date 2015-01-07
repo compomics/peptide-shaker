@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.TagAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.psm_scoring.PsmScores;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.Tag;
@@ -169,20 +170,16 @@ public class PsIdentificationAlgorithmMatchesSection {
         }
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Loading Spectra. Please Wait...");
-            waitingHandler.resetSecondaryProgressCounter();
-        }
-        identification.loadSpectrumMatches(spectrumKeys, waitingHandler);
-
-        if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
         for (String spectrumFile : psmMap.keySet()) {
+        
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), null, true); //@TODO: make an assumptions iterator
 
-            for (String spectrumKey : psmMap.get(spectrumFile)) {
+            while (psmIterator.hasNext()) {
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -191,7 +188,9 @@ public class PsIdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+                
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
                 for (int advocateId : assumptions.keySet()) {
