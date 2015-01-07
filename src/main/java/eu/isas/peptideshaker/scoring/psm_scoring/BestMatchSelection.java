@@ -538,9 +538,9 @@ public class BestMatchSelection {
 
     /**
      * Selects a first hit in a list of equally scoring peptide matches. The
-     * selection is made based on: 1- The occurrence of the protein detection as
-     * given in the proteinCount map 2- The sequence coverage by fragment ions
-     * 3- The precrusor mass error
+     * selection is made based on: 1 - The occurrence of the protein detection
+     * as given in the proteinCount map 2 - The sequence coverage by fragment
+     * ions 3 - The precursor mass error.
      *
      * If no best hit is found, the first one sorted alphabetically is retained.
      *
@@ -558,19 +558,23 @@ public class BestMatchSelection {
      * @throws InterruptedException exception thrown whenever an interrupted
      * exception occurred while remapping the proteins or getting the spectrum
      * @throws SQLException exception thrown whenever an SQL exception occurred
-     * while interracting with the protein tree
+     * while interacting with the protein tree
      * @throws ClassNotFoundException exception thrown whenever an exception
      * occurred while deserializing an object
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
      */
     public synchronized static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
-            SequenceMatchingPreferences sequenceMatchingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+            SequenceMatchingPreferences sequenceMatchingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
+            throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
+
         if (firstHits.size() == 1) {
             return firstHits.get(0);
         }
+
         Integer maxProteins = 0;
         ArrayList<PeptideAssumption> bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
+
         for (PeptideAssumption peptideAssumption : firstHits) {
             for (String accession : peptideAssumption.getPeptide().getParentProteins(sequenceMatchingPreferences)) {
                 Integer count = proteinCount.get(accession);
@@ -585,18 +589,21 @@ public class BestMatchSelection {
                 }
             }
         }
+
         if (bestPeptideAssumptions.size() == 1) {
             return bestPeptideAssumptions.get(0);
         } else if (!bestPeptideAssumptions.isEmpty()) {
             firstHits = bestPeptideAssumptions;
             bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
         }
+
         MSnSpectrum spectrum = (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey);
         double mzTolerance = shotgunProtocol.getMs2Resolution();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
         int maxCoveredAminoAcids = 0;
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+
         for (PeptideAssumption peptideAssumption : firstHits) {
             Peptide peptide = peptideAssumption.getPeptide();
             int precursorCharge = peptideAssumption.getIdentificationCharge().value;
@@ -614,16 +621,19 @@ public class BestMatchSelection {
                 bestPeptideAssumptions.add(peptideAssumption);
             }
         }
+
         if (bestPeptideAssumptions.size() == 1) {
             return bestPeptideAssumptions.get(0);
         } else if (!bestPeptideAssumptions.isEmpty()) {
             firstHits = bestPeptideAssumptions;
             bestPeptideAssumptions = new ArrayList<PeptideAssumption>(firstHits.size());
         }
+
         double minMassError = identificationParameters.getIdFilter().getMaxMzDeviation();
         if (minMassError == -1.0) {
             minMassError = identificationParameters.getSearchParameters().getPrecursorAccuracy();
         }
+
         for (PeptideAssumption peptideAssumption : firstHits) {
             double massError = Math.abs(peptideAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), shotgunProtocol.isMs1ResolutionPpm()));
             if (massError < minMassError) {
@@ -634,15 +644,18 @@ public class BestMatchSelection {
                 bestPeptideAssumptions.add(peptideAssumption);
             }
         }
+
         if (bestPeptideAssumptions.size() == 1) {
             return bestPeptideAssumptions.get(0);
         } else if (bestPeptideAssumptions.isEmpty()) {
             bestPeptideAssumptions = firstHits;
         }
+
         HashMap<String, PeptideAssumption> sequenceToPeptideAssumptionsMap = new HashMap<String, PeptideAssumption>(bestPeptideAssumptions.size());
         for (PeptideAssumption peptideAssumption : bestPeptideAssumptions) {
             sequenceToPeptideAssumptionsMap.put(peptideAssumption.getPeptide().getSequence(), peptideAssumption);
         }
+
         ArrayList<String> sequences = new ArrayList<String>(sequenceToPeptideAssumptionsMap.keySet());
         Collections.sort(sequences);
         return sequenceToPeptideAssumptionsMap.get(sequences.get(0));
