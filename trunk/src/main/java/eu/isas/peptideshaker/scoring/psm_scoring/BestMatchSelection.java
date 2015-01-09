@@ -344,6 +344,7 @@ public class BestMatchSelection {
 
                                         HashMap<String, PeptideAssumption> bestPeptideAssumptions = coverageMap.get(minError);
                                         ArrayList<String> sequences = new ArrayList<String>(bestPeptideAssumptions.keySet());
+                                        Collections.sort(sequences);
 
                                         for (String sequence : sequences) {
                                             PeptideAssumption peptideAssumption = bestPeptideAssumptions.get(sequence);
