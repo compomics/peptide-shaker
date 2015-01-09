@@ -41,6 +41,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="javaSettingsMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="pathSettingsMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Resource Folders"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set Path to resource folders"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pathSettingsMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
             <Menu class="javax.swing.JMenu" name="toolsMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tools"/>

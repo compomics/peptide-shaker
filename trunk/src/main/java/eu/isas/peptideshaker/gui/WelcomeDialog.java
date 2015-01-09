@@ -87,6 +87,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         settingsPopupMenu = new javax.swing.JPopupMenu();
         settingsMenu = new javax.swing.JMenu();
         javaSettingsMenuItem = new javax.swing.JMenuItem();
+        pathSettingsMenu = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         searchGUISettingsMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -131,6 +132,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
         settingsMenu.add(javaSettingsMenuItem);
+
+        pathSettingsMenu.setText("Resource Folders");
+        pathSettingsMenu.setToolTipText("Set Path to resource folders");
+        pathSettingsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pathSettingsMenuActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(pathSettingsMenu);
 
         toolsMenu.setText("Tools");
 
@@ -861,6 +871,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
+    private void pathSettingsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pathSettingsMenuActionPerformed
+        peptideShakerGUI.editPathSettings();
+    }//GEN-LAST:event_pathSettingsMenuActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel backgroundPanel;
@@ -877,6 +891,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openExampleDatasetJButton;
     private javax.swing.JButton openJButton;
+    private javax.swing.JMenuItem pathSettingsMenu;
     private javax.swing.JButton probeButton;
     private javax.swing.JButton quantifyJButton;
     private javax.swing.JLabel recentProjectsLabel;
