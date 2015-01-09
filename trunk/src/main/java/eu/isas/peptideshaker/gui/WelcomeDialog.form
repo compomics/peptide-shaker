@@ -43,8 +43,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="pathSettingsMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Resource Folders"/>
-                <Property name="toolTipText" type="java.lang.String" value="Set Path to resource folders"/>
+                <Property name="text" type="java.lang.String" value="Resource Settings"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pathSettingsMenuActionPerformed"/>

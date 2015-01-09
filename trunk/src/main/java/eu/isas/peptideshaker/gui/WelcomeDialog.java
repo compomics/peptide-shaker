@@ -133,8 +133,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
         settingsMenu.add(javaSettingsMenuItem);
 
-        pathSettingsMenu.setText("Resource Folders");
-        pathSettingsMenu.setToolTipText("Set Path to resource folders");
+        pathSettingsMenu.setText("Resource Settings");
         pathSettingsMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pathSettingsMenuActionPerformed(evt);
@@ -871,8 +870,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new JavaSettingsDialog(dummyParentFrame, peptideShakerGUI, this, "PeptideShaker", true);
     }//GEN-LAST:event_lowMemoryWarningLabelMouseReleased
 
+    /**
+     * Open the Edit Paths dialog.
+     * 
+     * @param evt 
+     */
     private void pathSettingsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pathSettingsMenuActionPerformed
-        peptideShakerGUI.editPathSettings();
+        peptideShakerGUI.editPathSettings(this);
     }//GEN-LAST:event_pathSettingsMenuActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

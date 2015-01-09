@@ -587,7 +587,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesHelpLabel = new javax.swing.JLabel();
         reshakableCheckBox = new javax.swing.JCheckBox();
         aboutButton = new javax.swing.JButton();
-        peptideShakerHomePageLabel = new javax.swing.JLabel();
+        peptideShakerPublicationLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -941,17 +941,17 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
         });
 
-        peptideShakerHomePageLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://peptide-shaker.googlecode.com\">PeptideShaker (http://peptide-shaker.googlecode.com)</a>.</html>\n\n");
-        peptideShakerHomePageLabel.setToolTipText("Open the PeptideShaker web page");
-        peptideShakerHomePageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
+        peptideShakerPublicationLabel.setToolTipText("Open the PeptideShaker publication");
+        peptideShakerPublicationLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseClicked(evt);
+                peptideShakerPublicationLabelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseEntered(evt);
+                peptideShakerPublicationLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseExited(evt);
+                peptideShakerPublicationLabelMouseExited(evt);
             }
         });
 
@@ -966,7 +966,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         .addGap(10, 10, 10)
                         .addComponent(aboutButton)
                         .addGap(48, 48, 48)
-                        .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 564, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(reshakeButton)
                         .addGap(14, 14, 14))
@@ -988,7 +988,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(reshakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(aboutButton))
                 .addContainerGap())
         );
@@ -1375,29 +1375,29 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseClicked
+    private void peptideShakerPublicationLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        BareBonesBrowserLaunch.openURL("http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseClicked
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseClicked
 
     /**
      * Change the cursor to a hand icon.
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseEntered
+    private void peptideShakerPublicationLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseEntered
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseEntered
 
     /**
      * Change the cursor back to the default icon.
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
+    private void peptideShakerPublicationLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseExited
 
     /**
      * Close the dialog.
@@ -3296,7 +3296,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JLabel peptideShakerHomePageLabel;
+    private javax.swing.JLabel peptideShakerPublicationLabel;
     private javax.swing.JLabel projectHelpLabel;
     private javax.swing.JLabel projectSearchLabel;
     private javax.swing.JPanel projectsPanel;

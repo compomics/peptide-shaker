@@ -663,8 +663,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="configurationFilesSettings">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Resource Folders"/>
-                <Property name="toolTipText" type="java.lang.String" value="Set Path to resource folders"/>
+                <Property name="mnemonic" type="int" value="69"/>
+                <Property name="text" type="java.lang.String" value="Resource Settings"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set paths to resource folders"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationFilesSettingsActionPerformed"/>
