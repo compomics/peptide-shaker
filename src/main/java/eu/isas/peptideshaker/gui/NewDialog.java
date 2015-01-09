@@ -230,7 +230,7 @@ public class NewDialog extends javax.swing.JDialog {
         browseDbButton = new javax.swing.JButton();
         clearDbButton = new javax.swing.JButton();
         aboutButton = new javax.swing.JButton();
-        peptideShakerHomePageLabel = new javax.swing.JLabel();
+        peptideShakerPublicationLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker - New Project");
@@ -414,7 +414,7 @@ public class NewDialog extends javax.swing.JDialog {
                     .addComponent(importFiltersLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(preferencesTxt)
+                    .addComponent(preferencesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                     .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(importFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -608,17 +608,17 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
-        peptideShakerHomePageLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://peptide-shaker.googlecode.com\">PeptideShaker (http://peptide-shaker.googlecode.com)</a>.</html>\n\n");
-        peptideShakerHomePageLabel.setToolTipText("Open the PeptideShaker web page");
-        peptideShakerHomePageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        peptideShakerPublicationLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html\">Vaudel <i>et al.</i>: Nature Biotechnol. 2015 Jan;33(1):22–24</a>.</html>\n\n");
+        peptideShakerPublicationLabel.setToolTipText("Open the PeptideShaker publication");
+        peptideShakerPublicationLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseClicked(evt);
+                peptideShakerPublicationLabelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseEntered(evt);
+                peptideShakerPublicationLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                peptideShakerHomePageLabelMouseExited(evt);
+                peptideShakerPublicationLabelMouseExited(evt);
             }
         });
 
@@ -632,9 +632,9 @@ public class NewDialog extends javax.swing.JDialog {
                     .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(aboutButton)
-                        .addGap(71, 71, 71)
-                        .addComponent(peptideShakerHomePageLabel)
-                        .addGap(44, 44, 44)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22))
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -654,7 +654,7 @@ public class NewDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aboutButton)
-                    .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(peptideShakerPublicationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1268,29 +1268,29 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseClicked
+    private void peptideShakerPublicationLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        BareBonesBrowserLaunch.openURL("http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseClicked
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseClicked
 
     /**
      * Change the cursor to a hand cursor.
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseEntered
+    private void peptideShakerPublicationLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseEntered
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
+    private void peptideShakerPublicationLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerPublicationLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
+    }//GEN-LAST:event_peptideShakerPublicationLabelMouseExited
 
     /**
      * Display the list of selected identification files.
@@ -1429,7 +1429,7 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JLabel importFiltersLabel1;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton loadButton;
-    private javax.swing.JLabel peptideShakerHomePageLabel;
+    private javax.swing.JLabel peptideShakerPublicationLabel;
     private javax.swing.JTextField preferencesTxt;
     private javax.swing.JPanel processingParametersPanel;
     private javax.swing.JPanel projectDetailsPanel;

@@ -54,9 +54,9 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                           <Component id="aboutButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
-                          <Component id="peptideShakerHomePageLabel" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="peptideShakerPublicationLabel" min="-2" pref="515" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="loadButton" min="-2" pref="141" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
@@ -80,7 +80,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="aboutButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="peptideShakerHomePageLabel" alignment="2" min="-2" pref="45" max="-2" attributes="0"/>
+                      <Component id="peptideShakerPublicationLabel" alignment="2" min="-2" pref="45" max="-2" attributes="0"/>
                       <Component id="loadButton" alignment="2" min="-2" pref="53" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -277,7 +277,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="preferencesTxt" max="32767" attributes="3"/>
+                          <Component id="preferencesTxt" pref="519" max="32767" attributes="3"/>
                           <Component id="searchTxt" alignment="1" max="32767" attributes="1"/>
                           <Component id="importFilterTxt" alignment="1" max="32767" attributes="3"/>
                       </Group>
@@ -587,15 +587,15 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="peptideShakerHomePageLabel">
+        <Component class="javax.swing.JLabel" name="peptideShakerPublicationLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Please cite PeptideShaker as &lt;a href=&quot;http://peptide-shaker.googlecode.com&quot;&gt;PeptideShaker (http://peptide-shaker.googlecode.com)&lt;/a&gt;.&lt;/html&gt;&#xa;&#xa;"/>
-            <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Please cite PeptideShaker as &lt;a href=&quot;http://www.nature.com/nbt/journal/v33/n1/full/nbt.3109.html&quot;&gt;Vaudel &lt;i&gt;et al.&lt;/i&gt;: Nature Biotechnol. 2015 Jan;33(1):22&#x2013;24&lt;/a&gt;.&lt;/html&gt;&#xa;&#xa;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker publication"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseClicked"/>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseExited"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerPublicationLabelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerPublicationLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerPublicationLabelMouseExited"/>
           </Events>
         </Component>
       </SubComponents>

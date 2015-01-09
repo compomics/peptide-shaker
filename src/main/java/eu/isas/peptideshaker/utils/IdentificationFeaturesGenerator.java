@@ -666,7 +666,7 @@ public class IdentificationFeaturesGenerator {
             Double result = referenceMass * spectrumCounting;
             Double totalCounting = metrics.getTotalSpectrumCountingMass();
             result /= totalCounting;
-            int unitCorrection = 6 + 3 + 9 - 4 + metricsPrefix.POWER; // offset + kDaâ†’Da + kgâ†’Î¼ + Avogadro.AMU exponents + metrics POWER
+            int unitCorrection = 6 + 3 + 9 - 4 + metricsPrefix.POWER; // offset + kDa to Da + kg to u + Avogadro.AMU exponents + metrics POWER
             double constants = Constants.AVOGADRO_NO_EXP * Constants.AMU_NO_EXP * Math.pow(10, unitCorrection);
             result /= constants;
             return result;

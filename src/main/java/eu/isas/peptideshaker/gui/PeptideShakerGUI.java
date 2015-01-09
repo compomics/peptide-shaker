@@ -40,14 +40,12 @@ import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.PrivacySettingsDialog;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.error_handlers.notification.NotesDialog;
-import com.compomics.util.gui.error_handlers.notification.NotificationDialog;
 import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import com.compomics.util.gui.utils.SwingUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
@@ -116,7 +114,6 @@ import net.jimmc.jshortcut.JShellLink;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The main PeptideShaker frame.
@@ -1502,8 +1499,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(javaOptionsJMenuItem);
 
-        configurationFilesSettings.setText("Resource Folders");
-        configurationFilesSettings.setToolTipText("Set Path to resource folders");
+        configurationFilesSettings.setMnemonic('E');
+        configurationFilesSettings.setText("Resource Settings");
+        configurationFilesSettings.setToolTipText("Set paths to resource folders");
         configurationFilesSettings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 configurationFilesSettingsActionPerformed(evt);
@@ -3089,14 +3087,21 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         updateTipsNotificationCounter();
     }//GEN-LAST:event_tipsButtonMouseReleased
 
+    /**
+     * Open the Edit Paths dialog.
+     * 
+     * @param evt 
+     */
     private void configurationFilesSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurationFilesSettingsActionPerformed
-        editPathSettings();
+        editPathSettings(null);
     }//GEN-LAST:event_configurationFilesSettingsActionPerformed
 
     /**
-     * Opens a dialog allowing the setting of paths
+     * Opens a dialog allowing the setting of paths.
+     * 
+     * @param welcomeDialog reference to the Welcome dialog, can be null
      */
-    public void editPathSettings() {
+    public void editPathSettings(WelcomeDialog welcomeDialog) {
         try {
             HashMap<PathKey, String> pathSettings = new HashMap<PathKey, String>();
             for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
@@ -3114,10 +3119,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         PeptideShakerPathPreferences.setPathPreferences(pathKey, newPath);
                     }
                 }
-                // Write path file preference
+                // write path file preference
                 File destinationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
                 try {
                     PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
+                    if (welcomeDialog != null) {
+                        welcomeDialog.setVisible(false);
+                    }
                     restart();
                 } catch (Exception e) {
                     catchException(e);
