@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.36.0 (coming soon...):*
+*Changes in PeptideShaker 0.36.0 (January 10. 2015):*
 
  * NEW FEATURE: Mirrored spectra support in the spectrum panels.
  * NEW FEATURE: Protein inference graphs in the protein inference dialogs.
@@ -23,6 +23,11 @@
  * FEATURE IMPROVEMENT: The search parameters can now be extracted from the SearchGUI zip file.
  * FEATURE IMPROVEMENT: Minor improvements to the command line progress display.
  * FEATURE IMPROVEMENT: Made it possible to set the Java Home from the GUI.
+ * FEATURE IMPROVEMENT: Added a shortcut to the PRIDE free text search in the Project filtering dialog in the PRIDE Reshake.
+ * FEATURE IMPROVEMENT: Added CV term for the MyriMatch e-values to the mzid and PRIDE XML exports.
+ * FEATURE IMPROVEMENT: Improved the selection of the search engine first hit.
+ * FEATURE IMPROVEMENT: Added a dialog to edit the path preferences.
+ * FEATURE IMPROVEMENT: Improved the handling of an exception at startup.
 
  * BUG FIX: Fixed a bug in the ExportGraphicsDialog where the last selected folder was not set.
  * BUG FIX: Fixed a bug where the tool failed to start if less than 1GB of memory was the maximum value allowed by the system.
@@ -30,11 +35,13 @@
  * BUG FIX: Fixed a minor GUI issue with the progress bar in the PRIDE Reshake.
  * BUG FIX: The sequence matching type is now set to amino acid when checking the fixed modifications.
  * BUG FIX: The PSM PTM mapping no longer ignores the user canceling the process in the waiting dialog.
+ * BUG FIX: Fixed a bug with the renderer for the coverage column in the Fractions tab.
+ * BUG FIX: Solved issues that resulted in the best match selection being different between Java 7 and 8.
 
  * LIBRARY UPDATE: Updated omssa-parser to version 1.6.12.
  * LIBRARY UPDATE: Updated xtandem-parser to version 1.7.17.
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.28.
- * LIBRARY UPDATE: Updated utilities to version 3.45.9. 
+ * LIBRARY UPDATE: Updated utilities to version 3.45.18. 
 
 ----
 
