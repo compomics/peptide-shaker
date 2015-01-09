@@ -177,7 +177,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="forwardIonsDeNovoCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="f-ions"/>
+                <Property name="text" type="java.lang.String" value="b-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forwardIonsDeNovoCheckBoxMenuItemActionPerformed"/>
@@ -185,7 +185,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="rewindIonsDeNovoCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="r-ions"/>
+                <Property name="text" type="java.lang.String" value="y-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rewindIonsDeNovoCheckBoxMenuItemActionPerformed"/>
