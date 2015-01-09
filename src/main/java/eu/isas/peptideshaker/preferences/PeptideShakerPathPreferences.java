@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
+import com.compomics.util.preferences.PathKey;
 import com.compomics.util.preferences.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
@@ -26,7 +27,7 @@ public class PeptideShakerPathPreferences {
     /**
      * Enum of the paths which can be set in PeptideShaker.
      */
-    public enum PeptideShakerPathKey {
+    public enum PeptideShakerPathKey implements PathKey {
 
         /**
          * Directory where identification matches are temporarily saved to
@@ -75,20 +76,12 @@ public class PeptideShakerPathPreferences {
             this.isDirectory = isDirectory;
         }
 
-        /**
-         * Returns the id of the path.
-         *
-         * @return the id of the path
-         */
+        @Override
         public String getId() {
             return id;
         }
 
-        /**
-         * Returns the description of the path.
-         *
-         * @return the description of the path
-         */
+        @Override
         public String getDescription() {
             return description;
         }
@@ -164,7 +157,30 @@ public class PeptideShakerPathPreferences {
      * Sets the path according to the given key and path.
      *
      * @param peptideShakerPathKey the key of the path
+     *
+     * @return returns the path used
+     *
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
+     */
+    public static String getPathPreference(PeptideShakerPathKey peptideShakerPathKey) throws IOException {
+        switch (peptideShakerPathKey) {
+            case matchesDirectory:
+                return PeptideShaker.getMatchesDirectoryParent();
+            case peptideShakerExports:
+                return PSExportFactory.getSerializationFolder();
+            case peptideShakerPreferences:
+                return PeptideShaker.getUserPreferencesFolder();
+            default:
+                throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
+        }
+    }
+
+    /**
+     * Sets the path according to the given key and path.
+     *
+     * @param peptideShakerPathKey the key of the path
      * @param path the path to be set
+     *
      * @throws FileNotFoundException thrown if an FileNotFoundException occurs
      */
     public static void setPathPreference(PeptideShakerPathKey peptideShakerPathKey, String path) throws IOException {
@@ -180,6 +196,26 @@ public class PeptideShakerPathPreferences {
                 return;
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
+        }
+    }
+
+    /**
+     * Sets the path according to the given key and path.
+     *
+     * @param pathKey the key of the path
+     * @param path the path to be set
+     *
+     * @throws FileNotFoundException thrown if an FileNotFoundException occurs
+     */
+    public static void setPathPreferences(PathKey pathKey, String path) throws IOException {
+        if (pathKey instanceof PeptideShakerPathKey) {
+            PeptideShakerPathKey peptideShakerPathKey = (PeptideShakerPathKey) pathKey;
+            PeptideShakerPathPreferences.setPathPreference(peptideShakerPathKey, path);
+        } else if (pathKey instanceof UtilitiesPathPreferences.UtilitiesPathKey) {
+            UtilitiesPathPreferences.UtilitiesPathKey utilitiesPathKey = (UtilitiesPathPreferences.UtilitiesPathKey) pathKey;
+            UtilitiesPathPreferences.setPathPreference(utilitiesPathKey, path);
+        } else {
+            throw new UnsupportedOperationException("Path " + pathKey.getId() + " not implemented.");
         }
     }
 

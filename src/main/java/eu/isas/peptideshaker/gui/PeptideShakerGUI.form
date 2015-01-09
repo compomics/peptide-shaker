@@ -661,6 +661,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="javaOptionsJMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="configurationFilesSettings">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Resource Folders"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set Path to resource folders"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationFilesSettingsActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="privacyMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="80"/>

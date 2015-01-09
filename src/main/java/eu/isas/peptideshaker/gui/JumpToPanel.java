@@ -136,7 +136,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Updates the item selection in the selected tab.
      */
     public void updateSelectionInTab() {
-
+        
         indexLabel.setForeground(Color.BLACK);
 
         if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {

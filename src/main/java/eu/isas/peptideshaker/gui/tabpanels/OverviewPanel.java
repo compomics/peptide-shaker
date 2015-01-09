@@ -2200,7 +2200,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    updateSelection(true);
+                    try {
+                        updateSelection(true);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
             });
         }
@@ -4321,13 +4325,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 for (int aa = 0; aa < sequence.length(); aa++) {
 
                     String ptmName = fixedPtms.get(aa);
-                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa+1)) {
+                    for (String variablePTM : psPtmScores.getPtmsAtRepresentativeSite(aa + 1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
                         }
                     }
-                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa+1)) {
+                    for (String variablePTM : psPtmScores.getConfidentModificationsAt(aa + 1)) {
                         if (displayPreferences.isDisplayedPTM(variablePTM)) {
                             ptmName = variablePTM;
                             break;
@@ -4785,8 +4789,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        updateSelection(true);
-                        updatePeptidePanelTitle();
+                        try {
+                            updateSelection(true);
+                            updatePeptidePanelTitle();
+                        } catch (Exception e) {
+                            // Exception generally thrown at startup
+                            e.printStackTrace();
+                        }
                     }
                 });
 
@@ -4893,11 +4902,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     new Thread(new Runnable() {
                         public void run() {
-                            peptideShakerGUI.checkNewsFeed();
-                            peptideShakerGUI.showNotesNotification();
-                            peptideShakerGUI.showTipsNotification();
-                            updateSelection(true); // @TODO: this is sometimes too fast and results in Row index out of range...
-                            proteinTable.requestFocus();
+                            try {
+                                peptideShakerGUI.checkNewsFeed();
+                                peptideShakerGUI.showNotesNotification();
+                                peptideShakerGUI.showTipsNotification();
+                                proteinTable.requestFocus();
+                                updateSelection(true);
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
                         }
                     }, "UpdateSelectionThread").start();
 
@@ -4913,8 +4926,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * Updates the results in the protein table and reselect the desired
      * protein.
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while retrieving a match from the database
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while retrieving a match from the database
+     * @throws java.lang.InterruptedException exception thrown whenever an error
+     * occurred while retrieving a match from the database
      */
-    public void updateProteinTable() {
+    public void updateProteinTable() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
         dm.fireTableDataChanged();
         updateSelection(true);
@@ -5158,8 +5180,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Hides or displays the score columns in the protein and peptide tables.
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while retrieving a match from the database
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while retrieving a match from the database
+     * @throws java.lang.InterruptedException exception thrown whenever an error
+     * occurred while retrieving a match from the database
      */
-    public void updateScores() {
+    public void updateScores() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ((ProteinTableModel) proteinTable.getModel()).showScores(peptideShakerGUI.getDisplayPreferences().showScores());
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
@@ -5486,93 +5517,92 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void updateSelection(boolean scrollToVisible) {
 
-        int proteinRow = 0;
-        String proteinKey = peptideShakerGUI.getSelectedProteinKey();
-        String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-        String psmKey = peptideShakerGUI.getSelectedPsmKey();
+        try {
+            int proteinRow = 0;
+            String proteinKey = peptideShakerGUI.getSelectedProteinKey();
+            String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
+            String psmKey = peptideShakerGUI.getSelectedPsmKey();
 
-        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
-                && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
-                && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
-                try {
+            if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
+                    && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
+                    && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                     if (spectrumMatch.getBestPeptideAssumption() != null) {
                         Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                         peptideKey = peptide.getMatchingKey(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
                     }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return;
+                } else {
+                    peptideShakerGUI.resetSelectedItems();
                 }
-            } else {
-                peptideShakerGUI.resetSelectedItems();
             }
-        }
 
-        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
 
-            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
-            while (proteinMatchesIterator.hasNext()) {
-                try {
-                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                    if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                        proteinKey = proteinMatch.getKey();
-                        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
-                        break;
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+                while (proteinMatchesIterator.hasNext()) {
+                    try {
+                        ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                        if (proteinMatch.getPeptideMatchesKeys().contains(peptideKey)) {
+                            proteinKey = proteinMatch.getKey();
+                            peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+                            break;
+                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return;
                     }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return;
                 }
             }
-        }
 
-        if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            proteinRow = getProteinRow(proteinKey);
-        }
-
-        if (proteinKeys.isEmpty()) {
-            // For the silly people like me who happen to hide all proteins
-            clearData();
-            return;
-        }
-
-        if (proteinRow == -1) {
-            peptideShakerGUI.resetSelectedItems();
-            proteinTableMouseReleased(null);
-        } else if (proteinTable.getSelectedRow() != proteinRow) {
-            proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
-            if (scrollToVisible) {
-                proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
+            if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                proteinRow = getProteinRow(proteinKey);
             }
-            proteinTableMouseReleased(null);
-        }
 
-        int peptideRow = 0;
-        if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            peptideRow = getPeptideRow(peptideKey);
-        }
-
-        if (peptideTable.getSelectedRow() != peptideRow && peptideRow != -1) {
-            peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
-            if (scrollToVisible) {
-                peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
+            if (proteinKeys.isEmpty()) {
+                // For the silly people like me who happen to hide all proteins
+                clearData();
+                return;
             }
-            peptideTableMouseReleased(null);
-        }
 
-        int psmRow = 0;
-        if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            psmRow = getPsmRow(psmKey);
-        }
-
-        if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
-            psmTable.setRowSelectionInterval(psmRow, psmRow);
-            if (scrollToVisible) {
-                psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
+            if (proteinRow == -1) {
+                peptideShakerGUI.resetSelectedItems();
+                proteinTableMouseReleased(null);
+            } else if (proteinTable.getSelectedRow() != proteinRow) {
+                proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+                if (scrollToVisible) {
+                    proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
+                }
+                proteinTableMouseReleased(null);
             }
-            psmTableMouseReleased(null);
+
+            int peptideRow = 0;
+            if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                peptideRow = getPeptideRow(peptideKey);
+            }
+
+            if (peptideTable.getSelectedRow() != peptideRow && peptideRow != -1) {
+                peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+                if (scrollToVisible) {
+                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
+                }
+                peptideTableMouseReleased(null);
+            }
+
+            int psmRow = 0;
+            if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                psmRow = getPsmRow(psmKey);
+            }
+
+            if (psmTable.getSelectedRow() != psmRow && psmRow != -1 && psmRow < psmTable.getRowCount()) {
+                psmTable.setRowSelectionInterval(psmRow, psmRow);
+                if (scrollToVisible) {
+                    psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
+                }
+                psmTableMouseReleased(null);
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
     }
 
@@ -5717,85 +5747,109 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     @Override
     public void annotationClicked(ArrayList<ResidueAnnotation> allAnnotation, ChartMouseEvent cme) {
 
-        final Range oldRange = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
+        try {
+            final Range oldRange = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
 
-        if (allAnnotation.size() == 1 && allAnnotation.get(0).isClickable()) {
+            if (allAnnotation.size() == 1 && allAnnotation.get(0).isClickable()) {
 
-            // select the peptide
-            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).getIdentifier(), PeptideShakerGUI.NO_SELECTION);
-            updateSelection(true);
+                // select the peptide
+                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).getIdentifier(), PeptideShakerGUI.NO_SELECTION);
+                updateSelection(true);
 
-            // update the psms
-            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).getIdentifier(), PeptideShakerGUI.NO_SELECTION);
+                // update the psms
+                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).getIdentifier(), PeptideShakerGUI.NO_SELECTION);
 
-            // update the psm selection
-            updatePsmSelection(peptideTable.getSelectedRow());
+                // update the psm selection
+                updatePsmSelection(peptideTable.getSelectedRow());
 
-            // new peptide, reset spectrum boundaries
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                    updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
-                }
-            });
-
-            // reset the range
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
-                    coverageChart.revalidate();
-                    coverageChart.repaint();
-                }
-            });
-
-        } else {
-            // show popup menu
-            JPopupMenu peptidesPopupMenu = new JPopupMenu();
-
-            for (ResidueAnnotation currentAnnotation : allAnnotation) {
-                if (currentAnnotation.isClickable()) {
-                    String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + currentAnnotation.getAnnotation() + "</html>";
-                    final String peptideKey = currentAnnotation.getIdentifier();
-                    JMenuItem menuItem = new JMenuItem(text);
-                    menuItem.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-                            // select the peptide
-                            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
-                            updateSelection(true);
-
-                            // update the psms
-                            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
-
-                            // update the psm selection
-                            updatePsmSelection(peptideTable.getSelectedRow());
-
-                            // new peptide, reset spectrum boundaries
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                                    updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
-                                }
-                            });
-
-                            // reset the range
-                            // invoke later to give time for components to update
-                            SwingUtilities.invokeLater(new Runnable() {
-                                public void run() {
-                                    ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
-                                    coverageChart.revalidate();
-                                    coverageChart.repaint();
-                                }
-                            });
+                // new peptide, reset spectrum boundaries
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                            updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
                         }
-                    });
-                    peptidesPopupMenu.add(menuItem);
-                }
-            }
+                    }
+                });
 
-            peptidesPopupMenu.show(cme.getTrigger().getComponent(), cme.getTrigger().getX(), cme.getTrigger().getY());
+                // reset the range
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
+                            coverageChart.revalidate();
+                            coverageChart.repaint();
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                    }
+                });
+
+            } else {
+                // show popup menu
+                JPopupMenu peptidesPopupMenu = new JPopupMenu();
+
+                for (ResidueAnnotation currentAnnotation : allAnnotation) {
+                    if (currentAnnotation.isClickable()) {
+                        String text = "<html>" + (peptidesPopupMenu.getComponentCount() + 1) + ": " + currentAnnotation.getAnnotation() + "</html>";
+                        final String peptideKey = currentAnnotation.getIdentifier();
+                        JMenuItem menuItem = new JMenuItem(text);
+                        menuItem.addActionListener(new java.awt.event.ActionListener() {
+                            public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                                try {
+                                    // select the peptide
+                                    peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
+                                    updateSelection(true);
+
+                                    // update the psms
+                                    peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
+
+                                    // update the psm selection
+                                    updatePsmSelection(peptideTable.getSelectedRow());
+
+                                    // new peptide, reset spectrum boundaries
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                                                updateSpectrum(tableModel.getViewIndex(psmTable.getSelectedRow()), true);
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                            }
+                                        }
+                                    });
+
+                                    // reset the range
+                                    // invoke later to give time for components to update
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        public void run() {
+                                            try {
+                                                ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
+                                                coverageChart.revalidate();
+                                                coverageChart.repaint();
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                            }
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    peptideShakerGUI.catchException(e);
+                                }
+                            }
+                        });
+                        peptidesPopupMenu.add(menuItem);
+                    }
+                }
+
+                peptidesPopupMenu.show(cme.getTrigger().getComponent(), cme.getTrigger().getX(), cme.getTrigger().getY());
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
     }
 
