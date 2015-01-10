@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.36.1 (January 11. 2015):*
+
+ * FEATURE IMPROVEMENT: Updated the Example Dataset.
+
+----
+
 *Changes in PeptideShaker 0.36.0 (January 10. 2015):*
 
  * NEW FEATURE: Mirrored spectra support in the spectrum panels.
