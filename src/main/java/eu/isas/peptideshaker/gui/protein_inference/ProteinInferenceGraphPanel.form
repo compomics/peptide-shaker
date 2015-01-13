@@ -52,13 +52,24 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="layoutLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="exportLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="legendLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="layoutLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="exportLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="legendLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="selectAllLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="showProteinLabelsLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="showPeptideLabelsLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="proteinCountLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -83,11 +94,14 @@
                       <Component id="exportLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="helpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="legendLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="selectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="peptideCountLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="peptideCountValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="showProteinLabelsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="showPeptideLabelsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -174,6 +188,39 @@
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="helpLabelMouseEntered"/>
             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="helpLabelMouseExited"/>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="helpLabelMouseReleased"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="selectAllLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Select All&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Select all proteins and peptides"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectAllLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectAllLabelMouseExited"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectAllLabelMouseReleased"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="showProteinLabelsLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Protein Labels&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show the protein labels"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showProteinLabelsLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showProteinLabelsLabelMouseExited"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showProteinLabelsLabelMouseReleased"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="showPeptideLabelsLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Peptide Labels&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show the peptide labels"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showPeptideLabelsLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showPeptideLabelsLabelMouseExited"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="showPeptideLabelsLabelMouseReleased"/>
           </Events>
         </Component>
       </SubComponents>

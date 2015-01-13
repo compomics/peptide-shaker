@@ -86,7 +86,7 @@ public class PeptideShakerMethods {
 
                 text += " [PMID " + ref + "]";
             }
-            
+
             text += ".";
         } catch (Exception e) {
             // A backward compatibility issue occurred
@@ -110,17 +110,17 @@ public class PeptideShakerMethods {
      * @return the database usage details
      */
     public static String getDatabaseText() {
-        
+
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-        
+
         String text = "";
-        
+
         if (sequenceFactory.concatenatedTargetDecoy()) {
             text += "Protein identification was conducted against a concatenated target/decoy [PMID 20013364] version of the ";
         } else {
             text += "Protein identification was conducted against a version of the ";
         }
-        
+
         FastaIndex fastaIndex = sequenceFactory.getCurrentFastaIndex();
 
         ArrayList<String> species = fastaIndex.getSpecies();
@@ -206,7 +206,7 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
-            
+
             text += ", ";
         }
         ArrayList<String> variablePtmsNames = searchParameters.getModificationProfile().getVariableModifications();
@@ -230,7 +230,7 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
-            
+
             text += ", ";
         }
         ArrayList<String> refinementFixedPtmsNames = searchParameters.getModificationProfile().getRefinementFixedModifications();
@@ -254,7 +254,7 @@ public class PeptideShakerMethods {
                 }
                 text += ptmName + " (" + sign + ptm.getMass() + " Da)";
             }
-            
+
             text += ", ";
         }
         ArrayList<String> refinementVariablePtmsNames = searchParameters.getModificationProfile().getRefinementVariableModifications();
@@ -290,7 +290,7 @@ public class PeptideShakerMethods {
      */
     public static String getPeptideShaker() {
         return "Peptides and proteins were inferred from the spectrum identification results using PeptideShaker "
-                + "version " + PeptideShaker.getVersion() + " (http://peptide-shaker.googlecode.com). ";
+                + "version " + PeptideShaker.getVersion() + " [PMID 25574629]. ";
     }
 
     /**

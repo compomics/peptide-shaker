@@ -257,7 +257,8 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             @Override
             public void labelVertex(RenderContext<String, String> rc, Layout<String, String> layout, String v, String label) {
                 if (label.startsWith("Peptide") && showPeptideLabels) {
-                    super.labelVertex(rc, layout, v, label.substring(label.indexOf(" ") + 1));
+                    String fullTooltip = nodeToolTips.get(label);
+                    super.labelVertex(rc, layout, v, fullTooltip.substring(0, fullTooltip.indexOf("<br>")));
                 }
                 if (label.startsWith("Protein") && showProteinLabels) {
                     super.labelVertex(rc, layout, v, label.substring(label.indexOf(" ") + 1));
@@ -470,6 +471,9 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
         exportLabel = new javax.swing.JLabel();
         legendLabel = new javax.swing.JLabel();
         helpLabel = new javax.swing.JLabel();
+        selectAllLabel = new javax.swing.JLabel();
+        showProteinLabelsLabel = new javax.swing.JLabel();
+        showPeptideLabelsLabel = new javax.swing.JLabel();
         graphPanel = new javax.swing.JPanel();
         settingsPanel = new javax.swing.JPanel();
         evidenceRadioButton = new javax.swing.JRadioButton();
@@ -571,19 +575,69 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
             }
         });
 
+        selectAllLabel.setText("<html><a href>Select All</html>");
+        selectAllLabel.setToolTipText("Select all proteins and peptides");
+        selectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                selectAllLabelMouseReleased(evt);
+            }
+        });
+
+        showProteinLabelsLabel.setText("<html><a href>Protein Labels</html>");
+        showProteinLabelsLabel.setToolTipText("Show the protein labels");
+        showProteinLabelsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                showProteinLabelsLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                showProteinLabelsLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                showProteinLabelsLabelMouseReleased(evt);
+            }
+        });
+
+        showPeptideLabelsLabel.setText("<html><a href>Peptide Labels</html>");
+        showPeptideLabelsLabel.setToolTipText("Show the peptide labels");
+        showPeptideLabelsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                showPeptideLabelsLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                showPeptideLabelsLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                showPeptideLabelsLabelMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout selectionPanelLayout = new javax.swing.GroupLayout(selectionPanel);
         selectionPanel.setLayout(selectionPanelLayout);
         selectionPanelLayout.setHorizontalGroup(
             selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(layoutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(exportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(selectionPanelLayout.createSequentialGroup()
+                        .addComponent(layoutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(exportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(selectionPanelLayout.createSequentialGroup()
+                        .addComponent(showProteinLabelsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showPeptideLabelsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(proteinCountLabel)
@@ -606,11 +660,14 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
                     .addComponent(layoutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(legendLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0)
                 .addGroup(selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(peptideCountLabel)
-                    .addComponent(peptideCountValueLabel)))
+                    .addComponent(peptideCountValueLabel)
+                    .addComponent(showProteinLabelsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showPeptideLabelsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         graphPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -957,6 +1014,91 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_legendLabelMouseReleased
 
     /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void selectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_selectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void selectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_selectAllLabelMouseExited
+
+    /**
+     * Select all the proteins and peptides.
+     * 
+     * @param evt 
+     */
+    private void selectAllLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectAllLabelMouseReleased
+        for (String tempNode : nodes) {
+            visualizationViewer.getPickedVertexState().pick(tempNode, true);
+        }
+    }//GEN-LAST:event_selectAllLabelMouseReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void showProteinLabelsLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showProteinLabelsLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_showProteinLabelsLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void showProteinLabelsLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showProteinLabelsLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_showProteinLabelsLabelMouseExited
+
+    /**
+     * Update the plot.
+     * 
+     * @param evt 
+     */
+    private void showProteinLabelsLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showProteinLabelsLabelMouseReleased
+        showProteinLabels = !showProteinLabels;
+        this.repaint();
+    }//GEN-LAST:event_showProteinLabelsLabelMouseReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void showPeptideLabelsLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showPeptideLabelsLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_showPeptideLabelsLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void showPeptideLabelsLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showPeptideLabelsLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_showPeptideLabelsLabelMouseExited
+
+    /**
+     * Update the plot.
+     * 
+     * @param evt 
+     */
+    private void showPeptideLabelsLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showPeptideLabelsLabelMouseReleased
+        showPeptideLabels = !showPeptideLabels;
+        this.repaint();
+    }//GEN-LAST:event_showPeptideLabelsLabelMouseReleased
+
+    /**
      * Get the selected node as an HTML string.
      *
      * @return the selected node as an HTML string
@@ -1046,9 +1188,12 @@ public class ProteinInferenceGraphPanel extends javax.swing.JPanel {
     private javax.swing.JLabel peptideCountValueLabel;
     private javax.swing.JLabel proteinCountLabel;
     private javax.swing.JLabel proteinCountValueLabel;
+    private javax.swing.JLabel selectAllLabel;
     private javax.swing.ButtonGroup selectionButtonGroup;
     private javax.swing.JPanel selectionPanel;
     private javax.swing.JPanel settingsPanel;
+    private javax.swing.JLabel showPeptideLabelsLabel;
+    private javax.swing.JLabel showProteinLabelsLabel;
     private javax.swing.JRadioButton uniqueRadioButton;
     private javax.swing.JRadioButton validationStatusRadioButton;
     // End of variables declaration//GEN-END:variables
