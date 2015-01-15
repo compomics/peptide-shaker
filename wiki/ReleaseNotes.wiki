@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.36.2 (Coming soon...):*
+
+ * BUG FIX: Fixed a bug in the PRIDE Reshake where the drop down menus in the project filtering dialog did not include the values from all projects.
+
+----
+
 *Changes in PeptideShaker 0.36.1 (January 11. 2015):*
 
  * FEATURE IMPROVEMENT: Updated the Example Dataset.
