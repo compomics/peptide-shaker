@@ -2100,18 +2100,18 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     progressDialog.setMaxPrimaryProgressCounter(numberOfProjects + 1);
                     progressDialog.increasePrimaryProgressCounter();
 
+                    speciesAll = new ArrayList<String>();
+                    instrumentsAll = new ArrayList<String>();
+                    ptmsAll = new ArrayList<String>();
+                    tissuesAll = new ArrayList<String>();
+                    projectTagsAll = new ArrayList<String>();
+
                     // load the projects in batches
                     for (int currentPage = 0; currentPage < numberOfPages; currentPage++) {
 
                         // get the list of projects
                         ResponseEntity<ProjectDetailList> projectList = template.getForEntity(projectServiceURL
                                 + "project/list?show=" + projectBatchSize + "&page=" + currentPage + "&sort=publication_date&order=desc", ProjectDetailList.class);
-
-                        speciesAll = new ArrayList<String>();
-                        instrumentsAll = new ArrayList<String>();
-                        ptmsAll = new ArrayList<String>();
-                        tissuesAll = new ArrayList<String>();
-                        projectTagsAll = new ArrayList<String>();
 
                         // iterate the project and add them to the table
                         for (ProjectDetail projectDetail : projectList.getBody().getList()) {
@@ -2170,19 +2170,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                             progressDialog.increasePrimaryProgressCounter();
                         }
 
-                        // sort the lists
-                        Collections.sort(speciesAll);
-                        Collections.sort(instrumentsAll);
-                        Collections.sort(tissuesAll);
-                        Collections.sort(ptmsAll);
-                        Collections.sort(projectTagsAll);
-
-                        speciesAll.add(0, "");
-                        tissuesAll.add(0, "");
-                        instrumentsAll.add(0, "");
-                        ptmsAll.add(0, "");
-                        projectTagsAll.add(0, "");
-
                         if (progressDialog.isRunCanceled()) {
                             break;
                         }
@@ -2190,6 +2177,19 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         ((TitledBorder) projectsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "PRIDE Projects (" + projectsTable.getRowCount() + ")");
                         projectsPanel.repaint();
                     }
+
+                    // sort the lists
+                    Collections.sort(speciesAll);
+                    Collections.sort(instrumentsAll);
+                    Collections.sort(tissuesAll);
+                    Collections.sort(ptmsAll);
+                    Collections.sort(projectTagsAll);
+
+                    speciesAll.add(0, "");
+                    tissuesAll.add(0, "");
+                    instrumentsAll.add(0, "");
+                    ptmsAll.add(0, "");
+                    projectTagsAll.add(0, "");
 
                     progressDialog.setRunFinished();
 
@@ -2997,7 +2997,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
     /**
      * Writes the given spectrum to the buffered writer.
      *
-     * @param spectrum the spectrum 
+     * @param spectrum the spectrum
      * @param bw the buffered writer
      * @return true of the spectrum could be converted to mgf
      * @throws IOException thrown if a problem occurs when writing to the file
