@@ -5,6 +5,11 @@
 
 *Changes in PeptideShaker 0.36.2 (January 17. 2015):*
 
+ * NEW FEATURE: Added the option to turn on/off the labels for the proteins and peptides in the protein inference graph.
+ * NEW FEATURE: Added the option to select all proteins and peptides in the protein inference graph.
+
+ * FEATURE IMPROVEMENT: Added the PeptideShaker PubMed ID to the methods export dialog.
+
  * BUG FIX: Fixed a bug in the PRIDE Reshake where the drop down menus in the project filtering dialog did not include all values.
 
 ----
