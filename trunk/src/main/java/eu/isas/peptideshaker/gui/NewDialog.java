@@ -10,6 +10,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -144,7 +145,8 @@ public class NewDialog extends javax.swing.JDialog {
         super(peptideShakerGui, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = null;
-        identificationParameters.setSearchParameters(new SearchParameters()); // set default search parameters
+        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
+        identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -163,7 +165,8 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShakerGui;
         this.welcomeDialog = welcomeDialog;
-        identificationParameters.setSearchParameters(new SearchParameters()); // set default search parameters
+        identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
+        identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -842,6 +845,7 @@ public class NewDialog extends javax.swing.JDialog {
                     identificationParameters.setProteinInferencePreferences(new ProteinInferencePreferences());
                 }
                 identificationParameters.getProteinInferencePreferences().setProteinSequenceDatabase(fastaFile);
+                identificationParameters.getSearchParameters().setFastaFile(fastaFile);
                 checkFastaFile();
             }
 
@@ -1957,10 +1961,10 @@ public class NewDialog extends javax.swing.JDialog {
      * @return the project details
      */
     private ProjectDetails getProjectDetails() {
-        ProjectDetails projectDetails = new ProjectDetails();
-        projectDetails.setCreationDate(new Date());
-        projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
-        return projectDetails;
+        ProjectDetails tempProjectDetails = new ProjectDetails();
+        tempProjectDetails.setCreationDate(new Date());
+        tempProjectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
+        return tempProjectDetails;
     }
 
     /**
