@@ -517,7 +517,9 @@ public class MzIdentMLExport {
                 CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(modMatch.getTheoreticPtm());
                 if (ptmCvTerm != null) {
                     writeCvTerm(ptmCvTerm);
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: order", modMatchIndex + ""));
+                    if (mzidVersion1_2) {
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: order", modMatchIndex + ""));
+                    }
                     modMatchIndex++;
                 }
             }
@@ -1216,7 +1218,7 @@ public class MzIdentMLExport {
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      */
-    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex) 
+    private void writeSpectrumIdentificationResult(String psmKey, int psmIndex)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
