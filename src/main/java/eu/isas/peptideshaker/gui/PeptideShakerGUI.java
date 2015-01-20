@@ -3565,11 +3565,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-            overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / annotationPreferences.getFragmentIonAccuracy()) * 100));
+            overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             overviewPanel.updateSpectrum();
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
             spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-            spectrumIdentificationPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / annotationPreferences.getFragmentIonAccuracy()) * 100));
+            spectrumIdentificationPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             spectrumIdentificationPanel.updateSpectrum();
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
