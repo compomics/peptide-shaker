@@ -804,7 +804,7 @@ public class FileImporter {
                             String report = "Warning: More than 75% of the PSMs were rejected by the loading filters when importing the matches.";
                             double meanRejected = sharePsmsRejected / 4;
                             if (proteinIssue > meanRejected) {
-                                report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
+                                report += " Apparently your database contains a high degree of shared peptides between the target and decoy sequences. Please verify your database";
                                 if (software.keySet().contains(Advocate.mascot.getName())) {
                                     report += " and make sure that you use Mascot with the 'decoy' option disabled.";
                                 }

@@ -486,7 +486,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                             || nameLowerCase.endsWith("xml")
                             || nameLowerCase.endsWith("mzid")
                             || nameLowerCase.endsWith("csv")
-                            || nameLowerCase.endsWith("tags")) {
+                            || nameLowerCase.endsWith("tags")
+                            || nameLowerCase.endsWith("tide-search.target.txt")) {
                         if (!nameLowerCase.endsWith("mods.xml")
                                 && !nameLowerCase.endsWith("usermods.xml")
                                 && !nameLowerCase.endsWith("settings.xml")) {

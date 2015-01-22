@@ -25,6 +25,7 @@ import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagId
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MzIdentMLIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.PepxmlIdfileReader;
+import com.compomics.util.experiment.io.identifications.idfilereaders.TideIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
@@ -435,7 +436,8 @@ public class PsmImporter {
                                                 || fileReader instanceof XTandemIdfileReader
                                                 || fileReader instanceof MsAmandaIdfileReader
                                                 || fileReader instanceof MzIdentMLIdfileReader
-                                                || fileReader instanceof PepxmlIdfileReader) {
+                                                || fileReader instanceof PepxmlIdfileReader
+                                                || fileReader instanceof TideIdfileReader) {
                                             String[] parsedName = sePTM.split("@");
                                             double seMass = 0;
                                             try {

@@ -3922,7 +3922,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 currentSpectrumKey = spectrumMatch.getKey();
 
                 // add the spectrum annotations
-                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
