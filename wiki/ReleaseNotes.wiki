@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.37.0 (Coming soon...):*
+
+ * NEW FEATURE: Added support for Tide. (beta)
+
+ * FEATURE IMPROVEMENT: Added retention time to the mzid export.
+ * FEATURE IMPROVEMENT: Updated Ensembl Genomes to version 25.
+
+ * BUG FIX: In the New Project dialog loading a project without changing the search settings resulted in a missing FASTA file.
+ * BUG FIX: In the Spectrum IDs tab the retention time conversion to minutes was not done for the minimum retention time value.
+ * BUG FIX: In the mzid export a test CV term for the upcoming mzid 1.2 format changes was not removed.
+ * BUG FIX: The accuracy slider in the spectrum panels had stopped working.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.45.19. 
+
+----
+
 *Changes in PeptideShaker 0.36.2 (January 17. 2015):*
 
  * NEW FEATURE: Added the option to turn on/off the labels for the proteins and peptides in the protein inference graph.
