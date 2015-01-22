@@ -19,6 +19,7 @@ import com.compomics.util.experiment.identification.matches_iterators.ProteinMat
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
@@ -1527,6 +1528,13 @@ public class MzIdentMLExport {
 
             // add the spectrum title
             writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitleHtml));
+            
+            // add the precursor retention time
+            Precursor precursor = spectrumFactory.getPrecursor(psmKey);
+            if (precursor != null) {
+                br.write(getCurrentTabSpace() + "<cvParam cvRef=\"PSI-MS\" accession=\"MS:1000894\" name=\"retention time\" value=\"" + String.valueOf(precursor.getRt()) + "\" "
+                        + "unitCvRef=\"UO\" unitAccession=\"UO:0000010\" unitName=\"seconds\"/>" + System.getProperty("line.separator"));
+            }
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SpectrumIdentificationResult>" + System.getProperty("line.separator"));
@@ -1547,7 +1555,7 @@ public class MzIdentMLExport {
         // mz
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_MZ\">" + System.getProperty("line.separator"));
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001225\" cvRef=\"PSI-MS\" unitCvRef=\"PSI-MS\" unitName=\"m/z\" "
+        br.write(getCurrentTabSpace() + "<cvParam unitCvRef=\"PSI-MS\" accession=\"MS:1001225\" cvRef=\"PSI-MS\" unitName=\"m/z\" "
                 + "unitAccession=\"MS:1000040\" name=\"product ion m/z\"/>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + System.getProperty("line.separator"));
@@ -1563,7 +1571,7 @@ public class MzIdentMLExport {
         // mass error
         br.write(getCurrentTabSpace() + "<Measure id=\"Measure_Error\">" + System.getProperty("line.separator"));
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<cvParam accession=\"MS:1001227\" cvRef=\"PSI-MS\" unitCvRef=\"PSI-MS\" "
+        br.write(getCurrentTabSpace() + "<cvParam unitCvRef=\"PSI-MS\" accession=\"MS:1001227\" cvRef=\"PSI-MS\" "
                 + "unitName=\"m/z\" unitAccession=\"MS:1000040\" name=\"product ion m/z error\"/>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Measure>" + System.getProperty("line.separator"));

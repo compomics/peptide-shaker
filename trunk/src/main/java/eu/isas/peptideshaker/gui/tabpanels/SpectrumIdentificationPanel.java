@@ -2798,7 +2798,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         // add the spectrum annotations
                                         if (i == 0) {
-                                            spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                                            spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
 
                                             // add de novo sequencing
                                             spectrum.addAutomaticDeNovoSequencing(peptide, annotations,
@@ -2845,7 +2845,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 false, annotationPreferences.isHighResolutionAnnotation());
 
                                         // add the spectrum annotations
-                                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
 
                                         // add de novo sequencing
                                         spectrum.addAutomaticDeNovoSequencing(tagAssumption.getTag(), annotations,

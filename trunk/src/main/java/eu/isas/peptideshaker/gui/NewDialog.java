@@ -295,7 +295,7 @@ public class NewDialog extends javax.swing.JDialog {
         });
 
         speciesLabel.setText("Species");
-        speciesLabel.setToolTipText("Set the species to get gene annotations");
+        speciesLabel.setToolTipText("Set the species to get gene and GO annotations");
 
         speciesTextField.setEditable(false);
         speciesTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -956,12 +956,13 @@ public class NewDialog extends javax.swing.JDialog {
                         || myFile.getName().toLowerCase().endsWith("csv")
                         || myFile.getName().toLowerCase().endsWith("tags")
                         || myFile.getName().toLowerCase().endsWith("zip")
+                        || myFile.getName().toLowerCase().endsWith("tide-search.target.txt")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv) and Mascot (.dat)"; // @TODO: add directag
+                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt) and Mascot (.dat)"; // @TODO: add directag
             }
         };
 
@@ -1054,6 +1055,21 @@ public class NewDialog extends javax.swing.JDialog {
                 return "MS Amanda (.csv)";
             }
         };
+        
+        // filter for tide only
+        FileFilter tideFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                return myFile.getName().toLowerCase().endsWith("tide-search.target.txt")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Tide (.txt)";
+            }
+        };
 
         // filter for DirecTag only
         FileFilter direcTagFilter = new FileFilter() {
@@ -1092,6 +1108,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(omssaFilter);
         fileChooser.addChoosableFileFilter(tandemFilter);
         fileChooser.addChoosableFileFilter(msAmandaFilter);
+        fileChooser.addChoosableFileFilter(tideFilter);
         fileChooser.addChoosableFileFilter(mascotFilter);
         fileChooser.addChoosableFileFilter(direcTagFilter);
 
@@ -2235,7 +2252,8 @@ public class NewDialog extends javax.swing.JDialog {
                 || lowerCaseName.endsWith("xml")
                 || lowerCaseName.endsWith("mzid")
                 || lowerCaseName.endsWith("csv")
-                || lowerCaseName.endsWith("tags")) {
+                || lowerCaseName.endsWith("tags")
+                || lowerCaseName.endsWith("tide-search.target.txt")) {
             if (!lowerCaseName.endsWith("mods.xml")
                     && !lowerCaseName.endsWith("usermods.xml")
                     && !lowerCaseName.endsWith("settings.xml")) {

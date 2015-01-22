@@ -3976,7 +3976,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     allSpectra.get(i).getMzValuesAsArray(), allSpectra.get(i).getIntensityValuesNormalizedAsArray(),
                                     500, "2",
                                     "", 40, false, false, false, 2, false);
-                            spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)));
+                            spectrumPanel.setAnnotateHighestPeak(!annotationPreferences.isHighResolutionAnnotation());
+                            spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)), !annotationPreferences.isHighResolutionAnnotation());
 
                             spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                             spectrumPanel.setDeltaMassWindow(peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getFragmentIonAccuracy());
@@ -4000,6 +4001,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.addMirroredSpectrum(allSpectra.get(i).getMzValuesAsArray(), allSpectra.get(i).getIntensityValuesNormalizedAsArray(),
                                     500, "2", "", false, peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor(),
                                     peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedMirroredPeakColor());
+                            spectrumPanel.setAnnotateHighestPeak(!annotationPreferences.isHighResolutionAnnotation());
                             spectrumPanel.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(allAnnotations.get(i)));
 
                             int forwardIon = peptideShakerGUI.getIdentificationParameters().getSearchParameters().getIonSearched1();
@@ -4496,7 +4498,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getFragmentIonAccuracy(), false,
                                     annotationPreferences.isHighResolutionAnnotation());
-                            spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                            spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());
                             spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
 
                             if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey) && psmTable.getSelectedRowCount() == 1) {
