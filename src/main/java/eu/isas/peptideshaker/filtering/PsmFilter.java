@@ -1,12 +1,10 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -29,22 +27,6 @@ public class PsmFilter extends MatchFilter {
      */
     static final long serialVersionUID = 2930349531911042645L;
     /**
-     * the precursor m/z.
-     */
-    private Double precursorMz = null;
-    /**
-     * The type of comparison to be used for the precursor m/z.
-     */
-    private ComparisonType precursorMzComparison = ComparisonType.EQUAL;
-    /**
-     * The precursor retention time.
-     */
-    private Double precursorRT = null;
-    /**
-     * The type of comparison to be used for the precursor retention time.
-     */
-    private ComparisonType precursorRTComparison = ComparisonType.EQUAL;
-    /**
      * Score limit.
      */
     private Double psmScore = null;
@@ -65,7 +47,33 @@ public class PsmFilter extends MatchFilter {
      */
     private AssumptionFilter assumptionFilter;
     /**
+     * the precursor m/z.
+     *
+     * @deprecated use the assumption filter instead
+     */
+    private Double precursorMz = null;
+    /**
+     * The type of comparison to be used for the precursor m/z.
+     *
+     * @deprecated use the assumption filter instead
+     */
+    private ComparisonType precursorMzComparison = ComparisonType.EQUAL;
+    /**
+     * The precursor retention time.
+     *
+     * @deprecated use the assumption filter instead
+     */
+    private Double precursorRT = null;
+    /**
+     * The type of comparison to be used for the precursor retention time.
+     *
+     * @deprecated use the assumption filter instead
+     */
+    private ComparisonType precursorRTComparison = ComparisonType.EQUAL;
+    /**
      * List of spectrum files names retained.
+     *
+     * @deprecated use the assumption filter instead
      */
     private ArrayList<String> fileName = null;
     /**
@@ -135,89 +143,60 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
+     * Constructor.
+     *
+     * @param name the name of the filter
+     * @param description the description of the filter
+     * @param condition a description of the condition to be met to pass the
+     * filter
+     * @param reportPassed a report for when the filter is passed
+     * @param reportFailed a report for when the filter is not passed
+     */
+    public PsmFilter(String name, String description, String condition, String reportPassed, String reportFailed) {
+        this.name = name;
+        this.description = description;
+        this.condition = condition;
+        this.reportPassed = reportPassed;
+        this.reportFailed = reportFailed;
+        assumptionFilter = new AssumptionFilter(name, description, condition, reportPassed, reportFailed);
+        this.filterType = FilterType.PSM;
+    }
+
+    /**
      * Verifies that the filter is compatible with the current version and makes
      * necessary updates if not.
      */
     private void compatibilityCheck() {
         if (assumptionFilter == null) {
-            assumptionFilter = new AssumptionFilter(name);
-            if (charges != null) {
-                assumptionFilter.setCharges(charges);
-            }
-            if (precursorMzError != null) {
-                assumptionFilter.setPrecursorMzError(precursorMzError);
-                assumptionFilter.setPrecursorMzErrorComparison(precursorMzErrorComparison);
-            }
-            if (minPrecursorMzError != null) {
-                assumptionFilter.setMinPrecursorMzError(minPrecursorMzError);
-                assumptionFilter.setPrecursorMinMzErrorComparison(precursorMinMzErrorComparison);
-            }
-            if (maxPrecursorMzError != null) {
-                assumptionFilter.setMaxPrecursorMzError(maxPrecursorMzError);
-                assumptionFilter.setPrecursorMaxMzErrorComparison(precursorMaxMzErrorComparison);
-            }
-            if (sequenceCoverage != null) {
-                assumptionFilter.setSequenceCoverage(sequenceCoverage);
-                assumptionFilter.setSequenceCoverageComparison(sequenceCoverageComparison);
-            }
+            assumptionFilter = new AssumptionFilter(name, "", "", "", "");
         }
-    }
-
-    /**
-     * Returns the precursor m/z.
-     *
-     * @return the precursor m/z
-     */
-    public Double getPrecursorMz() {
-        return precursorMz;
-    }
-
-    /**
-     * Sets the precursor m/z.
-     *
-     * @param precursorMz the precursor m/z
-     */
-    public void setPrecursorMz(Double precursorMz) {
-        this.precursorMz = precursorMz;
-    }
-
-    /**
-     * Returns the comparison type used for the precursor m/z error comparison.
-     *
-     * @return the comparison type used for the precursor m/z error comparison
-     */
-    public ComparisonType getPrecursorMzErrorComparison() {
-        compatibilityCheck();
-        return assumptionFilter.getPrecursorMzErrorComparison();
-    }
-
-    /**
-     * Sets the comparison type used for the precursor m/z error comparison.
-     *
-     * @param precursorMzErrorComparison the comparison type used for the
-     * precursor m/z error comparison
-     */
-    public void setPrecursorMzErrorComparison(ComparisonType precursorMzErrorComparison) {
-        compatibilityCheck();
-        assumptionFilter.setPrecursorMzErrorComparison(precursorMzErrorComparison);
-    }
-
-    /**
-     * Returns the precursor retention time.
-     *
-     * @return the precursor retention time
-     */
-    public Double getPrecursorRT() {
-        return precursorRT;
-    }
-
-    /**
-     * Sets the precursor retention time.
-     *
-     * @param precursorRT the precursor retention time
-     */
-    public void setPrecursorRT(Double precursorRT) {
-        this.precursorRT = precursorRT;
+        if (charges != null && assumptionFilter.getCharges() == null) {
+            assumptionFilter.setCharges(charges);
+        }
+        if (precursorMzError != null && assumptionFilter.getPrecursorMzError() == null) {
+            assumptionFilter.setPrecursorMzError(precursorMzError);
+            assumptionFilter.setPrecursorMzErrorComparison(precursorMzErrorComparison);
+        }
+        if (minPrecursorMzError != null && assumptionFilter.getMinPrecursorMzError() == null) {
+            assumptionFilter.setMinPrecursorMzError(minPrecursorMzError);
+            assumptionFilter.setPrecursorMinMzErrorComparison(precursorMinMzErrorComparison);
+        }
+        if (maxPrecursorMzError != null && assumptionFilter.getMaxPrecursorMzError() == null) {
+            assumptionFilter.setMaxPrecursorMzError(maxPrecursorMzError);
+            assumptionFilter.setPrecursorMaxMzErrorComparison(precursorMaxMzErrorComparison);
+        }
+        if (sequenceCoverage != null && assumptionFilter.getSequenceCoverage() == null) {
+            assumptionFilter.setSequenceCoverage(sequenceCoverage);
+            assumptionFilter.setSequenceCoverageComparison(sequenceCoverageComparison);
+        }
+        if (precursorMz != null && assumptionFilter.getPrecursorMz() == null) {
+            assumptionFilter.setPrecursorMz(precursorMz);
+            assumptionFilter.setPrecursorMzComparison(precursorMzComparison);
+        }
+        if (precursorRT != null && assumptionFilter.getPrecursorRT() == null) {
+            assumptionFilter.setPrecursorRT(precursorRT);
+            assumptionFilter.setPrecursorRTComparison(precursorRTComparison);
+        }
     }
 
     /**
@@ -294,25 +273,6 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the precursor m/z comparison.
-     *
-     * @return the comparison type used for the precursor m/z comparison
-     */
-    public ComparisonType getPrecursorMzComparison() {
-        return precursorMzComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the precursor m/z comparison.
-     *
-     * @param precursorMzComparison the comparison type used for the precursor
-     * m/z comparison
-     */
-    public void setPrecursorMzComparison(ComparisonType precursorMzComparison) {
-        this.precursorMzComparison = precursorMzComparison;
-    }
-
-    /**
      * Returns the filter used to filter the best assumption of this match.
      *
      * @return the filter used to filter the best assumption of this match
@@ -323,179 +283,16 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the precursor RT comparison.
+     * Sets the assumption filter.
      *
-     * @return the comparison type used for the precursor RT comparison
+     * @param assumptionFilter the assumption filter
      */
-    public ComparisonType getPrecursorRTComparison() {
-        return precursorRTComparison;
+    public void setAssumptionFilter(AssumptionFilter assumptionFilter) {
+        this.assumptionFilter = assumptionFilter;
     }
 
     /**
-     * Sets the comparison type used for the precursor RT comparison.
-     *
-     * @param precursorRTComparison the comparison type used for the precursor
-     * RT comparison
-     */
-    public void setPrecursorRTComparison(ComparisonType precursorRTComparison) {
-        this.precursorRTComparison = precursorRTComparison;
-    }
-
-    /**
-     * Returns the list of spectrum files containing the desired spectra.
-     *
-     * @return the list of spectrum files containing the desired spectra
-     */
-    public ArrayList<String> getFileNames() {
-        return fileName;
-    }
-
-    /**
-     * Sets the list of spectrum files containing the desired spectra.
-     *
-     * @param filesNames the list of spectrum files containing the desired
-     * spectra
-     */
-    public void setFileNames(ArrayList<String> filesNames) {
-        this.fileName = filesNames;
-    }
-
-    /**
-     * Sets the allowed charges for the best assumption.
-     *
-     * @param charges the allowed charges
-     */
-    public void setCharges(ArrayList<Integer> charges) {
-        compatibilityCheck();
-        assumptionFilter.setCharges(charges);
-    }
-
-    /**
-     * Sets the precursor m/z error for the best assumption.
-     *
-     * @param precursorMzError the precursor m/z error
-     */
-    public void setPrecursorMzError(Double precursorMzError) {
-        compatibilityCheck();
-        assumptionFilter.setPrecursorMzError(precursorMzError);
-    }
-
-    /**
-     * Sets the comparison type used for the search engine confidence of the
-     * best assumption.
-     *
-     * @param searchEngineConfidenceComparison the comparison type used for the
-     * confidence
-     */
-    public void setSearchEngineConfidenceComparison(RowFilter.ComparisonType searchEngineConfidenceComparison) {
-        compatibilityCheck();
-        assumptionFilter.setSearchEngineConfidenceComparison(searchEngineConfidenceComparison);
-    }
-
-    /**
-     * Sets the comparison type used for the search engine score if the best
-     * assumption.
-     *
-     * @param searchEngineScoreComparison the comparison type used for the
-     * search engine score
-     */
-    public void setSearchEngineScoreComparison(RowFilter.ComparisonType searchEngineScoreComparison) {
-        compatibilityCheck();
-        assumptionFilter.setSearchEngineScoreComparison(searchEngineScoreComparison);
-    }
-
-    /**
-     * Sets the threshold for the search engine score of the best assumption.
-     *
-     * @param searchEngineScore the threshold for the psm score
-     */
-    public void setSearchEngineScore(Double searchEngineScore) {
-        compatibilityCheck();
-        assumptionFilter.setSearchEngineScore(searchEngineScore);
-    }
-
-    /**
-     * Sets the threshold for the search engine confidence of the best
-     * assumption.
-     *
-     * @param searchEngineConfidence the threshold for the search engine
-     * confidence
-     */
-    public void setSearchEngineConfidence(Double searchEngineConfidence) {
-        compatibilityCheck();
-        assumptionFilter.setSearchEngineConfidence(searchEngineConfidence);
-    }
-
-    /**
-     * Sets the minimal precursor m/z error of the best assumption.
-     *
-     * @param minPrecursorMzError the minimal precursor m/z error
-     */
-    public void setMinPrecursorMzError(Double minPrecursorMzError) {
-        compatibilityCheck();
-        assumptionFilter.setMinPrecursorMzError(minPrecursorMzError);
-    }
-
-    /**
-     * Sets the comparison type used for the precursor min m/z error comparison
-     * of the best assumption.
-     *
-     * @param precursorMinMzErrorComparison the comparison type used for the
-     * precursor min m/z error comparison
-     */
-    public void setPrecursorMinMzErrorComparison(RowFilter.ComparisonType precursorMinMzErrorComparison) {
-        compatibilityCheck();
-        assumptionFilter.setPrecursorMinMzErrorComparison(precursorMinMzErrorComparison);
-    }
-
-    /**
-     * Sets the maximal precursor m/z error of the best assumption.
-     *
-     * @param maxPrecursorMzError the maximal precursor m/z error
-     */
-    public void setMaxPrecursorMzError(Double maxPrecursorMzError) {
-        compatibilityCheck();
-        assumptionFilter.setMaxPrecursorMzError(maxPrecursorMzError);
-    }
-
-    /**
-     * Sets the comparison type used for the precursor max m/z error comparison
-     * of the best assumption.
-     *
-     * @param precursorMaxMzErrorComparison the comparison type used for the
-     * precursor max m/z error comparison
-     */
-    public void setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType precursorMaxMzErrorComparison) {
-        compatibilityCheck();
-        assumptionFilter.setPrecursorMaxMzErrorComparison(precursorMaxMzErrorComparison);
-    }
-
-    /**
-     * Sets the sequence coverage by fragment ions threshold in percent of the
-     * best assumption.
-     *
-     * @param sequenceCoverage the sequence coverage by fragment ions threshold
-     * in percent
-     */
-    public void setSequenceCoverage(Double sequenceCoverage) {
-        compatibilityCheck();
-        assumptionFilter.setSequenceCoverage(sequenceCoverage);
-    }
-
-    /**
-     * Sets the comparator for the sequence coverage by fragment ions of the
-     * best assumption.
-     *
-     * @param sequenceCoverageComparison the comparator for the sequence
-     * coverage by fragment ions
-     */
-    public void setSequenceCoverageComparison(RowFilter.ComparisonType sequenceCoverageComparison) {
-        compatibilityCheck();
-        assumptionFilter.setSequenceCoverageComparison(sequenceCoverageComparison);
-    }
-
-    /**
-     * Tests whether a spectrum match is validated by this filter.
+     * Tests whether a spectrum match is validated by this filter. No probabilistic m/z error filtering possible.
      *
      * @param spectrumKey the key of the spectrum match
      * @param identification the identification object to get the information
@@ -515,7 +312,7 @@ public class PsmFilter extends MatchFilter {
      */
     public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, null);
+        return isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, null, null);
     }
 
     /**
@@ -526,7 +323,7 @@ public class PsmFilter extends MatchFilter {
      * from
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
-     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
+     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -538,9 +335,35 @@ public class PsmFilter extends MatchFilter {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<Double> precursorMzDeviations)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        return isValidated(spectrumKey, this, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+        return isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, null, precursorMzDeviations);
+    }
+
+    /**
+     * Tests whether a spectrum match is validated by this filter.
+     *
+     * @param spectrumKey the key of the spectrum match
+     * @param identification the identification object to get the information
+     * from
+     * @param shotgunProtocol information about the protocol
+     * @param identificationParameters the identification parameters
+     * @param peptideSpectrumAnnotator a spectrum annotator, can be null
+     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
+     *
+     * @return a boolean indicating whether a spectrum match is validated by a
+     * given filter
+     *
+     * @throws IOException thrown if an IOException occurs
+     * @throws SQLException thrown if an SQLException occurs
+     * @throws InterruptedException thrown if an InterruptedException occurs
+     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
+     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
+     * occurs
+     */
+    public boolean isValidated(String spectrumKey, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        return isValidated(spectrumKey, this, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, precursorMzDeviations);
     }
 
     /**
@@ -553,6 +376,7 @@ public class PsmFilter extends MatchFilter {
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
+     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -564,7 +388,8 @@ public class PsmFilter extends MatchFilter {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (psmFilter.getExceptions().contains(spectrumKey)) {
@@ -577,8 +402,27 @@ public class PsmFilter extends MatchFilter {
         PSParameter psParameter = new PSParameter();
 
         if (psmFilter.getPsmScore() != null
-                || psmFilter.getPsmConfidence() != null) {
+                || psmFilter.getPsmConfidence() != null
+                || psmFilter.getValidationLevel() != null) {
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+            if (psmFilter.getValidationComparison() == ComparisonType.AFTER) {
+                if (psParameter.getMatchValidationLevel().getIndex() <= psmFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (psmFilter.getValidationComparison() == ComparisonType.BEFORE) {
+                if (psParameter.getMatchValidationLevel().getIndex() > psmFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (psmFilter.getValidationComparison() == ComparisonType.EQUAL) {
+                if (psParameter.getMatchValidationLevel().getIndex() != psmFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (psmFilter.getValidationComparison() == ComparisonType.NOT_EQUAL) {
+                if (psParameter.getMatchValidationLevel().getIndex() == psmFilter.getValidationLevel()) {
+                    return false;
+                }
+            }
 
             if (psmFilter.getPsmScore() != null) {
                 if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.AFTER) {
@@ -586,7 +430,7 @@ public class PsmFilter extends MatchFilter {
                         return false;
                     }
                 } else if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (psParameter.getPsmScore() >= psmFilter.getPsmScore()) {
+                    if (psParameter.getPsmScore() > psmFilter.getPsmScore()) {
                         return false;
                     }
                 } else if (psmFilter.getPsmScoreComparison() == RowFilter.ComparisonType.EQUAL) {
@@ -606,7 +450,7 @@ public class PsmFilter extends MatchFilter {
                         return false;
                     }
                 } else if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (psParameter.getPsmConfidence() >= psmFilter.getPsmConfidence()) {
+                    if (psParameter.getPsmConfidence() > psmFilter.getPsmConfidence()) {
                         return false;
                     }
                 } else if (psmFilter.getPsmConfidenceComparison() == RowFilter.ComparisonType.EQUAL) {
@@ -621,60 +465,9 @@ public class PsmFilter extends MatchFilter {
             }
         }
 
-        if (psmFilter.getPrecursorMz() != null
-                || psmFilter.getPrecursorRT() != null) {
-
-            SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-            Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-
-            if (psmFilter.getPrecursorMz() != null) {
-                if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.AFTER) {
-                    if (precursor.getMz() <= psmFilter.getPrecursorMz()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (precursor.getMz() >= psmFilter.getPrecursorMz()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.EQUAL) {
-                    if (precursor.getMz() != psmFilter.getPrecursorMz()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorMzComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
-                    if (precursor.getMz() == psmFilter.getPrecursorMz()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (psmFilter.getPrecursorRT() != null) {
-                if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.AFTER) {
-                    if (precursor.getRt() <= psmFilter.getPrecursorRT()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.BEFORE) {
-                    if (precursor.getRt() >= psmFilter.getPrecursorRT()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.EQUAL) {
-                    if (precursor.getRt() != psmFilter.getPrecursorRT()) {
-                        return false;
-                    }
-                } else if (psmFilter.getPrecursorRTComparison() == RowFilter.ComparisonType.NOT_EQUAL) {
-                    if (precursor.getRt() == psmFilter.getPrecursorRT()) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        if (psmFilter.getFileNames() != null && !psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
-            return false;
-        }
-
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         if (spectrumMatch.getBestPeptideAssumption() != null) {
-            return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+            return psmFilter.getAssumptionFilter().isValidated(spectrumKey, spectrumMatch.getBestPeptideAssumption(), shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, precursorMzDeviations);
         } else if (spectrumMatch.getBestTagAssumption() != null) {
             //TODO: implement a tag assumption filter
             return true;
@@ -687,5 +480,68 @@ public class PsmFilter extends MatchFilter {
     public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         return isValidated(matchKey, identification, shotgunProtocol, identificationParameters, null);
+    }
+
+    @Override
+    public MatchFilter clone() {
+        PsmFilter psmFilter = new PsmFilter(name, description, condition, reportPassed, reportFailed);
+        psmFilter.setActive(isActive());
+        psmFilter.setPsmScore(getPsmScore());
+        psmFilter.setPsmScoreComparison(getPsmScoreComparison());
+        psmFilter.setPsmConfidence(getPsmConfidence());
+        psmFilter.setPsmConfidenceComparison(getPsmConfidenceComparison());
+        psmFilter.setAssumptionFilter((AssumptionFilter) assumptionFilter.clone());
+        return psmFilter;
+    }
+
+    /**
+     * Indicates whether another filter is the same as the current filter.
+     * 
+     * @param anotherFilter another filter
+     * 
+     * @return a boolean indicating whether another filter is the same as the current filter
+     */
+    public boolean isSameAs(PsmFilter anotherFilter) {
+        if (!name.equals(anotherFilter.getName())) {
+            return false;
+        }
+        if (!description.equals(anotherFilter.getDescription())) {
+            return false;
+        }
+        if (!condition.equals(anotherFilter.getCondition())) {
+            return false;
+        }
+        if (!reportPassed.equals(anotherFilter.getReport(true))) {
+            return false;
+        }
+        if (!reportFailed.equals(anotherFilter.getReport(false))) {
+            return false;
+        }
+        if (isActive() != anotherFilter.isActive()) {
+            return false;
+        }
+        if (getPsmScore() == null && anotherFilter.getPsmScore() != null
+                || getPsmScore() != null && !getPsmScore().equals(anotherFilter.getPsmScore())) {
+            return false;
+        }
+        if (getPsmScoreComparison() != anotherFilter.getPsmScoreComparison()) {
+            return false;
+        }
+        if (getPsmConfidence() == null && anotherFilter.getPsmConfidence() != null
+                || getPsmConfidence() != null && !getPsmConfidence().equals(anotherFilter.getPsmConfidence())) {
+            return false;
+        }
+        if (getPsmConfidenceComparison() != anotherFilter.getPsmConfidenceComparison()) {
+            return false;
+        }
+        return assumptionFilter.isSameAs(anotherFilter.getAssumptionFilter());
+    }
+
+    @Override
+    public boolean isSameAs(Filter anotherFilter) {
+        if (anotherFilter instanceof PsmFilter) {
+            return isSameAs((PsmFilter) anotherFilter);
+        }
+        return false;
     }
 }

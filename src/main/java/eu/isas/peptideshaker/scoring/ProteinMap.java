@@ -25,41 +25,15 @@ public class ProteinMap implements Serializable {
     private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
     /**
      * The filters to use to flag doubtful matches.
+     * 
+     * @deprecated use ValidationQCPreferences instead
      */
-    private ArrayList<ProteinFilter> doubtfulMatchesFilters = getDefaultProteinFilters();
+    private ArrayList<ProteinFilter> doubtfulMatchesFilters = null;
 
     /**
      * Constructor.
      */
     public ProteinMap() {
-    }
-
-    /**
-     * Returns the filters used to flag doubtful matches.
-     *
-     * @return the filters used to flag doubtful matches
-     */
-    public ArrayList<ProteinFilter> getDoubtfulMatchesFilters() {
-        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFilters = new ArrayList<ProteinFilter>();
-        }
-        return doubtfulMatchesFilters;
-    }
-
-    /**
-     * Sets the filters used to flag doubtful matches.
-     *
-     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
-     */
-    public void setDoubtfulMatchesFilters(ArrayList<ProteinFilter> doubtfulMatchesFilters) {
-        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
-    }
-    
-    /**
-     * Resets the doubtful matches filters
-     */
-    public void resetDoubtfulMatchesFilters() {
-        doubtfulMatchesFilters = getDefaultProteinFilters();
     }
 
     /**
@@ -127,30 +101,5 @@ public class ProteinMap implements Serializable {
      */
     public TargetDecoyMap getTargetDecoyMap() {
         return proteinMatchMap;
-    }
-
-    /**
-     * Returns the default filters for setting a match as doubtful.
-     *
-     * @return the default filters for setting a match as doubtful
-     */
-    public static ArrayList<ProteinFilter> getDefaultProteinFilters() {
-        ArrayList<ProteinFilter> filters = new ArrayList<ProteinFilter>();
-
-        // @TODO: make the thresholds editable by the user!
-        
-        ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides"); // the name is used to show what we expect
-        proteinFilter.setDescription("<2 confident peptides"); // the description is displayed as failure explanation
-        proteinFilter.setnConfidentPeptides(1);
-        proteinFilter.setnConfidentPeptidesComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(proteinFilter);
-
-        proteinFilter = new ProteinFilter(">=2 confident spectra");
-        proteinFilter.setDescription("<2 confident spectra");
-        proteinFilter.setProteinNConfidentSpectra(1);
-        proteinFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(proteinFilter);
-
-        return filters;
     }
 }

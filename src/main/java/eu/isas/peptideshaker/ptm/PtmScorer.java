@@ -1413,9 +1413,14 @@ public class PtmScorer {
         HashMap<String, HashMap<Double, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, ArrayList<String>>>();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFileName, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, true);
+            
+            while (psmIterator.hasNext()) {
+                
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+            
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     boolean variableAA = false;
                     for (ModificationMatch modificationMatch : spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches()) {
@@ -1492,12 +1497,13 @@ public class PtmScorer {
             for (Double ptmMass : peptidesOfFile.keySet()) {
 
                 ArrayList<String> spectrumKeys = peptidesOfFile.get(ptmMass);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true);
+            
+            while (psmIterator.hasNext()) {
+                
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
 
-                identification.loadSpectrumMatches(spectrumKeys, null);
-
-                for (String spectrumKey : spectrumKeys) {
-
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String sequence = peptide.getSequence();
                     String notConfidentKey = peptide.getMatchingKey(sequenceMatchingPreferences);

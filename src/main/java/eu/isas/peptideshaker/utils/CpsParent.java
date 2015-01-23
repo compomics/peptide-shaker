@@ -5,6 +5,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -16,9 +17,14 @@ import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.ProteinInferencePreferences;
+import com.compomics.util.preferences.ValidationQCPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
+import eu.isas.peptideshaker.filtering.PeptideFilter;
+import eu.isas.peptideshaker.filtering.ProteinFilter;
+import eu.isas.peptideshaker.filtering.PsmFilter;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -27,6 +33,10 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
+import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
+import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -194,12 +204,21 @@ public class CpsParent extends UserPreferencesParent {
             shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(searchParameters);
         }
 
+        // Backward compatibility for the Validation quality control preferences
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
+        if (validationQCPreferences.getPsmFilters() == null
+                || validationQCPreferences.getPeptideFilters() == null
+                || validationQCPreferences.getProteinFilters() == null) {
+            MatchesValidator.setDefaultMatchesQCFilters(validationQCPreferences);
+        }
+
         // Get identification details and set up caches
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (identification.getSpectrumIdentificationMap() == null) {
             // 0.18 version, needs update of the spectrum mapping
             identification.updateSpectrumMapping();
         }
+
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
         if (experimentSettings.getIdentificationFeaturesCache() != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());

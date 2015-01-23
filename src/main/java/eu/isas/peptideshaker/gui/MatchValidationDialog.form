@@ -68,7 +68,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="validationLevelPanel" alignment="1" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                          <Component id="editLbl" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="okButton" min="-2" pref="65" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
@@ -99,6 +101,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="editLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -232,7 +235,7 @@
                     <Font component="bitRecommendationLabel4" italic="true" property="font" relativeSize="true" size="0"/>
                   </FontInfo>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Recommended: between 10,000 and 100,000"/>
+                <Property name="text" type="java.lang.String" value="Recommended: between 1,000 and 100,000"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="nTargetLbl">
@@ -261,12 +264,12 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="matchesBeforeFirstDecoyLbl" pref="265" max="32767" attributes="0"/>
                               <EmptySpace pref="266" max="32767" attributes="0"/>
-                              <Component id="bitRecommendationLabel5" min="-2" max="-2" attributes="0"/>
+                              <Component id="recommendedNumberOfTargetHitsLbl" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="confidenceResolutionLbl" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="266" max="-2" attributes="0"/>
-                              <Component id="bitRecommendationLabel6" min="-2" max="-2" attributes="0"/>
+                              <Component id="recommendedResolutionLbl" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -279,12 +282,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="matchesBeforeFirstDecoyLbl" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bitRecommendationLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="recommendedNumberOfTargetHitsLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="confidenceResolutionLbl" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bitRecommendationLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="recommendedResolutionLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -292,11 +295,11 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="bitRecommendationLabel5">
+            <Component class="javax.swing.JLabel" name="recommendedNumberOfTargetHitsLbl">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                   <FontInfo relative="true">
-                    <Font component="bitRecommendationLabel5" italic="true" property="font" relativeSize="true" size="0"/>
+                    <Font component="recommendedNumberOfTargetHitsLbl" italic="true" property="font" relativeSize="true" size="0"/>
                   </FontInfo>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Recommended: 100 matches before the first decoy hit"/>
@@ -307,11 +310,11 @@
                 <Property name="text" type="java.lang.String" value="xxx matches before the first decoy hit"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="bitRecommendationLabel6">
+            <Component class="javax.swing.JLabel" name="recommendedResolutionLbl">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                   <FontInfo relative="true">
-                    <Font component="bitRecommendationLabel6" italic="true" property="font" relativeSize="true" size="0"/>
+                    <Font component="recommendedResolutionLbl" italic="true" property="font" relativeSize="true" size="0"/>
                   </FontInfo>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Recommended: resolution &lt; 1%"/>
@@ -479,6 +482,14 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="editLbl">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="11" style="2"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Validation Quality Control Settings can be edited via the &quot;Edit&quot; -&gt; &quot;Validation QC&quot; Menu"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

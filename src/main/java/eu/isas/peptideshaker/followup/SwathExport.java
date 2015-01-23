@@ -13,17 +13,20 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.fileimport.PsmImporter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -79,6 +82,8 @@ public class SwathExport {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
@@ -122,30 +127,24 @@ public class SwathExport {
                     String mgfFile = spectrumFactory.getMgfFileNames().get(i);
 
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                    }
-                    identification.loadSpectrumMatches(mgfFile, waitingHandler);
-                    if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                    }
-                    identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
-                    if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait...");
                         // reset the progress bar
                         waitingHandler.resetSecondaryProgressCounter();
                         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
                     }
+                    
+                    PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false);
 
-                    for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
+                    while (psmIterator.hasNext()) {
 
-                        String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
+                        SpectrumMatch spectrumMatch = psmIterator.next();
+                        String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {
                             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                             if (psParameter.getMatchValidationLevel().isValidated()) {
 
-                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
 

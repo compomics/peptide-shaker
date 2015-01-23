@@ -43,6 +43,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import eu.isas.peptideshaker.utils.Tips;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Point;
 import java.awt.Toolkit;
 import org.apache.commons.cli.*;
@@ -592,6 +593,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         idMatchValidationPreferences.setDefaultPsmFDR(cliInputBean.getPsmFDR());
         idMatchValidationPreferences.setDefaultPeptideFDR(cliInputBean.getPeptideFDR());
         idMatchValidationPreferences.setDefaultProteinFDR(cliInputBean.getProteinFDR());
+        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
 
         // set the processing settings
         processingPreferences = new ProcessingPreferences();

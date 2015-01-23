@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
-import com.compomics.util.preferences.PathKey;
-import com.compomics.util.preferences.UtilitiesPathPreferences;
+import com.compomics.software.settings.PathKey;
+import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import java.io.BufferedReader;

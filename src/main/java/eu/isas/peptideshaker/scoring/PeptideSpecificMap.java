@@ -48,41 +48,16 @@ public class PeptideSpecificMap implements Serializable {
     public final static String SEPARATOR = "_cus_";
     /**
      * The filters to use to flag doubtful matches.
+     * 
+     * 
+     * @deprecated use ValidationQCPreferences instead
      */
-    private ArrayList<PeptideFilter> doubtfulMatchesFilters = getDefaultPeptideFilters();
+    private ArrayList<PeptideFilter> doubtfulMatchesFilters = null;
 
     /**
      * Constructor.
      */
     public PeptideSpecificMap() {
-    }
-
-    /**
-     * Returns the filters used to flag doubtful matches.
-     *
-     * @return the filters used to flag doubtful matches
-     */
-    public ArrayList<PeptideFilter> getDoubtfulMatchesFilters() {
-        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFilters = new ArrayList<PeptideFilter>();
-        }
-        return doubtfulMatchesFilters;
-    }
-
-    /**
-     * Sets the filters used to flag doubtful matches.
-     *
-     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
-     */
-    public void setDoubtfulMatchesFilters(ArrayList<PeptideFilter> doubtfulMatchesFilters) {
-        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
-    }
-    
-    /**
-     * Resets the doubtful matches filters.
-     */
-    public void resetDoubtfulMatchesFilters() {
-        doubtfulMatchesFilters = getDefaultPeptideFilters();
     }
 
     /**
@@ -315,22 +290,5 @@ public class PeptideSpecificMap implements Serializable {
 
             return result;
         }
-    }
-
-    /**
-     * Returns the default filters for setting a match as doubtful.
-     *
-     * @return the default filters for setting a match as doubtful
-     */
-    public static ArrayList<PeptideFilter> getDefaultPeptideFilters() {
-        ArrayList<PeptideFilter> filters = new ArrayList<PeptideFilter>();
-
-        PeptideFilter peptideFilter = new PeptideFilter("One confident PSM");
-        peptideFilter.setDescription("No confident PSM");
-        peptideFilter.setNConfidentSpectra(0); // @TODO: make the thresholds editable by the user!
-        peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(peptideFilter);
-
-        return filters;
     }
 }

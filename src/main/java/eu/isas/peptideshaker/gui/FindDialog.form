@@ -417,41 +417,49 @@
                     <Component class="javax.swing.JLabel" name="piStatusLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="PI Status"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Inference Status"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="ms2QuantLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="MS2 Quant."/>
+                        <Property name="toolTipText" type="java.lang.String" value="MS2 Quantification [fmol]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="peptidesLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="#Peptides"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated Peptides"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="spectraLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="#Spectra"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated PSMs"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="scoreLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Score"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Score"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="coverageLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Coverage"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Coverage [%]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="confidenceLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Confidence"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="spectrumCountingTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="MS2 Quantification [fmol]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="spectrumCountingTxtKeyReleased"/>
@@ -502,6 +510,7 @@
                             <StringItem index="4" value="Unrelated Proteins"/>
                           </StringArray>
                         </Property>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Inference Status"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinPICmbActionPerformed"/>
@@ -511,6 +520,7 @@
                     <Component class="javax.swing.JTextField" name="proteinConfidenceTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinConfidenceTxtKeyReleased"/>
@@ -535,6 +545,7 @@
                     <Component class="javax.swing.JTextField" name="proteinScoreTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Score"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinScoreTxtKeyReleased"/>
@@ -559,6 +570,7 @@
                     <Component class="javax.swing.JTextField" name="proteinsNSpectraTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated PSMs"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinsNSpectraTxtKeyReleased"/>
@@ -583,6 +595,7 @@
                     <Component class="javax.swing.JTextField" name="nPeptidesTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated Peptides"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="nPeptidesTxtKeyReleased"/>
@@ -607,6 +620,7 @@
                     <Component class="javax.swing.JTextField" name="proteinCoverageTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Coverage [%]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinCoverageTxtKeyReleased"/>
@@ -955,6 +969,7 @@
                     <Component class="javax.swing.JLabel" name="piStatusPeptideLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="PI Status"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Inference Status"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="peptidePICmb">
@@ -968,6 +983,7 @@
                             <StringItem index="4" value="Unrelated Proteins"/>
                           </StringArray>
                         </Property>
+                        <Property name="toolTipText" type="java.lang.String" value="Protein Inference Status"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidePICmbActionPerformed"/>
@@ -977,11 +993,13 @@
                     <Component class="javax.swing.JLabel" name="spectraPeptidesLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="#Spectra"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated Spectra"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="peptideNSpectraTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Number of Validated Spectra"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideNSpectraTxtKeyReleased"/>
@@ -1006,11 +1024,13 @@
                     <Component class="javax.swing.JLabel" name="confidencePeptidesLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Confidence"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="peptideConfidenceTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideConfidenceTxtActionPerformed"/>
@@ -1052,6 +1072,7 @@
                     <Component class="javax.swing.JTextField" name="peptideScoreTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Peptide Score"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideScoreTxtKeyReleased"/>
@@ -1060,6 +1081,7 @@
                     <Component class="javax.swing.JLabel" name="scorePeptidesLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Score"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Peptide Score"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="sequenceLabel">
@@ -1147,6 +1169,11 @@
                                 </Property>
                                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                                   <TableColumnModel selectionModel="0">
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
                                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                                       <Title/>
                                       <Editor/>
@@ -1442,7 +1469,13 @@
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="precursorRTTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="precursorMzTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="precursorErrorTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="psmConfidenceTxt" alignment="0" max="32767" attributes="2"/>
                                   <Group type="102" alignment="0" attributes="0">
+                                      <Component id="charge1CheckBox" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="charge2CheckBox" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                       <Component id="charge3CheckBox" min="-2" max="-2" attributes="0"/>
@@ -1450,11 +1483,8 @@
                                       <Component id="charge4CheckBox" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                       <Component id="chargeOver4CheckBox" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="precursorRTTxt" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="precursorMzTxt" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="precursorErrorTxt" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="psmConfidenceTxt" alignment="0" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -1503,6 +1533,7 @@
                                   <Component id="charge3CheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="charge4CheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="chargeOver4CheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="charge1CheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -1516,11 +1547,13 @@
                     <Component class="javax.swing.JLabel" name="precursorRtLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Precursor RT"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor Retention Time [s]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorRTTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor Retention Time [s]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="precursorRTTxtKeyReleased"/>
@@ -1545,11 +1578,13 @@
                     <Component class="javax.swing.JLabel" name="confidencePsmsLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Confidence"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="psmConfidenceTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Confidence [%]"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="psmConfidenceTxtKeyReleased"/>
@@ -1574,11 +1609,13 @@
                     <Component class="javax.swing.JLabel" name="precursorMzLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Precursor m/z"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor m/z"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorMzTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="text" type="java.lang.String" value="Precursor m/z"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="precursorMzTxtKeyReleased"/>
@@ -1603,11 +1640,13 @@
                     <Component class="javax.swing.JLabel" name="precursorErrorLabel">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Precursor Error"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor m/z Error"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorErrorTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor m/z Error"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="precursorErrorTxtKeyReleased"/>
@@ -1751,6 +1790,17 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chargeOver4CheckBoxActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="charge1CheckBox">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="1"/>
+                        <Property name="iconTextGap" type="int" value="6"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="charge1CheckBoxActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

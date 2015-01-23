@@ -4,12 +4,14 @@ import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
+import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -26,6 +28,7 @@ import com.compomics.util.preferences.IdMatchValidationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -233,18 +236,15 @@ public class MatchesValidator {
         PSParameter psParameter2 = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Match Validation. Please Wait...");
+            waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
                     + 2 * identification.getSpectrumIdentificationSize());
         }
-
-        psmMap.resetDoubtfulMatchesFilters();
-        peptideMap.resetDoubtfulMatchesFilters();
-        proteinMap.resetDoubtfulMatchesFilters();
 
         PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
@@ -259,7 +259,6 @@ public class MatchesValidator {
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
             ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
-            ArrayList<Integer> charges = new ArrayList<Integer>();
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
 
@@ -270,7 +269,7 @@ public class MatchesValidator {
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 String spectrumKey = spectrumMatch.getKey();
 
-                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
+                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, null, false);
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -282,16 +281,6 @@ public class MatchesValidator {
                         double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
                         double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
                         precursorMzDeviations.add(precursorMzError);
-                        Integer charge = peptideAssumption.getIdentificationCharge().value;
-
-                        if (!charges.contains(charge)) {
-                            charges.add(charge);
-                            PsmFilter psmFilter = new PsmFilter(">30% Fragment Ion Sequence Coverage");
-                            psmFilter.setDescription("<30% sequence coverage by fragment ions");
-                            psmFilter.setSequenceCoverage(30.0); // @TODO: make the doubtfulThreshold editable by the user!
-                            psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
-                            psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
-                        }
 
                         if (inputMap != null) {
 
@@ -327,6 +316,60 @@ public class MatchesValidator {
                     }
                 }
 
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressCounter();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+
+            if (inputMap != null) {
+                inputMap.resetAdvocateContributions(spectrumFileName);
+            }
+
+            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
+
+            while (psmIterator.hasNext()) {
+
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
+
+                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, precursorMzDeviations, true);
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+
+                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+
+                    if (peptideAssumption != null) {
+                        if (inputMap != null) {
+                            Peptide bestPeptide = peptideAssumption.getPeptide();
+                            ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                            for (int advocateId : assumptions.keySet()) {
+                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                                for (double eValue : advocateAssumptions.keySet()) {
+                                    for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
+                                        if (spectrumIdAssumption instanceof PeptideAssumption) {
+                                            Peptide advocatePeptide = ((PeptideAssumption) spectrumIdAssumption).getPeptide();
+                                            if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
+                                                agreementAdvocates.add(advocateId);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            boolean unique = agreementAdvocates.size() == 1;
+                            for (int advocateId : agreementAdvocates) {
+                                inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
+                            }
+                            inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                        }
+                    }
+                }
+
                 // go through the peptide assumptions
                 if (inputMap != null) { //backward compatibility check
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
@@ -336,7 +379,7 @@ public class MatchesValidator {
                             for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
                                 if (spectrumIdAssumption instanceof PeptideAssumption) {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
-                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator);
+                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator, precursorMzDeviations);
                                 } else if (spectrumIdAssumption instanceof TagAssumption) {
                                     TagAssumption tagAssumption = (TagAssumption) spectrumIdAssumption;
                                     updateTagAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, tagAssumption);
@@ -351,101 +394,6 @@ public class MatchesValidator {
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
-                }
-            }
-
-            // check if we should narrow the mass accuracy window, if yes, do a second pass validation
-            if (!precursorMzDeviations.isEmpty()) {
-
-                NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
-                Double minDeviation = precDeviationDistribution.getMinValueForProbability(0.0001);
-                Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(0.0001);
-                boolean needSecondPass = false;
-
-                if (minDeviation < maxDeviation) {
-                    String unit = "ppm";
-                    if (!shotgunProtocol.isMs1ResolutionPpm()) {
-                        unit = "Da";
-                    }
-                    if (minDeviation != Double.NaN && minDeviation > -shotgunProtocol.getMs1Resolution()) {
-                        needSecondPass = true;
-                        PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation > " + Util.roundDouble(minDeviation, 2) + " " + unit);
-                        psmFilter.setDescription("Precursor m/z deviation < " + Util.roundDouble(minDeviation, 2) + " " + unit);
-                        psmFilter.setMinPrecursorMzError(minDeviation);
-                        psmFilter.setPrecursorMinMzErrorComparison(RowFilter.ComparisonType.AFTER);
-                        for (int charge : charges) {
-                            psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
-                        }
-                    }
-                    if (minDeviation != Double.NaN && maxDeviation < shotgunProtocol.getMs1Resolution()) {
-                        needSecondPass = true;
-                        PsmFilter psmFilter = new PsmFilter("Precursor m/z deviation < " + Util.roundDouble(maxDeviation, 2) + " " + unit);
-                        psmFilter.setDescription("Precursor m/z deviation > " + Util.roundDouble(maxDeviation, 2) + " " + unit);
-                        psmFilter.setMaxPrecursorMzError(maxDeviation);
-                        psmFilter.setPrecursorMaxMzErrorComparison(RowFilter.ComparisonType.BEFORE);
-                        for (int charge : charges) {
-                            psmMap.addDoubtfulMatchesFilter(charge, spectrumFileName, psmFilter);
-                        }
-                    }
-                }
-
-                if (needSecondPass) {
-
-                    if (inputMap != null) {
-                        inputMap.resetAdvocateContributions(spectrumFileName);
-                    }
-
-                    psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
-
-                    while (psmIterator.hasNext()) {
-
-                        SpectrumMatch spectrumMatch = psmIterator.next();
-                        String spectrumKey = spectrumMatch.getKey();
-
-                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey);
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                        if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                            PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-
-                            if (peptideAssumption != null) {
-                                if (inputMap != null) {
-                                    Peptide bestPeptide = peptideAssumption.getPeptide();
-                                    ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
-                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                                    for (int advocateId : assumptions.keySet()) {
-                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                                        for (double eValue : advocateAssumptions.keySet()) {
-                                            for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
-                                                if (spectrumIdAssumption instanceof PeptideAssumption) {
-                                                    Peptide advocatePeptide = ((PeptideAssumption) spectrumIdAssumption).getPeptide();
-                                                    if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                                        agreementAdvocates.add(advocateId);
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    boolean unique = agreementAdvocates.size() == 1;
-                                    for (int advocateId : agreementAdvocates) {
-                                        inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
-                                    }
-                                    inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
-                                }
-                            }
-                        }
-
-                        if (waitingHandler != null) {
-                            waitingHandler.increaseSecondaryProgressCounter();
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
-                            }
-                        }
-                    }
-                } else if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressCounter(identification.getSpectrumIdentification(spectrumFileName).size());
                 }
             }
         }
@@ -540,8 +488,11 @@ public class MatchesValidator {
         // validate the proteins
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+        double fdrLimit = targetDecoyResults.getFdrLimit();
+        double nTargetLimit = 100.0 / fdrLimit;
         double proteinThreshold = targetDecoyResults.getScoreLimit();
-        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+        double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
         if (proteinConfidentThreshold > 100) {
             proteinConfidentThreshold = 100;
         }
@@ -558,7 +509,7 @@ public class MatchesValidator {
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
             updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
-                    targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+                    targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
 
             // set the fraction details
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
@@ -681,10 +632,14 @@ public class MatchesValidator {
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProteinMap proteinMap, String proteinKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+        double fdrLimit = targetDecoyResults.getFdrLimit();
+        double nTargetLimit = 100.0 / fdrLimit;
         double proteinThreshold = targetDecoyResults.getScoreLimit();
-        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+        double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
         if (proteinConfidentThreshold > 100) {
             proteinConfidentThreshold = 100;
@@ -692,7 +647,7 @@ public class MatchesValidator {
 
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
         updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
-                targetDecoyMap, proteinThreshold, proteinConfidentThreshold, noValidated, proteinMap.getDoubtfulMatchesFilters(), proteinKey);
+                targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
     }
 
     /**
@@ -706,7 +661,8 @@ public class MatchesValidator {
      * match should be considered as confident
      * @param noValidated boolean indicating whether no validation was actually
      * conducted
-     * @param doubtfulMatchFilters the filters to use for quality filtering
+     * @param nTargetLimit the limit in number of target hits before the first
+     * decoy hit
      * @param identificationFeaturesGenerator the identification features
      * generator
      * @param proteinKey the key of the protein match of interest
@@ -720,14 +676,15 @@ public class MatchesValidator {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold,
-            double confidenceThreshold, boolean noValidated, ArrayList<ProteinFilter> doubtfulMatchFilters,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold, double nTargetLimit,
+            double confidenceThreshold, boolean noValidated,
             String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
         psParameter.resetQcResults();
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (!psParameter.isManualValidation()) {
 
@@ -736,8 +693,9 @@ public class MatchesValidator {
                 if (!noValidated && psParameter.getProteinProbabilityScore() <= scoreThreshold) {
                     String reasonDoubtful = null;
                     boolean filterPassed = true;
-                    for (ProteinFilter filter : doubtfulMatchFilters) {
-                        boolean validation = filter.isValidated(proteinKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
+                    for (Filter filter : validationQCPreferences.getProteinFilters()) {
+                        ProteinFilter proteinFilter = (ProteinFilter) filter;
+                        boolean validation = proteinFilter.isValidated(proteinKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
                         psParameter.setQcResult(filter.getName(), validation);
                         if (!validation) {
                             filterPassed = false;
@@ -758,7 +716,7 @@ public class MatchesValidator {
                         }
                         reasonDoubtful += "Low confidence";
                     }
-                    boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+                    boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
                     if (!enoughHits) {
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
@@ -767,7 +725,8 @@ public class MatchesValidator {
                         }
                         reasonDoubtful += "Low number of hits";
                     }
-                    if (!sequenceFactory.hasEnoughSequences()) {
+                    boolean enoughSequences = !validationQCPreferences.isDbSize() || sequenceFactory.hasEnoughSequences();
+                    if (!enoughSequences) {
                         if (reasonDoubtful == null) {
                             reasonDoubtful = "";
                         } else {
@@ -775,7 +734,7 @@ public class MatchesValidator {
                         }
                         reasonDoubtful += "Database too small";
                     }
-                    if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                    if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                     } else {
                         psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
@@ -820,12 +779,16 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
         psParameter.resetQcResults();
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
             TargetDecoyMap targetDecoyMap = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey()));
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double fdrLimit = targetDecoyResults.getFdrLimit();
+            double nTargetLimit = 100.0 / fdrLimit;
             double peptideThreshold = targetDecoyResults.getScoreLimit();
-            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
             }
@@ -833,8 +796,9 @@ public class MatchesValidator {
             if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
-                for (PeptideFilter filter : peptideMap.getDoubtfulMatchesFilters()) {
-                    boolean validation = filter.isValidated(peptideKey, identification, identificationFeaturesGenerator);
+                for (Filter filter : validationQCPreferences.getPeptideFilters()) {
+                    PeptideFilter peptideFilter = (PeptideFilter) filter;
+                    boolean validation = peptideFilter.isValidated(peptideKey, identification, identificationFeaturesGenerator);
                     psParameter.setQcResult(filter.getName(), validation);
                     if (!validation) {
                         filterPassed = false;
@@ -855,7 +819,7 @@ public class MatchesValidator {
                     }
                     reasonDoubtful += "Low confidence";
                 }
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
@@ -864,7 +828,8 @@ public class MatchesValidator {
                     }
                     reasonDoubtful += "Low number of hits";
                 }
-                if (!sequenceFactory.hasEnoughSequences()) {
+                boolean enoughSequences = !validationQCPreferences.isDbSize() || sequenceFactory.hasEnoughSequences();
+                if (!enoughSequences) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
                     } else {
@@ -872,7 +837,7 @@ public class MatchesValidator {
                     }
                     reasonDoubtful += "Database too small";
                 }
-                if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                 } else {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
@@ -902,6 +867,9 @@ public class MatchesValidator {
      * generator
      * @param spectrumKey the key of the spectrum match of interest
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
+     * @param precursorMzDeviations list of the precursor m/z deviations to
+     * compare this psm to
+     * @param applyQCFilters if true quality control filters will be used
      *
      * @throws IOException thrown if an IOException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
@@ -911,12 +879,13 @@ public class MatchesValidator {
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
-            PsmSpecificMap psmMap, String spectrumKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PsmSpecificMap psmMap, String spectrumKey, ArrayList<Double> precursorMzDeviations, boolean applyQCFilters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
         psParameter.resetQcResults();
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 
@@ -926,51 +895,53 @@ public class MatchesValidator {
             double psmThreshold = 0;
             double confidenceThreshold = 100;
             boolean noValidated = true;
+            double nTargetLimit = 100;
 
             if (targetDecoyMap != null) {
                 TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                double fdrLimit = targetDecoyResults.getFdrLimit();
+                nTargetLimit = 100.0 / fdrLimit;
                 psmThreshold = targetDecoyResults.getScoreLimit();
-                confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+                double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+                confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
                 if (confidenceThreshold > 100) {
                     confidenceThreshold = 100;
                 }
+
                 noValidated = targetDecoyResults.noValidated();
             }
 
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
 
-                AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-                SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-                String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
-                    // update the annotation preferences for the new psm, mainly the charge
-                    annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, sequenceMatchingPreferences);
-                } else if (spectrumMatch.getBestTagAssumption() != null) {
-                    charge = spectrumMatch.getBestTagAssumption().getIdentificationCharge().value;
-                } else {
-                    throw new IllegalArgumentException("No best tag or peptide found for spectrum " + spectrumKey);
-                }
-
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
+                
+                if (applyQCFilters) {
 
-                for (PsmFilter filter : psmMap.getDoubtfulMatchesFilters(charge, spectrumFile)) {
-                    boolean validated = filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
-                    psParameter.setQcResult(filter.getName(), validated);
-                    if (!validated) {
-                        if (filter.getName().toLowerCase().contains("deviation")) {
-                            filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
-                        } else if (filter.getName().toLowerCase().contains("coverage")) {
-                            filter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                    AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+                    SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    if (spectrumMatch.getBestPeptideAssumption() != null) {
+                        // update the annotation preferences for the new psm, mainly the charge
+                        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, sequenceMatchingPreferences);
+                    } else if (spectrumMatch.getBestTagAssumption() != null) {
+                        // Will not get until there for now
+                    } else {
+                        throw new IllegalArgumentException("No best tag or peptide found for spectrum " + spectrumKey);
+                    }
+                    for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                        PsmFilter psmFilter = (PsmFilter) filter;
+                        boolean validated = psmFilter.isValidated(spectrumKey, identification, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, precursorMzDeviations);
+                        psParameter.setQcResult(psmFilter.getName(), validated);
+                        if (!validated) {
+                            filterPassed = false;
+                            if (reasonDoubtful == null) {
+                                reasonDoubtful = "";
+                            } else {
+                                reasonDoubtful += ", ";
+                            }
+                            reasonDoubtful += filter.getDescription();
                         }
-                        filterPassed = false;
-                        if (reasonDoubtful == null) {
-                            reasonDoubtful = "";
-                        } else {
-                            reasonDoubtful += ", ";
-                        }
-                        reasonDoubtful += filter.getDescription();
                     }
                 }
 
@@ -985,7 +956,7 @@ public class MatchesValidator {
                     reasonDoubtful += "Low confidence";
                 }
 
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+                boolean enoughHits = !validationQCPreferences.isFirstDecoy() || targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
@@ -996,7 +967,9 @@ public class MatchesValidator {
                     reasonDoubtful += "Low number of hits";
                 }
 
-                if (!sequenceFactory.hasEnoughSequences()) {
+                boolean enoughSequences = !validationQCPreferences.isDbSize() || sequenceFactory.hasEnoughSequences();
+
+                if (!enoughSequences) {
                     if (reasonDoubtful == null) {
                         reasonDoubtful = "";
                     } else {
@@ -1005,7 +978,7 @@ public class MatchesValidator {
                     reasonDoubtful += "Database too small";
                 }
 
-                if (filterPassed && confidenceThresholdPassed && enoughHits && sequenceFactory.hasEnoughSequences()) {
+                if (filterPassed && confidenceThresholdPassed && enoughHits && enoughSequences) {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.confident);
                 } else {
                     psParameter.setMatchValidationLevel(MatchValidationLevel.doubtful);
@@ -1041,20 +1014,24 @@ public class MatchesValidator {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
-    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol, 
+    public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, TagAssumption tagAssumption)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) tagAssumption.getUrParam(psParameter);
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 
             TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(tagAssumption.getAdvocate());
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double fdrLimit = targetDecoyResults.getFdrLimit();
+            double nTargetLimit = 100.0 / fdrLimit;
             double seThreshold = targetDecoyResults.getScoreLimit();
-            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
@@ -1092,7 +1069,7 @@ public class MatchesValidator {
                     reasonDoubtful += "Low confidence";
                 }
 
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
@@ -1140,6 +1117,8 @@ public class MatchesValidator {
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
+     * @param precursorMzDeviations list of the precursor m/z deviations to
+     * compare this assumption to
      *
      * @throws IOException thrown if an IOException occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
@@ -1147,21 +1126,26 @@ public class MatchesValidator {
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      */
-    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol, 
-            IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+    public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
+            IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption,
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
         psParameter.resetQcResults();
+        ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
 
         if (sequenceFactory.concatenatedTargetDecoy()) {
 
             TargetDecoyMap targetDecoyMap = inputMap.getTargetDecoyMap(peptideAssumption.getAdvocate());
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double fdrLimit = targetDecoyResults.getFdrLimit();
+            double nTargetLimit = 100.0 / fdrLimit;
             double seThreshold = targetDecoyResults.getScoreLimit();
-            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + targetDecoyMap.getResolution();
+            double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+            double confidenceThreshold = targetDecoyResults.getConfidenceLimit() + margin;
 
             if (confidenceThreshold > 100) {
                 confidenceThreshold = 100;
@@ -1174,8 +1158,10 @@ public class MatchesValidator {
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
 
-                for (AssumptionFilter filter : inputMap.getDoubtfulMatchesFilters()) {
-                    boolean validated = filter.isValidated(spectrumKey, peptideAssumption, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
+                for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                    PsmFilter psmFilter = (PsmFilter) filter;
+                    AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
+                    boolean validated = assumptionFilter.isValidated(spectrumKey, peptideAssumption, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, precursorMzDeviations);
                     psParameter.setQcResult(filter.getName(), validated);
                     if (!validated) {
                         filterPassed = false;
@@ -1199,7 +1185,7 @@ public class MatchesValidator {
                     reasonDoubtful += "Low confidence";
                 }
 
-                boolean enoughHits = targetDecoyMap.getnTargetOnly() > 100;
+                boolean enoughHits = targetDecoyMap.getnTargetOnly() > nTargetLimit;
 
                 if (!enoughHits) {
                     if (reasonDoubtful == null) {
@@ -1589,5 +1575,50 @@ public class MatchesValidator {
      */
     public void setProteinMap(ProteinMap proteinMap) {
         this.proteinMap = proteinMap;
+    }
+
+    /**
+     * Sets the default matches quality control filters.
+     *
+     * @param validationQCPreferences the default matches quality control
+     * filters
+     */
+    public static void setDefaultMatchesQCFilters(ValidationQCPreferences validationQCPreferences) {
+
+        ArrayList<Filter> psmFilters = new ArrayList<Filter>(3);
+        PsmFilter psmFilter = new PsmFilter("Fragment Ion Sequence Coverage");
+        psmFilter.setDescription("Sequence coverage filter by fragment ions");
+        psmFilter.getAssumptionFilter().setSequenceCoverage(30.0);
+        psmFilter.getAssumptionFilter().setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
+        psmFilters.add(psmFilter);
+        psmFilter = new PsmFilter("Mass deviation");
+        psmFilter.setDescription("Precursor m/z deviation filter");
+        psmFilter.getAssumptionFilter().setPrecursorMzError(0.0001);
+        psmFilter.getAssumptionFilter().setPrecursorMzErrorComparison(RowFilter.ComparisonType.BEFORE);
+        psmFilter.getAssumptionFilter().setPrecursorMzErrorType(IonMatch.MzErrorType.Statistical);
+        psmFilters.add(psmFilter);
+        validationQCPreferences.setPsmFilters(psmFilters);
+
+        ArrayList<Filter> peptideFilters = new ArrayList<Filter>(1);
+        PeptideFilter peptideFilter = new PeptideFilter("One confident PSM");
+        peptideFilter.setDescription("Number of confident PSMs filter");
+        peptideFilter.setNConfidentSpectra(0);
+        peptideFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
+        peptideFilters.add(peptideFilter);
+        validationQCPreferences.setPeptideFilters(peptideFilters);
+
+        ArrayList<Filter> proteinFilters = new ArrayList<Filter>(1);
+        ProteinFilter proteinFilter = new ProteinFilter(">=2 confident peptides");
+        proteinFilter.setDescription("Number of confident peptides filter");
+        proteinFilter.setnConfidentPeptides(1);
+        proteinFilter.setnConfidentPeptidesComparison(RowFilter.ComparisonType.AFTER);
+        proteinFilters.add(proteinFilter);
+        proteinFilter = new ProteinFilter(">=2 confident spectra");
+        proteinFilter.setDescription("Number of confident spectra filter");
+        proteinFilter.setProteinNConfidentSpectra(1);
+        proteinFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
+        proteinFilters.add(proteinFilter);
+        validationQCPreferences.setProteinFilters(proteinFilters);
+
     }
 }

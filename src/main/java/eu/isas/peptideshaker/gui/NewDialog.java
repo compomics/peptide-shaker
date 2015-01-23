@@ -43,6 +43,7 @@ import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.Tips;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -147,6 +148,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.welcomeDialog = null;
         identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
         identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -167,6 +169,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.welcomeDialog = welcomeDialog;
         identificationParameters = IdentificationParameters.getDefaultIdentificationParameters(new SearchParameters()); // set default ID parameters
         identificationParameters.getSearchParameters().setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        MatchesValidator.setDefaultMatchesQCFilters(identificationParameters.getIdValidationPreferences().getValidationQCPreferences());
         loadGeneMappings(); //@TODO: gene mappings should be initialized in the shaker
         setUpGui();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));

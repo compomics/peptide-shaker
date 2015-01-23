@@ -9,12 +9,19 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.ValidationQCPreferences;
+import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
+import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
+import eu.isas.peptideshaker.gui.filtering.PeptideFilterDialog;
+import eu.isas.peptideshaker.gui.filtering.ProteinFilterDialog;
+import eu.isas.peptideshaker.gui.filtering.PsmFilterDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -113,7 +120,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         PEPTIDE,
         PSM
     }
-
+    
     /**
      * Constructor for a protein match validation dialog.
      *
@@ -152,18 +159,19 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         type = Type.PROTEIN;
 
-        ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
-        for (ProteinFilter proteinFilter : proteinMap.getDoubtfulMatchesFilters()) {
-            filters.add(proteinFilter);
-        }
-
         TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-        populateGUI(identificationFeaturesGenerator, targetDecoyMap, filters, "Proteins");
+        populateGUI(targetDecoyMap, "Proteins");
 
         setTitle("Protein Group Validation Quality");
 
         setLocationRelativeTo(parent);
         setVisible(true);
+        
+        if (!psParameter.hasQcFilters()) {
+            JOptionPane.showMessageDialog(null,
+                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -203,11 +211,6 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         this.identificationParameters = identificationParameters;
         type = Type.PEPTIDE;
 
-        ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
-        for (PeptideFilter peptideFilter : peptideSpecificMap.getDoubtfulMatchesFilters()) {
-            filters.add(peptideFilter);
-        }
-
         String peptideGroupKey = psParameter.getSpecificMapKey();
         TargetDecoyMap targetDecoyMap = peptideSpecificMap.getTargetDecoyMap(peptideSpecificMap.getCorrectedKey(peptideGroupKey));
         String groupName = "";
@@ -215,12 +218,18 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             groupName += PeptideSpecificMap.getKeyName(identificationParameters.getSearchParameters().getModificationProfile(), peptideGroupKey) + " ";
         }
         groupName += "Peptides";
-        populateGUI(identificationFeaturesGenerator, targetDecoyMap, filters, groupName);
+        populateGUI(targetDecoyMap, groupName);
 
         setTitle("Peptide Validation Quality");
 
         setLocationRelativeTo(parent);
         setVisible(true);
+        
+        if (!psParameter.hasQcFilters()) {
+            JOptionPane.showMessageDialog(null,
+                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -270,10 +279,6 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         } else {
             throw new IllegalArgumentException("No best match found for spectrum " + psmMatchKey + ".");
         }
-        ArrayList<MatchFilter> filters = new ArrayList<MatchFilter>();
-        for (PsmFilter psmFilter : psmSpecificMap.getDoubtfulMatchesFilters(charge, fileName)) {
-            filters.add(psmFilter);
-        }
 
         TargetDecoyMap targetDecoyMap = psmSpecificMap.getTargetDecoyMap(charge, fileName);
         String groupName = "Charge ";
@@ -284,12 +289,18 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             groupName += correctedCharge;
         }
         groupName += " PSMs";
-        populateGUI(identificationFeaturesGenerator, targetDecoyMap, filters, groupName);
+        populateGUI(targetDecoyMap, groupName);
 
         setTitle("PSM Validation Quality");
 
         setLocationRelativeTo(parent);
         setVisible(true);
+        
+        if (!psParameter.hasQcFilters()) {
+            JOptionPane.showMessageDialog(null,
+                    "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -306,7 +317,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         validationLevelJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         // set up the table header tooltips
-        validationTableToolTips = new ArrayList<String>();
+        validationTableToolTips = new ArrayList<String>(3);
         validationTableToolTips.add(null);
         validationTableToolTips.add("Quality Test");
         validationTableToolTips.add("Passed");
@@ -325,8 +336,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    private void populateGUI(IdentificationFeaturesGenerator identificationFeaturesGenerator, TargetDecoyMap targetDecoyMap,
-            ArrayList<MatchFilter> filters, String targetDecoyCategory) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory) 
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         // Validation level
         validationLevelJComboBox.setSelectedItem(psParameter.getMatchValidationLevel().getName());
@@ -355,20 +366,29 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         if (targetDecoy) {
             int nTargetOnly = targetDecoyMap.getnTargetOnly();
             matchesBeforeFirstDecoyLbl.setText(nTargetOnly + " matches before the first decoy hit");
-            if (nTargetOnly < 100) { // @TODO: make the threshold editable by the user!
+            
+            TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+            double fdrLimit = targetDecoyResults.getFdrLimit();
+            double nTargetLimit = 100.0 / fdrLimit;
+            if (nTargetOnly < nTargetLimit) {
                 matchesBeforeFirstDecoyLbl.setForeground(Color.red);
             } else {
                 matchesBeforeFirstDecoyLbl.setForeground(green);
             }
+            recommendedNumberOfTargetHitsLbl.setText("Recommended: " + Util.roundDouble(nTargetLimit, 0) + " matches before the first decoy hit");
+            
             double resolution = targetDecoyMap.getResolution();
             confidenceResolutionLbl.setText("PEP/Confidence resolution of " + Util.roundDouble(resolution, 2) + "%");
-            if (resolution > 5) { // @TODO: make the threshold editable by the user!
+            
+            double resolutionLimit = fdrLimit;
+            if (resolution > 5*resolutionLimit) {
                 confidenceResolutionLbl.setForeground(Color.red);
-            } else if (resolution > 1) { // @TODO: make the threshold editable by the user!
+            } else if (resolution > resolutionLimit) {
                 confidenceResolutionLbl.setForeground(orange);
             } else {
                 confidenceResolutionLbl.setForeground(green);
             }
+            recommendedResolutionLbl.setText("Recommended: resolution < " + Util.roundDouble(resolutionLimit, 2) + "%");
         } else {
             matchesBeforeFirstDecoyLbl.setText("No decoy");
             matchesBeforeFirstDecoyLbl.setForeground(Color.gray);
@@ -440,14 +460,6 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             confidenceThresholdLbl.setText("Impossible to estimate confidence threshold");
             validationStatusLbl.setForeground(Color.gray);
             confidenceLbl.setForeground(Color.gray);
-        }
-
-        // Backward compatibility check
-        if (!psParameter.hasQcFilters()) {
-            for (MatchFilter filter : filters) {
-                boolean validated = filter.isValidated(matchKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters);
-                psParameter.setQcResult(filter.getName(), validated);
-            }
         }
 
         // Quality filters
@@ -574,9 +586,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         bitRecommendationLabel4 = new javax.swing.JLabel();
         nTargetLbl = new javax.swing.JLabel();
         targetDecoyGroupPanel = new javax.swing.JPanel();
-        bitRecommendationLabel5 = new javax.swing.JLabel();
+        recommendedNumberOfTargetHitsLbl = new javax.swing.JLabel();
         matchesBeforeFirstDecoyLbl = new javax.swing.JLabel();
-        bitRecommendationLabel6 = new javax.swing.JLabel();
+        recommendedResolutionLbl = new javax.swing.JLabel();
         confidenceResolutionLbl = new javax.swing.JLabel();
         targetDecoyPanel = new javax.swing.JPanel();
         validationThresholdLbl = new javax.swing.JLabel();
@@ -599,6 +611,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         };
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        editLbl = new javax.swing.JLabel();
 
         bitRecommendationLabel1.setFont(bitRecommendationLabel1.getFont().deriveFont((bitRecommendationLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
         bitRecommendationLabel1.setText("Recommended: Concatenated Target/Decoy");
@@ -653,7 +666,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         targetDecoyLbl.setText("Concatenated Target/Decoy");
 
         bitRecommendationLabel4.setFont(bitRecommendationLabel4.getFont().deriveFont((bitRecommendationLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
-        bitRecommendationLabel4.setText("Recommended: between 10,000 and 100,000");
+        bitRecommendationLabel4.setText("Recommended: between 1,000 and 100,000");
 
         nTargetLbl.setText("xx,xxx target sequences");
 
@@ -691,13 +704,13 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         targetDecoyGroupPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Target/Decoy Group"));
         targetDecoyGroupPanel.setOpaque(false);
 
-        bitRecommendationLabel5.setFont(bitRecommendationLabel5.getFont().deriveFont((bitRecommendationLabel5.getFont().getStyle() | java.awt.Font.ITALIC)));
-        bitRecommendationLabel5.setText("Recommended: 100 matches before the first decoy hit");
+        recommendedNumberOfTargetHitsLbl.setFont(recommendedNumberOfTargetHitsLbl.getFont().deriveFont((recommendedNumberOfTargetHitsLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
+        recommendedNumberOfTargetHitsLbl.setText("Recommended: 100 matches before the first decoy hit");
 
         matchesBeforeFirstDecoyLbl.setText("xxx matches before the first decoy hit");
 
-        bitRecommendationLabel6.setFont(bitRecommendationLabel6.getFont().deriveFont((bitRecommendationLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
-        bitRecommendationLabel6.setText("Recommended: resolution < 1%");
+        recommendedResolutionLbl.setFont(recommendedResolutionLbl.getFont().deriveFont((recommendedResolutionLbl.getFont().getStyle() | java.awt.Font.ITALIC)));
+        recommendedResolutionLbl.setText("Recommended: resolution < 1%");
 
         confidenceResolutionLbl.setText("PEP/Confidence resolution of x%");
 
@@ -711,11 +724,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                     .addGroup(targetDecoyGroupPanelLayout.createSequentialGroup()
                         .addComponent(matchesBeforeFirstDecoyLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
-                        .addComponent(bitRecommendationLabel5))
+                        .addComponent(recommendedNumberOfTargetHitsLbl))
                     .addGroup(targetDecoyGroupPanelLayout.createSequentialGroup()
                         .addComponent(confidenceResolutionLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(266, 266, 266)
-                        .addComponent(bitRecommendationLabel6)))
+                        .addComponent(recommendedResolutionLbl)))
                 .addContainerGap())
         );
         targetDecoyGroupPanelLayout.setVerticalGroup(
@@ -724,11 +737,11 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(targetDecoyGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(matchesBeforeFirstDecoyLbl)
-                    .addComponent(bitRecommendationLabel5))
+                    .addComponent(recommendedNumberOfTargetHitsLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(targetDecoyGroupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confidenceResolutionLbl)
-                    .addComponent(bitRecommendationLabel6))
+                    .addComponent(recommendedResolutionLbl))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -820,6 +833,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
             }
         });
 
+        editLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        editLbl.setText("Validation Quality Control Settings can be edited via the \"Edit\" -> \"Validation QC\" Menu");
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -829,7 +845,9 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(validationLevelPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(editLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
@@ -855,7 +873,8 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(okButton))
+                    .addComponent(okButton)
+                    .addComponent(editLbl))
                 .addContainerGap())
         );
 
@@ -1038,19 +1057,20 @@ public class MatchValidationDialog extends javax.swing.JDialog {
     private javax.swing.JLabel bitRecommendationLabel1;
     private javax.swing.JLabel bitRecommendationLabel3;
     private javax.swing.JLabel bitRecommendationLabel4;
-    private javax.swing.JLabel bitRecommendationLabel5;
-    private javax.swing.JLabel bitRecommendationLabel6;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel confidenceLbl;
     private javax.swing.JLabel confidenceResolutionLbl;
     private javax.swing.JLabel confidenceThresholdLbl;
     private javax.swing.JPanel databaseSearchPanel;
+    private javax.swing.JLabel editLbl;
     private javax.swing.JLabel matchesBeforeFirstDecoyLbl;
     private javax.swing.JLabel nTargetLbl;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel qualityFiltersPanel;
     private javax.swing.JTable qualityFiltersTable;
     private javax.swing.JScrollPane qualityFiltersTableScrollPane;
+    private javax.swing.JLabel recommendedNumberOfTargetHitsLbl;
+    private javax.swing.JLabel recommendedResolutionLbl;
     private javax.swing.JPanel targetDecoyGroupPanel;
     private javax.swing.JLabel targetDecoyLbl;
     private javax.swing.JPanel targetDecoyPanel;
