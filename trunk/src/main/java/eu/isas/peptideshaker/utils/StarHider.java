@@ -535,8 +535,8 @@ public class StarHider {
                 PsmFilter psmFilter;
                 if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
                     psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION);
-                    psmFilter.setCharges(peptideShakerGUI.getMetrics().getFoundCharges());
-                    psmFilter.setFileNames(peptideShakerGUI.getIdentification().getSpectrumFiles());
+                    psmFilter.getAssumptionFilter().setCharges(peptideShakerGUI.getMetrics().getFoundCharges());
+                    psmFilter.getAssumptionFilter().setFileNames(peptideShakerGUI.getIdentification().getSpectrumFiles());
                     psmFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
                 } else {
@@ -609,8 +609,8 @@ public class StarHider {
                 PsmFilter psmFilter;
                 if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
                     psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION);
-                    psmFilter.setCharges(peptideShakerGUI.getMetrics().getFoundCharges());
-                    psmFilter.setFileNames(peptideShakerGUI.getIdentification().getSpectrumFiles());
+                    psmFilter.getAssumptionFilter().setCharges(peptideShakerGUI.getMetrics().getFoundCharges());
+                    psmFilter.getAssumptionFilter().setFileNames(peptideShakerGUI.getIdentification().getSpectrumFiles());
                     psmFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
                 } else {

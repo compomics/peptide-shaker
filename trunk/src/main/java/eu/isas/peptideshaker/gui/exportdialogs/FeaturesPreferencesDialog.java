@@ -2074,6 +2074,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                     "An error occurred while generating the output. Please make sure "
                                     + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
+                        } catch (IllegalArgumentException e) {
+                            if (e.getMessage().contains("Invalid row number (65536)")) {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(peptideShakerGUI,
+                                        "An error occurred while generating the output. This format can contain only 65,535 lines. Please use a text export instead.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            } else {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            }
                         } catch (Exception e) {
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);

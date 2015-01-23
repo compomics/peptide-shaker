@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
-import com.compomics.util.preferences.UtilitiesPathPreferences;
+import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import org.apache.commons.cli.Options;
 

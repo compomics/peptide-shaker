@@ -496,10 +496,15 @@ public class ProjectDetails implements Serializable {
         ArrayList<File> idFiles = identificationFiles;
         for (File idFile : idFiles) {
             String idFileName = Util.getFileName(idFile);
-            try {
-                IdfileReader idFileReader = idFileReaderFactory.getFileReader(idFile);
-                identificationAlgorithms.put(idFileName, idFileReader.getSoftwareVersions());
-            } catch (Exception e) {
+            boolean fileFound = idFile.exists();
+            if (fileFound) {
+                try {
+                    IdfileReader idFileReader = idFileReaderFactory.getFileReader(idFile);
+                    identificationAlgorithms.put(idFileName, idFileReader.getSoftwareVersions());
+                } catch (Exception e) {
+                    fileFound = false;
+                }
+            } else {
                 // File was moved, use the extension to map it manually
                 Advocate advocate = Advocate.getAdvocateFromFile(idFileName);
                 if (advocate != null) {

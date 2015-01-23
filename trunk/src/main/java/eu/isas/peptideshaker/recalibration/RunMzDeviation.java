@@ -3,8 +3,10 @@ package eu.isas.peptideshaker.recalibration;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.*;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -262,99 +264,96 @@ public class RunMzDeviation {
     public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences,
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
-        // @TODO: the progress bar usage in the code below could be improved
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-        PSParameter psParameter = new PSParameter();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
         HashMap<Double, ArrayList<Double>> spectrumFragmentMap;
 
-        identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, waitingHandler);
-        identification.loadSpectrumMatches(spectrumFileName, waitingHandler);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         if (waitingHandler != null) {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
-        for (String spectrumName : spectrumFactory.getSpectrumTitles(spectrumFileName)) {
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false);
+
+        while (psmIterator.hasNext()) {
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            String spectrumKey = Spectrum.getSpectrumKey(spectrumFileName, spectrumName);
+            SpectrumMatch spectrumMatch = psmIterator.next();
+            String spectrumKey = spectrumMatch.getKey();
 
-            if (identification.matchExists(spectrumKey)) {
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            if (psParameter.getMatchValidationLevel().isValidated()) {
 
-                if (psParameter.getMatchValidationLevel().isValidated()) {
+                Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
+                double precursorMz = precursor.getMz();
+                double precursorRT = precursor.getRt();
 
-                    Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                    double precursorMz = precursor.getMz();
-                    double precursorRT = precursor.getRt();
+                if (!precursorRawMap.containsKey(precursorRT)) {
+                    precursorRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
+                }
+                if (!precursorRawMap.get(precursorRT).containsKey(precursorMz)) {
+                    precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
+                }
 
-                    if (!precursorRawMap.containsKey(precursorRT)) {
-                        precursorRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
+                if (spectrumMatch.getBestPeptideAssumption() != null) {
+
+                    double error = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursorMz, false);
+                    precursorRawMap.get(precursorRT).get(precursorMz).add(error);
+
+                    MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                    ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
+                            annotationPreferences.getIonTypes(),
+                            annotationPreferences.getNeutralLosses(),
+                            annotationPreferences.getValidatedCharges(),
+                            spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
+                            currentSpectrum,
+                            spectrumMatch.getBestPeptideAssumption().getPeptide(),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                            annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                    spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
+
+                    for (IonMatch ionMatch : annotations) {
+
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                            break;
+                        }
+
+                        double fragmentMz = ionMatch.peak.mz;
+                        int roundedValue = (int) (fragmentMz / ms2Bin);
+                        double fragmentMzKey = (double) roundedValue * ms2Bin;
+
+                        if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
+                            spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
+                        }
+
+                        spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
                     }
-                    if (!precursorRawMap.get(precursorRT).containsKey(precursorMz)) {
-                        precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
+
+                    if (!fragmentRawMap.containsKey(precursorRT)) {
+                        fragmentRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
                     }
 
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    for (double key : spectrumFragmentMap.keySet()) {
 
-                    if (spectrumMatch.getBestPeptideAssumption() != null) {
-
-                        double error = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursorMz, false);
-                        precursorRawMap.get(precursorRT).get(precursorMz).add(error);
-
-                        MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
-                                annotationPreferences.getIonTypes(),
-                                annotationPreferences.getNeutralLosses(),
-                                annotationPreferences.getValidatedCharges(),
-                                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                                currentSpectrum,
-                                spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
-                        spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
-
-                        for (IonMatch ionMatch : annotations) {
-
-                            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                                break;
-                            }
-
-                            double fragmentMz = ionMatch.peak.mz;
-                            int roundedValue = (int) (fragmentMz / ms2Bin);
-                            double fragmentMzKey = (double) roundedValue * ms2Bin;
-
-                            if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
-                                spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
-                            }
-
-                            spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                            break;
                         }
 
-                        if (!fragmentRawMap.containsKey(precursorRT)) {
-                            fragmentRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());
+                        if (!fragmentRawMap.get(precursorRT).containsKey(key)) {
+                            fragmentRawMap.get(precursorRT).put(key, new ArrayList<Double>());
                         }
 
-                        for (double key : spectrumFragmentMap.keySet()) {
-
-                            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                                break;
-                            }
-
-                            if (!fragmentRawMap.get(precursorRT).containsKey(key)) {
-                                fragmentRawMap.get(precursorRT).put(key, new ArrayList<Double>());
-                            }
-
-                            fragmentRawMap.get(precursorRT).get(key).add(BasicMathFunctions.median(spectrumFragmentMap.get(key)));
-                        }
+                        fragmentRawMap.get(precursorRT).get(key).add(BasicMathFunctions.median(spectrumFragmentMap.get(key)));
                     }
                 }
             }

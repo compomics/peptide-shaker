@@ -45,83 +45,22 @@ public class PsmSpecificMap implements Serializable {
     private HashMap<Integer, ArrayList<String>> fileSpecificGrouping = new HashMap<Integer, ArrayList<String>>();
     /**
      * The filters to use to flag doubtful matches.
-     *
-     * @deprecated use the specific map instead
+     * 
+     * @deprecated use ValidationQCPreferences instead
      */
     private ArrayList<PsmFilter> doubtfulMatchesFilters = null;
     /**
      * The filters to use to flag doubtful matches in a map: charge &gt; file name
      * &gt; list of filters.
+     * 
+     * @deprecated use ValidationQCPreferences instead
      */
-    private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>>();
+    private HashMap<Integer, HashMap<String, ArrayList<PsmFilter>>> doubtfulMatchesFiltersSpecificMap = null;
 
     /**
      * Constructor.
      */
     public PsmSpecificMap() {
-    }
-
-    /**
-     * Returns the filters used to flag doubtful matches in a map.
-     *
-     * @return the filters used to flag doubtful matches
-     */
-    public HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>> getDoubtfulMatchesFilters() {
-        if (doubtfulMatchesFiltersSpecificMap == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
-        }
-        return doubtfulMatchesFiltersSpecificMap;
-    }
-
-    /**
-     * Returns the filters used to flag doubtful matches corresponding to the
-     * given charge and file. An empty list if none found.
-     *
-     * @param charge the charge of the PSM
-     * @param fileName the name of the spectrum file
-     * @return the filters used to flag doubtful matches
-     */
-    public ArrayList<PsmFilter> getDoubtfulMatchesFilters(Integer charge, String fileName) {
-        if (doubtfulMatchesFiltersSpecificMap == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFiltersSpecificMap = new HashMap<Integer, HashMap< String, ArrayList<PsmFilter>>>();
-        }
-        HashMap< String, ArrayList<PsmFilter>> chargeFilters = doubtfulMatchesFiltersSpecificMap.get(charge);
-        if (chargeFilters == null) {
-            return new ArrayList<PsmFilter>();
-        }
-        ArrayList<PsmFilter> fileFilters = chargeFilters.get(fileName);
-        if (fileFilters == null) {
-            return new ArrayList<PsmFilter>();
-        }
-        return fileFilters;
-    }
-
-    /**
-     * Adds a PSM filter to the list of doubtful matches filters.
-     *
-     * @param charge the charge of the PSM
-     * @param fileName the name of the spectrum file
-     * @param psmFilter the new filter to add
-     */
-    public void addDoubtfulMatchesFilter(Integer charge, String fileName, PsmFilter psmFilter) {
-        HashMap< String, ArrayList<PsmFilter>> chargeFilters = doubtfulMatchesFiltersSpecificMap.get(charge);
-        if (chargeFilters == null) {
-            chargeFilters = new HashMap<String, ArrayList<PsmFilter>>();
-            doubtfulMatchesFiltersSpecificMap.put(charge, chargeFilters);
-        }
-        ArrayList<PsmFilter> fileFilters = chargeFilters.get(fileName);
-        if (fileFilters == null) {
-            fileFilters = new ArrayList<PsmFilter>();
-            chargeFilters.put(fileName, fileFilters);
-        }
-        fileFilters.add(psmFilter);
-    }
-    
-    /**
-     * Resets the doubtful matches filters.
-     */
-    public void resetDoubtfulMatchesFilters() {
-        doubtfulMatchesFiltersSpecificMap.clear();
     }
 
     /**

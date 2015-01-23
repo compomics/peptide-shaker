@@ -72,21 +72,34 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.LastSelectedFolder;
-import com.compomics.util.preferences.PathKey;
-import com.compomics.util.preferences.UtilitiesPathPreferences;
-import com.compomics.util.preferences.gui.PathSettingsDialog;
+import com.compomics.software.settings.PathKey;
+import com.compomics.software.settings.UtilitiesPathPreferences;
+import com.compomics.software.settings.gui.PathSettingsDialog;
+import com.compomics.util.experiment.filtering.Filter;
+import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.ValidationQCPreferences;
+import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
+import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
 import eu.isas.peptideshaker.export.ProjectExport;
+import eu.isas.peptideshaker.filtering.PeptideFilter;
+import eu.isas.peptideshaker.filtering.ProteinFilter;
+import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
+import eu.isas.peptideshaker.gui.filtering.PeptideFilterDialog;
+import eu.isas.peptideshaker.gui.filtering.ProteinFilterDialog;
+import eu.isas.peptideshaker.gui.filtering.PsmFilterDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.PsmPTMMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
+import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -121,7 +134,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHomeOrMemoryDialogParent, NotificationDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHomeOrMemoryDialogParent, NotificationDialogParent, ValidationQCPreferencesDialogParent {
 
     /**
      * The path to the example dataset.
@@ -756,6 +769,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         processingParametersMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
+        validationQcMenuItem = new javax.swing.JMenuItem();
         fractionDetailsJMenuItem = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
         speciesJMenuItem = new javax.swing.JMenuItem();
@@ -1459,6 +1473,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         editMenu.add(annotationPreferencesMenu);
+
+        validationQcMenuItem.setText("Validation QC");
+        validationQcMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                validationQcMenuItemMouseReleased(evt);
+            }
+        });
+        editMenu.add(validationQcMenuItem);
 
         fractionDetailsJMenuItem.setMnemonic('R');
         fractionDetailsJMenuItem.setText("Fraction Details");
@@ -3089,16 +3111,84 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Open the Edit Paths dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void configurationFilesSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurationFilesSettingsActionPerformed
         editPathSettings(null);
     }//GEN-LAST:event_configurationFilesSettingsActionPerformed
 
+    private void validationQcMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validationQcMenuItemMouseReleased
+
+        final IdMatchValidationPreferences idValidationPreferences = getIdentificationParameters().getIdValidationPreferences();
+        final ValidationQCPreferences validationQCPreferences = idValidationPreferences.getValidationQCPreferences();
+        ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences);
+        if (!validationQCPreferencesDialog.isCanceled()) {
+            ValidationQCPreferences newPreferences = validationQCPreferencesDialog.getValidationQCPreferences();
+            if (!newPreferences.isSameAs(validationQCPreferences)) {
+
+                idValidationPreferences.setValidationQCPreferences(newPreferences);
+
+                progressDialog = new ProgressDialogX(PeptideShakerGUI.this,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setTitle("Validating. Please Wait...");
+                progressDialog.setPrimaryProgressCounterIndeterminate(false);
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("RecalculateThread") {
+                    @Override
+                    public void run() {
+
+                        PeptideShakerGUI peptideShakerGUI = PeptideShakerGUI.this;
+
+                        try {
+                            PSMaps pSMaps = new PSMaps();
+                            pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+
+                            MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences());
+
+                            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+
+                            if (!progressDialog.isRunCanceled()) {
+                                // update the other tabs
+                                peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
+                                peptideShakerGUI.getMetrics().setnConfidentProteins(-1);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, false);
+                                peptideShakerGUI.setDataSaved(false);
+                            } else {
+                                idValidationPreferences.setValidationQCPreferences(validationQCPreferences);
+                            }
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+
+                        progressDialog.setRunFinished();
+                    }
+                }.start();
+            }
+        }
+    }//GEN-LAST:event_validationQcMenuItemMouseReleased
+
     /**
      * Opens a dialog allowing the setting of paths.
-     * 
+     *
      * @param welcomeDialog reference to the Welcome dialog, can be null
      */
     public void editPathSettings(WelcomeDialog welcomeDialog) {
@@ -3382,6 +3472,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JButton tipsButton;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JCheckBoxMenuItem validatedProteinsOnlyJCheckBoxMenuItem;
+    private javax.swing.JMenuItem validationQcMenuItem;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;
@@ -6528,5 +6619,50 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             System.out.println("Checking for new version failed. Unknown error.");
             return false;
         }
+    }
+
+    @Override
+    public Filter createPsmFilter() {
+        PsmFilterDialog psmFilterDialog = new PsmFilterDialog(this, getIdentificationParameters(), getIdentification().getOrderedSpectrumFileNames());
+        if (!psmFilterDialog.isCanceled()) {
+            return psmFilterDialog.getFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public void editPsmFilter(Filter filter) {
+        PsmFilter psmFilter = (PsmFilter) filter;
+        new PsmFilterDialog(this, psmFilter, getIdentificationParameters(), getIdentification().getOrderedSpectrumFileNames());
+    }
+
+    @Override
+    public Filter createPeptideFilter() {
+        PeptideFilterDialog peptideFilterDialog = new PeptideFilterDialog(this, getIdentificationParameters());
+        if (!peptideFilterDialog.isCanceled()) {
+            return peptideFilterDialog.getFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public void editPeptideFilter(Filter filter) {
+        PeptideFilter peptideFilter = (PeptideFilter) filter;
+        new PeptideFilterDialog(this, peptideFilter, getIdentificationParameters());
+    }
+
+    @Override
+    public Filter createProteinFilter() {
+        ProteinFilterDialog proteinFilterDialog = new ProteinFilterDialog(this);
+        if (!proteinFilterDialog.isCanceled()) {
+            return proteinFilterDialog.getFilter();
+        }
+        return null;
+    }
+
+    @Override
+    public void editProteinFilter(Filter filter) {
+        ProteinFilter proteinFilter = (ProteinFilter) filter;
+        new ProteinFilterDialog(this, proteinFilter);
     }
 }

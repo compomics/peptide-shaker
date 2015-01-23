@@ -621,6 +621,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationPreferencesMenuActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="validationQcMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Validation QC"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="validationQcMenuItemMouseReleased"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="82"/>

@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.filtering;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -105,6 +107,36 @@ public class PeptideFilter extends MatchFilter {
      */
     public PeptideFilter(String name) {
         this.name = name;
+        this.filterType = FilterType.PEPTIDE;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param name the name of the filter
+     * @param description the description of the filter
+     */
+    public PeptideFilter(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.filterType = FilterType.PEPTIDE;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param name the name of the filter
+     * @param description the description of the filter
+     * @param condition a description of the condition to be met to pass the filter
+     * @param reportPassed a report for when the filter is passed
+     * @param reportFailed a report for when the filter is not passed
+     */
+    public PeptideFilter(String name, String description, String condition, String reportPassed, String reportFailed) {
+        this.name = name;
+        this.description = description;
+        this.condition = condition;
+        this.reportPassed = reportPassed;
+        this.reportFailed = reportFailed;
         this.filterType = FilterType.PEPTIDE;
     }
 
@@ -271,7 +303,7 @@ public class PeptideFilter extends MatchFilter {
      *
      * @param pi the protein inference desired
      */
-    public void setPi(int pi) {
+    public void setPi(Integer pi) {
         this.pi = pi;
     }
 
@@ -494,6 +526,26 @@ public class PeptideFilter extends MatchFilter {
 
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideMatchKey, psParameter);
+        
+        if (peptideFilter.getValidationLevel() != null) {
+            if (peptideFilter.getValidationComparison()== ComparisonType.AFTER) {
+                if (psParameter.getMatchValidationLevel().getIndex() <= peptideFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (peptideFilter.getValidationComparison() == ComparisonType.BEFORE) {
+                if (psParameter.getMatchValidationLevel().getIndex() > peptideFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (peptideFilter.getValidationComparison() == ComparisonType.EQUAL) {
+                if (psParameter.getMatchValidationLevel().getIndex() != peptideFilter.getValidationLevel()) {
+                    return false;
+                }
+            } else if (peptideFilter.getValidationComparison() == ComparisonType.NOT_EQUAL) {
+                if (psParameter.getMatchValidationLevel().getIndex() == peptideFilter.getValidationLevel()) {
+                    return false;
+                }
+            }
+        }
 
         if (peptideFilter.getPi() != 5) {
             if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
@@ -511,7 +563,7 @@ public class PeptideFilter extends MatchFilter {
                     return false;
                 }
             } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BEFORE) {
-                if (psParameter.getPeptideScore() >= peptideFilter.getPeptideScore()) {
+                if (psParameter.getPeptideScore() > peptideFilter.getPeptideScore()) {
                     return false;
                 }
             } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.EQUAL) {
@@ -531,7 +583,7 @@ public class PeptideFilter extends MatchFilter {
                     return false;
                 }
             } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BEFORE) {
-                if (psParameter.getPeptideConfidence() >= peptideFilter.getPeptideConfidence()) {
+                if (psParameter.getPeptideConfidence() > peptideFilter.getPeptideConfidence()) {
                     return false;
                 }
             } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.EQUAL) {
@@ -557,7 +609,7 @@ public class PeptideFilter extends MatchFilter {
                         return false;
                     }
                 } else if (peptideFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                    if (peptideMatch.getSpectrumCount() >= peptideFilter.getNSpectra()) {
+                    if (peptideMatch.getSpectrumCount() > peptideFilter.getNSpectra()) {
                         return false;
                     }
                 } else if (peptideFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
@@ -578,7 +630,7 @@ public class PeptideFilter extends MatchFilter {
                         return false;
                     }
                 } else if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.BEFORE) {
-                    if (nValidatedSpectra >= peptideFilter.getNValidatedSpectra()) {
+                    if (nValidatedSpectra > peptideFilter.getNValidatedSpectra()) {
                         return false;
                     }
                 } else if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.EQUAL) {
@@ -599,7 +651,7 @@ public class PeptideFilter extends MatchFilter {
                         return false;
                     }
                 } else if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.BEFORE) {
-                    if (nConfidentPeptides >= peptideFilter.getNConfidentSpectra()) {
+                    if (nConfidentPeptides > peptideFilter.getNConfidentSpectra()) {
                         return false;
                     }
                 } else if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.EQUAL) {
@@ -674,5 +726,123 @@ public class PeptideFilter extends MatchFilter {
     public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         return isValidated(matchKey, identification, identificationFeaturesGenerator);
+    }
+
+    @Override
+    public MatchFilter clone() {
+        
+        PeptideFilter peptideFilter = new PeptideFilter(name, description, condition, reportPassed, reportFailed);
+        peptideFilter.setActive(isActive());
+        peptideFilter.setProtein(getProtein());
+        peptideFilter.setSequence(getSequence());
+        peptideFilter.setNSpectra(getNSpectra());
+        peptideFilter.setnSpectraComparison(getnSpectraComparison());
+        peptideFilter.setNValidatedSpectra(getNValidatedSpectra());
+        peptideFilter.setnValidatedSpectraComparison(getnValidatedSpectraComparison());
+        peptideFilter.setNConfidentSpectra(getNConfidentSpectra());
+        peptideFilter.setnConfidentSpectraComparison(getnConfidentSpectraComparison());
+        peptideFilter.setPeptideScore(getPeptideScore());
+        peptideFilter.setPeptideScoreComparison(getPeptideScoreComparison());
+        peptideFilter.setPeptideConfidence(getPeptideConfidence());
+        peptideFilter.setPeptideConfidenceComparison(getPeptideConfidenceComparison());
+        peptideFilter.setPi(getPi());
+        peptideFilter.setPiComparison(getPiComparison());
+        peptideFilter.setModificationStatus(getModificationStatus());
+        return peptideFilter;
+        
+    }
+
+    /**
+     * Indicates whether another filter is the same as the current filter.
+     * 
+     * @param anotherFilter another filter
+     * 
+     * @return a boolean indicating whether another filter is the same as the current filter
+     */
+    public boolean isSameAs(PeptideFilter anotherFilter) {
+        if (!name.equals(anotherFilter.getName())) {
+            return false;
+        }
+        if (!description.equals(anotherFilter.getDescription())) {
+            return false;
+        }
+        if (!condition.equals(anotherFilter.getCondition())) {
+            return false;
+        }
+        if (!reportPassed.equals(anotherFilter.getReport(true))) {
+            return false;
+        }
+        if (!reportFailed.equals(anotherFilter.getReport(false))) {
+            return false;
+        }
+        if (isActive() != anotherFilter.isActive()) {
+            return false;
+        }
+        if (getProtein() == null && anotherFilter.getProtein() != null
+                || getProtein() != null && !getProtein().equals(anotherFilter.getProtein())) {
+            return false;
+        }
+        if (getSequence() == null && anotherFilter.getSequence() != null
+                || getSequence() != null && !getSequence().equals(anotherFilter.getSequence())) {
+            return false;
+        }
+        if (getNSpectra() == null && anotherFilter.getNSpectra() != null
+                || getNSpectra() != null && !getNSpectra().equals(anotherFilter.getNSpectra())) {
+            return false;
+        }
+        if (!getnSpectraComparison().equals(anotherFilter.getnSpectraComparison())) {
+            return false;
+        }
+        if (getNValidatedSpectra() == null && anotherFilter.getNValidatedSpectra() != null
+                || getNValidatedSpectra() != null && !getNValidatedSpectra().equals(anotherFilter.getNValidatedSpectra())) {
+            return false;
+        }
+        if (!getnValidatedSpectraComparison().equals(anotherFilter.getnValidatedSpectraComparison())) {
+            return false;
+        }
+        if (getNConfidentSpectra() == null && anotherFilter.getNConfidentSpectra() != null
+                || getNConfidentSpectra() != null && !getNConfidentSpectra().equals(anotherFilter.getNConfidentSpectra())) {
+            return false;
+        }
+        if (!getnConfidentSpectraComparison().equals(anotherFilter.getnConfidentSpectraComparison())) {
+            return false;
+        }
+        if (getPeptideScore() == null && anotherFilter.getPeptideScore() != null
+                || getPeptideScore() != null && !getPeptideScore().equals(anotherFilter.getPeptideScore())) {
+            return false;
+        }
+        if (!getPeptideScoreComparison().equals(anotherFilter.getPeptideScoreComparison())) {
+            return false;
+        }
+        if (getPeptideConfidence() == null && anotherFilter.getPeptideConfidence() != null
+                || getPeptideConfidence() != null && !getPeptideConfidence().equals(anotherFilter.getPeptideConfidence())) {
+            return false;
+        }
+        if (!getPeptideConfidenceComparison().equals(anotherFilter.getPeptideConfidenceComparison())) {
+            return false;
+        }
+        if (getPi()!= anotherFilter.getPi()) {
+            return false;
+        }
+        if (!getPiComparison().equals(anotherFilter.getPiComparison())) {
+            return false;
+        }
+        if (getModificationStatus() == null && anotherFilter.getModificationStatus() != null
+                || getModificationStatus() != null && anotherFilter.getModificationStatus() == null
+                || getModificationStatus() != null && anotherFilter.getModificationStatus() != null
+                && !Util.sameLists(getModificationStatus(), anotherFilter.getModificationStatus())) {
+            return false;
+        }
+        
+        
+        return true;
+    }
+
+    @Override
+    public boolean isSameAs(Filter anotherFilter) {
+        if (anotherFilter instanceof PeptideFilter) {
+            return isSameAs((PeptideFilter) anotherFilter);
+        }
+        return false;
     }
 }

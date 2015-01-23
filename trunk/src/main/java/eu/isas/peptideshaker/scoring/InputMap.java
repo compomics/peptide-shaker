@@ -39,8 +39,10 @@ public class InputMap implements Serializable {
     private HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>> intermediateScores = new HashMap<String, HashMap<Integer, HashMap<Integer, TargetDecoyMap>>>();
     /**
      * The filters to use to flag doubtful matches.
+     * 
+     * @deprecated use ValidationQCPreferences instead
      */
-    private ArrayList<AssumptionFilter> doubtfulMatchesFilters = getDefaultAssumptionFilters();
+    private ArrayList<AssumptionFilter> doubtfulMatchesFilters = null;
     /**
      * Map of the search engine contribution. Advocate Id &gt; Spectrum file name
      * &gt; number of validated hits.
@@ -51,7 +53,7 @@ public class InputMap implements Serializable {
      * &gt; number of validated hits found by this advocate only.
      */
     private HashMap<Integer, HashMap<String, Integer>> advocateUniqueContribution;
-
+    
     /**
      * Returns true for multiple search engines investigations.
      *
@@ -270,53 +272,6 @@ public class InputMap implements Serializable {
             result += targetDecoyMap.getMapSize();
         }
         return result;
-    }
-
-    /**
-     * Returns the filters used to flag doubtful matches.
-     *
-     * @return the filters used to flag doubtful matches
-     */
-    public ArrayList<AssumptionFilter> getDoubtfulMatchesFilters() {
-        if (doubtfulMatchesFilters == null) { // Backward compatibility check for projects without filters
-            doubtfulMatchesFilters = new ArrayList<AssumptionFilter>();
-        }
-        return doubtfulMatchesFilters;
-    }
-
-    /**
-     * Sets the filters used to flag doubtful matches.
-     *
-     * @param doubtfulMatchesFilters the filters used to flag doubtful matches
-     */
-    public void setDoubtfulMatchesFilters(ArrayList<AssumptionFilter> doubtfulMatchesFilters) {
-        this.doubtfulMatchesFilters = doubtfulMatchesFilters;
-    }
-
-    /**
-     * Adds a PSM filter to the list of doubtful matches filters.
-     *
-     * @param assumptionFilter the new filter to add
-     */
-    public void addDoubtfulMatchesFilter(AssumptionFilter assumptionFilter) {
-        this.doubtfulMatchesFilters.add(assumptionFilter);
-    }
-
-    /**
-     * Returns the default filters for setting a match as doubtful.
-     *
-     * @return the default filters for setting a match as doubtful
-     */
-    public static ArrayList<AssumptionFilter> getDefaultAssumptionFilters() {
-        ArrayList<AssumptionFilter> filters = new ArrayList<AssumptionFilter>();
-
-        AssumptionFilter psmFilter = new AssumptionFilter(">30% Fragment Ion Sequence Coverage");
-        psmFilter.setDescription(">30% sequence coverage by fragment ions");
-        psmFilter.setSequenceCoverage(30.0);
-        psmFilter.setSequenceCoverageComparison(RowFilter.ComparisonType.AFTER);
-        filters.add(psmFilter);
-
-        return filters;
     }
 
     /**

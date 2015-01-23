@@ -321,8 +321,8 @@ public class FindDialog extends javax.swing.JDialog {
         proteinTableToolTips.add("Other Proteins");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Coverage (%)");
-        proteinTableToolTips.add("Number of Peptides");
-        proteinTableToolTips.add("Number of Spectra");
+        proteinTableToolTips.add("Number of Validated Peptides");
+        proteinTableToolTips.add("Number of Validated PSMs");
         proteinTableToolTips.add("Protein MS2 Quantification");
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
@@ -335,7 +335,7 @@ public class FindDialog extends javax.swing.JDialog {
         peptideTableToolTips.add("Protein Accession Numbers");
         peptideTableToolTips.add("Protein Descriptions");
         peptideTableToolTips.add("Peptide Sequence");
-        peptideTableToolTips.add("Number of Spectra");
+        peptideTableToolTips.add("Number of Validated PSMs");
         peptideTableToolTips.add("Peptide Score");
         peptideTableToolTips.add("Peptide Confidence");
         peptideTableToolTips.add("Peptide Key");
@@ -519,12 +519,12 @@ public class FindDialog extends javax.swing.JDialog {
             proteinCoverageTxt.setText(proteinFilter.getProteinCoverage() + "");
             proteinCoverageCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getProteinCoverageComparison()));
         }
-        if (proteinFilter.getnPeptides() != null) {
-            nPeptidesTxt.setText(proteinFilter.getnPeptides() + "");
+        if (proteinFilter.getnValidatedPeptides() != null) {
+            nPeptidesTxt.setText(proteinFilter.getnValidatedPeptides() + "");
             nPeptidesCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getnPeptidesComparison()));
         }
-        if (proteinFilter.getProteinNSpectra() != null) {
-            proteinsNSpectraTxt.setText(proteinFilter.getProteinNSpectra() + "");
+        if (proteinFilter.getProteinNValidatedSpectra() != null) {
+            proteinsNSpectraTxt.setText(proteinFilter.getProteinNValidatedSpectra() + "");
             proteinNSpectraCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getnSpectraComparison()));
         }
         if (proteinFilter.getProteinScore() != null) {
@@ -536,26 +536,20 @@ public class FindDialog extends javax.swing.JDialog {
             proteinConfidenceCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getProteinConfidenceComparison()));
         }
 
-        boolean first = true;
         String text = "";
 
         for (String key : proteinFilter.getManualValidation()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += key;
         }
 
         proteinManualValidationTxt.setText(text);
-        first = true;
         text = "";
 
         for (String key : proteinFilter.getExceptions()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += key;
@@ -579,13 +573,13 @@ public class FindDialog extends javax.swing.JDialog {
             peptidePICmb.setSelectedIndex(peptideFilter.getPi() + 1);
             peptidePiComparisonCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPiComparison()));
         }
-        if (peptideFilter.getNSpectra() != null) {
-            peptideNSpectraTxt.setText(peptideFilter.getNSpectra() + "");
+        if (peptideFilter.getNValidatedSpectra() != null) {
+            peptideNSpectraTxt.setText(peptideFilter.getNValidatedSpectra() + "");
             peptideNSpectraCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getnSpectraComparison()));
         }
         if (peptideFilter.getPeptideScore() != null) {
             peptideScoreTxt.setText(peptideFilter.getPeptideScore() + "");
-            proteinScoreCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPeptideScoreComparison()));
+            peptideScoreCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPeptideScoreComparison()));
         }
         if (peptideFilter.getPeptideConfidence() != null) {
             peptideConfidenceTxt.setText(peptideFilter.getPeptideConfidence() + "");
@@ -601,26 +595,20 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
 
-        boolean first = true;
         String text = "";
 
         for (String key : peptideFilter.getManualValidation()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += key;
         }
 
         peptideManualValidationTxt.setText(text);
-        first = true;
         text = "";
 
         for (String accession : peptideFilter.getExceptions()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += accession;
@@ -634,30 +622,45 @@ public class FindDialog extends javax.swing.JDialog {
      */
     private void fillPsmTab() {
 
-        if (psmFilter.getPrecursorRT() != null) {
-            precursorRTTxt.setText(psmFilter.getPrecursorRT() + "");
-            precursorRTCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorRTComparison()));
+        if (psmFilter.getAssumptionFilter().getPrecursorRT() != null) {
+            precursorRTTxt.setText(psmFilter.getAssumptionFilter().getPrecursorRT() + "");
+            precursorRTCmb.setSelectedIndex(getComparisonIndex(psmFilter.getAssumptionFilter().getPrecursorRTComparison()));
         }
-        if (psmFilter.getPrecursorMz() != null) {
-            precursorMzTxt.setText(psmFilter.getPrecursorMz() + "");
-            precursorMzCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorMzComparison()));
+        if (psmFilter.getAssumptionFilter().getPrecursorMz() != null) {
+            precursorMzTxt.setText(psmFilter.getAssumptionFilter().getPrecursorMz() + "");
+            precursorMzCmb.setSelectedIndex(getComparisonIndex(psmFilter.getAssumptionFilter().getPrecursorMzComparison()));
         }
         if (psmFilter.getAssumptionFilter().getPrecursorMzError() != null) {
             precursorErrorTxt.setText(psmFilter.getAssumptionFilter().getPrecursorMzError() + "");
-            precursorErrorCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorMzErrorComparison()));
+            precursorErrorCmb.setSelectedIndex(getComparisonIndex(psmFilter.getAssumptionFilter().getPrecursorMzErrorComparison()));
         }
         if (psmFilter.getPsmConfidence() != null) {
             psmConfidenceTxt.setText(psmFilter.getPsmConfidence() + "");
             psmConfidenceCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPsmConfidenceComparison()));
         }
 
-        charge2CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(2));
-        charge3CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(3));
-        charge4CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(4));
-        chargeOver4CheckBox.setSelected(psmFilter.getAssumptionFilter().getCharges().contains(5));
+        charge1CheckBox.setSelected(false);
+        charge2CheckBox.setSelected(false);
+        charge3CheckBox.setSelected(false);
+        charge4CheckBox.setSelected(false);
+        chargeOver4CheckBox.setSelected(false);
+        ArrayList<Integer> charges = psmFilter.getAssumptionFilter().getCharges();
+        for (Integer charge : charges) {
+            if (charge == 1) {
+                charge1CheckBox.setSelected(true);
+            } else if (charge == 2) {
+                charge2CheckBox.setSelected(true);
+            } else if (charge == 3) {
+                charge3CheckBox.setSelected(true);
+            } else if (charge == 4) {
+                charge4CheckBox.setSelected(true);
+            } else if (charge > 4) {
+                chargeOver4CheckBox.setSelected(true);
+            }
+        }
 
         for (int row = 0; row < spectrumFilesTable.getRowCount(); row++) {
-            if (psmFilter.getFileNames().contains(
+            if (psmFilter.getAssumptionFilter().getFileNames().contains(
                     (String) spectrumFilesTable.getValueAt(row, 1))) {
                 spectrumFilesTable.setValueAt(true, row, 0);
             } else {
@@ -665,26 +668,20 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
 
-        boolean first = true;
         String text = "";
 
         for (String key : psmFilter.getManualValidation()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += key;
         }
 
         psmManualValidationTxt.setText(text);
-        first = true;
         text = "";
 
         for (String accession : psmFilter.getExceptions()) {
-            if (first) {
-                first = false;
-            } else {
+            if (!text.equals("")) {
                 text += "; ";
             }
             text += accession;
@@ -1003,11 +1000,11 @@ public class FindDialog extends javax.swing.JDialog {
                 proteinFilter.setProteinCoverageComparison(getComparisonType(proteinCoverageCmb.getSelectedIndex()));
             }
             if (!nPeptidesTxt.getText().trim().equals("")) {
-                proteinFilter.setnPeptides(new Integer(nPeptidesTxt.getText().trim()));
+                proteinFilter.setnValidatedPeptides(new Integer(nPeptidesTxt.getText().trim()));
                 proteinFilter.setnPeptidesComparison(getComparisonType(nPeptidesCmb.getSelectedIndex()));
             }
             if (!proteinsNSpectraTxt.getText().trim().equals("")) {
-                proteinFilter.setProteinNSpectra(new Integer(proteinsNSpectraTxt.getText().trim()));
+                proteinFilter.setProteinNValidatedSpectra(new Integer(proteinsNSpectraTxt.getText().trim()));
                 proteinFilter.setnSpectraComparison(getComparisonType(proteinNSpectraCmb.getSelectedIndex()));
             }
             if (!proteinScoreTxt.getText().trim().equals("")) {
@@ -1126,18 +1123,9 @@ public class FindDialog extends javax.swing.JDialog {
                         }
                         return coverage;
                     case 8:
-                        proteinMatch = identification.getProteinMatch(proteinKey);
-                        return proteinMatch.getPeptideCount();
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
                     case 9:
-                        proteinMatch = identification.getProteinMatch(proteinKey);
-                        int cpt = 0;
-                        PeptideMatch peptideMatch;
-                        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-                        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            cpt += peptideMatch.getSpectrumCount();
-                        }
-                        return cpt;
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
                     case 10:
                         try {
                             return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
@@ -1303,7 +1291,7 @@ public class FindDialog extends javax.swing.JDialog {
         if (validateInput()) {
             if (peptideFilter == null) {
                 peptideFilter = new PeptideFilter("find peptide filter");
-            } 
+            }
             ArrayList<String> modifications = new ArrayList<String>();
             for (int row = 0; row < modificationTable.getRowCount(); row++) {
                 if ((Boolean) modificationTable.getValueAt(row, 0)) {
@@ -1325,7 +1313,7 @@ public class FindDialog extends javax.swing.JDialog {
                 peptideFilter.setPi(pi);
             }
             if (!peptideNSpectraTxt.getText().trim().equals("")) {
-                peptideFilter.setNSpectra(new Integer(peptideNSpectraTxt.getText().trim()));
+                peptideFilter.setNValidatedSpectra(new Integer(peptideNSpectraTxt.getText().trim()));
                 peptideFilter.setnSpectraComparison(getComparisonType(peptideNSpectraCmb.getSelectedIndex()));
             }
             if (!peptideScoreTxt.getText().trim().equals("")) {
@@ -1423,8 +1411,7 @@ public class FindDialog extends javax.swing.JDialog {
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch, true, true, true);
                     case 7:
-                        peptideMatch = identification.getPeptideMatch(peptideKey);
-                        return peptideMatch.getSpectrumCount();
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                     case 8:
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.getPeptideScore();
@@ -1517,6 +1504,10 @@ public class FindDialog extends javax.swing.JDialog {
 
                         List<RowFilter<Object, Object>> chargeFilters = new ArrayList<RowFilter<Object, Object>>();
 
+                        if (charge1CheckBox.isSelected()) {
+                            chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 1,
+                                    psmTable.getColumn("Charge").getModelIndex()));
+                        }
                         if (charge2CheckBox.isSelected()) {
                             chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 2,
                                     psmTable.getColumn("Charge").getModelIndex()));
@@ -1598,19 +1589,19 @@ public class FindDialog extends javax.swing.JDialog {
             if (psmFilter == null) {
                 psmFilter = new PsmFilter("find psm filter");
             }
-            psmFilter.setCharges(charges);
-            psmFilter.setFileNames(files);
+            psmFilter.getAssumptionFilter().setCharges(charges);
+            psmFilter.getAssumptionFilter().setFileNames(files);
             if (!precursorRTTxt.getText().trim().equals("")) {
-                psmFilter.setPrecursorRT(new Double(precursorRTTxt.getText().trim()));
-                psmFilter.setPrecursorRTComparison(getComparisonType(precursorRTCmb.getSelectedIndex()));
+                psmFilter.getAssumptionFilter().setPrecursorRT(new Double(precursorRTTxt.getText().trim()));
+                psmFilter.getAssumptionFilter().setPrecursorRTComparison(getComparisonType(precursorRTCmb.getSelectedIndex()));
             }
             if (!precursorMzTxt.getText().trim().equals("")) {
-                psmFilter.setPrecursorMz(new Double(precursorMzTxt.getText().trim()));
-                psmFilter.setPrecursorMzComparison(getComparisonType(precursorMzCmb.getSelectedIndex()));
+                psmFilter.getAssumptionFilter().setPrecursorMz(new Double(precursorMzTxt.getText().trim()));
+                psmFilter.getAssumptionFilter().setPrecursorMzComparison(getComparisonType(precursorMzCmb.getSelectedIndex()));
             }
             if (!precursorErrorTxt.getText().trim().equals("")) {
-                psmFilter.setPrecursorMzError(new Double(precursorErrorTxt.getText().trim()));
-                psmFilter.setPrecursorMzErrorComparison(getComparisonType(precursorErrorCmb.getSelectedIndex()));
+                psmFilter.getAssumptionFilter().setPrecursorMzError(new Double(precursorErrorTxt.getText().trim()));
+                psmFilter.getAssumptionFilter().setPrecursorMzErrorComparison(getComparisonType(precursorErrorCmb.getSelectedIndex()));
             }
             if (!psmConfidenceTxt.getText().trim().equals("")) {
                 psmFilter.setPsmConfidence(new Double(psmConfidenceTxt.getText().trim()));
@@ -2021,6 +2012,7 @@ public class FindDialog extends javax.swing.JDialog {
         charge3CheckBox = new javax.swing.JCheckBox();
         charge4CheckBox = new javax.swing.JCheckBox();
         chargeOver4CheckBox = new javax.swing.JCheckBox();
+        charge1CheckBox = new javax.swing.JCheckBox();
         psmSplitPane = new javax.swing.JSplitPane();
         psmManualValidationPanel = new javax.swing.JPanel();
         psmManualValidationScrollPane = new javax.swing.JScrollPane();
@@ -2155,20 +2147,28 @@ public class FindDialog extends javax.swing.JDialog {
         identifierLabel.setText("Identifier");
 
         piStatusLabel.setText("PI Status");
+        piStatusLabel.setToolTipText("Protein Inference Status");
 
         ms2QuantLabel.setText("MS2 Quant.");
+        ms2QuantLabel.setToolTipText("MS2 Quantification [fmol]");
 
         peptidesLabel.setText("#Peptides");
+        peptidesLabel.setToolTipText("Number of Validated Peptides");
 
         spectraLabel.setText("#Spectra");
+        spectraLabel.setToolTipText("Number of Validated PSMs");
 
         scoreLabel.setText("Score");
+        scoreLabel.setToolTipText("Protein Score");
 
         coverageLabel.setText("Coverage");
+        coverageLabel.setToolTipText("Coverage [%]");
 
         confidenceLabel.setText("Confidence");
+        confidenceLabel.setToolTipText("Confidence [%]");
 
         spectrumCountingTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        spectrumCountingTxt.setToolTipText("MS2 Quantification [fmol]");
         spectrumCountingTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 spectrumCountingTxtKeyReleased(evt);
@@ -2200,6 +2200,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinPICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No Requirement", "Single Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
+        proteinPICmb.setToolTipText("Protein Inference Status");
         proteinPICmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinPICmbActionPerformed(evt);
@@ -2212,6 +2213,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinConfidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinConfidenceTxt.setToolTipText("Confidence [%]");
         proteinConfidenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 proteinConfidenceTxtKeyReleased(evt);
@@ -2227,6 +2229,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinScoreTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinScoreTxt.setToolTipText("Protein Score");
         proteinScoreTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 proteinScoreTxtKeyReleased(evt);
@@ -2242,6 +2245,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinsNSpectraTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinsNSpectraTxt.setToolTipText("Number of Validated PSMs");
         proteinsNSpectraTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 proteinsNSpectraTxtKeyReleased(evt);
@@ -2257,6 +2261,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         nPeptidesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        nPeptidesTxt.setToolTipText("Number of Validated Peptides");
         nPeptidesTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 nPeptidesTxtKeyReleased(evt);
@@ -2272,6 +2277,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinCoverageTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinCoverageTxt.setToolTipText("Coverage [%]");
         proteinCoverageTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 proteinCoverageTxtKeyReleased(evt);
@@ -2494,8 +2500,10 @@ public class FindDialog extends javax.swing.JDialog {
         regExp2Label.setToolTipText("<html> Regular Expression<br> example: N[^P][ST] returns all sequences with:<br> an N, then anything but a P, and then an S or a T </html>");
 
         piStatusPeptideLabel.setText("PI Status");
+        piStatusPeptideLabel.setToolTipText("Protein Inference Status");
 
         peptidePICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No Requirement", "Single Protein", "Isoforms", "Isoforms/Unrelated Proteins", "Unrelated Proteins" }));
+        peptidePICmb.setToolTipText("Protein Inference Status");
         peptidePICmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptidePICmbActionPerformed(evt);
@@ -2508,8 +2516,10 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         spectraPeptidesLabel.setText("#Spectra");
+        spectraPeptidesLabel.setToolTipText("Number of Validated Spectra");
 
         peptideNSpectraTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        peptideNSpectraTxt.setToolTipText("Number of Validated Spectra");
         peptideNSpectraTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 peptideNSpectraTxtKeyReleased(evt);
@@ -2525,8 +2535,10 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         confidencePeptidesLabel.setText("Confidence");
+        confidencePeptidesLabel.setToolTipText("Confidence [%]");
 
         peptideConfidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        peptideConfidenceTxt.setToolTipText("Confidence [%]");
         peptideConfidenceTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideConfidenceTxtActionPerformed(evt);
@@ -2555,6 +2567,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         peptideScoreTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        peptideScoreTxt.setToolTipText("Peptide Score");
         peptideScoreTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 peptideScoreTxtKeyReleased(evt);
@@ -2562,6 +2575,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         scorePeptidesLabel.setText("Score");
+        scorePeptidesLabel.setToolTipText("Peptide Score");
 
         sequenceLabel.setText("Sequence");
 
@@ -2853,8 +2867,10 @@ public class FindDialog extends javax.swing.JDialog {
         psmFilterParamsPanel.setOpaque(false);
 
         precursorRtLabel.setText("Precursor RT");
+        precursorRtLabel.setToolTipText("Precursor Retention Time [s]");
 
         precursorRTTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        precursorRTTxt.setToolTipText("Precursor Retention Time [s]");
         precursorRTTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 precursorRTTxtKeyReleased(evt);
@@ -2870,8 +2886,10 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         confidencePsmsLabel.setText("Confidence");
+        confidencePsmsLabel.setToolTipText("Confidence [%]");
 
         psmConfidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        psmConfidenceTxt.setToolTipText("Confidence [%]");
         psmConfidenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 psmConfidenceTxtKeyReleased(evt);
@@ -2887,8 +2905,10 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         precursorMzLabel.setText("Precursor m/z");
+        precursorMzLabel.setToolTipText("Precursor m/z");
 
         precursorMzTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        precursorMzTxt.setText("Precursor m/z");
         precursorMzTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 precursorMzTxtKeyReleased(evt);
@@ -2904,8 +2924,10 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         precursorErrorLabel.setText("Precursor Error");
+        precursorErrorLabel.setToolTipText("Precursor m/z Error");
 
         precursorErrorTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        precursorErrorTxt.setToolTipText("Precursor m/z Error");
         precursorErrorTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 precursorErrorTxtKeyReleased(evt);
@@ -3012,6 +3034,16 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
+        charge1CheckBox.setSelected(true);
+        charge1CheckBox.setText("1");
+        charge1CheckBox.setIconTextGap(6);
+        charge1CheckBox.setOpaque(false);
+        charge1CheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                charge1CheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout psmFilterParamsPanelLayout = new javax.swing.GroupLayout(psmFilterParamsPanel);
         psmFilterParamsPanel.setLayout(psmFilterParamsPanelLayout);
         psmFilterParamsPanelLayout.setHorizontalGroup(
@@ -3026,18 +3058,21 @@ public class FindDialog extends javax.swing.JDialog {
                     .addComponent(chargeLabel))
                 .addGap(21, 21, 21)
                 .addGroup(psmFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(precursorRTTxt)
+                    .addComponent(precursorMzTxt)
+                    .addComponent(precursorErrorTxt)
+                    .addComponent(psmConfidenceTxt)
                     .addGroup(psmFilterParamsPanelLayout.createSequentialGroup()
+                        .addComponent(charge1CheckBox)
+                        .addGap(18, 18, 18)
                         .addComponent(charge2CheckBox)
                         .addGap(18, 18, 18)
                         .addComponent(charge3CheckBox)
                         .addGap(18, 18, 18)
                         .addComponent(charge4CheckBox)
                         .addGap(18, 18, 18)
-                        .addComponent(chargeOver4CheckBox))
-                    .addComponent(precursorRTTxt)
-                    .addComponent(precursorMzTxt)
-                    .addComponent(precursorErrorTxt)
-                    .addComponent(psmConfidenceTxt))
+                        .addComponent(chargeOver4CheckBox)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(psmFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(precursorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -3077,7 +3112,8 @@ public class FindDialog extends javax.swing.JDialog {
                     .addComponent(charge2CheckBox)
                     .addComponent(charge3CheckBox)
                     .addComponent(charge4CheckBox)
-                    .addComponent(chargeOver4CheckBox)))
+                    .addComponent(chargeOver4CheckBox)
+                    .addComponent(charge1CheckBox)))
             .addGroup(psmFilterParamsPanelLayout.createSequentialGroup()
                 .addComponent(spectrumFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -3517,8 +3553,8 @@ public class FindDialog extends javax.swing.JDialog {
 
     /**
      * Filter the peptides.
-     * the key event
-     * @param evt
+     *
+     * @param evt the key event
      */
     private void peptideNSpectraTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideNSpectraTxtKeyReleased
         filterPeptides();
@@ -3899,8 +3935,14 @@ public class FindDialog extends javax.swing.JDialog {
     private void filterTypeJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_filterTypeJTabbedPaneStateChanged
         // @TODO: batch load the table content!!
     }//GEN-LAST:event_filterTypeJTabbedPaneStateChanged
+
+    private void charge1CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_charge1CheckBoxActionPerformed
+        filterPsms();
+    }//GEN-LAST:event_charge1CheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JCheckBox charge1CheckBox;
     private javax.swing.JCheckBox charge2CheckBox;
     private javax.swing.JCheckBox charge3CheckBox;
     private javax.swing.JCheckBox charge4CheckBox;

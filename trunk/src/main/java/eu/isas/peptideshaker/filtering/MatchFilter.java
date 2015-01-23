@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -15,7 +17,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  *
  * @author Marc Vaudel
  */
-public abstract class MatchFilter implements Serializable {
+public abstract class MatchFilter implements Serializable, Filter {
 
     /**
      * Serial number for serialization compatibility.
@@ -30,6 +32,18 @@ public abstract class MatchFilter implements Serializable {
      */
     protected String description = "";
     /**
+     * Description of the condition to meet to pass the filter
+     */
+    protected String condition = "";
+    /**
+     * Report when the filter is passed
+     */
+    protected String reportPassed = "";
+    /**
+     * Report when the filter is not passed
+     */
+    protected String reportFailed = "";
+    /**
      * boolean indicating whether the filter is active.
      */
     private boolean active = true;
@@ -41,6 +55,14 @@ public abstract class MatchFilter implements Serializable {
      * The exceptions to the rule.
      */
     private ArrayList<String> exceptions = new ArrayList<String>();
+    /**
+     * Validation level.
+     */
+    private Integer validationLevel = null;
+    /**
+     * The type of comparison to be used for the confidence.
+     */
+    private RowFilter.ComparisonType validationComparison = RowFilter.ComparisonType.EQUAL;
 
     /**
      * Name of the manual selection filter.
@@ -74,13 +96,28 @@ public abstract class MatchFilter implements Serializable {
      */
     protected FilterType filterType;
 
-    /**
-     * Return the name of the filter.
-     *
-     * @return the name of the filter
-     */
+    @Override
     public String getName() {
         return name;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
+    }
+    
+    @Override
+    public String getCondition() {
+        return condition;
+    }
+    
+    @Override
+    public String getReport(boolean filterPassed) {
+        if (filterPassed) {
+            return reportPassed;
+        } else {
+            return reportFailed;
+        }
     }
 
     /**
@@ -93,30 +130,50 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
-     * Return the type of the filter.
-     *
-     * @return the type of the filter
-     */
-    public FilterType getType() {
-        return filterType;
-    }
-
-    /**
-     * Returns the description of the filter.
-     *
-     * @return the description of the filter
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * Sets the description of the filter.
      *
      * @param description the description of the filter
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Sets the description of the condition to meet.
+     * 
+     * @param condition the description of the condition to meet
+     */
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    /**
+     * Sets the report when the filter is passed.
+     * 
+     * @param reportPassed the report when the filter is passed
+     */
+    public void setReportPassed(String reportPassed) {
+        this.reportPassed = reportPassed;
+    }
+
+    /**
+     * Sets the report when the filter is not passed.
+     * 
+     * @param reportFailed the report when the filter is not passed
+     */
+    public void setReportFailed(String reportFailed) {
+        this.reportFailed = reportFailed;
+    }
+    
+    
+
+    /**
+     * Return the type of the filter.
+     *
+     * @return the type of the filter
+     */
+    public FilterType getType() {
+        return filterType;
     }
 
     /**
@@ -208,6 +265,45 @@ public abstract class MatchFilter implements Serializable {
     public void removeException(String matchKey) {
         exceptions.remove(matchKey);
     }
+
+    /**
+     * Returns the validation level used for filtering.
+     * 
+     * @return the validation level used for filtering
+     */
+    public Integer getValidationLevel() {
+        return validationLevel;
+    }
+
+    /**
+     * Sets the validation level used for filtering.
+     * 
+     * @param validationLevel the validation level used for filtering
+     */
+    public void setValidationLevel(Integer validationLevel) {
+        this.validationLevel = validationLevel;
+    }
+
+    /**
+     * Returns the comparison type used for validation level comparison.
+     * 
+     * @return the comparison type used for validation level comparison
+     */
+    public RowFilter.ComparisonType getValidationComparison() {
+        return validationComparison;
+    }
+
+    /**
+     * Sets the comparison type used for validation level comparison.
+     * 
+     * @param validationComparison the comparison type used for validation level comparison
+     */
+    public void setValidationComparison(RowFilter.ComparisonType validationComparison) {
+        this.validationComparison = validationComparison;
+    }
+    
+    @Override
+    public abstract MatchFilter clone();
 
     /**
      * Tests whether a match is validated by this filter.

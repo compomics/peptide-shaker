@@ -7,12 +7,17 @@ import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.experiment.refinementparameters.MsAmandaScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -233,12 +238,18 @@ public class PrideXmlExport {
      * Creates the PRIDE XML file.
      *
      * @param progressDialog a dialog displaying progress to the user
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
+     * occurred while reading an mzML file
+     * @throws SQLException exception thrown whenever a problem
+     * occurred while accessing a database
+     * @throws ClassNotFoundException exception thrown whenever a problem
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue occurred
      */
-    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         // the experiment start tag
         writeExperimentCollectionStartTag();
@@ -317,14 +328,19 @@ public class PrideXmlExport {
      * Writes all PSMs.
      *
      * @param progressDialog a progress dialog to display progress to the user
+     * 
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
+     * occurred while reading an mzML file
+     * @throws SQLException exception thrown whenever a problem
+     * occurred while accessing a database
+     * @throws ClassNotFoundException exception thrown whenever a problem
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue occurred
      */
-    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
-        try {
             SequenceFactory sequenceFactory = SequenceFactory.getInstance();
             PSParameter proteinProbabilities = new PSParameter();
             PSParameter peptideProbabilities = new PSParameter();
@@ -358,25 +374,22 @@ public class PrideXmlExport {
 
             searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerVersion;
 
-            for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatches(spectrumFile, null);
-            }
-            identification.loadPeptideMatches(null);
-            identification.loadProteinMatches(null);
-            for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatchParameters(spectrumFile, psmProbabilities, null);
-            }
-            identification.loadPeptideMatchParameters(peptideProbabilities, null);
-            identification.loadProteinMatchParameters(proteinProbabilities, null);
-
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
 
-            for (String proteinKey : identification.getProteinIdentification()) {
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(new PSParameter());
+
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+
+            while (proteinMatchesIterator.hasNext()) {
 
                 if (waitingHandler.isRunCanceled()) {
                     break;
                 }
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                String proteinKey = proteinMatch.getKey();
+
                 proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
                 double confidenceThreshold;
 
@@ -387,29 +400,30 @@ public class PrideXmlExport {
                 br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
 
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), peptideProbabilities, null);
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters);
 
-                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                while (peptideMatchesIterator.hasNext()) {
 
                     if (waitingHandler.isRunCanceled()) {
                         break;
                     }
 
-                    PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    String peptideKey = peptideMatch.getKey();
+
                     peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
-                    identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
-                    identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, null);
+                    PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatches(), parameters, true);
 
-                    for (String spectrumKey : currentMatch.getSpectrumMatches()) {
+                    while (psmIterator.hasNext()) {
 
                         if (waitingHandler.isRunCanceled()) {
                             break;
                         }
 
+                        SpectrumMatch spectrumMatch = psmIterator.next();
+                        String spectrumKey = spectrumMatch.getKey();
                         psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();
                         Peptide tempPeptide = bestAssumption.getPeptide();
 
@@ -422,10 +436,15 @@ public class PrideXmlExport {
 
                         // peptide start and end
                         String proteinAccession = proteinMatch.getMainMatch();
-                        String proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
-                        int peptideStart = proteinSequence.lastIndexOf(tempPeptide.getSequence()) + 1; // @TODO: lastIndexOf should be avoided!!
-                        br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<End>" + (peptideStart + tempPeptide.getSequence().length() - 1) + "</End>" + System.getProperty("line.separator"));
+                        Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
+                        String peptideSequence = Peptide.getSequence(peptideKey);
+                        ArrayList<Integer> startIndexes = currentProtein.getPeptideStart(peptideSequence,
+                                identificationParameters.getSequenceMatchingPreferences());
+                        for (Integer peptideStart : startIndexes) {
+                            br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
+                            Integer endIndex = peptideStart + tempPeptide.getSequence().length() - 1;
+                            br.write(getCurrentTabSpace() + "<End>" + endIndex + "</End>" + System.getProperty("line.separator"));
+                        }
 
                         // spectrum index reference
                         br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>" + System.getProperty("line.separator"));
@@ -699,9 +718,6 @@ public class PrideXmlExport {
                 progress += increment;
                 progressDialog.setValue((int) ((100 * progress) / totalProgress));
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // @TODO: add better error handling
-        }
     }
 
     /**
