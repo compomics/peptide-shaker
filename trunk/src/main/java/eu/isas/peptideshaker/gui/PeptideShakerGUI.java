@@ -1475,9 +1475,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         validationQcMenuItem.setMnemonic('V');
         validationQcMenuItem.setText("Validation QC");
-        validationQcMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                validationQcMenuItemMouseReleased(evt);
+        validationQcMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validationQcMenuItemActionPerformed(evt);
             }
         });
         editMenu.add(validationQcMenuItem);
@@ -3120,14 +3120,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Open the ValidationQCPreferencesDialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
-    private void validationQcMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validationQcMenuItemMouseReleased
+    private void validationQcMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validationQcMenuItemActionPerformed
 
         final IdMatchValidationPreferences idValidationPreferences = getIdentificationParameters().getIdValidationPreferences();
         final ValidationQCPreferences validationQCPreferences = idValidationPreferences.getValidationQCPreferences();
         ValidationQCPreferencesDialog validationQCPreferencesDialog = new ValidationQCPreferencesDialog(this, this, validationQCPreferences);
+
         if (!validationQCPreferencesDialog.isCanceled()) {
             ValidationQCPreferences newPreferences = validationQCPreferencesDialog.getValidationQCPreferences();
             if (!newPreferences.isSameAs(validationQCPreferences)) {
@@ -3162,8 +3163,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, 
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), 
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog,
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingPreferences());
 
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
@@ -3191,7 +3192,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }.start();
             }
         }
-    }//GEN-LAST:event_validationQcMenuItemMouseReleased
+    }//GEN-LAST:event_validationQcMenuItemActionPerformed
 
     /**
      * Opens a dialog allowing the setting of paths.
