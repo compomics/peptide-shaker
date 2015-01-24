@@ -96,7 +96,7 @@ public class AssumptionFilter extends MatchFilter {
      */
     private ArrayList<String> fileNames = null;
     /**
-     * the precursor m/z.
+     * The precursor m/z.
      */
     private Double precursorMz = null;
     /**

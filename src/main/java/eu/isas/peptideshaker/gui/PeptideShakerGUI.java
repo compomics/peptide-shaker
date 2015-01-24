@@ -94,7 +94,6 @@ import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
 import eu.isas.peptideshaker.ptm.PtmScorer;
 import eu.isas.peptideshaker.scoring.PsmPTMMap;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -1474,6 +1473,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         });
         editMenu.add(annotationPreferencesMenu);
 
+        validationQcMenuItem.setMnemonic('V');
         validationQcMenuItem.setText("Validation QC");
         validationQcMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -3118,6 +3118,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editPathSettings(null);
     }//GEN-LAST:event_configurationFilesSettingsActionPerformed
 
+    /**
+     * Open the ValidationQCPreferencesDialog.
+     * 
+     * @param evt 
+     */
     private void validationQcMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validationQcMenuItemMouseReleased
 
         final IdMatchValidationPreferences idValidationPreferences = getIdentificationParameters().getIdValidationPreferences();
@@ -3157,7 +3162,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences());
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, 
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), 
+                                    peptideShakerGUI.getSpectrumCountingPreferences());
 
                             progressDialog.setPrimaryProgressCounterIndeterminate(true);
 

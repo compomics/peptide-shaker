@@ -897,7 +897,6 @@ public class ProteinFilter extends MatchFilter {
 
     @Override
     public MatchFilter clone() {
-        
         ProteinFilter proteinFilter = new ProteinFilter(name, description, condition, reportPassed, reportFailed);
         proteinFilter.setActive(isActive());
         proteinFilter.setIdentifierRegex(getIdentifierRegex());
@@ -924,7 +923,6 @@ public class ProteinFilter extends MatchFilter {
         proteinFilter.setPi(getPi());
         proteinFilter.setPiComparison(getPiComparison());
         return proteinFilter;
-        
     }
 
     /**
