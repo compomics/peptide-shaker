@@ -2078,7 +2078,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             if (e.getMessage().contains("Invalid row number (65536)")) {
                                 progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occurred while generating the output. This format can contain only 65,535 lines. Please use a text export instead.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                                        "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
+                                                + "Please use a text export instead.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             } else {
                                 progressDialog.setRunFinished();
