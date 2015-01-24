@@ -32,19 +32,19 @@ public abstract class MatchFilter implements Serializable, Filter {
      */
     protected String description = "";
     /**
-     * Description of the condition to meet to pass the filter
+     * Description of the condition to meet to pass the filter.
      */
     protected String condition = "";
     /**
-     * Report when the filter is passed
+     * Report when the filter is passed.
      */
     protected String reportPassed = "";
     /**
-     * Report when the filter is not passed
+     * Report when the filter is not passed.
      */
     protected String reportFailed = "";
     /**
-     * boolean indicating whether the filter is active.
+     * Boolean indicating whether the filter is active.
      */
     private boolean active = true;
     /**

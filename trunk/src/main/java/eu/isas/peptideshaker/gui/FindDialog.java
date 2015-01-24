@@ -3928,7 +3928,7 @@ public class FindDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
     /**
-     * Preload the tables
+     * Preload the tables.
      *
      * @param evt the change event
      */
@@ -3936,6 +3936,11 @@ public class FindDialog extends javax.swing.JDialog {
         // @TODO: batch load the table content!!
     }//GEN-LAST:event_filterTypeJTabbedPaneStateChanged
 
+    /**
+     * Filter the PSMs.
+     * 
+     * @param evt 
+     */
     private void charge1CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_charge1CheckBoxActionPerformed
         filterPsms();
     }//GEN-LAST:event_charge1CheckBoxActionPerformed

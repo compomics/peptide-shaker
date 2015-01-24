@@ -730,7 +730,6 @@ public class PeptideFilter extends MatchFilter {
 
     @Override
     public MatchFilter clone() {
-        
         PeptideFilter peptideFilter = new PeptideFilter(name, description, condition, reportPassed, reportFailed);
         peptideFilter.setActive(isActive());
         peptideFilter.setProtein(getProtein());
@@ -749,7 +748,6 @@ public class PeptideFilter extends MatchFilter {
         peptideFilter.setPiComparison(getPiComparison());
         peptideFilter.setModificationStatus(getModificationStatus());
         return peptideFilter;
-        
     }
 
     /**

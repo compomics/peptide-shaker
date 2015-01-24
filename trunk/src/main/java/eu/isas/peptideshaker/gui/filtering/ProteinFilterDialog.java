@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.filtering;
 
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -14,7 +9,7 @@ import javax.swing.RowFilter.ComparisonType;
 import javax.swing.SwingConstants;
 
 /**
- * Dialog to edit protein filters
+ * Dialog to edit protein filters.
  *
  * @author Marc Vaudel
  */
@@ -30,7 +25,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
     private ProteinFilter proteinFilter;
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new ProteinFilterDialog.
      *
      * @param parent the parent frame
      */
@@ -39,7 +34,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new ProteinFilterDialog.
      *
      * @param parent the parent frame
      * @param filter the protein filter to edit
@@ -58,9 +53,9 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Sets up the gui components.
+     * Sets up the GUI components.
      *
-     * @param proteinFilter the filter to use to populate the gui
+     * @param proteinFilter the filter to use to populate the GUI
      */
     public void setUpGUI(ProteinFilter proteinFilter) {
 
@@ -147,8 +142,6 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         proteinFilterPanel = new javax.swing.JPanel();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
         filterSplitPane = new javax.swing.JSplitPane();
         settingsPanel = new javax.swing.JPanel();
         proteinFilterParamsPanel = new javax.swing.JPanel();
@@ -188,32 +181,23 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
         nameLbl = new javax.swing.JLabel();
         nameTxt = new javax.swing.JTextField();
         descriptionLbl = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        descriptionScrollPane = new javax.swing.JScrollPane();
         descriptionTxt = new javax.swing.JTextArea();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Protein Filters");
 
         proteinFilterPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         filterSplitPane.setBorder(null);
         filterSplitPane.setDividerLocation(200);
         filterSplitPane.setDividerSize(0);
         filterSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         filterSplitPane.setOpaque(false);
+
+        settingsPanel.setOpaque(false);
 
         proteinFilterParamsPanel.setBackground(new java.awt.Color(230, 230, 230));
         proteinFilterParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
@@ -469,13 +453,13 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Properties"));
         propertiesPanel.setOpaque(false);
 
-        nameLbl.setText("Name:");
+        nameLbl.setText("Name");
 
-        descriptionLbl.setText("Description:");
+        descriptionLbl.setText("Description");
 
         descriptionTxt.setColumns(20);
         descriptionTxt.setRows(5);
-        jScrollPane1.setViewportView(descriptionTxt);
+        descriptionScrollPane.setViewportView(descriptionTxt);
 
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
@@ -484,7 +468,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
             .addGroup(propertiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(descriptionScrollPane)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
                         .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(propertiesPanelLayout.createSequentialGroup()
@@ -505,11 +489,25 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(descriptionLbl)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                .addComponent(descriptionScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         filterSplitPane.setLeftComponent(propertiesPanel);
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout proteinFilterPanelLayout = new javax.swing.GroupLayout(proteinFilterPanel);
         proteinFilterPanel.setLayout(proteinFilterPanelLayout);
@@ -553,6 +551,11 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Set the filters and close the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             setFilter();
@@ -560,21 +563,25 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel confidenceLabel;
     private javax.swing.JLabel coverageLabel;
     private javax.swing.JLabel descriptionLbl;
+    private javax.swing.JScrollPane descriptionScrollPane;
     private javax.swing.JTextArea descriptionTxt;
     private javax.swing.JSplitPane filterSplitPane;
     private javax.swing.JLabel identifierLabel;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSplitPane manualSelectionSplitPane;
     private javax.swing.JLabel ms2QuantLabel;
@@ -632,7 +639,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Modifies the filter according to the user selection
+     * Modifies the filter according to the user selection.
      */
     public void setFilter() {
 
@@ -768,7 +775,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
 
     /**
      * Convenience method returning the comparison type based on the selected
-     * item in the < = > combo boxes.
+     * item in the smaller than, equals or greater than combo boxes.
      *
      * @param selectedItem the index of the item selected
      * @return the corresponding comparison type
@@ -821,5 +828,4 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
                 || !proteinScoreTxt.getText().trim().equals("")
                 || !proteinConfidenceTxt.getText().trim().equals("");
     }
-
 }

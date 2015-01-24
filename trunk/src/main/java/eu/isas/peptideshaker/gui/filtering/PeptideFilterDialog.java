@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.filtering;
 
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -22,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 /**
- * Dialog to edit peptide filters
+ * Dialog to edit peptide filters.
  *
  * @author Marc Vaudel
  */
@@ -37,12 +32,12 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
      */
     private boolean canceled = false;
     /**
-     * The original filter
+     * The original filter.
      */
     private PeptideFilter peptideFilter;
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new ProteinFilterDialog.
      *
      * @param parent the parent frame
      * @param identificationParameters the identification parameters
@@ -52,7 +47,7 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new  ProteinFilterDialog.
      *
      * @param parent the parent frame
      * @param filter the protein filter to edit
@@ -72,9 +67,9 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Sets up the gui components.
+     * Sets up the GUI components.
      *
-     * @param peptideFilter the filter to use to populate the gui
+     * @param peptideFilter the filter to use to populate the GUI
      * @param identificationParameters the identification parameters
      */
     public void setUpGUI(PeptideFilter peptideFilter, IdentificationParameters identificationParameters) {
@@ -163,8 +158,6 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         proteinFilterPanel = new javax.swing.JPanel();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
         filterSplitPane = new javax.swing.JSplitPane();
         settingsPanel = new javax.swing.JPanel();
         peptideFilterParamsPanel = new javax.swing.JPanel();
@@ -210,26 +203,15 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         nameLbl = new javax.swing.JLabel();
         nameTxt = new javax.swing.JTextField();
         descriptionLbl = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        descriptionlScrollPane = new javax.swing.JScrollPane();
         descriptionTxt = new javax.swing.JTextArea();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Peptide Filter");
 
         proteinFilterPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         filterSplitPane.setBackground(new java.awt.Color(230, 230, 230));
         filterSplitPane.setBorder(null);
@@ -419,7 +401,7 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
             peptidesExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidesExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesExceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+                .addComponent(peptidesExceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
                 .addContainerGap())
         );
         peptidesExceptionsPanelLayout.setVerticalGroup(
@@ -464,14 +446,14 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         settingsPanelLayout.setHorizontalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(peptideFilterParamsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(manualInputSplitPane)
+            .addComponent(manualInputSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addComponent(peptideFilterParamsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(manualInputSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE))
+                .addComponent(manualInputSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
         );
 
         filterSplitPane.setRightComponent(settingsPanel);
@@ -480,13 +462,13 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Properties"));
         propertiesPanel.setOpaque(false);
 
-        nameLbl.setText("Name:");
+        nameLbl.setText("Name");
 
-        descriptionLbl.setText("Description:");
+        descriptionLbl.setText("Description");
 
         descriptionTxt.setColumns(20);
         descriptionTxt.setRows(5);
-        jScrollPane1.setViewportView(descriptionTxt);
+        descriptionlScrollPane.setViewportView(descriptionTxt);
 
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
@@ -495,7 +477,7 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
             .addGroup(propertiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(descriptionlScrollPane)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
                         .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(propertiesPanelLayout.createSequentialGroup()
@@ -516,11 +498,25 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(descriptionLbl)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addComponent(descriptionlScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         filterSplitPane.setLeftComponent(propertiesPanel);
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout proteinFilterPanelLayout = new javax.swing.GroupLayout(proteinFilterPanel);
         proteinFilterPanel.setLayout(proteinFilterPanelLayout);
@@ -541,7 +537,7 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
             proteinFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinFilterPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+                .addComponent(filterSplitPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(proteinFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -563,6 +559,11 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Set the filters and close the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             setFilter();
@@ -570,19 +571,23 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel confidencePeptidesLabel;
     private javax.swing.JLabel descriptionLbl;
     private javax.swing.JTextArea descriptionTxt;
+    private javax.swing.JScrollPane descriptionlScrollPane;
     private javax.swing.JSplitPane filterSplitPane;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane manualInputSplitPane;
     private javax.swing.JTable modificationTable;
     private javax.swing.JPanel modificationsPanel;
@@ -672,7 +677,6 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         }
         peptideFilter.setManualValidation(parseAccessions(peptideManualValidationTxt.getText()));
         peptideFilter.setExceptions(parseAccessions(peptideExceptionsTxt.getText()));
-
     }
 
     /**
@@ -727,7 +731,7 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
 
     /**
      * Convenience method returning the comparison type based on the selected
-     * item in the < = > combo boxes.
+     * item in the smaller than, equals or greater than combo boxes.
      *
      * @param selectedItem the index of the item selected
      * @return the corresponding comparison type
@@ -785,5 +789,4 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
         }
         return false;
     }
-
 }

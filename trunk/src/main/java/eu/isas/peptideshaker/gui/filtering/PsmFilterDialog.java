@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 /**
- * Dialog to edit peptide filters
+ * Dialog to edit peptide filters.
  *
  * @author Marc Vaudel
  */
@@ -32,12 +32,12 @@ public class PsmFilterDialog extends javax.swing.JDialog {
      */
     private ArrayList<String> spectrumFilesTableToolTips;
     /**
-     * The original filter
+     * The original filter.
      */
     private PsmFilter psmFilter;
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new ProteinFilterDialog.
      *
      * @param parent the parent frame
      * @param identificationParameters the identification parameters
@@ -48,7 +48,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates new form ProteinFilterDialog
+     * Creates a new ProteinFilterDialog.
      *
      * @param parent the parent frame
      * @param filter the protein filter to edit
@@ -69,9 +69,9 @@ public class PsmFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Sets up the gui components.
+     * Sets up the GUI components.
      *
-     * @param psmFilter the filter to use to populate the gui
+     * @param psmFilter the filter to use to populate the GUI
      * @param identificationParameters the identification parameters
      * @param spectrumFiles list of the loaded spectrum files
      */
@@ -196,14 +196,12 @@ public class PsmFilterDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         proteinFilterPanel = new javax.swing.JPanel();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
         filterSplitPane = new javax.swing.JSplitPane();
         propertiesPanel = new javax.swing.JPanel();
         nameLbl = new javax.swing.JLabel();
         nameTxt = new javax.swing.JTextField();
         descriptionLbl = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        descriptionScrollPane = new javax.swing.JScrollPane();
         descriptionTxt = new javax.swing.JTextArea();
         filterSettingsPanel = new javax.swing.JPanel();
         manualSelectionSplitPane = new javax.swing.JSplitPane();
@@ -255,24 +253,13 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             }
         };
         spectrumFilesLbl = new javax.swing.JLabel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("PSM Filters");
 
         proteinFilterPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         filterSplitPane.setBorder(null);
         filterSplitPane.setDividerLocation(200);
@@ -283,13 +270,13 @@ public class PsmFilterDialog extends javax.swing.JDialog {
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Properties"));
         propertiesPanel.setOpaque(false);
 
-        nameLbl.setText("Name:");
+        nameLbl.setText("Name");
 
-        descriptionLbl.setText("Description:");
+        descriptionLbl.setText("Description");
 
         descriptionTxt.setColumns(20);
         descriptionTxt.setRows(5);
-        jScrollPane1.setViewportView(descriptionTxt);
+        descriptionScrollPane.setViewportView(descriptionTxt);
 
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
@@ -298,7 +285,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             .addGroup(propertiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(descriptionScrollPane)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
                         .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(propertiesPanelLayout.createSequentialGroup()
@@ -319,7 +306,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(descriptionLbl)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                .addComponent(descriptionScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -354,7 +341,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             psmManualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmManualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                .addComponent(psmManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -375,14 +362,14 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             psmExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
+                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE)
                 .addContainerGap())
         );
         psmExceptionsPanelLayout.setVerticalGroup(
             psmExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -603,7 +590,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             .addGroup(spectrumFilesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectrumFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
+                    .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
                     .addGroup(spectrumFilesPanelLayout.createSequentialGroup()
                         .addComponent(spectrumFilesLbl)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -646,10 +633,24 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             .addGroup(filterSettingsPanelLayout.createSequentialGroup()
                 .addComponent(psmFilterParamsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(manualSelectionSplitPane))
+                .addComponent(manualSelectionSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
         );
 
         filterSplitPane.setRightComponent(filterSettingsPanel);
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout proteinFilterPanelLayout = new javax.swing.GroupLayout(proteinFilterPanel);
         proteinFilterPanel.setLayout(proteinFilterPanelLayout);
@@ -670,7 +671,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
             proteinFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinFilterPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+                .addComponent(filterSplitPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(proteinFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -692,6 +693,11 @@ public class PsmFilterDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Set the filters and close the dialog.
+     *
+     * @param evt
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             setFilter();
@@ -699,11 +705,15 @@ public class PsmFilterDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Close the dialog without saving.
+     *
+     * @param evt
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
@@ -716,13 +726,13 @@ public class PsmFilterDialog extends javax.swing.JDialog {
     private javax.swing.JLabel confidencePsmsLabel;
     private javax.swing.JLabel confidenceUnitLbl;
     private javax.swing.JLabel descriptionLbl;
+    private javax.swing.JScrollPane descriptionScrollPane;
     private javax.swing.JTextArea descriptionTxt;
     private javax.swing.JPanel detailedParametersPanel;
     private javax.swing.JComboBox errorUnitCmb;
     private javax.swing.JScrollPane filesScrollPane;
     private javax.swing.JPanel filterSettingsPanel;
     private javax.swing.JSplitPane filterSplitPane;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane manualSelectionSplitPane;
     private javax.swing.JLabel mzUnitLbl;
     private javax.swing.JLabel nameLbl;
@@ -774,7 +784,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Modifies the filter according to the user selection
+     * Modifies the filter according to the user selection.
      */
     public void setFilter() {
 
@@ -875,7 +885,6 @@ public class PsmFilterDialog extends javax.swing.JDialog {
         }
 
         return true;
-
     }
 
     /**
@@ -902,7 +911,7 @@ public class PsmFilterDialog extends javax.swing.JDialog {
 
     /**
      * Convenience method returning the comparison type based on the selected
-     * item in the < = > combo boxes.
+     * item in the smaller than, equals or greater than combo boxes.
      *
      * @param selectedItem the index of the item selected
      * @return the corresponding comparison type
@@ -967,5 +976,4 @@ public class PsmFilterDialog extends javax.swing.JDialog {
         }
         return false;
     }
-
 }

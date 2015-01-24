@@ -47,7 +47,7 @@ public class PsmFilter extends MatchFilter {
      */
     private AssumptionFilter assumptionFilter;
     /**
-     * the precursor m/z.
+     * The precursor m/z.
      *
      * @deprecated use the assumption filter instead
      */
@@ -292,7 +292,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Tests whether a spectrum match is validated by this filter. No probabilistic m/z error filtering possible.
+     * Tests whether a spectrum match is validated by this filter. No
+     * probabilistic m/z error filtering possible.
      *
      * @param spectrumKey the key of the spectrum match
      * @param identification the identification object to get the information
@@ -323,7 +324,8 @@ public class PsmFilter extends MatchFilter {
      * from
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
-     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
+     * @param precursorMzDeviations list of the precursor m/z deviations to
+     * compare this one for the probabilistic m/z error filtering
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -349,7 +351,8 @@ public class PsmFilter extends MatchFilter {
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
-     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
+     * @param precursorMzDeviations list of the precursor m/z deviations to
+     * compare this one for the probabilistic m/z error filtering
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -376,7 +379,8 @@ public class PsmFilter extends MatchFilter {
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
-     * @param precursorMzDeviations list of the precursor m/z deviations to compare this one for the probabilistic m/z error filtering
+     * @param precursorMzDeviations list of the precursor m/z deviations to
+     * compare this one for the probabilistic m/z error filtering
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -388,7 +392,7 @@ public class PsmFilter extends MatchFilter {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, 
+    public static boolean isValidated(String spectrumKey, PsmFilter psmFilter, Identification identification, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -496,10 +500,11 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Indicates whether another filter is the same as the current filter.
-     * 
+     *
      * @param anotherFilter another filter
-     * 
-     * @return a boolean indicating whether another filter is the same as the current filter
+     *
+     * @return a boolean indicating whether another filter is the same as the
+     * current filter
      */
     public boolean isSameAs(PsmFilter anotherFilter) {
         if (!name.equals(anotherFilter.getName())) {
