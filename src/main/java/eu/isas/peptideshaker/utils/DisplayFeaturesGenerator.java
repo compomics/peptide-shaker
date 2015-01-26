@@ -412,7 +412,7 @@ public class DisplayFeaturesGenerator {
             } else if (fixedModifications.containsKey(aa) && !fixedModifications.get(aa).isEmpty()) {
                 for (String ptmName : fixedModifications.get(aa)) { //There should be only one
                     String temp = AminoAcidSequence.getTaggedResidue(aminoAcid, ptmName, modificationProfile, 1, true, true) + ": " + ptmName + " (fixed)<br>";
-                    if (!alreadyAnnotated.contains(temp)) {
+                    if (temp.startsWith("<") && !alreadyAnnotated.contains(temp)) {
                         tooltip += temp;
                         alreadyAnnotated.add(temp);
                     }
