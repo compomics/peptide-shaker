@@ -89,6 +89,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(GUI.id, true, GUI.description);
         aOptions.addOption(PTM_SCORE.id, true, PTM_SCORE.description);
         aOptions.addOption(PTM_THRESHOLD.id, true, PTM_THRESHOLD.description);
+        aOptions.addOption(SCORE_NEUTRAL_LOSSES.id, true, SCORE_NEUTRAL_LOSSES.description);
         aOptions.addOption(PROTEIN_FRACTION_MW_CONFIDENCE.id, true, PROTEIN_FRACTION_MW_CONFIDENCE.description);
         aOptions.addOption(MIN_PEPTIDE_LENGTH.id, true, MIN_PEPTIDE_LENGTH.description);
         aOptions.addOption(MAX_PEPTIDE_LENGTH.id, true, MAX_PEPTIDE_LENGTH.description);
