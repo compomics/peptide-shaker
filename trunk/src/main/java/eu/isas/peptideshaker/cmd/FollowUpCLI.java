@@ -75,20 +75,21 @@ public class FollowUpCLI extends CpsParent {
             try {
                 setPathConfiguration();
             } catch (Exception e) {
-                System.out.println("An error occurred when setting path configuration. Default will be used.");
+                System.out.println("An error occurred when the setting path configurations. Default paths will be used.");
                 e.printStackTrace();
             }
         }
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
-                System.out.println("Impossible to write in the following configuration folders, please use a temporary folder, the path configuration command line, or edit the configuration paths from the graphical interface.");
+                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
+                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
                 for (PathKey pathKey : errorKeys) {
                     System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
                 }
             }
         } catch (Exception e) {
-            System.out.println("Impossible to load path configuration, default will be used.");
+            System.out.println("Unable to load the path configurations. Default paths will be used.");
         }
 
         waitingHandler = new WaitingHandlerCLIImpl();
