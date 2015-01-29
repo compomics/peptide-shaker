@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
+import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
@@ -49,7 +50,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }

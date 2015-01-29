@@ -19,10 +19,6 @@ import java.io.IOException;
  */
 public class PeptideShakerPathPreferences {
 
-    /**
-     * Default name for the path configuration file.
-     */
-    public static final String configurationFileName = "resources/conf/paths.txt";
 
     /**
      * Enum of the paths which can be set in PeptideShaker.

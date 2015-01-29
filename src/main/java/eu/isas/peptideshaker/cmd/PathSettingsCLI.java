@@ -73,7 +73,7 @@ public class PathSettingsCLI {
         }
 
         // Write path file preference
-        File destinationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File destinationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         try {
             PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
         } catch (Exception e) {
