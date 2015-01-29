@@ -801,7 +801,6 @@ public class PrideXmlExport {
             PTM ptm = ptmFactory.getPTM(modName);
 
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
-
             if (cvTerm == null) {
                 cvTerm = PtmToPrideMap.getDefaultCVTerm(ptm.getName());
             }
