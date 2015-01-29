@@ -2,6 +2,15 @@
 #labels Featured
 
 ----
+
+*Changes in PeptideShaker 0.37.3 (January 29. 2015):*
+
+ * BUG FIX: Fixed a bug where neutral losses and reporter ions for user defined modifications disappeared.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.45.25.
+
+----
+
 *Changes in PeptideShaker 0.37.2 (January 29. 2015):*
 
  * BUG FIX: Fixed a bug in the pepxml reader where only the location of the first variable PTM in a peptide was correct.
