@@ -75,20 +75,21 @@ public class MzidCLI extends CpsParent {
             try {
                 setPathConfiguration();
             } catch (Exception e) {
-                System.out.println("An error occurred when setting path configuration. Default will be used.");
+                System.out.println("An error occurred when setting the path configurations. Default paths will be used.");
                 e.printStackTrace();
             }
         }
         try {
             ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
             if (!errorKeys.isEmpty()) {
-                System.out.println("Impossible to write in the following configuration folders, please use a temporary folder, the path configuration command line, or edit the configuration paths from the graphical interface.");
+                System.out.println("Unable to write in the following configuration folders. Please use a temporary folder, "
+                        + "the path configuration command line, or edit the configuration paths from the graphical interface.");
                 for (PathKey pathKey : errorKeys) {
                     System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
                 }
             }
         } catch (Exception e) {
-            System.out.println("Impossible to load path configuration, default will be used.");
+            System.out.println("Unable to load the path configurations. Default paths will be used.");
         }
 
         waitingHandler = new WaitingHandlerCLIImpl();
@@ -112,12 +113,12 @@ public class MzidCLI extends CpsParent {
         // load fasta file
         try {
             if (!loadFastaFile(waitingHandler)) {
-                waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
+                waitingHandler.appendReport("The FASTA file was not found, please locate it using the GUI.", true, true);
                 return 1;
             }
             waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
+            waitingHandler.appendReport("An error occurred while loading the FASTA file.", true, true);
             e.printStackTrace();
             return 1;
         }
