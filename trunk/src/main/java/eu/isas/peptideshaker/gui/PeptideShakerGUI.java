@@ -417,7 +417,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }
@@ -3218,7 +3218,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     }
                 }
                 // write path file preference
-                File destinationFile = new File(getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+                File destinationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
                 try {
                     PeptideShakerPathPreferences.writeConfigurationToFile(destinationFile);
                     if (welcomeDialog != null) {

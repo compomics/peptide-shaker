@@ -9,6 +9,7 @@ import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.JavaSettingsDialog;
+import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -872,8 +873,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
     /**
      * Open the Edit Paths dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void pathSettingsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pathSettingsMenuActionPerformed
         peptideShakerGUI.editPathSettings(this);
@@ -957,10 +958,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         String installPath = "user.home";
 
-        if (peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() != null) {
-            if (new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile() != null
-                    && new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile().getParentFile() != null) {
-                installPath = new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).getParentFile().getParent();
+        UtilitiesUserPreferences utilitiesUserPreferences = peptideShakerGUI.getUtilitiesUserPreferences();
+        
+        if (utilitiesUserPreferences.getSearchGuiPath() != null) { // @TODO: if not null, update the path
+            if (new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile() != null
+                    && new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile().getParentFile() != null) {
+                installPath = new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile().getParent();
             }
         }
 

@@ -60,15 +60,13 @@
         <a name="#Optimize_Estimator_Accuracy"></a>
         <h3>Estimator Optimization</h3>
         <p align="justify">
-            The estimator plots will help you improve the accuracy of confidence estimation. 
-            By default, the PEP window is set to a minimum Nmax value: the maximum amount of target hits comprised between two 
-            subsequent decoy hits.
+            The estimator plots will help you improve the accuracy of confidence estimation by adjusting the bin size used to estimate the PEP.
             <br><br>
-            When the PEP value is confidently estimated, probabilistic estimators can be used. However, sometimes the PEP cannot be 
+            When the PEP value is confidently estimated, probabilistic estimators provide a smoothed version of the classical estimators. However, sometimes the PEP cannot be 
             accurately estimated, e.g., for small populations. The confidence and probabilistic estimators will then no longer 
             be reliable. 
             <br><br>
-            It is advised to trust only score and classical FDR. By default, the classical estimation is selected.
+            It is advised to let PEP and FDR estimator advanced settings to default.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -95,7 +93,7 @@
                 <i>When the confidence estimation is not accurate the probabilistic 
                     estimator should not be used! 
                     <br><br>
-                    When Nmax or the number of validated hits are small (typically less than 100) low FDR threshold 
+                    When PEP accuracy is high (typically more than 10%) or the number of validated hits are small (typically less than 100) low FDR threshold 
                     (typically 1%) should not be applied!</i> 
                 <br><br>
                 For more information about the minimum acceptable FDR see 
@@ -127,12 +125,9 @@
         <ul>
             <li><b>Total TP:</b> the estimated total amount of the true positives which can be found in this dataset without any threshold.</li>
             <br>
-            <li><b>Nmax:</b> the maximum amount of target hits comprised between two subsequent decoy hits. 
+            <li><b>Resolution:</b> PEP estimator resolution, calculated by 1/bin size. A low value indicate precise confidence (PEP) estimation.
                 <br><br>
-                <i>If this value is lower than 100 the 
-                    accuracy of the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">verified</a>!</i> 
-                <br><br>
-                For more information about Nmax, see 
+                For more information about estimators resolution, see 
                 <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
                     Proteomics 2011;11(10):2105-14</a>.</li>
             <br>

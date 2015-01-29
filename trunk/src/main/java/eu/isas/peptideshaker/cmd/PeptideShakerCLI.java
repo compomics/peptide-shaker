@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
 import com.compomics.util.experiment.MsExperiment;
@@ -802,7 +803,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Sets the path configuration.
      */
     private void setPathConfiguration() throws IOException {
-        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), PeptideShakerPathPreferences.configurationFileName);
+        File pathConfigurationFile = new File(PeptideShaker.getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
         if (pathConfigurationFile.exists()) {
             PeptideShakerPathPreferences.loadPathPreferencesFromFile(pathConfigurationFile);
         }

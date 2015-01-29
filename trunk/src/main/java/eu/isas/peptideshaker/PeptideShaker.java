@@ -143,6 +143,10 @@ public class PeptideShaker {
      * List of warnings collected while working on the data.
      */
     private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
+    /**
+     * If true, a warning will be displayed when encountering memory issues.
+     */
+    private boolean memoryWarning = true;
 
     /**
      * Empty constructor for instantiation purposes.
@@ -265,8 +269,11 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
 
-        if (!objectsCache.memoryCheck()) {
+        if (!objectsCache.memoryCheck() && memoryWarning) {
             waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
+            waitingHandler.appendReport("You can edit the memory given to the tool via the \"Edit\" > \"Java Settings\" menu.", false, true);
+            waitingHandler.appendReport("See http://peptide-shaker.googlecode.com for help.", false, true);
+            memoryWarning = false;
         }
         if (waitingHandler.isRunCanceled()) {
             return;
