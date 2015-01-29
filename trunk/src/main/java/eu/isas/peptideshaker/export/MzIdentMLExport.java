@@ -496,7 +496,10 @@ public class MzIdentMLExport {
                         + "residues=\"" + peptideSequence.charAt(modMatch.getModificationSite() - 1) + "\" "
                         + "location=\"" + ptmLocation + "\" >" + System.getProperty("line.separator"));
 
-                CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+                CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(currentPtm.getName());
+                if (ptmCvTerm == null) {
+                    ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+                }
                 if (ptmCvTerm != null) {
                     tabCounter++;
                     writeCvTerm(ptmCvTerm);
@@ -515,7 +518,10 @@ public class MzIdentMLExport {
 
             modMatchIndex = 0;
             for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                CvTerm ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(modMatch.getTheoreticPtm());
+                CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(modMatch.getTheoreticPtm());
+                if (ptmCvTerm == null) {
+                    ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(modMatch.getTheoreticPtm());
+                }
                 if (ptmCvTerm != null) {
                     writeCvTerm(ptmCvTerm);
                     if (mzidVersion1_2) {
