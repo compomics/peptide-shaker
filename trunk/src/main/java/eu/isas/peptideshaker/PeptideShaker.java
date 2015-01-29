@@ -271,8 +271,8 @@ public class PeptideShaker {
 
         if (!objectsCache.memoryCheck() && memoryWarning) {
             waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
-            waitingHandler.appendReport("You can edit the memory given to the tool via the \"Edit\" > \"Java Settings\" menu.", false, true);
-            waitingHandler.appendReport("See http://peptide-shaker.googlecode.com for help.", false, true);
+            waitingHandler.appendReport("You can edit the memory given to the tool via the \"Edit\" > \"Java Settings\" menu.", true, true);
+            waitingHandler.appendReport("See http://peptide-shaker.googlecode.com for help.", true, true);
             memoryWarning = false;
         }
         if (waitingHandler.isRunCanceled()) {

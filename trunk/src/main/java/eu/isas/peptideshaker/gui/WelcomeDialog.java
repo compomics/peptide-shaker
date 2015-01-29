@@ -9,7 +9,6 @@ import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.JavaSettingsDialog;
-import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -956,24 +955,35 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     public boolean downloadSearchGUI() {
 
-        String installPath = "user.home";
+        boolean firstTimeInstall = true;
+        String installPath = null;
 
         UtilitiesUserPreferences utilitiesUserPreferences = peptideShakerGUI.getUtilitiesUserPreferences();
         
-        if (utilitiesUserPreferences.getSearchGuiPath() != null) { // @TODO: if not null, update the path
+        if (utilitiesUserPreferences.getSearchGuiPath() != null) {
             if (new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile() != null
                     && new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile().getParentFile() != null) {
                 installPath = new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile().getParent();
             }
         }
 
-        final File downloadFolder = Util.getUserSelectedFolder(this, "Select SearchGUI Folder", installPath, "SearchGUI Folder", "Select", false);
+        final File downloadFolder;
+
+        if (installPath == null) {
+            installPath = "user.home";
+            downloadFolder = Util.getUserSelectedFolder(this, "Select SearchGUI Folder", installPath, "SearchGUI Folder", "Select", false);
+        } else {
+            firstTimeInstall = false;
+            downloadFolder = new File(installPath);
+        }
+        
+        final boolean finalFirstTimeInstall = firstTimeInstall;
 
         if (downloadFolder != null) {
 
             progressDialog = new ProgressDialogX(dummyParentFrame,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui-orange.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
 
             progressDialog.setPrimaryProgressCounterIndeterminate(true);
@@ -994,8 +1004,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         URL jarRepository = new URL("http", "genesis.ugent.be", new StringBuilder().append("/maven2/").toString());
-                        downloadLatestZipFromRepo(downloadFolder, "SearchGUI", "eu.isas.searchgui", "SearchGUI", "searchgui.ico",
-                                null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                        if (finalFirstTimeInstall) {
+                            downloadLatestZipFromRepo(downloadFolder, "SearchGUI", "eu.isas.searchgui", "SearchGUI", "searchgui.ico",
+                                    null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                        } else {
+                            downloadLatestZipFromRepo(new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).toURI().toURL(), "SearchGUI", false,
+                                    "searchgui.ico", null, jarRepository, false, true, new GUIFileDAO(), progressDialog);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (URISyntaxException e) {
