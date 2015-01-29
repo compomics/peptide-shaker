@@ -1,10 +1,12 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
+import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * A wrapper class used to start the jar file with parameters. The parameters
@@ -40,6 +42,17 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
         // Set path for utilities preferences
         try {
             setPathConfiguration();
+        } catch (Exception e) {
+            System.out.println("Impossible to load path configuration, default will be used.");
+        }
+        try {
+            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+            if (!errorKeys.isEmpty()) {
+                System.out.println("Impossible to write in the following configuration folders, please edit the configuration paths.");
+                for (PathKey pathKey : errorKeys) {
+                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
+                }
+            }
         } catch (Exception e) {
             System.out.println("Impossible to load path configuration, default will be used.");
         }

@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class sets the path preferences for the files to read/write.
@@ -18,7 +19,6 @@ import java.io.IOException;
  * @author Marc Vaudel
  */
 public class PeptideShakerPathPreferences {
-
 
     /**
      * Enum of the paths which can be set in PeptideShaker.
@@ -294,5 +294,27 @@ public class PeptideShakerPathPreferences {
         }
 
         bw.newLine();
+    }
+
+    /**
+     * Returns a list containing the keys of the paths where the tool is not
+     * able to write.
+     *
+     * @return a list containing the keys of the paths where the tool is not
+     * able to write
+     *
+     * @throws IOException exception thrown whenever an error occurred while
+     * loading the path configuration
+     */
+    public static ArrayList<PathKey> getErrorKeys() throws IOException {
+        ArrayList<PathKey> result = new ArrayList<PathKey>();
+        for (PeptideShakerPathKey peptideShakerPathKey : PeptideShakerPathKey.values()) {
+            String folder = PeptideShakerPathPreferences.getPathPreference(peptideShakerPathKey);
+            if (!UtilitiesPathPreferences.testPath(folder)) {
+                result.add(peptideShakerPathKey);
+            }
+        }
+        result.addAll(UtilitiesPathPreferences.getErrorKeys());
+        return result;
     }
 }

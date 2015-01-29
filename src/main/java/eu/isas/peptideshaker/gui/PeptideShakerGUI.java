@@ -414,7 +414,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Sets the path configuration.
+     * Sets the path configuration, displays the path settings dialog if a
+     * folder cannot be accessed.
      */
     private void setPathConfiguration() throws IOException {
         File pathConfigurationFile = new File(getJarFilePath(), UtilitiesPathPreferences.configurationFileName);
@@ -445,10 +446,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             setPathConfiguration();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Failed to load user path configurations. Defaults will be used.", "Path Error",
-                    JOptionPane.WARNING_MESSAGE);
-            e.printStackTrace();
+            // Will be taken care of next 
+        }
+        try {
+            if (!PeptideShakerPathPreferences.getErrorKeys().isEmpty()) {
+                editPathSettings(null);
+            }
+        } catch (Exception e) {
+            editPathSettings(null);
         }
 
         ptmFactory = PTMFactory.getInstance();
