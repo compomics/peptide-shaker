@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.util.Util;
 import com.compomics.util.db.DerbyUtil;
@@ -116,6 +117,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     e.printStackTrace();
                 }
             }
+        try {
+            ArrayList<PathKey> errorKeys = PeptideShakerPathPreferences.getErrorKeys();
+            if (!errorKeys.isEmpty()) {
+                System.out.println("Impossible to write in the following configuration folders, please use a temporary folder, the path configuration command line, or edit the configuration paths from the graphical interface.");
+                for (PathKey pathKey : errorKeys) {
+                    System.out.println(pathKey.getId() + ": " + pathKey.getDescription());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Impossible to load path configuration, default will be used.");
+        }
 
             // set up the waiting handler
             if (cliInputBean.isGUI()) {
