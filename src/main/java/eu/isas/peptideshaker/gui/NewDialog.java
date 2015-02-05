@@ -704,11 +704,13 @@ public class NewDialog extends javax.swing.JDialog {
                 shotgunProtocol = ShotgunProtocol.inferProtocolFromSearchSettings(identificationParameters.getSearchParameters());
             }
             peptideShakerGUI.setShotgunProtocol(shotgunProtocol);
-            peptideShakerGUI.setProjectDetails(getProjectDetails());
+            projectDetails = new ProjectDetails();
+            projectDetails.setCreationDate(new Date());
+            projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
+            peptideShakerGUI.setProjectDetails(projectDetails);
             peptideShakerGUI.setCurentNotes(new ArrayList<String>());
             peptideShakerGUI.updateNotesNotificationCounter();
             peptideShakerGUI.resetDisplayFeaturesGenerator();
-            peptideShakerGUI.setProjectDetails(projectDetails);
             peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
@@ -1973,18 +1975,6 @@ public class NewDialog extends javax.swing.JDialog {
                     "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Creates the project details for this new project.
-     *
-     * @return the project details
-     */
-    private ProjectDetails getProjectDetails() {
-        ProjectDetails tempProjectDetails = new ProjectDetails();
-        tempProjectDetails.setCreationDate(new Date());
-        tempProjectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
-        return tempProjectDetails;
     }
 
     /**
