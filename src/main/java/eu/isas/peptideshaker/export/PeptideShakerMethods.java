@@ -323,7 +323,7 @@ public class PeptideShakerMethods {
      * @return the PTM scoring methods used
      */
     public static String getPtmScoring(PTMScoringPreferences ptmScoringPreferences) {
-        String text = "Post-translational modification localizations were scored using the D-score [PMID 21337703] ";
+        String text = "Post-translational modification localizations were scored using the D-score [PMID 23307401] ";
         if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
             if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
                 text += "and the A-score [PMID 16964243] ";
