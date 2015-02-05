@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
+import com.compomics.util.experiment.identification.ptm.PtmScore;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -504,7 +505,7 @@ public class MzIdentMLExport {
                     tabCounter++;
                     writeCvTerm(ptmCvTerm);
                     if (mzidVersion1_2) {
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "order", modMatchIndex + "")); // @TODO: add correct cv term!
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "order", modMatchIndex + "")); // @TODO: add correct cv term!
                         modMatchIndex++;
                     }
                     tabCounter--;
@@ -516,21 +517,20 @@ public class MzIdentMLExport {
                 br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
             }
 
-            modMatchIndex = 0;
-            for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(modMatch.getTheoreticPtm());
-                if (ptmCvTerm == null) {
-                    ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(modMatch.getTheoreticPtm());
-                }
-                if (ptmCvTerm != null) {
-                    writeCvTerm(ptmCvTerm);
-                    if (mzidVersion1_2) {
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: order", modMatchIndex + ""));
-                    }
-                    modMatchIndex++;
-                }
-            }
-
+//            modMatchIndex = 0;
+//            for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+//                CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(modMatch.getTheoreticPtm());
+//                if (ptmCvTerm == null) {
+//                    ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(modMatch.getTheoreticPtm());
+//                }
+//                if (ptmCvTerm != null) {
+//                    writeCvTerm(ptmCvTerm);
+//                    if (mzidVersion1_2) {
+//                        //writeCvTerm(new CvTerm("PSI-MS", "MS:??????", "peptide: order", modMatchIndex + "")); // @TODO: different order than the order field above! // @TODO: not supported...
+//                    }
+//                    modMatchIndex++;
+//                }
+//            }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</Peptide>" + System.getProperty("line.separator"));
 
@@ -711,13 +711,18 @@ public class MzIdentMLExport {
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001256", "fragment mass type mono", null));
         if (mzidVersion1_2) {
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide-level scoring performed", null)); // @TODO: add correct cv term!
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002492", "consensus scoring", null));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002490", "peptide-level scoring performed", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002497", "Group PSMs by distinct peptide sequence with taking modifications into account", null));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002489", "Modification localization scoring performed", null));
             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", ptmScoringPreferences.getSelectedProbabilisticScore().getName(), null)); // @TODO: add correct cv term!
+                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore:Ascore", null));
+                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", null));
+                }
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score", null)); // @TODO: add correct cv term!
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "D-score", null)); // @TODO: the definition is "D-Score for phosphorylation site location", but we use it for other ptms as well...
         }
 
         // @TODO: list all search parameters from the search engines used?
@@ -1392,7 +1397,7 @@ public class MzIdentMLExport {
             }
 
             // add peptide shaker score and confidence
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker: PSM score", Double.toString(Util.roundDouble(psmParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002466", "PeptideShaker PSM score", Double.toString(Util.roundDouble(psmParameter.getPsmScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002467", "PeptideShaker PSM confidence", Double.toString(Util.roundDouble(psmParameter.getPsmConfidence(), CONFIDENCE_DECIMALS))));
 
             if (mzidVersion1_2) {
@@ -1412,25 +1417,27 @@ public class MzIdentMLExport {
                                 if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
                                     valid = "false";
                                 }
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX",
-                                        ptmScoringPreferences.getSelectedProbabilisticScore().getName(),
-                                        modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+
+                                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore:Ascore", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                }
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
                             if (score < 95) { //@TODO: avoid this hard coded value
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "D-score",
-                                    modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
                         }
                         modMatchIndex++;
                     }
                 }
 
                 PSParameter peptideParameter = (PSParameter) identification.getPeptideMatchParameter(bestPeptideKey, psmParameter);
-                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: Confidence", peptideParameter.getPeptideConfidence() + "")); // @TODO: add correct cv term!
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002489", "peptide: Score", peptideParameter.getPeptideScore() + ""));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
 
                 psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
@@ -1446,18 +1453,20 @@ public class MzIdentMLExport {
                                 if (score < ptmScoringPreferences.getProbabilisticScoreThreshold()) {
                                     valid = "false";
                                 }
-                                writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX", "peptide: "
-                                        + ptmScoringPreferences.getSelectedProbabilisticScore().getName(),
-                                        modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+
+                                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:??????", "peptide: Ascore:Ascore", modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS::??????", "peptide: phosphoRS score", modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                                }
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
                             if (score < 95) { // @TODO: avoid this hard coded value
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:100XXX",
-                                    "peptide: D-score", modMatchIndex
-                                    + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                            writeCvTerm(new CvTerm("PSI-MS", "MS::??????", "peptide: D-score",
+                                    modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
                         }
                         modMatchIndex++;
                     }
@@ -1534,7 +1543,7 @@ public class MzIdentMLExport {
 
             // add the spectrum title
             writeCvTerm(new CvTerm("PSI-MS", "MS:1000796", "spectrum title", spectrumTitleHtml));
-            
+
             // add the precursor retention time
             Precursor precursor = spectrumFactory.getPrecursor(psmKey);
             if (precursor != null) {
