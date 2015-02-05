@@ -737,7 +737,9 @@ public class CpsParent extends UserPreferencesParent {
             report += "<b>Sample:</b> " + sample.getReference() + "<br>";
             report += "<b>Replicate number:</b> " + replicateNumber + "<br><br>";
 
-            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
+            if (projectDetails.getCreationDate() != null) {
+                report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
+            }
 
             report += "<b>Identification Files</b>:<br>";
             for (File idFile : projectDetails.getIdentificationFiles()) {
