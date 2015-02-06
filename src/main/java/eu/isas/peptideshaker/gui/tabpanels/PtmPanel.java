@@ -343,7 +343,7 @@ public class PtmPanel extends javax.swing.JPanel {
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
         proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
-        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.BLUE);
+        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
@@ -4126,7 +4126,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 case 1:
                     return "   ";
                 case 2:
-                    return "PI";
+                    return "PI"; // @TODO: add proteins?
                 case 3:
                     return "Sequence";
                 case 4:
