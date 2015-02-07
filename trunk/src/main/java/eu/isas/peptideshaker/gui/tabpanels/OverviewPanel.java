@@ -2146,7 +2146,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
 
             // update the psm selection
-            updatePsmSelection(row);
+            updatePsmSelection(row, false);
 
             // new peptide, reset spectrum boundaries
             SwingUtilities.invokeLater(new Runnable() {
@@ -4635,8 +4635,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * Update the PSM selection according to the currently selected peptide.
      *
      * @param row the row index of the selected peptide
+     * @param forcePsmOrderUpdate if true, the sorted listed is recreated even
+     * if not needed
      */
-    private void updatePsmSelection(int row) {
+    private void updatePsmSelection(int row, boolean forcePsmOrderUpdate) {
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -4648,7 +4650,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int peptideIndex = tableModel.getViewIndex(row);
                 String peptideKey = peptideKeys.get(peptideIndex);
                 try {
-                    psmKeys = identificationFeaturesGenerator.getSortedPsmKeys(peptideKey);
+                    psmKeys = identificationFeaturesGenerator.getSortedPsmKeys(peptideKey, peptideShakerGUI.getUtilitiesUserPreferences().getSortPsmsOnRt(), forcePsmOrderUpdate);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     try {
@@ -5288,6 +5290,38 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * Update the PSM order in the PSM table.
+     */
+    public void updatePsmOrder() {
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+        try {
+            updatePsmSelection(peptideTable.getSelectedRow(), true);
+
+            // update the peptide table
+            ((DefaultTableModel) psmTable.getModel()).fireTableDataChanged();
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif"))); // @TODO: not really sure why this is needed..?
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            e.printStackTrace();
+        }
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+
+    /**
      * Update the spectrum and fragment ions panel border title with information
      * about the currently selected PSM.
      *
@@ -5762,7 +5796,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), allAnnotation.get(0).getIdentifier(), PeptideShakerGUI.NO_SELECTION);
 
                 // update the psm selection
-                updatePsmSelection(peptideTable.getSelectedRow());
+                updatePsmSelection(peptideTable.getSelectedRow(), false);
 
                 // new peptide, reset spectrum boundaries
                 SwingUtilities.invokeLater(new Runnable() {
@@ -5811,7 +5845,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
 
                                     // update the psm selection
-                                    updatePsmSelection(peptideTable.getSelectedRow());
+                                    updatePsmSelection(peptideTable.getSelectedRow(), false);
 
                                     // new peptide, reset spectrum boundaries
                                     SwingUtilities.invokeLater(new Runnable() {

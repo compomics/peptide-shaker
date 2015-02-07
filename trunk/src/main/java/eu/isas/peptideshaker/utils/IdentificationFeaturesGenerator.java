@@ -2481,6 +2481,9 @@ public class IdentificationFeaturesGenerator {
      * Returns the ordered list of spectrum keys for a given peptide.
      *
      * @param peptideKey the key of the peptide of interest
+     * @param sortOnRt if true, the PSMs are sorted in retention time, false
+     * sorts on PSM score
+     * @param forceUpdate if true, the sorted listed is recreated even if not needed
      *
      * @return the ordered list of spectrum keys
      *
@@ -2493,18 +2496,20 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object
      */
-    public ArrayList<String> getSortedPsmKeys(String peptideKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null) {
+    public ArrayList<String> getSortedPsmKeys(String peptideKey, boolean sortOnRt, boolean forceUpdate) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
+        if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null || forceUpdate) {
 
             PeptideMatch currentPeptideMatch = identification.getPeptideMatch(peptideKey);
             HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<Integer, HashMap<Double, ArrayList<String>>>();
-            boolean hasRT = true;
+            boolean hasRT = sortOnRt;
             double rt = -1;
             PSParameter psParameter = new PSParameter();
             int nValidatedPsms = 0;
 
             identification.loadSpectrumMatchParameters(currentPeptideMatch.getSpectrumMatches(), psParameter, null);
             identification.loadSpectrumMatches(currentPeptideMatch.getSpectrumMatches(), null);
+
             for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -2521,10 +2526,8 @@ public class IdentificationFeaturesGenerator {
                     }
                     if (hasRT) {
                         try {
-
                             Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                             rt = precursor.getRt();
-
                             if (rt == -1) {
                                 hasRT = false;
                             }
@@ -2562,14 +2565,15 @@ public class IdentificationFeaturesGenerator {
             identificationFeaturesCache.setPsmList(psmList);
             identificationFeaturesCache.setCurrentPeptideKey(peptideKey);
         }
+
         return identificationFeaturesCache.getPsmList();
     }
 
     /**
-     * Returns the number of validated psms for the last selected peptide /!\
+     * Returns the number of validated PSMs for the last selected peptide /!\
      * This value is only available after getSortedPsmKeys has been called.
      *
-     * @return the number of validated psms for the last selected peptide
+     * @return the number of validated PSMs for the last selected peptide
      */
     public int getNValidatedPsms() {
         return identificationFeaturesCache.getnValidatedPsms();

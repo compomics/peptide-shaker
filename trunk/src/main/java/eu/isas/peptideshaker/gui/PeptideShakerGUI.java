@@ -580,9 +580,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Loads the user preferences.
      */
     public void loadUserPreferences() {
-
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            psmSortRtRadioButtonMenuItem.setSelected(utilitiesUserPreferences.getSortPsmsOnRt());
             lastSelectedFolder = utilitiesUserPreferences.getLastSelectedFolder();
         } catch (Exception e) {
             e.printStackTrace();
@@ -734,6 +734,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         splitterMenu7 = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
         deNovoChargeButtonGroup = new javax.swing.ButtonGroup();
+        psmSortOrderButtonGroup = new javax.swing.ButtonGroup();
         backgroundPanel = new javax.swing.JPanel();
         backgroundLayeredPane = new javax.swing.JLayeredPane();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
@@ -810,6 +811,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         fixedModsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         validatedProteinsOnlyJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        psmSortOrderMenu = new javax.swing.JMenu();
+        psmSortScoreRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        psmSortRtRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         gettingStartedMenuItem = new javax.swing.JMenuItem();
@@ -1775,6 +1779,29 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         });
         viewJMenu.add(validatedProteinsOnlyJCheckBoxMenuItem);
+
+        psmSortOrderMenu.setText("PSM Sort Order");
+
+        psmSortOrderButtonGroup.add(psmSortScoreRadioButtonMenuItem);
+        psmSortScoreRadioButtonMenuItem.setSelected(true);
+        psmSortScoreRadioButtonMenuItem.setText("Score");
+        psmSortScoreRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmSortScoreRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        psmSortOrderMenu.add(psmSortScoreRadioButtonMenuItem);
+
+        psmSortOrderButtonGroup.add(psmSortRtRadioButtonMenuItem);
+        psmSortRtRadioButtonMenuItem.setText("Retention Time");
+        psmSortRtRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmSortRtRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        psmSortOrderMenu.add(psmSortRtRadioButtonMenuItem);
+
+        viewJMenu.add(psmSortOrderMenu);
 
         menuBar.add(viewJMenu);
 
@@ -3200,6 +3227,25 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_validationQcMenuItemActionPerformed
 
     /**
+     * Change the PSM sort order.
+     * 
+     * @param evt 
+     */
+    private void psmSortScoreRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmSortScoreRadioButtonMenuItemActionPerformed
+        utilitiesUserPreferences.setSortPsmsOnRt(!psmSortScoreRadioButtonMenuItem.isSelected());
+        overviewPanel.updatePsmOrder();
+    }//GEN-LAST:event_psmSortScoreRadioButtonMenuItemActionPerformed
+
+    /**
+     * Change the PSM sort order.
+     * 
+     * @param evt 
+     */
+    private void psmSortRtRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmSortRtRadioButtonMenuItemActionPerformed
+        psmSortScoreRadioButtonMenuItemActionPerformed(null);
+    }//GEN-LAST:event_psmSortRtRadioButtonMenuItemActionPerformed
+
+    /**
      * Opens a dialog allowing the setting of paths.
      *
      * @param welcomeDialog reference to the Welcome dialog, can be null
@@ -3453,6 +3499,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JPanel proteinFractionsJPanel;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
+    private javax.swing.ButtonGroup psmSortOrderButtonGroup;
+    private javax.swing.JMenu psmSortOrderMenu;
+    private javax.swing.JRadioButtonMenuItem psmSortRtRadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem psmSortScoreRadioButtonMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
     private javax.swing.JMenuItem quantifyMenuItem;
@@ -6340,7 +6390,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             ArrayList<String> psmKeys;
 
             try {
-                psmKeys = getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey);
+                psmKeys = getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey, utilitiesUserPreferences.getSortPsmsOnRt(), false);
             } catch (Exception e) {
                 try {
                     // try without order

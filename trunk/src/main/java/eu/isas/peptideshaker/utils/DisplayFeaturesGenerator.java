@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.AminoAcidPattern;
 import com.compomics.util.experiment.biology.AminoAcidSequence;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -58,16 +57,12 @@ public class DisplayFeaturesGenerator {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The compomics PTM factory.
-     */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
      * Constructor
      *
      * @param modificationProfile the modification profile containing the colors
-     * of the ptms
+     * of the PTMs
      * @param exceptionHandler an exception handler to catch exceptions
      */
     public DisplayFeaturesGenerator(ModificationProfile modificationProfile, ExceptionHandler exceptionHandler) {
