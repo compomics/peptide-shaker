@@ -95,10 +95,6 @@ public class FileImporter {
      */
     private ProteinTree proteinTree;
     /**
-     * Suffix for folders where the content of zip files should be extracted.
-     */
-    public final static String tempFolderName = "PeptideShaker_temp";
-    /**
      * The shotgun protocol.
      */
     private ShotgunProtocol shotgunProtocol;
@@ -946,16 +942,5 @@ public class FileImporter {
      */
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FileImporter.class").getPath(), "PeptideShaker");
-    }
-
-    /**
-     * Returns the temp folder name to use when unzipping a zip file.
-     *
-     * @param fileName the name of the zip file
-     *
-     * @return the folder name associated to the zip file
-     */
-    public static String getTempFolderName(String fileName) {
-        return Util.removeExtension(fileName) + "_" + FileImporter.tempFolderName;
     }
 }

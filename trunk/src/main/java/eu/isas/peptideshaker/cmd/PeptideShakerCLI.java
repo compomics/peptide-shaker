@@ -44,6 +44,7 @@ import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.Properties;
+import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 import java.awt.Point;
@@ -473,7 +474,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             String fileName = inputFile.getName();
             if (fileName.toLowerCase().endsWith("zip")) {
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
-                String newName = FileImporter.getTempFolderName(fileName);
+                String newName = PsZipUtils.getTempFolderName(fileName);
                 File destinationFolder = new File(parentFile, newName);
                 destinationFolder.mkdir();
                 TempFilesManager.registerTempFolder(destinationFolder);

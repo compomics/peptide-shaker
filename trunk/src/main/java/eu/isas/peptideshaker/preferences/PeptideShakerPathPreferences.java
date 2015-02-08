@@ -4,6 +4,7 @@ import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.PSExportFactory;
+import eu.isas.peptideshaker.utils.PsZipUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
  * @author Marc Vaudel
  */
 public class PeptideShakerPathPreferences {
-
     /**
      * Enum of the paths which can be set in PeptideShaker.
      */
@@ -37,7 +37,11 @@ public class PeptideShakerPathPreferences {
         /**
          * Folder containing the user custom exports file.
          */
-        peptideShakerExports("peptideshaker_exports", "Folder containing the user custom exports file.", "", true);
+        peptideShakerExports("peptideshaker_exports", "Folder containing the user custom exports file.", "", true),
+        /**
+     * The folder to use when unzipping files
+         */
+        unzipFolder("unzip", "Folder to use when unzipping files", "", true);
         /**
          * The key used to refer to this path.
          */
@@ -166,6 +170,8 @@ public class PeptideShakerPathPreferences {
                 return PSExportFactory.getSerializationFolder();
             case peptideShakerPreferences:
                 return PeptideShaker.getUserPreferencesFolder();
+            case unzipFolder:
+                return PsZipUtils.getUnzipParentFolder();
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
         }
@@ -189,6 +195,9 @@ public class PeptideShakerPathPreferences {
                 return;
             case peptideShakerPreferences:
                 PeptideShaker.setUserPreferencesFolder(path);
+                return;
+            case unzipFolder:
+                PsZipUtils.setUnzipParentFolder(path);
                 return;
             default:
                 throw new UnsupportedOperationException("Path " + peptideShakerPathKey.id + " not implemented.");
@@ -288,6 +297,9 @@ public class PeptideShakerPathPreferences {
                 break;
             case peptideShakerPreferences:
                 bw.write(PeptideShaker.getUserPreferencesFolder());
+                break;
+            case unzipFolder:
+                bw.write(PsZipUtils.getUnzipParentFolder());
                 break;
             default:
                 throw new UnsupportedOperationException("Path " + pathKey.id + " not implemented.");

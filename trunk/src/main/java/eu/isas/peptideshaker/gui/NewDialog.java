@@ -42,6 +42,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
 
@@ -2181,10 +2182,15 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private boolean loadZipFile(File file, ArrayList<File> parameterFiles, ArrayList<File> dataFolders, ArrayList<File> inputFiles) {
 
-        String newName = FileImporter.getTempFolderName(file.getName());
-        File destinationFolder = new File(file.getParentFile(), newName);
+        String newName = PsZipUtils.getTempFolderName(file.getName());
+        String parentFolder = PsZipUtils.getUnzipParentFolder();
+        if (parentFolder == null) {
+            parentFolder = file.getParent();
+        }
+        File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
+        File destinationFolder = new File(parentFolderFile, newName);
         destinationFolder.mkdir();
-        TempFilesManager.registerTempFolder(destinationFolder);
+        TempFilesManager.registerTempFolder(parentFolderFile);
 
         progressDialog.setWaitingText("Unzipping " + file.getName() + ". Please Wait...");
 
