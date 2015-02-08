@@ -756,29 +756,57 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      */
     public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
-        SpectrumFactory.getInstance().closeFiles();
-        SequenceFactory.getInstance().clearFactory();
-        GOFactory.getInstance().closeFiles();
-
-        if (identification != null) {
-            identification.close();
+        try {
+            SpectrumFactory.getInstance().closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SequenceFactory.getInstance().clearFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            GOFactory.getInstance().closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        DerbyUtil.closeConnection();
+        try {
+            if (identification != null) {
+                identification.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
-        File[] tempFiles = matchFolder.listFiles();
+        try {
+            DerbyUtil.closeConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        if (tempFiles != null) {
-            for (File currentFile : tempFiles) {
-                boolean deleted = Util.deleteDir(currentFile);
-                if (!deleted) {
-                    System.out.println(currentFile.getAbsolutePath() + " could not be deleted!"); // @TODO: better handling of this error?
+        try {
+            File matchFolder = PeptideShaker.getSerializationDirectory(PeptideShaker.getJarFilePath());
+            File[] tempFiles = matchFolder.listFiles();
+
+            if (tempFiles != null) {
+                for (File currentFile : tempFiles) {
+                    boolean deleted = Util.deleteDir(currentFile);
+                    if (!deleted) {
+                        System.out.println(currentFile.getAbsolutePath() + " could not be deleted!"); // @TODO: better handling of this error?
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        TempFilesManager.deleteTempFolders();
+        try {
+            TempFilesManager.deleteTempFolders();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
