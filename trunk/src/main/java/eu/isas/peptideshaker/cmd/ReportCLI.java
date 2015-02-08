@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -63,7 +64,7 @@ public class ReportCLI extends CpsParent {
 
     /**
      * Calling this method will run the configured PeptideShaker process.
-     * 
+     *
      * @return returns 1 if the process was canceled
      */
     public Object call() {
@@ -95,19 +96,35 @@ public class ReportCLI extends CpsParent {
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
-        cpsFile = reportCLIInputBean.getCpsFile();
+        String inputFilePath = null;
 
         try {
-            loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+            if (reportCLIInputBean.getZipFile() != null) {
+                inputFilePath = reportCLIInputBean.getZipFile().getAbsolutePath();
+                loadCpsFromZipFile(reportCLIInputBean.getZipFile(), PeptideShaker.getJarFilePath(), waitingHandler);
+            } else if (reportCLIInputBean.getCpsFile() != null) {
+                inputFilePath = reportCLIInputBean.getCpsFile().getAbsolutePath();
+                cpsFile = reportCLIInputBean.getCpsFile();
+                loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+            } else {
+                waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
+                return 1;
+            }
         } catch (SQLException e) {
-            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ". "
+            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ". "
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(cpsFile.getAbsolutePath() + " successfuly loaded.", true, true);
+            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -115,12 +132,24 @@ public class ReportCLI extends CpsParent {
         try {
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The FASTA file was not found. Please locate it using the GUI.", true, true);
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -132,12 +161,24 @@ public class ReportCLI extends CpsParent {
                 } else {
                     waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
                 }
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -167,7 +208,13 @@ public class ReportCLI extends CpsParent {
                 }
             }
         }
-        
+
+        try {
+            PeptideShakerCLI.closePeptideShaker(identification);
+        } catch (Exception e2) {
+            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+            e2.printStackTrace();
+        }
         waitingHandler.appendReport("Report export completed.", true, true);
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.

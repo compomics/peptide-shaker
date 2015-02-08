@@ -11,6 +11,8 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.filehandling.TempFilesManager;
+import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -109,6 +111,45 @@ public class CpsParent extends UserPreferencesParent {
      * The currently loaded cps file.
      */
     protected File cpsFile = null;
+
+    /**
+     * Loads the information from a cps file.
+     *
+     * @param zipFile the zip file containing the cps file
+     * @param jarFilePath the path to the jar file
+     * @param waitingHandler a waiting handler displaying feedback to the user.
+     * Ignored if null
+     *
+     * @throws IOException thrown of IOException occurs
+     * @throws FileNotFoundException thrown if FileNotFoundException occurs
+     * @throws SQLException thrown if SQLException occurs
+     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
+     */
+    public void loadCpsFromZipFile(File zipFile, String jarFilePath, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
+
+        String newName = PsZipUtils.getTempFolderName(zipFile.getName());
+        String parentFolder = PsZipUtils.getUnzipParentFolder();
+        if (parentFolder == null) {
+            parentFolder = zipFile.getParent();
+        }
+        File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
+        File destinationFolder = new File(parentFolderFile, newName);
+        destinationFolder.mkdir();
+        TempFilesManager.registerTempFolder(parentFolderFile);
+
+        waitingHandler.setWaitingText("Unzipping " + zipFile.getName() + ". Please Wait...");
+        ZipUtils.unzip(zipFile, destinationFolder, waitingHandler);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+        if (!waitingHandler.isRunCanceled()) {
+            for (File file : destinationFolder.listFiles()) {
+                if (file.getName().toLowerCase().endsWith(".cps")) {
+                    cpsFile = file;
+                    loadCpsFile(jarFilePath, waitingHandler);
+                    return;
+                }
+            }
+        }
+    }
 
     /**
      * Loads the information from a cps file.

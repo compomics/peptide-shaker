@@ -19,6 +19,10 @@ public class ReportCLIInputBean {
      */
     private File cpsFile = null;
     /**
+     * The zip file
+     */
+    private File zipFile = null;
+    /**
      * Folder where to export the reports.
      */
     private File reportOutputFolder = null;
@@ -43,7 +47,14 @@ public class ReportCLIInputBean {
     public ReportCLIInputBean(CommandLine aLine) {
 
         if (aLine.hasOption(ReportCLIParams.CPS_FILE.id)) {
-            cpsFile = new File(aLine.getOptionValue(ReportCLIParams.CPS_FILE.id));
+            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
+            if (file.toLowerCase().endsWith("cps")) {
+                cpsFile = new File(file);
+            } else if (file.toLowerCase().endsWith("zip")) {
+                zipFile = new File(file);
+            } else {
+                    throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
+            }
         }
         if (aLine.hasOption(ReportCLIParams.EXPORT_FOLDER.id)) {
             reportOutputFolder = new File(aLine.getOptionValue(ReportCLIParams.EXPORT_FOLDER.id));
@@ -72,6 +83,15 @@ public class ReportCLIInputBean {
      */
     public File getCpsFile() {
         return cpsFile;
+    }
+
+    /**
+     * The zip file selected by the user. Null if not set.
+     *
+     * @return zip file selected by the user
+     */
+    public File getZipFile() {
+        return zipFile;
     }
 
     /**

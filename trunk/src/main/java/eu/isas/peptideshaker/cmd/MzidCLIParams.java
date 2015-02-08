@@ -9,7 +9,7 @@ import org.apache.commons.cli.Options;
  */
 public enum MzidCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cps file).", true, true),
+    CPS_FILE("in", "PeptideShaker project (.cps or zip file)", true, true),
     CONTACT_FIRST_NAME("contact_first_name", "Contact first name.", true, true),
     CONTACT_LAST_NAME("contact_last_name", "Contact last name.", true, true),
     CONTACT_EMAIL("contact_email", "Contact e-mail.", true, true),

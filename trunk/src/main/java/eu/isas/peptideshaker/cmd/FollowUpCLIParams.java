@@ -13,7 +13,7 @@ import org.apache.commons.cli.Options;
  */
 public enum FollowUpCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cps file)", true),
+    CPS_FILE("in", "PeptideShaker project (.cps or zip file)", true),
     RECALIBRATION_FOLDER("recalibration_folder", "Output folder for the recalibrated files. (Existing files will be overwritten.)", false),
     RECALIBRATION_MODE("recalibration_mode", "Recalibration type. 0: precursor and fragment ions (default), 1: precursor only, 2: fragment ions only.", false),
     SPECTRUM_FOLDER("spectrum_folder", "Output folder for the spectra. (Existing files will be overwritten.)", false),
