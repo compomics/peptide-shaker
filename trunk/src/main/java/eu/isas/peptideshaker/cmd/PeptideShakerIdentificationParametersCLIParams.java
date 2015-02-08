@@ -5,7 +5,7 @@ import org.apache.commons.cli.Options;
 
 /**
  * This class provides the parameters which can be used for the identification
- * parameters cli in PeptideShaker
+ * parameters cli in PeptideShaker.
  *
  * @author Marc Vaudel
  */
@@ -32,6 +32,9 @@ public class PeptideShakerIdentificationParametersCLIParams {
         aOptions.addOption(IdentificationParametersCLIParams.FI.id, true, IdentificationParametersCLIParams.FI.description);
         aOptions.addOption(IdentificationParametersCLIParams.RI.id, true, IdentificationParametersCLIParams.RI.description);
         aOptions.addOption(IdentificationParametersCLIParams.DB.id, true, IdentificationParametersCLIParams.DB.description);
+        aOptions.addOption(IdentificationParametersCLIParams.USAGE.id, false, IdentificationParametersCLIParams.USAGE.description);
+        aOptions.addOption(IdentificationParametersCLIParams.USAGE_2.id, false, IdentificationParametersCLIParams.USAGE_2.description);
+        aOptions.addOption(IdentificationParametersCLIParams.USAGE_3.id, false, IdentificationParametersCLIParams.USAGE_3.description);
     }
 
     /**
@@ -61,6 +64,7 @@ public class PeptideShakerIdentificationParametersCLIParams {
 
         output += "\n\nHelp:\n\n";
         output += "-" + String.format(formatter, IdentificationParametersCLIParams.MODS.id) + IdentificationParametersCLIParams.MODS.description + "\n";
+        output += "-" + String.format(formatter, IdentificationParametersCLIParams.USAGE.id) + IdentificationParametersCLIParams.USAGE.description + "\n";
 
         return output;
     }

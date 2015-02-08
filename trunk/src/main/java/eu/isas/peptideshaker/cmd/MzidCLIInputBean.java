@@ -10,13 +10,13 @@ import org.apache.commons.cli.CommandLine;
  * @author Marc Vaueel
  */
 public class MzidCLIInputBean {
-    
+
     /**
      * The PeptideShaker cps file.
      */
     private File cpsFile;
     /**
-     * The zip file
+     * The zip file.
      */
     private File zipFile = null;
     /**
@@ -63,14 +63,14 @@ public class MzidCLIInputBean {
      * The path settings.
      */
     private PathSettingsCLIInputBean pathSettingsCLIInputBean;
-    
+
     /**
      * Parses a MzidCLI command line and stores the input in the attributes.
-     * 
+     *
      * @param aLine a MzidCLI command line
      */
     public MzidCLIInputBean(CommandLine aLine) {
-        
+
         if (aLine.hasOption(MzidCLIParams.CPS_FILE.id)) {
             String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
             if (file.toLowerCase().endsWith("cps")) {
@@ -78,7 +78,7 @@ public class MzidCLIInputBean {
             } else if (file.toLowerCase().endsWith("zip")) {
                 zipFile = new File(file);
             } else {
-                    throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
+                throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
             }
         }
         if (aLine.hasOption(MzidCLIParams.CONTACT_FIRST_NAME.id)) {
@@ -111,13 +111,13 @@ public class MzidCLIInputBean {
         if (aLine.hasOption(MzidCLIParams.OUTPUT_FILE.id)) {
             outputFile = new File(aLine.getOptionValue(MzidCLIParams.OUTPUT_FILE.id));
         }
-        
+
         pathSettingsCLIInputBean = new PathSettingsCLIInputBean(aLine);
     }
 
     /**
      * Returns the cps file.
-     * 
+     *
      * @return the cps file
      */
     public File getCpsFile() {
@@ -135,16 +135,16 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the contact first name.
-     * 
+     *
      * @return the contact first name
      */
     public String getContactFirstName() {
         return contactFirstName;
     }
-    
+
     /**
      * Returns the contact last name.
-     * 
+     *
      * @return the contact last name
      */
     public String getContactLastName() {
@@ -153,7 +153,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the contact email.
-     * 
+     *
      * @return the contact email
      */
     public String getContactEmail() {
@@ -162,7 +162,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the contact address.
-     * 
+     *
      * @return the contact address
      */
     public String getContactAddress() {
@@ -171,7 +171,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the contact URL.
-     * 
+     *
      * @return the contact URL
      */
     public String getContactUrl() {
@@ -180,7 +180,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the organization name.
-     * 
+     *
      * @return the organization name
      */
     public String getOrganizationName() {
@@ -189,7 +189,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the organization mail.
-     * 
+     *
      * @return the organization mail
      */
     public String getOrganizationMail() {
@@ -198,7 +198,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the organization address.
-     * 
+     *
      * @return the organization address
      */
     public String getOrganizationAddress() {
@@ -207,7 +207,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the organization URL.
-     * 
+     *
      * @return the organization URL
      */
     public String getOrganizationUrl() {
@@ -216,7 +216,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the file where to mzIdentML export will be stored.
-     * 
+     *
      * @return the file where to mzIdentML export will be stored
      */
     public File getOutputFile() {
@@ -225,7 +225,7 @@ public class MzidCLIInputBean {
 
     /**
      * Returns the path settings input.
-     * 
+     *
      * @return the path settings input
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {
