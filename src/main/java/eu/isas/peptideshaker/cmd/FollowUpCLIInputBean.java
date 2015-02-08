@@ -19,6 +19,10 @@ public class FollowUpCLIInputBean {
      */
     private File cpsFile = null;
     /**
+     * The zip file
+     */
+    private File zipFile = null;
+    /**
      * Folder where to export recalibrated files.
      */
     private File recalibrationFolder = null;
@@ -114,7 +118,14 @@ public class FollowUpCLIInputBean {
     public FollowUpCLIInputBean(CommandLine aLine) {
 
         if (aLine.hasOption(FollowUpCLIParams.CPS_FILE.id)) {
-            cpsFile = new File(aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id));
+            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
+            if (file.toLowerCase().endsWith("cps")) {
+                cpsFile = new File(file);
+            } else if (file.toLowerCase().endsWith("zip")) {
+                zipFile = new File(file);
+            } else {
+                    throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
+            }
         }
         if (aLine.hasOption(FollowUpCLIParams.RECALIBRATION_FOLDER.id)) {
             recalibrationFolder = new File(aLine.getOptionValue(FollowUpCLIParams.RECALIBRATION_FOLDER.id));
@@ -204,6 +215,15 @@ public class FollowUpCLIInputBean {
      */
     public File getCpsFile() {
         return cpsFile;
+    }
+
+    /**
+     * The zip file selected by the user. Null if not set.
+     *
+     * @return zip file selected by the user
+     */
+    public File getZipFile() {
+        return zipFile;
     }
 
     /**
@@ -486,10 +506,10 @@ public class FollowUpCLIInputBean {
     public boolean inclusionListNeeded() {
         return inclusionFile != null;
     }
-    
+
     /**
      * Returns the path settings provided by the user.
-     * 
+     *
      * @return the path settings provided by the user
      */
     public PathSettingsCLIInputBean getPathSettingsCLIInputBean() {

@@ -10,7 +10,7 @@ import org.apache.commons.cli.Options;
  */
 public enum ReportCLIParams {
 
-    CPS_FILE("in", "PeptideShaker project (.cps file)", true),
+    CPS_FILE("in", "PeptideShaker project (.cps or zip file)", true),
     EXPORT_FOLDER("out_reports", "Output folder for report files. (Existing files will be overwritten.)", true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false),
     DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + PSExportFactory.getInstance().getCommandLineOptions(), false);

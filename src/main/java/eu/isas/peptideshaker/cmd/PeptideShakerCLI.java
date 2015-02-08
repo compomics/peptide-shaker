@@ -754,7 +754,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * @throws IOException thrown of IOException occurs
      * @throws SQLException thrown if SQLException occurs
      */
-    public void closePeptideShaker(Identification identification) throws IOException, SQLException {
+    public static void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().clearFactory();

@@ -16,6 +16,10 @@ public class MzidCLIInputBean {
      */
     private File cpsFile;
     /**
+     * The zip file
+     */
+    private File zipFile = null;
+    /**
      * The contact first name.
      */
     private String contactFirstName;
@@ -68,7 +72,14 @@ public class MzidCLIInputBean {
     public MzidCLIInputBean(CommandLine aLine) {
         
         if (aLine.hasOption(MzidCLIParams.CPS_FILE.id)) {
-            cpsFile = new File(aLine.getOptionValue(MzidCLIParams.CPS_FILE.id));
+            String file = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
+            if (file.toLowerCase().endsWith("cps")) {
+                cpsFile = new File(file);
+            } else if (file.toLowerCase().endsWith("zip")) {
+                zipFile = new File(file);
+            } else {
+                    throw new IllegalArgumentException("Unknown file format \'" + file + "\' for PeptideShaker project input.");
+            }
         }
         if (aLine.hasOption(MzidCLIParams.CONTACT_FIRST_NAME.id)) {
             contactFirstName = aLine.getOptionValue(MzidCLIParams.CONTACT_FIRST_NAME.id);
@@ -111,6 +122,15 @@ public class MzidCLIInputBean {
      */
     public File getCpsFile() {
         return cpsFile;
+    }
+
+    /**
+     * The zip file selected by the user. Null if not set.
+     *
+     * @return zip file selected by the user
+     */
+    public File getZipFile() {
+        return zipFile;
     }
 
     /**

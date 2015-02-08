@@ -8,6 +8,7 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -94,19 +95,35 @@ public class FollowUpCLI extends CpsParent {
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
-        cpsFile = followUpCLIInputBean.getCpsFile();
+        String inputFilePath = null;
 
         try {
-            loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+            if (followUpCLIInputBean.getZipFile() != null) {
+                inputFilePath = followUpCLIInputBean.getZipFile().getAbsolutePath();
+                loadCpsFromZipFile(followUpCLIInputBean.getZipFile(), PeptideShaker.getJarFilePath(), waitingHandler);
+            } else if (followUpCLIInputBean.getCpsFile() != null) {
+                inputFilePath = followUpCLIInputBean.getCpsFile().getAbsolutePath();
+                cpsFile = followUpCLIInputBean.getCpsFile();
+                loadCpsFile(PeptideShaker.getJarFilePath(), waitingHandler);
+            } else {
+                waitingHandler.appendReport("PeptideShaker project input missing.", true, true);
+                return 1;
+            }
         } catch (SQLException e) {
-            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ". "
+            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ". "
                     + "It looks like another instance of PeptideShaker is still connected to the file. "
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
-            waitingHandler.appendReport(cpsFile.getAbsolutePath() + " successfuly loaded.", true, true);
+            waitingHandler.appendReport(inputFilePath + " successfuly loaded.", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while reading: " + cpsFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -114,12 +131,24 @@ public class FollowUpCLI extends CpsParent {
         try {
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -131,12 +160,24 @@ public class FollowUpCLI extends CpsParent {
                 } else {
                     waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
                 }
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -224,9 +265,15 @@ public class FollowUpCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-        
+
         waitingHandler.appendReport("Follow-up export completed.", true, true);
 
+        try {
+            PeptideShakerCLI.closePeptideShaker(identification);
+        } catch (Exception e2) {
+            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+            e2.printStackTrace();
+        }
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
