@@ -515,6 +515,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             initComponents();
 
+            psmSortRtRadioButtonMenuItem.setSelected(utilitiesUserPreferences.getSortPsmsOnRt());
+
             reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
             quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
             jSeparator2.setVisible(false); // @TODO: re-enable later?
@@ -584,7 +586,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     public void loadUserPreferences() {
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
-            psmSortRtRadioButtonMenuItem.setSelected(utilitiesUserPreferences.getSortPsmsOnRt());
             lastSelectedFolder = utilitiesUserPreferences.getLastSelectedFolder();
         } catch (Exception e) {
             e.printStackTrace();

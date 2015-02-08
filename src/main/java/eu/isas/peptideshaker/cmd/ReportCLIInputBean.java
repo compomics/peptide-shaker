@@ -19,7 +19,7 @@ public class ReportCLIInputBean {
      */
     private File cpsFile = null;
     /**
-     * The zip file
+     * The zip file.
      */
     private File zipFile = null;
     /**

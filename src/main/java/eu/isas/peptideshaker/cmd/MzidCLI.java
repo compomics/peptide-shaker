@@ -8,7 +8,6 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.filehandling.TempFilesManager;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -118,12 +117,12 @@ public class MzidCLI extends CpsParent {
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while reading: " + inputFilePath + ".", true, true);
             e.printStackTrace();
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -131,24 +130,24 @@ public class MzidCLI extends CpsParent {
         try {
             if (!loadFastaFile(waitingHandler)) {
                 waitingHandler.appendReport("The FASTA file was not found, please locate it using the GUI.", true, true);
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Protein database " + identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the FASTA file.", true, true);
             e.printStackTrace();
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 
@@ -160,24 +159,24 @@ public class MzidCLI extends CpsParent {
                 } else {
                     waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
                 }
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
+                try {
+                    PeptideShakerCLI.closePeptideShaker(identification);
+                } catch (Exception e2) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e2.printStackTrace();
+                }
                 return 1;
             }
             waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
-        try {
-            PeptideShakerCLI.closePeptideShaker(identification);
-        } catch (Exception e2) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e2.printStackTrace();
-        }
+            try {
+                PeptideShakerCLI.closePeptideShaker(identification);
+            } catch (Exception e2) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e2.printStackTrace();
+            }
             return 1;
         }
 

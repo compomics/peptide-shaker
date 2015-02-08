@@ -20,6 +20,7 @@ import java.util.ArrayList;
  * @author Marc Vaudel
  */
 public class PeptideShakerPathPreferences {
+
     /**
      * Enum of the paths which can be set in PeptideShaker.
      */
@@ -39,7 +40,7 @@ public class PeptideShakerPathPreferences {
          */
         peptideShakerExports("peptideshaker_exports", "Folder containing the user custom exports file.", "", true),
         /**
-     * The folder to use when unzipping files
+         * The folder to use when unzipping files.
          */
         unzipFolder("unzip", "Folder to use when unzipping files", "", true);
         /**
