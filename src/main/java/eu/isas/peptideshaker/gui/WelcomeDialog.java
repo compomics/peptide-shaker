@@ -487,21 +487,29 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
-        // @TODO: the default folder should be the example dataset folder !!!!
-        File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
+        String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
+        File selectedFile = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, new String[]{"PeptideShaker (.cps)", "Zipped PeptideShaker (.zip)"}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false);
 
-        if (newFile != null) {
-            if (!newFile.getName().toLowerCase().endsWith("cps")) {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Wrong File.", JOptionPane.WARNING_MESSAGE);
-            } else {
+        if (selectedFile != null) {
+
+            peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(selectedFile.getParent());
+            String fileName = selectedFile.getName().toLowerCase();
+            if (fileName.endsWith("zip")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
-                peptideShakerGUI.importPeptideShakerFile(newFile);
-                peptideShakerGUI.getUserPreferences().addRecentProject(newFile);
+                peptideShakerGUI.importPeptideShakerZipFile(selectedFile);
+            } else if (fileName.endsWith("cps")) {
+                setVisible(false);
+                peptideShakerGUI.setVisible(true);
+                peptideShakerGUI.importPeptideShakerFile(selectedFile);
+                peptideShakerGUI.getUserPreferences().addRecentProject(selectedFile);
                 peptideShakerGUI.updateRecentProjectsList();
                 LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
-                lastSelectedFolder.setLastSelectedFolder(newFile.getAbsolutePath());
+                lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
                 dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
+                        "Wrong File.", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_openJButtonActionPerformed
@@ -959,7 +967,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         String installPath = null;
 
         UtilitiesUserPreferences utilitiesUserPreferences = peptideShakerGUI.getUtilitiesUserPreferences();
-        
+
         if (utilitiesUserPreferences.getSearchGuiPath() != null) {
             if (new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile() != null
                     && new File(utilitiesUserPreferences.getSearchGuiPath()).getParentFile().getParentFile() != null) {
@@ -976,7 +984,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
             firstTimeInstall = false;
             downloadFolder = new File(installPath);
         }
-        
+
         final boolean finalFirstTimeInstall = firstTimeInstall;
 
         if (downloadFolder != null) {
