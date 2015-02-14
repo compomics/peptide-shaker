@@ -258,7 +258,8 @@ public class CLIMethods {
 
         PSExportFactory exportFactory = PSExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
-        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
+        String reportName = reportType.replaceAll(" ", "_");
+        File reportFile = new File(reportCLIInputBean.getReportOutputFolder(), PSExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportName));
 
         //@TODO: allow format selection
         PSExportFactory.writeExport(exportScheme, reportFile, ExportFormat.text, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator,
