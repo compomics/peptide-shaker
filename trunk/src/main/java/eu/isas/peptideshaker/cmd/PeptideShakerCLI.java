@@ -475,9 +475,14 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             if (fileName.toLowerCase().endsWith("zip")) {
                 waitingHandler.appendReport("Unzipping " + fileName + ".", true, true);
                 String newName = PsZipUtils.getTempFolderName(fileName);
-                File destinationFolder = new File(parentFile, newName);
+                String parentFolder = PsZipUtils.getUnzipParentFolder();
+                if (parentFolder == null) {
+                    parentFolder = parentFile.getAbsolutePath();
+                }
+                File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
+                File destinationFolder = new File(parentFolderFile, newName);
                 destinationFolder.mkdir();
-                TempFilesManager.registerTempFolder(destinationFolder);
+                TempFilesManager.registerTempFolder(parentFolderFile);
                 ZipUtils.unzip(inputFile, destinationFolder, waitingHandler);
                 if (waitingHandler instanceof WaitingHandlerCLIImpl) {
                     waitingHandler.appendReportEndLine();
