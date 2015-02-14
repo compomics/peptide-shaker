@@ -38,7 +38,6 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.export.ProjectExport;
-import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -645,55 +644,51 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
 
         // set the gene preferences
         if (cliInputBean.getSpecies() != null) {
-            try {
-                GenePreferences genePreferences = new GenePreferences();
-                identificationParameters.setGenePreferences(genePreferences);
 
-                genePreferences.loadSpeciesAndGoDomains();
-                genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
-                genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
+            GenePreferences genePreferences = new GenePreferences();
+            identificationParameters.setGenePreferences(genePreferences);
 
-                // try to download gene and go information
-                GeneFactory geneFactory = GeneFactory.getInstance();
+            genePreferences.loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
-                String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
-                if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
-                    currentEnsemblSpeciesType = "ensembl";
-                }
+            genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
+            genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
 
-                Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
+            // try to download gene and go information
+            GeneFactory geneFactory = GeneFactory.getInstance();
 
-                String selectedSpecies = cliInputBean.getSpecies();
-                String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
-                String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
+            String currentEnsemblSpeciesType = cliInputBean.getSpeciesType().toLowerCase();
+            if (currentEnsemblSpeciesType.equalsIgnoreCase("Vertebrates")) {
+                currentEnsemblSpeciesType = "ensembl";
+            }
 
-                boolean downloadNewMappings;
+            Integer latestEnsemblVersion = geneFactory.getCurrentEnsemblVersion(currentEnsemblSpeciesType);
 
-                if (currentEnsemblVersionAsString == null) {
-                    if (cliInputBean.updateSpecies()) {
-                        downloadNewMappings = true;
-                    } else {
-                        waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
-                        waitingHandler.setRunCanceled();
-                        downloadNewMappings = false;
-                    }
+            String selectedSpecies = cliInputBean.getSpecies();
+            String selectedDb = genePreferences.getEnsemblDatabaseName(cliInputBean.getSpeciesType(), selectedSpecies);
+            String currentEnsemblVersionAsString = genePreferences.getEnsemblVersion(selectedDb);
+
+            boolean downloadNewMappings;
+
+            if (currentEnsemblVersionAsString == null) {
+                if (cliInputBean.updateSpecies()) {
+                    downloadNewMappings = true;
                 } else {
-                    if (cliInputBean.updateSpecies()) {
-                        downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
-                    } else {
-                        downloadNewMappings = false;
-                    }
+                    waitingHandler.appendReport("Species and GO mappings where not found for " + selectedSpecies + "! Download manually or use the species_update option.", true, true);
+                    waitingHandler.setRunCanceled();
+                    downloadNewMappings = false;
                 }
-
-                // download mappings if needed
-                if (downloadNewMappings) {
-                    genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
-                    genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
+            } else {
+                if (cliInputBean.updateSpecies()) {
+                    downloadNewMappings = checkForSpeciesUpdate(currentEnsemblVersionAsString, latestEnsemblVersion);
+                } else {
+                    downloadNewMappings = false;
                 }
+            }
 
-            } catch (IOException e) {
-                System.out.println("Failed to load the species and GO domains!");
-                e.printStackTrace();
+            // download mappings if needed
+            if (downloadNewMappings) {
+                genePreferences.clearOldMappings(cliInputBean.getSpeciesType(), selectedSpecies, true);
+                genePreferences.downloadMappings(waitingHandler, cliInputBean.getSpeciesType(), selectedSpecies, true);
             }
         }
 
