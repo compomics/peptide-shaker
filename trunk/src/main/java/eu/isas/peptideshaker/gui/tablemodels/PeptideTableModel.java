@@ -5,6 +5,8 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -309,38 +311,29 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             }
         }
         try {
-            loadPeptideObjects(tempKeys);
 
-            for (String peptideKey : tempKeys) {
-                if (interrupted) {
-                    loadPeptideObjects(tempKeys);
-                    return rows.get(0);
-                }
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(new PSParameter());
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideKeys, parameters, true, parameters);
+
+            int i = 0;
+            while (peptideMatchesIterator.hasNext()) {
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                String peptideKey = peptideMatch.getKey();
                 peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-                loadPeptideObjects(tempKeys);
+                if (interrupted) {
+                    return rows.get(i);
+                }
+                i++;
             }
         } catch (SQLNonTransientConnectionException e) {
             // connection has been closed
-            return rows.get(0); // @TODO: is this the correct thing to return in this case..? 
+            return rows.get(0);
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);
         }
         return rows.get(rows.size() - 1);
-    }
-
-    /**
-     * Loads the peptide matches and peptide parameters in cache.
-     *
-     * @param keys the keys to load
-     * @throws SQLException
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void loadPeptideObjects(ArrayList<String> keys) throws SQLException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        identification.loadPeptideMatches(keys, null);
-        identification.loadPeptideMatchParameters(keys, new PSParameter(), null);
     }
 
     @Override

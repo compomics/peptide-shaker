@@ -6,6 +6,8 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
@@ -468,64 +470,50 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             tempKeys.add(proteinKey);
         }
         try {
-            loadProteins(tempKeys);
 
-            for (int i : rows) {
-                String proteinKey = proteinKeys.get(i);
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(new PSParameter());
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, parameters, true, parameters, true, parameters);
+            
+            int i = 0;
+            while (proteinMatchesIterator.hasNext()) {
+                ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                String proteinKey = proteinMatch.getKey();
                 identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
                 identificationFeaturesGenerator.getObservableCoverage(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNSpectra(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
                 identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                 if (interrupted) {
-                    loadProteins(tempKeys);
-                    return i;
+                    return rows.get(i);
                 }
+                i++;
             }
         } catch (SQLNonTransientConnectionException e) {
             // connection has been closed
-            return rows.get(rows.size() - 1); // @TODO: is this the correct thing to return in this case..? 
+            return rows.get(rows.size() - 1);
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);
         }
 
         return rows.get(rows.size() - 1);
-    }
-
-    /**
-     * Loads the protein matches and matches parameters in cache.
-     *
-     * @param keys the keys of the matches to load
-     * @throws SQLException
-     * @throws IOException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    private void loadProteins(ArrayList<String> keys) throws SQLException, IOException, IOException, ClassNotFoundException, InterruptedException {
-        identification.loadProteinMatches(keys, null);
-        identification.loadProteinMatchParameters(keys, new PSParameter(), null);
     }
 
     @Override
@@ -570,7 +558,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             Color sparklineColorNotFound, Color sparklineColorDoubtful, DecimalFormat scoreAndConfidenceDecimalFormat, Class parentClass, Integer maxProteinKeyLength) {
 
         // @TODO: find a better location for this method?
-        
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
