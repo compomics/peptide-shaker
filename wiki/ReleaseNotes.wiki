@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.37.4 (February 16. 2015):*
+
+ * FEATURE IMPROVEMENT: It is now possible to open zipped PeptideShaker projects.
+  * Follow-up, report, and mzidCLI also support zip file input.
+ * FEATURE IMPROVEMENT: Improved the error handling for the command line mode.
+ * FEATURE IMPROVEMENT: Made it possible to control the PSM sort order (score or retention time).
+ * FEATURE IMPROVEMENT: Removed spaces from the name of the command line exports.
+ 
+ * BUG FIX: Gene mapping files are now set when starting a command line.
+ * BUG FIX: Fixed a bug where the project creation date was not set in the project details.
+ * BUG FIX: Fixed a bug in the color coding of the PI column in the peptide table in the PTMs tab.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.45.33.
+
+----
+
 *Changes in PeptideShaker 0.37.3 (January 29. 2015):*
 
  * BUG FIX: Fixed a bug where neutral losses and reporter ions for user defined modifications disappeared.
