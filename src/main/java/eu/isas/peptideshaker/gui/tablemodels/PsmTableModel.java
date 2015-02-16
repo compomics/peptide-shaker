@@ -3,8 +3,10 @@ package eu.isas.peptideshaker.gui.tablemodels;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -282,18 +284,22 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             for (int i : rows) {
                 tempPsmKeys.add(psmKeys.get(i));
             }
-            if (interrupted) {
-                return rows.get(0);
+            
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(new PSParameter());
+            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, parameters, true);
+            int i = 0;
+            while (psmIterator.hasNext()) {
+                psmIterator.next();
+                if (interrupted) {
+                    return rows.get(i);
+                }
+                i++;
             }
-            identification.loadSpectrumMatches(tempPsmKeys, null);
-            if (interrupted) {
-                return rows.get(0);
-            }
-            identification.loadSpectrumMatchParameters(tempPsmKeys, new PSParameter(), null);
             return rows.get(rows.size() - 1);
         } catch (SQLNonTransientConnectionException e) {
             // connection has been closed
-            return rows.get(0); // @TODO: is this the correct thing to return in this case..? 
+            return rows.get(0);
         } catch (Exception e) {
             catchException(e);
             return rows.get(0);
