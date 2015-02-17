@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
+import com.compomics.util.FileAndFileFilter;
+import com.compomics.util.Util;
 import com.compomics.util.gui.ExportFormatSelectionDialog;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -2013,87 +2015,87 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void writeSelectedReport() {
 
-        ExportFormatSelectionDialog exportFormatSelectionDialog = new ExportFormatSelectionDialog(this, true);
+        String textFileFilterDescription = "Tab separated text file (.txt)";
+        String excelFileFilterDescription = "Excel Workbook (.xls)";
+        String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
+                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
 
-        if (!exportFormatSelectionDialog.isCanceled()) {
+        if (selectedFileAndFilter != null) {
 
-            final File selectedFile;
-            final ExportFormat exportFormat = exportFormatSelectionDialog.getFormat();
-
-            // get the file to send the output to
-            if (exportFormat == ExportFormat.text) {
-                selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+            final File selectedFile = selectedFileAndFilter.getFile();
+            final ExportFormat exportFormat;
+            if (selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(textFileFilterDescription)) {
+                exportFormat = ExportFormat.text;
             } else {
-                selectedFile = peptideShakerGUI.getUserSelectedFile(".xls", "Excel Workbook (.xls)", "Export...", false);
+                exportFormat = ExportFormat.excel;
             }
 
-            if (selectedFile != null) {
-                progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                        true);
-                progressDialog.setTitle("Exporting Report. Please Wait...");
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setTitle("Exporting Report. Please Wait...");
 
-                final String filePath = selectedFile.getPath();
+            final String filePath = selectedFile.getPath();
 
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            progressDialog.setVisible(true);
-                        } catch (IndexOutOfBoundsException e) {
-                            // ignore
-                        }
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
                     }
-                }, "ProgressDialog").start();
+                }
+            }, "ProgressDialog").start();
 
-                new Thread("ExportThread") {
-                    @Override
-                    public void run() {
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
 
-                        try {
-                            String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
-                            ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
-                            progressDialog.setTitle("Exporting. Please Wait...");
-                            PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
-                                    peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
-                                    peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null,
-                                    peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
-                                    peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
-                                    peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
+                    try {
+                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+                        ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+                        PSExportFactory.writeExport(exportScheme, selectedFile, exportFormat, peptideShakerGUI.getExperiment().getReference(),
+                                peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
+                                peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
+                                peptideShakerGUI.getIdentificationFeaturesGenerator(), null, null, null, null,
+                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
+                                peptideShakerGUI.getSpectrumCountingPreferences(), progressDialog);
 
-                            boolean processCancelled = progressDialog.isRunCanceled();
-                            progressDialog.setRunFinished();
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
 
-                            if (!processCancelled) {
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                        } catch (FileNotFoundException e) {
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (FileNotFoundException e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occurred while generating the output. Please make sure "
+                                + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (IllegalArgumentException e) {
+                        if (e.getMessage().contains("Invalid row number (65536)")) {
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(peptideShakerGUI,
-                                    "An error occurred while generating the output. Please make sure "
-                                    + "that the destination file is not opened by another application.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                                    "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
+                                    + "Please use a text export instead.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
-                        } catch (IllegalArgumentException e) {
-                            if (e.getMessage().contains("Invalid row number (65536)")) {
-                                progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occurred while generating the output. This format can contain only 65,535 lines.\n" // @TODO: update the excel export library?
-                                                + "Please use a text export instead.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                                e.printStackTrace();
-                            } else {
-                                progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                                e.printStackTrace();
-                            }
-                        } catch (Exception e) {
+                        } else {
                             progressDialog.setRunFinished();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                         }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
                     }
-                }.start();
-            }
+                }
+            }.start();
         }
     }
 
@@ -2102,57 +2104,57 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void writeDocumentationOfSelectedReport() {
 
-        ExportFormatSelectionDialog exportFormatSelectionDialog = new ExportFormatSelectionDialog(this, true);
+        String textFileFilterDescription = "Tab separated text file (.txt)";
+        String excelFileFilterDescription = "Excel Workbook (.xls)";
+        String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
+                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
 
-        if (!exportFormatSelectionDialog.isCanceled()) {
+        if (selectedFileAndFilter != null) {
 
-            final File selectedFile;
-            final ExportFormat exportFormat = exportFormatSelectionDialog.getFormat();
-
-            // get the file to send the output to
-            if (exportFormat == ExportFormat.text) {
-                selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+            final File selectedFile = selectedFileAndFilter.getFile();
+            final ExportFormat exportFormat;
+            if (selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(textFileFilterDescription)) {
+                exportFormat = ExportFormat.text;
             } else {
-                selectedFile = peptideShakerGUI.getUserSelectedFile(".xls", "Excel Workbook (.xls)", "Export...", false);
+                exportFormat = ExportFormat.excel;
             }
 
-            if (selectedFile != null) {
-                progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                        true);
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
 
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            progressDialog.setVisible(true);
-                        } catch (IndexOutOfBoundsException e) {
-                            // ignore
-                        }
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
                     }
-                }, "ProgressDialog").start();
+                }
+            }, "ProgressDialog").start();
 
-                new Thread("ExportThread") {
-                    @Override
-                    public void run() {
-                        boolean error = false;
-                        try {
-                            String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
-                            ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
-                            PSExportFactory.writeDocumentation(exportScheme, exportFormat, selectedFile);
-                        } catch (Exception e) {
-                            error = true;
-                            peptideShakerGUI.catchException(e);
-                        }
-                        progressDialog.setRunFinished();
-
-                        if (!error) {
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Documentation saved to \'" + selectedFile.getAbsolutePath() + "\'.",
-                                    "Documentation Saved", JOptionPane.INFORMATION_MESSAGE);
-                        }
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+                    boolean error = false;
+                    try {
+                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+                        ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
+                        PSExportFactory.writeDocumentation(exportScheme, exportFormat, selectedFile);
+                    } catch (Exception e) {
+                        error = true;
+                        peptideShakerGUI.catchException(e);
                     }
-                }.start();
-            }
+                    progressDialog.setRunFinished();
+
+                    if (!error) {
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Documentation saved to \'" + selectedFile.getAbsolutePath() + "\'.",
+                                "Documentation Saved", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            }.start();
         }
     }
 

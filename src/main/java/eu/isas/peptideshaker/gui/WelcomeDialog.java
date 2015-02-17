@@ -9,6 +9,7 @@ import com.compomics.software.autoupdater.WebDAO;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.software.dialogs.JavaSettingsDialog;
+import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -487,19 +488,23 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
+        String cpsFileFilterDescription = "PeptideShaker (.cps)";
+        String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        File selectedFile = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, new String[]{"PeptideShaker (.cps)", "Zipped PeptideShaker (.zip)"}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false);
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, 
+                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false, false, 0);
 
-        if (selectedFile != null) {
+        if (selectedFileAndFilter != null) {
 
+            File selectedFile = selectedFileAndFilter.getFile(); 
             peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(selectedFile.getParent());
-            String fileName = selectedFile.getName().toLowerCase();
-            if (fileName.endsWith("zip")) {
+
+            if (selectedFile.getName().endsWith(".zip")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerZipFile(selectedFile);
                 dispose();
-            } else if (fileName.endsWith("cps")) {
+            } else if (selectedFile.getName().endsWith(".cps")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerFile(selectedFile);
@@ -509,8 +514,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
-                        "Wrong File.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_openJButtonActionPerformed

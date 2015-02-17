@@ -75,6 +75,7 @@ import com.compomics.util.preferences.LastSelectedFolder;
 import com.compomics.software.settings.PathKey;
 import com.compomics.software.settings.UtilitiesPathPreferences;
 import com.compomics.software.settings.gui.PathSettingsDialog;
+import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
@@ -2354,15 +2355,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         String lastSelectedFolderPath = lastSelectedFolder.getLastSelectedFolder();
-        File selectedFile = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, new String[]{"PeptideShaker (.cps)", "Zipped PeptideShaker (.zip)"}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false);
+        
+        String cpsFileFilterDescription = "PeptideShaker (.cps)";
+        String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, 
+                new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false, false, 0);
 
-        if (selectedFile != null) {
+        if (selectedFileAndFilter != null) {
 
+            File selectedFile = selectedFileAndFilter.getFile(); 
             lastSelectedFolder.setLastSelectedFolder(selectedFile.getParent());
-            String fileName = selectedFile.getName().toLowerCase();
-            if (fileName.endsWith("zip")) {
+
+            if (selectedFile.getName().endsWith(".zip")) {
                 importPeptideShakerZipFile(selectedFile);
-            } else if (fileName.endsWith("cps")) {
+            } else if (selectedFile.getName().endsWith(".cps")) {
                 exceptionHandler.setIgnoreExceptions(true);
                 clearData(true, true);
                 exceptionHandler.setIgnoreExceptions(false);
@@ -2372,8 +2378,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 importPeptideShakerFile(selectedFile);
                 lastSelectedFolder.setLastSelectedFolder(selectedFile.getAbsolutePath());
             } else {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
-                        "Wrong File.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Unsupported File.", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
@@ -2538,7 +2543,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         if (spectrumAsMgf != null) {
 
-            File selectedFile = getUserSelectedFile(".mgf", "(Mascot Generic Format) *.mgf", "Save As...", false);
+            File selectedFile = getUserSelectedFile(".mgf", "Mascot Generic Format (*.mgf)", "Save As...", false);
 
             if (selectedFile != null) {
                 try {
@@ -6126,7 +6131,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * file
      */
     public void saveProjectAs(boolean closeWhenDone, boolean aExportToZipWhenDone) {
-        File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
+        File selectedFile = getUserSelectedFile(".cps", "Compomics Peptide Shaker format (*.cps)", "Save As...", false);
         cpsBean.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone, aExportToZipWhenDone);
@@ -6369,7 +6374,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (cpsBean.getCpsFile() != null) {
 
                 // select the output folder
-                File selectedFile = getUserSelectedFile(".zip", "(Compressed file format) *.zip", "Export As Zip...", false);
+                File selectedFile = getUserSelectedFile(".zip", "Compressed file format (*.zip)", "Export As Zip...", false);
 
                 if (selectedFile != null) {
 

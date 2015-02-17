@@ -40,7 +40,6 @@ import com.compomics.util.preferences.ProteinInferencePreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
-import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;

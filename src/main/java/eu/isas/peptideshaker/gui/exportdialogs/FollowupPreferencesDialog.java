@@ -531,9 +531,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         final File finalOutputFile;
 
         if (psmSelectionComboBox.getSelectedIndex() == 4) {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".xls", "(Excel Workbook) *.xls", "Select Destination File", false);
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".xls", "Excel Workbook (*.xls)", "Select Destination File", false);
         } else {
-            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+            finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab Separated Text File (*.txt)", "Select Destination File", false);
         }
 
         if (finalOutputFile != null) {
@@ -865,7 +865,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportSwath() {
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab Separated Text Fil) (*.txt)", "Select Destination File", false);
 
         if (finalOutputFile != null) {
 

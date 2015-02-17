@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
+import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -41,6 +42,10 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
      * schema.
      */
     private boolean validateMzIdentML = false; // just takes too long if switched on...
+    /**
+     * If true mzIdentML version 1.2 is created, false creates mzIdentML 1.1.
+     */
+    private boolean mzIdentML_v1_2 = false;
 
     /**
      * Create a new MzIdentMLExportDialog.
@@ -508,19 +513,43 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
     private void browseOutputFolderJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseOutputFolderJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
+        // First check whether a file has already been selected.
+        // If so, start from that file's parent.
         LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
         String folder = lastSelectedFolder.getLastSelectedFolder(ExportWriter.lastFolderKey);
         if (folder == null) {
             folder = lastSelectedFolder.getLastSelectedFolder();
         }
-        File selectedFile = Util.getUserSelectedFile(this, ".mzid", "(mzIdentML file) *.mzid", "Select Export File", folder, false);
 
-        if (selectedFile != null) {
-            String path = selectedFile.getAbsolutePath();
+        if (!outputFolderJTextField.getText().isEmpty()) {
+            if (new File(outputFolderJTextField.getText()).exists()) {
+                folder = outputFolderJTextField.getText();
+            } else if (new File(outputFolderJTextField.getText()).getParentFile().exists()) {
+                folder = new File(outputFolderJTextField.getText()).getParent();
+            }
+        }
+
+        String mzid_v1_1_FileFilterDescription = "mzIdentML v1.1 (*.mzid)";
+        String mzid_v1_2_FileFilterDescription = "mzIdentML v1.2 (beta) (*.mzid)";
+
+        int defaultFilterIndex;
+        if (mzIdentML_v1_2 == true) {
+            defaultFilterIndex = 1;
+        } else {
+            defaultFilterIndex = 0;
+        }
+
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".mzid", ".mzid"},
+                new String[]{mzid_v1_1_FileFilterDescription, mzid_v1_2_FileFilterDescription}, "Select Export File", folder, false, true, false, defaultFilterIndex);
+
+        if (selectedFileAndFilter != null) {
+            String path = selectedFileAndFilter.getFile().getAbsolutePath();
 
             if (!path.endsWith(".mzid")) {
                 path += ".mzid";
             }
+
+            mzIdentML_v1_2 = selectedFileAndFilter.getFileFilter().getDescription().equalsIgnoreCase(mzid_v1_2_FileFilterDescription);
 
             lastSelectedFolder.setLastSelectedFolder(ExportWriter.lastFolderKey, folder);
             outputFolderJTextField.setText(path);
@@ -612,7 +641,7 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
                     MzIdentMLExport mzIdentMLExport = new MzIdentMLExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getIdentificationFeaturesGenerator(),
                             finalOutputFile, progressDialog);
-                    mzIdentMLExport.createMzIdentMLFile(false);
+                    mzIdentMLExport.createMzIdentMLFile(mzIdentML_v1_2);
 
                     // validate the mzidentml file
                     if (validateMzIdentML && !progressDialog.isRunCanceled()) {
