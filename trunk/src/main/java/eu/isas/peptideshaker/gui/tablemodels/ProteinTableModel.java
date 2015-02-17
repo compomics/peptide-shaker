@@ -18,8 +18,6 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Component;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -469,12 +467,12 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             String proteinKey = proteinKeys.get(i);
             tempKeys.add(proteinKey);
         }
-        try {
 
+        try {
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
             ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, parameters, true, parameters, true, parameters);
-            
+
             int i = 0;
             while (proteinMatchesIterator.hasNext()) {
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
