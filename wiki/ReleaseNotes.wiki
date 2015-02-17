@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.37.5 (February 17. 2015):*
+
+ * FEATURE IMPROVEMENT: Sped up the PSM exports.
+ * FEATURE IMPROVEMENT: Improved the format selection when exporting.
+
+ * BUG FIX: The progress bar is now displayed when unzipping PeptideShaker projects.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.45.35.
+
+----
+
 *Changes in PeptideShaker 0.37.4 (February 16. 2015):*
 
  * FEATURE IMPROVEMENT: It is now possible to open zipped PeptideShaker projects.
