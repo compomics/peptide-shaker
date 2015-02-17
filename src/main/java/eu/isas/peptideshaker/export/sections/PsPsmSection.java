@@ -151,17 +151,6 @@ public class PsPsmSection {
             totalSize += psmMap.get(spectrumFile).size();
         }
 
-        // get the spectrum keys
-        ArrayList<String> spectrumKeys = new ArrayList<String>();
-
-        for (String spectrumFile : psmMap.keySet()) {
-            for (String spectrumKey : psmMap.get(spectrumFile)) {
-                if (!spectrumKeys.contains(spectrumKey)) {
-                    spectrumKeys.add(spectrumKey);
-                }
-            }
-        }
-
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
             waitingHandler.resetSecondaryProgressCounter();
@@ -174,7 +163,7 @@ public class PsPsmSection {
 
         for (String spectrumFile : psmMap.keySet()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, spectrumKeys, parameters, !identificationAlgorithmMatchesFeatures.isEmpty());
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), parameters, !identificationAlgorithmMatchesFeatures.isEmpty());
 
             while (psmIterator.hasNext()) {
 

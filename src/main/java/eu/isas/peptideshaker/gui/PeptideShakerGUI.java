@@ -5295,7 +5295,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param zipFile the PeptideShaker zip file to import
      */
-    public void importPeptideShakerZipFile(File zipFile) {
+    public void importPeptideShakerZipFile(final File zipFile) {
 
         String newName = PsZipUtils.getTempFolderName(zipFile.getName());
         String parentFolder = PsZipUtils.getUnzipParentFolder();
@@ -5303,9 +5303,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             parentFolder = zipFile.getParent();
         }
         File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
-        File destinationFolder = new File(parentFolderFile, newName);
+        final File destinationFolder = new File(parentFolderFile, newName);
         destinationFolder.mkdir();
         TempFilesManager.registerTempFolder(parentFolderFile);
+
+        final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
 
         progressDialog = new ProgressDialogX(this,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -5313,33 +5315,53 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 true);
         progressDialog.setWaitingText("Unzipping " + zipFile.getName() + ". Please Wait...");
 
-        try {
-            ZipUtils.unzip(zipFile, destinationFolder, progressDialog);
-            progressDialog.setSecondaryProgressCounterIndeterminate(true);
-            if (!progressDialog.isRunCanceled()) {
-                for (File file : destinationFolder.listFiles()) {
-                    if (file.getName().toLowerCase().endsWith(".cps")) {
-                        exceptionHandler.setIgnoreExceptions(true);
-                        clearData(true, true);
-                        exceptionHandler.setIgnoreExceptions(false);
-                        clearPreferences();
-                        getUserPreferences().addRecentProject(file);
-                        updateRecentProjectsList();
-                        importPeptideShakerFile(file);
-                        lastSelectedFolder.setLastSelectedFolder(file.getAbsolutePath());
-                        return;
-                    }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
                 }
-                JOptionPane.showMessageDialog(this,
-                        "No PeptideShaker project was found in the zip file.",
-                        "No PeptideShaker Project Found", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getMessage(),
-                    "Unzip Error", JOptionPane.WARNING_MESSAGE);
-            e.printStackTrace();
-        }
+        }, "ProgressDialog").start();
+
+        new Thread("UnzippingThread") {
+            @Override
+            public void run() {
+
+                try {
+                    ZipUtils.unzip(zipFile, destinationFolder, progressDialog);
+                    progressDialog.setSecondaryProgressCounterIndeterminate(true);
+                    if (!progressDialog.isRunCanceled()) {
+                        for (File file : destinationFolder.listFiles()) {
+                            if (file.getName().toLowerCase().endsWith(".cps")) {
+                                exceptionHandler.setIgnoreExceptions(true);
+                                clearData(true, true);
+                                exceptionHandler.setIgnoreExceptions(false);
+                                clearPreferences();
+                                getUserPreferences().addRecentProject(file);
+                                updateRecentProjectsList();
+                                progressDialog.setRunFinished();
+                                importPeptideShakerFile(file);
+                                lastSelectedFolder.setLastSelectedFolder(file.getAbsolutePath());
+                                return;
+                            }
+                        }
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "No PeptideShaker project was found in the zip file.",
+                                "No PeptideShaker Project Found", JOptionPane.WARNING_MESSAGE);
+                    }
+                    progressDialog.setRunFinished();
+                } catch (Exception e) {
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            e.getMessage(),
+                            "Unzip Error", JOptionPane.WARNING_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     /**

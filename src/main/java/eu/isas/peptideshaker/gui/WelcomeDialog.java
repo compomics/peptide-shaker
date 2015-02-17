@@ -498,6 +498,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerZipFile(selectedFile);
+                dispose();
             } else if (fileName.endsWith("cps")) {
                 setVisible(false);
                 peptideShakerGUI.setVisible(true);
