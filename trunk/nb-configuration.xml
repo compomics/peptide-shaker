@@ -11,5 +11,6 @@ Without this configuration present, some functionality in the IDE may be limited
         <word>PeptideShaker</word>
         <word>proteomic</word>
         <word>proteomics</word>
+        <word>sparkline</word>
     </spellchecker-wordlist>
 </project-shared-configuration>
