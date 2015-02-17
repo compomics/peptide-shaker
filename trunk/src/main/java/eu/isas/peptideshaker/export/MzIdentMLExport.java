@@ -41,6 +41,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -99,6 +100,10 @@ public class MzIdentMLExport {
      * The number of decimals to use for the confidence values.
      */
     private final int CONFIDENCE_DECIMALS = 2;
+    /**
+     * D-score threshold.
+     */
+    private Double dScoreThreshold = 95.0 ;//@TODO: avoid this hard coded value
     /**
      * Write mzid 1.2? False, results in mzid 1.1.
      */
@@ -505,15 +510,13 @@ public class MzIdentMLExport {
                     tabCounter++;
                     writeCvTerm(ptmCvTerm);
                     if (mzidVersion1_2) {
-                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "order", modMatchIndex + "")); // @TODO: add correct cv term!
+                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "order", modMatchIndex + ""));
                         modMatchIndex++;
                     }
                     tabCounter--;
                 }
 
                 // add cv/user params
-                // @TODO: ptm validation
-                // @TODO: ptm localization scores across possible sites: PhosphoRS, A-score, d-score, ms-score
                 br.write(getCurrentTabSpace() + "</Modification>" + System.getProperty("line.separator"));
             }
 
@@ -649,9 +652,9 @@ public class MzIdentMLExport {
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<SpectrumIdentification "
-                + "spectrumIdentificationList_ref=\"SIL_1\" " // @TODO: should not be hardcoded?
-                + "spectrumIdentificationProtocol_ref=\"SearchProtocol_1\" " // @TODO: should not be hardcoded?
-                + "id=\"SpecIdent_1\">" // @TODO: should not be hardcoded?
+                + "spectrumIdentificationList_ref=\"SIL_1\" "
+                + "spectrumIdentificationProtocol_ref=\"SearchProtocol_1\" "
+                + "id=\"SpecIdent_1\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
 
@@ -660,19 +663,19 @@ public class MzIdentMLExport {
             br.write(getCurrentTabSpace() + "<InputSpectra spectraData_ref=\"" + mgfFileName + "\"/>" + System.getProperty("line.separator"));
         }
 
-        br.write(getCurrentTabSpace() + "<SearchDatabaseRef searchDatabase_ref=\"SearchDB_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
+        br.write(getCurrentTabSpace() + "<SearchDatabaseRef searchDatabase_ref=\"SearchDB_1\"/>" + System.getProperty("line.separator"));
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentification>" + System.getProperty("line.separator"));
 
         // add protein detection
         br.write(getCurrentTabSpace() + "<ProteinDetection " // @TODO: add activityDate? example: activityDate="2011-03-25T13:33:51
-                + "proteinDetectionProtocol_ref=\"PeptideShaker_1\" " // @TODO: should not be hardcoded?
-                + "proteinDetectionList_ref=\"Protein_groups\" " // @TODO: should not be hardcoded?
-                + "id=\"PD_1\">" // @TODO: should not be hardcoded?
+                + "proteinDetectionProtocol_ref=\"PeptideShaker_1\" "
+                + "proteinDetectionList_ref=\"Protein_groups\" "
+                + "id=\"PD_1\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
-        br.write(getCurrentTabSpace() + "<InputSpectrumIdentifications spectrumIdentificationList_ref=\"SIL_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
+        br.write(getCurrentTabSpace() + "<InputSpectrumIdentifications spectrumIdentificationList_ref=\"SIL_1\"/>" + System.getProperty("line.separator"));
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ProteinDetection>" + System.getProperty("line.separator"));
 
@@ -718,11 +721,14 @@ public class MzIdentMLExport {
             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
                 if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore:Ascore", null));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002554", "peptide:Ascore", null)); // @TODO: should these be added twice??
                 } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", null));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002553", "peptide:phosphoRS score", null));
                 }
             }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "D-score", null)); // @TODO: the definition is "D-Score for phosphorylation site location", but we use it for other ptms as well...
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002539", "D-score", null)); // @TODO: the definition is "D-Score for phosphorylation site location", but we use it for other ptms as well...
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002556", "peptide:D-Score", null));
         }
 
         // @TODO: list all search parameters from the search engines used?
@@ -903,10 +909,10 @@ public class MzIdentMLExport {
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultProteinFDR(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
-            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
-            }
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "D-score threshold", "95")); //@TODO: avoid this hard coded value
+//            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) { // @TODO: missing CV term!
+//                writeCvTerm(new CvTerm("PSI-MS", "MS:???", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
+//            }
+//            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "D-score threshold", dScoreThreshold.toString())); //@TODO: avoid this hard coded value // @TODO: missing CV term!
 
 //            // peptideshaker maps
 //            PSMaps psMaps = new PSMaps();
@@ -923,7 +929,7 @@ public class MzIdentMLExport {
 //                int thresholdType = targetDecoyResults.getInputType();
 //                if (peptideGroupsKeys.size() > 1) {
 //                    String peptideClass = PeptideSpecificMap.getKeyName(searchParameters.getModificationProfile(), key);
-//                    // @TODO: somehow indicate the class of peptide thresholded?
+//                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002544", "PeptideShaker peptide confidence type", peptideClass)); // peptide confidence type
 //                }
 //                if (thresholdType == 0) {
 //                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002463", "distinct peptide-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
@@ -947,6 +953,7 @@ public class MzIdentMLExport {
 //                        double threshold = targetDecoyResults.getUserInput() / 100;
 //                        int thresholdType = targetDecoyResults.getInputType();
 //                        String psmClass = "Charge " + charge + " of file " + file; // @TODO: annotate class?
+//                        writeCvTerm(new CvTerm("PSI-MS", "MS:1002543", "PeptideShaker PSM confidence type", "???")); // psm confidence type
 //                        if (thresholdType == 0) {
 //                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002465", "PSM-level global confidence", Double.toString(Util.roundDouble(threshold, CONFIDENCE_DECIMALS)))); // confidence
 //                        } else if (targetDecoyResults.getInputType() == 1) {
@@ -957,11 +964,12 @@ public class MzIdentMLExport {
 //                    }
 //                }
 //            }
-            //@TODO: set the PSM group label
+//            
+//            //@TODO: set the PSM group label
 //            for (int charge : psmSpecificMap.getChargesFromGroupedFiles()) {
 //                int correctedCharge = psmSpecificMap.getCorrectedCharge(charge);
 //                if (correctedCharge == charge) {
-//                    TargetDecoyMap targetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(charge, null);
+//                    TargetDecoyMap targetDecoyMap = psMaps.getPsmSpecificMap().getTargetDecoyMap(charge, null);
 //                    TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
 //                    double threshold = targetDecoyResults.getUserInput() / 100;
 //                    int thresholdType = targetDecoyResults.getInputType();
@@ -976,8 +984,8 @@ public class MzIdentMLExport {
 //                }
 //            }
 //
-            // @TODO: re-add psm ptm thresholds
-//            PsmPTMMap psmPTMMap = pSMaps.getPsmPTMMap();
+//            // @TODO: re-add psm ptm thresholds
+//            PsmPTMMap psmPTMMap = psMaps.getPsmPTMMap();
 //            if (psmPTMMap != null) { // backward compatibility: information only present in versions 0.28.2 and later
 //                for (Double ptmMass : psmPTMMap.getModificationsScored()) {
 //                    for (int mapKey : psmPTMMap.getKeys(ptmMass).keySet()) {
@@ -1192,16 +1200,18 @@ public class MzIdentMLExport {
                 // add main protein cv terms
                 if (accession.equalsIgnoreCase(mainAccession)) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001591", "anchor protein", null));
-                    //writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
                 } else {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null)); // @TODO: validate these cv terms!! (children of MS:1001101)
                 }
 
                 // add protein coverage cv term
-                //writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", null)); // @TODO: sequence coverage?? (need for MIAPE)
-                // add protein score
-                // @TODO: add protein scores? don't think we have these..?
-                // children off MS:1001153 or MS:1001116
+//                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(accession); // @TODO: correct?? (need for MIAPE)
+//                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+//                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+//                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+//                writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", validatedCoverage.toString()));
+
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
             }
@@ -1209,6 +1219,7 @@ public class MzIdentMLExport {
             // add protein group cv terms
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002470", "PeptideShaker protein group score", Double.toString(Util.roundDouble(psParameter.getProteinScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002471", "PeptideShaker protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002545", "PeptideShaker protein confidence type", psParameter.getMatchValidationLevel().getName()));
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</ProteinAmbiguityGroup>" + System.getProperty("line.separator"));
@@ -1267,11 +1278,6 @@ public class MzIdentMLExport {
                     + "id=\"" + spectrumIdentificationItemKey + "\">" + System.getProperty("line.separator"));
             tabCounter++;
 
-            // @TODO: add peptide level annotation
-            // MS:1002462: distinct peptide-level global FNR
-            // MS:1002463: distinct peptide-level global confidence
-            // MS:1001364: distinct peptide-level global FDR
-            //
             // add the peptide evidence references
             // get all the possible parent proteins
             ArrayList<String> possibleProteins = bestPeptideAssumption.getPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
@@ -1402,6 +1408,7 @@ public class MzIdentMLExport {
 
             if (mzidVersion1_2) {
 
+                // @TODO: ptm localization scores across possible sites: PhosphoRS, A-score, d-score, ms-score
                 PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
                 PeptideMatch peptideMatch = identification.getPeptideMatch(bestPeptideKey);
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
@@ -1426,10 +1433,10 @@ public class MzIdentMLExport {
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
-                            if (score < 95) { //@TODO: avoid this hard coded value
+                            if (score < dScoreThreshold) {
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002540", "D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002539", "D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
                         }
                         modMatchIndex++;
                     }
@@ -1455,18 +1462,18 @@ public class MzIdentMLExport {
                                 }
 
                                 if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
-                                    writeCvTerm(new CvTerm("PSI-MS", "MS:??????", "peptide: Ascore:Ascore", modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002554", "peptide:Ascore", modMatchIndex + ":" + score + ":" + site + ":" + valid));
                                 } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                                    writeCvTerm(new CvTerm("PSI-MS", "MS::??????", "peptide: phosphoRS score", modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002553", "peptide:phosphoRS score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
                                 }
                             }
                             double score = ptmScoring.getDeltaScore(site);
                             String valid = "true";
-                            if (score < 95) { // @TODO: avoid this hard coded value
+                            if (score < dScoreThreshold) { // @TODO: avoid this hard coded value
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS::??????", "peptide: D-score",
-                                    modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: add correct cv term!
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002556", "peptide:D-Score", modMatchIndex + ":" + score + ":" + site + ":" + valid)); // @TODO: the definition is "D-Score for phosphorylation site location", but we use it for other ptms as well...
+                            //writeCvTerm(new CvTerm("PSI-MS", "MS:1002542", "PeptideShaker PTM confidence type", "???")); // @TODO: add me? or should this be at the psm level..?
                         }
                         modMatchIndex++;
                     }
@@ -1533,11 +1540,15 @@ public class MzIdentMLExport {
             }
 
             // add other cv and user params
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass()))); // @TODO: add more? MS:1001105 - peptide result details
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001117", "theoretical mass", String.valueOf(bestPeptideAssumption.getTheoreticMass())));
 
-            // @TODO: 
+            // @TODO: add peptide level annotation - MS:1001105 - peptide result details
+            // MS:1002462: distinct peptide-level global FNR
+            // MS:1002463: distinct peptide-level global confidence
+            // MS:1001364: distinct peptide-level global FDR
+            //
             // add validation level information
-            //writeUserParam(psmParameter.getMatchValidationLevel().getIndex());
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002543", "PeptideShaker PSM confidence type", psmParameter.getMatchValidationLevel().getName()));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SpectrumIdentificationItem>" + System.getProperty("line.separator"));
 
@@ -1635,7 +1646,7 @@ public class MzIdentMLExport {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1002459", "MS Amanda csv format", null));
                     } else if (advocateIndex == Advocate.comet.getIndex()) {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1001421", "pepXML format", null));
-                    } else if (advocateIndex == Advocate.myriMatch.getIndex()) {
+                    } else if (advocateIndex == Advocate.myriMatch.getIndex() || advocateIndex == Advocate.tide.getIndex()) {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1000914", "tab delimited text format", null));
                     } else {
                         // @TODO: add support for the new advocates!!
