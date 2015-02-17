@@ -311,10 +311,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             }
         }
         try {
-
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideKeys, parameters, true, parameters);
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, parameters, true, parameters);
 
             int i = 0;
             while (peptideMatchesIterator.hasNext()) {

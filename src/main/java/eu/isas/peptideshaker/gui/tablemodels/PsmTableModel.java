@@ -284,10 +284,11 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             for (int i : rows) {
                 tempPsmKeys.add(psmKeys.get(i));
             }
-            
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(new PSParameter());
+
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(new PSParameter());
             PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, parameters, true);
+
             int i = 0;
             while (psmIterator.hasNext()) {
                 psmIterator.next();
