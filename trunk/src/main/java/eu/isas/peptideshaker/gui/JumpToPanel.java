@@ -487,7 +487,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             }
                                         }
 
-                                        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null, false, null);
+                                        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(secondaryCandidates, null, false, null, null); // @TODO: waiting handler?
 
                                         while (peptideMatchesIterator.hasNext()) {
 

@@ -2387,14 +2387,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
 
             progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + spectrumFiles.size() + ") ");
-            PsmIterator psmIterator = identification.getPsmIterator(fileName, parameters, true);
+            PsmIterator psmIterator = identification.getPsmIterator(fileName, parameters, true, progressDialog);
 
             while (psmIterator.hasNext()) {
                 if (progressDialog.isRunCanceled()) {
                     break;
                 }
 
+                progressDialog.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                progressDialog.setDisplayProgress(true);
+                
                 String spectrumKey = spectrumMatch.getKey();
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {

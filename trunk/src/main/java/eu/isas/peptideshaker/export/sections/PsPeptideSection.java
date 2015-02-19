@@ -27,7 +27,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.apache.commons.math.util.FastMath;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -140,7 +139,7 @@ public class PsPeptideSection {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
 
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, parameters, psmSection != null, parameters);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(keys, parameters, psmSection != null, parameters, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
@@ -151,7 +150,14 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(false);
+            }
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(true);
+            }
+
             String peptideKey = peptideMatch.getKey();
 
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -187,7 +193,13 @@ public class PsPeptideSection {
                         }
                         psmSectionPrefix += line + ".";
                         writer.increaseDepth();
-                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, null);
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(false);
+                        }
+                        psmSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMatch.getSpectrumMatches(), psmSectionPrefix, validatedOnly, decoys, waitingHandler);
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(true);
+                        }
                         writer.decreseDepth();
                     }
                     line++;
@@ -484,7 +496,6 @@ public class PsPeptideSection {
             default:
                 return "Not implemented";
         }
-
     }
 
     /**

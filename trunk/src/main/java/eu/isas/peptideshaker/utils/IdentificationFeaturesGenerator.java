@@ -2214,10 +2214,18 @@ public class IdentificationFeaturesGenerator {
             PSParameter psParameter = new PSParameter();
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(psParameter);
-            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
             while (proteinMatchesIterator.hasNext()) {
+
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(false);
+                }
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(true);
+                }
+
                 String proteinKey = proteinMatch.getKey();
 
                 if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -2483,7 +2491,8 @@ public class IdentificationFeaturesGenerator {
      * @param peptideKey the key of the peptide of interest
      * @param sortOnRt if true, the PSMs are sorted in retention time, false
      * sorts on PSM score
-     * @param forceUpdate if true, the sorted listed is recreated even if not needed
+     * @param forceUpdate if true, the sorted listed is recreated even if not
+     * needed
      *
      * @return the ordered list of spectrum keys
      *

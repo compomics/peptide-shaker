@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.validation;
 
-import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
@@ -262,11 +261,18 @@ public class MatchesValidator {
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(false);
+                }
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(true);
+                }
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, null, false);
@@ -328,11 +334,18 @@ public class MatchesValidator {
                 inputMap.resetAdvocateContributions(spectrumFileName);
             }
 
-            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false);
+            psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(false);
+                }
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(true);
+                }
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, precursorMzDeviations, true);
@@ -402,10 +415,17 @@ public class MatchesValidator {
         ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
 
         // validate the peptides
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
         while (peptideMatchesIterator.hasNext()) {
 
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(false);
+            }
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(true);
+            }
+
             String peptideKey = peptideMatch.getKey();
 
             updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
@@ -503,10 +523,18 @@ public class MatchesValidator {
         double maxProteinAveragePrecursorIntensity = 0.0, maxProteinSummedPrecursorIntensity = 0.0;
         double totalSpectrumCountingMass = 0.0;
 
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(false);
+            }
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(true);
+            }
+
             String proteinKey = proteinMatch.getKey();
             updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
                     targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
@@ -915,7 +943,7 @@ public class MatchesValidator {
 
                 String reasonDoubtful = null;
                 boolean filterPassed = true;
-                
+
                 if (applyQCFilters) {
 
                     AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -1248,11 +1276,14 @@ public class MatchesValidator {
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
         PSParameter psParameter = new PSParameter();
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
+            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String peptideKey = peptideMatch.getKey();
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
@@ -1338,11 +1369,14 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
+            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String peptideKey = peptideMatch.getKey();
 
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -1392,10 +1426,14 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String proteinKey = proteinMatch.getKey();
 
             waitingHandler.increaseSecondaryProgressCounter();
@@ -1473,10 +1511,14 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String proteinKey = proteinMatch.getKey();
             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 

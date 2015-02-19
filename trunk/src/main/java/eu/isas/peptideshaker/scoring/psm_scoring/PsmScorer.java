@@ -82,11 +82,14 @@ public class PsmScorer {
         //HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+                
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
@@ -245,11 +248,14 @@ public class PsmScorer {
 //        br.newLine();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+                
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);

@@ -5575,7 +5575,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
 
-                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+                ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: add waiting handler?
+                //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
+
                 while (proteinMatchesIterator.hasNext()) {
                     try {
                         ProteinMatch proteinMatch = proteinMatchesIterator.next();

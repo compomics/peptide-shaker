@@ -103,7 +103,7 @@ public class MzIdentMLExport {
     /**
      * D-score threshold.
      */
-    private Double dScoreThreshold = 95.0 ;//@TODO: avoid this hard coded value
+    private Double dScoreThreshold = 95.0; //@TODO: avoid this hard coded value!!
     /**
      * Write mzid 1.2? False, results in mzid 1.1.
      */
@@ -471,11 +471,15 @@ public class MzIdentMLExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters);
+
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
+            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String peptideKey = peptideMatch.getKey();
 
             Peptide peptide = peptideMatch.getTheoreticPeptide();
@@ -550,11 +554,13 @@ public class MzIdentMLExport {
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
 
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
@@ -907,7 +913,7 @@ public class MzIdentMLExport {
             // Initial global thresholds
             IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
             PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultProteinFDR(), CONFIDENCE_DECIMALS))));
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPeptideFDR(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
 //            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) { // @TODO: missing CV term!
 //                writeCvTerm(new CvTerm("PSI-MS", "MS:???", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
@@ -1087,14 +1093,18 @@ public class MzIdentMLExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
         int psmCount = 0;
+
         // iterate the spectrum files
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, true);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, true, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
@@ -1141,10 +1151,14 @@ public class MzIdentMLExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
             String proteinGroupKey = proteinMatch.getKey();
 
             String proteinGroupId = "PAG_" + groupCpt++;
@@ -1202,15 +1216,17 @@ public class MzIdentMLExport {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001591", "anchor protein", null));
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
                 } else {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null)); // @TODO: validate these cv terms!! (children of MS:1001101)
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
                 }
 
-                // add protein coverage cv term
-//                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(accession); // @TODO: correct?? (need for MIAPE)
-//                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-//                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-//                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
-//                writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", validatedCoverage.toString()));
+                // add protein coverage cv term - main protein only
+                if (accession.equalsIgnoreCase(mainAccession)) {
+                    HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinGroupKey);
+                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
+                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
+                    Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", Double.toString(Util.roundDouble(validatedCoverage, CONFIDENCE_DECIMALS))));
+                }
 
                 tabCounter--;
                 br.write(getCurrentTabSpace() + "</ProteinDetectionHypothesis>" + System.getProperty("line.separator"));
@@ -1527,7 +1543,7 @@ public class MzIdentMLExport {
                 } else if (tempAdvocate == Advocate.myriMatch.getIndex()) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001589", "MyriMatch:MVH", Double.toString(eValue)));
                 } else {
-                    writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue);
+                    writeUserParam(Advocate.getAdvocate(tempAdvocate).getName() + " e-value", "" + eValue); // @TODO: add Tide when CV term is added
                 }
             }
 

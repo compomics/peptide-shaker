@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.ptm;
 import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -36,7 +35,6 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PsmPTMMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -1254,7 +1252,7 @@ public class PtmScorer {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true, null);
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
                 PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
                 PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, peptideSpectrumAnnotator, identification, identificationParameters, waitingHandler, exceptionHandler);
@@ -1339,10 +1337,14 @@ public class PtmScorer {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+            
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+            
             String proteinKey = proteinMatch.getKey();
 
             scorePTMs(identification, proteinMatch, identificationParameters, false);
@@ -1413,14 +1415,17 @@ public class PtmScorer {
         HashMap<String, HashMap<Double, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<Double, ArrayList<String>>>();
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
-            
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, true);
-            
+
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, true, waitingHandler);
+
             while (psmIterator.hasNext()) {
-                
+
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+                
                 String spectrumKey = spectrumMatch.getKey();
-            
+
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     boolean variableAA = false;
                     for (ModificationMatch modificationMatch : spectrumMatch.getBestPeptideAssumption().getPeptide().getModificationMatches()) {
@@ -1497,12 +1502,15 @@ public class PtmScorer {
             for (Double ptmMass : peptidesOfFile.keySet()) {
 
                 ArrayList<String> spectrumKeys = peptidesOfFile.get(ptmMass);
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true);
-            
-            while (psmIterator.hasNext()) {
-                
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                String spectrumKey = spectrumMatch.getKey();
+                PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, true, waitingHandler);
+
+                while (psmIterator.hasNext()) {
+
+                    waitingHandler.setDisplayProgress(false);
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+                    waitingHandler.setDisplayProgress(true);
+                    
+                    String spectrumKey = spectrumMatch.getKey();
 
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
                     String sequence = peptide.getSequence();

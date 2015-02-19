@@ -87,10 +87,14 @@ public class StarHider {
                     PSParameter psParameter = new PSParameter();
                     ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                     parameters.add(psParameter);
-                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, progressDialog);
 
                     while (proteinMatchesIterator.hasNext()) {
+
+                        progressDialog.setDisplayProgress(false);
                         ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                        progressDialog.setDisplayProgress(true);
+
                         String proteinKey = proteinMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {

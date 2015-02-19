@@ -149,7 +149,7 @@ public class PsProteinSection {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(
-                keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters); // @TODO: find a better way to know if we need psms
+                keys, parameters, peptideSection != null, parameters, peptideSection != null, parameters, waitingHandler); // @TODO: find a better way to know if we need psms
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -160,7 +160,14 @@ public class PsProteinSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(false);
+            }
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(true);
+            }
+
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {
@@ -188,7 +195,13 @@ public class PsProteinSection {
                     writer.newLine();
                     if (peptideSection != null) {
                         writer.increaseDepth();
-                        peptideSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, null);
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(false);
+                        }
+                        peptideSection.writeSection(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, proteinMatch.getPeptideMatchesKeys(), nSurroundingAas, line + ".", validatedOnly, decoys, waitingHandler);
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(true);
+                        }
                         writer.decreseDepth();
                     }
                     line++;

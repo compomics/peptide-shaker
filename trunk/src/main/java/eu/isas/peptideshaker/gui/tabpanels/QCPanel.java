@@ -1628,7 +1628,6 @@ public class QCPanel extends javax.swing.JPanel {
         progressDialog.setValue(0);
 
         try {
-
             Identification identification = peptideShakerGUI.getIdentification();
             IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
@@ -1641,9 +1640,14 @@ public class QCPanel extends javax.swing.JPanel {
             validatedDecoyValues = new ArrayList<Double>();
             nonValidatedDecoyValues = new ArrayList<Double>();
 
-            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null);
+            ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, progressDialog);
+            
             while (proteinMatchesIterator.hasNext()) {
+                
+                progressDialog.setDisplayProgress(false);
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                progressDialog.setDisplayProgress(true);
+                
                 String proteinKey = proteinMatch.getKey();
 
                 if (progressDialog.isRunCanceled()) {
@@ -1725,11 +1729,14 @@ public class QCPanel extends javax.swing.JPanel {
                 PSParameter psmParameter = new PSParameter();
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters);
+                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
 
+                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    progressDialog.setDisplayProgress(true);
+                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1791,11 +1798,14 @@ public class QCPanel extends javax.swing.JPanel {
                 PSParameter psmParameter = new PSParameter();
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters);
+                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
 
+                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    progressDialog.setDisplayProgress(true);
+                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1846,11 +1856,14 @@ public class QCPanel extends javax.swing.JPanel {
                 PSParameter psmParameter = new PSParameter();
                 ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
                 parameters.add(psmParameter);
-                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters);
+                PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, parameters, progressDialog);
 
                 while (peptideMatchesIterator.hasNext()) {
 
+                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    progressDialog.setDisplayProgress(true);
+                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1923,11 +1936,14 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, progressDialog);
 
                     while (psmIterator.hasNext()) {
 
+                        progressDialog.setDisplayProgress(false);
                         SpectrumMatch spectrumMatch = psmIterator.next();
+                        progressDialog.setDisplayProgress(true);
+                        
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
@@ -1978,11 +1994,14 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 for (String spectrumFileName : identification.getSpectrumFiles()) {
-                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
+                    PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, progressDialog);
 
                     while (psmIterator.hasNext()) {
 
+                        progressDialog.setDisplayProgress(false);
                         SpectrumMatch spectrumMatch = psmIterator.next();
+                        progressDialog.setDisplayProgress(true);
+                        
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
