@@ -131,11 +131,18 @@ public class SwathExport {
                         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
                     }
                     
-                    PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false);
+                    PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
 
                     while (psmIterator.hasNext()) {
 
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(false);
+                        }
                         SpectrumMatch spectrumMatch = psmIterator.next();
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(true);
+                        }
+                        
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {

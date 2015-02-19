@@ -160,12 +160,14 @@ public class ProgenesisExcelExport {
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
             // get the protein match
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
 
             // insert the protein details
             insertProteinDetails(proteinMatch.getMainMatch());
@@ -175,12 +177,14 @@ public class ProgenesisExcelExport {
 
             int proteinStartRow = currentRow;
 
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters);
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, true, parameters, waitingHandler);
             
             // print the peptide details
             while (peptideMatchesIterator.hasNext()) {
                 
+                waitingHandler.setDisplayProgress(false);
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                waitingHandler.setDisplayProgress(true);
 
                 // insert peptide data
                 insertPeptideData(peptideMatch);
@@ -254,11 +258,18 @@ public class ProgenesisExcelExport {
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
         
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false);
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
 
         while (psmIterator.hasNext()) {
 
+            waitingHandler.setDisplayProgress(false);
             SpectrumMatch spectrumMatch = psmIterator.next();
+            waitingHandler.setDisplayProgress(true);
+            
+            if (waitingHandler.isRunCanceled()) {
+                break;
+            }
+            
             String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 

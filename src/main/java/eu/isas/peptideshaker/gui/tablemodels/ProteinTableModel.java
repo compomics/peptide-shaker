@@ -79,6 +79,10 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * If true the scores will be shown.
      */
     private boolean showScores = false;
+    /**
+     * The batch size.
+     */
+    private int batchSize = 20;
 
     /**
      * Constructor which sets a new empty table.
@@ -460,7 +464,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
 
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i : rows) {
@@ -471,34 +475,39 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
         try {
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, parameters, true, parameters, true, parameters);
+
+            ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(tempKeys, parameters, true, parameters, true, parameters, waitingHandler);
+            proteinMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
             while (proteinMatchesIterator.hasNext()) {
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
                 String proteinKey = proteinMatch.getKey();
+                if (waitingHandler.isRunCanceled()) {
+                    return rows.get(i);
+                }
                 identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 identificationFeaturesGenerator.getObservableCoverage(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNValidatedPeptides(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNValidatedSpectra(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 identificationFeaturesGenerator.getNSpectra(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 i++;
@@ -521,7 +530,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 11
                     || column == 12) {
-                identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), null);
+                identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), waitingHandler);
             } else if (column == 3
                     || column == 4
                     || column == 5
@@ -530,7 +539,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 8
                     || column == 9
                     || column == 10) {
-                identification.loadProteinMatches(proteinKeys, null);
+                identification.loadProteinMatches(proteinKeys, waitingHandler);
             }
         } catch (Exception e) {
             catchException(e);

@@ -37,6 +37,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * A list of ordered PSM keys.
      */
     private ArrayList<String> psmKeys = null;
+    /**
+     * The batch size.
+     */
+    private int batchSize = 20;
 
     /**
      * Constructor which sets a new table.
@@ -278,7 +282,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
         try {
             ArrayList<String> tempPsmKeys = new ArrayList<String>();
             for (int i : rows) {
@@ -287,12 +291,13 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, parameters, true);
+            PsmIterator psmIterator = identification.getPsmIterator(tempPsmKeys, parameters, true, waitingHandler);
+            psmIterator.setBatchSize(batchSize);
 
             int i = 0;
             while (psmIterator.hasNext()) {
                 psmIterator.next();
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
                 i++;
@@ -313,12 +318,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             if (column == 1
                     || column == 6
                     || column == 7) {
-                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), null);
+                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), waitingHandler);
             } else if (column == 2
                     || column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadSpectrumMatches(psmKeys, null);
+                identification.loadSpectrumMatches(psmKeys, waitingHandler);
             }
         } catch (Exception e) {
             catchException(e);

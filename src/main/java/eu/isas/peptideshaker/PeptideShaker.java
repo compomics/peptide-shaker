@@ -639,11 +639,18 @@ public class PeptideShaker {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, true, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(false);
+                }
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                if (waitingHandler != null) {
+                    waitingHandler.setDisplayProgress(true);
+                }
+
                 String spectrumKey = spectrumMatch.getKey();
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
 
@@ -786,11 +793,14 @@ public class PeptideShaker {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), parameters, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -801,8 +811,8 @@ public class PeptideShaker {
                 } else {
                     psParameter.setPsmProbability(1.0);
                 }
-                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
 
+                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
                 identification.buildPeptidesAndProteins(spectrumKey, sequenceMatchingPreferences);
 
                 waitingHandler.increaseSecondaryProgressCounter();

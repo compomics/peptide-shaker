@@ -176,8 +176,8 @@ public class PsIdentificationAlgorithmMatchesSection {
         }
 
         for (String spectrumFile : psmMap.keySet()) {
-        
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), null, true); //@TODO: make an assumptions iterator
+
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), null, true, waitingHandler); //@TODO: make an assumptions iterator?
 
             while (psmIterator.hasNext()) {
 
@@ -188,15 +188,24 @@ public class PsIdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
+                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
+                waitingHandler.setDisplayProgress(true);
+
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+
                 String spectrumKey = spectrumMatch.getKey();
-                
+
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
 
                 for (int advocateId : assumptions.keySet()) {
+
                     HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
                     ArrayList<Double> scores = new ArrayList<Double>(advocateAssumptions.keySet());
                     Collections.sort(scores);
+
                     for (double score : scores) {
                         for (SpectrumIdentificationAssumption assumption : advocateAssumptions.get(score)) {
 

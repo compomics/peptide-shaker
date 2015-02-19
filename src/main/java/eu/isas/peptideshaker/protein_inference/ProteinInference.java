@@ -340,10 +340,18 @@ public class ProteinInference {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
+
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+
             String proteinSharedKey = proteinMatch.getKey();
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
@@ -399,9 +407,18 @@ public class ProteinInference {
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
 
-        proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters);
+        proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, true, parameters, waitingHandler);
+
         while (proteinMatchesIterator.hasNext()) {
+
+            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
+            waitingHandler.setDisplayProgress(true);
+            
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+
             String proteinKey = proteinMatch.getKey();
 
             if (!ProteinMatch.isDecoy(proteinKey)) {

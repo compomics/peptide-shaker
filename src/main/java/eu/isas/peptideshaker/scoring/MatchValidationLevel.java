@@ -13,7 +13,7 @@ public enum MatchValidationLevel {
     none(-1, "No Validation"),
     not_validated(0, "Not Validated"),
     doubtful(1, "Doubtful"),
-    confident(2, "Validated");
+    confident(2, "Confident");
     /**
      * The index associated to this possibility. The higher the id, the better
      * the confidence.

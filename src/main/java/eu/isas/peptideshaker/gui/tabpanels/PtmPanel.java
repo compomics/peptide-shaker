@@ -3172,23 +3172,25 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void createPeptideMap(ProgressDialogX progressDialogX) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        boolean modified;
-        ArrayList<String> accountedModifications;
-
         identification.loadPeptideMatches(progressDialog);
-
         ArrayList<String> notModifiedPeptides = new ArrayList<String>();
-
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null, progressDialogX);
 
         while (peptideMatchesIterator.hasNext()) {
 
+            if (progressDialogX != null) {
+                progressDialogX.setDisplayProgress(false);
+            }
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            if (progressDialogX != null) {
+                progressDialogX.setDisplayProgress(true);
+            }
+
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
-            modified = false;
-            accountedModifications = new ArrayList<String>();
+            boolean modified = false;
+            ArrayList<String> accountedModifications = new ArrayList<String>();
 
             for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
 
@@ -3213,6 +3215,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 notModifiedPeptides.add(peptideKey);
             }
             if (progressDialogX != null) {
+                if (progressDialogX.isRunCanceled()) {
+                    return;
+                }
                 progressDialogX.increasePrimaryProgressCounter();
             }
         }

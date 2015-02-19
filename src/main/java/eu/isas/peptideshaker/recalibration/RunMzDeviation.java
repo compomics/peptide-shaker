@@ -261,8 +261,8 @@ public class RunMzDeviation {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences,
-            WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
@@ -279,7 +279,7 @@ public class RunMzDeviation {
             waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
-        PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false);
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, parameters, false, waitingHandler);
 
         while (psmIterator.hasNext()) {
 
@@ -287,7 +287,14 @@ public class RunMzDeviation {
                 break;
             }
 
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(false);
+            }
             SpectrumMatch spectrumMatch = psmIterator.next();
+            if (waitingHandler != null) {
+                waitingHandler.setDisplayProgress(true);
+            }
+
             String spectrumKey = spectrumMatch.getKey();
 
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);

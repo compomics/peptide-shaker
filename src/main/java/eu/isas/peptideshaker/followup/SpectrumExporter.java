@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -106,11 +105,18 @@ public class SpectrumExporter {
                         waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
                     }
 
-                    PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false);
+                    PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
 
                     while (psmIterator.hasNext()) {
 
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(false);
+                        }
                         SpectrumMatch spectrumMatch = psmIterator.next();
+                        if (waitingHandler != null) {
+                            waitingHandler.setDisplayProgress(true);
+                        }
+
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (shallExport(spectrumMatch, exportType, sequenceMatchingPreferences)) {

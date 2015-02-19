@@ -50,6 +50,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * attached.
      */
     private String proteinAccession;
+    /**
+     * The batch size.
+     */
+    private int batchSize = 20;
 
     /**
      * Constructor which sets a new table.
@@ -302,7 +306,8 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, WaitingHandler waitingHandler) {
+
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i : rows) {
             if (i < peptideKeys.size()) {
@@ -310,19 +315,21 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 tempKeys.add(peptideKey);
             }
         }
+
         try {
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, parameters, true, parameters);
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(tempKeys, parameters, true, parameters, waitingHandler);
+            peptideMatchesIterator.setBatchSize(batchSize);
 
             int i = 0;
             while (peptideMatchesIterator.hasNext()) {
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                String peptideKey = peptideMatch.getKey();
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-                if (interrupted) {
+                if (waitingHandler.isRunCanceled()) {
                     return rows.get(i);
                 }
+                String peptideKey = peptideMatch.getKey();
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                 i++;
             }
         } catch (SQLNonTransientConnectionException e) {
@@ -332,6 +339,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             catchException(e);
             return rows.get(0);
         }
+
         return rows.get(rows.size() - 1);
     }
 
@@ -342,11 +350,11 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 6
                     || column == 7) {
-                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), null);
+                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), waitingHandler);
             } else if (column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadPeptideMatches(peptideKeys, null);
+                identification.loadPeptideMatches(peptideKeys, waitingHandler);
             }
         } catch (Exception e) {
             catchException(e);
