@@ -315,7 +315,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.45.36</version>
+            <version>3.45.37</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
