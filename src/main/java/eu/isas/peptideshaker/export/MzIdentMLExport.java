@@ -881,14 +881,18 @@ public class MzIdentMLExport {
             IdMatchValidationPreferences idMatchValidationPreferences = identificationParameters.getIdValidationPreferences();
             writeCvTerm(new CvTerm("PSI-MS", "MS:1001364", "distinct peptide-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPeptideFDR(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002350", "PSM-level global FDR", Double.toString(Util.roundDouble(idMatchValidationPreferences.getDefaultPsmFDR(), CONFIDENCE_DECIMALS))));
-//            
-            // @TODO: add peptide and psm level annotation
-//            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
-//            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) { // @TODO: missing CV term!
-//                writeCvTerm(new CvTerm("PSI-MS", "MS:???", ptmScoringPreferences.getSelectedProbabilisticScore().getName() + " threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
-//            }
-//            writeCvTerm(new CvTerm("PSI-MS", "MS:???", "D-score threshold", dScoreThreshold.toString())); //@TODO: avoid this hard coded value // @TODO: missing CV term!
 
+            PTMScoringPreferences ptmScoringPreferences = identificationParameters.getPtmScoringPreferences();
+            if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
+                if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002556", "Ascore threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
+                } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002567", "phosphoRS score threshold", ptmScoringPreferences.getProbabilisticScoreThreshold() + ""));
+                }
+            }
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002557", "D-score threshold", dScoreThreshold.toString()));
+
+         // @TODO: add peptide and psm level annotation
 //            // peptideshaker maps
 //            PSMaps psMaps = new PSMaps();
 //            psMaps = (PSMaps) identification.getUrParam(psMaps);
