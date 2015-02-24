@@ -3492,59 +3492,64 @@ public class PtmPanel extends javax.swing.JPanel {
                 HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
                 PSParameter probabilities = new PSParameter();
 
-                progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                progressDialog.setValue(0);
-                progressDialog.setMaxPrimaryProgressCounter(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size());
+                if (peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())) != null) {
 
-                for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                    progressDialog.setValue(0);
+                    progressDialog.setMaxPrimaryProgressCounter(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size()); // @TOOD: null point if no peptides with the given ptm is found!
 
-                    progressDialog.increasePrimaryProgressCounter();
+                    for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
+                        progressDialog.increasePrimaryProgressCounter();
 
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        if (progressDialog.isRunCanceled()) {
+                            break;
+                        }
 
-                    if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
-                        probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
-                        double p = probabilities.getPeptideProbability();
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences())) {
 
-                        if (!probabilities.isHidden()) {
+                            probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
+                            double p = probabilities.getPeptideProbability();
 
-                            if (!scoreToPeptideMap.containsKey(p)) {
-                                scoreToPeptideMap.put(p, new ArrayList<String>());
+                            if (!probabilities.isHidden()) {
+
+                                if (!scoreToPeptideMap.containsKey(p)) {
+                                    scoreToPeptideMap.put(p, new ArrayList<String>());
+                                }
+
+                                scoreToPeptideMap.get(p).add(peptideKey);
                             }
-
-                            scoreToPeptideMap.get(p).add(peptideKey);
                         }
                     }
-                }
-
-                if (progressDialog.isRunCanceled()) {
-                    return;
-                }
-
-                ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
-                Collections.sort(scores);
-                displayedPeptides = new ArrayList<String>();
-
-                ArrayList<String> tempList;
-
-                for (double score : scores) {
 
                     if (progressDialog.isRunCanceled()) {
-                        break;
+                        return;
                     }
 
-                    tempList = scoreToPeptideMap.get(score);
-                    Collections.sort(tempList);
-                    displayedPeptides.addAll(tempList);
-                }
+                    ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
+                    Collections.sort(scores);
+                    displayedPeptides = new ArrayList<String>();
 
-                if (progressDialog.isRunCanceled()) {
-                    return;
+                    ArrayList<String> tempList;
+
+                    for (double score : scores) {
+
+                        if (progressDialog.isRunCanceled()) {
+                            break;
+                        }
+
+                        tempList = scoreToPeptideMap.get(score);
+                        Collections.sort(tempList);
+                        displayedPeptides.addAll(tempList);
+                    }
+
+                    if (progressDialog.isRunCanceled()) {
+                        return;
+                    }
+                } else {
+                    displayedPeptides = new ArrayList<String>();
                 }
 
                 ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
