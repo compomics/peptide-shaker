@@ -157,10 +157,11 @@ public class FileImporter {
     /**
      * Imports sequences from a FASTA file.
      *
-     * @param waitingHandler the handler displaying feedback to the user
+     * @param waitingHandler the handler displaying feedback to the user and allowing cancelling the import
+     * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
-    public void importSequences(WaitingHandler waitingHandler, File fastaFile) {
+    public void importSequences(WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, File fastaFile) {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
@@ -201,7 +202,7 @@ public class FileImporter {
             sequenceFactory.setnCache(cacheSize);
 
             try {
-                proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
+                proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
                         + " could not be accessed, make sure that the file is not used by another program.", true, true);
@@ -424,7 +425,7 @@ public class FileImporter {
         public int importFiles() {
 
             try {
-                importSequences(waitingHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
+                importSequences(waitingHandler, exceptionHandler, identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase());
 
                 if (waitingHandler.isRunCanceled()) {
                     return 1;
