@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.protein_inference;
 
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.memory.MemoryConsumptionStatus;
@@ -234,12 +233,10 @@ public class PeptideMapper {
      */
     private void mapPeptide(Peptide peptide, boolean increaseProgressBar) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        if (peptide.getSequence().equals("TVTDAQK")) {
-            int debug = 1;
-        }
         if (identificationParameters.getIdFilter().validatePeptide(peptide, sequenceMatchingPreferences)) {
             if (peptide.getParentProteins(sequenceMatchingPreferences).isEmpty()) {
-                throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() + ". Please make sure that the database given to PeptideShaker is the same as the one used for the search.");
+                throw new IllegalArgumentException("No protein was found for peptide of sequence " + peptide.getSequence() 
+                        + ". Please make sure that the database given to PeptideShaker is identical to the one used for the search.");
             }
         }
         if (increaseProgressBar) {
