@@ -158,6 +158,11 @@ public class MzIdentMLExport {
     private IdentificationParameters identificationParameters;
 
     /**
+     * Map of ptm indexes: ptm mass to index
+     */
+    private HashMap<Double, Integer> ptmIndexMap = new HashMap<Double, Integer>();
+
+    /**
      * Constructor.
      *
      * @param peptideShakerVersion the PeptideShaker version
@@ -174,17 +179,15 @@ public class MzIdentMLExport {
      * @param waitingHandler waiting handler used to display progress to the
      * user and interrupt the process
      *
-     * @throws FileNotFoundException Exception thrown whenever a file was not
-     * found
      * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
      * @throws ClassNotFoundException Exception thrown whenever an error
-     * occurred while deserializing a pride object
+     * occurred while deserializing an object
      */
     public MzIdentMLExport(String peptideShakerVersion, Identification identification, ProjectDetails projectDetails, ProcessingPreferences processingPreferences,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            File outputFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
+            File outputFile, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
         this.peptideShakerVersion = peptideShakerVersion;
         this.identification = identification;
         this.projectDetails = projectDetails;
@@ -206,15 +209,18 @@ public class MzIdentMLExport {
      *
      * @param version12 if true, mzid 1.2 version information will be included
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws MzMLUnmarshallerException exception thrown whenever a problem
-     * occurred while reading the mzML file
-     * @throws ClassNotFoundException thrown of ClassNotFoundException occurs
-     * @throws InterruptedException thrown if FileNotFoundException occurs
-     * @throws SQLException thrown of SQLException occurs
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while reading an mzML file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interracting with the database
      */
-    public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, ClassNotFoundException, InterruptedException, SQLException {
+    public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
 
         mzidVersion_1_2 = version12;
 
@@ -424,17 +430,16 @@ public class MzIdentMLExport {
     /**
      * Write the sequence collection.
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
-     * @throws IllegalArgumentException thrown whenever an error is encountered
-     * while reading the FASTA file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
      * @throws InterruptedException exception thrown whenever a threading issue
-     * occurred while retrieving the match
-     * @throws ClassNotFoundException exception thrown whenever an error
-     * occurred while deserializing a match from the database
-     * @throws SQLException exception thrown whenever an SQL error occurs
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interracting with the database
      */
-    private void writeSequenceCollection() throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException, SQLException {
+    private void writeSequenceCollection() throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
         br.write(getCurrentTabSpace() + "<SequenceCollection>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -711,16 +716,28 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ModificationParams>" + System.getProperty("line.separator"));
         tabCounter++;
 
+        for (String ptm : searchParameters.getModificationProfile().getAllModifications()) {
+
+            PTM currentPtm = ptmFactory.getPTM(ptm);
+            Double ptmMass = currentPtm.getMass();
+            Integer index = ptmIndexMap.get(ptmMass);
+            if (index == null) {
+                ptmIndexMap.put(ptmMass, ptmIndexMap.size());
+            }
+        }
+
         // iterate and add the ptms
         for (String ptm : searchParameters.getModificationProfile().getAllModifications()) {
 
             PTM currentPtm = ptmFactory.getPTM(ptm);
+            int ptmType = currentPtm.getType();
+            Double ptmMass = currentPtm.getMass();
 
             String aminoAcidsAtTarget = "";
-            if (currentPtm.getType() == PTM.MODN
-                    || currentPtm.getType() == PTM.MODNP
-                    || currentPtm.getType() == PTM.MODC
-                    || currentPtm.getType() == PTM.MODCP) {
+            if (ptmType == PTM.MODN
+                    || ptmType == PTM.MODNP
+                    || ptmType == PTM.MODC
+                    || ptmType == PTM.MODCP) {
                 aminoAcidsAtTarget = ".";
             } else {
                 for (Character aa : currentPtm.getPattern().getAminoAcidsAtTarget()) {
@@ -740,22 +757,26 @@ public class MzIdentMLExport {
             }
 
             // add modification specificity
-            if (currentPtm.getType() == PTM.MODN
-                    || currentPtm.getType() == PTM.MODNAA) {
+            if (ptmType == PTM.MODN
+                    || ptmType == PTM.MODNAA) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
-            } else if (currentPtm.getType() == PTM.MODNP
-                    || currentPtm.getType() == PTM.MODNPAA) {
+            } else if (ptmType == PTM.MODNP
+                    || ptmType == PTM.MODNPAA) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
-            } else if (currentPtm.getType() == PTM.MODC
-                    || currentPtm.getType() == PTM.MODCAA) {
+            } else if (ptmType == PTM.MODC
+                    || ptmType == PTM.MODCAA) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
-            } else if (currentPtm.getType() == PTM.MODCP
-                    || currentPtm.getType() == PTM.MODCPAA) {
+            } else if (ptmType == PTM.MODCP
+                    || ptmType == PTM.MODCPAA) {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
             }
 
             // add modification type
-            //writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ?)); // @TODO: add modification index
+            Integer ptmIndex = ptmIndexMap.get(ptmMass);
+            if (ptmIndex == null) {
+                throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
+            }
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "index", ptmIndex + ""));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
         }
@@ -892,7 +913,7 @@ public class MzIdentMLExport {
             }
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002557", "D-score threshold", dScoreThreshold.toString()));
 
-         // @TODO: add peptide and psm level annotation
+            // @TODO: add peptide and psm level annotation
 //            // peptideshaker maps
 //            PSMaps psMaps = new PSMaps();
 //            psMaps = (PSMaps) identification.getUrParam(psMaps);
@@ -1035,10 +1056,16 @@ public class MzIdentMLExport {
     /**
      * Write the data collection.
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interracting with the database
      */
-    private void writeDataCollection() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
         tabCounter++;
         writeInputFileDetails();
@@ -1050,10 +1077,16 @@ public class MzIdentMLExport {
     /**
      * Write the data analysis section.
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interracting with the database
      */
-    private void writeDataAnalysis() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         br.write(getCurrentTabSpace() + "<AnalysisData>" + System.getProperty("line.separator"));
         tabCounter++;
@@ -1109,10 +1142,16 @@ public class MzIdentMLExport {
     /**
      * Write the protein groups.
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interracting with the database
      */
-    private void writeProteinDetectionList() throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    private void writeProteinDetectionList() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
@@ -1227,11 +1266,22 @@ public class MzIdentMLExport {
     /**
      * Write a spectrum identification result.
      *
-     * @throws IOException exception thrown whenever a problem occurred while
+     * @param psmKey the key of the psm to write
+     * @param psmIndex the index of the psm
+     *
+     * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing an object
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while writing the export
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while reading an mzML file
      */
     private void writeSpectrumIdentificationResult(String psmKey, int psmIndex)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(psmKey);
@@ -1402,9 +1452,16 @@ public class MzIdentMLExport {
                 PSPtmScores psPtmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                 if (psPtmScores != null) {
-                    int modMatchIndex = 0; // @TODO: replace by the modification index from the ModificationParams section
                     for (ModificationMatch modMatch : bestPeptideAssumption.getPeptide().getModificationMatches()) {
-                        PtmScoring ptmScoring = psPtmScores.getPtmScoring(modMatch.getTheoreticPtm());
+                        String ptmName = modMatch.getTheoreticPtm();
+                        PTM currentPtm = ptmFactory.getPTM(ptmName);
+                        Double ptmMass = currentPtm.getMass();
+
+                        Integer ptmIndex = ptmIndexMap.get(ptmMass);
+                        if (ptmIndex == null) {
+                            throw new IllegalArgumentException("No index found for PTM " + ptmName + " of mass " + ptmMass + ".");
+                        }
+                        PtmScoring ptmScoring = psPtmScores.getPtmScoring(ptmName);
                         if (ptmScoring != null) {
                             int site = modMatch.getModificationSite(); // @TODO: annotate all sites!
                             if (ptmScoringPreferences.isProbabilitsticScoreCalculation()) {
@@ -1415,9 +1472,9 @@ public class MzIdentMLExport {
                                 }
 
                                 if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore) {
-                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore:Ascore", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001985", "Ascore:Ascore", ptmIndex + ":" + score + ":" + site + ":" + valid));
                                 } else if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001969", "phosphoRS score", ptmIndex + ":" + score + ":" + site + ":" + valid));
                                 }
                             }
                             double score = ptmScoring.getDeltaScore(site);
@@ -1425,9 +1482,8 @@ public class MzIdentMLExport {
                             if (score < dScoreThreshold) {
                                 valid = "false";
                             }
-                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002539", "D-score", modMatchIndex + ":" + score + ":" + site + ":" + valid));
+                            writeCvTerm(new CvTerm("PSI-MS", "MS:1002539", "D-score", ptmIndex + ":" + score + ":" + site + ":" + valid));
                         }
-                        modMatchIndex++;
                     }
                 }
 
