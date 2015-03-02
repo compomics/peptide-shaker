@@ -121,7 +121,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Sets the delta score at a given site. first amino acid is 1.
+     * Sets the delta score at a given site. First amino acid is 1.
      *
      * @param site the modification site
      * @param score the delta score
@@ -132,7 +132,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the delta score at a given site. first amino acid is 1.
+     * Returns the delta score at a given site. First amino acid is 1.
      *
      * @param site the site of interest
      * @return the attached delta score. 0 if not found.
@@ -148,7 +148,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Sets the probabilistic score at a given site. first amino acid is 1.
+     * Sets the probabilistic score at a given site. First amino acid is 1.
      *
      * @param site the modification site
      * @param score the delta score
@@ -159,7 +159,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the probabilistic score at a given site. first amino acid is 1.
+     * Returns the probabilistic score at a given site. First amino acid is 1.
      *
      * @param site the site of interest
      * @return the attached probabilistic score. 0 if not found.
