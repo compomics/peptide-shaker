@@ -282,7 +282,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace()
                 + "<cv id=\"PSI-MS\" "
                 + "uri=\"http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo\" "
-                + "version=\"2.25.0\" "
+                + "version=\"3.73.0\" "
                 + "fullName=\"PSI-MS\"/>" + System.getProperty("line.separator"));
 
         br.write(getCurrentTabSpace()
@@ -1129,6 +1129,8 @@ public class MzIdentMLExport {
             return;
         }
 
+        // add MS:1002439 - final PSM list UNDER DISCUSSION?
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
 
@@ -1247,7 +1249,8 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002470", "PeptideShaker protein group score", Double.toString(Util.roundDouble(psParameter.getProteinScore(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002471", "PeptideShaker protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002545", "PeptideShaker protein confidence type", psParameter.getMatchValidationLevel().getName()));
-
+            writeCvTerm(new CvTerm("PSI-MS", "MS:1002415", "protein group passes threshold", "" + psParameter.getMatchValidationLevel().isValidated()));
+ 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</ProteinAmbiguityGroup>" + System.getProperty("line.separator"));
 
@@ -1258,6 +1261,9 @@ public class MzIdentMLExport {
             }
         }
 
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1002404", "count of identified proteins", "" + identificationFeaturesGenerator.getNValidatedProteins()));
+        // @TODO: add children of MS:1001184 - search statistics? (date / time search performed, number of molecular hypothesis considered, search time taken)
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));
     }
@@ -1265,8 +1271,8 @@ public class MzIdentMLExport {
     /**
      * Write a spectrum identification result.
      *
-     * @param psmKey the key of the psm to write
-     * @param psmIndex the index of the psm
+     * @param psmKey the key of the PSM to write
+     * @param psmIndex the index of the PSM
      *
      * @throws IOException Exception thrown whenever an error occurred while
      * reading/writing a file
@@ -1733,6 +1739,8 @@ public class MzIdentMLExport {
                 writeUserParam("Unknown"); // @TODO: add cv term?
             }
 
+            // @TODO: add children of MS:1000561 - data file checksum type?
+
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
             tabCounter--;
@@ -1752,7 +1760,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<DatabaseName>" + System.getProperty("line.separator"));
         tabCounter++;
-        writeUserParam(database.getName());
+        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DatabaseName>" + System.getProperty("line.separator"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));
