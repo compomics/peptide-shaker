@@ -2008,7 +2008,9 @@ public class NewDialog extends javax.swing.JDialog {
             // @TODO: is this possible?
             searchTxt.setText("User Defined");
         }
-        fastaFileTxt.setText(searchParameters.getFastaFile().getName());
+        if (searchParameters.getFastaFile() != null) {
+            fastaFileTxt.setText(searchParameters.getFastaFile().getName());
+        }
 
         validateInput();
     }

@@ -12,11 +12,11 @@ import com.compomics.util.Util;
 public class PsZipUtils {
     
     /**
-     * The folder to use when unzipping files
+     * The folder to use when unzipping files.
      */
     private static String unzipParentFolder = null;
     /**
-     * The sub folder where the information will be stored
+     * The sub folder where the information will be stored.
      */
     private static String unzipSubFolder = ".PeptideShaker_unzip_temp";
     /**
@@ -26,7 +26,7 @@ public class PsZipUtils {
     /**
      * Returns the parent folder where to unzip files. Null if not set.
      * 
-     * @return the parent folder where to unzip files
+     * @return the parent folder where to unzip files.
      */
     public static String getUnzipParentFolder() {
         return unzipParentFolder;
@@ -59,5 +59,4 @@ public class PsZipUtils {
     public static String getTempFolderName(String fileName) {
         return Util.removeExtension(fileName) + "_" + tempFolderName;
     }
-
 }
