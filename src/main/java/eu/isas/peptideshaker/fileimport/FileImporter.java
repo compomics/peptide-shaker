@@ -157,7 +157,7 @@ public class FileImporter {
     /**
      * Imports sequences from a FASTA file.
      *
-     * @param waitingHandler the handler displaying feedback to the user and allowing cancelling the import
+     * @param waitingHandler the handler displaying feedback to the user and allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
