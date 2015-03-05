@@ -2908,7 +2908,7 @@ public class FindDialog extends javax.swing.JDialog {
         precursorMzLabel.setToolTipText("Precursor m/z");
 
         precursorMzTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        precursorMzTxt.setText("Precursor m/z");
+        precursorMzTxt.setToolTipText("Precursor m/z");
         precursorMzTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 precursorMzTxtKeyReleased(evt);
