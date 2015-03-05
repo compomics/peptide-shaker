@@ -1615,7 +1615,7 @@
                     <Component class="javax.swing.JTextField" name="precursorMzTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Precursor m/z"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Precursor m/z"/>
                       </Properties>
                       <Events>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="precursorMzTxtKeyReleased"/>
