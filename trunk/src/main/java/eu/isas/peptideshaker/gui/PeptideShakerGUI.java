@@ -3278,7 +3278,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 HashMap<PathKey, String> newSettings = pathSettingsDialog.getKeyToPathMap();
                 for (PathKey pathKey : pathSettings.keySet()) {
                     String newPath = newSettings.get(pathKey);
-                    if (!pathSettings.get(pathKey).equals(newPath)) {
+                    String oldPath = pathSettings.get(pathKey);
+                    if (newPath != null && (oldPath == null || !newPath.equals(oldPath))) {
                         PeptideShakerPathPreferences.setPathPreferences(pathKey, newPath);
                     }
                 }
