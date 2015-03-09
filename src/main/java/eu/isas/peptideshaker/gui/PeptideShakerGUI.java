@@ -2320,6 +2320,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             getDisplayPreferences().showScores(scoresJCheckBoxMenuItem.isSelected());
             overviewPanel.updateScores();
+            // @TODO: update spectrum ID tab
             proteinStructurePanel.updateScores();
             proteinFractionsPanel.updateScores();
             goPanel.updateScores();
