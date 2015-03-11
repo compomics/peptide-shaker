@@ -2721,7 +2721,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " Da (default)"; // @TODO: what about accuracy in ppm
         }
 
-        // set the precuros ion accuracy
+        // set the precursor ion accuracy
         prideParametersReport += "<br><b>Precursor Ion Mass Tolerance:</b> ";
         if (peptideIonMassTolerance != null) {
             prideSearchParameters.setPrecursorAccuracy(peptideIonMassTolerance); // @TODO: ppm assumed?
