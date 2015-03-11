@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.37.6 (March 11. 2015):*
+
+ * FEATURE IMPROVEMENT: Added protein coverage for the main protein to the mzid export.
+ * FEATURE IMPROVEMENT: Made it possible to cancel the batch loading in the table models.
+ * FEATURE IMPROVEMENT: PSI-MS CV terms are now used for the fragment and precursor ions instead of PRIDE CV terms.
+
+ * BUG FIX: Corrected a bug in the handling of default paths.
+ * BUG FIX: Fixed a possible null pointer in the New Project dialog occurring if the search parameters did not have a FASTA file.
+ * BUG FIX: Fixed a null pointer in the PTM tab that occurred if a variable PTM was not detected in any peptides.
+ * BUG FIX: Fixed bugs in the equals methods for the Tide parameters.
+ * BUG FIX: Removed the text from the precursor m/z field in the PSM tab in the FindDialog.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.45.44.
+
+----
+
 *Changes in PeptideShaker 0.37.5 (February 17. 2015):*
 
  * FEATURE IMPROVEMENT: Sped up the PSM exports.
