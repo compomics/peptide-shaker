@@ -3690,4 +3690,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // add the plot to the chart
         overviewPlotsPanel.add(chartPanel);
     }
+
+    /**
+     * Hides or displays the search engine scores in the spectrum
+     * identifications table.
+     */
+    public void updateScores() {
+        //spectrumSelectionChanged(); // @TODO: implement me!
+    }
 }
