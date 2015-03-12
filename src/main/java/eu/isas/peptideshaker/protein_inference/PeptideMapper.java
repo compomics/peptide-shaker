@@ -51,7 +51,7 @@ public class PeptideMapper {
      * Constructor.
      *
      * @param identificationParameters the identification parameters
-     * @param waitingHandler A waiting handler
+     * @param waitingHandler a waiting handler
      * @param exceptionHandler an exception handler
      */
     public PeptideMapper(IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
@@ -63,15 +63,21 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
-     * list of peptides
-     * @param nThreads The number of threads to use
-     * @param waitingHandler A waiting handler
+     * @param peptideMap a map of the peptides to map: start of the sequence
+     * &gt; list of peptides
+     * @param nThreads the number of threads to use
+     * @param waitingHandler a waiting handler
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
+     * @throws java.util.concurrent.ExecutionException thrown whenever an error
+     * occurred while deserializing an object from the database
      */
     public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
             ClassNotFoundException, ExecutionException {
@@ -85,16 +91,20 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
-     * list of peptides
+     * @param peptideMap a map of the peptides to map: start of the sequence
+     * &gt; list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
      * @param idFilter The import filter
      * @param waitingHandler A waiting handler
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
      */
     private void mapPeptidesSingleThreaded(HashMap<String, LinkedList<Peptide>> peptideMap, WaitingHandler waitingHandler)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException {
@@ -119,17 +129,21 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
-     * list of peptides
+     * @param peptideMap a map of the peptides to map: start of the sequence
+     * &gt; list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
-     * @param idFilter The import filter
-     * @param nThreads The number of threads to use
-     * @param waitingHandler A waiting handler
+     * @param idFilter the import filter
+     * @param nThreads the number of threads to use
+     * @param waitingHandler a waiting handler
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
      */
     private void mapPeptidesThreadingPerKey(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
             WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
@@ -164,17 +178,21 @@ public class PeptideMapper {
     /**
      * Maps the peptides found to the proteins.
      *
-     * @param peptideMap a map of the peptides to map: start of the sequence &gt;
-     * list of peptides
+     * @param peptideMap a map of the peptides to map: start of the sequence
+     * &gt; list of peptides
      * @param sequenceMatchingPreferences The sequence matching preferences
-     * @param idFilter The import filter
-     * @param nThreads The number of threads to use
-     * @param waitingHandler A waiting handler
+     * @param idFilter the import filter
+     * @param nThreads the number of threads to use
+     * @param waitingHandler a waiting handler
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
      */
     private void mapPeptidesThreadingPerPeptide(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
             WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
@@ -225,10 +243,14 @@ public class PeptideMapper {
      * @param increaseProgressBar boolean indicating whether the progress bar
      * should be increased after mapping the peptide
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database
      */
     private void mapPeptide(Peptide peptide, boolean increaseProgressBar) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
