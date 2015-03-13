@@ -63,6 +63,7 @@ public class PsAnnotationSection {
      *
      * @param annotationPreferences the annotation preferences of the project
      * @param waitingHandler the waiting handler
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
@@ -91,7 +92,6 @@ public class PsAnnotationSection {
                 writer.addSeparator();
             }
 
-            boolean first = true;
             writer.write(exportFeature.getTitle());
             writer.addSeparator();
 
@@ -112,7 +112,7 @@ public class PsAnnotationSection {
                     break;
                 case neutral_losses:
                     String neutralLosses = "";
-                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
+                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses()) {
                         if (!neutralLosses.equals("")) {
                             neutralLosses += ", ";
                         }
@@ -121,21 +121,11 @@ public class PsAnnotationSection {
                     writer.write(neutralLosses);
                     break;
                 case neutral_losses_sequence_dependence:
-                    if (annotationPreferences.areNeutralLossesSequenceDependant()) {
+                    if (annotationPreferences.areNeutralLossesSequenceAuto()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
                     }
-                    break;
-                case selected_charges:
-                    String charges = "";
-                    for (int charge : annotationPreferences.getValidatedCharges()) {
-                        if (!charges.equals("")) {
-                            charges += ", ";
-                        }
-                        charges += charge;
-                    }
-                    writer.write(charges);
                     break;
                 case selected_ions:
                     String ions = "";

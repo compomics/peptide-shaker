@@ -15,6 +15,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
@@ -523,13 +524,12 @@ public class AssumptionFilter extends MatchFilter {
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * 
+     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with the identification database
+     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever a backward compatibility error occurred while deserializing a match from the database
+     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with the identification database
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file
      */
     public boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
             PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
@@ -551,13 +551,12 @@ public class AssumptionFilter extends MatchFilter {
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * 
+     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with the identification database
+     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever a backward compatibility error occurred while deserializing a match from the database
+     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with the identification database
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file
      */
     public static boolean isValidated(String spectrumKey, PeptideAssumption peptideAssumption, AssumptionFilter assumptionFilter, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator, ArrayList<Double> precursorMzDeviations)
@@ -840,15 +839,13 @@ public class AssumptionFilter extends MatchFilter {
                 peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
             }
             AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-            HashMap<Integer, ArrayList<IonMatch>> ionMatches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
-                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                    peptideAssumption.getIdentificationCharge().value, spectrum, peptide, spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    shotgunProtocol.getMs2Resolution(), false, annotationPreferences.isHighResolutionAnnotation());
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+            HashMap<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
 
             double nCovered = 0;
             int nAA = peptide.getSequence().length();
             for (int i = 0; i <= nAA; i++) {
-                ArrayList<IonMatch> matchesAtAa = ionMatches.get(i);
+                ArrayList<IonMatch> matchesAtAa = matches.get(i);
                 if (matchesAtAa != null && !matchesAtAa.isEmpty()) {
                     nCovered++;
                 }

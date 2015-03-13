@@ -185,7 +185,7 @@ public class FollowUpCLI extends CpsParent {
         // recalibrate spectra
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
-                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
+                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
@@ -240,7 +240,7 @@ public class FollowUpCLI extends CpsParent {
         // PepNovo training export
         if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
             try {
-                CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
+                CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                 waitingHandler.appendReport("Pepnovo training export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);

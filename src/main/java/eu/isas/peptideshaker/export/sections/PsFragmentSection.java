@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.export.sections;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -13,6 +14,8 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.io.export.ExportFeature;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.PsFragmentFeature.fragment_type;
@@ -85,18 +88,15 @@ public class PsFragmentSection {
      * @param identificationParameters the identification parameters
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
-     * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * 
+     * @throws IOException exception thrown whenever an error occurred while interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while reading an mzML file
      */
     public void writeSection(SpectrumMatch spectrumMatch, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            String linePrefix, WaitingHandler waitingHandler) throws IOException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -107,17 +107,15 @@ public class PsFragmentSection {
             writeHeader();
         }
 
-        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
+        String spectrumKey = spectrumMatch.getKey();
+        PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                annotationPreferences.getNeutralLosses(),
-                annotationPreferences.getValidatedCharges(),
-                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
+        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                 spectrum,
-                spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                peptideAssumption.getPeptide());
 
         HashMap<Double, ArrayList<IonMatch>> sortedAnnotation = new HashMap<Double, ArrayList<IonMatch>>();
         for (IonMatch ionMatch : annotations) {
@@ -217,7 +215,7 @@ public class PsFragmentSection {
     /**
      * Writes the header of this section.
      *
-     * @throws IOException thrown if an IOException occurs
+     * @throws IOException exception thrown whenever an error occurred while writing the file
      */
     public void writeHeader() throws IOException {
         if (indexes) {

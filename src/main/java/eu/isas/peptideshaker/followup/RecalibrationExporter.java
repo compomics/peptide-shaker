@@ -6,6 +6,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.recalibration.RunMzDeviation;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
 import java.io.BufferedWriter;
@@ -44,19 +45,23 @@ public class RecalibrationExporter {
      * shall be recalibrated
      * @param folder folder where recalibrated files shall be written
      * @param identification identification of the project
-     * @param annotationPreferences the spectrum annotation preferences
+     * @param identificationParameters the identification parameters
      * @param waitingHandler waiting handler displaying progress and used to
      * cancel the process. Can be null. The method does not call RunFinished.
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs 
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
-            Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
+            Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -77,7 +82,7 @@ public class RecalibrationExporter {
                 waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
             }
 
-            spectrumRecalibrator.estimateErrors(fileName, identification, annotationPreferences, waitingHandler);
+            spectrumRecalibrator.estimateErrors(fileName, identification, identificationParameters, waitingHandler);
 
             // Debug part
             if (debug) {
@@ -171,6 +176,7 @@ public class RecalibrationExporter {
      * Returns the name of the recalibrated file.
      *
      * @param fileName the original file name
+     *
      * @return the name of the recalibrated file
      */
     public static String getRecalibratedFileName(String fileName) {

@@ -32,6 +32,7 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -217,7 +218,7 @@ public class MzIdentMLExport {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
-     * interracting with the database
+     * interacting with the database
      */
     public void createMzIdentMLFile(boolean version12) throws IOException, MzMLUnmarshallerException, ClassNotFoundException, InterruptedException, SQLException {
 
@@ -1130,7 +1131,6 @@ public class MzIdentMLExport {
         }
 
         // add MS:1002439 - final PSM list UNDER DISCUSSION?
-
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
 
@@ -1250,7 +1250,7 @@ public class MzIdentMLExport {
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002471", "PeptideShaker protein group confidence", Double.toString(Util.roundDouble(psParameter.getProteinConfidence(), CONFIDENCE_DECIMALS))));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002545", "PeptideShaker protein confidence type", psParameter.getMatchValidationLevel().getName()));
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002415", "protein group passes threshold", "" + psParameter.getMatchValidationLevel().isValidated()));
- 
+
             tabCounter--;
             br.write(getCurrentTabSpace() + "</ProteinAmbiguityGroup>" + System.getProperty("line.separator"));
 
@@ -1342,25 +1342,16 @@ public class MzIdentMLExport {
             }
 
             // add the fragment ion annotation
-            int identificationCharge = bestPeptideAssumption.getIdentificationCharge().value;
             AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-            annotationPreferences.setCurrentSettings(bestPeptideAssumption, true, identificationParameters.getSequenceMatchingPreferences());
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
-
-            // get all the fragment ion annotations
-            ArrayList<IonMatch> annotations = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                    annotationPreferences.getNeutralLosses(),
-                    annotationPreferences.getValidatedCharges(),
-                    identificationCharge,
-                    spectrum, bestPeptideAssumption.getPeptide(),
-                    spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    annotationPreferences.getFragmentIonAccuracy(), false,
-                    annotationPreferences.isHighResolutionAnnotation());
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+            ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                    (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
 
             // organize the fragment ions by ion type
             HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
 
-            for (IonMatch ionMatch : annotations) {
+            for (IonMatch ionMatch : matches) {
 
                 if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
                         || ionMatch.ion.getType() == IonType.IMMONIUM_ION) { // @TODO: add PRECURSOR_ION and REPORTER_ION
@@ -1740,7 +1731,6 @@ public class MzIdentMLExport {
             }
 
             // @TODO: add children of MS:1000561 - data file checksum type?
-
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
             tabCounter--;

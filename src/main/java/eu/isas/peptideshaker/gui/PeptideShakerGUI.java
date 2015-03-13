@@ -79,6 +79,7 @@ import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.preferences.IdMatchValidationPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
@@ -370,6 +371,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * True if an existing project is currently in the process of being opened.
      */
     private boolean openingExistingProject = false;
+    /**
+     * The annotation preferences for the currently selected spectrum and
+     * peptide.
+     */
+    private SpecificAnnotationPreferences specificAnnotationPreferences;
 
     /**
      * The main method used to start PeptideShaker.
@@ -2356,15 +2362,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         String lastSelectedFolderPath = lastSelectedFolder.getLastSelectedFolder();
-        
+
         String cpsFileFilterDescription = "PeptideShaker (.cps)";
         String zipFileFilterDescription = "Zipped PeptideShaker (.zip)";
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"}, 
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".cps", ".zip"},
                 new String[]{cpsFileFilterDescription, zipFileFilterDescription}, "Open PeptideShaker Project", lastSelectedFolderPath, true, false, false, 0);
 
         if (selectedFileAndFilter != null) {
 
-            File selectedFile = selectedFileAndFilter.getFile(); 
+            File selectedFile = selectedFileAndFilter.getFile();
             lastSelectedFolder.setLastSelectedFolder(selectedFile.getParent());
 
             if (selectedFile.getName().endsWith(".zip")) {
@@ -2415,70 +2421,76 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void allCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_allCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
 
     /**
@@ -2571,21 +2583,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
-        if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
-            adaptCheckBoxMenuItem.setSelected(true);
-            AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-            try {
-                annotationPreferences.resetAutomaticAnnotation(getIdentificationParameters().getSequenceMatchingPreferences());
-            } catch (Exception e) {
-                catchException(e);
-            }
-
-            for (int availableCharge : chargeMenus.keySet()) {
-                chargeMenus.get(availableCharge).setSelected(annotationPreferences.getValidatedCharges().contains(availableCharge));
-            }
-        }
-
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
 
     /**
@@ -2754,7 +2752,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
     /**
@@ -2779,21 +2778,24 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void precursorCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckMenuActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_precursorCheckMenuActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void immoniumIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_immoniumIonsCheckMenuActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_immoniumIonsCheckMenuActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void reporterIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reporterIonsCheckMenuActionPerformed
-        updateAnnotationPreferences();
+        deselectAutomaticAnnotationMenu();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_reporterIonsCheckMenuActionPerformed
 
     /**
@@ -2832,14 +2834,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void forwardIonsDeNovoCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardIonsDeNovoCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_forwardIonsDeNovoCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void rewindIonsDeNovoCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rewindIonsDeNovoCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_rewindIonsDeNovoCheckBoxMenuItemActionPerformed
 
     /**
@@ -2898,14 +2900,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void deNovoChargeOneJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deNovoChargeOneJRadioButtonMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_deNovoChargeOneJRadioButtonMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
     private void deNovoChargeTwoJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
 
     /**
@@ -3119,7 +3121,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void highResAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highResAnnotationCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+        updateSpectrumAnnotations();
     }//GEN-LAST:event_highResAnnotationCheckBoxMenuItemActionPerformed
 
     /**
@@ -4880,8 +4882,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         immoniumIonsCheckMenu.setSelected(false);
         reporterIonsCheckMenu.setSelected(false);
 
-        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-        for (Ion.IonType ionType : annotationPreferences.getIonTypes().keySet()) {
+        for (Ion.IonType ionType : specificAnnotationPreferences.getIonTypes().keySet()) {
             if (ionType == IonType.IMMONIUM_ION) {
                 immoniumIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PRECURSOR_ION) {
@@ -4889,7 +4890,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (ionType == IonType.REPORTER_ION) {
                 reporterIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PEPTIDE_FRAGMENT_ION) {
-                for (int subtype : annotationPreferences.getIonTypes().get(ionType)) {
+                for (int subtype : specificAnnotationPreferences.getIonTypes().get(ionType)) {
                     if (subtype == PeptideFragmentIon.A_ION) {
                         aIonCheckBoxMenuItem.setSelected(true);
                     } else if (subtype == PeptideFragmentIon.B_ION) {
@@ -4907,19 +4908,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             }
         }
 
-        boolean selected;
-
-        ArrayList<String> selectedLosses = new ArrayList<String>();
-
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
-
-            if (lossMenuItem.isSelected()) {
-                selectedLosses.add(lossMenuItem.getText());
-            }
-
             lossMenu.remove(lossMenuItem);
         }
-
         lossMenu.setVisible(true);
         lossSplitter.setVisible(true);
         lossMenus.clear();
@@ -4942,50 +4933,37 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ArrayList<String> names = new ArrayList<String>(neutralLosses.keySet());
         Collections.sort(names);
 
-        ArrayList<String> finalSelectedLosses = selectedLosses;
-
-        if (names.isEmpty()) {
+        if (neutralLosses.isEmpty()) {
             lossMenu.setVisible(false);
             lossSplitter.setVisible(false);
         } else {
+
             for (int i = 0; i < names.size(); i++) {
 
-                if (annotationPreferences.areNeutralLossesSequenceDependant()) {
-                    selected = false;
-                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
-                        if (neutralLoss.isSameAs(neutralLoss)) {
-                            selected = true;
-                            break;
-                        }
+                String neutralLossName = names.get(i);
+                NeutralLoss neutralLoss = neutralLosses.get(neutralLossName);
+
+                boolean selected = false;
+                for (NeutralLoss specificNeutralLoss : specificAnnotationPreferences.getNeutralLossesMap().getAccountedNeutralLosses()) {
+                    if (neutralLoss.isSameAs(specificNeutralLoss)) {
+                        selected = true;
+                        break;
                     }
-                } else {
-                    selected = finalSelectedLosses.contains(names.get(i));
                 }
 
-                JCheckBoxMenuItem lossMenuItem = new JCheckBoxMenuItem(names.get(i));
+                JCheckBoxMenuItem lossMenuItem = new JCheckBoxMenuItem(neutralLossName);
                 lossMenuItem.setSelected(selected);
+                lossMenuItem.setEnabled(!specificAnnotationPreferences.isNeutralLossesAuto());
                 lossMenuItem.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-                        annotationPreferences.useAutomaticAnnotation(false);
-                        annotationPreferences.setNeutralLossesSequenceDependant(false);
-                        updateAnnotationPreferences();
+                        deselectAutomaticAnnotationMenu();
+                        updateSpectrumAnnotations();
                     }
                 });
-                lossMenus.put(neutralLosses.get(names.get(i)), lossMenuItem);
+                lossMenus.put(neutralLosses.get(neutralLossName), lossMenuItem);
                 lossMenu.add(lossMenuItem, i);
             }
-        }
-
-        ArrayList<String> selectedCharges = new ArrayList<String>();
-
-        for (JCheckBoxMenuItem chargeMenuItem : chargeMenus.values()) {
-
-            if (chargeMenuItem.isSelected()) {
-                selectedCharges.add(chargeMenuItem.getText());
-            }
-
-            chargeMenu.remove(chargeMenuItem);
+            adaptCheckBoxMenuItem.setSelected(specificAnnotationPreferences.isNeutralLossesAuto());
         }
 
         chargeMenus.clear();
@@ -4994,27 +4972,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             precursorCharge = 2;
         }
 
-        final ArrayList<String> finalSelectedCharges = selectedCharges;
+        for (Integer charge = 1; charge < precursorCharge; charge++) {
 
-        for (int charge = 1; charge < precursorCharge; charge++) {
+            final JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
 
-            JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
-
-            if (annotationPreferences.useAutomaticAnnotation()) {
-                chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
-            } else {
-                if (finalSelectedCharges.contains(charge + "+")) {
-                    chargeMenuItem.setSelected(true);
-                } else {
-                    chargeMenuItem.setSelected(false);
-                }
-            }
-
+            chargeMenuItem.setSelected(specificAnnotationPreferences.getSelectedCharges().contains(charge));
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
-                    annotationPreferences.useAutomaticAnnotation(false);
-                    updateAnnotationPreferences();
+                    deselectAutomaticAnnotationMenu();
+                    updateSpectrumAnnotations();
                 }
             });
 
@@ -5022,100 +4988,102 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             chargeMenu.add(chargeMenuItem);
         }
 
-        automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
-        adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        // General annotation settings
+        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
         highResAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.isHighResolutionAnnotation());
-
-        // disable/enable the neutral loss options
-        for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
-            lossMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
-        }
-
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
-
         barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
         intensityIonTableRadioButtonMenuItem.setSelected(annotationPreferences.useIntensityIonTable());
     }
 
     /**
-     * Save the current annotation preferences selected in the annotation menus.
+     * Save the current annotation preferences selected in the annotation menus
+     * in the specific annotation preferences.
      */
     public void updateAnnotationPreferences() {
 
-        AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
+        try {
+            AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
 
-        annotationPreferences.clearIonTypes();
-        if (aIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
-        }
-        if (bIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
-        }
-        if (cIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
-        }
-        if (xIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
-        }
-        if (yIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
-        }
-        if (zIonCheckBoxMenuItem.isSelected()) {
-            annotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
-            annotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
-        }
-        if (precursorCheckMenu.isSelected()) {
-            annotationPreferences.addIonType(IonType.PRECURSOR_ION);
-        }
-        if (immoniumIonsCheckMenu.isSelected()) {
-            annotationPreferences.addIonType(IonType.IMMONIUM_ION);
-        }
-        if (reporterIonsCheckMenu.isSelected()) {
-            for (int subtype : getReporterIons()) {
-                annotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
+            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences());
+
+            if (!automaticAnnotationCheckBoxMenuItem.isSelected()) {
+
+                specificAnnotationPreferences.clearIonTypes();
+                if (aIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.A_ION);
+                }
+                if (bIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.B_ION);
+                }
+                if (cIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.C_ION);
+                }
+                if (xIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.X_ION);
+                }
+                if (yIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Y_ION);
+                }
+                if (zIonCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PEPTIDE_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+                    specificAnnotationPreferences.addIonType(IonType.TAG_FRAGMENT_ION, PeptideFragmentIon.Z_ION);
+                }
+                if (precursorCheckMenu.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.PRECURSOR_ION);
+                }
+                if (immoniumIonsCheckMenu.isSelected()) {
+                    specificAnnotationPreferences.addIonType(IonType.IMMONIUM_ION);
+                }
+                if (reporterIonsCheckMenu.isSelected()) {
+                    for (int subtype : getReporterIons()) {
+                        specificAnnotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
+                    }
+                }
+
+                if (!adaptCheckBoxMenuItem.isSelected()) {
+                    specificAnnotationPreferences.setNeutralLossesAuto(false);
+                    specificAnnotationPreferences.clearNeutralLosses();
+                    for (NeutralLoss neutralLoss : lossMenus.keySet()) {
+                        if (lossMenus.get(neutralLoss).isSelected()) {
+                            specificAnnotationPreferences.addNeutralLoss(neutralLoss);
+                        }
+                    }
+                }
+
+                specificAnnotationPreferences.clearCharges();
+                for (int charge : chargeMenus.keySet()) {
+                    if (chargeMenus.get(charge).isSelected()) {
+                        specificAnnotationPreferences.addSelectedCharge(charge);
+                    }
+                }
+
+            } else {
+                automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
             }
-        }
 
-        annotationPreferences.clearNeutralLosses();
+            // The following preferences are kept for all spectra
+            annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
+            annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
+            annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
+            annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
+            annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
+            annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
 
-        for (NeutralLoss neutralLoss : lossMenus.keySet()) {
-            if (lossMenus.get(neutralLoss).isSelected()) {
-                annotationPreferences.addNeutralLoss(neutralLoss);
+            if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
+                annotationPreferences.setDeNovoCharge(1);
+            } else {
+                annotationPreferences.setDeNovoCharge(2);
             }
+
+        } catch (Exception e) {
+            catchException(e);
         }
-
-        annotationPreferences.clearCharges();
-
-        for (int charge : chargeMenus.keySet()) {
-            if (chargeMenus.get(charge).isSelected()) {
-                annotationPreferences.addSelectedCharge(charge);
-            }
-        }
-
-        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected() && !adaptCheckBoxMenuItem.isSelected());
-        annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
-        annotationPreferences.setHighResolutionAnnotation(highResAnnotationCheckBoxMenuItem.isSelected());
-
-        annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
-        annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
-        annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
-
-        annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
-        annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
-
-        if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
-            annotationPreferences.setDeNovoCharge(1);
-        } else {
-            annotationPreferences.setDeNovoCharge(2);
-        }
-
-        updateSpectrumAnnotations();
-        setDataSaved(false);
     }
 
     /**
@@ -6818,4 +6786,35 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         ProteinFilter proteinFilter = (ProteinFilter) filter;
         new ProteinFilterDialog(this, proteinFilter);
     }
+
+    /**
+     * Returns the specific annotation preferences for the currently selected
+     * spectrum and peptide.
+     *
+     * @return the specific annotation preferences for the currently selected
+     * spectrum and peptide
+     */
+    public SpecificAnnotationPreferences getSpecificAnnotationPreferences() {
+        return specificAnnotationPreferences;
+    }
+
+    /**
+     * Sets the specific annotation preferences for the currently selected
+     * spectrum and peptide.
+     *
+     * @param specificAnnotationPreferences the specific annotation preferences
+     * for the currently selected spectrum and peptide
+     */
+    public void setSpecificAnnotationPreferences(SpecificAnnotationPreferences specificAnnotationPreferences) {
+        this.specificAnnotationPreferences = specificAnnotationPreferences;
+    }
+
+    /**
+     * Deselects the automatic annotation menu and changes the text accordingly.
+     */
+    private void deselectAutomaticAnnotationMenu() {
+        automaticAnnotationCheckBoxMenuItem.setSelected(false);
+//        automaticAnnotationCheckBoxMenuItem.setText("Restaure Default");
+    }
+
 }

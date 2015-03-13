@@ -36,9 +36,7 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         AA_coverage,
         /**
-         * The sequence coverage of a given protein stored as small object.
-         *
-         * @deprecated replaced by sequence_validation_coverage
+         * The sequence coverage of a given protein using validated peptides stored as small object.
          */
         sequence_coverage,
         /**

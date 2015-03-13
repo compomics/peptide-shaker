@@ -80,7 +80,7 @@ public class PeptideMapper {
      * occurred while deserializing an object from the database
      */
     public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
-            ClassNotFoundException, ExecutionException {
+            ClassNotFoundException {
         if (nThreads == 1) {
             mapPeptidesSingleThreaded(peptideMap, waitingHandler);
         } else {
@@ -146,7 +146,7 @@ public class PeptideMapper {
      * occurred while deserializing an object from the database
      */
     private void mapPeptidesThreadingPerKey(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads,
-            WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException, ExecutionException {
+            WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException, ClassNotFoundException {
 
         if (peptideMap != null && !peptideMap.isEmpty()) {
             waitingHandler.resetSecondaryProgressCounter();
@@ -314,6 +314,7 @@ public class PeptideMapper {
             } catch (Exception e) {
                 if (!canceled && !waitingHandler.isRunCanceled()) {
                     exceptionHandler.catchException(e);
+                    canceled = true;
                 }
             }
         }

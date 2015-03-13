@@ -64,30 +64,17 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private void setUpGui() {
 
         // set main table properties
-        chargesTable.getTableHeader().setReorderingAllowed(false);
         neutralLossesTable.getTableHeader().setReorderingAllowed(false);
 
         // make sure that the scroll panes are see-through
-        chargeScrollPane.getViewport().setOpaque(false);
         neutralLossScrollPane.getViewport().setOpaque(false);
-
-        chargesTable.getColumn(" ").setMaxWidth(50);
-        chargesTable.getColumn(" ").setMinWidth(50);
-        chargesTable.getColumn("  ").setMaxWidth(30);
-        chargesTable.getColumn("  ").setMinWidth(30);
 
         neutralLossesTable.getColumn(" ").setMaxWidth(50);
         neutralLossesTable.getColumn(" ").setMinWidth(50);
         neutralLossesTable.getColumn("  ").setMaxWidth(30);
         neutralLossesTable.getColumn("  ").setMinWidth(30);
 
-        chargesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
         neutralLossesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
-
-        chargesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
-                null,
-                "Selected", null));
         neutralLossesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
                 null,
@@ -98,27 +85,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      * Set up the required data.
      */
     private void setUpData() {
-        setUpCharges();
         setUpNeutralLosses();
-    }
-
-    /**
-     * Set up the charges.
-     */
-    public void setUpCharges() {
-        ArrayList<Integer> charges = peptideShakerGUI.getCharges();
-
-        int maxCharge = 1;
-
-        if (!charges.isEmpty()) {
-            maxCharge = Collections.max(charges);
-        }
-
-        ArrayList<Integer> selectedCharges = annotationPreferences.getValidatedCharges();
-
-        for (int charge = 1; charge <= maxCharge; charge++) {
-            chargesMap.put(charge, selectedCharges.contains(charge));
-        }
     }
 
     /**
@@ -126,7 +93,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      */
     public void setUpNeutralLosses() {
         ArrayList<NeutralLoss> possibleNeutralLosses = peptideShakerGUI.getNeutralLosses();
-        ArrayList<NeutralLoss> selectedNeutralLosses = annotationPreferences.getNeutralLosses().getAccountedNeutralLosses();
+        ArrayList<NeutralLoss> selectedNeutralLosses = annotationPreferences.getNeutralLosses();
 
         for (NeutralLoss possibleNeutralLoss : possibleNeutralLosses) {
 
@@ -166,9 +133,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         precursorBox = new javax.swing.JCheckBox();
         immoniumBox = new javax.swing.JCheckBox();
         reporterBox = new javax.swing.JCheckBox();
-        chargePanel = new javax.swing.JPanel();
-        chargeScrollPane = new javax.swing.JScrollPane();
-        chargesTable = new javax.swing.JTable();
         neutralLossPanel = new javax.swing.JPanel();
         neutralLossScrollPane = new javax.swing.JScrollPane();
         neutralLossesTable = new javax.swing.JTable();
@@ -180,8 +144,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationLevelLabel = new javax.swing.JLabel();
         accuracySpinner = new javax.swing.JSpinner();
         peakMatchingCheckBoxPanel = new javax.swing.JPanel();
-        adaptNeutralLossesBox = new javax.swing.JCheckBox();
-        automaticAnnotationCheck = new javax.swing.JCheckBox();
         highResolutionBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -314,30 +276,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        chargePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Charge"));
-        chargePanel.setOpaque(false);
-
-        chargesTable.setModel(new ChargesTableModel());
-        chargesTable.setOpaque(false);
-        chargeScrollPane.setViewportView(chargesTable);
-
-        javax.swing.GroupLayout chargePanelLayout = new javax.swing.GroupLayout(chargePanel);
-        chargePanel.setLayout(chargePanelLayout);
-        chargePanelLayout.setHorizontalGroup(
-            chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(chargePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chargeScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        chargePanelLayout.setVerticalGroup(
-            chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(chargePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chargeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         neutralLossPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Neutral Loss"));
         neutralLossPanel.setOpaque(false);
 
@@ -383,26 +321,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         peakMatchingCheckBoxPanel.setOpaque(false);
 
-        adaptNeutralLossesBox.setSelected(true);
-        adaptNeutralLossesBox.setText("Adapt Neutral Losses");
-        adaptNeutralLossesBox.setIconTextGap(10);
-        adaptNeutralLossesBox.setOpaque(false);
-        adaptNeutralLossesBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                adaptNeutralLossesBoxActionPerformed(evt);
-            }
-        });
-
-        automaticAnnotationCheck.setSelected(true);
-        automaticAnnotationCheck.setText("Automatic Annotation");
-        automaticAnnotationCheck.setIconTextGap(10);
-        automaticAnnotationCheck.setOpaque(false);
-        automaticAnnotationCheck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                automaticAnnotationCheckActionPerformed(evt);
-            }
-        });
-
         highResolutionBox.setSelected(true);
         highResolutionBox.setText("High Resolution");
         highResolutionBox.setIconTextGap(10);
@@ -414,25 +332,15 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakMatchingCheckBoxPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(automaticAnnotationCheck)
-                    .addComponent(adaptNeutralLossesBox)
-                    .addComponent(highResolutionBox))
-                .addContainerGap())
+                .addComponent(highResolutionBox)
+                .addGap(36, 36, 36))
         );
         peakMatchingCheckBoxPanelLayout.setVerticalGroup(
             peakMatchingCheckBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peakMatchingCheckBoxPanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(adaptNeutralLossesBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(automaticAnnotationCheck)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(highResolutionBox)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peakMatchingCheckBoxPanelLayout.createSequentialGroup()
+                .addGap(0, 45, Short.MAX_VALUE)
+                .addComponent(highResolutionBox))
         );
-
-        peakMatchingCheckBoxPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {adaptNeutralLossesBox, automaticAnnotationCheck, highResolutionBox});
 
         javax.swing.GroupLayout peakMatchingPanelLayout = new javax.swing.GroupLayout(peakMatchingPanel);
         peakMatchingPanel.setLayout(peakMatchingPanelLayout);
@@ -473,7 +381,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(fragmentIonAccuracyLabel)
                             .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fragmentIonAccuracyTypeLabel)))
-                    .addComponent(peakMatchingCheckBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(peakMatchingCheckBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -493,7 +401,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
                     .addComponent(peakMatchingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(chargePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(neutralLossPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -506,8 +413,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(ionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chargePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(neutralLossPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(peakMatchingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -518,8 +423,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(annotationPreferencesHelpJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {chargePanel, neutralLossPanel});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -534,6 +437,38 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Open the help dialog.
+     *
+     * @param evt
+     */
+    private void annotationPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"),
+            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+            "PeptideShaker - Help");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void annotationPreferencesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_annotationPreferencesHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void annotationPreferencesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_annotationPreferencesHelpJButtonMouseEntered
 
     /**
      * Close the dialog and update the spectrum annotations.
@@ -584,21 +519,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationPreferences.setHighResolutionAnnotation(highResolutionBox.isSelected());
 
         annotationPreferences.clearNeutralLosses();
-
         for (NeutralLoss neutralLoss : neutralLossesMap.keySet()) {
             if (neutralLossesMap.get(neutralLoss)) {
                 annotationPreferences.addNeutralLoss(neutralLoss);
-            }
-        }
-
-        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheck.isSelected());
-        annotationPreferences.setNeutralLossesSequenceDependant(adaptNeutralLossesBox.isSelected());
-
-        annotationPreferences.clearCharges();
-
-        for (int charge : chargesMap.keySet()) {
-            if (chargesMap.get(charge)) {
-                annotationPreferences.addSelectedCharge(charge);
             }
         }
 
@@ -617,79 +540,16 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void annotationPreferencesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_annotationPreferencesHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void annotationPreferencesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_annotationPreferencesHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     *
-     * @param evt
-     */
-    private void annotationPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
-
-    /**
-     * Reset the automatic annotation in the tables.
-     *
-     * @param evt
-     */
-    private void automaticAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckActionPerformed
-        if (automaticAnnotationCheck.isSelected()) {
-            adaptNeutralLossesBox.setSelected(true);
-            setUpData();
-            ((DefaultTableModel) chargesTable.getModel()).fireTableDataChanged();
-            ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
-        }
-    }//GEN-LAST:event_automaticAnnotationCheckActionPerformed
-
-    /**
-     * Reset the neutral losses to adapt to the sequence if selected.
-     *
-     * @param evt
-     */
-    private void adaptNeutralLossesBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptNeutralLossesBoxActionPerformed
-        if (adaptNeutralLossesBox.isSelected()) {
-            setUpNeutralLosses();
-            ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
-        }
-    }//GEN-LAST:event_adaptNeutralLossesBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
-    private javax.swing.JCheckBox adaptNeutralLossesBox;
     private javax.swing.JLabel annotationLevelLabel;
     private javax.swing.JLabel annotationLevelPercentLabel;
     private javax.swing.JButton annotationPreferencesHelpJButton;
-    private javax.swing.JCheckBox automaticAnnotationCheck;
     private javax.swing.JCheckBox bBox;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox cBox;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel chargePanel;
-    private javax.swing.JScrollPane chargeScrollPane;
-    private javax.swing.JTable chargesTable;
     private javax.swing.JLabel fragmentIonAccuracyLabel;
     private javax.swing.JLabel fragmentIonAccuracyTypeLabel;
     private javax.swing.JCheckBox highResolutionBox;
@@ -754,8 +614,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         }
 
-        automaticAnnotationCheck.setSelected(annotationPreferences.useAutomaticAnnotation());
-        adaptNeutralLossesBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
         highResolutionBox.setSelected(annotationPreferences.isHighResolutionAnnotation());
     }
 
@@ -827,7 +685,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             chargesMap.put(charges.get(row), !chargesMap.get(charges.get(row)));
-            automaticAnnotationCheck.setSelected(false);
         }
     }
 
@@ -907,8 +764,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             NeutralLoss neutralLoss = namesMap.get(namesList.get(row));
             neutralLossesMap.put(neutralLoss, !neutralLossesMap.get(neutralLoss));
-            adaptNeutralLossesBox.setSelected(false);
-            automaticAnnotationCheck.setSelected(false);
         }
     }
 }

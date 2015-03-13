@@ -218,7 +218,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // recalibrate spectra
                 if (followUpCLIInputBean.recalibrationNeeded()) {
                     try {
-                        CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
+                        CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                         e.printStackTrace();
@@ -269,7 +269,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                 // de novo training export
                 if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
                     try {
-                        CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters.getAnnotationPreferences(), waitingHandler);
+                        CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, identificationParameters, waitingHandler);
                         waitingHandler.appendReport("PepNovo training export completed.", true, true);
                     } catch (Exception e) {
                         waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
@@ -751,6 +751,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
      * @param identification the identification to close
+     * 
      * @throws IOException thrown of IOException occurs
      * @throws SQLException thrown if SQLException occurs
      */

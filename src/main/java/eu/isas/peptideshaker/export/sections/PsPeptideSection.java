@@ -101,19 +101,20 @@ public class PsPeptideSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA,
             String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -229,14 +230,11 @@ public class PsPeptideSection {
      * @return the component of the section corresponding to the given feature
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * interacting with a file while mapping potential modification sites
+     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping potential modification sites
+     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the ProteinTree
+     * @throws SQLException exception thrown whenever an error occurred while interacting with the ProteinTree
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file
      */
     public static String getfeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, PeptideMatch peptideMatch, PSParameter psParameter, PsPeptideFeature peptideFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler)
@@ -504,6 +502,7 @@ public class PsPeptideSection {
      * @param peptide the peptide
      * @param variablePtms if true, only variable PTMs are shown, false return
      * only the fixed PTMs
+     * 
      * @return the peptide modifications as a string
      */
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
@@ -552,6 +551,7 @@ public class PsPeptideSection {
      *
      * @param peptideMatch the peptide match
      * @param ptmProfile the PTM profile
+     * 
      * @return the peptide modification location confidence as a string
      */
     public static String getPeptideModificationLocations(PeptideMatch peptideMatch, ModificationProfile ptmProfile) {

@@ -1,10 +1,8 @@
 package eu.isas.peptideshaker.scoring.psm_scoring;
 
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
@@ -18,6 +16,7 @@ import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.PsmScoringPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -64,14 +63,11 @@ public class PsmScorer {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences, 
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) 
+    public void estimateIntermediateScores(Identification identification, InputMap inputMap, ProcessingPreferences processingPreferences,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws SQLException, IOException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-        HashMap<Ion.IonType, HashSet<Integer>> iontypes = annotationPreferences.getIonTypes();
-        NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
-        ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         PsmScoringPreferences psmScoringPreferences = identificationParameters.getPsmScoringPreferences();
@@ -89,7 +85,7 @@ public class PsmScorer {
                 waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 waitingHandler.setDisplayProgress(true);
-                
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
@@ -108,7 +104,6 @@ public class PsmScorer {
                                 if (assumption instanceof PeptideAssumption) {
 
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) assumption;
-                                    annotationPreferences.setCurrentSettings(peptideAssumption, true, sequenceMatchingPreferences);
                                     PSParameter psParameter = new PSParameter();
                                     MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
 
@@ -121,8 +116,8 @@ public class PsmScorer {
                                         if (scoreIndex == PsmScores.native_score.index) {
                                             score = peptideAssumption.getScore();
                                         } else {
-                                            score = PsmScores.getDecreasingScore(peptide, spectrum, iontypes, neutralLosses, charges,
-                                                    peptideAssumption.getIdentificationCharge().value, shotgunProtocol, scoreIndex);
+                                            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+                                            score = PsmScores.getDecreasingScore(peptide, peptideAssumption.getIdentificationCharge().value, spectrum, shotgunProtocol, identificationParameters, specificAnnotationPreferences, scoreIndex);
                                         }
 
                                         psParameter.setIntermediateScore(scoreIndex, score);
@@ -255,7 +250,7 @@ public class PsmScorer {
                 waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
                 waitingHandler.setDisplayProgress(true);
-                
+
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);

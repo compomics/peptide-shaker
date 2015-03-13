@@ -1050,7 +1050,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder,
-                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences(), progressDialog);
+                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationParameters(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

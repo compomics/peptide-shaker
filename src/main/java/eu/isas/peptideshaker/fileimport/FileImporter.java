@@ -690,7 +690,7 @@ public class FileImporter {
 
                         // Map spectrum sequencing matches on protein sequences
                         if (tagMapper != null) {
-                            tagMapper.mapTags(fileReader, waitingHandler, processingPreferences.getnThreads());
+                            tagMapper.mapTags(fileReader, identification, waitingHandler, processingPreferences.getnThreads());
                         }
 
                         // Map the peptides on protein sequences

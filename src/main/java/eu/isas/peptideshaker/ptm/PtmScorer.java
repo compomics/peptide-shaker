@@ -32,6 +32,7 @@ import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -53,6 +54,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class scores the PSM PTMs using the scores implemented in compomics
@@ -101,10 +103,16 @@ public class PtmScorer {
      * @param spectrumMatch the spectrum match of interest
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws Exception exception thrown whenever an error occurred while
-     * reading/writing the an identification match
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
      */
-    public void attachDeltaScore(Identification identification, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences) throws Exception {
+    public void attachDeltaScore(Identification identification, SpectrumMatch spectrumMatch, SequenceMatchingPreferences sequenceMatchingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
         PSPtmScores ptmScores = new PSPtmScores();
@@ -238,10 +246,18 @@ public class PtmScorer {
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator the peptide spectrum annotator
      *
-     * @throws Exception exception thrown whenever an error occurred while
-     * computing the score
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
-    private synchronized void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -258,7 +274,8 @@ public class PtmScorer {
         HashMap<Double, ArrayList<PTM>> modifications = new HashMap<Double, ArrayList<PTM>>();
         HashMap<Double, Integer> nMod = new HashMap<Double, Integer>();
         HashMap<Double, ModificationMatch> modificationMatches = new HashMap<Double, ModificationMatch>();
-        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
+        Peptide peptide = bestPeptideAssumption.getPeptide();
 
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
@@ -281,20 +298,16 @@ public class PtmScorer {
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-            annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, sequenceMatchingPreferences);
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences());
 
             for (Double ptmMass : modifications.keySet()) {
                 HashMap<Integer, Double> scores = null;
                 if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
-                    scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                            spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
+                    scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
+                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
-                    scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                            spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            searchParameters.getFragmentIonAccuracy(), scoringPreferences.isProbabilisticScoreNeutralLosses(),
+                    scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
+                            scoringPreferences.isProbabilisticScoreNeutralLosses(),
                             sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
                 }
                 if (scores != null) {
@@ -366,11 +379,19 @@ public class PtmScorer {
      * canceling
      * @param peptideSpectrumAnnotator the spectrum annotator
      *
-     * @throws Exception exception thrown whenever an error occurred while
-     * reading/writing the an identification match
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
     public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws Exception {
+            WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);

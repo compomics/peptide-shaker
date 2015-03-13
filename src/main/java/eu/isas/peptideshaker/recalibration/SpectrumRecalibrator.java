@@ -6,7 +6,7 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -64,22 +64,24 @@ public class SpectrumRecalibrator {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
-     * @param annotationPreferences the annotation preferences to be used
+     * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
+    public void estimateErrors(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
-        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, annotationPreferences, waitingHandler);
+        RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, identificationParameters, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }
 
@@ -92,11 +94,13 @@ public class SpectrumRecalibrator {
      * be recalibrated
      * @param recalibrateFragmentIons boolean indicating whether fragment ions
      * shall be recalibrated
+     *
      * @return a recalibrated spectrum
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public MSnSpectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) throws IOException, MzMLUnmarshallerException {
 

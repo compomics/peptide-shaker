@@ -58,6 +58,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -2710,8 +2711,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             try {
                 spectrumChartPanel.removeAll();
 
-                String spectrumkey = getSelectedSpectrumKey();
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumkey);
+                String spectrumKey = getSelectedSpectrumKey();
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
 
                 // get the selected spectrum
@@ -2727,7 +2728,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         } else if (spectrumMatch.getBestTagAssumption() != null) {
                             charge = spectrumMatch.getBestTagAssumption().getIdentificationCharge().toString();
                         } else {
-                            throw new IllegalArgumentException("Best hit not found for spectrum " + spectrumkey + ".");
+                            throw new IllegalArgumentException("Best hit not found for spectrum " + spectrumKey + ".");
                         }
                     } else {
                         charge = precursor.getPossibleChargesAsString();
@@ -2762,9 +2763,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
 
                 // add spectrum annotations
-                if (identification.matchExists(spectrumkey)) {
+                if (identification.matchExists(spectrumKey)) {
 
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumkey);
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     SearchParameters searchParameters = peptideShakerGUI.getIdentificationParameters().getSearchParameters();
                     int forwardIon = searchParameters.getIonSearched1();
                     int rewindIon = searchParameters.getIonSearched2();
@@ -2791,15 +2792,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     if (currentAssumption instanceof PeptideAssumption) {
                                         PeptideAssumption currentPeptideAssumption = (PeptideAssumption) currentAssumption;
                                         Peptide peptide = currentPeptideAssumption.getPeptide();
-                                        annotationPreferences.setCurrentSettings(currentPeptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
-                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-                                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                                annotationPreferences.getNeutralLosses(),
-                                                annotationPreferences.getValidatedCharges(),
-                                                currentPeptideAssumption.getIdentificationCharge().value,
-                                                currentSpectrum, peptide,
-                                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, currentPeptideAssumption));
+                                        peptideShakerGUI.updateAnnotationPreferences();
+                                        SpecificAnnotationPreferences specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
 
                                         allAnnotations.add(annotations);
                                         allSpectra.add(currentSpectrum);
@@ -2837,20 +2833,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     } else if (currentAssumption instanceof TagAssumption) {
                                         TagAssumption tagAssumption = (TagAssumption) currentAssumption;
 
-                                        // add the annotations
-                                        annotationPreferences.setCurrentSettings(tagAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()),
-                                                peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-
+                                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, tagAssumption));
+                                        peptideShakerGUI.updateAnnotationPreferences();
+                                        SpecificAnnotationPreferences specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
                                         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
-
-                                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                                annotationPreferences.getNeutralLosses(),
-                                                annotationPreferences.getValidatedCharges(),
-                                                tagAssumption.getIdentificationCharge().value,
-                                                currentSpectrum, tagAssumption.getTag(),
-                                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                                annotationPreferences.getFragmentIonAccuracy(),
-                                                false, annotationPreferences.isHighResolutionAnnotation());
+                                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, tagAssumption.getTag());
 
                                         // add the spectrum annotations
                                         spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations), !annotationPreferences.isHighResolutionAnnotation());

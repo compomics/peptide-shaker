@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.TagFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -26,19 +27,23 @@ import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.tags.matchers.TagMatcher;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
@@ -96,25 +101,28 @@ public class TagMapper {
      * mapper.
      *
      * @param idfileReader the identification file to map
+     * @param identification identification object used to store the matches
      * @param waitingHandler a waiting handler used to display progress and
      * cancel the process
      * @param nThreads the number of threads to use
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
-    public void mapTags(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException,
+    public void mapTags(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler, int nThreads) throws IOException,
             InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
         if (nThreads == 1) {
-            mapTagsSingleThread(idfileReader, waitingHandler);
+            mapTagsSingleThread(idfileReader, identification, waitingHandler);
         } else {
-            mapTagsThreadingPerKey(idfileReader, waitingHandler, nThreads);
+            mapTagsThreadingPerKey(idfileReader, identification, waitingHandler, nThreads);
         }
     }
 
@@ -122,14 +130,22 @@ public class TagMapper {
      * Maps tags in the protein database.
      *
      * @param idfileReader the id file reader
+     * @param identification identification object used to store the matches
+     * @param waitingHandler waiting handler allowing the display of progress
+     * and cancelling the process
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
-    private void mapTagsSingleThread(IdfileReader idfileReader, WaitingHandler waitingHandler) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsSingleThread(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
         if (tagMap != null && !tagMap.isEmpty()) {
@@ -141,24 +157,33 @@ public class TagMapper {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                 }
             }
         }
     }
 
     /**
-     * Maps tags in the protein database.
+     * Maps tags to the protein database proceeding per spectrum match.
      *
-     * @param idfileReader the id file reader
+     * @param idfileReader an id file reader where to get spectrum matches from
+     * @param identification identification object used to store the matches
+     * @param waitingHandler waiting handler allowing the display of progress
+     * and cancelling the process
+     * @param nThreads the number of threads to use
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
-    private void mapTagsThreadingPerMatch(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsThreadingPerMatch(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
@@ -172,7 +197,7 @@ public class TagMapper {
                 Iterator<SpectrumMatch> matchIterator = tagMap.get(key).iterator();
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
-                    SpectrumMatchTagMapperRunnable tagMapperRunnable = new SpectrumMatchTagMapperRunnable(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                    SpectrumMatchTagMapperRunnable tagMapperRunnable = new SpectrumMatchTagMapperRunnable(identification, spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                     pool.submit(tagMapperRunnable);
                     if (waitingHandler.isRunCanceled()) {
                         pool.shutdownNow();
@@ -188,17 +213,26 @@ public class TagMapper {
     }
 
     /**
-     * Maps tags in the protein database.
+     * Maps tags to the protein database proceeding by tag key.
      *
-     * @param idfileReader the id file reader
+     * @param idfileReader an id file reader where to get spectrum matches from
+     * @param identification identification object used to store the matches
+     * @param waitingHandler waiting handler allowing the display of progress
+     * and cancelling the process
+     * @param nThreads the number of threads to use
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
-    private void mapTagsThreadingPerKey(IdfileReader idfileReader, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsThreadingPerKey(IdfileReader idfileReader, Identification identification, WaitingHandler waitingHandler, int nThreads) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         HashMap<String, LinkedList<SpectrumMatch>> tagMap = idfileReader.getTagsMap();
@@ -208,7 +242,7 @@ public class TagMapper {
             ModificationProfile modificationProfile = identificationParameters.getSearchParameters().getModificationProfile();
             for (String key : tagMap.keySet()) {
                 LinkedList<SpectrumMatch> spectrumMatches = tagMap.get(key);
-                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);
+                KeyTagMapperRunnable tagMapperRunnable = new KeyTagMapperRunnable(identification, spectrumMatches, modificationProfile.getFixedModifications(), modificationProfile.getAllNotFixedModifications(), identificationParameters.getSequenceMatchingPreferences(), key, waitingHandler);
                 pool.submit(tagMapperRunnable);
                 if (waitingHandler.isRunCanceled()) {
                     pool.shutdownNow();
@@ -223,17 +257,29 @@ public class TagMapper {
     }
 
     /**
-     * Maps tags in the protein database.
+     * Maps tags to the protein database.
      *
-     * @param idfileReader the id file reader
+     * @param identification identification object used to store the matches
+     * @param spectrumMatch the spectrum match containing the tags to map
+     * @param tagMatcher the tag matcher to match the tags
+     * @param key the key of the tag to match
+     * @param waitingHandler waiting handler allowing the display of progress
+     * and cancelling the process
+     * @param increaseProgress boolean indicating whether the progress bar of
+     * the waiting handler should be increased
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws MzMLUnmarshallerException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
-    private void mapTagsForSpectrumMatch(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
+    private void mapTagsForSpectrumMatch(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
 
         TagSpectrumAnnotator spectrumAnnotator = new TagSpectrumAnnotator();
         int keySize = key.length();
@@ -245,26 +291,33 @@ public class TagMapper {
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         HashMap<Integer, HashMap<String, ArrayList<TagAssumption>>> tagAssumptionsMap = spectrumMatch.getTagAssumptionsMap(keySize, identificationParameters.getSequenceMatchingPreferences());
-        for (int advocateId : tagAssumptionsMap.keySet()) {
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsToSave = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(1);
+        HashSet<Integer> advocates = new HashSet<Integer>(tagAssumptionsMap.keySet());
+        for (Integer advocateId : advocates) {
             HashMap<String, ArrayList<TagAssumption>> algorithmTags = tagAssumptionsMap.get(advocateId);
             ArrayList<TagAssumption> tagAssumptions = algorithmTags.get(key);
             if (tagAssumptions != null) {
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateMapToSave = assumptionsToSave.get(advocateId);
+                if (advocateMapToSave == null) {
+                    advocateMapToSave = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(2);
+                    assumptionsToSave.put(advocateId, advocateMapToSave);
+                }
                 ArrayList<String> inspectedTags = new ArrayList<String>();
                 ArrayList<String> peptidesFound = new ArrayList<String>();
                 for (TagAssumption tagAssumption : tagAssumptions) {
                     String tagSequence = tagAssumption.getTag().asSequence();
                     if (!inspectedTags.contains(tagSequence)) {
+                        Double score = tagAssumption.getScore();
+                        ArrayList<SpectrumIdentificationAssumption> assumptionAtScoreToSave = advocateMapToSave.get(score);
+                        if (assumptionAtScoreToSave == null) {
+                            assumptionAtScoreToSave = new ArrayList<SpectrumIdentificationAssumption>(4);
+                            advocateMapToSave.put(score, assumptionAtScoreToSave);
+                        }
                         mapPtmsForTag(tagAssumption.getTag(), advocateId);
                         ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
                         extendedTagList.add(tagAssumption);
-                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                new NeutralLossesMap(),
-                                charges,
-                                tagAssumption.getIdentificationCharge().value,
-                                spectrum, tagAssumption.getTag(),
-                                0,
-                                annotationPreferences.getFragmentIonAccuracy(),
-                                false, annotationPreferences.isHighResolutionAnnotation());
+                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences());
+                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, tagAssumption.getTag());
                         int nB = 0, nY = 0;
                         for (IonMatch ionMatch : annotations) {
                             Ion ion = ionMatch.ion;
@@ -291,16 +344,18 @@ public class TagMapper {
                         for (TagAssumption extendedAssumption : extendedTagList) {
                             // free memory if needed and possible
                             if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-                                tagMatcher.setUseCache(false);
                                 tagMatcher.clearCache();
+                                if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
+                                    tagMatcher.setUseCache(false);
+                                }
                             }
+                            assumptionAtScoreToSave.add(extendedAssumption);
                             HashMap<Peptide, HashMap<String, ArrayList<Integer>>> proteinMapping = proteinTree.getProteinMapping(extendedAssumption.getTag(), tagMatcher, sequenceMatchingPreferences, searchParameters.getFragmentIonAccuracy());
                             for (Peptide peptide : proteinMapping.keySet()) {
                                 String peptideKey = peptide.getKey();
                                 if (!peptidesFound.contains(peptideKey)) {
                                     PeptideAssumption peptideAssumption = new PeptideAssumption(peptide, extendedAssumption.getRank(), advocateId, tagAssumption.getIdentificationCharge(), tagAssumption.getScore(), tagAssumption.getIdentificationFile());
-                                    peptideAssumption.addUrParam(tagAssumption);
-                                    spectrumMatch.addHit(advocateId, peptideAssumption, true);
+                                    assumptionAtScoreToSave.add(peptideAssumption);
                                     peptidesFound.add(peptideKey);
                                 }
                             }
@@ -309,8 +364,19 @@ public class TagMapper {
                         }
                     }
                 }
+                algorithmTags.remove(key);
+                if (algorithmTags.isEmpty()) {
+                    tagAssumptionsMap.remove(advocateId);
+                }
             }
         }
+        if (tagAssumptionsMap.isEmpty()) {
+            spectrumMatch.removeAssumptions();
+        }
+        if (!assumptionsToSave.isEmpty()) {
+            identification.addAssumptions(spectrumKey, assumptionsToSave, false, false);
+        }
+
         if (increaseProgress) {
             tagMatcher.clearCache();
             waitingHandler.increaseSecondaryProgressCounter();
@@ -335,11 +401,16 @@ public class TagMapper {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param advocateId the ID of the advocate
      *
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws FileNotFoundException
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while mapping the tags.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing a file.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database.
+     * @throws MzMLUnmarshallerException exception thrown whenever an error
+     * occurred while accessing an mzML file.
      */
     private void mapPtmsForTag(Tag tag, int advocateId) throws IOException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
@@ -459,20 +530,30 @@ public class TagMapper {
          * The tag to protein matcher.
          */
         private final TagMatcher tagMatcher;
+        /**
+         * Identification where to store the matches
+         */
+        private final Identification identification;
 
         /**
-         * Constructor.
+         * Constructor
          *
-         * @param spectrumMatches the spectrum matches to process
-         * @param key the key of tags to map
-         * @param waitingHandler waiting handler to display progress and cancel
-         * the process
+         * @param identification identification object where to store the
+         * matches
+         * @param spectrumMatches the spectrum matches to map
+         * @param fixedModifications list of fixed modifications
+         * @param variableModifications list of variable modifications
+         * @param sequenceMatchingPreferences sequence matching preferences
+         * @param key key of the tags to match
+         * @param waitingHandler waiting handler allowing the display of
+         * progress and cancelling the process
          */
-        public KeyTagMapperRunnable(LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
+        public KeyTagMapperRunnable(Identification identification, LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
             this.spectrumMatches = spectrumMatches;
             this.key = key;
             this.waitingHandler = waitingHandler;
             this.tagMatcher = new TagMatcher(fixedModifications, variableModifications, sequenceMatchingPreferences);
+            this.identification = identification;
         }
 
         @Override
@@ -483,7 +564,7 @@ public class TagMapper {
                 while (matchIterator.hasNext()) {
                     SpectrumMatch spectrumMatch = matchIterator.next();
                     if (!waitingHandler.isRunCanceled()) {
-                        mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
+                        mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, !matchIterator.hasNext());
                     }
                 }
             } catch (Exception e) {
@@ -522,21 +603,31 @@ public class TagMapper {
          * The tag to protein matcher.
          */
         private final TagMatcher tagMatcher;
+        /**
+         * Identification where to store the matches
+         */
+        private final Identification identification;
 
         /**
-         * Constructor.
+         * Constructor
          *
-         * @param spectrumMatch the spectrum match to process
-         * @param key the key of tags to map
-         * @param waitingHandler waiting handler to display progress and cancel
-         * the process
+         * @param identification the identification object where to store the
+         * matches
+         * @param spectrumMatch the spectrum match to map
+         * @param tagMatcher the tag matcher
+         * @param key the key inspected
+         * @param waitingHandler waiting handler allowing the display of
+         * progress and cancelling the process
+         * @param increaseProgress boolean indicating whether the progress bar
+         * of the waiting handler should be increased
          */
-        public SpectrumMatchTagMapperRunnable(SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
+        public SpectrumMatchTagMapperRunnable(Identification identification, SpectrumMatch spectrumMatch, TagMatcher tagMatcher, String key, WaitingHandler waitingHandler, boolean increaseProgress) {
             this.spectrumMatch = spectrumMatch;
             this.key = key;
             this.waitingHandler = waitingHandler;
             this.increaseProgress = increaseProgress;
             this.tagMatcher = tagMatcher;
+            this.identification = identification;
         }
 
         @Override
@@ -544,7 +635,7 @@ public class TagMapper {
 
             try {
                 if (!waitingHandler.isRunCanceled()) {
-                    mapTagsForSpectrumMatch(spectrumMatch, tagMatcher, key, waitingHandler, increaseProgress);
+                    mapTagsForSpectrumMatch(identification, spectrumMatch, tagMatcher, key, waitingHandler, increaseProgress);
                 }
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
