@@ -5064,7 +5064,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
 
             } else {
-                automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
+                selectAutomaticAnnotationMenu();
             }
 
             // The following preferences are kept for all spectra
@@ -6807,6 +6807,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      */
     public void setSpecificAnnotationPreferences(SpecificAnnotationPreferences specificAnnotationPreferences) {
         this.specificAnnotationPreferences = specificAnnotationPreferences;
+    }
+
+    /**
+     * Selects the automatic annotation menu and changes the text accordingly.
+     */
+    private void selectAutomaticAnnotationMenu() {
+//        automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
     }
 
     /**
