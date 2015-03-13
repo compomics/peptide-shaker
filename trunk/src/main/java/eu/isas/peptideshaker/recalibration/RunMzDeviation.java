@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
@@ -11,6 +12,8 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdentificationParameters;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -73,6 +76,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param precursorRT the precursor retention time
+     * 
      * @return the list for fragment ion m/z bins
      */
     public ArrayList<Double> getFragmentMZList(double precursorRT) {
@@ -84,6 +88,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param rtBin the retention time bin
+     * 
      * @return the precursor m/z deviation slope
      */
     public Double getSlope(Double rtBin) {
@@ -95,6 +100,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param rtBin the retention time bin
+     * 
      * @return the precursor m/z deviation offset
      */
     public Double getOffset(Double rtBin) {
@@ -107,6 +113,7 @@ public class RunMzDeviation {
      *
      * @param precursorMz the precursor m/z
      * @param precursorRT the precursor retention time
+     * 
      * @return the median error
      */
     public double getPrecursorMzCorrection(Double precursorMz, Double precursorRT) {
@@ -142,6 +149,7 @@ public class RunMzDeviation {
      *
      * @param precursorRT the precursor retention time
      * @param fragmentMZ the fragment m/z
+     * 
      * @return the error found
      */
     public Double getFragmentMzError(double precursorRT, double fragmentMZ) {
@@ -229,6 +237,7 @@ public class RunMzDeviation {
      *
      * @param precursorRT the precursor retention time
      * @param originalPeakList the original peak list
+     * 
      * @return the recalibrated peak list
      */
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
@@ -248,22 +257,24 @@ public class RunMzDeviation {
      *
      * @param spectrumFileName the name of the file of the run
      * @param identification the corresponding identification
-     * @param annotationPreferences the annotation preferences to be used
+     * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * 
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue occurred while 
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
+    public RunMzDeviation(String spectrumFileName, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler)
             throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
         PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
         ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
@@ -312,24 +323,20 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
                 }
 
-                if (spectrumMatch.getBestPeptideAssumption() != null) {
+                PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
-                    double error = spectrumMatch.getBestPeptideAssumption().getDeltaMass(precursorMz, false);
+                if (bestPeptideAssumption != null) {
+
+                    double error = bestPeptideAssumption.getDeltaMass(precursorMz, false);
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                    ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
-                            annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(),
-                            annotationPreferences.getValidatedCharges(),
-                            spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                            currentSpectrum,
-                            spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                    SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+                    ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                            (MSnSpectrum) currentSpectrum, bestPeptideAssumption.getPeptide());
                     spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
 
-                    for (IonMatch ionMatch : annotations) {
+                    for (IonMatch ionMatch : ionMatches) {
 
                         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;

@@ -7,8 +7,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
-import static eu.isas.peptideshaker.followup.RecalibrationExporter.getRecalibratedFileName;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
@@ -25,7 +24,7 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class exports de novo training files.
+ * This class exports algorithm training files.
  *
  * @author Marc Vaudel
  */
@@ -47,23 +46,26 @@ public class TrainingExport {
      *
      * @param destinationFolder the folder where to write the output files
      * @param identification the identification
-     * @param annotationPreferences the annotation preferences. Only necessary
-     * in recalibration mode.
+     * @param identificationParameters the identification parameters
      * @param recalibrate boolean indicating whether the files shall be
      * recalibrated
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences,
+    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, IdentificationParameters identificationParameters,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
-        exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, null, null, recalibrate, waitingHandler);
+        exportPepnovoTrainingFiles(destinationFolder, identification, identificationParameters, null, null, recalibrate, waitingHandler);
     }
 
     /**
@@ -72,8 +74,7 @@ public class TrainingExport {
      *
      * @param destinationFolder the folder where to write the output files
      * @param identification the identification
-     * @param annotationPreferences the annotation preferences. Only necessary
-     * in recalibration mode.
+     * @param identificationParameters the identification parameters
      * @param fdr the false discovery rate to use for the selection of "good"
      * spectra. Can be null, then the value used for validation is used.
      * @param fnr the false negative rate to use for the selection fo "bad"
@@ -84,14 +85,18 @@ public class TrainingExport {
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, Double fdr, Double fnr,
+    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, IdentificationParameters identificationParameters, Double fdr, Double fnr,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -117,7 +122,7 @@ public class TrainingExport {
                     waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
                 }
 
-                spectrumRecalibrator.estimateErrors(fileName, identification, annotationPreferences, waitingHandler);
+                spectrumRecalibrator.estimateErrors(fileName, identification, identificationParameters, waitingHandler);
             }
 
             PSParameter psParameter = new PSParameter();
@@ -179,7 +184,7 @@ public class TrainingExport {
             BufferedWriter writerBad = new BufferedWriter(new FileWriter(file));
             BufferedWriter writerRecalibration = null;
             if (recalibrate) {
-                file = new File(destinationFolder, getRecalibratedFileName(fileName));
+                file = new File(destinationFolder, RecalibrationExporter.getRecalibratedFileName(fileName));
                 writerRecalibration = new BufferedWriter(new FileWriter(file));
             }
 

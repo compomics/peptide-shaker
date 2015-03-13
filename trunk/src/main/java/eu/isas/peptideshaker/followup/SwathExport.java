@@ -21,6 +21,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -61,12 +62,16 @@ public class SwathExport {
      * @param annotationPreferences the spectrum annotation preferences
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
             ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences)
@@ -82,6 +87,7 @@ public class SwathExport {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
+        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
 
         if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
@@ -130,7 +136,7 @@ public class SwathExport {
                         waitingHandler.resetSecondaryProgressCounter();
                         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
                     }
-                    
+
                     PsmIterator psmIterator = identification.getPsmIterator(mgfFile, parameters, false, waitingHandler);
 
                     while (psmIterator.hasNext()) {
@@ -142,7 +148,7 @@ public class SwathExport {
                         if (waitingHandler != null) {
                             waitingHandler.setDisplayProgress(true);
                         }
-                        
+
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {
@@ -164,13 +170,13 @@ public class SwathExport {
                                         }
                                         if (!decoy) {
                                             if (exportType == ExportType.validated_psms) {
-                                                writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences);
+                                                writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                             } else {
                                                 String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                                                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                                                 if (psParameter.getMatchValidationLevel().isValidated()) {
                                                     if (exportType == ExportType.validated_psms_peptides) {
-                                                        writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences);
+                                                        writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                                     } else {
                                                         ArrayList<String> accessions = new ArrayList<String>();
                                                         for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
@@ -189,7 +195,7 @@ public class SwathExport {
                                                             }
                                                         }
                                                         if (!accessions.isEmpty()) {
-                                                            writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences, annotationPreferences);
+                                                            writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                                         }
                                                     }
                                                 }
@@ -249,19 +255,22 @@ public class SwathExport {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param annotationPreferences the annotation preferences to use for
      * spectrum annotation
+     * @param spectrumAnnotator the spectrum annotator to use
      *
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, annotationPreferences);
+        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
     }
 
     /**
@@ -276,18 +285,21 @@ public class SwathExport {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param annotationPreferences the annotation preferences to use for
      * spectrum annotation
+     * @param spectrumAnnotator the spectrum annotator to use
      *
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an error occurred while
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification, 
-            SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification,
+            SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -310,20 +322,11 @@ public class SwathExport {
 
         for (String accession : accessions) {
 
-            PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences);
+            ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
+                    (MSnSpectrum) spectrum, bestAssumption.getPeptide());
 
-            ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
-                    annotationPreferences.getIonTypes(),
-                    annotationPreferences.getNeutralLosses(),
-                    annotationPreferences.getValidatedCharges(),
-                    spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                    spectrum,
-                    spectrumMatch.getBestPeptideAssumption().getPeptide(),
-                    spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                    annotationPreferences.getFragmentIonAccuracy(), false,
-                    annotationPreferences.isHighResolutionAnnotation());
-
-            for (IonMatch ionMatch : annotations) {
+            for (IonMatch ionMatch : matches) {
 
                 if (ionMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION) {
 

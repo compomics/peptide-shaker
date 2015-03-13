@@ -9,6 +9,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -286,10 +287,9 @@ public class PtmTable extends JTable {
             try {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
-                        annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                        annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.updateAnnotationPreferences();
+                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
             } catch (Exception e) {
@@ -464,10 +464,9 @@ public class PtmTable extends JTable {
             try {
                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
-                        annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                        spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                        annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, spectrumMatch.getBestPeptideAssumption()));
+                peptideShakerGUI.updateAnnotationPreferences();
+                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences, peptideShakerGUI.getSpecificAnnotationPreferences());
                 tempContent.normalize();
                 tableContent.addAll(tempContent);
             } catch (Exception e) {

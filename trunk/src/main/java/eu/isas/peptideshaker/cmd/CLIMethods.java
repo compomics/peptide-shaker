@@ -5,9 +5,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.io.export.ExportFormat;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.IdFilter;
-import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.PSExportFactory;
 import com.compomics.util.io.export.ExportScheme;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -45,18 +42,22 @@ public class CLIMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param annotationPreferences the annotation preferences
+     * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+            IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         if (!recalibrationFolder.exists()) {
             recalibrationFolder.mkdir();
@@ -68,7 +69,7 @@ public class CLIMethods {
         } else if (followUpCLIInputBean.getRecalibrationMode() == 2) {
             ms1 = false;
         }
-        RecalibrationExporter.writeRecalibratedSpectra(ms1, ms2, recalibrationFolder, identification, annotationPreferences, waitingHandler);
+        RecalibrationExporter.writeRecalibratedSpectra(ms1, ms2, recalibrationFolder, identification, identificationParameters, waitingHandler);
     }
 
     /**
@@ -79,12 +80,16 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
@@ -104,10 +109,15 @@ public class CLIMethods {
      * generator
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     *
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
      */
     public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
@@ -129,10 +139,14 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param filteringPreferences the filtering preferences
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
      */
     public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler, FilterPreferences filteringPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getFastaExportFile();
@@ -151,10 +165,14 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
      */
     public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler, SequenceMatchingPreferences sequenceMatchingPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
@@ -170,22 +188,26 @@ public class CLIMethods {
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param annotationPreferences the annotation preferences
+     * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler to display progress
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
         }
-        TrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
+        TrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, identificationParameters, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
 
     /**
@@ -199,12 +221,16 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler to display progress
      * @param filterPreferences the filter preferences
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<InclusionListExport.PeptideFilterType>();
@@ -239,16 +265,19 @@ public class CLIMethods {
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param waitingHandler waiting handler displaying feedback to the user
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
-     * @throws IllegalArgumentException thrown if IllegalArgumentException
-     * occurs
-     * @throws org.apache.commons.math.MathException thrown if MathException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an exception occurred while estimating the theoretical coverage of a
+     * protein
      */
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
@@ -274,7 +303,8 @@ public class CLIMethods {
      * @param reportType the type of report of interest
      * @param waitingHandler waiting handler displaying feedback to the user
      *
-     * @throws IOException thrown of IOException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
      */
     public static void exportDocumentation(ReportCLIInputBean reportCLIInputBean, String reportType, WaitingHandler waitingHandler) throws IOException {
         PSExportFactory exportFactory = PSExportFactory.getInstance();
@@ -294,14 +324,17 @@ public class CLIMethods {
      * @param waitingHandler a waiting handler allowing display of progress and
      * interruption of the export
      *
-     * @throws IOException thrown of IOException occurs
-     * @throws MzMLUnmarshallerException thrown if MzMLUnmarshallerException
-     * occurs
-     * @throws SQLException thrown if SQLException occurs
-     * @throws ClassNotFoundException thrown if ClassNotFoundException occurs
-     * @throws InterruptedException thrown if InterruptedException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while interacting with the database
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
      */
-    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler) 
+    public static void exportMzId(MzidCLIInputBean mzidCLIInputBean, CpsParent cpsParent, WaitingHandler waitingHandler)
             throws IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException, SQLException {
 
         ProjectDetails projectDetails = cpsParent.getProjectDetails();

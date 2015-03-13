@@ -66,6 +66,7 @@ public class PsProjectSection {
      * @param replicateNumber the replicate number
      * @param projectDetails the details of this project
      * @param waitingHandler the waiting handler
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */

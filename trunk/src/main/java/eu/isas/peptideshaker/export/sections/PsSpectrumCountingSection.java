@@ -62,6 +62,7 @@ public class PsSpectrumCountingSection {
      * @param spectrumCountingPreferences the spectrum counting preferences of
      * this project
      * @param waitingHandler the waiting handler
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file
      */

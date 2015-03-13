@@ -24,6 +24,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -648,7 +649,7 @@ public class PrideXmlExport {
                         writeCvTerm(new CvTerm("PSI-MS", "MS:1002319", "Amanda:AmandaScore", "" + msAmandaScore));
                     }
 
-                        // @TODO: add additional scores for OMSSA and X!Tandem as well
+                    // @TODO: add additional scores for OMSSA and X!Tandem as well
                     // "MS:1001329", "OMSSA:pvalue"
                     // "PRIDE:0000182","X|Tandem Z score"
                     // "MS:1001331", "X!Tandem:hyperscore"
@@ -740,20 +741,13 @@ public class PrideXmlExport {
      */
     private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException, SQLException {
 
-        Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();
+        PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+        Peptide peptide = peptideAssumption.getPeptide();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-        annotationPreferences.setCurrentSettings(spectrumMatch.getBestPeptideAssumption(), true, identificationParameters.getSequenceMatchingPreferences());
-        MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
-
-        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                annotationPreferences.getNeutralLosses(),
-                annotationPreferences.getValidatedCharges(),
-                spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value,
-                tempSpectrum, peptide,
-                tempSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
-
-        for (IonMatch annotation : annotations) {
+        MSnSpectrum spectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
+        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+        ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
+        for (IonMatch annotation : matches) {
             writeFragmentIon(annotation);
         }
     }

@@ -20,6 +20,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.DirecTagIdfileReader;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MsAmandaIdfileReader;
@@ -41,7 +42,6 @@ import static eu.isas.peptideshaker.fileimport.FileImporter.ptmMassTolerance;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.psm_scoring.BestMatchSelection;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -225,16 +225,19 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public void importPsms(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
-            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
         if (nThreads == 1) {
             importPsmsSingleThread(idFileSpectrumMatches, waitingHandler);
         } else {
@@ -250,16 +253,19 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     public void importPsmsMultipleThreads(LinkedList<SpectrumMatch> idFileSpectrumMatches, int nThreads, WaitingHandler waitingHandler)
-            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
         while (!idFileSpectrumMatches.isEmpty()) {
@@ -284,20 +290,24 @@ public class PsmImporter {
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
-            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+        
+PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         while (!idFileSpectrumMatches.isEmpty()) {
             SpectrumMatch match = idFileSpectrumMatches.pollLast();
-            importPsm(match, waitingHandler);
+            importPsm(match, peptideSpectrumAnnotator, waitingHandler);
         }
     }
 
@@ -305,19 +315,23 @@ public class PsmImporter {
      * Imports a PSM.
      *
      * @param spectrumMatch the spectrum match to import
+     * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate spectra
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
-    private void importPsm(SpectrumMatch spectrumMatch, WaitingHandler waitingHandler)
-            throws IOException, SQLException, FileNotFoundException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+    private void importPsm(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         IdFilter idFilter = identificationParameters.getIdFilter();
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
@@ -386,7 +400,7 @@ public class PsmImporter {
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
                             // set the matching type to amino acid for the fixed ptms
-                            SequenceMatchingPreferences tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters); // @TODO: is there a simpler way?
+                            SequenceMatchingPreferences tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
                             tempSequenceMatchingPreferences.setSequenceMatchingType(SequenceMatchingPreferences.MatchingType.aminoAcid);
 
                             boolean fixedPtmIssue = false;
@@ -806,7 +820,7 @@ public class PsmImporter {
                             }
                         }
                         if (!firstHits.isEmpty()) {
-                            firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters);
+                            firstPeptideHit = BestMatchSelection.getBestHit(spectrumKey, firstHits, proteinCount, sequenceMatchingPreferences, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
                         }
                         if (firstPeptideHit != null) {
                             inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
@@ -854,12 +868,16 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param peptideAssumption the peptide assumption
      *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     private synchronized void checkPeptidesMassErrorsAndCharges(String spectrumKey, PeptideAssumption peptideAssumption)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
@@ -906,9 +924,10 @@ public class PsmImporter {
      * @param spectrumKey the key of the spectrum match
      * @param tagAssumption the tag assumption
      *
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     * @throws IOException thrown if an IOException occurs
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
      */
     private synchronized void checkTagMassErrorsAndCharge(String spectrumKey, TagAssumption tagAssumption) throws MzMLUnmarshallerException, IOException {
 
@@ -1139,6 +1158,11 @@ public class PsmImporter {
          * The waiting handler.
          */
         private WaitingHandler waitingHandler;
+        
+        /**
+         * The peptide spectrum annotator used to annotate spectra for this thread.
+         */
+        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
         /**
          * Constructor.
@@ -1157,11 +1181,12 @@ public class PsmImporter {
 
             try {
                 if (!waitingHandler.isRunCanceled()) {
-                    importPsm(spectrumMatch, waitingHandler);
+                    importPsm(spectrumMatch, peptideSpectrumAnnotator, waitingHandler);
                 }
             } catch (Exception e) {
                 if (!waitingHandler.isRunCanceled()) {
                     exceptionHandler.catchException(e);
+                    waitingHandler.setRunCanceled();
                 }
             }
         }

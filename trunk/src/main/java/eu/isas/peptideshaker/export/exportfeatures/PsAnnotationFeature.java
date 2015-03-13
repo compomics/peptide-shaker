@@ -16,7 +16,6 @@ public enum PsAnnotationFeature implements ExportFeature {
     selected_ions("Selected Ions", "Indicates the ion types selected for peak annotation.", false),
     neutral_losses("Neutral Losses", "Indicates the neutral losses selected for peak annotation.", false),
     neutral_losses_sequence_dependence("Neutral Losses Sequence Dependence", "Indicates whether neutral losses consideration is sequence dependent (1: yes, 0: no).", false),
-    selected_charges("Selected Charges", "The charges selected for fragment ion peak annotation.", false),
     fragment_ion_accuracy("Fragment Ion m/z Tolerance", "The m/z tolerance used for fragment ion annotation.", false);
 
     /**

@@ -30,6 +30,7 @@ import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.gui.export.graphics.ExportGraphicsDialog;
 import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -105,7 +106,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * The spectrum annotator for the first spectrum.
      */
-    private PeptideSpectrumAnnotator annotator = new PeptideSpectrumAnnotator();
+    private PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
     /**
      * The main GUI.
      */
@@ -3921,14 +3922,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 Peptide peptide = peptideAssumption.getPeptide();
                 identificationChargeFirstPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                 allModifications.addAll(peptide.getModificationMatches());
-                annotationPreferences.setCurrentSettings(peptideAssumption, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()), peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
-                ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                        annotationPreferences.getNeutralLosses(),
-                        annotationPreferences.getValidatedCharges(),
-                        identificationChargeFirstPsm,
-                        currentSpectrum, peptide,
-                        currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                        annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, peptideAssumption));
+                peptideShakerGUI.updateAnnotationPreferences();
+                SpecificAnnotationPreferences specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                 currentSpectrumKey = spectrumMatch.getKey();
 
                 // add the spectrum annotations
@@ -3966,13 +3963,10 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptide = peptideAssumption.getPeptide();
                         identificationChargeSecondPsm = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                         allModifications.addAll(peptide.getModificationMatches());
-                        annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                annotationPreferences.getNeutralLosses(),
-                                annotationPreferences.getValidatedCharges(),
-                                identificationChargeSecondPsm,
-                                currentSpectrum, peptide,
-                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                annotationPreferences.getFragmentIonAccuracy(), false, annotationPreferences.isHighResolutionAnnotation());
+                        peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, peptideAssumption));
+                        peptideShakerGUI.updateAnnotationPreferences();
+                        specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
+                        annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                         currentSpectrumKey = spectrumMatch.getKey();
 
                         spectrum.setAnnotationsMirrored(SpectrumAnnotator.getSpectrumAnnotation(annotations));

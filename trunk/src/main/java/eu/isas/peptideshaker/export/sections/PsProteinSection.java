@@ -110,16 +110,16 @@ public class PsProteinSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     * @throws org.apache.commons.math.MathException thrown if an MathException
-     * occurs
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown whenever an error is encountered while calculating the observable coverage
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
@@ -231,20 +231,20 @@ public class PsProteinSection {
      * @return the string to write
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
-     * @throws org.apache.commons.math.MathException thrown if an MathException
-     * occurs
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
+     * @throws org.apache.commons.math.MathException exception thrown whenever an error is encountered while calculating the observable coverage
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         switch (tempProteinFeatures) {
             case accession:
@@ -404,12 +404,9 @@ public class PsProteinSection {
                 }
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch, modifications);
             case coverage:
-                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                Double validatedCoverage = identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
                 Double value = 100 * validatedCoverage;
-                return Util.roundDouble(value, 2) + ""; // @TODO: this number can get bigger than 100%!!!
+                return Util.roundDouble(value, 2) + "";
             case possible_coverage:
                 value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
                 return Util.roundDouble(value, 2) + "";

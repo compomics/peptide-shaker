@@ -20,6 +20,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
+import com.compomics.util.preferences.SpecificAnnotationPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -242,20 +243,14 @@ public class BestMatchSelection {
                                     assumptionMap.put(peptideAssumption1.getPeptide().getSequenceWithLowerCasePtms(), peptideAssumption1);
                                 } else {
                                     MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                                    double mzTolerance = shotgunProtocol.getMs2Resolution();
-                                    boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
 
                                     HashMap<Double, HashMap<String, PeptideAssumption>> coverageMap = nSeMap.get(-1);
                                     if (coverageMap != null) {
                                         HashMap<String, PeptideAssumption> assumptionMap = coverageMap.get(-1.0);
                                         for (PeptideAssumption tempAssumption : assumptionMap.values()) { // There should be only one
                                             Peptide peptide = tempAssumption.getPeptide();
-                                            int precursorCharge = tempAssumption.getIdentificationCharge().value;
-                                            annotationPreferences.setCurrentSettings(tempAssumption, true, sequenceMatchingPreferences);
-                                            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids
-                                                    = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
-                                                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
-                                                            spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), tempAssumption, identificationParameters.getSequenceMatchingPreferences());
+            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                                             int nIons = coveredAminoAcids.size();
                                             nSeMap.put(nIons, coverageMap);
                                         }
@@ -263,12 +258,8 @@ public class BestMatchSelection {
                                     }
 
                                     Peptide peptide = peptideAssumption1.getPeptide();
-                                    int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
-                                    annotationPreferences.setCurrentSettings(peptideAssumption1, true, sequenceMatchingPreferences);
-                                    HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids
-                                            = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
-                                                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
-                                                    spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption1, identificationParameters.getSequenceMatchingPreferences());
+            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                                     int nIons = coveredAminoAcids.size();
 
                                     coverageMap = nSeMap.get(nIons);
@@ -554,6 +545,7 @@ public class BestMatchSelection {
      * @param sequenceMatchingPreferences the sequence matching preferences
      * @param shotgunProtocol the shotgun protocol
      * @param identificationParameters the identification parameters
+     * @param spectrumAnnotator the spectrum annotator to use
      *
      * @return a first hit from the list of equally scoring peptide matches
      *
@@ -568,8 +560,8 @@ public class BestMatchSelection {
      * @throws MzMLUnmarshallerException exception thrown whenever an exception
      * occurred while reading an mzML file
      */
-    public synchronized static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
-            SequenceMatchingPreferences sequenceMatchingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
+    public static PeptideAssumption getBestHit(String spectrumKey, ArrayList<PeptideAssumption> firstHits, HashMap<String, Integer> proteinCount,
+            SequenceMatchingPreferences sequenceMatchingPreferences, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IOException, InterruptedException, SQLException, ClassNotFoundException, MzMLUnmarshallerException {
 
         if (firstHits.size() == 1) {
@@ -602,20 +594,13 @@ public class BestMatchSelection {
         }
 
         MSnSpectrum spectrum = (MSnSpectrum) SpectrumFactory.getInstance().getSpectrum(spectrumKey);
-        double mzTolerance = shotgunProtocol.getMs2Resolution();
-        PeptideSpectrumAnnotator spectrumAnnotator = new PeptideSpectrumAnnotator();
-        boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
         int maxCoveredAminoAcids = 0;
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
 
         for (PeptideAssumption peptideAssumption : firstHits) {
             Peptide peptide = peptideAssumption.getPeptide();
-            int precursorCharge = peptideAssumption.getIdentificationCharge().value;
-            annotationPreferences.setCurrentSettings(peptideAssumption, true, sequenceMatchingPreferences);
-            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids
-                    = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), precursorCharge,
-                            spectrum, peptide, 0, mzTolerance, isPpm, annotationPreferences.isHighResolutionAnnotation());
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+            HashMap<Integer, ArrayList<IonMatch>> coveredAminoAcids = spectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
             int nAas = coveredAminoAcids.size();
             if (nAas > maxCoveredAminoAcids) {
                 maxCoveredAminoAcids = nAas;

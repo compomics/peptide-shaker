@@ -108,14 +108,15 @@ public class PsPsmSection {
      * @param waitingHandler the waiting handler
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
@@ -267,14 +268,15 @@ public class PsPsmSection {
      * section
      *
      * @throws IOException exception thrown whenever an error occurred while
-     * writing the file
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException
-     * occurs
-     * @throws SQLException thrown if a SQLException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
-     * occurs
+     * interacting with a file
+     * @throws SQLException thrown whenever an error occurred while interacting
+     * with the database
+     * @throws ClassNotFoundException thrown whenever an error occurred while
+     * deserializing a match from the database
+     * @throws InterruptedException thrown whenever a threading error occurred
+     * while interacting with the database
+     * @throws MzMLUnmarshallerException thrown whenever an error occurred while
+     * reading an mzML file
      */
     public static String getFeature(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, String linePrefix, SpectrumMatch spectrumMatch, PSParameter psParameter, PsPsmFeature psmFeature, boolean validatedOnly, boolean decoys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
