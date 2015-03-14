@@ -109,11 +109,16 @@ public class MatchesValidator {
      * @param inputMap the input target/decoy map
      * @param spectrumCountingPreferences the spectrum counting preferences
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
@@ -207,11 +212,16 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
             WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
@@ -638,11 +648,16 @@ public class MatchesValidator {
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ProteinMap proteinMap, String proteinKey)
@@ -685,11 +700,16 @@ public class MatchesValidator {
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updateProteinMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, TargetDecoyMap targetDecoyMap, double scoreThreshold, double nTargetLimit,
@@ -781,11 +801,16 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param peptideKey the key of the peptide match of interest
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updatePeptideMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpecificMap peptideMap, String peptideKey)
@@ -887,11 +912,16 @@ public class MatchesValidator {
      * compare this psm to
      * @param applyQCFilters if true quality control filters will be used
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updateSpectrumMatchValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
@@ -1013,11 +1043,16 @@ public class MatchesValidator {
      * @param spectrumKey the key of the inspected spectrum
      * @param tagAssumption the tag assumption of interest
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updateTagAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, TagAssumption tagAssumption)
@@ -1125,11 +1160,16 @@ public class MatchesValidator {
      * @param precursorMzDeviations list of the precursor m/z deviations to
      * compare this assumption to
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown whenever an error occurred while reading an mzML file.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException exception thrown
+     * whenever an error occurred while reading an mzML file.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public static void updatePeptideAssumptionValidationLevel(IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption,
@@ -1236,10 +1276,14 @@ public class MatchesValidator {
      * @param identificationParameters the identification parameters
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public void fillPeptideMaps(Identification identification, Metrics metrics, WaitingHandler waitingHandler,
             IdentificationParameters identificationParameters) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1330,10 +1374,14 @@ public class MatchesValidator {
      * validate
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while mapping the peptides to the proteins.
-     * @throws SQLException exception thrown whenever an error occurred while interacting with the database.
-     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from the database.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while mapping the peptides to the proteins.
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with the database.
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from the database.
      */
     public void attachPeptideProbabilities(Identification identification, WaitingHandler waitingHandler)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -1389,7 +1437,8 @@ public class MatchesValidator {
      * validate
      * @param waitingHandler the handler displaying feedback to the user
      *
-     * @throws IOException exception thrown whenever an error occurred while reading or writing a file.
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file.
      */
     public void fillProteinMap(Identification identification, WaitingHandler waitingHandler) throws Exception {
 
