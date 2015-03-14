@@ -296,14 +296,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="automaticAnnotationCheckBoxMenuItem">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="defaultAnnotationCheckBoxMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Automatic Annotation"/>
                 <Property name="toolTipText" type="java.lang.String" value="Use automatic annotation"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticAnnotationCheckBoxMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultAnnotationCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="errorPlotTypeCheckBoxMenuItem">
@@ -437,6 +437,15 @@
             <Property name="text" type="java.lang.String" value="|"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="resetAnnotationMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Reset Annotation&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="focusable" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="resetAnnotationMenuSelected"/>
+          </Events>
         </Menu>
       </SubComponents>
     </Container>

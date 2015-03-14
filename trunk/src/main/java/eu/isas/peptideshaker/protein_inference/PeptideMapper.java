@@ -76,8 +76,6 @@ public class PeptideMapper {
      * interacting with the database
      * @throws ClassNotFoundException exception thrown whenever an error
      * occurred while deserializing an object from the database
-     * @throws java.util.concurrent.ExecutionException thrown whenever an error
-     * occurred while deserializing an object from the database
      */
     public void mapPeptides(HashMap<String, LinkedList<Peptide>> peptideMap, int nThreads, WaitingHandler waitingHandler) throws IOException, InterruptedException, SQLException,
             ClassNotFoundException {

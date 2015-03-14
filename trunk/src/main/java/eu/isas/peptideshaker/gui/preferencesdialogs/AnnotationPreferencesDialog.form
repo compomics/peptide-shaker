@@ -338,9 +338,9 @@
                           <Component id="fragmentIonAccuracyTypeLabel" linkSize="7" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="annotationLevelPercentLabel" linkSize="7" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="highResolutionBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="peakMatchingCheckBoxPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -348,21 +348,17 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="2" attributes="0">
-                                  <Component id="annotationLevelLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="intensitySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="annotationLevelPercentLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="2" attributes="0">
-                                  <Component id="fragmentIonAccuracyLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="accuracySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="fragmentIonAccuracyTypeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="peakMatchingCheckBoxPanel" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="annotationLevelLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="intensitySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="annotationLevelPercentLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="fragmentIonAccuracyLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="accuracySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="fragmentIonAccuracyTypeLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="highResolutionBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -408,41 +404,14 @@
                 <Property name="toolTipText" type="java.lang.String" value="Fragment ion annotation accuracy."/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="peakMatchingCheckBoxPanel">
+            <Component class="javax.swing.JCheckBox" name="highResolutionBox">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="High Resolution"/>
+                <Property name="iconTextGap" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="highResolutionBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="45" max="32767" attributes="0"/>
-                          <Component id="highResolutionBox" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-              <SubComponents>
-                <Component class="javax.swing.JCheckBox" name="highResolutionBox">
-                  <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="High Resolution"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-              </SubComponents>
-            </Container>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

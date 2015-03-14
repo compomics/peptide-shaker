@@ -109,11 +109,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = (double[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey);
@@ -131,11 +138,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int[] getAACoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         int[] result = (int[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.AA_coverage, proteinMatchKey);
@@ -152,11 +166,18 @@ public class IdentificationFeaturesGenerator {
      * been altered.
      *
      * @param proteinMatchKey the key of the protein of interest
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public void updateCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = estimateCoverableAA(proteinMatchKey);
@@ -195,11 +216,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the sequence coverage
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private HashMap<Integer, Double> estimateSequenceCoverage(String proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -221,16 +249,24 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Estimates the sequence coverage for the given protein match using the validated peptides only.
+     * Estimates the sequence coverage for the given protein match using the
+     * validated peptides only.
      *
      * @param proteinMatchKey the key of the protein match
      *
      * @return the sequence coverage
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private Double estimateValidatedSequenceCoverage(String proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -259,11 +295,18 @@ public class IdentificationFeaturesGenerator {
      * enzymatic peptides will be considered, if false only non enzymatic
      *
      * @return the identification coverage of the protein sequence
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int[] estimateAACoverage(String proteinMatchKey, boolean enzymatic)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -283,11 +326,18 @@ public class IdentificationFeaturesGenerator {
      * enzymatic peptides will be considered, if false only non enzymatic
      *
      * @return the identification coverage of the protein sequence
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int[] estimateAACoverage(String proteinMatchKey, boolean allPeptides, boolean enzymatic)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -368,11 +418,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the identification coverage of the protein sequence
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int[] estimateAACoverage(String proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -387,11 +444,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private double[] estimateCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -465,11 +529,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      *
      * @return the sequence coverage
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getValidatedSequenceCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
@@ -498,11 +569,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      *
      * @return the sequence coverage
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public HashMap<Integer, Double> getSequenceCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         HashMap<Integer, Double> result = (HashMap<Integer, Double>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_validation_coverage, proteinMatchKey);
@@ -532,11 +610,18 @@ public class IdentificationFeaturesGenerator {
      * @param enzyme the enzyme used
      *
      * @return a list of non-enzymatic peptides for a given protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -607,11 +692,18 @@ public class IdentificationFeaturesGenerator {
      * Updates the sequence coverage of the protein of interest.
      *
      * @param proteinMatchKey the key of the protein of interest
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public void updateSequenceCoverage(String proteinMatchKey)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -629,11 +721,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getNormalizedSpectrumCounting(String proteinMatchKey)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
@@ -651,11 +750,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getNormalizedSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
@@ -674,11 +780,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the corresponding spectrum counting metric normalized in the
      * metricsprefix of mol
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getNormalizedSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Metrics metrics, MetricsPrefix metricsPrefix, SpectrumCountingPreferences.SpectralCountingMethod method)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
@@ -705,11 +818,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      *
      * @return the corresponding spectrum counting metric
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         return getSpectrumCounting(proteinMatchKey, spectrumCountingPreferences.getSelectedMethod());
@@ -723,11 +843,18 @@ public class IdentificationFeaturesGenerator {
      * @param method the method to use
      *
      * @return the corresponding spectrum counting metric
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException {
@@ -767,11 +894,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the inspected protein match
      *
      * @return the spectrum counting score
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private double estimateSpectrumCounting(String proteinMatchKey) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey,
@@ -791,11 +925,18 @@ public class IdentificationFeaturesGenerator {
      * @param sequenceMatchingPreferences the sequence matching preferences
      *
      * @return the spectrum counting index
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, SequenceMatchingPreferences sequenceMatchingPreferences)
@@ -906,12 +1047,21 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the best protein coverage possible according to the given
      * cleavage settings
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever an error occurred while estimating the probability to observe an amino acid
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an error occurred while estimating the probability to observe an amino
+     * acid
      */
     public Double getObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
 
@@ -940,12 +1090,21 @@ public class IdentificationFeaturesGenerator {
      * cleavage settings. Used when the main key for a protein has been altered.
      *
      * @param proteinMatchKey the key of the protein match of interest
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever an error occurred while estimating the probability to observe an amino acid
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an error occurred while estimating the probability to observe an amino
+     * acid
      */
     public void updateObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Double result = estimateObservableCoverage(proteinMatchKey);
@@ -960,12 +1119,21 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the best protein coverage possible according to the given
      * cleavage settings
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
-     * @throws org.apache.commons.math.MathException exception thrown whenever an error occurred while estimating the probability to observe an amino acid
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an error occurred while estimating the probability to observe an amino
+     * acid
      */
     private Double estimateObservableCoverage(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MathException {
         Enzyme enyzme = shotgunProtocol.getEnzyme();
@@ -989,11 +1157,18 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNValidatedProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (metrics.getnValidatedProteins() == -1) {
@@ -1004,11 +1179,18 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Estimates the number of validated proteins and saves it in the metrics.
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private void estimateNValidatedProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter probabilities = new PSParameter();
@@ -1034,11 +1216,18 @@ public class IdentificationFeaturesGenerator {
      * available after getSortedProteinKeys has been called.
      *
      * @return the number of validated proteins
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNConfidentProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (metrics.getnConfidentProteins() == -1) {
@@ -1049,11 +1238,18 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Estimates the number of confident proteins and saves it in the metrics.
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private void estimateNConfidentProteins() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter probabilities = new PSParameter();
@@ -1079,11 +1275,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1111,11 +1314,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of confident peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1144,11 +1354,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the match
      *
      * @return the number of unique peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNUniquePeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey);
@@ -1166,11 +1383,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of peptides unique to a protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNUniquePeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1193,11 +1417,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNValidatedPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
@@ -1216,11 +1447,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of confident peptides
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_peptides, proteinMatchKey);
@@ -1237,11 +1475,18 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public void updateNConfidentPeptides(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentPeptides(proteinMatchKey);
@@ -1252,11 +1497,18 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident spectra for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public void updateNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentSpectra(proteinMatchKey);
@@ -1281,11 +1533,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the given protein match
      *
      * @return the number of spectra for the given protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public Integer getNSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
@@ -1315,11 +1574,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1342,11 +1608,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getMaxNSpectra() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         return identificationFeaturesCache.getMaxSpectrumCount();
@@ -1358,11 +1631,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated spectra
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNValidatedSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
@@ -1381,11 +1661,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      *
      * @return the number of validated spectra
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, proteinMatchKey);
@@ -1417,11 +1704,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNValidatedSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1451,11 +1745,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatch the protein match of interest
      *
      * @return the number of spectra where this protein was found
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNConfidentSpectra(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1485,11 +1786,18 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the key of the peptide match
      *
      * @return the number of validated spectra
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNValidatedSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey);
@@ -1508,11 +1816,18 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the key of the peptide match
      *
      * @return the number of confident spectra
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public int getNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_confident_spectra, peptideMatchKey);
@@ -1529,11 +1844,18 @@ public class IdentificationFeaturesGenerator {
      * Updates the number of confident spectra for a given peptide match.
      *
      * @param peptideMatchKey the key of the peptide match
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public void updateNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = estimateNConfidentSpectraForPeptide(peptideMatchKey);
@@ -1558,11 +1880,18 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the peptide match of interest
      *
      * @return the number of confident spectra where this peptide was found
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNConfidentSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -1588,11 +1917,18 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the peptide match of interest
      *
      * @return the number of validated spectra where this peptide was found
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     private int estimateNValidatedSpectraForPeptide(String peptideMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -2022,11 +2358,18 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the list of validated protein keys
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getValidatedProteins(FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2041,11 +2384,18 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the list of validated protein keys
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getValidatedProteins(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2063,11 +2413,18 @@ public class IdentificationFeaturesGenerator {
      * @param waitingHandler the waiting handler, can be null
      *
      * @return the sorted list of protein keys
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2283,11 +2640,18 @@ public class IdentificationFeaturesGenerator {
      * @param filterPreferences the filtering preferences used. can be null
      *
      * @return the ordered protein keys to display when no filtering is applied.
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -2303,11 +2667,18 @@ public class IdentificationFeaturesGenerator {
      * @param proteinKey the key of the protein of interest
      *
      * @return a sorted list of the corresponding peptide keys
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getSortedPeptideKeys(String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
@@ -2373,11 +2744,18 @@ public class IdentificationFeaturesGenerator {
      * needed
      *
      * @return the ordered list of spectrum keys
-     * 
-     * @throws java.sql.SQLException exception thrown whenever an error occurred while interacting with a database (from the protein tree or identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object from a database (from the protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while interacting with a database (from the protein tree or identification)
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
      */
     public ArrayList<String> getSortedPsmKeys(String peptideKey, boolean sortOnRt, boolean forceUpdate) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 

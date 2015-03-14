@@ -723,7 +723,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         intensityIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         mzIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        automaticAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        defaultAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         annotationColorsJMenuItem = new javax.swing.JMenuItem();
@@ -742,6 +742,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         helpJMenu = new javax.swing.JMenu();
         helpMenuItem = new javax.swing.JMenuItem();
         splitterMenu7 = new javax.swing.JMenu();
+        resetAnnotationMenu = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
         deNovoChargeButtonGroup = new javax.swing.ButtonGroup();
         psmSortOrderButtonGroup = new javax.swing.ButtonGroup();
@@ -1072,15 +1073,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         settingsMenu.add(mzIonTableRadioButtonMenuItem);
         settingsMenu.add(jSeparator5);
 
-        automaticAnnotationCheckBoxMenuItem.setSelected(true);
-        automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
-        automaticAnnotationCheckBoxMenuItem.setToolTipText("Use automatic annotation");
-        automaticAnnotationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        defaultAnnotationCheckBoxMenuItem.setSelected(true);
+        defaultAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
+        defaultAnnotationCheckBoxMenuItem.setToolTipText("Use automatic annotation");
+        defaultAnnotationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                automaticAnnotationCheckBoxMenuItemActionPerformed(evt);
+                defaultAnnotationCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        settingsMenu.add(automaticAnnotationCheckBoxMenuItem);
+        settingsMenu.add(defaultAnnotationCheckBoxMenuItem);
 
         errorPlotTypeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         errorPlotTypeCheckBoxMenuItem.setSelected(true);
@@ -1194,6 +1195,19 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         splitterMenu7.setText("|");
         splitterMenu7.setEnabled(false);
         annotationMenuBar.add(splitterMenu7);
+
+        resetAnnotationMenu.setText("<html><a href>Reset Annotation</a></html>");
+        resetAnnotationMenu.setFocusable(false);
+        resetAnnotationMenu.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                resetAnnotationMenuSelected(evt);
+            }
+        });
+        annotationMenuBar.add(resetAnnotationMenu);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
@@ -2326,7 +2340,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             getDisplayPreferences().showScores(scoresJCheckBoxMenuItem.isSelected());
             overviewPanel.updateScores();
-            // @TODO: update spectrum ID tab
+            spectrumIdentificationPanel.updateScores();
             proteinStructurePanel.updateScores();
             proteinFractionsPanel.updateScores();
             goPanel.updateScores();
@@ -2421,7 +2435,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
@@ -2429,7 +2443,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
 
@@ -2437,7 +2451,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
 
@@ -2445,7 +2459,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
 
@@ -2453,7 +2467,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
 
@@ -2461,7 +2475,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
 
@@ -2582,9 +2596,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      *
      * @param evt
      */
-    private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+    private void defaultAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultAnnotationCheckBoxMenuItemActionPerformed
         updateSpectrumAnnotations();
-    }//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+    }//GEN-LAST:event_defaultAnnotationCheckBoxMenuItemActionPerformed
 
     /**
      * Open the project details dialog.
@@ -2752,7 +2766,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @param evt
      */
     private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptCheckBoxMenuItemActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
@@ -2778,7 +2792,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void precursorCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckMenuActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_precursorCheckMenuActionPerformed
 
@@ -2786,7 +2800,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void immoniumIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_immoniumIonsCheckMenuActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_immoniumIonsCheckMenuActionPerformed
 
@@ -2794,7 +2808,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * @see #updateAnnotationPreferences()
      */
     private void reporterIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reporterIonsCheckMenuActionPerformed
-        deselectAutomaticAnnotationMenu();
+        deselectDefaultAnnotationMenuItem();
         updateSpectrumAnnotations();
     }//GEN-LAST:event_reporterIonsCheckMenuActionPerformed
 
@@ -3263,6 +3277,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }//GEN-LAST:event_psmSortRtRadioButtonMenuItemActionPerformed
 
     /**
+     * Reset the annotation to the default annotation.
+     * 
+     * @param evt 
+     */
+    private void resetAnnotationMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_resetAnnotationMenuSelected
+        defaultAnnotationCheckBoxMenuItem.setSelected(true);
+        defaultAnnotationCheckBoxMenuItemActionPerformed(null);
+    }//GEN-LAST:event_resetAnnotationMenuSelected
+
+    /**
      * Opens a dialog allowing the setting of paths.
      *
      * @param welcomeDialog reference to the Welcome dialog, can be null
@@ -3422,7 +3446,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuBar annotationMenuBar;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
-    private javax.swing.JCheckBoxMenuItem automaticAnnotationCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem bIonCheckBoxMenuItem;
     private javax.swing.JLayeredPane backgroundLayeredPane;
     private javax.swing.JPanel backgroundPanel;
@@ -3436,6 +3459,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JRadioButtonMenuItem deNovoChargeOneJRadioButtonMenuItem;
     private javax.swing.JRadioButtonMenuItem deNovoChargeTwoJRadioButtonMenuItem;
     private javax.swing.JMenu deNovoMenu;
+    private javax.swing.JCheckBoxMenuItem defaultAnnotationCheckBoxMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
@@ -3526,6 +3550,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     private javax.swing.JMenuItem quantifyMenuItem;
     private javax.swing.JCheckBoxMenuItem reporterIonsCheckMenu;
     private javax.swing.JMenuItem reporterPreferencesJMenuItem;
+    private javax.swing.JMenu resetAnnotationMenu;
     private javax.swing.JMenuItem reshakeMenuItem;
     private javax.swing.JCheckBoxMenuItem rewindIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
@@ -4956,7 +4981,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 lossMenuItem.setEnabled(!specificAnnotationPreferences.isNeutralLossesAuto());
                 lossMenuItem.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        deselectAutomaticAnnotationMenu();
+                        deselectDefaultAnnotationMenuItem();
                         updateSpectrumAnnotations();
                     }
                 });
@@ -4967,6 +4992,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         }
 
         chargeMenus.clear();
+        chargeMenu.removeAll();
 
         if (precursorCharge == 1) {
             precursorCharge = 2;
@@ -4979,7 +5005,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             chargeMenuItem.setSelected(specificAnnotationPreferences.getSelectedCharges().contains(charge));
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    deselectAutomaticAnnotationMenu();
+                    deselectDefaultAnnotationMenuItem();
                     updateSpectrumAnnotations();
                 }
             });
@@ -5007,7 +5033,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences());
 
-            if (!automaticAnnotationCheckBoxMenuItem.isSelected()) {
+            if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 
                 specificAnnotationPreferences.clearIonTypes();
                 if (aIonCheckBoxMenuItem.isSelected()) {
@@ -5064,7 +5090,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 }
 
             } else {
-                selectAutomaticAnnotationMenu();
+                selectDefaultAnnotationMenuItem();
             }
 
             // The following preferences are kept for all spectra
@@ -6810,18 +6836,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Selects the automatic annotation menu and changes the text accordingly.
+     * Selects the default annotation menu item.
      */
-    private void selectAutomaticAnnotationMenu() {
-//        automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
+    private void selectDefaultAnnotationMenuItem() {
+        defaultAnnotationCheckBoxMenuItem.setSelected(true);
+        resetAnnotationMenu.setVisible(false);
     }
 
     /**
-     * Deselects the automatic annotation menu and changes the text accordingly.
+     * Deselects the default annotation menu item.
      */
-    private void deselectAutomaticAnnotationMenu() {
-        automaticAnnotationCheckBoxMenuItem.setSelected(false);
-//        automaticAnnotationCheckBoxMenuItem.setText("Restaure Default");
+    private void deselectDefaultAnnotationMenuItem() {
+        defaultAnnotationCheckBoxMenuItem.setSelected(false);
+        resetAnnotationMenu.setVisible(true);
     }
-
 }

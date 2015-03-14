@@ -10,7 +10,6 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.TagFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.TagAssumption;
@@ -30,7 +29,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTreeComponentsFactory;
 import com.compomics.util.experiment.identification.tags.matchers.TagMatcher;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.memory.MemoryConsumptionStatus;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -516,12 +514,10 @@ public class TagMapper {
          * The spectrum matches to process.
          */
         private final LinkedList<SpectrumMatch> spectrumMatches;
-
         /**
          * The tree key.
          */
         private final String key;
-
         /**
          * The waiting handler to display progress and cancel the process.
          */
@@ -531,7 +527,7 @@ public class TagMapper {
          */
         private final TagMatcher tagMatcher;
         /**
-         * Identification where to store the matches
+         * Identification where to store the matches.
          */
         private final Identification identification;
 
@@ -546,9 +542,10 @@ public class TagMapper {
          * @param sequenceMatchingPreferences sequence matching preferences
          * @param key key of the tags to match
          * @param waitingHandler waiting handler allowing the display of
-         * progress and cancelling the process
+         * progress and canceling the process
          */
-        public KeyTagMapperRunnable(Identification identification, LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
+        public KeyTagMapperRunnable(Identification identification, LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, 
+                ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
             this.spectrumMatches = spectrumMatches;
             this.key = key;
             this.waitingHandler = waitingHandler;
