@@ -797,7 +797,7 @@ public class MzIdentMLExport {
                 //+ "nTermGain=\"H\" " // Element formula gained at NTerm
                 + "id=\"Enz1\" "
                 + "name=\"" + enzyme.getName() + "\">"
-                + System.getProperty("line.separator"));
+                + System.getProperty("line.separator")); // @TODO: add <SiteRegexp><![CDATA[(?<=[KR])(?!P)]]></SiteRegexp>?
         tabCounter++;
 
         br.write(getCurrentTabSpace() + "<EnzymeName>" + System.getProperty("line.separator"));
@@ -1130,7 +1130,8 @@ public class MzIdentMLExport {
             return;
         }
 
-        // add MS:1002439 - final PSM list UNDER DISCUSSION?
+        writeCvTerm(new CvTerm("PSI-MS", "MS:1002439", "final PSM list", null));
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
 
@@ -1226,11 +1227,10 @@ public class MzIdentMLExport {
 
                 // add main protein cv terms
                 if (accession.equalsIgnoreCase(mainAccession)) {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001591", "anchor protein", null));
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
-                } else {
-                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001594", "sequence same-set protein", null));
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002403", "group representative", null));
                 }
+                
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002401", "leading protein", null));
 
                 // add protein coverage cv term - main protein only
                 if (accession.equalsIgnoreCase(mainAccession)) {
@@ -1358,7 +1358,7 @@ public class MzIdentMLExport {
 //                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
 //                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
 
-                    CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: replace by PSI-MS mappings...
+                    CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm(); // @TODO: replace by PSI-MS mappings... (children of MS:1001221)
                     Integer charge = ionMatch.charge.value;
 
                     if (fragmentIonTerm != null) {
@@ -1502,6 +1502,7 @@ public class MzIdentMLExport {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002469", "PeptideShaker peptide confidence", peptideParameter.getPeptideConfidence() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002468", "PeptideShaker peptide score", peptideParameter.getPeptideScore() + ""));
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002500", "peptide passes threshold", peptideParameter.getMatchValidationLevel().isValidated() + ""));
+                writeCvTerm(new CvTerm("PSI-MS", "MS:1002520", "peptide group ID", bestPeptideKey));
 
                 psPtmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
 
@@ -1693,6 +1694,11 @@ public class MzIdentMLExport {
 
         // add the search result files
         for (File idFile : projectDetails.getIdentificationFiles()) {
+            
+            // @TODO: add MS:1000568 - MD5?
+//            FileInputStream fis = new FileInputStream(new File("foo"));
+//            String md5 = DigestUtils.md5Hex(fis);
+//            fis.close();
 
             br.write(getCurrentTabSpace() + "<SourceFile location=\"" + idFile.getAbsolutePath() + "\" id=\"SourceFile_" + sourceFileCounter++ + "\">" + System.getProperty("line.separator"));
             tabCounter++;
@@ -1750,7 +1756,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "</FileFormat>" + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<DatabaseName>" + System.getProperty("line.separator"));
         tabCounter++;
-        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name
+        writeUserParam(database.getName()); // @TODO: add database type? children of MS:1001013 - database name???
         tabCounter--;
         br.write(getCurrentTabSpace() + "</DatabaseName>" + System.getProperty("line.separator"));
         writeCvTerm(new CvTerm("PSI-MS", "MS:1001073", "database type amino acid", null));
