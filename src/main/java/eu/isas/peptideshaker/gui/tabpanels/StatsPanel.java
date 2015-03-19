@@ -2975,7 +2975,7 @@ public class StatsPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * This method displays results on the panel
+     * This method displays results on the panel.
      */
     public void displayResults() {
 

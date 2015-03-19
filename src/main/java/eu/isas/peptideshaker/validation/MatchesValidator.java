@@ -255,10 +255,8 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
-
+            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>(); // @TODO: can be empty when used, resulting in a null pointer...
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
-
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
             while (psmIterator.hasNext()) {

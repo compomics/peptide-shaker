@@ -641,7 +641,7 @@ public class AssumptionFilter extends MatchFilter {
 
             if (assumptionFilter.getPrecursorMzError() != null) {
                 if (assumptionFilter.getPrecursorMzErrorType() == IonMatch.MzErrorType.Statistical) {
-                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
+                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations); // @TODO: precursorMzDeviations can be empty!!!
                     Double minDeviation = precDeviationDistribution.getMinValueForProbability(assumptionFilter.getPrecursorMzError());
                     Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(assumptionFilter.getPrecursorMzError());
                     double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm()));
@@ -693,7 +693,7 @@ public class AssumptionFilter extends MatchFilter {
 
             if (assumptionFilter.getMinPrecursorMzError() != null) {
                 if (assumptionFilter.getPrecursorMzErrorType() == IonMatch.MzErrorType.Statistical) {
-                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
+                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations); // @TODO: precursorMzDeviations can be empty!!!
                     Double minDeviation = precDeviationDistribution.getMinValueForProbability(assumptionFilter.getMinPrecursorMzError());
                     double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm()));
                     if (assumptionFilter.getPrecursorMinMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
@@ -744,7 +744,7 @@ public class AssumptionFilter extends MatchFilter {
 
             if (assumptionFilter.getMaxPrecursorMzError() != null) {
                 if (assumptionFilter.getPrecursorMzErrorType() == IonMatch.MzErrorType.Statistical) {
-                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations);
+                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations); // @TODO: precursorMzDeviations can be empty!!!
                     Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(assumptionFilter.getMaxPrecursorMzError());
                     double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm()));
                     if (assumptionFilter.getPrecursorMzErrorComparison() == RowFilter.ComparisonType.AFTER) {
