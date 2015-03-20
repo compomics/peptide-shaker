@@ -1058,20 +1058,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.setModel(new PeptideTableModel());
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                peptideTableMouseReleased(evt);
+        peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                peptideTableMouseMoved(evt);
             }
+        });
+        peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 peptideTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideTableMouseExited(evt);
             }
-        });
-        peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                peptideTableMouseMoved(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptideTableMouseReleased(evt);
             }
         });
         peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1558,14 +1558,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         accuracySlider.setToolTipText("Annotation Accuracy");
         accuracySlider.setValue(100);
         accuracySlider.setOpaque(false);
-        accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                accuracySliderMouseWheelMoved(evt);
-            }
-        });
         accuracySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 accuracySliderStateChanged(evt);
+            }
+        });
+        accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                accuracySliderMouseWheelMoved(evt);
             }
         });
 
@@ -1574,14 +1574,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         intensitySlider.setToolTipText("Annotation Level");
         intensitySlider.setValue(75);
         intensitySlider.setOpaque(false);
-        intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                intensitySliderMouseWheelMoved(evt);
-            }
-        });
         intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 intensitySliderStateChanged(evt);
+            }
+        });
+        intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                intensitySliderMouseWheelMoved(evt);
             }
         });
 
@@ -1980,11 +1980,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             if (column == psmTable.getColumn("  ").getModelIndex()) {
                 SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                String key = psmKeys.get(tableModel.getViewIndex(row));
-                if ((Boolean) psmTable.getValueAt(row, column)) {
-                    peptideShakerGUI.getStarHider().starPsm(key);
-                } else {
-                    peptideShakerGUI.getStarHider().unStarPsm(key);
+                int psmIndex = tableModel.getViewIndex(row);
+                String psmKey = psmKeys.get(tableModel.getViewIndex(psmIndex));
+                try {
+                    PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
+                    if (!psParameter.isStarred()) {
+                        peptideShakerGUI.getStarHider().starPsm(psmKey);
+                    } else {
+                        peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                    }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
             }
 
@@ -1995,13 +2001,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // open the match validation level dialog
             if (column == psmTable.getColumn("").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-                String key = psmKeys.get(tableModel.getViewIndex(row));
+                int psmIndex = tableModel.getViewIndex(row);
+                String psmKey = psmKeys.get(tableModel.getViewIndex(psmIndex));
                 Identification identification = peptideShakerGUI.getIdentification();
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) identification.getUrParam(pSMaps);
                 try {
                     MatchValidationDialog matchValidationDialog = new MatchValidationDialog(peptideShakerGUI, peptideShakerGUI.getExceptionHandler(),
-                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), key,
+                            identification, peptideShakerGUI.getIdentificationFeaturesGenerator(), pSMaps.getPsmSpecificMap(), psmKey,
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters());
                     if (matchValidationDialog.isValidationChanged()) {
                         updatePsmPanelTitle();
@@ -2162,10 +2169,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             });
 
             if (column == peptideTable.getColumn("  ").getModelIndex()) {
-                if ((Boolean) peptideTable.getValueAt(row, column)) {
-                    peptideShakerGUI.getStarHider().starPeptide(peptideKey);
-                } else {
-                    peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
+                try {
+                    PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
+                    if (!psParameter.isStarred()) {
+                        peptideShakerGUI.getStarHider().starPeptide(peptideKey);
+                    } else {
+                        peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
+                    }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
             }
 

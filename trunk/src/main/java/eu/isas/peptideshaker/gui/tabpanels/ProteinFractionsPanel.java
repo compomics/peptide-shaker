@@ -1366,6 +1366,20 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         peptideShakerGUI.catchException(ex);
                     }
                 }
+                
+                // star/unstar the protein
+                if (column == proteinTable.getColumn("  ").getModelIndex()) {
+                    try {
+                        PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
+                        if (!psParameter.isStarred()) {
+                            peptideShakerGUI.getStarHider().starProtein(proteinKey);
+                        } else {
+                            peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
+                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
 
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex()

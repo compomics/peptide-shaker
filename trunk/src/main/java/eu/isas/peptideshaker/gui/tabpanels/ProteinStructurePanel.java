@@ -1487,12 +1487,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 }
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
-                    String key = proteinKeys.get(proteinIndex);
                     try {
-                        if ((Boolean) proteinTable.getValueAt(row, column)) {
-                            peptideShakerGUI.getStarHider().starProtein(key);
+                        PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
+                        if (!psParameter.isStarred()) {
+                            peptideShakerGUI.getStarHider().starProtein(proteinKey);
                         } else {
-                            peptideShakerGUI.getStarHider().unStarProtein(key);
+                            peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
                         }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -1528,11 +1528,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 newItemSelection();
 
                 if (column == peptideTable.getColumn("  ").getModelIndex()) {
-                    String key = peptideTableMap.get(getPeptideIndex(row));
-                    if ((Boolean) peptideTable.getValueAt(row, column)) {
-                        peptideShakerGUI.getStarHider().starPeptide(key);
-                    } else {
-                        peptideShakerGUI.getStarHider().unStarPeptide(key);
+                    try {
+                        String peptideKey = peptideTableMap.get(getPeptideIndex(row));
+                        PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
+                        if (!psParameter.isStarred()) {
+                            peptideShakerGUI.getStarHider().starPeptide(peptideKey);
+                        } else {
+                            peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
+                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
 
@@ -3418,7 +3423,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION) && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, null); // @TODO: waiting handler?
             //proteinMatchesIterator.setBatchSize(20); // @TODO: add?
-            
+
             while (proteinMatchesIterator.hasNext()) {
                 try {
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
