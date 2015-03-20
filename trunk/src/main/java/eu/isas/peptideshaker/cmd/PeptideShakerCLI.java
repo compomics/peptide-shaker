@@ -602,7 +602,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         IdFilter idFilter = new IdFilter();
         idFilter.setMinPepLength(cliInputBean.getMinPepLength());
         idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
-        idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
+        if (cliInputBean.getMaxMzDeviation() != null) {
+            idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
+        }
         idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
         idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
         identificationParameters.setIdFilter(idFilter);
@@ -751,7 +753,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
      * @param identification the identification to close
-     * 
+     *
      * @throws IOException thrown of IOException occurs
      * @throws SQLException thrown if SQLException occurs
      */

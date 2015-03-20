@@ -157,7 +157,8 @@ public class FileImporter {
     /**
      * Imports sequences from a FASTA file.
      *
-     * @param waitingHandler the handler displaying feedback to the user and allowing canceling the import
+     * @param waitingHandler the handler displaying feedback to the user and
+     * allowing canceling the import
      * @param exceptionHandler handler for exceptions
      * @param fastaFile FASTA file to process
      */
@@ -591,9 +592,17 @@ public class FileImporter {
          * Establishes a connection to the identification database.
          *
          * @param identification the identifications
-         * @throws SQLException thrown if an SQL exception occurs
+         *
+         * @throws IOException thrown of IOException occurs exception thrown
+         * whenever an error occurred while reading or writing a file
+         * @throws SQLException thrown of SQLException occurs exception thrown
+         * whenever an error occurred while interacting with the database
+         * @throws java.lang.ClassNotFoundException exception thrown whenever an
+         * error occurred while deserializing an object
+         * @throws java.lang.InterruptedException exception thrown whenever a
+         * threading error occurred while establishing the connection
          */
-        private void connectToIdDb(Identification identification) throws SQLException {
+        private void connectToIdDb(Identification identification) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
             String dbFolder = PeptideShaker.getSerializationDirectory(getJarFilePath()).getAbsolutePath();
             identification.establishConnection(dbFolder, true, peptideShaker.getCache());
         }

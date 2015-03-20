@@ -100,7 +100,7 @@ public class PeptideShakerCLIInputBean {
     /**
      * The maximal m/z deviation allowed.
      */
-    private double maxMassDeviation = 10;
+    private Double maxMassDeviation = null;
     /**
      * Boolean indicating the unit of the allowed m/z deviation (true: ppm,
      * false: Da).
@@ -475,7 +475,7 @@ public class PeptideShakerCLIInputBean {
      *
      * @return the maximal mass deviation allowed
      */
-    public double getMaxMzDeviation() {
+    public Double getMaxMzDeviation() {
         return maxMassDeviation;
     }
 
@@ -484,7 +484,7 @@ public class PeptideShakerCLIInputBean {
      *
      * @param maxMzDeviation the maximal mass deviation allowed
      */
-    public void setMaxMzDeviation(double maxMzDeviation) {
+    public void setMaxMzDeviation(Double maxMzDeviation) {
         this.maxMassDeviation = maxMzDeviation;
     }
 
