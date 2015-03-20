@@ -1909,9 +1909,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 // do nothing
             } else { // no option
+            clearData(true, false);
                 new NewDialog(this, true);
             }
         } else {
+            clearData(true, false);
             new NewDialog(this, true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed

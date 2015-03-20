@@ -695,7 +695,6 @@ public class NewDialog extends javax.swing.JDialog {
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
-            peptideShakerGUI.clearData(true, false);
 
 //            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
 //            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
