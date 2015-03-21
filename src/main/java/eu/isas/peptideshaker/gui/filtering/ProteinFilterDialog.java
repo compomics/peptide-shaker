@@ -87,11 +87,11 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
             proteinCoverageCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getProteinCoverageComparison()));
         }
         if (proteinFilter.getnConfidentPeptides() != null) {
-            nPeptidesTxt.setText(proteinFilter.getnConfidentPeptides() + "");
+            nPeptidesTxt.setText(proteinFilter.getnPeptides() + "");
             nPeptidesCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getnPeptidesComparison()));
         }
         if (proteinFilter.getProteinNConfidentSpectra() != null) {
-            proteinsNSpectraTxt.setText(proteinFilter.getProteinNConfidentSpectra() + "");
+            proteinsNSpectraTxt.setText(proteinFilter.getProteinNSpectra()+ "");
             proteinNSpectraCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getnSpectraComparison()));
         }
         if (proteinFilter.getProteinScore() != null) {
@@ -756,6 +756,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
      * ComparisonType.
      *
      * @param comparisonType the comparison type
+     * 
      * @return the corresponding index to select
      */
     private int getComparisonIndex(RowFilter.ComparisonType comparisonType) {
@@ -778,6 +779,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
      * item in the smaller than, equals or greater than combo boxes.
      *
      * @param selectedItem the index of the item selected
+     * 
      * @return the corresponding comparison type
      */
     private ComparisonType getComparisonType(int selectedItem) {

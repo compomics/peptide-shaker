@@ -95,8 +95,8 @@ public class PeptideFilterDialog extends javax.swing.JDialog {
             peptidePIComparisonCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPiComparison()));
         }
         if (peptideFilter.getNValidatedSpectra() != null) {
-            peptideNSpectraTxt.setText(peptideFilter.getNValidatedSpectra() + "");
-            peptideNSpectraCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getnSpectraComparison()));
+            peptideNSpectraTxt.setText(peptideFilter.getNConfidentSpectra()+ "");
+            peptideNSpectraCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getnConfidentSpectraComparison()));
         }
         if (peptideFilter.getPeptideConfidence() != null) {
             peptideConfidenceTxt.setText(peptideFilter.getPeptideConfidence() + "");
