@@ -49,17 +49,23 @@ public class CpsExporter {
      * emptied
      * @param jarFilePath the path to the jar file
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown whenever an error occurred while interacting with the database
-     * @throws ArchiveException thrown of ArchiveException occurs exception thrown whenever an error occurred while taring the project
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while saving the project
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws SQLException thrown of SQLException occurs exception thrown
+     * whenever an error occurred while interacting with the database
+     * @throws ArchiveException thrown of ArchiveException occurs exception
+     * thrown whenever an error occurred while taring the project
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while saving the project
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, Metrics metrics,
             ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath)
             throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
-        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences, projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
+        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences, 
+                projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
     }
 
     /**
@@ -83,11 +89,16 @@ public class CpsExporter {
      * emptied
      * @param jarFilePath the path to the jar file
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown whenever an error occurred while interacting with the database
-     * @throws ArchiveException thrown of ArchiveException occurs exception thrown whenever an error occurred while taring the project
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while saving the project
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws SQLException thrown of SQLException occurs exception thrown
+     * whenever an error occurred while interacting with the database
+     * @throws ArchiveException thrown of ArchiveException occurs exception
+     * thrown whenever an error occurred while taring the project
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while saving the project
      */
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,

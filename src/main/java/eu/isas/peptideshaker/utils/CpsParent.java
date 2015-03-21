@@ -120,10 +120,14 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown whenever an error occurred while interacting with the database
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while saving the project
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws SQLException thrown of SQLException occurs exception thrown
+     * whenever an error occurred while interacting with the database
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while saving the project
      */
     public void loadCpsFromZipFile(File zipFile, String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
@@ -158,10 +162,14 @@ public class CpsParent extends UserPreferencesParent {
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown whenever an error occurred while interacting with the database
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while saving the project
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws SQLException thrown of SQLException occurs exception thrown
+     * whenever an error occurred while interacting with the database
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while saving the project
      */
     public void loadCpsFile(String jarFilePath, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
@@ -273,11 +281,16 @@ public class CpsParent extends UserPreferencesParent {
      * can be null.
      * @param emptyCache if true the cache will be emptied
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown whenever an error occurred while interacting with the database
-     * @throws ArchiveException thrown of ArchiveException occurs exception thrown whenever an error occurred while taring the project
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a threading error occurred while saving the project
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws SQLException thrown of SQLException occurs exception thrown
+     * whenever an error occurred while interacting with the database
+     * @throws ArchiveException thrown of ArchiveException occurs exception
+     * thrown whenever an error occurred while taring the project
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while saving the project
      */
     public void saveProject(WaitingHandler waitingHandler, boolean emptyCache) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
         CpsExporter.saveAs(cpsFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters,
@@ -312,11 +325,13 @@ public class CpsParent extends UserPreferencesParent {
      * instance, can be null
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     * 
+     *
      * @return a boolean indicating whether the loading was successful
      *
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an error occurred while deserializing an object
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object
      */
     public boolean loadFastaFile(File folder, WaitingHandler waitingHandler) throws IOException, ClassNotFoundException {
 
@@ -354,8 +369,9 @@ public class CpsParent extends UserPreferencesParent {
      * Can be null.
      *
      * @return a boolean indicating whether the loading was successful
-     * 
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
+     *
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
      */
     public boolean loadSpectrumFiles(WaitingHandler waitingHandler) throws IOException {
         return loadSpectrumFiles(null, waitingHandler);
@@ -370,8 +386,9 @@ public class CpsParent extends UserPreferencesParent {
      * Can be null
      *
      * @return a boolean indicating whether the loading was successful
-     * 
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
+     *
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
      */
     public boolean loadSpectrumFiles(File folder, WaitingHandler waitingHandler) throws IOException {
 
@@ -411,8 +428,9 @@ public class CpsParent extends UserPreferencesParent {
      * Can be null
      *
      * @return a boolean indicating whether the loading was successful
-     * 
-     * @throws IOException thrown of IOException occurs exception thrown whenever an error occurred while reading or writing a file
+     *
+     * @throws IOException thrown of IOException occurs exception thrown
+     * whenever an error occurred while reading or writing a file
      */
     public boolean loadSpectrumFile(String spectrumFileName, WaitingHandler waitingHandler) throws IOException {
 
@@ -447,7 +465,7 @@ public class CpsParent extends UserPreferencesParent {
      *
      * @param waitingHandler the waiting handler
      * @param jarFilePath the path to the jar file
-     * 
+     *
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadGeneMappings(String jarFilePath, WaitingHandler waitingHandler) {
