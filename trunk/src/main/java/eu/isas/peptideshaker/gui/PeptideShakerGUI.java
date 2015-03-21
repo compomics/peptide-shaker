@@ -3253,6 +3253,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         progressDialog.setRunFinished();
+                        
+                        PeptideShakerGUI.this.repaintPanels();
                     }
                 }.start();
             }

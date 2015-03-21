@@ -7,6 +7,7 @@ import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumIdentificationAssumption;
 import com.compomics.util.experiment.identification.TagAssumption;
@@ -255,7 +256,7 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>(); // @TODO: can be empty when used, resulting in a null pointer...
+            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
@@ -328,6 +329,29 @@ public class MatchesValidator {
 
             if (inputMap != null) {
                 inputMap.resetAdvocateContributions(spectrumFileName);
+            }
+
+            // Disable probabilistic precursor filter if there are not enough precursors
+            if (precursorMzDeviations.size() < 100) {
+                for (Filter filter : validationQCPreferences.getPsmFilters()) {
+                    PsmFilter psmFilter = (PsmFilter) filter;
+                    AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
+                    if (assumptionFilter.getPrecursorMzErrorType() == IonMatch.MzErrorType.Statistical) {
+                        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+                            assumptionFilter.setPrecursorMzErrorType(IonMatch.MzErrorType.RelativePpm);
+                        } else {
+                            assumptionFilter.setPrecursorMzErrorType(IonMatch.MzErrorType.Absolute);
+                        }
+                        assumptionFilter.setPrecursorMzError(searchParameters.getPrecursorAccuracy());
+                        if (assumptionFilter.getMinPrecursorMzError() != null) {
+                            assumptionFilter.setMinPrecursorMzError(null);
+                        }
+                        if (assumptionFilter.getMaxPrecursorMzError() != null) {
+                            assumptionFilter.setMaxPrecursorMzError(null);
+                        }
+                    }
+                }
             }
 
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
