@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.37.7 (coming soon...):*
+
+ * FEATURE IMPROVEMENT: Added a simpler way of resetting the spectrum annotation.
+ * FEATURE IMPROVEMENT: Updated the Ensembl mappings to Ensembl 79.
+
+ * BUG FIX: Fixed a typo in the mass for the TMT130 reporter for 6plex TMT.
+ * BUG FIX: Fixed bugs related to starting peptides and PSMs directly in the tables.
+ * BUG FIX: The precursor m/z error filter is disabled if very few precursors are found.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.46.5.
+
+----
+
 *Changes in PeptideShaker 0.37.6 (March 11. 2015):*
 
  * FEATURE IMPROVEMENT: Added protein coverage for the main protein to the mzid export.
