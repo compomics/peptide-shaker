@@ -9,19 +9,8 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.exceptions.exception_handlers.FrameExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
-import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.IdentificationParameters;
-import com.compomics.util.preferences.ValidationQCPreferences;
-import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
-import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
-import eu.isas.peptideshaker.filtering.MatchFilter;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
-import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.filtering.PsmFilter;
-import eu.isas.peptideshaker.gui.filtering.PeptideFilterDialog;
-import eu.isas.peptideshaker.gui.filtering.ProteinFilterDialog;
-import eu.isas.peptideshaker.gui.filtering.PsmFilterDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
@@ -120,7 +109,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         PEPTIDE,
         PSM
     }
-    
+
     /**
      * Constructor for a protein match validation dialog.
      *
@@ -143,7 +132,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            ProteinMap proteinMap, String proteinMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            ProteinMap proteinMap, String proteinMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
@@ -166,7 +155,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(parent);
         setVisible(true);
-        
+
         if (!psParameter.hasQcFilters()) {
             JOptionPane.showMessageDialog(null,
                     "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
@@ -196,7 +185,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            PeptideSpecificMap peptideSpecificMap, String peptideMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
@@ -224,7 +213,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(parent);
         setVisible(true);
-        
+
         if (!psParameter.hasQcFilters()) {
             JOptionPane.showMessageDialog(null,
                     "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
@@ -254,7 +243,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * occurs
      */
     public MatchValidationDialog(java.awt.Frame parent, FrameExceptionHandler exceptionHandler, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            PsmSpecificMap psmSpecificMap, String psmMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) 
+            PsmSpecificMap psmSpecificMap, String psmMatchKey, ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         super(parent, true);
         initComponents();
@@ -295,7 +284,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
         setLocationRelativeTo(parent);
         setVisible(true);
-        
+
         if (!psParameter.hasQcFilters()) {
             JOptionPane.showMessageDialog(null,
                     "No Quality Control filters was implemented in the PeptideShaker version used to create this project.", "No QC Filter",
@@ -307,7 +296,6 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGui() {
-
         // make sure that the scroll panes are see-through
         qualityFiltersTableScrollPane.getViewport().setOpaque(false);
 
@@ -328,7 +316,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      *
      * @param identificationFeaturesGenerator
      * @param proteinMap
-     * 
+     *
      * @throws SQLException thrown if an SQLException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      * @throws IOException thrown if an IOException occurs
@@ -336,7 +324,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
      * @throws MzMLUnmarshallerException thrown if an MzMLUnmarshallerException
      * occurs
      */
-    private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory) 
+    private void populateGUI(TargetDecoyMap targetDecoyMap, String targetDecoyCategory)
             throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         // Validation level
@@ -366,7 +354,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         if (targetDecoy) {
             int nTargetOnly = targetDecoyMap.getnTargetOnly();
             matchesBeforeFirstDecoyLbl.setText(nTargetOnly + " matches before the first decoy hit");
-            
+
             TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
             double fdrLimit = targetDecoyResults.getFdrLimit();
             double nTargetLimit = 100.0 / fdrLimit;
@@ -376,12 +364,12 @@ public class MatchValidationDialog extends javax.swing.JDialog {
                 matchesBeforeFirstDecoyLbl.setForeground(green);
             }
             recommendedNumberOfTargetHitsLbl.setText("Recommended: " + Util.roundDouble(nTargetLimit, 0) + " matches before the first decoy hit");
-            
+
             double resolution = targetDecoyMap.getResolution();
             confidenceResolutionLbl.setText("PEP/Confidence resolution of " + Util.roundDouble(resolution, 2) + "%");
-            
+
             double resolutionLimit = fdrLimit;
-            if (resolution > 5*resolutionLimit) {
+            if (resolution > 5 * resolutionLimit) {
                 confidenceResolutionLbl.setForeground(Color.red);
             } else if (resolution > resolutionLimit) {
                 confidenceResolutionLbl.setForeground(orange);
@@ -834,7 +822,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         });
 
         editLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        editLbl.setText("Validation Quality Control Settings can be edited via the \"Edit\" -> \"Validation QC\" Menu");
+        editLbl.setText("Validation filters can be edited via Edit > Validation Filters.");
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
