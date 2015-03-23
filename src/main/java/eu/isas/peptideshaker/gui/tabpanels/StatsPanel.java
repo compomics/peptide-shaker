@@ -3456,19 +3456,9 @@ public class StatsPanel extends javax.swing.JPanel {
         double[] confidences = targetDecoySeries.getConfidence();
 
         // test for valid values
-        boolean allValid = true;
-        for (int i = 0; i < scores.length && allValid; i++) { // @TODO: has to be a faster way..?
-            if (Double.isNaN(scores[i])) {
-                allValid = false;
-            }
-        }
-        for (int i = 0; i < confidences.length && allValid; i++) {
-            if (Double.isNaN(confidences[i])) {
-                allValid = false;
-            }
-        }
+        boolean enoughData = scores.length > 2;
 
-        if (!allValid) {
+        if (!enoughData) {
             // clear the chart
             confidenceChartPanel.removeAll();
             confidenceChartPanel.revalidate();
