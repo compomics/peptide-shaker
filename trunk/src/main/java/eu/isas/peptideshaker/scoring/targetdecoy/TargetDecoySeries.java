@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * This class will contain the PEP, FDR and FNR values of a target decoy 
- * map directly available for plotting.
+ * This class will contain the PEP, FDR and FNR values of a target decoy map
+ * directly available for plotting.
  *
  * @author Marc Vaudel
  */
@@ -62,8 +62,8 @@ public class TargetDecoySeries {
 
     /**
      * Constructor.
-     * 
-     * @param hitMap A map as present in target decoy maps
+     *
+     * @param hitMap a map as present in target decoy maps
      */
     public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap) {
 
@@ -120,8 +120,8 @@ public class TargetDecoySeries {
 
     /**
      * Completes the results at the desired FDR threshold.
-     * 
-     * @param targetDecoyResults The results containing the threshold
+     *
+     * @param targetDecoyResults the results containing the threshold
      */
     public void getFDRResults(TargetDecoyResults targetDecoyResults) {
 
@@ -193,8 +193,8 @@ public class TargetDecoySeries {
 
     /**
      * Completes the results at the desired confidence threshold.
-     * 
-     * @param targetDecoyResults The results containing the threshold
+     *
+     * @param targetDecoyResults the results containing the threshold
      */
     public void getConfidenceResults(TargetDecoyResults targetDecoyResults) {
 
@@ -243,14 +243,13 @@ public class TargetDecoySeries {
 
     /**
      * Completes the results at the desired FNR threshold.
-     * 
-     * @param targetDecoyResults The results containing the threshold
+     *
+     * @param targetDecoyResults the results containing the threshold
      */
     public void getFNRResults(TargetDecoyResults targetDecoyResults) {
 
         double threshold = targetDecoyResults.getFnrLimit();
-
-                    targetDecoyResults.setNoValidated(false);
+        targetDecoyResults.setNoValidated(false);
 
         for (int i = scores.length - 1; i >= 0; i--) {
             if (probaFNR[i] > threshold || i == 0) {
@@ -277,7 +276,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the classical FDR series.
-     * 
+     *
      * @return the classical FDR series
      */
     public double[] getClassicalFDR() {
@@ -286,7 +285,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the confidence series.
-     * 
+     *
      * @return the confidence series
      */
     public double[] getConfidence() {
@@ -295,7 +294,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the probabilistic benefit series.
-     * 
+     *
      * @return the probabilistic benefit series
      */
     public double[] getProbaBenefit() {
@@ -304,7 +303,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the probabilistic FDR series.
-     * 
+     *
      * @return the probabilistic FDR series
      */
     public double[] getProbaFDR() {
@@ -313,7 +312,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the probabilistic FNR series.
-     * 
+     *
      * @return the probabilistic FNR series
      */
     public double[] getProbaFNR() {
@@ -322,7 +321,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the score series.
-     * 
+     *
      * @return the score series
      */
     public double[] getScores() {
@@ -331,7 +330,7 @@ public class TargetDecoySeries {
 
     /**
      * Returns the score series.
-     * 
+     *
      * @return the score series
      */
     public double[] getPEP() {
