@@ -2019,6 +2019,18 @@ public class PtmPanel extends javax.swing.JPanel {
                                 progressDialog.setRunFinished();
                                 new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                             }
+                        } else if (column == peptidesTable.getColumn("   ").getModelIndex()) {
+                            try {
+                                String peptideKey = getSelectedPeptide(false);
+                                PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
+                                if (!psParameter.isStarred()) {
+                                    peptideShakerGUI.getStarHider().starPeptide(peptideKey);
+                                } else {
+                                    peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
+                                }
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
                         }
                     }
                 }
@@ -2099,6 +2111,18 @@ public class PtmPanel extends javax.swing.JPanel {
                                 progressDialog.setRunFinished();
                                 new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                             }
+                        } else if (column == peptidesTable.getColumn("   ").getModelIndex()) {
+                            try {
+                                String peptideKey = getSelectedPeptide(true);
+                                PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());
+                                if (!psParameter.isStarred()) {
+                                    peptideShakerGUI.getStarHider().starPeptide(peptideKey);
+                                } else {
+                                    peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
+                                }
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
                         }
                     }
                 }
@@ -2114,6 +2138,27 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void selectedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmsTableMouseReleased
+
+        int column = selectedPsmsTable.columnAtPoint(evt.getPoint());
+        int row = selectedPsmsTable.rowAtPoint(evt.getPoint());
+
+        // star/unstar a psm
+        if (column == selectedPsmsTable.getColumn("   ").getModelIndex()) {
+            try {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
+                String psmKey = peptideMatch.getSpectrumMatches().get(selectedPsmsTable.convertRowIndexToModel(row));
+                PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
+                if (!psParameter.isStarred()) {
+                    peptideShakerGUI.getStarHider().starPsm(psmKey);
+                } else {
+                    peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                }
+                selectedPsmsTable.revalidate();
+                selectedPsmsTable.repaint();
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
+        }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         try {
@@ -2479,6 +2524,27 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void relatedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsTableMouseReleased
+
+        int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
+        int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
+
+        // star/unstar a psm
+        if (column == relatedPsmsTable.getColumn("   ").getModelIndex()) {
+            try {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(true));
+                String psmKey = peptideMatch.getSpectrumMatches().get(relatedPsmsTable.convertRowIndexToModel(row));
+                PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
+                if (!psParameter.isStarred()) {
+                    peptideShakerGUI.getStarHider().starPsm(psmKey);
+                } else {
+                    peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                }
+                relatedPsmsTable.revalidate();
+                relatedPsmsTable.repaint();
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
+        }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 

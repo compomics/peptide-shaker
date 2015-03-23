@@ -1978,6 +1978,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             newItemSelection();
             updateSpectrum(row, false);
 
+            // star/unstar a psm
             if (column == psmTable.getColumn("  ").getModelIndex()) {
                 SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
                 int psmIndex = tableModel.getViewIndex(row);
@@ -2051,7 +2052,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                 String proteinKey = proteinKeys.get(proteinIndex);
-
                 peptideShakerGUI.setSelectedItems(proteinKeys.get(proteinIndex), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
 
                 // update the peptide selection
@@ -2070,6 +2070,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+                // star/unstar a protein
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     try {
                         PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
@@ -2168,6 +2169,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
             });
 
+            // star/unstar a peptide
             if (column == peptideTable.getColumn("  ").getModelIndex()) {
                 try {
                     PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, new PSParameter());

@@ -488,7 +488,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="11" style="2"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Validation Quality Control Settings can be edited via the &quot;Edit&quot; -&gt; &quot;Validation QC&quot; Menu"/>
+            <Property name="text" type="java.lang.String" value="Validation filters can be edited via Edit &gt; Validation Filters."/>
           </Properties>
         </Component>
       </SubComponents>

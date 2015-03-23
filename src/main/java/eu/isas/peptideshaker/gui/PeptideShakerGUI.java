@@ -1507,7 +1507,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         editMenu.add(annotationPreferencesMenu);
 
         validationQcMenuItem.setMnemonic('V');
-        validationQcMenuItem.setText("Validation QC");
+        validationQcMenuItem.setText("Validation Filters (beta)");
+        validationQcMenuItem.setEnabled(false);
         validationQcMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 validationQcMenuItemActionPerformed(evt);
@@ -1905,11 +1906,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
+                //clearData(true, false); // @TODO: add this?
                 new NewDialog(this, true);
             } else if (value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION) {
                 // do nothing
             } else { // no option
-            clearData(true, false);
+                clearData(true, false);
                 new NewDialog(this, true);
             }
         } else {
