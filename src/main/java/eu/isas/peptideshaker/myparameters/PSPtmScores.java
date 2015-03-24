@@ -32,7 +32,7 @@ public class PSPtmScores implements UrParameter {
      */
     private HashMap<Integer, ArrayList<String>> mainModificationSites = null;
     /**
-     * A map of all confident modifications in a sequence indexed by ptm: PTM
+     * A map of all confident modifications in a sequence indexed by PTM: PTM
      * name &gt; sites.
      */
     private HashMap<String, ArrayList<Integer>> confidentModificationsByPTM = null;

@@ -57,25 +57,25 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private PeptideMatch peptideMatch;
     /**
-     * list of psms for this peptide.
+     * list of PSMs for this peptide.
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
     /**
-     * Main ptm site selection.
+     * Main PTM site selection.
      */
     private boolean[] mainSelection;
     /**
-     * Secondary ptm site selection.
+     * Secondary PTM site selection.
      */
     private boolean[] secondarySelection;
     /**
-     * PTM confidence tooltip map, key: ptm confidence type, element: ptm
+     * PTM confidence tooltip map, key: PTM confidence type, element: PTM
      * confidence as a string.
      */
     private HashMap<Integer, String> ptmConfidenceTooltipMap;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param peptideShakerGUI The main GUI
      * @param peptideKey The peptide key of the investigated peptide
@@ -99,7 +99,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     PTM tempPTM = ptmFactory.getPTM(ptmName);
                     if (tempPTM.getMass() == ptmMass) {
                         for (int site : peptidePtmScore.getConfidentSitesForPtm(ptmName)) {
-                            mainSelection[site] = true;
+                            mainSelection[site - 1] = true;
                         }
                     }
                 }
@@ -109,7 +109,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     PTM tempPTM = ptmFactory.getPTM(ptmName);
                     if (tempPTM.getMass() == ptmMass) {
                         for (int site : peptidePtmScore.getAmbiguousModificationsSites(ptmName).keySet()) {
-                            secondarySelection[site] = true;
+                            secondarySelection[site - 1] = true;
                         }
                     }
                 }
