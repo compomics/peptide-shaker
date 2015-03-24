@@ -480,12 +480,8 @@ public class MzIdentMLExport {
 
         while (peptideMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String peptideKey = peptideMatch.getKey();
-
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
 
@@ -541,10 +537,7 @@ public class MzIdentMLExport {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 PeptideAssumption bestPeptideAssumption = spectrumMatch.getBestPeptideAssumption();
 
                 if (bestPeptideAssumption != null) {
@@ -1107,10 +1100,7 @@ public class MzIdentMLExport {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 String spectrumKey = spectrumMatch.getKey();
 
                 writeSpectrumIdentificationResult(spectrumKey, ++psmCount);
@@ -1169,10 +1159,7 @@ public class MzIdentMLExport {
 
         while (proteinMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String proteinGroupKey = proteinMatch.getKey();
 
             String proteinGroupId = "PAG_" + groupCpt++;

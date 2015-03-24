@@ -82,10 +82,7 @@ public class PsmScorer {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
@@ -247,10 +244,7 @@ public class PsmScorer {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 String spectrumKey = spectrumMatch.getKey();
 
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);

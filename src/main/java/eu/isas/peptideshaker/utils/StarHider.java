@@ -91,10 +91,7 @@ public class StarHider {
 
                     while (proteinMatchesIterator.hasNext()) {
 
-                        progressDialog.setDisplayProgress(false);
                         ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                        progressDialog.setDisplayProgress(true);
-
                         String proteinKey = proteinMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {

@@ -1643,11 +1643,8 @@ public class QCPanel extends javax.swing.JPanel {
             ProteinMatchesIterator proteinMatchesIterator = peptideShakerGUI.getIdentification().getProteinMatchesIterator(null, false, null, false, null, progressDialog);
             
             while (proteinMatchesIterator.hasNext()) {
-                
-                progressDialog.setDisplayProgress(false);
+
                 ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                progressDialog.setDisplayProgress(true);
-                
                 String proteinKey = proteinMatch.getKey();
 
                 if (progressDialog.isRunCanceled()) {
@@ -1733,10 +1730,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 while (peptideMatchesIterator.hasNext()) {
 
-                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                    progressDialog.setDisplayProgress(true);
-                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1802,10 +1796,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 while (peptideMatchesIterator.hasNext()) {
 
-                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                    progressDialog.setDisplayProgress(true);
-                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1860,10 +1851,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 while (peptideMatchesIterator.hasNext()) {
 
-                    progressDialog.setDisplayProgress(false);
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                    progressDialog.setDisplayProgress(true);
-                    
                     String peptideKey = peptideMatch.getKey();
 
                     if (progressDialog.isRunCanceled()) {
@@ -1940,10 +1928,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     while (psmIterator.hasNext()) {
 
-                        progressDialog.setDisplayProgress(false);
                         SpectrumMatch spectrumMatch = psmIterator.next();
-                        progressDialog.setDisplayProgress(true);
-                        
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {
@@ -1998,10 +1983,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     while (psmIterator.hasNext()) {
 
-                        progressDialog.setDisplayProgress(false);
                         SpectrumMatch spectrumMatch = psmIterator.next();
-                        progressDialog.setDisplayProgress(true);
-                        
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (progressDialog.isRunCanceled()) {

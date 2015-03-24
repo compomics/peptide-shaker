@@ -151,16 +151,8 @@ public class PsPeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(false);
-            }
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(true);
-            }
-
             String peptideKey = peptideMatch.getKey();
-
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (!validatedOnly || psParameter.getMatchValidationLevel().isValidated()) {

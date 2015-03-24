@@ -190,9 +190,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                     waitingHandler.increaseSecondaryProgressCounter();
                 }
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
 
                 if (waitingHandler.isRunCanceled()) {
                     return;

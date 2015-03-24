@@ -298,14 +298,7 @@ public class RunMzDeviation {
                 break;
             }
 
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(false);
-            }
             SpectrumMatch spectrumMatch = psmIterator.next();
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(true);
-            }
-
             String spectrumKey = spectrumMatch.getKey();
 
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);

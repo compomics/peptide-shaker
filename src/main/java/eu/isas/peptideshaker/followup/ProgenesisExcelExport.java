@@ -165,9 +165,7 @@ public class ProgenesisExcelExport {
         while (proteinMatchesIterator.hasNext()) {
 
             // get the protein match
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
 
             // insert the protein details
             insertProteinDetails(proteinMatch.getMainMatch());
@@ -182,9 +180,7 @@ public class ProgenesisExcelExport {
             // print the peptide details
             while (peptideMatchesIterator.hasNext()) {
                 
-                waitingHandler.setDisplayProgress(false);
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                waitingHandler.setDisplayProgress(true);
 
                 // insert peptide data
                 insertPeptideData(peptideMatch);
@@ -262,10 +258,8 @@ public class ProgenesisExcelExport {
 
         while (psmIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             SpectrumMatch spectrumMatch = psmIterator.next();
-            waitingHandler.setDisplayProgress(true);
-            
+
             if (waitingHandler.isRunCanceled()) {
                 break;
             }

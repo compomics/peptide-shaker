@@ -2395,10 +2395,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     break;
                 }
 
-                progressDialog.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                progressDialog.setDisplayProgress(true);
-
                 String spectrumKey = spectrumMatch.getKey();
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -2632,9 +2629,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(key);
 
                     double scoreOrConfidence = probabilities.getPsmConfidence();
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        scoreOrConfidence = probabilities.getPsmScore();
-                    }
+//                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+//                        scoreOrConfidence = probabilities.getPsmScore();
+//                    }
 
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
@@ -3550,14 +3547,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         PSParameter probabilities = (PSParameter) currentAssumption.getUrParam(aProbabilities);
         Double confidence = probabilities.getSearchEngineConfidence();
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-            Double rawScore = currentAssumption.getRawScore();
-            if (rawScore != null) {
-                confidence = rawScore;
-            } else {
-                confidence = currentAssumption.getScore();
-            }
-        }
+//        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+//            Double rawScore = currentAssumption.getRawScore();
+//            if (rawScore != null) {
+//                confidence = rawScore;
+//            } else {
+//                confidence = currentAssumption.getScore();
+//            }
+//        }
         int currentRowNumber = 0;
         boolean addRowAtBottom = true;
 

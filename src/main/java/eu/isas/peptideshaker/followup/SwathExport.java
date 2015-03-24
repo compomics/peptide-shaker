@@ -141,14 +141,7 @@ public class SwathExport {
 
                     while (psmIterator.hasNext()) {
 
-                        if (waitingHandler != null) {
-                            waitingHandler.setDisplayProgress(false);
-                        }
                         SpectrumMatch spectrumMatch = psmIterator.next();
-                        if (waitingHandler != null) {
-                            waitingHandler.setDisplayProgress(true);
-                        }
-
                         String spectrumKey = spectrumMatch.getKey();
 
                         if (identification.matchExists(spectrumKey)) {
