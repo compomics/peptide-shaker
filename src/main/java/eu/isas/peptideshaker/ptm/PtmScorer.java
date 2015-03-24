@@ -1275,8 +1275,7 @@ public class PtmScorer {
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true, null);
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
-                PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
-                PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, peptideSpectrumAnnotator, identification, identificationParameters, waitingHandler, exceptionHandler);
+                PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, identification, identificationParameters, waitingHandler, exceptionHandler);
                 pool.submit(runnable);
             }
             if (waitingHandler.isRunCanceled()) {
@@ -1998,24 +1997,25 @@ public class PtmScorer {
         /**
          * The peptide spectrum annotator.
          */
-        private PeptideSpectrumAnnotator peptideSpectrumAnnotator;
+        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
         /**
          * Constructor.
          *
          * @param psmIterator a PSM iterator
+         * @param identification the identification containing the matches
+         * @param identificationParameters the identification parameters
          * @param waitingHandler a waiting handler to display progress and allow
          * canceling the process
          * @param exceptionHandler handler for exceptions
          */
-        public PsmPtmScorerRunnable(PsmIterator psmIterator, PeptideSpectrumAnnotator peptideSpectrumAnnotator, Identification identification,
+        public PsmPtmScorerRunnable(PsmIterator psmIterator, Identification identification,
                 IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler) {
             this.psmIterator = psmIterator;
             this.identification = identification;
             this.identificationParameters = identificationParameters;
             this.waitingHandler = waitingHandler;
             this.exceptionHandler = exceptionHandler;
-            this.peptideSpectrumAnnotator = peptideSpectrumAnnotator;
         }
 
         @Override

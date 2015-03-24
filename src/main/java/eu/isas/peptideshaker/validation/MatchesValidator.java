@@ -48,6 +48,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.swing.RowFilter;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -101,7 +104,8 @@ public class MatchesValidator {
      * validate
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
-     * @param waitingHandler the handler displaying feedback to the user
+     * @param waitingHandler a waiting handler displaying progress to the user
+     * and allowing cancelling the process
      * @param exceptionHandler handler for exceptions
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
@@ -109,6 +113,7 @@ public class MatchesValidator {
      * generator providing information about the matches
      * @param inputMap the input target/decoy map
      * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param processingPreferences the processing preferences
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file.
@@ -123,7 +128,7 @@ public class MatchesValidator {
      */
     public void validateIdentifications(Identification identification, Metrics metrics, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, InputMap inputMap,
-            SpectrumCountingPreferences spectrumCountingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
+            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         IdMatchValidationPreferences validationPreferences = identificationParameters.getIdValidationPreferences();
 
@@ -191,8 +196,8 @@ public class MatchesValidator {
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
 
-        validateIdentifications(identification, metrics, inputMap, waitingHandler,
-                identificationFeaturesGenerator, shotgunProtocol, identificationParameters, spectrumCountingPreferences);
+        validateIdentifications(identification, metrics, inputMap, waitingHandler, exceptionHandler,
+                identificationFeaturesGenerator, shotgunProtocol, identificationParameters, spectrumCountingPreferences, processingPreferences);
 
         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
@@ -206,12 +211,15 @@ public class MatchesValidator {
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
      * @param inputMap the target decoy map of all search engine scores
-     * @param waitingHandler the progress bar
+     * @param waitingHandler a waiting handler displaying progress to the user
+     * and allowing cancelling the process
+     * @param exceptionHandler a handler for exceptions
      * @param identificationFeaturesGenerator an identification features
      * generator computing information about the identification matches
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
      * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param processingPreferences the processing preferences
      *
      * @throws IOException exception thrown whenever an error occurred while
      * reading or writing a file.
@@ -225,13 +233,12 @@ public class MatchesValidator {
      * occurred while deserializing an object from the database.
      */
     public void validateIdentifications(Identification identification, Metrics metrics, InputMap inputMap,
-            WaitingHandler waitingHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters,
-            SpectrumCountingPreferences spectrumCountingPreferences)
+            SpectrumCountingPreferences spectrumCountingPreferences, ProcessingPreferences processingPreferences)
             throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
-        PSParameter psParameter2 = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
         ValidationQCPreferences validationQCPreferences = identificationParameters.getIdValidationPreferences().getValidationQCPreferences();
@@ -244,11 +251,12 @@ public class MatchesValidator {
                     + 2 * identification.getSpectrumIdentificationSize());
         }
 
-        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
         if (metrics.getGroupedSpectrumKeys() != null) {
             spectrumKeysMap = metrics.getGroupedSpectrumKeys();
         }
+
+        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
         // validate the spectrum matches
         if (inputMap != null) {
@@ -256,80 +264,33 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
-            while (psmIterator.hasNext()) {
-
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(false);
-                }
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(true);
-                }
-
-                String spectrumKey = spectrumMatch.getKey();
-
-                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, null, false);
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-
-                    if (peptideAssumption != null) {
-
-                        double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
-                        double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
-                        precursorMzDeviations.add(precursorMzError);
-
-                        if (inputMap != null) {
-
-                            Peptide bestPeptide = peptideAssumption.getPeptide();
-                            ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
-
-                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                            for (int advocateId : assumptions.keySet()) {
-                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                                if (advocateAssumptions != null) {
-                                    ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
-                                    Collections.sort(eValues);
-                                    for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
-                                        if (firstHit instanceof PeptideAssumption) {
-                                            Peptide advocatePeptide = ((PeptideAssumption) firstHit).getPeptide();
-                                            if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                                agreementAdvocates.add(advocateId);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            boolean unique = agreementAdvocates.size() == 1;
-
-                            for (int advocateId : agreementAdvocates) {
-                                inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
-                            }
-
-                            inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
-                        }
-                    }
-                }
-
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressCounter();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
+            ArrayList<PsmValidatorRunnable> psmRunnables = new ArrayList<PsmValidatorRunnable>(processingPreferences.getnThreads());
+            for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, null, inputMap, false);
+                pool.submit(runnable);
+                psmRunnables.add(runnable);
+            }
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                pool.shutdownNow();
+                return;
+            }
+            pool.shutdown();
+            if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+                throw new InterruptedException("PSM validation timed out. Please contact the developers.");
             }
 
             if (inputMap != null) {
                 inputMap.resetAdvocateContributions(spectrumFileName);
             }
+
+            ArrayList<Double> precursorMzDeviations = new ArrayList<Double>();
+            for (PsmValidatorRunnable runnable : psmRunnables) {
+                precursorMzDeviations.addAll(runnable.getThreadPrecursorMzDeviations());
+            }
+            Collections.sort(precursorMzDeviations);
 
             // Disable probabilistic precursor filter if there are not enough precursors
             if (precursorMzDeviations.size() < 100) {
@@ -354,307 +315,87 @@ public class MatchesValidator {
                 }
             }
 
+            pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
-            while (psmIterator.hasNext()) {
-
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(false);
-                }
-                SpectrumMatch spectrumMatch = psmIterator.next();
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(true);
-                }
-
-                String spectrumKey = spectrumMatch.getKey();
-
-                updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, precursorMzDeviations, true);
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-
-                    PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
-
-                    if (peptideAssumption != null) {
-                        if (inputMap != null) {
-                            Peptide bestPeptide = peptideAssumption.getPeptide();
-                            ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
-                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                            for (int advocateId : assumptions.keySet()) {
-                                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                                for (double eValue : advocateAssumptions.keySet()) {
-                                    for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
-                                        if (spectrumIdAssumption instanceof PeptideAssumption) {
-                                            Peptide advocatePeptide = ((PeptideAssumption) spectrumIdAssumption).getPeptide();
-                                            if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
-                                                agreementAdvocates.add(advocateId);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            boolean unique = agreementAdvocates.size() == 1;
-                            for (int advocateId : agreementAdvocates) {
-                                inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
-                            }
-                            inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
-                        }
-                    }
-                }
-
-                // go through the peptide assumptions
-                if (inputMap != null) { //backward compatibility check
-                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
-                    for (int advocateId : assumptions.keySet()) {
-                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
-                        for (double eValue : advocateAssumptions.keySet()) {
-                            for (SpectrumIdentificationAssumption spectrumIdAssumption : advocateAssumptions.get(eValue)) {
-                                if (spectrumIdAssumption instanceof PeptideAssumption) {
-                                    PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdAssumption;
-                                    updatePeptideAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, peptideAssumption, peptideSpectrumAnnotator, precursorMzDeviations);
-                                } else if (spectrumIdAssumption instanceof TagAssumption) {
-                                    TagAssumption tagAssumption = (TagAssumption) spectrumIdAssumption;
-                                    updateTagAssumptionValidationLevel(identificationFeaturesGenerator, shotgunProtocol, identificationParameters, inputMap, spectrumKey, tagAssumption);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressCounter();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
+            for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+                PsmValidatorRunnable runnable = new PsmValidatorRunnable(psmIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, precursorMzDeviations, inputMap, true);
+                pool.submit(runnable);
             }
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                pool.shutdownNow();
+                return;
+            }
+            pool.shutdown();
+            if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+                throw new InterruptedException("PSM validation timed out. Please contact the developers.");
+            }
+        }
+
+        // validate the peptides
+        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<PeptideValidatorRunnable>(processingPreferences.getnThreads());
+
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
+
+        for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+            PeptideValidatorRunnable runnable = new PeptideValidatorRunnable(peptideMatchesIterator, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, metrics);
+            pool.submit(runnable);
+            peptideRunnables.add(runnable);
+        }
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+            pool.shutdownNow();
+            return;
+        }
+        pool.shutdown();
+        if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+            throw new InterruptedException("PSM validation timed out. Please contact the developers.");
         }
 
         HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
         ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
-
-        // validate the peptides
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);
-        while (peptideMatchesIterator.hasNext()) {
-
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(false);
-            }
-            PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(true);
-            }
-
-            String peptideKey = peptideMatch.getKey();
-
-            updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
-
-            // set the fraction details
-            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-
-            if (psParameter.getMatchValidationLevel().isValidated()) {
-                double length = Peptide.getSequence(peptideKey).length();
-                validatedPeptideLengths.add(length);
-            }
-
-            // @TODO: could be a better more elegant way of doing this?
-            HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
-            HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>();
-
-            for (String fraction : psParameter.getFractions()) {
-
-                ArrayList<Double> precursorIntensities = new ArrayList<Double>();
-
-                if (metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey) != null) {
-                    ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey);
-
-                    for (int k = 0; k < spectrumKeys.size(); k++) {
-
-                        psParameter2 = (PSParameter) identification.getSpectrumMatchParameter(spectrumKeys.get(k), psParameter2);
-
-                        if (psParameter2.getMatchValidationLevel().isValidated()) {
-                            if (validatedPsmsPerFraction.containsKey(fraction)) {
-                                Integer value = validatedPsmsPerFraction.get(fraction);
-                                validatedPsmsPerFraction.put(fraction, value + 1);
-                            } else {
-                                validatedPsmsPerFraction.put(fraction, 1);
-                            }
-
-                            if (SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity() > 0) { // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
-                                precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity());
-                            }
-                        }
-
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
-                            }
-                        }
-                    }
+        for (PeptideValidatorRunnable runnable : peptideRunnables) {
+            HashMap<String, Integer> threadValidatedTotalPeptidesPerFraction = runnable.getValidatedTotalPeptidesPerFraction();
+            for (String fraction : threadValidatedTotalPeptidesPerFraction.keySet()) {
+                Integer nValidated = validatedTotalPeptidesPerFraction.get(fraction);
+                if (nValidated == null) {
+                    nValidated = 0;
                 }
-
-                precursorIntensitesPerFractionPeptideLevel.put(fraction, precursorIntensities);
-
-                // save the total number of peptides per fraction
-                if (psParameter.getMatchValidationLevel().isValidated()) {
-                    if (validatedTotalPeptidesPerFraction.containsKey(fraction)) {
-                        Integer value = validatedTotalPeptidesPerFraction.get(fraction);
-                        validatedTotalPeptidesPerFraction.put(fraction, value + 1);
-                    } else {
-                        validatedTotalPeptidesPerFraction.put(fraction, 1);
-                    }
-                }
+                nValidated += threadValidatedTotalPeptidesPerFraction.get(fraction);
+                validatedTotalPeptidesPerFraction.put(fraction, nValidated);
             }
-
-            // set the number of validated spectra per fraction for each peptide
-            psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
-
-            identification.updatePeptideMatchParameter(peptideKey, psParameter);
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressCounter();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
-            }
+            validatedPeptideLengths.addAll(runnable.getValidatedPeptideLengths());
         }
-
         if (validatedPeptideLengths.size() >= 100) {
             NonSymmetricalNormalDistribution lengthDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(validatedPeptideLengths);
             metrics.setPeptideLengthDistribution(lengthDistribution);
         }
+        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
 
         // validate the proteins
-        TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
-        TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
-        double fdrLimit = targetDecoyResults.getFdrLimit();
-        double nTargetLimit = 100.0 / fdrLimit;
-        double proteinThreshold = targetDecoyResults.getScoreLimit();
-        double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
-        double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
-        if (proteinConfidentThreshold > 100) {
-            proteinConfidentThreshold = 100;
-        }
-        boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
-
-        int maxValidatedSpectraFractionLevel = 0;
-        int maxValidatedPeptidesFractionLevel = 0;
-        double maxProteinAveragePrecursorIntensity = 0.0, maxProteinSummedPrecursorIntensity = 0.0;
-        double totalSpectrumCountingMass = 0.0;
+        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
         ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters, waitingHandler);
-
-        while (proteinMatchesIterator.hasNext()) {
-
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(false);
-            }
-            ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(true);
-            }
-
-            String proteinKey = proteinMatch.getKey();
-            updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
-                    targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
-
-            // set the fraction details
-            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-
-            if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
-                double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
-                double massContribution = molecularWeight * tempSpectrumCounting;
-                totalSpectrumCountingMass += massContribution;
-            }
-
-            // @TODO: could be a better more elegant way of doing this?
-            HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
-            HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
-            HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
-            ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
-            identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
-
-            for (String currentPeptideKey : peptideKeys) {
-
-                psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter2);
-
-                for (String fraction : psParameter2.getFractions()) {
-
-                    if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
-                        if (validatedPsmsPerFraction.containsKey(fraction)) {
-                            Integer value = validatedPsmsPerFraction.get(fraction);
-                            validatedPsmsPerFraction.put(fraction, value + psParameter2.getFractionValidatedSpectra(fraction));
-                        } else {
-                            validatedPsmsPerFraction.put(fraction, psParameter2.getFractionValidatedSpectra(fraction));
-                        }
-
-                        if (validatedPsmsPerFraction.get(fraction) > maxValidatedSpectraFractionLevel) {
-                            maxValidatedSpectraFractionLevel = validatedPsmsPerFraction.get(fraction);
-                        }
-                    }
-
-                    if (psParameter2.getPrecursorIntensityPerFraction(fraction) != null) {
-                        if (precursorIntensitesPerFractionProteinLevel.containsKey(fraction)) {
-                            for (int i = 0; i < psParameter2.getPrecursorIntensityPerFraction(fraction).size(); i++) {
-                                precursorIntensitesPerFractionProteinLevel.get(fraction).add(psParameter2.getPrecursorIntensityPerFraction(fraction).get(i));
-                            }
-                        } else {
-                            precursorIntensitesPerFractionProteinLevel.put(fraction, psParameter2.getPrecursorIntensityPerFraction(fraction));
-                        }
-                    }
-
-                    if (psParameter2.getMatchValidationLevel().isValidated()) {
-                        if (validatedPeptidesPerFraction.containsKey(fraction)) {
-                            Integer value = validatedPeptidesPerFraction.get(fraction);
-                            validatedPeptidesPerFraction.put(fraction, value + 1);
-                        } else {
-                            validatedPeptidesPerFraction.put(fraction, 1);
-                        }
-
-                        if (validatedPeptidesPerFraction.get(fraction) > maxValidatedPeptidesFractionLevel) {
-                            maxValidatedPeptidesFractionLevel = validatedPeptidesPerFraction.get(fraction);
-                        }
-                    }
-                }
-
-                if (waitingHandler != null) {
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
-            }
-
-            // set the number of validated spectra per fraction for each peptide
-            psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-            psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
-            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
-
-            for (String fraction : psParameter.getFractions()) {
-                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
-                    if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
-                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
-                    }
-                    if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
-                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
-                    }
-                }
-            }
-
-            identification.updateProteinMatchParameter(proteinKey, psParameter);
-
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressCounter();
-            }
+        ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<ProteinValidatorRunnable>(processingPreferences.getnThreads());
+        for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
+            ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, metrics, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, validationQCPreferences);
+            pool.submit(runnable);
+            proteinRunnables.add(runnable);
+        }
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+            pool.shutdownNow();
+            return;
+        }
+        pool.shutdown();
+        if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
+            throw new InterruptedException("PSM validation timed out. Please contact the developers.");
         }
 
-        // set the max values in the metrics
-        metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
-        metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
-        metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
-        metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
-        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
+        double totalSpectrumCountingMass = 0;
+        for (ProteinValidatorRunnable runnable : proteinRunnables) {
+            totalSpectrumCountingMass += runnable.getTotalSpectrumCountingMass();
+        }
         metrics.setTotalSpectrumCountingMass(totalSpectrumCountingMass);
     }
 
@@ -1709,6 +1450,612 @@ public class MatchesValidator {
         proteinFilter.setnConfidentSpectraComparison(RowFilter.ComparisonType.AFTER);
         proteinFilters.add(proteinFilter);
         validationQCPreferences.setProteinFilters(proteinFilters);
+
+    }
+
+    /**
+     * Runnable validating PSMs.
+     *
+     * @author Marc Vaudel
+     */
+    private class PsmValidatorRunnable implements Runnable {
+
+        /**
+         * An iterator for the PSMs.
+         */
+        private PsmIterator psmIterator;
+        /**
+         * The identification.
+         */
+        private Identification identification;
+        /**
+         * The identification features generator used to estimate, store and
+         * retrieve identification features
+         */
+        private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+        /**
+         * The shotgun protocol
+         */
+        private ShotgunProtocol shotgunProtocol;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
+        /**
+         * The waiting handler.
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions.
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * The peptide spectrum annotator.
+         */
+        private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+        /**
+         * List used to store precursor m/z deviations of matches currently
+         * validated.
+         */
+        private ArrayList<Double> threadPrecursorMzDeviations = new ArrayList<Double>();
+        /**
+         * List used to store precursor m/z deviations.
+         */
+        private ArrayList<Double> precursorMzDeviations;
+        /**
+         * If not null, information on search engine agreement will be stored in
+         * the input map.
+         */
+        private InputMap inputMap;
+        /**
+         * If true, quality control filters will be applied to the matches
+         */
+        private boolean applyQCFilters;
+
+        /**
+         * Constructor.
+         *
+         * @param psmIterator a PSM iterator
+         * @param identification the identification containing the matches
+         * @param identificationFeaturesGenerator the identification features
+         * generator used to estimate, store and retrieve identification
+         * features
+         * @param shotgunProtocol information on the experimental protocol
+         * @param identificationParameters the identification parameters
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         * @param precursorMzDeviations list used to store precursor m/z
+         * deviations
+         * @param inputMap if provided information on search engine agreement
+         * will be stored in the input map
+         * @param applyQCFilters boolean indicating whether quality control
+         * filters should be used
+         */
+        public PsmValidatorRunnable(PsmIterator psmIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ArrayList<Double> precursorMzDeviations, InputMap inputMap, boolean applyQCFilters) {
+            this.psmIterator = psmIterator;
+            this.identification = identification;
+            this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.shotgunProtocol = shotgunProtocol;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+            this.precursorMzDeviations = precursorMzDeviations;
+            this.inputMap = inputMap;
+            this.applyQCFilters = applyQCFilters;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (psmIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+                    if (spectrumMatch != null) {
+
+                        String spectrumKey = spectrumMatch.getKey();
+
+                        updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, precursorMzDeviations, applyQCFilters);
+
+                        // Update search engine agreement
+                        PSParameter psParameter = new PSParameter();
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+
+                            PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+
+                            if (peptideAssumption != null) {
+
+                                double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+                                double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
+                                threadPrecursorMzDeviations.add(precursorMzError);
+
+                                if (inputMap != null) {
+
+                                    Peptide bestPeptide = peptideAssumption.getPeptide();
+                                    ArrayList<Integer> agreementAdvocates = new ArrayList<Integer>();
+
+                                    HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = identification.getAssumptions(spectrumKey);
+                                    for (int advocateId : assumptions.keySet()) {
+                                        HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> advocateAssumptions = assumptions.get(advocateId);
+                                        if (advocateAssumptions != null) {
+                                            ArrayList<Double> eValues = new ArrayList<Double>(advocateAssumptions.keySet());
+                                            Collections.sort(eValues);
+                                            for (SpectrumIdentificationAssumption firstHit : advocateAssumptions.get(eValues.get(0))) {
+                                                if (firstHit instanceof PeptideAssumption) {
+                                                    Peptide advocatePeptide = ((PeptideAssumption) firstHit).getPeptide();
+                                                    if (bestPeptide.isSameSequenceAndModificationStatus(advocatePeptide, identificationParameters.getSequenceMatchingPreferences())) {
+                                                        agreementAdvocates.add(advocateId);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    boolean unique = agreementAdvocates.size() == 1;
+
+                                    String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
+
+                                    for (int advocateId : agreementAdvocates) {
+                                        inputMap.addAdvocateContribution(advocateId, spectrumFileName, unique);
+                                    }
+
+                                    inputMap.addAdvocateContribution(Advocate.peptideShaker.getIndex(), spectrumFileName, agreementAdvocates.isEmpty());
+                                }
+                            }
+                        }
+                    }
+                    if (waitingHandler != null) {
+                        waitingHandler.increaseSecondaryProgressCounter();
+                    }
+                }
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+                waitingHandler.setRunCanceled();
+            }
+        }
+
+        /**
+         * Returns the precursor m/z deviations of the validated PSMs.
+         * 
+         * @return the precursor m/z deviations of the validated PSMs
+         */
+        public ArrayList<Double> getThreadPrecursorMzDeviations() {
+            return threadPrecursorMzDeviations;
+        }
+    }
+
+    /**
+     * Runnable validating peptides.
+     *
+     * @author Marc Vaudel
+     */
+    private class PeptideValidatorRunnable implements Runnable {
+
+        /**
+         * An iterator for the peptide matches.
+         */
+        private PeptideMatchesIterator peptideMatchesIterator;
+        /**
+         * The identification.
+         */
+        private Identification identification;
+        /**
+         * The identification features generator used to estimate, store and
+         * retrieve identification features
+         */
+        private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+        /**
+         * The shotgun protocol
+         */
+        private ShotgunProtocol shotgunProtocol;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
+        /**
+         * The waiting handler.
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions.
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * List used to store the length of the validated peptides.
+         */
+        private ArrayList<Double> validatedPeptideLengths = new ArrayList<Double>();
+        /**
+         * Map used to store the number of validated peptides per fraction.
+         */
+        private HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
+        /**
+         * The object used to store metrics on the project.
+         */
+        private Metrics metrics;
+
+        /**
+         * Constructor.
+         *
+         * @param psmIterator a peptide matches iterator
+         * @param identification the identification containing the matches
+         * @param identificationFeaturesGenerator the identification features
+         * generator used to estimate, store and retrieve identification
+         * features
+         * @param shotgunProtocol information on the experimental protocol
+         * @param identificationParameters the identification parameters
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         * @param validatedPeptideLengths list used to store the length of the
+         * validated peptides
+         * @param validatedTotalPeptidesPerFraction map used to store the number
+         * of validated peptides per fraction
+         * @param metrics the object used to store metrics on the project
+         */
+        public PeptideValidatorRunnable(PeptideMatchesIterator peptideMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ShotgunProtocol shotgunProtocol,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, Metrics metrics) {
+            this.peptideMatchesIterator = peptideMatchesIterator;
+            this.identification = identification;
+            this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.shotgunProtocol = shotgunProtocol;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+            this.metrics = metrics;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (peptideMatchesIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    if (peptideMatch != null) {
+
+                        String peptideKey = peptideMatch.getKey();
+
+                        updatePeptideMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideMap, peptideKey);
+
+                        // set the fraction details
+                        PSParameter psParameter = new PSParameter();
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+
+                        if (psParameter.getMatchValidationLevel().isValidated()) {
+                            double length = Peptide.getSequence(peptideKey).length();
+                            validatedPeptideLengths.add(length);
+                        }
+
+                        // @TODO: could be a better more elegant way of doing this?
+                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
+                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>();
+
+                        for (String fraction : psParameter.getFractions()) {
+
+                            ArrayList<Double> precursorIntensities = new ArrayList<Double>();
+
+                            if (metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey) != null) {
+                                ArrayList<String> spectrumKeys = metrics.getFractionPsmMatches().get(fraction + "_" + peptideKey);
+
+                                for (String spectrumKey : spectrumKeys) {
+
+                                    PSParameter psParameter2 = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                                    if (psParameter2.getMatchValidationLevel().isValidated()) {
+                                        if (validatedPsmsPerFraction.containsKey(fraction)) {
+                                            Integer value = validatedPsmsPerFraction.get(fraction);
+                                            validatedPsmsPerFraction.put(fraction, value + 1);
+                                        } else {
+                                            validatedPsmsPerFraction.put(fraction, 1);
+                                        }
+                                        if (SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity() > 0) {
+                                            // @TODO: replace by an mgf index map? (have to add intensity map to the index first...)
+                                            precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKey).getIntensity());
+                                        }
+                                    }
+                                    if (waitingHandler != null) {
+                                        if (waitingHandler.isRunCanceled()) {
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
+                            precursorIntensitesPerFractionPeptideLevel.put(fraction, precursorIntensities);
+
+                            // save the total number of peptides per fraction
+                            if (psParameter.getMatchValidationLevel().isValidated()) {
+                                if (validatedTotalPeptidesPerFraction.containsKey(fraction)) {
+                                    Integer value = validatedTotalPeptidesPerFraction.get(fraction);
+                                    validatedTotalPeptidesPerFraction.put(fraction, value + 1);
+                                } else {
+                                    validatedTotalPeptidesPerFraction.put(fraction, 1);
+                                }
+                            }
+                        }
+
+                        // set the number of validated spectra per fraction for each peptide
+                        psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
+                        psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
+
+                        identification.updatePeptideMatchParameter(peptideKey, psParameter);
+                        if (waitingHandler != null) {
+                            waitingHandler.increaseSecondaryProgressCounter();
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+                waitingHandler.setRunCanceled();
+            }
+        }
+
+        /**
+         * Returns a list of the lengths of the peptides validated.
+         *
+         * @return a list of the lengths of the peptides validated
+         */
+        public ArrayList<Double> getValidatedPeptideLengths() {
+            return validatedPeptideLengths;
+        }
+
+        /**
+         * Returns a map of the number of peptides validated per fraction.
+         *
+         * @return a map of the number of peptides validated per fraction
+         */
+        public HashMap<String, Integer> getValidatedTotalPeptidesPerFraction() {
+            return validatedTotalPeptidesPerFraction;
+        }
+    }
+
+    /**
+     * Runnable validating protein matches.
+     *
+     * @author Marc Vaudel
+     */
+    private class ProteinValidatorRunnable implements Runnable {
+
+        /**
+         * An iterator for the protein matches.
+         */
+        private ProteinMatchesIterator proteinMatchesIterator;
+        /**
+         * The identification.
+         */
+        private Identification identification;
+        /**
+         * The identification features generator used to estimate, store and
+         * retrieve identification features
+         */
+        private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+        /**
+         * The shotgun protocol
+         */
+        private ShotgunProtocol shotgunProtocol;
+        /**
+         * The identification parameters.
+         */
+        private IdentificationParameters identificationParameters;
+        /**
+         * The waiting handler.
+         */
+        private WaitingHandler waitingHandler;
+        /**
+         * Handler for the exceptions.
+         */
+        private ExceptionHandler exceptionHandler;
+        /**
+         * The validation QC preferences.
+         */
+        private ValidationQCPreferences validationQCPreferences;
+        /**
+         * The total spectrum counting mass contribution of the proteins
+         * validated.
+         */
+        private double totalSpectrumCountingMass = 0;
+        /**
+         * The object used to store metrics on the project.
+         */
+        private Metrics metrics;
+
+        /**
+         * Constructor.
+         *
+         * @param proteinMatchesIterator a protein matches iterator
+         * @param identification the identification containing the matches
+         * @param identificationFeaturesGenerator the identification features
+         * generator used to estimate, store and retrieve identification
+         * features
+         * @param metrics the object used to store metrics on the project
+         * @param shotgunProtocol information on the experimental protocol
+         * @param identificationParameters the identification parameters
+         * @param waitingHandler a waiting handler to display progress and allow
+         * canceling the process
+         * @param exceptionHandler handler for exceptions
+         * @param validationQCPreferences the validation QC preferences
+         */
+        public ProteinValidatorRunnable(ProteinMatchesIterator proteinMatchesIterator, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, ShotgunProtocol shotgunProtocol,
+                IdentificationParameters identificationParameters, WaitingHandler waitingHandler, ExceptionHandler exceptionHandler, ValidationQCPreferences validationQCPreferences) {
+            this.proteinMatchesIterator = proteinMatchesIterator;
+            this.identification = identification;
+            this.identificationFeaturesGenerator = identificationFeaturesGenerator;
+            this.metrics = metrics;
+            this.shotgunProtocol = shotgunProtocol;
+            this.identificationParameters = identificationParameters;
+            this.waitingHandler = waitingHandler;
+            this.exceptionHandler = exceptionHandler;
+            this.validationQCPreferences = validationQCPreferences;
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                TargetDecoyMap targetDecoyMap = proteinMap.getTargetDecoyMap();
+                TargetDecoyResults targetDecoyResults = targetDecoyMap.getTargetDecoyResults();
+                double fdrLimit = targetDecoyResults.getFdrLimit();
+                double nTargetLimit = 100.0 / fdrLimit;
+                double proteinThreshold = targetDecoyResults.getScoreLimit();
+                double margin = validationQCPreferences.getConfidenceMargin() * targetDecoyMap.getResolution();
+                double proteinConfidentThreshold = targetDecoyResults.getConfidenceLimit() + margin;
+                if (proteinConfidentThreshold > 100) {
+                    proteinConfidentThreshold = 100;
+                }
+                boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
+                int maxValidatedSpectraFractionLevel = 0;
+                int maxValidatedPeptidesFractionLevel = 0;
+                double maxProteinAveragePrecursorIntensity = 0.0, maxProteinSummedPrecursorIntensity = 0.0;
+
+                while (proteinMatchesIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+                    ProteinMatch proteinMatch = proteinMatchesIterator.next();
+                    if (proteinMatch != null) {
+
+                        String proteinKey = proteinMatch.getKey();
+                        updateProteinMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters,
+                                targetDecoyMap, proteinThreshold, nTargetLimit, proteinConfidentThreshold, noValidated, proteinKey);
+
+                        // set the fraction details
+                        PSParameter psParameter = new PSParameter();
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+
+                        if (!proteinMatch.isDecoy() && psParameter.getMatchValidationLevel().isValidated()) {
+                            double tempSpectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                            double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+                            double massContribution = molecularWeight * tempSpectrumCounting;
+                            totalSpectrumCountingMass += massContribution;
+                            
+                            // Load the coverage in cache
+                            identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                        }
+
+                        // @TODO: could be a better more elegant way of doing this?
+                        HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
+                        HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
+                        HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
+                        ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
+                        identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
+
+                        for (String currentPeptideKey : peptideKeys) {
+
+                            PSParameter psParameter2 = (PSParameter) identification.getPeptideMatchParameter(currentPeptideKey, psParameter);
+
+                            for (String fraction : psParameter2.getFractions()) {
+
+                                if (psParameter2.getFractionValidatedSpectra(fraction) != null) {
+                                    if (validatedPsmsPerFraction.containsKey(fraction)) {
+                                        Integer value = validatedPsmsPerFraction.get(fraction);
+                                        validatedPsmsPerFraction.put(fraction, value + psParameter2.getFractionValidatedSpectra(fraction));
+                                    } else {
+                                        validatedPsmsPerFraction.put(fraction, psParameter2.getFractionValidatedSpectra(fraction));
+                                    }
+
+                                    if (validatedPsmsPerFraction.get(fraction) > maxValidatedSpectraFractionLevel) {
+                                        maxValidatedSpectraFractionLevel = validatedPsmsPerFraction.get(fraction);
+                                    }
+                                }
+
+                                if (psParameter2.getPrecursorIntensityPerFraction(fraction) != null) {
+                                    if (precursorIntensitesPerFractionProteinLevel.containsKey(fraction)) {
+                                        for (int i = 0; i < psParameter2.getPrecursorIntensityPerFraction(fraction).size(); i++) {
+                                            precursorIntensitesPerFractionProteinLevel.get(fraction).add(psParameter2.getPrecursorIntensityPerFraction(fraction).get(i));
+                                        }
+                                    } else {
+                                        precursorIntensitesPerFractionProteinLevel.put(fraction, psParameter2.getPrecursorIntensityPerFraction(fraction));
+                                    }
+                                }
+
+                                if (psParameter2.getMatchValidationLevel().isValidated()) {
+                                    if (validatedPeptidesPerFraction.containsKey(fraction)) {
+                                        Integer value = validatedPeptidesPerFraction.get(fraction);
+                                        validatedPeptidesPerFraction.put(fraction, value + 1);
+                                    } else {
+                                        validatedPeptidesPerFraction.put(fraction, 1);
+                                    }
+
+                                    if (validatedPeptidesPerFraction.get(fraction) > maxValidatedPeptidesFractionLevel) {
+                                        maxValidatedPeptidesFractionLevel = validatedPeptidesPerFraction.get(fraction);
+                                    }
+                                }
+                            }
+
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
+                                }
+                            }
+                        }
+
+                        // set the number of validated spectra per fraction for each peptide
+                        psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
+                        psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
+                        psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
+
+                        for (String fraction : psParameter.getFractions()) {
+                            if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
+                                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
+                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
+                                }
+                                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
+                                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
+                                }
+                            }
+                        }
+
+                        identification.updateProteinMatchParameter(proteinKey, psParameter);
+
+                        if (waitingHandler != null) {
+                            waitingHandler.increaseSecondaryProgressCounter();
+                        }
+                    }
+                }
+
+                // set the max values in the metrics
+                setMaxValues(maxValidatedPeptidesFractionLevel, maxValidatedSpectraFractionLevel, maxProteinAveragePrecursorIntensity, maxProteinSummedPrecursorIntensity);
+
+            } catch (Exception e) {
+                exceptionHandler.catchException(e);
+            }
+        }
+
+        /**
+         * Sets the max values in the metrics.
+         *
+         * @param maxValidatedPeptidesFractionLevel the maximal number of
+         * validated peptides in a fraction
+         * @param maxValidatedSpectraFractionLevel the maximal number of
+         * validated spectra in a fraction
+         * @param maxProteinAveragePrecursorIntensity the maximal protein
+         * average intensity
+         * @param maxProteinSummedPrecursorIntensity the maximal protein summed
+         * intensity
+         */
+        private synchronized void setMaxValues(int maxValidatedPeptidesFractionLevel, int maxValidatedSpectraFractionLevel, double maxProteinAveragePrecursorIntensity, double maxProteinSummedPrecursorIntensity) {
+            if (metrics.getMaxValidatedPeptidesPerFraction() != null && maxValidatedPeptidesFractionLevel > metrics.getMaxValidatedPeptidesPerFraction()) {
+                metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
+            }
+            if (metrics.getMaxValidatedSpectraPerFraction() != null && maxValidatedSpectraFractionLevel > metrics.getMaxValidatedSpectraPerFraction()) {
+                metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
+            }
+            if (metrics.getMaxProteinAveragePrecursorIntensity() != null && maxProteinAveragePrecursorIntensity > metrics.getMaxProteinAveragePrecursorIntensity()) {
+                metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
+            }
+            if (metrics.getMaxProteinSummedPrecursorIntensity() != null && maxProteinSummedPrecursorIntensity > metrics.getMaxProteinSummedPrecursorIntensity()) {
+                metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
+            }
+        }
+
+        /**
+         * Returns the spectrum counting mass contribution of the validated
+         * proteins.
+         *
+         * @return the spectrum counting mass contribution of the validated
+         * proteins
+         */
+        public double getTotalSpectrumCountingMass() {
+            return totalSpectrumCountingMass;
+        }
 
     }
 }
