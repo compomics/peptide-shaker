@@ -82,16 +82,8 @@ public class InclusionListExport {
 
                 while (proteinMatchesIterator.hasNext()) {
 
-                    if (waitingHandler != null) {
-                        waitingHandler.setDisplayProgress(false);
-                    }
                     ProteinMatch proteinMatch = proteinMatchesIterator.next();
-                    if (waitingHandler != null) {
-                        waitingHandler.setDisplayProgress(true);
-                    }
-
                     String proteinMatchKey = proteinMatch.getKey();
-
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
 
                     if (!proteinFilters.contains(psParameter.getProteinInferenceClass())) {

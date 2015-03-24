@@ -411,12 +411,8 @@ public class PrideXmlExport {
                     break;
                 }
 
-                waitingHandler.setDisplayProgress(false);
                 PeptideMatch peptideMatch = peptideMatchesIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 String peptideKey = peptideMatch.getKey();
-
                 peptideProbabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
                 PsmIterator psmIterator = identification.getPsmIterator(peptideMatch.getSpectrumMatches(), parameters, true, waitingHandler);
@@ -427,10 +423,7 @@ public class PrideXmlExport {
                         break;
                     }
 
-                    waitingHandler.setDisplayProgress(false);
                     SpectrumMatch spectrumMatch = psmIterator.next();
-                    waitingHandler.setDisplayProgress(true);
-
                     String spectrumKey = spectrumMatch.getKey();
                     psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestPeptideAssumption();

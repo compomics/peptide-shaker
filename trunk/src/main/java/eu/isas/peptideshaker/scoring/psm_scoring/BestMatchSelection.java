@@ -134,10 +134,7 @@ public class BestMatchSelection {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch advocateMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-                
                 String spectrumKey = advocateMatch.getKey();
 
                 // map of the peptide first hits for this spectrum: score -> max protein count -> max search engine votes -> amino acids annotated -> min mass deviation -> peptide sequence

@@ -1361,10 +1361,7 @@ public class PtmScorer {
 
         while (proteinMatchesIterator.hasNext()) {
             
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-            
             String proteinKey = proteinMatch.getKey();
 
             scorePTMs(identification, proteinMatch, identificationParameters, false);
@@ -1440,10 +1437,7 @@ public class PtmScorer {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-                
                 String spectrumKey = spectrumMatch.getKey();
 
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
@@ -1526,10 +1520,7 @@ public class PtmScorer {
 
                 while (psmIterator.hasNext()) {
 
-                    waitingHandler.setDisplayProgress(false);
                     SpectrumMatch spectrumMatch = psmIterator.next();
-                    waitingHandler.setDisplayProgress(true);
-                    
                     String spectrumKey = spectrumMatch.getKey();
 
                     Peptide peptide = spectrumMatch.getBestPeptideAssumption().getPeptide();

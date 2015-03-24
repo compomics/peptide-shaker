@@ -1064,11 +1064,9 @@ public class MatchesValidator {
 
         while (peptideMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String peptideKey = peptideMatch.getKey();
+
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
                     foundModifications.add(modification);
@@ -1161,12 +1159,8 @@ public class MatchesValidator {
 
         while (peptideMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String peptideKey = peptideMatch.getKey();
-
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (sequenceFactory.concatenatedTargetDecoy()) {
@@ -1219,10 +1213,7 @@ public class MatchesValidator {
 
         while (proteinMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String proteinKey = proteinMatch.getKey();
 
             waitingHandler.increaseSecondaryProgressCounter();
@@ -1304,10 +1295,7 @@ public class MatchesValidator {
 
         while (proteinMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
-
             String proteinKey = proteinMatch.getKey();
             Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
@@ -1711,7 +1699,9 @@ public class MatchesValidator {
         public void run() {
             try {
                 while (peptideMatchesIterator.hasNext() && !waitingHandler.isRunCanceled()) {
+
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();
+
                     if (peptideMatch != null) {
 
                         String peptideKey = peptideMatch.getKey();

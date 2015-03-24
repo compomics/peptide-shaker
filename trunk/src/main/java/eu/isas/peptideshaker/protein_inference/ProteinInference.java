@@ -344,9 +344,7 @@ public class ProteinInference {
 
         while (proteinMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
 
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -411,9 +409,7 @@ public class ProteinInference {
 
         while (proteinMatchesIterator.hasNext()) {
 
-            waitingHandler.setDisplayProgress(false);
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            waitingHandler.setDisplayProgress(true);
             
             if (waitingHandler.isRunCanceled()) {
                 return;

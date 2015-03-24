@@ -643,14 +643,7 @@ public class PeptideShaker {
 
             while (psmIterator.hasNext()) {
 
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(false);
-                }
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                if (waitingHandler != null) {
-                    waitingHandler.setDisplayProgress(true);
-                }
-
                 String spectrumKey = spectrumMatch.getKey();
                 HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumKey);
 
@@ -797,13 +790,10 @@ public class PeptideShaker {
 
             while (psmIterator.hasNext()) {
 
-                waitingHandler.setDisplayProgress(false);
                 SpectrumMatch spectrumMatch = psmIterator.next();
-                waitingHandler.setDisplayProgress(true);
-
                 String spectrumKey = spectrumMatch.getKey();
-
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
                 if (sequenceFactory.concatenatedTargetDecoy()) {
                     Integer charge = new Integer(psParameter.getSpecificMapKey());
                     String fileName = Spectrum.getSpectrumFile(spectrumKey);

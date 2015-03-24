@@ -160,14 +160,7 @@ public class PsProteinSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(false);
-            }
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
-            if (waitingHandler != null) {
-                waitingHandler.setDisplayProgress(true);
-            }
-
             String proteinKey = proteinMatch.getKey();
 
             if (decoys || !ProteinMatch.isDecoy(proteinKey)) {

@@ -3245,14 +3245,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         while (peptideMatchesIterator.hasNext()) {
 
-            if (progressDialogX != null) {
-                progressDialogX.setDisplayProgress(false);
-            }
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            if (progressDialogX != null) {
-                progressDialogX.setDisplayProgress(true);
-            }
-
             String peptideKey = peptideMatch.getKey();
             Peptide peptide = peptideMatch.getTheoreticPeptide();
 
