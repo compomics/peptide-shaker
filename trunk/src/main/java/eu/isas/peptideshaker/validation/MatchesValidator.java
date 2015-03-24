@@ -1470,11 +1470,11 @@ public class MatchesValidator {
         private Identification identification;
         /**
          * The identification features generator used to estimate, store and
-         * retrieve identification features
+         * retrieve identification features.
          */
         private IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The shotgun protocol
+         * The shotgun protocol.
          */
         private ShotgunProtocol shotgunProtocol;
         /**
@@ -1508,7 +1508,7 @@ public class MatchesValidator {
          */
         private InputMap inputMap;
         /**
-         * If true, quality control filters will be applied to the matches
+         * If true, quality control filters will be applied to the matches.
          */
         private boolean applyQCFilters;
 
@@ -1619,7 +1619,7 @@ public class MatchesValidator {
 
         /**
          * Returns the precursor m/z deviations of the validated PSMs.
-         * 
+         *
          * @return the precursor m/z deviations of the validated PSMs
          */
         public ArrayList<Double> getThreadPrecursorMzDeviations() {
@@ -1644,11 +1644,11 @@ public class MatchesValidator {
         private Identification identification;
         /**
          * The identification features generator used to estimate, store and
-         * retrieve identification features
+         * retrieve identification features.
          */
         private IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The shotgun protocol
+         * The shotgun protocol.
          */
         private ShotgunProtocol shotgunProtocol;
         /**
@@ -1826,12 +1826,12 @@ public class MatchesValidator {
          */
         private Identification identification;
         /**
-         * The identification features generator used to estimate, store and
+         * The identification features generator used. to estimate, store and
          * retrieve identification features
          */
         private IdentificationFeaturesGenerator identificationFeaturesGenerator;
         /**
-         * The shotgun protocol
+         * The shotgun protocol.
          */
         private ShotgunProtocol shotgunProtocol;
         /**
@@ -1925,7 +1925,7 @@ public class MatchesValidator {
                             double molecularWeight = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                             double massContribution = molecularWeight * tempSpectrumCounting;
                             totalSpectrumCountingMass += massContribution;
-                            
+
                             // Load the coverage in cache
                             identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                         }
