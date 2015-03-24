@@ -444,7 +444,7 @@ public class PeptideShaker {
         } else {
             waitingHandler.appendReport("Validating identifications, quality control of matches.", true, true);
         }
-        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences);
+        matchesValidator.validateIdentifications(identification, metrics, waitingHandler, exceptionHandler, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, inputMap, spectrumCountingPreferences, processingPreferences);
         waitingHandler.increasePrimaryProgressCounter();
         metrics.clearSpectrumKeys();
         if (waitingHandler.isRunCanceled()) {

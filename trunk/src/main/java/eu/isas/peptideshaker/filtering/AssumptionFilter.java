@@ -520,7 +520,7 @@ public class AssumptionFilter extends MatchFilter {
      * @param identificationParameters the identification parameters
      * @param peptideSpectrumAnnotator a spectrum annotator, can be null
      * @param precursorMzDeviations list of the precursor m/z deviations to
-     * compare this one for the probabilistic m/z error filtering
+     * compare this one for the probabilistic m/z error filtering (the list should be sorted)
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -547,7 +547,7 @@ public class AssumptionFilter extends MatchFilter {
      * @param peptideSpectrumAnnotator a spectrum annotator to annotate the
      * spectrum, can be null
      * @param precursorMzDeviations list of the precursor m/z deviations to
-     * compare this one for the probabilistic m/z error filtering
+     * compare this one for the probabilistic m/z error filtering (the list should be sorted)
      *
      * @return a boolean indicating whether a spectrum match is validated by a
      * given filter
@@ -641,7 +641,7 @@ public class AssumptionFilter extends MatchFilter {
 
             if (assumptionFilter.getPrecursorMzError() != null) {
                 if (assumptionFilter.getPrecursorMzErrorType() == IonMatch.MzErrorType.Statistical) {
-                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistribution(precursorMzDeviations); // @TODO: precursorMzDeviations can be empty!!!
+                    NonSymmetricalNormalDistribution precDeviationDistribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistributionFromSortedList(precursorMzDeviations);
                     Double minDeviation = precDeviationDistribution.getMinValueForProbability(assumptionFilter.getPrecursorMzError());
                     Double maxDeviation = precDeviationDistribution.getMaxValueForProbability(assumptionFilter.getPrecursorMzError());
                     double error = Math.abs(peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm()));
