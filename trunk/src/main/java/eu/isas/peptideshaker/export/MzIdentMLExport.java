@@ -1221,10 +1221,7 @@ public class MzIdentMLExport {
 
                 // add protein coverage cv term - main protein only
                 if (accession.equalsIgnoreCase(mainAccession)) {
-                    HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinGroupKey);
-                    Double sequenceCoverageConfident = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
-                    Double sequenceCoverageDoubtful = 100 * sequenceCoverage.get(MatchValidationLevel.doubtful.getIndex());
-                    Double validatedCoverage = sequenceCoverageConfident + sequenceCoverageDoubtful;
+                    Double validatedCoverage = identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinGroupKey);
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1001093", "sequence coverage", Double.toString(Util.roundDouble(validatedCoverage, CONFIDENCE_DECIMALS))));
                 }
 

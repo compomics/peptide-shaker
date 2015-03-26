@@ -5586,8 +5586,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         public void run() {
                             openingExistingProject = false;
                         }
-                    });
-
+                    }); 
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
