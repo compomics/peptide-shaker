@@ -93,7 +93,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 *Optional PTM localization scoring parameters*
 
 {{{
--ptm_score                 The PTM probabilistic score to use if any (0: A-score, 1: phosphoRS).
+-ptm_score                 The PTM probabilistic score to use if any (0: A-score, 1: phosphoRS). 
+                           If no score is given, no probabilistic score will be used.
 
 -ptm_threshold             The threshold to use for the PTM scores. If none set, 
                            an automatic threshold will be used.
@@ -110,7 +111,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -max_peptide_length        Maximum peptide length filter (default is '30').
 
--max_precursor_error       Maximum precursor error filter (default '10'). 
+-max_precursor_error       Maximum precursor error filter (no filter is used by default). 
                            See also max_precursor_error_type.
 
 -max_precursor_error_type  Maximum precursor error type (0: ppm, 1: Da, default is '0'). 
