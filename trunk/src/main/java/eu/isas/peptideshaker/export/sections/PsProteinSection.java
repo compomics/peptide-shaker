@@ -119,7 +119,8 @@ public class PsProteinSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever an error is encountered while calculating the observable coverage
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an error is encountered while calculating the observable coverage
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys,
@@ -233,7 +234,8 @@ public class PsProteinSection {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever an error is encountered while calculating the observable coverage
+     * @throws org.apache.commons.math.MathException exception thrown whenever
+     * an error is encountered while calculating the observable coverage
      */
     public static String getFeature(IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, ArrayList<String> keys, int nSurroundingAas, String proteinKey, ProteinMatch proteinMatch, PSParameter psParameter, PsProteinFeature tempProteinFeatures, WaitingHandler waitingHandler)
@@ -396,12 +398,15 @@ public class PsProteinSection {
                     }
                 }
                 return identificationFeaturesGenerator.getAmbiguousPtmSiteNumber(proteinMatch, modifications);
-            case coverage:
-                Double validatedCoverage = identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
-                Double value = 100 * validatedCoverage;
-                return Util.roundDouble(value, 2) + "";
             case possible_coverage:
-                value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                Double value = 100 * identificationFeaturesGenerator.getObservableCoverage(proteinKey);
+                return Util.roundDouble(value, 2) + "";
+            case coverage:
+                value = 100 * identificationFeaturesGenerator.getValidatedSequenceCoverage(proteinKey);
+                return Util.roundDouble(value, 2) + "";
+            case confident_coverage:
+                HashMap<Integer, Double> sequenceCoverage = identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                value = 100 * sequenceCoverage.get(MatchValidationLevel.confident.getIndex());
                 return Util.roundDouble(value, 2) + "";
             case decoy:
                 if (ProteinMatch.isDecoy(proteinKey)) {

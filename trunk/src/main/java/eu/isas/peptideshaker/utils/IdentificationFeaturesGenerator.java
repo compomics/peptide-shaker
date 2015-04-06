@@ -10,15 +10,18 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMatch;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.math.statistics.Distribution;
+import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import org.apache.commons.math.MathException;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class provides identification features and stores them in cache.
@@ -82,6 +86,10 @@ public class IdentificationFeaturesGenerator {
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
+    /**
+     * Map of the distributions of precursor mass errors.
+     */
+    private HashMap<String, NonSymmetricalNormalDistribution> massErrorDistribution = null;
 
     /**
      * Constructor.
@@ -102,27 +110,93 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of the likelihood to find identify a given amino acid in
-     * the protein sequence. 0 is the first amino acid.
-     *
-     * @param proteinMatchKey the key of the protein of interest
-     *
-     * @return an array of boolean indicating whether the amino acids of given
-     * peptides can generate peptides
-     *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
-     * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
+     * Sets a mass error distribution in the massErrorDistribution map.
+     * 
+     * @param spectrumFile the spectrum file of interest
+     * @param precursorMzDeviations list of precursor mass errors
      */
-    public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public void setMassErrorDistribution(String spectrumFile, ArrayList<Double> precursorMzDeviations) {
+        if (massErrorDistribution == null) {
+            massErrorDistribution = new HashMap<String, NonSymmetricalNormalDistribution>(1);
+        }
+        NonSymmetricalNormalDistribution distribution = NonSymmetricalNormalDistribution.getRobustNonSymmetricalNormalDistributionFromSortedList(precursorMzDeviations);
+        massErrorDistribution.put(spectrumFile, distribution);
+    }
+
+    /**
+     * Returns the precursor mass error distribution of validated peptides in a spectrum file.
+     * 
+     * @param spectrumFile the name of the file of interest
+     * 
+     * @return the precursor mass error distribution of validated peptides in a spectrum file
+     * 
+     * @throws SQLException Exception thrown whenever an error occurred while interacting with a database
+     * @throws IOException Exception thrown whenever an error occurred while reading or writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error occurred while deserializing a file
+     * @throws InterruptedException Exception thrown whenever a threading error occurred while estimating the mass distribution
+     * @throws MzMLUnmarshallerException Exception thrown whenever an error occurred while reading an mzML file
+     */
+    public NonSymmetricalNormalDistribution getMassErrorDistribution(String spectrumFile) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        if (massErrorDistribution == null || massErrorDistribution.get(spectrumFile) == null) {
+            estimateMassErrorDistribution(spectrumFile);
+        }
+        return massErrorDistribution.get(spectrumFile);
+    }
+
+    /**
+     * Estimates the precursor mass errors of validated peptides in a file and sets in in the massErrorDistribution map.
+     * 
+     * @param spectrumFile the spectrum file of interest
+     * 
+     * @throws SQLException Exception thrown whenever an error occurred while interacting with a database
+     * @throws IOException Exception thrown whenever an error occurred while reading or writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error occurred while deserializing a file
+     * @throws InterruptedException Exception thrown whenever a threading error occurred while estimating the mass distribution
+     * @throws MzMLUnmarshallerException Exception thrown whenever an error occurred while reading an mzML file
+     */
+    private void estimateMassErrorDistribution(String spectrumFile) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        ArrayList<Double> precursorMzDeviations = new ArrayList<Double>(512);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, parameters, false, null);
+        while (psmIterator.hasNext()) {
+            SpectrumMatch spectrumMatch = psmIterator.next();
+            PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
+            if (peptideAssumption != null) {
+                String spectrumKey = spectrumMatch.getKey();
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                if (psParameter.getMatchValidationLevel().isValidated()) {
+                    double precursorMz = spectrumFactory.getPrecursorMz(spectrumKey);
+                    double precursorMzError = peptideAssumption.getDeltaMass(precursorMz, shotgunProtocol.isMs1ResolutionPpm());
+                    precursorMzDeviations.add(precursorMzError);
+                }
+            }
+        }
+        setMassErrorDistribution(spectrumFile, precursorMzDeviations);;
+    }
+
+/**
+ * Returns an array of the likelihood to find identify a given amino acid in the
+ * protein sequence. 0 is the first amino acid.
+ *
+ * @param proteinMatchKey the key of the protein of interest
+ *
+ * @return an array of boolean indicating whether the amino acids of given
+ * peptides can generate peptides
+ *
+ * @throws java.sql.SQLException exception thrown whenever an error occurred
+ * while interacting with a database (from the protein tree or identification)
+ * @throws java.io.IOException exception thrown whenever an error occurred while
+ * reading or writing a file
+ * @throws java.lang.ClassNotFoundException exception thrown whenever an error
+ * occurred while deserializing an object from a database (from the protein tree
+ * or identification)
+ * @throws java.lang.InterruptedException exception thrown whenever a threading
+ * error occurred while interacting with a database (from the protein tree or
+ * identification)
+ */
+public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = (double[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey);
         if (result == null) {
             result = estimateCoverableAA(proteinMatchKey);

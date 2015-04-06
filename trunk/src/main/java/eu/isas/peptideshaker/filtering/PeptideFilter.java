@@ -1,22 +1,25 @@
 package eu.isas.peptideshaker.filtering;
 
-import com.compomics.util.Util;
+import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.filtering.Filter;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
-import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
+import com.compomics.util.protein.Header;
+import eu.isas.peptideshaker.filtering.items.PeptideFilterItem;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
+import org.apache.commons.math.MathException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -31,74 +34,13 @@ public class PeptideFilter extends MatchFilter {
      * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = 959658989341486818L;
+
     /**
-     * A protein regex.
+     * Constructor.
      */
-    private String protein = null;
-    /**
-     * Sequence regex.
-     */
-    private String sequence = null;
-    /**
-     * The compiled protein pattern.
-     */
-    private Pattern proteinPattern = null;
-    /**
-     * The compiled peptide sequence pattern.
-     */
-    private Pattern sequencePattern = null;
-    /**
-     * Number of spectra limit.
-     */
-    private Integer nSpectra = null;
-    /**
-     * The type of comparison to be used for the number of spectra.
-     */
-    private ComparisonType nSpectraComparison = ComparisonType.EQUAL;
-    /**
-     * Number of validated spectra limit.
-     */
-    private Integer nValidatedSpectra = null;
-    /**
-     * The type of comparison to be used for the number of validated spectra.
-     */
-    private ComparisonType nValidatedSpectraComparison = ComparisonType.EQUAL;
-    /**
-     * Number of confident spectra limit.
-     */
-    private Integer nConfidentSpectra = null;
-    /**
-     * The type of comparison to be used for the number of confident spectra.
-     */
-    private ComparisonType nConfidentSpectraComparison = ComparisonType.EQUAL;
-    /**
-     * Score limit.
-     */
-    private Double peptideScore = null;
-    /**
-     * The type of comparison to be used for the peptide score.
-     */
-    private ComparisonType peptideScoreComparison = ComparisonType.EQUAL;
-    /**
-     * Confidence limit.
-     */
-    private Double peptideConfidence = null;
-    /**
-     * The type of comparison to be used for the peptide confidence.
-     */
-    private ComparisonType peptideConfidenceComparison = ComparisonType.EQUAL;
-    /**
-     * The current protein inference filter selection.
-     */
-    private int pi = 5;
-    /**
-     * The type of comparison to be used for the PI.
-     */
-    private ComparisonType piComparison = ComparisonType.EQUAL;
-    /**
-     * The list of modifications allowed for the peptide.
-     */
-    private ArrayList<String> modificationStatus = null;
+    public PeptideFilter() {
+        this.filterType = FilterType.PEPTIDE;
+    }
 
     /**
      * Constructor.
@@ -127,7 +69,8 @@ public class PeptideFilter extends MatchFilter {
      *
      * @param name the name of the filter
      * @param description the description of the filter
-     * @param condition a description of the condition to be met to pass the filter
+     * @param condition a description of the condition to be met to pass the
+     * filter
      * @param reportPassed a report for when the filter is passed
      * @param reportFailed a report for when the filter is not passed
      */
@@ -140,707 +83,258 @@ public class PeptideFilter extends MatchFilter {
         this.filterType = FilterType.PEPTIDE;
     }
 
-    /**
-     * Returns the threshold for the peptide confidence.
-     *
-     * @return the threshold for the peptide confidence
-     */
-    public Double getPeptideConfidence() {
-        return peptideConfidence;
+    @Override
+    protected MatchFilter getNew() {
+        return new ProteinFilter();
     }
 
-    /**
-     * Sets the threshold for the peptide confidence.
-     *
-     * @param peptideConfidence the threshold for the peptide confidence
-     */
-    public void setPeptideConfidence(Double peptideConfidence) {
-        this.peptideConfidence = peptideConfidence;
-    }
+    @Override
+    public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
-    /**
-     * Returns the threshold for the number of spectra.
-     *
-     * @return the threshold for the number of spectra
-     */
-    public Integer getNSpectra() {
-        return nSpectra;
-    }
-
-    /**
-     * Sets the threshold for the number of spectra.
-     *
-     * @param nSpectra the threshold for the number of spectra
-     */
-    public void setNSpectra(Integer nSpectra) {
-        this.nSpectra = nSpectra;
-    }
-
-    /**
-     * Returns the threshold for the number of validated spectra.
-     *
-     * @return the threshold for the number of validated spectra
-     */
-    public Integer getNValidatedSpectra() {
-        return nValidatedSpectra;
-    }
-
-    /**
-     * Sets the threshold for the number of validated spectra.
-     *
-     * @param nValidatedSpectra the threshold for the number of validated
-     * spectra
-     */
-    public void setNValidatedSpectra(Integer nValidatedSpectra) {
-        this.nValidatedSpectra = nValidatedSpectra;
-    }
-
-    /**
-     * Returns the threshold for the number of confident spectra.
-     *
-     * @return the threshold for the number of confident spectra
-     */
-    public Integer getNConfidentSpectra() {
-        return nConfidentSpectra;
-    }
-
-    /**
-     * Sets the threshold for the number of confident spectra.
-     *
-     * @param nConfidentSpectra the threshold for the number of confident
-     * spectra
-     */
-    public void setNConfidentSpectra(Integer nConfidentSpectra) {
-        this.nConfidentSpectra = nConfidentSpectra;
-    }
-
-    /**
-     * Returns the threshold for the peptide score
-     *
-     * @return the threshold for the peptide score
-     */
-    public Double getPeptideScore() {
-        return peptideScore;
-    }
-
-    /**
-     * Sets the threshold for the peptide score.
-     *
-     * @param peptideScore the threshold for the peptide score
-     */
-    public void setPeptideScore(Double peptideScore) {
-        this.peptideScore = peptideScore;
-    }
-
-    /**
-     * Returns the comparison type used for the number of spectra.
-     *
-     * @return the comparison type used for the number of spectra
-     */
-    public ComparisonType getnSpectraComparison() {
-        return nSpectraComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the number of spectra.
-     *
-     * @param nSpectraComparison the comparison type used for the number of
-     * spectra
-     */
-    public void setnSpectraComparison(ComparisonType nSpectraComparison) {
-        this.nSpectraComparison = nSpectraComparison;
-    }
-
-    /**
-     * Returns the comparison type used for the number of validated spectra.
-     *
-     * @return the comparison type used for the number of validated spectra
-     */
-    public ComparisonType getnValidatedSpectraComparison() {
-        return nValidatedSpectraComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the number of validated spectra.
-     *
-     * @param nValidatedSpectraComparison the comparison type used for the
-     * number of validated spectra
-     */
-    public void setnValidatedSpectraComparison(ComparisonType nValidatedSpectraComparison) {
-        this.nValidatedSpectraComparison = nValidatedSpectraComparison;
-    }
-
-    /**
-     * Returns the comparison type used for the number of confident spectra.
-     *
-     * @return the comparison type used for the number of confident spectra
-     */
-    public ComparisonType getnConfidentSpectraComparison() {
-        return nConfidentSpectraComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the number of confident spectra.
-     *
-     * @param nConfidentSpectraComparison the comparison type used for the
-     * number of confident spectra
-     */
-    public void setnConfidentSpectraComparison(ComparisonType nConfidentSpectraComparison) {
-        this.nConfidentSpectraComparison = nConfidentSpectraComparison;
-    }
-
-    /**
-     * Returns the protein inference desired.
-     *
-     * @return the protein inference desired
-     */
-    public int getPi() {
-        return pi;
-    }
-
-    /**
-     * Sets the protein inference desired.
-     *
-     * @param pi the protein inference desired
-     */
-    public void setPi(Integer pi) {
-        this.pi = pi;
-    }
-
-    /**
-     * Returns the comparison type used for the confidence.
-     *
-     * @return the comparison type used for the confidence
-     */
-    public ComparisonType getPeptideConfidenceComparison() {
-        return peptideConfidenceComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the confidence.
-     *
-     * @param peptideConfidenceComparison the comparison type used for the
-     * confidence
-     */
-    public void setPeptideConfidenceComparison(ComparisonType peptideConfidenceComparison) {
-        this.peptideConfidenceComparison = peptideConfidenceComparison;
-    }
-
-    /**
-     * Returns the comparison type used for the peptide score.
-     *
-     * @return the comparison type used for the peptide score
-     */
-    public ComparisonType getPeptideScoreComparison() {
-        return peptideScoreComparison;
-    }
-
-    /**
-     * Sets the comparison type used for the peptide score.
-     *
-     * @param peptideScoreComparison the comparison type used for the peptide
-     * score
-     */
-    public void setPeptideScoreComparison(ComparisonType peptideScoreComparison) {
-        this.peptideScoreComparison = peptideScoreComparison;
-    }
-
-    /**
-     * Returns the modifications to retain.
-     *
-     * @return the modifications to retain
-     */
-    public ArrayList<String> getModificationStatus() {
-        return modificationStatus;
-    }
-
-    /**
-     * Sets the modifications to retain.
-     *
-     * @param modificationStatus the modifications to retain
-     */
-    public void setModificationStatus(ArrayList<String> modificationStatus) {
-        this.modificationStatus = modificationStatus;
-    }
-
-    /**
-     * Returns a regular exception to be searched in protein which contain the
-     * peptide sequence.
-     *
-     * @return a regular exception to be searched in protein which contain the
-     * peptide sequence
-     */
-    public String getProtein() {
-        return protein;
-    }
-
-    /**
-     * Sets a regular exception to be searched in protein which contain the
-     * peptide sequence.
-     *
-     * @param protein a regular exception to be searched in protein which
-     * contain the peptide sequence
-     */
-    public void setProtein(String protein) {
-        this.protein = protein;
-        this.proteinPattern = Pattern.compile("(.*?)" + protein + "(.*?)");
-    }
-
-    /**
-     * Returns a regex to be found in the sequence.
-     *
-     * @return a regex to be found in the sequence
-     */
-    public String getSequence() {
-        return sequence;
-    }
-
-    /**
-     * Sets a regex to be found in the sequence.
-     *
-     * @param sequence a regex to be found in the sequence
-     */
-    public void setSequence(String sequence) {
-        this.sequence = sequence;
-        this.sequencePattern = Pattern.compile("(.*?)" + sequence + "(.*?)");
-    }
-
-    /**
-     * Returns the comparison type to use for the PI.
-     *
-     * @return the comparison type to use for the PI
-     */
-    public ComparisonType getPiComparison() {
-        return piComparison;
-    }
-
-    /**
-     * Sets the comparison type to use for the PI.
-     *
-     * @param piComparison the comparison type to use for the PI
-     */
-    public void setPiComparison(ComparisonType piComparison) {
-        this.piComparison = piComparison;
-    }
-
-    /**
-     * Returns the compiled protein pattern. Null if no pattern is set.
-     *
-     * @return the compiled protein pattern
-     */
-    public Pattern getProteinPattern() {
-        if (protein != null) {
-            if (proteinPattern != null) {
-                return proteinPattern;
-            }
+        PeptideFilterItem filterItem = PeptideFilterItem.getItem(itemName);
+        if (filterItem == null) {
+            throw new IllegalArgumentException("Filter item " + itemName + "not recognized as peptide filter item.");
         }
-        return null;
-    }
-
-    /**
-     * Returns the compiled peptide sequence pattern. Null if no pattern is set.
-     *
-     * @return the compiled peptide sequence pattern
-     */
-    public Pattern getSequencePattern() {
-        if (sequence != null) {
-            if (sequencePattern != null) {
-                return sequencePattern;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Tests whether a peptide match is validated by this filter.
-     *
-     * @param peptideKey the key of the peptide match
-     * @param identification the identification where to get the information
-     * from
-     * @param identificationFeaturesGenerator the identification features
-     * generator which will provide information about the peptide match
-     *
-     * @return a boolean indicating whether a peptide match is validated by a
-     * given filter
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    public boolean isValidated(String peptideKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) 
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return isValidated(peptideKey, this, identification, identificationFeaturesGenerator);
-    }
-
-    /**
-     * Tests whether a peptide match is validated by a given filter.
-     *
-     * @param peptideMatchKey the key of the peptide match
-     * @param peptideFilter the filter
-     * @param identification the identification where to get the information
-     * from
-     * @param identificationFeaturesGenerator the identification features
-     * generator which will provide information about the peptide match
-     *
-     * @return a boolean indicating whether a peptide match is validated by a
-     * given filter
-     *
-     * @throws IOException thrown if an IOException occurs
-     * @throws SQLException thrown if an SQLException occurs
-     * @throws InterruptedException thrown if an InterruptedException occurs
-     * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
-     */
-    public static boolean isValidated(String peptideMatchKey, PeptideFilter peptideFilter, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator) 
-            throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-
-        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-
-        if (peptideFilter.getExceptions().contains(peptideMatchKey)) {
-            return false;
-        }
-
-        if (peptideFilter.getManualValidation().size() > 0) {
-            return peptideFilter.getManualValidation().contains(peptideMatchKey);
-        }
-
-        if (peptideFilter.getModificationStatus() != null) {
-            boolean found = false;
-            for (String ptm : peptideFilter.getModificationStatus()) {
-                if (ptm.equals(PtmPanel.NO_MODIFICATION)) {
-                    if (!Peptide.isModified(peptideMatchKey)) {
-                        found = true;
-                        break;
-                    }
+        String input = value.toString();
+        switch (filterItem) {
+            case proteinAccession:
+                PeptideMatch peptideMatch = identification.getPeptideMatch(matchKey);
+                return filterItemComparator.passes(input, peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences()));
+            case proteinDescription:
+                peptideMatch = identification.getPeptideMatch(matchKey);
+                ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences());
+                ArrayList<String> descriptions = new ArrayList<String>();
+                for (String accession : accessions) {
+                    Header proteinHeader = SequenceFactory.getInstance().getHeader(accession);
+                    descriptions.add(proteinHeader.getDescription());
+                }
+                return filterItemComparator.passes(input, descriptions);
+            case sequence:
+                return filterItemComparator.passes(input, Peptide.getSequence(matchKey));
+            case ptm:
+                peptideMatch = identification.getPeptideMatch(matchKey);
+                ArrayList<String> ptms;
+                PSPtmScores psPtmScores = new PSPtmScores();
+                psPtmScores = (PSPtmScores) peptideMatch.getUrParam(psPtmScores);
+                if (psPtmScores != null) {
+                    ptms = psPtmScores.getScoredPTMs();
                 } else {
-                    if (Peptide.isModified(peptideMatchKey, ptm)) {
-                        found = true;
-                        break;
-                    }
+                    ptms = new ArrayList<String>(0);
                 }
-            }
-            if (!found) {
-                return false;
-            }
+                return filterItemComparator.passes(input, ptms);
+            case nPSMs:
+                peptideMatch = identification.getPeptideMatch(matchKey);
+                Integer nPsms = peptideMatch.getSpectrumCount();
+                return filterItemComparator.passes(input, nPsms.toString());
+            case nValidatedPSMs:
+                nPsms = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(matchKey);
+                return filterItemComparator.passes(input, nPsms.toString());
+            case nConfidentPSMs:
+                nPsms = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(matchKey);
+                return filterItemComparator.passes(input, nPsms.toString());
+            case confidence:
+                PSParameter psParameter = new PSParameter();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                Double confidence = psParameter.getProteinConfidence();
+                return filterItemComparator.passes(input, confidence.toString());
+            case proteinInference:
+                psParameter = new PSParameter();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                Integer pi = psParameter.getProteinInferenceClass();
+                return filterItemComparator.passes(input, pi.toString());
+            case validationStatus:
+                psParameter = new PSParameter();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                Integer validation = psParameter.getMatchValidationLevel().getIndex();
+                return filterItemComparator.passes(input, validation.toString());
+            case stared:
+                psParameter = new PSParameter();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(matchKey, psParameter);
+                String starred;
+                if (psParameter.isStarred()) {
+                    starred = FilterItemComparator.trueFalse[0];
+                } else {
+                    starred = FilterItemComparator.trueFalse[1];
+                }
+                return filterItemComparator.passes(input, starred);
+            default:
+                throw new IllegalArgumentException("Protein filter not implemented for item " + filterItem.name + ".");
         }
-
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideMatchKey, psParameter);
-        
-        if (peptideFilter.getValidationLevel() != null) {
-            if (peptideFilter.getValidationComparison()== ComparisonType.AFTER) {
-                if (psParameter.getMatchValidationLevel().getIndex() <= peptideFilter.getValidationLevel()) {
-                    return false;
-                }
-            } else if (peptideFilter.getValidationComparison() == ComparisonType.BEFORE) {
-                if (psParameter.getMatchValidationLevel().getIndex() > peptideFilter.getValidationLevel()) {
-                    return false;
-                }
-            } else if (peptideFilter.getValidationComparison() == ComparisonType.EQUAL) {
-                if (psParameter.getMatchValidationLevel().getIndex() != peptideFilter.getValidationLevel()) {
-                    return false;
-                }
-            } else if (peptideFilter.getValidationComparison() == ComparisonType.NOT_EQUAL) {
-                if (psParameter.getMatchValidationLevel().getIndex() == peptideFilter.getValidationLevel()) {
-                    return false;
-                }
-            }
-        }
-
-        if (peptideFilter.getPi() != 5) {
-            if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
-                    && psParameter.getProteinInferenceClass() == peptideFilter.getPi()) {
-                return false;
-            } else if (peptideFilter.getPiComparison() == ComparisonType.EQUAL
-                    && psParameter.getProteinInferenceClass() != peptideFilter.getPi()) {
-                return false;
-            }
-        }
-
-        if (peptideFilter.getPeptideScore() != null) {
-            if (peptideFilter.getPeptideScoreComparison() == ComparisonType.AFTER) {
-                if (psParameter.getPeptideScore() <= peptideFilter.getPeptideScore()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BEFORE) {
-                if (psParameter.getPeptideScore() > peptideFilter.getPeptideScore()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.EQUAL) {
-                if (psParameter.getPeptideScore() != peptideFilter.getPeptideScore()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.NOT_EQUAL) {
-                if (psParameter.getPeptideScore() == peptideFilter.getPeptideScore()) {
-                    return false;
-                }
-            }
-        }
-
-        if (peptideFilter.getPeptideConfidence() != null) {
-            if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.AFTER) {
-                if (psParameter.getPeptideConfidence() <= peptideFilter.getPeptideConfidence()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BEFORE) {
-                if (psParameter.getPeptideConfidence() > peptideFilter.getPeptideConfidence()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.EQUAL) {
-                if (psParameter.getPeptideConfidence() != peptideFilter.getPeptideConfidence()) {
-                    return false;
-                }
-            } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.NOT_EQUAL) {
-                if (psParameter.getPeptideConfidence() == peptideFilter.getPeptideConfidence()) {
-                    return false;
-                }
-            }
-        }
-
-        if (peptideFilter.getNSpectra() != null
-                || peptideFilter.getNValidatedSpectra() != null
-                || peptideFilter.getNConfidentSpectra() != null
-                || peptideFilter.getProtein() != null) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
-
-            if (peptideFilter.getNSpectra() != null) {
-                if (peptideFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                    if (peptideMatch.getSpectrumCount() <= peptideFilter.getNSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                    if (peptideMatch.getSpectrumCount() > peptideFilter.getNSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                    if (peptideMatch.getSpectrumCount() != peptideFilter.getNSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (peptideMatch.getSpectrumCount() != peptideFilter.getNSpectra()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (peptideFilter.getNValidatedSpectra() != null) {
-                int nValidatedSpectra = identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideMatchKey);
-                if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.AFTER) {
-                    if (nValidatedSpectra <= peptideFilter.getNValidatedSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.BEFORE) {
-                    if (nValidatedSpectra > peptideFilter.getNValidatedSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.EQUAL) {
-                    if (nValidatedSpectra != peptideFilter.getNValidatedSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnValidatedSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (nValidatedSpectra != peptideFilter.getNValidatedSpectra()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (peptideFilter.getNConfidentSpectra() != null) {
-                int nConfidentPeptides = identificationFeaturesGenerator.getNConfidentSpectraForPeptide(peptideMatchKey);
-                if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.AFTER) {
-                    if (nConfidentPeptides <= peptideFilter.getNConfidentSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.BEFORE) {
-                    if (nConfidentPeptides > peptideFilter.getNConfidentSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.EQUAL) {
-                    if (nConfidentPeptides != peptideFilter.getNConfidentSpectra()) {
-                        return false;
-                    }
-                } else if (peptideFilter.getnConfidentSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                    if (nConfidentPeptides != peptideFilter.getNConfidentSpectra()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (peptideFilter.getProtein() != null) {
-                 boolean found = false;
-                for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
-                    if (accession.split(peptideFilter.getProtein()).length > 1) {
-                        found = true;
-                        break;
-                    }
-                    if (sequenceFactory.getHeader(accession).getSimpleProteinDescription() != null
-                            && sequenceFactory.getHeader(accession).getSimpleProteinDescription().split(peptideFilter.getProtein()).length > 1) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    return false;
-                }
-            }
-        }
-
-        // sequence pattern
-        if (peptideFilter.getSequence() != null && peptideFilter.getSequence().trim().length() > 0) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
-            String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-            Matcher m;
-            if (peptideFilter.getSequencePattern() != null) {
-                m = peptideFilter.getSequencePattern().matcher(peptideSequence);
-            } else {
-                Pattern p = Pattern.compile("(.*?)" + peptideFilter.getSequence() + "(.*?)");
-                m = p.matcher(peptideSequence);
-            }
-            if (!m.matches()) {
-                return false;
-            }
-        }
-
-        // protein pattern
-        if (peptideFilter.getProtein() != null && peptideFilter.getProtein().trim().length() > 0) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
-            String accessions = "";
-            for (String accession : peptideMatch.getTheoreticPeptide().getParentProteinsNoRemapping()) {
-                accessions += accession + " ";
-            }
-            Matcher m;
-            if (peptideFilter.getProteinPattern() != null) {
-                m = peptideFilter.getProteinPattern().matcher(accessions);
-            } else {
-                Pattern p = Pattern.compile("(.*?)" + peptideFilter.getProtein() + "(.*?)");
-                m = p.matcher(accessions);
-            }
-            if (!m.matches()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean isValidated(String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException {
-        return isValidated(matchKey, identification, identificationFeaturesGenerator);
-    }
-
-    @Override
-    public MatchFilter clone() {
-        PeptideFilter peptideFilter = new PeptideFilter(name, description, condition, reportPassed, reportFailed);
-        peptideFilter.setActive(isActive());
-        peptideFilter.setProtein(getProtein());
-        peptideFilter.setSequence(getSequence());
-        peptideFilter.setNSpectra(getNSpectra());
-        peptideFilter.setnSpectraComparison(getnSpectraComparison());
-        peptideFilter.setNValidatedSpectra(getNValidatedSpectra());
-        peptideFilter.setnValidatedSpectraComparison(getnValidatedSpectraComparison());
-        peptideFilter.setNConfidentSpectra(getNConfidentSpectra());
-        peptideFilter.setnConfidentSpectraComparison(getnConfidentSpectraComparison());
-        peptideFilter.setPeptideScore(getPeptideScore());
-        peptideFilter.setPeptideScoreComparison(getPeptideScoreComparison());
-        peptideFilter.setPeptideConfidence(getPeptideConfidence());
-        peptideFilter.setPeptideConfidenceComparison(getPeptideConfidenceComparison());
-        peptideFilter.setPi(getPi());
-        peptideFilter.setPiComparison(getPiComparison());
-        peptideFilter.setModificationStatus(getModificationStatus());
-        return peptideFilter;
     }
 
     /**
-     * Indicates whether another filter is the same as the current filter.
-     * 
-     * @param anotherFilter another filter
-     * 
-     * @return a boolean indicating whether another filter is the same as the current filter
+     * Checks whether it is an old filter using the deprecated code below and
+     * converts it to the new structure
      */
-    public boolean isSameAs(PeptideFilter anotherFilter) {
-        if (!name.equals(anotherFilter.getName())) {
-            return false;
+    public void backwardCompatibilityCheck() {
+        if (protein != null) {
+            setFilterItem(PeptideFilterItem.proteinAccession.name, FilterItemComparator.matches, protein);
+            protein = null;
         }
-        if (!description.equals(anotherFilter.getDescription())) {
-            return false;
+        if (sequence != null) {
+            setFilterItem(PeptideFilterItem.proteinAccession.name, FilterItemComparator.matches, sequence);
+            sequence = null;
         }
-        if (!condition.equals(anotherFilter.getCondition())) {
-            return false;
+        if (proteinPattern != null) {
+            setFilterItem(PeptideFilterItem.sequence.name, FilterItemComparator.matches, proteinPattern);
+            proteinPattern = null;
         }
-        if (!reportPassed.equals(anotherFilter.getReport(true))) {
-            return false;
+        if (sequencePattern != null) {
+            setFilterItem(PeptideFilterItem.sequence.name, FilterItemComparator.matches, sequencePattern);
+            sequencePattern = null;
         }
-        if (!reportFailed.equals(anotherFilter.getReport(false))) {
-            return false;
+        if (nSpectra != null) {
+            if (nSpectraComparison == ComparisonType.BEFORE) {
+                setFilterItem(PeptideFilterItem.nPSMs.name, FilterItemComparator.lower, nSpectra);
+            } else if (nSpectraComparison == ComparisonType.AFTER) {
+                setFilterItem(PeptideFilterItem.nPSMs.name, FilterItemComparator.higher, nSpectra);
+            } else if (nSpectraComparison == ComparisonType.EQUAL) {
+                setFilterItem(PeptideFilterItem.nPSMs.name, FilterItemComparator.equal, nSpectra);
+            }
+            nSpectra = null;
         }
-        if (isActive() != anotherFilter.isActive()) {
-            return false;
+        if (nValidatedSpectra != null) {
+            if (nValidatedSpectraComparison == ComparisonType.BEFORE) {
+                setFilterItem(PeptideFilterItem.nValidatedPSMs.name, FilterItemComparator.lower, nValidatedSpectra);
+            } else if (nValidatedSpectraComparison == ComparisonType.AFTER) {
+                setFilterItem(PeptideFilterItem.nValidatedPSMs.name, FilterItemComparator.higher, nValidatedSpectra);
+            } else if (nValidatedSpectraComparison == ComparisonType.EQUAL) {
+                setFilterItem(PeptideFilterItem.nValidatedPSMs.name, FilterItemComparator.equal, nValidatedSpectra);
+            }
+            nValidatedSpectra = null;
         }
-        if (getProtein() == null && anotherFilter.getProtein() != null
-                || getProtein() != null && !getProtein().equals(anotherFilter.getProtein())) {
-            return false;
+        if (nConfidentSpectra != null) {
+            if (nConfidentSpectraComparison == ComparisonType.BEFORE) {
+                setFilterItem(PeptideFilterItem.nConfidentPSMs.name, FilterItemComparator.lower, nConfidentSpectra);
+            } else if (nConfidentSpectraComparison == ComparisonType.AFTER) {
+                setFilterItem(PeptideFilterItem.nConfidentPSMs.name, FilterItemComparator.higher, nConfidentSpectra);
+            } else if (nConfidentSpectraComparison == ComparisonType.EQUAL) {
+                setFilterItem(PeptideFilterItem.nConfidentPSMs.name, FilterItemComparator.equal, nConfidentSpectra);
+            }
+            nConfidentSpectra = null;
         }
-        if (getSequence() == null && anotherFilter.getSequence() != null
-                || getSequence() != null && !getSequence().equals(anotherFilter.getSequence())) {
-            return false;
+        if (peptideConfidence != null) {
+            if (peptideConfidenceComparison == ComparisonType.BEFORE) {
+                setFilterItem(PeptideFilterItem.confidence.name, FilterItemComparator.lower, peptideConfidence);
+            } else if (peptideConfidenceComparison == ComparisonType.AFTER) {
+                setFilterItem(PeptideFilterItem.confidence.name, FilterItemComparator.higher, peptideConfidence);
+            } else if (peptideConfidenceComparison == ComparisonType.EQUAL) {
+                setFilterItem(PeptideFilterItem.confidence.name, FilterItemComparator.equal, peptideConfidence);
+            }
+            peptideConfidence = null;
         }
-        if (getNSpectra() == null && anotherFilter.getNSpectra() != null
-                || getNSpectra() != null && !getNSpectra().equals(anotherFilter.getNSpectra())) {
-            return false;
+        if (pi != 5) {
+            if (piComparison == ComparisonType.BEFORE) {
+                setFilterItem(PeptideFilterItem.proteinInference.name, FilterItemComparator.lower, pi);
+            } else if (piComparison == ComparisonType.AFTER) {
+                setFilterItem(PeptideFilterItem.proteinInference.name, FilterItemComparator.higher, pi);
+            } else if (piComparison == ComparisonType.EQUAL) {
+                setFilterItem(PeptideFilterItem.proteinInference.name, FilterItemComparator.equal, pi);
+            }
         }
-        if (!getnSpectraComparison().equals(anotherFilter.getnSpectraComparison())) {
-            return false;
-        }
-        if (getNValidatedSpectra() == null && anotherFilter.getNValidatedSpectra() != null
-                || getNValidatedSpectra() != null && !getNValidatedSpectra().equals(anotherFilter.getNValidatedSpectra())) {
-            return false;
-        }
-        if (!getnValidatedSpectraComparison().equals(anotherFilter.getnValidatedSpectraComparison())) {
-            return false;
-        }
-        if (getNConfidentSpectra() == null && anotherFilter.getNConfidentSpectra() != null
-                || getNConfidentSpectra() != null && !getNConfidentSpectra().equals(anotherFilter.getNConfidentSpectra())) {
-            return false;
-        }
-        if (!getnConfidentSpectraComparison().equals(anotherFilter.getnConfidentSpectraComparison())) {
-            return false;
-        }
-        if (getPeptideScore() == null && anotherFilter.getPeptideScore() != null
-                || getPeptideScore() != null && !getPeptideScore().equals(anotherFilter.getPeptideScore())) {
-            return false;
-        }
-        if (!getPeptideScoreComparison().equals(anotherFilter.getPeptideScoreComparison())) {
-            return false;
-        }
-        if (getPeptideConfidence() == null && anotherFilter.getPeptideConfidence() != null
-                || getPeptideConfidence() != null && !getPeptideConfidence().equals(anotherFilter.getPeptideConfidence())) {
-            return false;
-        }
-        if (!getPeptideConfidenceComparison().equals(anotherFilter.getPeptideConfidenceComparison())) {
-            return false;
-        }
-        if (getPi()!= anotherFilter.getPi()) {
-            return false;
-        }
-        if (!getPiComparison().equals(anotherFilter.getPiComparison())) {
-            return false;
-        }
-        if (getModificationStatus() == null && anotherFilter.getModificationStatus() != null
-                || getModificationStatus() != null && anotherFilter.getModificationStatus() == null
-                || getModificationStatus() != null && anotherFilter.getModificationStatus() != null
-                && !Util.sameLists(getModificationStatus(), anotherFilter.getModificationStatus())) {
-            return false;
-        }
-        
-        
-        return true;
     }
 
-    @Override
-    public boolean isSameAs(Filter anotherFilter) {
-        if (anotherFilter instanceof PeptideFilter) {
-            return isSameAs((PeptideFilter) anotherFilter);
-        }
-        return false;
-    }
+    /**
+     * A protein regex.
+     *
+     * @deprecated use the filter items instead
+     */
+    private String protein = null;
+    /**
+     * Sequence regex.
+     *
+     * @deprecated use the filter items instead
+     */
+    private String sequence = null;
+    /**
+     * The compiled protein pattern.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Pattern proteinPattern = null;
+    /**
+     * The compiled peptide sequence pattern.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Pattern sequencePattern = null;
+    /**
+     * Number of spectra limit.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Integer nSpectra = null;
+    /**
+     * The type of comparison to be used for the number of spectra.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType nSpectraComparison = ComparisonType.EQUAL;
+    /**
+     * Number of validated spectra limit.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Integer nValidatedSpectra = null;
+    /**
+     * The type of comparison to be used for the number of validated spectra.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType nValidatedSpectraComparison = ComparisonType.EQUAL;
+    /**
+     * Number of confident spectra limit.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Integer nConfidentSpectra = null;
+    /**
+     * The type of comparison to be used for the number of confident spectra.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType nConfidentSpectraComparison = ComparisonType.EQUAL;
+    /**
+     * Score limit.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Double peptideScore = null;
+    /**
+     * The type of comparison to be used for the peptide score.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType peptideScoreComparison = ComparisonType.EQUAL;
+    /**
+     * Confidence limit.
+     *
+     * @deprecated use the filter items instead
+     */
+    private Double peptideConfidence = null;
+    /**
+     * The type of comparison to be used for the peptide confidence.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType peptideConfidenceComparison = ComparisonType.EQUAL;
+    /**
+     * The current protein inference filter selection.
+     *
+     * @deprecated use the filter items instead
+     */
+    private int pi = 5;
+    /**
+     * The type of comparison to be used for the PI.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ComparisonType piComparison = ComparisonType.EQUAL;
+    /**
+     * The list of modifications allowed for the peptide.
+     *
+     * @deprecated use the filter items instead
+     */
+    private ArrayList<String> modificationStatus = null;
 }

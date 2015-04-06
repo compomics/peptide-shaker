@@ -78,6 +78,8 @@ public class PSParameter implements UrParameter {
     private Boolean manualValidation = false;
     /**
      * The reason why a match is flagged as doubtful.
+     * 
+     * @deprecated use the filter report instead.
      */
     private String reasonDoubtful = null;
     /**
@@ -136,35 +138,35 @@ public class PSParameter implements UrParameter {
     /**
      * The fraction confidence map.
      */
-    private HashMap<String, Double> fractionPEP = new HashMap<String, Double>();
+    private HashMap<String, Double> fractionPEP = null;
     /**
      * The fraction confidence map.
      */
-    private HashMap<String, Double> fractionScore = new HashMap<String, Double>();
+    private HashMap<String, Double> fractionScore = null;
     /**
      * The number of validated peptides per fraction.
      */
-    private HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
+    private HashMap<String, Integer> validatedPeptidesPerFraction = null;
     /**
      * The number of validated spectra per fraction.
      */
-    private HashMap<String, Integer> validatedSpectraPerFraction = new HashMap<String, Integer>();
+    private HashMap<String, Integer> validatedSpectraPerFraction = null;
     /**
      * The precursor intensity per fraction.
      */
-    private HashMap<String, ArrayList<Double>> precursorIntensityPerFraction = new HashMap<String, ArrayList<Double>>();
+    private HashMap<String, ArrayList<Double>> precursorIntensityPerFraction = null;
     /**
      * The average precursor intensity per fraction.
      */
-    private HashMap<String, Double> precursorIntensityAveragePerFraction = new HashMap<String, Double>();
+    private HashMap<String, Double> precursorIntensityAveragePerFraction = null;
     /**
      * The summed precursor intensity per fraction.
      */
-    private HashMap<String, Double> precursorIntensitySummedPerFraction = new HashMap<String, Double>();
+    private HashMap<String, Double> precursorIntensitySummedPerFraction = null;
     /**
      * The results of the validation quality filters.
      */
-    private HashMap<String, Boolean> qcFilters = new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> qcFilters = null;
     /**
      * Map of the intermediate scores. Score index &gt; value
      */
@@ -646,7 +648,10 @@ public class PSParameter implements UrParameter {
      * @param fraction the fraction
      * @param confidence the confidence
      */
-    public void setFractionScore(String fraction, double confidence) {
+    public void setFractionScore(String fraction, Double confidence) {
+        if (fractionScore == null) {
+            fractionScore = new HashMap<String, Double>(2);
+        }
         fractionScore.put(fraction, confidence);
     }
 
@@ -656,7 +661,10 @@ public class PSParameter implements UrParameter {
      * @param fraction the fraction
      * @return the fraction score
      */
-    public double getFractionScore(String fraction) {
+    public Double getFractionScore(String fraction) {
+        if (fractionScore == null) {
+            return null;
+        }
         return fractionScore.get(fraction);
     }
 
@@ -679,7 +687,10 @@ public class PSParameter implements UrParameter {
      * @param fraction the fraction
      * @param confidence the confidence
      */
-    public void setFractionPEP(String fraction, double confidence) {
+    public void setFractionPEP(String fraction, Double confidence) {
+        if (fractionPEP == null) {
+            fractionPEP = new HashMap<String, Double>(2);
+        }
         fractionPEP.put(fraction, confidence);
     }
 
@@ -689,7 +700,10 @@ public class PSParameter implements UrParameter {
      * @param fraction the fraction
      * @return the fraction pep
      */
-    public double getFractionPEP(String fraction) {
+    public Double getFractionPEP(String fraction) {
+        if (fractionPEP == null) {
+            return null;
+        }
         return fractionPEP.get(fraction);
     }
 
@@ -699,7 +713,10 @@ public class PSParameter implements UrParameter {
      * @param fraction the fraction
      * @return the fraction confidence
      */
-    public double getFractionConfidence(String fraction) {
+    public Double getFractionConfidence(String fraction) {
+        if (fractionPEP == null || fractionPEP.get(fraction) == null) {
+            return null;
+        }
         return 100 * (1 - fractionPEP.get(fraction));
     }
 
@@ -781,10 +798,13 @@ public class PSParameter implements UrParameter {
                 sum += intensity;
             }
 
-            if (precursorIntensitySummedPerFraction != null) {
+            if (precursorIntensitySummedPerFraction != null) { //@TODO: is always null?
                 precursorIntensitySummedPerFraction.put(fraction, sum);
             }
 
+            if (precursorIntensityAveragePerFraction == null) {
+                precursorIntensityAveragePerFraction = new HashMap<String, Double>(2);
+            }
             if (sum > 0) {
                 precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
             } else {

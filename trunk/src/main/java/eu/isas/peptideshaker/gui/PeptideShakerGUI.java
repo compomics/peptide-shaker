@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import eu.isas.peptideshaker.gui.filtering.FiltersDialog;
 import com.compomics.util.gui.error_handlers.notification.NotificationDialogParent;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
@@ -84,14 +85,13 @@ import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
 import eu.isas.peptideshaker.export.ProjectExport;
+import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.exportdialogs.MethodsSectionDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.MzIdentMLExportDialog;
-import eu.isas.peptideshaker.gui.filtering.PeptideFilterDialog;
-import eu.isas.peptideshaker.gui.filtering.ProteinFilterDialog;
-import eu.isas.peptideshaker.gui.filtering.PsmFilterDialog;
+import eu.isas.peptideshaker.gui.filtering.FilterDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences;
 import eu.isas.peptideshaker.preferences.PeptideShakerPathPreferences.PeptideShakerPathKey;
@@ -1508,7 +1508,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         validationQcMenuItem.setMnemonic('V');
         validationQcMenuItem.setText("Validation Filters (beta)");
-        validationQcMenuItem.setEnabled(false);
         validationQcMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 validationQcMenuItemActionPerformed(evt);
@@ -3748,7 +3747,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Returns the spectrum annotator.
+     * Returns the spectrum annotator. Warning: should not be used in different threads.
      *
      * @return the spectrum annotator
      */
@@ -6775,47 +6774,34 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     @Override
     public Filter createPsmFilter() {
-        PsmFilterDialog psmFilterDialog = new PsmFilterDialog(this, getIdentificationParameters(), getIdentification().getOrderedSpectrumFileNames());
-        if (!psmFilterDialog.isCanceled()) {
-            return psmFilterDialog.getFilter();
+        FilterDialog filterDialog = new FilterDialog(this, new PsmFilter());
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
         }
         return null;
-    }
-
-    @Override
-    public void editPsmFilter(Filter filter) {
-        PsmFilter psmFilter = (PsmFilter) filter;
-        new PsmFilterDialog(this, psmFilter, getIdentificationParameters(), getIdentification().getOrderedSpectrumFileNames());
     }
 
     @Override
     public Filter createPeptideFilter() {
-        PeptideFilterDialog peptideFilterDialog = new PeptideFilterDialog(this, getIdentificationParameters());
-        if (!peptideFilterDialog.isCanceled()) {
-            return peptideFilterDialog.getFilter();
+        FilterDialog filterDialog = new FilterDialog(this, new PeptideFilter());
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
         }
         return null;
-    }
-
-    @Override
-    public void editPeptideFilter(Filter filter) {
-        PeptideFilter peptideFilter = (PeptideFilter) filter;
-        new PeptideFilterDialog(this, peptideFilter, getIdentificationParameters());
     }
 
     @Override
     public Filter createProteinFilter() {
-        ProteinFilterDialog proteinFilterDialog = new ProteinFilterDialog(this);
-        if (!proteinFilterDialog.isCanceled()) {
-            return proteinFilterDialog.getFilter();
+        FilterDialog filterDialog = new FilterDialog(this, new ProteinFilter());
+        if (!filterDialog.isCanceled()) {
+            return filterDialog.getFilter();
         }
         return null;
     }
 
     @Override
-    public void editProteinFilter(Filter filter) {
-        ProteinFilter proteinFilter = (ProteinFilter) filter;
-        new ProteinFilterDialog(this, proteinFilter);
+    public void editFilter(Filter filter) {
+        new FilterDialog(this, (MatchFilter) filter);
     }
 
     /**

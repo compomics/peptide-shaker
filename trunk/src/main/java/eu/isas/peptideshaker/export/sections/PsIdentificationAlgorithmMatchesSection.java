@@ -482,7 +482,10 @@ public class PsIdentificationAlgorithmMatchesSection {
                 return precursor.getRt() + "";
             case algorithm_score:
                 int id = peptideAssumption.getAdvocate();
-                double score = peptideAssumption.getScore();
+                Double score = peptideAssumption.getRawScore();
+                if (score == null) {
+                    score = peptideAssumption.getScore();
+                }
                 return Advocate.getAdvocate(id).getName() + " (" + score + ")";
             case sequence:
                 return peptideAssumption.getPeptide().getSequence();

@@ -87,10 +87,9 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         tryptic_protein,
         /**
-         * The number of unique peptides. Stored as a small object. @TODO: do we
-         * need the list of them?
+         * The number of unique peptides. Stored as a small object.
          */
-        unique_peptides
+        unique_peptides;
     }
     /**
      * The number of values kept in memory for small objects.
@@ -206,7 +205,7 @@ public class IdentificationFeaturesCache implements Serializable {
                     }
                 }
                 for (String key : toRemove) {
-                    bigObjectsInCache.remove(key);
+                    smallObjectsInCache.remove(key);
                 }
                 break;
         }

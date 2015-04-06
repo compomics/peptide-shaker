@@ -400,7 +400,7 @@ public class PsPsmSection {
                 }
                 return "";
             case algorithm_score:
-                HashMap<Integer, Double> scoreMap = new HashMap<Integer, Double>();
+                HashMap<Integer, PeptideAssumption> assumptionMap = new HashMap<Integer, PeptideAssumption>();
                 if (spectrumMatch.getBestPeptideAssumption() != null) {
                     HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptionsMap = identification.getAssumptions(spectrumMatch.getKey());
                     for (Integer id : assumptionsMap.keySet()) {
@@ -411,9 +411,9 @@ public class PsPsmSection {
                                     PeptideAssumption peptideAssumption = (PeptideAssumption) spectrumIdentificationAssumption;
                                     if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestPeptideAssumption().getPeptide(), identificationParameters.getSequenceMatchingPreferences())) {
                                         double score = peptideAssumption.getScore();
-                                        Double currentScore = scoreMap.get(id);
-                                        if (currentScore == null || score < currentScore) {
-                                            scoreMap.put(id, score);
+                                        PeptideAssumption currentAssumption = assumptionMap.get(id);
+                                        if (currentAssumption == null || score < currentAssumption.getScore()) {
+                                            assumptionMap.put(id, currentAssumption);
                                         }
                                     }
                                 }
@@ -421,14 +421,19 @@ public class PsPsmSection {
                         }
                     }
                 }
-                ArrayList<Integer> ids = new ArrayList<Integer>(scoreMap.keySet());
+                ArrayList<Integer> ids = new ArrayList<Integer>(assumptionMap.keySet());
                 Collections.sort(ids);
                 StringBuilder result = new StringBuilder();
                 for (int id : ids) {
                     if (result.length() != 0) {
                         result.append(", ");
                     }
-                    result.append(Advocate.getAdvocate(id).getName()).append(" (").append(scoreMap.get(id)).append(")");
+                    PeptideAssumption currentAssumption = assumptionMap.get(id);
+                    Double score = currentAssumption.getRawScore();
+                    if (score == null) {
+                        currentAssumption.getScore();
+                    }
+                    result.append(Advocate.getAdvocate(id).getName()).append(" (").append(score).append(")");
                 }
                 return result.toString();
             case confidence:
