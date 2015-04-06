@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.FileAndFileFilter;
 import com.compomics.util.Util;
-import com.compomics.util.gui.ExportFormatSelectionDialog;
 import com.compomics.util.gui.export.report.ReportEditor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
+import com.compomics.util.math.statistics.Distribution;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -139,7 +140,7 @@ public class Metrics implements Serializable {
      */
     public ArrayList<Integer> getFoundCharges() {
         if (foundCharges.isEmpty()) {
-            // code for backward compatibility, quite uggly I agree...
+            // code for backward compatibility
             foundCharges.add(2);
             foundCharges.add(3);
             foundCharges.add(4);
@@ -604,7 +605,7 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the grouped spectrum keys.
+     * Returns the spectrum keys grouped per peptide. 
      *
      * @return the grouped spectrum keys
      */

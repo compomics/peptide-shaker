@@ -184,8 +184,6 @@ public class TargetDecoyMap implements Serializable {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
-        waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
-
         if (scores == null) {
             estimateScores();
         }

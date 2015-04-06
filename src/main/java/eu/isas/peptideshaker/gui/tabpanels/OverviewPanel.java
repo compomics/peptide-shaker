@@ -1986,9 +1986,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(psmKey, new PSParameter());
                     if (!psParameter.isStarred()) {
-                        peptideShakerGUI.getStarHider().starPsm(psmKey);
+                        peptideShakerGUI.getStarHider().starPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                     } else {
-                        peptideShakerGUI.getStarHider().unStarPsm(psmKey);
+                        peptideShakerGUI.getStarHider().unStarPsm(psmKey, peptideShakerGUI.getSpectrumAnnotator());
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
