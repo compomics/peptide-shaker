@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.38.0 (Coming soon...):*
+
+ * FEATURE IMPROVEMENT: Multithreaded and thus sped up the validation and filtering.
+ * FEATURE IMPROVEMENT: Temporarily disabled the editing of the matches filters.
+
+ * BUG FIX: Corrected a memory leak, thus reducing the memory usage.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.46.12.
+
+----
+
 *Changes in PeptideShaker 0.37.7 (March 26. 2015):*
 
  * FEATURE IMPROVEMENT: Added a simpler way of resetting the spectrum annotation.
