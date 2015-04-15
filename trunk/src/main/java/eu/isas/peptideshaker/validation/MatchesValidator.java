@@ -259,13 +259,13 @@ public class MatchesValidator {
             spectrumKeysMap = metrics.getGroupedSpectrumKeys();
         }
 
-        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-
         // validate the spectrum matches
         if (inputMap != null) {
             inputMap.resetAdvocateContributions();
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
+
+            ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
@@ -332,7 +332,7 @@ public class MatchesValidator {
         }
 
         // validate the peptides
-        pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
+        ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
         ArrayList<PeptideValidatorRunnable> peptideRunnables = new ArrayList<PeptideValidatorRunnable>(processingPreferences.getnThreads());
 
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, parameters, waitingHandler);

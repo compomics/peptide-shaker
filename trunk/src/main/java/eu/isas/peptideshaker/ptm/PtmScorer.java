@@ -45,6 +45,8 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,10 +83,9 @@ public class PtmScorer {
      */
     private PsmPTMMap psmPTMMap;
     /**
-     * The number of decimals to which scores should be floored. Ignored if
-     * null.
+     * The math context to use when performing the PTM localization scoring.
      */
-    public static final Integer ptmScoreScale = 10;
+    public static final MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
 
     /**
      * Constructor.
@@ -224,9 +225,6 @@ public class PtmScorer {
                     }
 
                     double deltaScore = (secondaryP - refP) * 100;
-                    if (ptmScoreScale != null) {
-                        deltaScore = Util.floorDouble(deltaScore, ptmScoreScale);
-                    }
                     ptmScoring.setDeltaScore(modSite, deltaScore);
                 }
 
@@ -304,11 +302,11 @@ public class PtmScorer {
                 HashMap<Integer, Double> scores = null;
                 if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
-                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
+                            scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext.getPrecision());
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(),
-                            sequenceMatchingPreferences, peptideSpectrumAnnotator, ptmScoreScale);
+                            sequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext);
                 }
                 if (scores != null) {
                     // remap to searched PTMs
