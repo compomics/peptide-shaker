@@ -2018,6 +2018,7 @@ public class PtmScorer {
                 }
             } catch (Exception e) {
                 exceptionHandler.catchException(e);
+                waitingHandler.setRunCanceled();
             }
         }
     }

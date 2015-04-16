@@ -312,8 +312,7 @@ public class MatchesValidator {
                 }
             }
 
-//            pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-            pool = Executors.newFixedThreadPool(1);
+            pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
             psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, parameters, false, waitingHandler);
 
