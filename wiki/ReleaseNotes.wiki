@@ -3,14 +3,15 @@
 
 ----
 
-*Changes in PeptideShaker 0.38.0 (Coming soon...):*
+*Changes in PeptideShaker 0.38.0 (April 17. 2015):*
 
- * FEATURE IMPROVEMENT: Multithreaded and thus sped up the validation and filtering.
- * FEATURE IMPROVEMENT: Temporarily disabled the editing of the matches filters.
+ * FEATURE IMPROVEMENT: Multithreaded and thus sped up the validation, filtering and PTM scoring.
 
+ * BUG FIX: Fixed issues in the PhosphoRS scoring.
+ * BUG FIX: Corrected a threading issue in the validation of multiple mgf files.
  * BUG FIX: Corrected a memory leak, thus reducing the memory usage.
 
- * LIBRARY UPDATE: Updated utilities to version 3.46.12.
+ * LIBRARY UPDATE: Updated utilities to version 3.47.1.
 
 ----
 
