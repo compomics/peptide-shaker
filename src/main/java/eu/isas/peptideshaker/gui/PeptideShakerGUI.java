@@ -1508,6 +1508,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
         validationQcMenuItem.setMnemonic('V');
         validationQcMenuItem.setText("Validation Filters (beta)");
+        validationQcMenuItem.setEnabled(false);
         validationQcMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 validationQcMenuItemActionPerformed(evt);
@@ -3397,7 +3398,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
-            starHideJMenuItem.setEnabled(true);
+            //starHideJMenuItem.setEnabled(true);
+            //validationQcMenuItem.setEnabled(true);
+            starHideJMenuItem.setVisible(false);
+            validationQcMenuItem.setVisible(false);
             ionsMenu.setEnabled(true);
             otherMenu.setEnabled(true);
             lossMenu.setEnabled(true);
@@ -4956,7 +4960,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         for (ModificationMatch modMatch : modificationMatches) {
             PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
             for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
-                neutralLosses.put(neutralLoss.name, neutralLoss);
+                if (!neutralLosses.containsKey(neutralLoss.name)) {
+                    neutralLosses.put(neutralLoss.name, neutralLoss);
+                }
             }
         }
 
