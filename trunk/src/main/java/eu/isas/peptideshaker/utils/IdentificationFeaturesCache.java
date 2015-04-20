@@ -24,6 +24,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
         /**
          * The coverable amino acids stored as big object.
+         *
          * @deprecated replaced by coverable_AA_p
          */
         coverable_AA,
@@ -36,7 +37,8 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         AA_coverage,
         /**
-         * The sequence coverage of a given protein using validated peptides stored as small object.
+         * The sequence coverage of a given protein using validated peptides
+         * stored as small object.
          */
         sequence_coverage,
         /**
@@ -161,53 +163,58 @@ public class IdentificationFeaturesCache implements Serializable {
      * The current peptide key.
      */
     private String currentPeptideKey = "";
+    /**
+     * Indicates whether the cache is read only
+     */
+    private boolean readOnly = false;
 
     /**
      * Clears all objects of the given type.
      *
      * @param type the object type
      */
-    public void removeObjects(ObjectType type) {
+    public synchronized void removeObjects(ObjectType type) {
+        if (!readOnly) {
+            String typeKey = getTypeAsString(type);
+            ArrayList<String> toRemove = new ArrayList<String>();
 
-        String typeKey = getTypeAsString(type);
-        ArrayList<String> toRemove = new ArrayList<String>();
-
-        switch (type) {
-            case coverable_AA:
-            case coverable_AA_p:
-            case AA_coverage:
-            case tryptic_protein:
-                bigObjectsCache.remove(type);
-                for (String key : bigObjectsInCache) {
-                    if (key.contains(typeKey)) {
-                        toRemove.add(key);
+            switch (type) {
+                case coverable_AA:
+                case coverable_AA_p:
+                case AA_coverage:
+                case tryptic_protein:
+                    bigObjectsCache.remove(type);
+                    for (String key : bigObjectsInCache) {
+                        if (key.contains(typeKey)) {
+                            toRemove.add(key);
+                        }
                     }
-                }
-                for (String key : toRemove) {
-                    bigObjectsInCache.remove(key);
-                }
-                break;
-            case sequence_coverage:
-            case sequence_validation_coverage:
-            case expected_coverage:
-            case spectrum_counting:
-            case number_of_spectra:
-            case number_of_validated_spectra:
-            case number_of_validated_peptides:
-            case number_of_confident_spectra:
-            case number_of_confident_peptides:
-            case max_psm_mz_for_peptides:
-            case unique_peptides:
-                smallObjectsCache.remove(type);
-                for (String key : smallObjectsInCache) {
-                    if (key.contains(typeKey)) {
-                        toRemove.add(key);
+                    for (String key : toRemove) {
+                        bigObjectsInCache.remove(key);
                     }
-                }
-                for (String key : toRemove) {
-                    smallObjectsInCache.remove(key);
-                }
-                break;
+                    break;
+                case sequence_coverage:
+                case sequence_validation_coverage:
+                case expected_coverage:
+                case spectrum_counting:
+                case number_of_spectra:
+                case number_of_validated_spectra:
+                case number_of_validated_peptides:
+                case number_of_confident_spectra:
+                case number_of_confident_peptides:
+                case max_psm_mz_for_peptides:
+                case unique_peptides:
+                    smallObjectsCache.remove(type);
+                    for (String key : smallObjectsInCache) {
+                        if (key.contains(typeKey)) {
+                            toRemove.add(key);
+                        }
+                    }
+                    for (String key : toRemove) {
+                        smallObjectsInCache.remove(key);
+                    }
+                    break;
+            }
         }
     }
 
@@ -218,73 +225,73 @@ public class IdentificationFeaturesCache implements Serializable {
      * @param objectKey the object key
      * @param object the object to store
      */
-    public void addObject(ObjectType type, String objectKey, Object object) {
-        switch (type) {
-            case coverable_AA:
-            case coverable_AA_p:
-            case AA_coverage:
-            case tryptic_protein:
-                if (!bigObjectsCache.containsKey(type)) {
-                    bigObjectsCache.put(type, new HashMap<String, Object>());
-                }
+    public synchronized void addObject(ObjectType type, String objectKey, Object object) {
+        if (!readOnly) {
+            switch (type) {
+                case coverable_AA:
+                case coverable_AA_p:
+                case AA_coverage:
+                case tryptic_protein:
+                    if (!bigObjectsCache.containsKey(type)) {
+                        bigObjectsCache.put(type, new HashMap<String, Object>());
+                    }
 
-                Object oldValue = bigObjectsCache.get(type).put(objectKey, object);
+                    Object oldValue = bigObjectsCache.get(type).put(objectKey, object);
 
-                if (oldValue == null) {
-                    bigObjectsInCache.add(getCacheKey(type, objectKey)); // don't add if the object was already in the cache
-                }
+                    if (oldValue == null) { // don't add if the object was already in the cache
+                        bigObjectsInCache.add(getCacheKey(type, objectKey));
+                    }
 
-                while (bigObjectsInCache.size() >= bigObjectsCacheSize) {
-                    ObjectType oldType = getType(bigObjectsInCache.get(0));
-                    String oldKey = getObjectKey(bigObjectsInCache.get(0));
-                    if (bigObjectsCache.containsKey(oldType)) { //Should always be true. Should...
-                        bigObjectsCache.get(oldType).remove(oldKey);
-                        if (bigObjectsCache.get(oldType).isEmpty()) {
-                            bigObjectsCache.remove(oldType);
+                    while (bigObjectsInCache.size() >= bigObjectsCacheSize && !bigObjectsInCache.isEmpty()) {
+                        String firstObjectKey = bigObjectsInCache.get(0);
+                        ObjectType oldType = getType(firstObjectKey);
+                        String oldKey = getObjectKey(firstObjectKey);
+                        HashMap<String, Object> cacheForType = bigObjectsCache.get(oldType);
+                        if (cacheForType != null) {
+                            cacheForType.remove(oldKey);
+                            if (cacheForType.isEmpty()) {
+                                bigObjectsCache.remove(oldType);
+                            }
                         }
+                        bigObjectsInCache.remove(0);
                     }
-                    bigObjectsInCache.remove(0);
-                    if (bigObjectsInCache.isEmpty()) {
-                        break;
+                    break;
+                case sequence_coverage:
+                case sequence_validation_coverage:
+                case expected_coverage:
+                case spectrum_counting:
+                case number_of_spectra:
+                case number_of_validated_spectra:
+                case number_of_validated_peptides:
+                case number_of_confident_spectra:
+                case number_of_confident_peptides:
+                case max_psm_mz_for_peptides:
+                case unique_peptides:
+                    if (!smallObjectsCache.containsKey(type)) {
+                        smallObjectsCache.put(type, new HashMap<String, Object>());
                     }
-                }
-                break;
-            case sequence_coverage:
-            case sequence_validation_coverage:
-            case expected_coverage:
-            case spectrum_counting:
-            case number_of_spectra:
-            case number_of_validated_spectra:
-            case number_of_validated_peptides:
-            case number_of_confident_spectra:
-            case number_of_confident_peptides:
-            case max_psm_mz_for_peptides:
-            case unique_peptides:
-                if (!smallObjectsCache.containsKey(type)) {
-                    smallObjectsCache.put(type, new HashMap<String, Object>());
-                }
 
-                oldValue = smallObjectsCache.get(type).put(objectKey, object);
+                    oldValue = smallObjectsCache.get(type).put(objectKey, object);
 
-                if (oldValue == null) {
-                    smallObjectsInCache.add(getCacheKey(type, objectKey));
-                }
+                    if (oldValue == null) {
+                        smallObjectsInCache.add(getCacheKey(type, objectKey));
+                    }
 
-                while (smallObjectsInCache.size() >= smallObjectsCacheSize) {
-                    ObjectType oldType = getType(smallObjectsInCache.get(0));
-                    String oldKey = getObjectKey(smallObjectsInCache.get(0));
-                    if (smallObjectsCache.containsKey(oldType)) { //Should always be true. Should...
-                        smallObjectsCache.get(oldType).remove(oldKey);
-                        if (smallObjectsCache.get(oldType).isEmpty()) {
-                            smallObjectsCache.remove(oldType);
+                    while (smallObjectsInCache.size() >= smallObjectsCacheSize && !smallObjectsInCache.isEmpty()) {
+                        String firstObjectKey = smallObjectsInCache.get(0);
+                        ObjectType oldType = getType(firstObjectKey);
+                        String oldKey = getObjectKey(firstObjectKey);
+                        HashMap<String, Object> cacheForType = smallObjectsCache.get(oldType);
+                        if (cacheForType != null) {
+                            cacheForType.remove(oldKey);
+                            if (cacheForType.isEmpty()) {
+                                smallObjectsCache.remove(oldType);
+                            }
                         }
+                        smallObjectsInCache.remove(0);
                     }
-                    smallObjectsInCache.remove(0);
-                    if (smallObjectsInCache.isEmpty()) {
-                        break;
-                    }
-                }
-                break;
+                    break;
+            }
         }
     }
 
@@ -296,26 +303,16 @@ public class IdentificationFeaturesCache implements Serializable {
      * @return the desired object
      */
     public Object getObject(ObjectType type, String objectKey) {
-        Object result = null;
         switch (type) {
             case coverable_AA:
             case coverable_AA_p:
             case AA_coverage:
             case tryptic_protein:
-                if (bigObjectsCache.containsKey(type)) {
-                    result = bigObjectsCache.get(type).get(objectKey);
+                HashMap<String, Object> cacheForType = bigObjectsCache.get(type);
+                if (cacheForType != null) {
+                    return cacheForType.get(objectKey);
                 }
-                if (result != null && bigObjectsInCache.size() >= bigObjectsCacheSize) {
-                    String cacheKey = getCacheKey(type, objectKey);
-                    for (int i = 0; i < Math.min(bigObjectsInCache.size(), 100); i++) {
-                        if (bigObjectsInCache.get(i).equals(cacheKey)) {
-                            bigObjectsInCache.remove(i);
-                            bigObjectsInCache.add(cacheKey);
-                            break;
-                        }
-                    }
-                }
-                return result;
+                return null;
             case sequence_coverage:
             case sequence_validation_coverage:
             case expected_coverage:
@@ -327,22 +324,13 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_confident_peptides:
             case max_psm_mz_for_peptides:
             case unique_peptides:
-                if (smallObjectsCache.containsKey(type)) {
-                    result = smallObjectsCache.get(type).get(objectKey);
+                cacheForType = smallObjectsCache.get(type);
+                if (cacheForType != null) {
+                    return cacheForType.get(objectKey);
                 }
-                if (result != null && smallObjectsInCache.size() >= smallObjectsCacheSize) {
-                    String cacheKey = getCacheKey(type, objectKey);
-                    for (int i = 0; i < Math.min(smallObjectsInCache.size(), 100); i++) {
-                        if (smallObjectsInCache.get(i).equals(cacheKey)) {
-                            smallObjectsInCache.remove(i);
-                            smallObjectsInCache.add(cacheKey);
-                            break;
-                        }
-                    }
-                }
-                return result;
+                return null;
             default:
-                return result;
+                return null;
         }
     }
 
@@ -645,4 +633,15 @@ public class IdentificationFeaturesCache implements Serializable {
         }
         return buf.toString();
     }
+
+    /**
+     * Sets the cache in read only.
+     *
+     * @param readOnly boolean indicating whether the cache should be in read
+     * only
+     */
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
 }

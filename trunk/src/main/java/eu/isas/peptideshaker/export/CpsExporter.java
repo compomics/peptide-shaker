@@ -64,7 +64,7 @@ public class CpsExporter {
             IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, Metrics metrics,
             ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath)
             throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
-        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences, 
+        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences,
                 projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
     }
 
@@ -105,35 +105,45 @@ public class CpsExporter {
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache,
             DisplayPreferences displayPreferences, String jarFilePath) throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
 
-        // save the user advocates
-        projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
-
-        // set the experiment parameters
-        PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
-        experiment.addUrParam(peptideShakerSettings);
-
-        // save the objects in cache
-        objectsCache.saveCache(waitingHandler, emptyCache);
-
-        // close connection
-        identification.close();
-
         File matchesFolder = PeptideShaker.getSerializationDirectory(jarFilePath);
+        identificationFeaturesCache.setReadOnly(true);
 
-        // transfer all files in the match directory
-        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            waitingHandler.setPrimaryProgressCounterIndeterminate(true);
-            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-            File experimentFile = new File(matchesFolder, PeptideShaker.experimentObjectName);
-            ExperimentIO.save(experimentFile, experiment);
-        }
+        try {
 
-        identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
+            // save the user advocates
+            projectDetails.setUserAdvocateMapping(Advocate.getUserAdvocates());
 
-        // tar everything in the current cps file
-        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
+            // set the experiment parameters
+            PeptideShakerSettings peptideShakerSettings = new PeptideShakerSettings(shotgunProtocol, identificationParameters, spectrumCountingPreferences,
+                    projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesCache);
+            experiment.addUrParam(peptideShakerSettings);
+
+            // save the objects in cache
+            objectsCache.saveCache(waitingHandler, emptyCache);
+            objectsCache.setReadOnly(true);
+
+            // close connection
+            identification.close();
+
+            // transfer all files in the match directory
+            if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
+
+                waitingHandler.setPrimaryProgressCounterIndeterminate(true);
+                waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                File experimentFile = new File(matchesFolder, PeptideShaker.experimentObjectName);
+                ExperimentIO.save(experimentFile, experiment);
+            }
+
+            // tar everything in the current cps file
+            if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
+                TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
+            }
+
+        } finally {
+            // Restaure the project navigability
+            objectsCache.setReadOnly(false);
+            identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
+            identificationFeaturesCache.setReadOnly(false);
         }
     }
 }

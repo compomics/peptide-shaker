@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.myparameters;
 
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -119,6 +120,8 @@ public class PSSettings implements UrParameter {
         if (utilitiesAnnotationPreferences == null) {
             // most likely a compatibility issue, reset the annotation preferences
             utilitiesAnnotationPreferences = new AnnotationPreferences();
+            utilitiesAnnotationPreferences.addNeutralLoss(NeutralLoss.H2O);
+            utilitiesAnnotationPreferences.addNeutralLoss(NeutralLoss.NH3);
         }
         return utilitiesAnnotationPreferences;
     }
