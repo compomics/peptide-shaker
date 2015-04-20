@@ -261,11 +261,14 @@ public class CpsParent extends UserPreferencesParent {
         }
 
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, shotgunProtocol, identificationParameters, metrics, spectrumCountingPreferences);
-        if (experimentSettings.getIdentificationFeaturesCache() != null) {
+        IdentificationFeaturesCache identificationFeaturesCache = experimentSettings.getIdentificationFeaturesCache();
+        if (identificationFeaturesCache != null) {
             identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
+            identificationFeaturesCache.setReadOnly(false);
         }
         objectsCache = new ObjectsCache();
         objectsCache.setAutomatedMemoryManagement(true);
+        objectsCache.setReadOnly(false);
         String dbFolder = PeptideShaker.getSerializationDirectory(jarFilePath).getAbsolutePath();
         identification.restoreConnection(dbFolder, false, objectsCache);
         identification.checkIdentificationDBTables(); // Backward compatibility check
