@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.38.1 (April 25. 2015):*
+
+ * FEATURE IMPROVEMENT: Increased the precision of the PhosphoRS calculation.
+ * FEATURE IMPROVEMENT: Updated the Example Dataset.
+ 
+ * BUG FIX: Fixed a bug in the spectrum annotation where the intensity limit was not set correctly.
+ * BUG FIX: Fixed a bug in the CV term mapping for pyro-cmc.
+ * BUG FIX: Fixed a bug in the saving that made it impossible to open saved projects.
+ * BUG FIX: Fixed a backwards computability issue with the spectrum annotation.
+ * BUG FIX: Fixed a bug in the spectrum annotation where the intensity limit was not set correctly.
+ * BUG FIX: Corrected a bug in the setting of temporary folders.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.47.4.
+
+----
+
 *Changes in PeptideShaker 0.38.0 (April 17. 2015):*
 
  * FEATURE IMPROVEMENT: Multithreaded and thus sped up the validation, filtering and PTM scoring.
