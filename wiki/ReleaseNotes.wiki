@@ -6,7 +6,6 @@
 *Changes in PeptideShaker 0.38.1 (April 25. 2015):*
 
  * FEATURE IMPROVEMENT: Increased the precision of the PhosphoRS calculation.
- * FEATURE IMPROVEMENT: Updated the Example Dataset.
  
  * BUG FIX: Fixed a bug in the spectrum annotation where the intensity limit was not set correctly.
  * BUG FIX: Fixed a bug in the CV term mapping for pyro-cmc.
