@@ -164,7 +164,7 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private String currentPeptideKey = "";
     /**
-     * Indicates whether the cache is read only
+     * Indicates whether the cache is read only.
      */
     private boolean readOnly = false;
 
@@ -643,5 +643,4 @@ public class IdentificationFeaturesCache implements Serializable {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
-
 }
