@@ -15,7 +15,6 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
-import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.experiment.identification.spectrum_annotators.TagSpectrumAnnotator;
 import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
@@ -163,10 +162,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The ID results table column header tooltips.
      */
     private ArrayList<String> idResultsTableToolTips;
-    /**
-     * The spectrum annotator for ID software specific results.
-     */
-    private PeptideSpectrumAnnotator specificAnnotator = new PeptideSpectrumAnnotator();
     /**
      * The list of search results.
      */
@@ -2792,7 +2787,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         peptideShakerGUI.setSpecificAnnotationPreferences(new SpecificAnnotationPreferences(spectrumKey, currentPeptideAssumption));
                                         peptideShakerGUI.updateAnnotationPreferences();
                                         SpecificAnnotationPreferences specificAnnotationPreferences = peptideShakerGUI.getSpecificAnnotationPreferences();
-                                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
+                                        ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
 
                                         allAnnotations.add(annotations);
                                         allSpectra.add(currentSpectrum);
