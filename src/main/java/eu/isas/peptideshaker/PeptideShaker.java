@@ -372,7 +372,7 @@ public class PeptideShaker {
         }
 
         if (MemoryConsumptionStatus.memoryUsed() > 0.9) {
-            metrics.clearSpectrumKeys(); // @TODO: use other ways of releasing emmory?
+            metrics.clearSpectrumKeys();
         }
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(identificationParameters.getSequenceMatchingPreferences(), waitingHandler); // @TODO: this is very slow if memory is full!!

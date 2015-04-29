@@ -214,7 +214,7 @@ public class PSParameter implements UrParameter {
      */
     public double getPeptideScore() {
         double score;
-        if (peptideProbabilityScore < Math.pow(10, -100)) {
+        if (peptideProbabilityScore < FastMath.pow(10, -100)) {
             score = 100;
         } else {
             score = -10 * FastMath.log10(peptideProbabilityScore);
@@ -285,10 +285,10 @@ public class PSParameter implements UrParameter {
      */
     public double getProteinScore() {
         double score;
-        if (proteinProbabilityScore < Math.pow(10, -100)) {
+        if (proteinProbabilityScore < FastMath.pow(10, -100)) {
             score = 100;
         } else {
-            score = -10 * Math.log10(proteinProbabilityScore);
+            score = -10 * FastMath.log10(proteinProbabilityScore);
         }
         if (score <= 0) {
             score = 0;
@@ -452,9 +452,10 @@ public class PSParameter implements UrParameter {
      */
     public double getPsmScore() {
         double score;
-        score = -10 * Math.log10(psmProbabilityScore);
-        if (score <= 0) {
-            score = 0;
+        if (psmProbabilityScore < FastMath.pow(10, -100)) {
+            score = 100;
+        } else {
+            score = -10 * FastMath.log10(psmProbabilityScore);
         }
         return score;
     }

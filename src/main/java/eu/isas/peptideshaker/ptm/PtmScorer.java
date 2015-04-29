@@ -1730,6 +1730,10 @@ public class PtmScorer {
                     }
                 } else {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
+                    if (ptmScoring == null) {
+                        ptmScoring = new PtmScoring(modName);
+                        ptmScores.addPtmScoring(modName, ptmScoring);
+                    }
                     ptmScoring.setSiteConfidence(modificationMatch.getModificationSite(), PtmScoring.VERY_CONFIDENT);
                     modificationMatch.setConfident(true);
                 }

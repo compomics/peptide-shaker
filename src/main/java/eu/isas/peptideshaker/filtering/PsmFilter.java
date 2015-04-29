@@ -2,10 +2,11 @@ package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.ShotgunProtocol;
+import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
+import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.filtering.items.PsmFilterItem;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -73,7 +74,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the filter used to filter at the assumption level.
-     * 
+     *
      * @return the assumption filter
      */
     public AssumptionFilter getAssumptionFilter() {
@@ -82,13 +83,13 @@ public class PsmFilter extends MatchFilter {
 
     @Override
     protected MatchFilter getNew() {
-        return new ProteinFilter();
+        return new PsmFilter();
     }
 
     @Override
     public boolean isValidated(String itemName, FilterItemComparator filterItemComparator, Object value, String matchKey, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
-        
+
         PsmFilterItem filterItem = PsmFilterItem.getItem(itemName);
         if (filterItem == null) {
             return assumptionFilter.isValidated(itemName, filterItemComparator, value, matchKey, identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator);
@@ -120,6 +121,20 @@ public class PsmFilter extends MatchFilter {
         }
     }
 
+    @Override
+    public FilterItem[] getPossibleFilterItems() {
+        return PsmFilterItem.values();
+    }
+
+    @Override
+    public FilterItem getFilterItem(String itemName) {
+        FilterItem psmFilterItem = PsmFilterItem.getItem(itemName);
+        if (psmFilterItem != null) {
+            return psmFilterItem;
+        }
+        return AssumptionFilterItem.getItem(itemName);
+    }
+
     /**
      * Checks whether it is an old filter using the deprecated code below and
      * converts it to the new structure
@@ -136,7 +151,7 @@ public class PsmFilter extends MatchFilter {
             psmConfidence = null;
         }
     }
-    
+
     /**
      * Score limit.
      *

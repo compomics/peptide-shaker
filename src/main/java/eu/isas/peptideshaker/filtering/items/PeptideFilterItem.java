@@ -1,6 +1,10 @@
 package eu.isas.peptideshaker.filtering.items;
 
 import com.compomics.util.experiment.filtering.FilterItem;
+import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.scoring.MatchValidationLevel;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Enum of the different items a peptide filter can filter on.
@@ -65,6 +69,59 @@ public enum PeptideFilterItem implements FilterItem {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public FilterItem[] getPossibleValues() {
+        PeptideFilterItem[] values = values();
+        FilterItem[] result = new FilterItem[values.length];
+        System.arraycopy(values, 0, result, 0, values.length);
+        return result;
+    }
+
+    @Override
+    public boolean isNumber() {
+        switch (this) {
+    case nPSMs:
+    case nValidatedPSMs:
+    case nConfidentPSMs:
+    case confidence:
+        return true;
+    default:
+        return false;
+        }
+    }
+
+    @Override
+    public ArrayList<String> getPossibilities() {
+        switch (this) {
+    case proteinInference:
+                ArrayList<String> pi = new ArrayList<String>(4); // @TODO: check that this is correct
+                pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.NOT_GROUP));
+                pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED));
+                pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED_AND_UNRELATED));
+                pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.UNRELATED));
+                return pi;
+            case validationStatus:
+                return new ArrayList<String>(Arrays.asList(MatchValidationLevel.getValidationLevelsNames()));
+            case stared:
+                ArrayList<String> starred = new ArrayList<String>(2);
+                starred.add("Starred");
+                starred.add("Not Starred");
+                return starred;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public boolean isPtm() {
+        switch (this) {
+            case ptm:
+                return true;
+            default:
+                return false;
+        }
     }
 
 }
