@@ -4,10 +4,10 @@ import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.filtering.Filter;
+import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
 import com.compomics.util.preferences.IdentificationParameters;
-import eu.isas.peptideshaker.filtering.items.PsmFilterItem;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
 import java.io.Serializable;
@@ -62,12 +62,10 @@ public abstract class MatchFilter implements Serializable, Filter {
      * The exceptions to the rule.
      */
     protected ArrayList<String> exceptions = new ArrayList<String>();
-
     /**
      * Name of the manual selection filter.
      */
     public static final String MANUAL_SELECTION = "manual selection";
-
     /**
      * Map of the comparators to use.
      */
@@ -325,7 +323,27 @@ public abstract class MatchFilter implements Serializable, Filter {
      * @param value the value to filter
      */
     public void setFilterItem(String itemName, FilterItemComparator filterItemComparator, Object value) {
+        setComparatorForItem(itemName, filterItemComparator);
+        setValueForItem(itemName, value);
+    }
+    
+    /**
+     * Sets the comparator for a given item.
+     * 
+     * @param itemName the name of the item to filter on
+     * @param filterItemComparator the comparator
+     */
+    public void setComparatorForItem(String itemName, FilterItemComparator filterItemComparator) {
         comparatorsMap.put(itemName, filterItemComparator);
+    }
+    
+    /**
+     * Sets the value for a given item.
+     * 
+     * @param itemName the name of the item to filter on
+     * @param value the comparator
+     */
+    public void setValueForItem(String itemName, Object value) {
         valuesMap.put(itemName, value);
     }
 
@@ -493,6 +511,22 @@ public abstract class MatchFilter implements Serializable, Filter {
         }
         return false;
     }
+    
+    /**
+     * Returns the filter items accepted by this filter.
+     * 
+     * @return the filter items accepted by this filter
+     */
+    public abstract FilterItem[] getPossibleFilterItems();
+    
+    /**
+     * Returns the filter item corresponding to the given name.
+     * 
+     * @param itemName the name of the filter item
+     * 
+     * @return the filter item corresponding to the given name
+     */
+    public abstract FilterItem getFilterItem(String itemName);
 
     /**
      * Validation level.

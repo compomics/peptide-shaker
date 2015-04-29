@@ -29,6 +29,7 @@ import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -265,6 +266,10 @@ public class MatchesValidator {
         }
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
+            AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
+            Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
+            annotationPreferences.setAnnotationLevel(0);
+            
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
@@ -328,6 +333,8 @@ public class MatchesValidator {
             if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
                 throw new InterruptedException("PSM validation timed out. Please contact the developers.");
             }
+            
+            annotationPreferences.setAnnotationLevel(intensityLimit);
         }
 
         // validate the peptides

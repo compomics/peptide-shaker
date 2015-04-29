@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.filtering;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.IonMatch;
@@ -275,6 +276,16 @@ public class AssumptionFilter extends MatchFilter {
             default:
                 throw new IllegalArgumentException("Protein filter not implemented for item " + filterItem.name + ".");
         }
+    }
+
+    @Override
+    public FilterItem[] getPossibleFilterItems() {
+        return AssumptionFilterItem.values();
+    }
+
+    @Override
+    public FilterItem getFilterItem(String itemName) {
+        return AssumptionFilterItem.getItem(itemName);
     }
 
     /**

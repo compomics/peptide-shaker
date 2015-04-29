@@ -5,8 +5,8 @@ import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.spectrum_annotators.PeptideSpectrumAnnotator;
@@ -209,6 +209,16 @@ public class ProteinFilter extends MatchFilter {
             default:
                 throw new IllegalArgumentException("Protein filter not implemented for item " + filterItem.name + ".");
         }
+    }
+
+    @Override
+    public FilterItem[] getPossibleFilterItems() {
+        return ProteinFilterItem.values();
+    }
+
+    @Override
+    public FilterItem getFilterItem(String itemName) {
+        return ProteinFilterItem.getItem(itemName);
     }
 
     /**
