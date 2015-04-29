@@ -111,5 +111,4 @@ public enum PsmFilterItem implements FilterItem {
                 return false;
         }
     }
-
 }

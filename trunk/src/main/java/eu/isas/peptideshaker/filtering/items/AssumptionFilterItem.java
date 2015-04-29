@@ -19,7 +19,7 @@ public enum AssumptionFilterItem implements FilterItem {
     precrusorMzErrorDa("Precursor m/z error (Da)", "Spectrum precursor m/z error in Dalton."),
     precrusorMzErrorPpm("Precursor m/z error (ppm)", "Spectrum precursor m/z error in ppm."),
     precrusorMzErrorStat("Precursor m/z error (%p)", "Probability in percent of getting the spectrum precursor m/z error in the spectrum file."),
-    ptm("PTM", "Posttranslational modification carried by the match."),
+    ptm("PTM", "Post-translational modification carried by the match."),
     sequenceCoverage("Sequence coverage", "Coverage of the sequence by fragment ions in percent."),
     algorithmScore("Algorithm score", "Score given by the identification algorithm."),
     fileNames("Spectrum file", "Name of the spectrum file."),
@@ -95,7 +95,7 @@ public enum AssumptionFilterItem implements FilterItem {
             case confidence:
                 return true;
             default:
-               return false;
+                return false;
         }
     }
 
@@ -125,5 +125,4 @@ public enum AssumptionFilterItem implements FilterItem {
                 return false;
         }
     }
-
 }

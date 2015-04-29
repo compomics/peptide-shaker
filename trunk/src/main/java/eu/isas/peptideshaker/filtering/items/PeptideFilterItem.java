@@ -13,18 +13,18 @@ import java.util.Arrays;
  */
 public enum PeptideFilterItem implements FilterItem {
 
-    proteinAccession("Protein Accession", "Accession of the protein this peptide maps to according to the sequence database."), 
+    proteinAccession("Protein Accession", "Accession of the protein this peptide maps to according to the sequence database."),
     proteinDescription("Protein Description", "Description of the protein according to the sequence database."),
     sequence("Peptide Sequence", "Amino acid pattern which should be contained in the peptide sequence."),
     ptm("PTM", "Posttranslational modification carried by the peptide."),
-    nPSMs("# PSMs", "Number of PSMs."), 
-    nValidatedPSMs("# Validated PSMs", "Number of Validated PSMs."), 
-    nConfidentPSMs("# Confident PSMs", "Number of Confident PSMs."), 
-    confidence("Confidence", "Confidence in protein identification."), 
-    proteinInference("PI", "Protein inference status of the peptide."), 
+    nPSMs("#PSMs", "Number of PSMs."),
+    nValidatedPSMs("#Validated PSMs", "Number of Validated PSMs."),
+    nConfidentPSMs("#Confident PSMs", "Number of Confident PSMs."),
+    confidence("Confidence", "Confidence in protein identification."),
+    proteinInference("PI", "Protein inference status of the peptide."),
     validationStatus("Validation", "Validation status."),
     stared("Stared", "Marked with a yellow star.");
-    
+
     /**
      * The name of the filtering item.
      */
@@ -33,10 +33,10 @@ public enum PeptideFilterItem implements FilterItem {
      * The description of the filtering item.
      */
     public final String description;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param name name of the filtering item
      * @param description description of the filtering item
      */
@@ -44,12 +44,12 @@ public enum PeptideFilterItem implements FilterItem {
         this.name = name;
         this.description = description;
     }
-    
+
     /**
      * Returns the item designated by the given name.
-     * 
+     *
      * @param itemName the name of the item of interest
-     * 
+     *
      * @return the item of interest
      */
     public static PeptideFilterItem getItem(String itemName) {
@@ -82,20 +82,20 @@ public enum PeptideFilterItem implements FilterItem {
     @Override
     public boolean isNumber() {
         switch (this) {
-    case nPSMs:
-    case nValidatedPSMs:
-    case nConfidentPSMs:
-    case confidence:
-        return true;
-    default:
-        return false;
+            case nPSMs:
+            case nValidatedPSMs:
+            case nConfidentPSMs:
+            case confidence:
+                return true;
+            default:
+                return false;
         }
     }
 
     @Override
     public ArrayList<String> getPossibilities() {
         switch (this) {
-    case proteinInference:
+            case proteinInference:
                 ArrayList<String> pi = new ArrayList<String>(4); // @TODO: check that this is correct
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.NOT_GROUP));
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED));
@@ -123,5 +123,4 @@ public enum PeptideFilterItem implements FilterItem {
                 return false;
         }
     }
-
 }

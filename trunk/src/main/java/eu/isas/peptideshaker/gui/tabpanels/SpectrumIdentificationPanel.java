@@ -283,8 +283,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchResultsTable.getColumn(" ").setMaxWidth(30);
         searchResultsTable.getColumn("SE").setMinWidth(37);
         searchResultsTable.getColumn("SE").setMaxWidth(37);
-        searchResultsTable.getColumn("Rank").setMinWidth(37);
-        searchResultsTable.getColumn("Rank").setMaxWidth(37);
+        searchResultsTable.getColumn("Rnk").setMinWidth(37);
+        searchResultsTable.getColumn("Rnk").setMaxWidth(37);
         searchResultsTable.getColumn("  ").setMinWidth(30);
         searchResultsTable.getColumn("  ").setMaxWidth(30);
 
@@ -2848,9 +2848,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                 SpectrumIdentificationAssumption currentAssumption = currentAssumptionsList.get(searchResultsTable.getSelectedRows()[i]);
                                 if (currentAssumption != null) {
-                                    
-                                selectedIndexes.add((i + 1) + " " + currentAssumption.getIdentificationCharge().toString());
-                                    
+
+                                    selectedIndexes.add((i + 1) + " " + currentAssumption.getIdentificationCharge().toString());
+
                                     if (currentAssumption instanceof PeptideAssumption) {
                                         PeptideAssumption currentPeptideAssumption = (PeptideAssumption) currentAssumption;
                                         Peptide peptide = currentPeptideAssumption.getPeptide();
@@ -3653,7 +3653,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 case 1:
                     return "SE";
                 case 2:
-                    return "Rank";
+                    return "Rnk";
                 case 3:
                     return "Sequence";
                 case 4:
@@ -3926,7 +3926,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * identifications table.
      */
     public void updateScores() {
-        
+
         ((DefaultTableModel) spectrumTable.getModel()).fireTableStructureChanged();
         ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableStructureChanged();
         ((DefaultTableModel) searchResultsTable.getModel()).fireTableStructureChanged();
