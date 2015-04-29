@@ -30,7 +30,7 @@ public class FilterDialog extends javax.swing.JDialog {
      */
     private MatchFilter matchFilter;
     /**
-     * The names of the items to display
+     * The names of the items to display.
      */
     private ArrayList<String> ItemsNames = null;
 
@@ -53,6 +53,9 @@ public class FilterDialog extends javax.swing.JDialog {
      * Sets up the GUI components.
      */
     public void setUpGUI() {
+
+        // make sure that the scroll panes are see-through
+        filterItemsTableScrollPane.getViewport().setOpaque(false);
 
         nameTxt.setText(matchFilter.getName());
         descriptionTxt.setText(matchFilter.getDescription());
@@ -96,11 +99,10 @@ public class FilterDialog extends javax.swing.JDialog {
         comparatorColumn.setMaxWidth(300);
         comboBox = new JComboBox(FilterItemComparator.values());
         comparatorColumn.setCellEditor(new DefaultCellEditor(comboBox));
-
     }
 
     /**
-     * Updates the table
+     * Updates the table.
      */
     public void updateTable() {
         ((DefaultTableModel) filterItemsTable.getModel()).fireTableDataChanged();
@@ -135,7 +137,7 @@ public class FilterDialog extends javax.swing.JDialog {
         exceptionsScrollPane = new javax.swing.JScrollPane();
         exceptionsTxt = new javax.swing.JTextArea();
         filterItemsPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        filterItemsTableScrollPane = new javax.swing.JScrollPane();
         filterItemsTable = new javax.swing.JTable();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -286,7 +288,7 @@ public class FilterDialog extends javax.swing.JDialog {
                 filterItemsTableMouseReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(filterItemsTable);
+        filterItemsTableScrollPane.setViewportView(filterItemsTable);
 
         javax.swing.GroupLayout filterItemsPanelLayout = new javax.swing.GroupLayout(filterItemsPanel);
         filterItemsPanel.setLayout(filterItemsPanelLayout);
@@ -294,14 +296,14 @@ public class FilterDialog extends javax.swing.JDialog {
             filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterItemsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(filterItemsTableScrollPane)
                 .addContainerGap())
         );
         filterItemsPanelLayout.setVerticalGroup(
             filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterItemsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(filterItemsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -399,6 +401,11 @@ public class FilterDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Adds a new filter item.
+     * 
+     * @param evt 
+     */
     private void addItemMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemMenuItemActionPerformed
 
         String filterItemName = null;
@@ -419,6 +426,11 @@ public class FilterDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_addItemMenuItemActionPerformed
 
+    /**
+     * Removes a filter item.
+     * 
+     * @param evt 
+     */
     private void removeItemMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_removeItemMenuItemMouseReleased
         int row = filterItemsTable.getSelectedRow();
         if (row >= 0) {
@@ -428,6 +440,11 @@ public class FilterDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_removeItemMenuItemMouseReleased
 
+    /**
+     * Show the filter item pop up menu.
+     * 
+     * @param evt 
+     */
     private void filterItemsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filterItemsTableMouseReleased
         if (evt != null && filterItemsTable.rowAtPoint(evt.getPoint()) != -1) {
             int row = filterItemsTable.rowAtPoint(evt.getPoint());
@@ -449,11 +466,11 @@ public class FilterDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea exceptionsTxt;
     private javax.swing.JPanel filterItemsPanel;
     private javax.swing.JTable filterItemsTable;
+    private javax.swing.JScrollPane filterItemsTableScrollPane;
     private javax.swing.JPanel filterPanel;
     private javax.swing.JPanel filterSettingsPanel;
     private javax.swing.JSplitPane filterSplitPane;
     private javax.swing.JPopupMenu itemPopupMenu;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane manualSelectionSplitPane;
     private javax.swing.JPanel manualValidationPanel;
     private javax.swing.JScrollPane manualValidationScrollPane;

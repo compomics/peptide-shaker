@@ -24,12 +24,12 @@ public enum ProteinFilterItem implements FilterItem {
     confidentCoverage("Confident Coverage", "Protein sequence coverage achieved using confident peptides."),
     spectrumCounting("Spectrum Counting", "Spectrum counting quantification value."),
     ptm("PTM", "Posttranslational modification carried by the protein."),
-    nPeptides("# Peptides", "Number of peptides."),
-    nValidatedPeptides("# Validated Peptides", "Number of validated peptides."),
-    nConfidentPeptides("# Confident Peptides", "Number of confident peptides."),
-    nPSMs("# PSMs", "Number of PSMs."),
-    nValidatedPSMs("# Validated PSMs", "Number of Validated PSMs."),
-    nConfidentPSMs("# Confident PSMs", "Number of Confident PSMs."),
+    nPeptides("#Peptides", "Number of peptides."),
+    nValidatedPeptides("#Validated Peptides", "Number of validated peptides."),
+    nConfidentPeptides("#Confident Peptides", "Number of confident peptides."),
+    nPSMs("#PSMs", "Number of PSMs."),
+    nValidatedPSMs("#Validated PSMs", "Number of Validated PSMs."),
+    nConfidentPSMs("#Confident PSMs", "Number of Confident PSMs."),
     confidence("Confidence", "Confidence in protein identification."),
     proteinInference("PI", "Protein inference status."),
     validationStatus("Validation", "Validation status."),
@@ -112,7 +112,7 @@ public enum ProteinFilterItem implements FilterItem {
     @Override
     public ArrayList<String> getPossibilities() {
         switch (this) {
-    case proteinInference:
+            case proteinInference:
                 ArrayList<String> pi = new ArrayList<String>(4);
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.NOT_GROUP));
                 pi.add(PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED));
