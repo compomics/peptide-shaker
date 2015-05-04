@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.38.2 (May 4. 2015):*
+
+ * BUG FIX: Fixed a bug in the PTM scoring that occurred if using Java 7.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.48.1.
+
+----
+
 *Changes in PeptideShaker 0.38.1 (April 25. 2015):*
 
  * FEATURE IMPROVEMENT: Increased the precision of the PhosphoRS calculation.
