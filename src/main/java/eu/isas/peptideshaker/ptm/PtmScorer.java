@@ -303,10 +303,16 @@ public class PtmScorer {
                 if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && nMod.get(ptmMass) == 1) {
                     scores = AScore.getAScore(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(), sequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext.getPrecision());
+                    if (scores == null) {
+                        throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with the A-score."); // Most likely a compatibility issue with utilities
+                    }
                 } else if (scoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                     scores = PhosphoRS.getSequenceProbabilities(peptide, modifications.get(ptmMass), spectrum, annotationPreferences, specificAnnotationPreferences,
                             scoringPreferences.isProbabilisticScoreNeutralLosses(),
                             sequenceMatchingPreferences, peptideSpectrumAnnotator, mathContext);
+                    if (scores == null) {
+                        throw new IllegalArgumentException("An error occurred while scoring spectrum " + spectrum.getSpectrumTitle() + "of file " + spectrum.getFileName() + " with PhosphoRS."); // Most likely a compatibility issue with utilities
+                    }
                 }
                 if (scores != null) {
                     // remap to searched PTMs
@@ -1730,10 +1736,6 @@ public class PtmScorer {
                     }
                 } else {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
-                    if (ptmScoring == null) {
-                        ptmScoring = new PtmScoring(modName);
-                        ptmScores.addPtmScoring(modName, ptmScoring);
-                    }
                     ptmScoring.setSiteConfidence(modificationMatch.getModificationSite(), PtmScoring.VERY_CONFIDENT);
                     modificationMatch.setConfident(true);
                 }
