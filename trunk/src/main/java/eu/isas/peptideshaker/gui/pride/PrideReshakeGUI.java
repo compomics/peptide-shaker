@@ -21,18 +21,14 @@ import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1243,7 +1239,13 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                 String tempLink = (String) filesTable.getValueAt(row, column);
                 tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
-                final Double fileSize = (Double) filesTable.getValueAt(row, filesTable.getColumn("Size (MB)").getModelIndex());
+                Double fileSizeInMB = (Double) filesTable.getValueAt(row, filesTable.getColumn("Size (MB)").getModelIndex());
+                final int fileSizeInBytes;
+                if (fileSizeInMB != null) {
+                   fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                } else {
+                    fileSizeInBytes = -1;
+                }
 
                 LastSelectedFolder lastSelectedFolder = peptideShakerGUI.getLastSelectedFolder();
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
@@ -1275,7 +1277,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         public void run() {
                             try {
                                 File downLoadLocation = new File(downloadFolder, new File(link).getName());
-                                File savedFile = saveUrl(downLoadLocation, link, fileSize, progressDialog);
+                                File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, getUserName(), getPassword(), progressDialog);
 
                                 boolean canceled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
@@ -2277,7 +2279,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * @param fileSizes the file sizes
      */
     public void downloadPrideDatasets(String aWorkingFolder, final ArrayList<String> selectedSpectrumFiles,
-            final String searchSettingsProjectFile, final String database, String aSpecies, final ArrayList<Double> fileSizes) {
+            final String searchSettingsProjectFile, final String database, String aSpecies, final ArrayList<Integer> fileSizes) {
 
         outputFolder = aWorkingFolder;
         currentSpecies = aSpecies;
@@ -2429,7 +2431,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                 if (downloadFile) {
 
                                     // download the pride data file
-                                    saveUrl(currentZippedPrideDataFile, currentFile, fileSizes.get(i), progressDialog);
+                                    Util.saveUrl(currentZippedPrideDataFile, currentFile, fileSizes.get(i), getUserName(), getPassword(), progressDialog);
 
                                     // file downloaded, unzip file
                                     progressDialog.setTitle("Unzipping Files (" + (i + 1) + "/" + allFiles.size() + "). Please Wait...");
@@ -3116,7 +3118,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
      * Set the current filter values.
      *
      * @param currentFilterValues the current filter values
-     * @param assaysGreaterThanFiler the assays greater than flter
+     * @param assaysGreaterThanFiler the assays greater than filter
      */
     public void setCurrentFilterValues(String[] currentFilterValues, boolean assaysGreaterThanFiler) {
         this.currentFilterValues = currentFilterValues;
@@ -3137,117 +3139,6 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         reshakeButton.setEnabled(filesSelected);
-    }
-
-    /**
-     * Save a file from a URL.
-     *
-     * @param saveFile the file to save to
-     * @param targetUrlAsString the target URL as a string
-     * @param fileSize the file size
-     * @param progressDialog the progress dialog
-     * @return the saved file
-     *
-     * @throws MalformedURLException thrown if an MalformedURLException occurs
-     * @throws IOException thrown if an IOException occurs
-     * @throws FileNotFoundException thrown if a FileNotFoundException occurs
-     */
-    public File saveUrl(File saveFile, String targetUrlAsString, Double fileSize, ProgressDialogX progressDialog)
-            throws MalformedURLException, IOException, FileNotFoundException {
-
-        BufferedInputStream in = null;
-        FileOutputStream fout = null;
-
-        try {
-            boolean urlExists = checkIfURLExists(targetUrlAsString);
-
-            if (!urlExists) {
-                if (targetUrlAsString.endsWith(".gz")) {
-                    targetUrlAsString = targetUrlAsString.substring(0, targetUrlAsString.length() - 3);
-                    saveFile = new File(saveFile.getAbsolutePath().substring(0, saveFile.getAbsolutePath().length() - 3));
-                }
-            }
-
-            URL targetUrl = new URL(targetUrlAsString);
-            URLConnection urlConnection = targetUrl.openConnection();
-
-            if (password != null) {
-                String userpass = userName + ":" + password;
-                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
-                urlConnection.setRequestProperty("Authorization", basicAuth);
-            }
-
-            int contentLength = urlConnection.getContentLength();
-
-            if (contentLength != -1) {
-                progressDialog.resetPrimaryProgressCounter();
-                progressDialog.setMaxPrimaryProgressCounter(contentLength);
-            } else {
-                progressDialog.resetPrimaryProgressCounter();
-                contentLength = (int) (fileSize * 1024 * 1024);
-                progressDialog.setMaxPrimaryProgressCounter(contentLength);
-            }
-
-            in = new BufferedInputStream(urlConnection.getInputStream());
-
-            fout = new FileOutputStream(saveFile);
-
-            long start = System.currentTimeMillis();
-
-            final byte data[] = new byte[1024];
-            int count;
-            while ((count = in.read(data, 0, 1024)) != -1 && !progressDialog.isRunCanceled()) {
-                fout.write(data, 0, count);
-
-                if (contentLength != -1) {
-
-                    long now = System.currentTimeMillis();
-
-                    if ((now - start) > 100) {
-                        progressDialog.setPrimaryProgressCounter((int) saveFile.length());
-                        start = System.currentTimeMillis();
-                    }
-                }
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (fout != null) {
-                fout.close();
-            }
-        }
-
-        return saveFile;
-    }
-
-    /**
-     * Check if a given URL exists.
-     *
-     * @param targetUrlAsString the URL to check
-     * @return true of it exists
-     */
-    public boolean checkIfURLExists(String targetUrlAsString) {
-
-        try {
-            URL targetUrl = new URL(targetUrlAsString);
-            URLConnection urlConnection = targetUrl.openConnection();
-
-            if (password != null) {
-                String userpass = userName + ":" + password;
-                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
-                urlConnection.setRequestProperty("Authorization", basicAuth);
-            }
-
-            InputStream inputStream = urlConnection.getInputStream();
-            inputStream.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     /**
@@ -3393,5 +3284,23 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         }
 
         return report;
+    }
+
+    /**
+     * Returns the current user name.
+     * 
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Returns the current password.
+     * 
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
     }
 }

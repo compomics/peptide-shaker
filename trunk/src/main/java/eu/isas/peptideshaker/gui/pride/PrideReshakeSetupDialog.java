@@ -799,7 +799,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                 ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
                 String selectedSearchSettingsFile = null;
-                ArrayList<Double> fileSizes = new ArrayList<Double>();
+                ArrayList<Integer> fileSizes = new ArrayList<Integer>();
 
                 for (int i = 0; i < spectrumTable.getRowCount(); i++) {
                     if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
@@ -808,18 +808,25 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         link = link.substring(link.indexOf("\"") + 1);
                         link = link.substring(0, link.indexOf("\""));
 
-                        boolean exists = prideReShakeGUI.checkIfURLExists(link);
+                        boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
 
                         if (!exists) {
                             if (link.endsWith(".gz")) {
                                 link = link.substring(0, link.length() - 3);
-                                exists = prideReShakeGUI.checkIfURLExists(link);
+                                exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
                             }
                         }
 
                         if (exists) {
                             selectedSpectrumFiles.add(link);
-                            fileSizes.add((Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex()));
+                            Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
+                            int fileSizeInBytes;
+                            if (fileSizeInMB != null) {
+                                fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                            } else {
+                                fileSizeInBytes = -1;
+                            }
+                            fileSizes.add(fileSizeInBytes);
                         } else {
                             JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                     "PRIDE web service access error. Cannot open:<br>"
@@ -840,13 +847,13 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                         if (!selectedSpectrumFiles.contains(link)) {
 
-                            boolean exists = prideReShakeGUI.checkIfURLExists(link);
+                            boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
 
                             if (!exists) {
                                 if (link.endsWith(".gz")) {
                                     link = link.substring(0, link.length() - 3);
                                     if (!selectedSpectrumFiles.contains(link)) {
-                                        exists = prideReShakeGUI.checkIfURLExists(link);
+                                        exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
                                     } else {
                                         exists = true;
                                     }
@@ -855,7 +862,14 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
 
                             if (exists) {
                                 selectedSearchSettingsFile = link;
-                                fileSizes.add((Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex()));
+                                Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
+                                int fileSizeInBytes;
+                                if (fileSizeInMB != null) {
+                                    fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                                } else {
+                                    fileSizeInBytes = -1;
+                                }
+                                fileSizes.add(fileSizeInBytes);
                             } else {
                                 JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
                                         "PRIDE web service access error. Cannot open:<br>"
@@ -993,7 +1007,13 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
             String tempLink = (String) searchSettingsTable.getValueAt(row, column);
             tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
             final String link = tempLink.substring(0, tempLink.indexOf("\""));
-            final Double fileSize = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
+            Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(row, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
+            final int fileSizeInBytes;
+            if (fileSizeInMB != null) {
+                fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+            } else {
+                fileSizeInBytes = -1;
+            }
 
             final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
@@ -1024,7 +1044,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                     public void run() {
                         try {
                             File downLoadLocation = new File(downloadFolder, new File(link).getName());
-                            File savedFile = prideReShakeGUI.saveUrl(downLoadLocation, link, fileSize, progressDialog);
+                            File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
 
                             boolean canceled = progressDialog.isRunCanceled();
                             progressDialog.setRunFinished();
@@ -1117,7 +1137,13 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 String tempLink = (String) spectrumTable.getValueAt(row, column);
                 tempLink = tempLink.substring(tempLink.indexOf("\"") + 1);
                 final String link = tempLink.substring(0, tempLink.indexOf("\""));
-                final Double fileSize = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size (MB)").getModelIndex());
+                final Double fileSizeInMB = (Double) spectrumTable.getValueAt(row, spectrumTable.getColumn("Size (MB)").getModelIndex());
+                final int fileSizeInBytes;
+                if (fileSizeInMB != null) {
+                    fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                } else {
+                    fileSizeInBytes = -1;
+                }
 
                 final File downloadFolder = Util.getUserSelectedFolder(this, "Select Download Folder", lastSelectedFolder.getLastSelectedFolder(), "Download Folder", "Select", false);
 
@@ -1148,7 +1174,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                         public void run() {
                             try {
                                 File downLoadLocation = new File(downloadFolder, new File(link).getName());
-                                File savedFile = prideReShakeGUI.saveUrl(downLoadLocation, link, fileSize, progressDialog);
+                                File savedFile = Util.saveUrl(downLoadLocation, link, fileSizeInBytes, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword(), progressDialog);
 
                                 boolean canceled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
