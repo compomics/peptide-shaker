@@ -407,19 +407,44 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // turn off the derby log file
         DerbyUtil.disableDerbyLog();
 
+        // see if a cps or url is to be opened
         File cpsFile = null;
         boolean cps = false;
+        String zipUrl = null;
+        boolean url = false;
+        String zipUrlDownloadFolder = null;
+        boolean downloadFolder = false;
+
         for (String arg : args) {
             if (cps) {
                 cpsFile = new File(arg);
                 cps = false;
+            } else if (url) {
+                zipUrl = arg;
+                url = false;
+            } else if (downloadFolder) {
+                zipUrlDownloadFolder = arg;
+                downloadFolder = false;
             }
+
             if (arg.equals(ToolFactory.peptideShakerFileOption)) {
                 cps = true;
+            } else if (arg.equals(ToolFactory.peptideShakerUrlOption)) {
+                url = true;
+            } else if (arg.equals(ToolFactory.peptideShakerUrlDownloadFolderOption)) {
+                downloadFolder = true;
             }
         }
 
-        new PeptideShakerGUI(cpsFile, true);
+        // check if the download folder was provided if a url was given
+        if (zipUrl != null && zipUrlDownloadFolder == null) {
+            zipUrl = null;
+            JOptionPane.showMessageDialog(null,
+                    "Setting the download folder is mandatory when opening a URL. Please use the -zipUrlFolder option.", "Downloading URL Error",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+
+        new PeptideShakerGUI(cpsFile, zipUrl, zipUrlDownloadFolder, true);
     }
 
     /**
@@ -443,10 +468,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
      * Creates a new PeptideShaker frame.
      *
      * @param cpsFile the cps file to load
+     * @param zipURL the URL to a zipped cps file to download and load
+     * @param zipUrlDownloadFolder the folder to download the URL to
      * @param showWelcomeDialog boolean indicating if the Welcome Dialog is to
      * be shown
      */
-    public PeptideShakerGUI(File cpsFile, boolean showWelcomeDialog) {
+    public PeptideShakerGUI(File cpsFile, String zipURL, String zipUrlDownloadFolder, boolean showWelcomeDialog) {
 
         // set up the ErrorLog
         setUpLogFile(true);
@@ -575,14 +602,17 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             setLocationRelativeTo(null);
 
-            if (cpsFile == null) {
+            if (cpsFile != null) {
+                setVisible(true);
+                importPeptideShakerFile(cpsFile);
+            } else if (zipURL != null) {
+                setVisible(true);
+                importPeptideShakerZipFromURL(zipURL, zipUrlDownloadFolder);
+            } else {
                 if (showWelcomeDialog) {
                     // open the welcome dialog
                     new WelcomeDialog(this, !java64bit || !memoryOk, javaVersionWarning, true);
                 }
-            } else {
-                setVisible(true);
-                importPeptideShakerFile(cpsFile);
             }
         }
     }
@@ -3230,7 +3260,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
 
                             MatchesValidator matchesValidator = new MatchesValidator(pSMaps.getPsmSpecificMap(), pSMaps.getPeptideSpecificMap(), pSMaps.getProteinMap());
-                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler, 
+                            matchesValidator.validateIdentifications(peptideShakerGUI.getIdentification(), peptideShakerGUI.getMetrics(), pSMaps.getInputMap(), progressDialog, exceptionHandler,
                                     peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(),
                                     peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getProcessingPreferences());
 
@@ -3255,7 +3285,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         }
 
                         progressDialog.setRunFinished();
-                        
+
                         PeptideShakerGUI.this.repaintPanels();
                     }
                 }.start();
@@ -3284,8 +3314,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Reset the annotation to the default annotation.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void resetAnnotationMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_resetAnnotationMenuSelected
         defaultAnnotationCheckBoxMenuItem.setSelected(true);
@@ -3312,8 +3342,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 for (PathKey pathKey : pathSettings.keySet()) {
                     String oldPath = pathSettings.get(pathKey);
                     String newPath = newSettings.get(pathKey);
-                    if (oldPath == null && newPath != null 
-                            || oldPath != null && newPath == null 
+                    if (oldPath == null && newPath != null
+                            || oldPath != null && newPath == null
                             || oldPath != null && newPath != null && !oldPath.equals(newPath)) {
                         PeptideShakerPathPreferences.setPathPreferences(pathKey, newPath);
                     }
@@ -3400,10 +3430,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
-            starHideJMenuItem.setEnabled(true);
-            validationQcMenuItem.setEnabled(true);
-            starHideJMenuItem.setVisible(true);
-            validationQcMenuItem.setVisible(true);
+            //starHideJMenuItem.setEnabled(true);
+            //validationQcMenuItem.setEnabled(true);
+            starHideJMenuItem.setVisible(false);
+            validationQcMenuItem.setVisible(false);
             ionsMenu.setEnabled(true);
             otherMenu.setEnabled(true);
             lossMenu.setEnabled(true);
@@ -3753,7 +3783,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
-     * Returns the spectrum annotator. Warning: should not be used in different threads.
+     * Returns the spectrum annotator. Warning: should not be used in different
+     * threads.
      *
      * @return the spectrum annotator
      */
@@ -5305,6 +5336,68 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
     }
 
     /**
+     * Imports a PeptideShaker zip file from a URL.
+     *
+     * @param zipURL the PeptideShaker zip file to import
+     * @param destinationFolder the folder to download and unzip the project in
+     */
+    public void importPeptideShakerZipFromURL(final String zipURL, final String destinationFolder) {
+
+        // @TODO: add a default url download folder to the temp folder structure
+//        String newName = "zipped_url";
+//        String parentFolder = PsZipUtils.getUnzipParentFolder();
+//        if (parentFolder == null) {
+//            parentFolder = zipFile.getParent();
+//        }
+//        File parentFolderFile = new File(parentFolder, PsZipUtils.getUnzipSubFolder());
+//        final File destinationFolder = new File(parentFolderFile, newName);
+//        destinationFolder.mkdir();
+//        TempFilesManager.registerTempFolder(parentFolderFile);
+//        
+        final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
+
+        progressDialog = new ProgressDialogX(this,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setWaitingText("Downloading PeptideShaker Project. Please Wait...");
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DownloadingUrlThread") {
+            @Override
+            public void run() {
+
+                try {
+                    URL url = new URL(zipURL);
+                    String path = url.getPath();
+                    if (!path.endsWith(".zip")) {
+                        path += ".zip";
+                    }
+                    File tmpFile = new File(destinationFolder, new File(path).getName());
+                    Util.saveUrl(tmpFile, zipURL, Util.getFileSize(url), null, null, progressDialog);
+                    progressDialog.setRunFinished();
+                    importPeptideShakerZipFile(tmpFile);
+                } catch (Exception e) {
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            e.getMessage(),
+                            "Download Error", JOptionPane.WARNING_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    /**
      * Imports informations from a PeptideShaker zip file.
      *
      * @param zipFile the PeptideShaker zip file to import
@@ -5593,7 +5686,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                         public void run() {
                             openingExistingProject = false;
                         }
-                    }); 
+                    });
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occurred while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
