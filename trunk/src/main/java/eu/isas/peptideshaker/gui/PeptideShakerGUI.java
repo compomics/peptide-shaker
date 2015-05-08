@@ -604,7 +604,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (cpsFile != null) {
                 setVisible(true);
-                importPeptideShakerFile(cpsFile);
+                if (cpsFile.getName().endsWith(".zip")) {
+                    importPeptideShakerZipFile(cpsFile);
+                } else {
+                    importPeptideShakerFile(cpsFile);
+                }
             } else if (zipURL != null) {
                 setVisible(true);
                 importPeptideShakerZipFromURL(zipURL, zipUrlDownloadFolder);
