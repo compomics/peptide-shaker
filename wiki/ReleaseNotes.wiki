@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.38.4 (May 23. 2015):*
+
+ * NEW FEATURE: Added the option to start PeptideShaker with opening a zipped project from a URL.
+ * NEW FEATURE: Made it possible to load zipped cps files via the PeptideShaker GUI command line.
+
+ * FEATURE IMPROVEMENT: Leading and trailing white space is now removed before parsing FASTA headers.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.48.4.
+
+----
+
 *Changes in PeptideShaker 0.38.3 (May 8. 2015):*
 
  * BUG FIX: Fixed a bug in calculating the min/max mz value in a spectrum that occurred if the spectrum contained no peaks.
