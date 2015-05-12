@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.38.4 (May 23. 2015):*
+*Changes in PeptideShaker 0.38.4 (May 12. 2015):*
 
  * NEW FEATURE: Added the option to start PeptideShaker with opening a zipped project from a URL.
  * NEW FEATURE: Made it possible to load zipped cps files via the PeptideShaker GUI command line.
