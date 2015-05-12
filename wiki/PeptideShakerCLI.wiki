@@ -430,10 +430,16 @@ See also: [http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting
 
 *Opening PeptideShaker Projects*
 
-To open a PeptideShaker project (a cps file) from the command line (for display in PetpideShaker) use the following command:
+To open a PeptideShaker project (cps file or zipped cps file) from the command line (for display in PeptideShaker) use the following command:
 
 {{{
 java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
+}}}
+
+To open a zipped PeptideShaker project via a URL from the command line (for display in PeptideShaker) use the following command:
+
+{{{
+java -jar PeptideShaker-X.Y.Z.jar -zipUrl "http://my_url/PS.zip" -zipUrlFolder C:\my folder\"
 }}}
 
 
