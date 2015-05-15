@@ -104,6 +104,12 @@ public class DisplayFeaturesGenerator {
                         accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                                 + proteinAccession + "</font></a></html>";
+                    } else if (databaseType == Header.DatabaseType.UniRef) {
+                        // remove the 'UniRefXYZ_' part to get the default UniProt accession
+                        String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
+                        accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(uniProtProteinAccession)
+                                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
+                                + proteinAccession + "</font></a></html>";
                     } else {
                         // unknown database!
                     }
@@ -162,6 +168,16 @@ public class DisplayFeaturesGenerator {
                         } else if (database == DatabaseType.NCBI) {
                             accessionNumberWithLink.append("<a href=\"");
                             accessionNumberWithLink.append(getNcbiAccessionLink(proteinAccession));
+                            accessionNumberWithLink.append("\"><font color=\"");
+                            accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
+                            accessionNumberWithLink.append("\">");
+                            accessionNumberWithLink.append(proteinAccession);
+                            accessionNumberWithLink.append("</font></a>, ");
+                        } else if (database == Header.DatabaseType.UniRef) {
+                            // remove the 'UniRefXYZ_' part to get the default UniProt accession
+                            String uniProtProteinAccession = proteinAccession.substring(proteinAccession.indexOf("_") + 1);
+                            accessionNumberWithLink.append("<a href=\"");
+                            accessionNumberWithLink.append(getUniProtAccessionLink(uniProtProteinAccession));
                             accessionNumberWithLink.append("\"><font color=\"");
                             accessionNumberWithLink.append(notSelectedRowHtmlTagFontColor);
                             accessionNumberWithLink.append("\">");
