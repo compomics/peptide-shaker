@@ -383,7 +383,7 @@ public class PeptideShaker {
 
         waitingHandler.appendReport("Simplifying protein groups.", true, true);
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.removeRedundantGroups(identification, shotgunProtocol, identificationParameters, waitingHandler);
+        proteinInference.removeRedundantGroups(identification, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -417,7 +417,7 @@ public class PeptideShaker {
         }
 
         waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
-        proteinInference.retainBestScoringGroups(identification, metrics, matchesValidator.getProteinMap(), shotgunProtocol, identificationParameters, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, matchesValidator.getProteinMap(), shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -495,8 +495,8 @@ public class PeptideShaker {
                 detailedReport += " identifications.<br>";
             }
 
-            firstLine = true;
-
+//            firstLine = true;
+//
 //            if (psmMap.getKeys().size() == 1) { // @TODO: re-add!
 //                detailedReport += "PSMs.<br>";
 //            } else {
@@ -576,7 +576,7 @@ public class PeptideShaker {
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
 
     /**
@@ -601,7 +601,7 @@ public class PeptideShaker {
         proteinMap.estimateProbabilities(waitingHandler);
         matchesValidator.attachProteinProbabilities(identification, metrics, waitingHandler, processingPreferences);
         ProteinInference proteinInference = new ProteinInference();
-        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, waitingHandler);
+        proteinInference.retainBestScoringGroups(identification, metrics, proteinMap, shotgunProtocol, identificationParameters, identificationFeaturesGenerator, waitingHandler);
     }
 
     /**
