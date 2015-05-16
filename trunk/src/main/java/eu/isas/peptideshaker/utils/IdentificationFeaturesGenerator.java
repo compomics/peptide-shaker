@@ -111,7 +111,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Sets a mass error distribution in the massErrorDistribution map.
-     * 
+     *
      * @param spectrumFile the spectrum file of interest
      * @param precursorMzDeviations list of precursor mass errors
      */
@@ -124,17 +124,24 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the precursor mass error distribution of validated peptides in a spectrum file.
-     * 
+     * Returns the precursor mass error distribution of validated peptides in a
+     * spectrum file.
+     *
      * @param spectrumFile the name of the file of interest
-     * 
-     * @return the precursor mass error distribution of validated peptides in a spectrum file
-     * 
-     * @throws SQLException Exception thrown whenever an error occurred while interacting with a database
-     * @throws IOException Exception thrown whenever an error occurred while reading or writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error occurred while deserializing a file
-     * @throws InterruptedException Exception thrown whenever a threading error occurred while estimating the mass distribution
-     * @throws MzMLUnmarshallerException Exception thrown whenever an error occurred while reading an mzML file
+     *
+     * @return the precursor mass error distribution of validated peptides in a
+     * spectrum file
+     *
+     * @throws SQLException Exception thrown whenever an error occurred while
+     * interacting with a database
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing a file
+     * @throws InterruptedException Exception thrown whenever a threading error
+     * occurred while estimating the mass distribution
+     * @throws MzMLUnmarshallerException Exception thrown whenever an error
+     * occurred while reading an mzML file
      */
     public NonSymmetricalNormalDistribution getMassErrorDistribution(String spectrumFile) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         if (massErrorDistribution == null || massErrorDistribution.get(spectrumFile) == null) {
@@ -144,15 +151,21 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Estimates the precursor mass errors of validated peptides in a file and sets in in the massErrorDistribution map.
-     * 
+     * Estimates the precursor mass errors of validated peptides in a file and
+     * sets in in the massErrorDistribution map.
+     *
      * @param spectrumFile the spectrum file of interest
-     * 
-     * @throws SQLException Exception thrown whenever an error occurred while interacting with a database
-     * @throws IOException Exception thrown whenever an error occurred while reading or writing a file
-     * @throws ClassNotFoundException Exception thrown whenever an error occurred while deserializing a file
-     * @throws InterruptedException Exception thrown whenever a threading error occurred while estimating the mass distribution
-     * @throws MzMLUnmarshallerException Exception thrown whenever an error occurred while reading an mzML file
+     *
+     * @throws SQLException Exception thrown whenever an error occurred while
+     * interacting with a database
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing a file
+     * @throws InterruptedException Exception thrown whenever a threading error
+     * occurred while estimating the mass distribution
+     * @throws MzMLUnmarshallerException Exception thrown whenever an error
+     * occurred while reading an mzML file
      */
     private void estimateMassErrorDistribution(String spectrumFile) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         ArrayList<Double> precursorMzDeviations = new ArrayList<Double>(512);
@@ -173,30 +186,31 @@ public class IdentificationFeaturesGenerator {
                 }
             }
         }
-        setMassErrorDistribution(spectrumFile, precursorMzDeviations);;
+        setMassErrorDistribution(spectrumFile, precursorMzDeviations);
     }
 
-/**
- * Returns an array of the likelihood to find identify a given amino acid in the
- * protein sequence. 0 is the first amino acid.
- *
- * @param proteinMatchKey the key of the protein of interest
- *
- * @return an array of boolean indicating whether the amino acids of given
- * peptides can generate peptides
- *
- * @throws java.sql.SQLException exception thrown whenever an error occurred
- * while interacting with a database (from the protein tree or identification)
- * @throws java.io.IOException exception thrown whenever an error occurred while
- * reading or writing a file
- * @throws java.lang.ClassNotFoundException exception thrown whenever an error
- * occurred while deserializing an object from a database (from the protein tree
- * or identification)
- * @throws java.lang.InterruptedException exception thrown whenever a threading
- * error occurred while interacting with a database (from the protein tree or
- * identification)
- */
-public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    /**
+     * Returns an array of the likelihood to find identify a given amino acid in
+     * the protein sequence. 0 is the first amino acid.
+     *
+     * @param proteinMatchKey the key of the protein of interest
+     *
+     * @return an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         double[] result = (double[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA_p, proteinMatchKey);
         if (result == null) {
             result = estimateCoverableAA(proteinMatchKey);
@@ -1483,6 +1497,60 @@ public double[] getCoverableAA(String proteinMatchKey) throws SQLException, IOEx
             }
         }
         return cpt;
+    }
+
+    /**
+     * Returns true if the protein has any enzymatic peptides.
+     *
+     * @param proteinMatch the protein match
+     * @param proteinAccession the protein accession to check
+     *
+     * @return true if the protein has any enzymatic peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    public boolean hasEnzymaticPeptides(ProteinMatch proteinMatch, String proteinAccession) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Boolean result = (Boolean) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinAccession);
+
+        if (result == null) {
+            result = checkEnzymaticPeptides(proteinMatch, proteinAccession);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.containsEnzymaticPeptides, proteinAccession, result);
+        }
+        return result;
+    }
+
+    /**
+     * Returns true if the protein has any enzymatic peptides.
+     *
+     * @param proteinMatch the protein match
+     * @param proteinAccession the protein accession to check
+     *
+     * @return true if the protein has any enzymatic peptides
+     *
+     * @throws java.sql.SQLException exception thrown whenever an error occurred
+     * while interacting with a database (from the protein tree or
+     * identification)
+     * @throws java.io.IOException exception thrown whenever an error occurred
+     * while reading or writing a file
+     * @throws java.lang.ClassNotFoundException exception thrown whenever an
+     * error occurred while deserializing an object from a database (from the
+     * protein tree or identification)
+     * @throws java.lang.InterruptedException exception thrown whenever a
+     * threading error occurred while interacting with a database (from the
+     * protein tree or identification)
+     */
+    private boolean checkEnzymaticPeptides(ProteinMatch proteinMatch, String proteinAccession) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return proteinMatch.hasEnzymaticPeptide(proteinAccession, shotgunProtocol.getEnzyme(), identificationParameters.getSequenceMatchingPreferences());
     }
 
     /**

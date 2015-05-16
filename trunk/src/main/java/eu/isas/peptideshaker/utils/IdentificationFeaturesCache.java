@@ -91,7 +91,12 @@ public class IdentificationFeaturesCache implements Serializable {
         /**
          * The number of unique peptides. Stored as a small object.
          */
-        unique_peptides;
+        unique_peptides,
+        /**
+         * Contains if a given protein accession contains enzymatic peptides:
+         * true or false. Stored as a small object.
+         */
+        containsEnzymaticPeptides;
     }
     /**
      * The number of values kept in memory for small objects.
@@ -204,6 +209,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 case number_of_confident_peptides:
                 case max_psm_mz_for_peptides:
                 case unique_peptides:
+                case containsEnzymaticPeptides:
                     smallObjectsCache.remove(type);
                     for (String key : smallObjectsInCache) {
                         if (key.contains(typeKey)) {
@@ -267,6 +273,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 case number_of_confident_peptides:
                 case max_psm_mz_for_peptides:
                 case unique_peptides:
+                case containsEnzymaticPeptides:
                     if (!smallObjectsCache.containsKey(type)) {
                         smallObjectsCache.put(type, new HashMap<String, Object>());
                     }
@@ -324,6 +331,7 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_confident_peptides:
             case max_psm_mz_for_peptides:
             case unique_peptides:
+            case containsEnzymaticPeptides:
                 cacheForType = smallObjectsCache.get(type);
                 if (cacheForType != null) {
                     return cacheForType.get(objectKey);
@@ -569,6 +577,8 @@ public class IdentificationFeaturesCache implements Serializable {
                 return "tryptic_protein";
             case unique_peptides:
                 return "unique_peptides";
+            case containsEnzymaticPeptides:
+                return "contains_enzymatic_peptides";
             default:
                 return "default";
         }
@@ -613,6 +623,8 @@ public class IdentificationFeaturesCache implements Serializable {
             return ObjectType.tryptic_protein;
         } else if (objectTypeAsString.equals("unique_peptides")) {
             return ObjectType.unique_peptides;
+        } else if (objectTypeAsString.equals("contains_enzymatic_peptides")) { 
+            return ObjectType.containsEnzymaticPeptides;
         } else {
             return null;
         }
