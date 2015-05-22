@@ -230,7 +230,7 @@ public class PSPtmScores implements UrParameter {
      * Changes the representative site for a given ambiguously localized PTM in
      * all maps.
      *
-     * @param ptmName the name of the ptm of interest
+     * @param ptmName the name of the PTM of interest
      * @param originalRepresentativeSite the original representative site
      * @param newRepresentativeSite the new representative site
      */
