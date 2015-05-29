@@ -76,7 +76,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param precursorRT the precursor retention time
-     * 
+     *
      * @return the list for fragment ion m/z bins
      */
     public ArrayList<Double> getFragmentMZList(double precursorRT) {
@@ -88,7 +88,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param rtBin the retention time bin
-     * 
+     *
      * @return the precursor m/z deviation slope
      */
     public Double getSlope(Double rtBin) {
@@ -100,7 +100,7 @@ public class RunMzDeviation {
      * point.
      *
      * @param rtBin the retention time bin
-     * 
+     *
      * @return the precursor m/z deviation offset
      */
     public Double getOffset(Double rtBin) {
@@ -113,7 +113,7 @@ public class RunMzDeviation {
      *
      * @param precursorMz the precursor m/z
      * @param precursorRT the precursor retention time
-     * 
+     *
      * @return the median error
      */
     public double getPrecursorMzCorrection(Double precursorMz, Double precursorRT) {
@@ -149,7 +149,7 @@ public class RunMzDeviation {
      *
      * @param precursorRT the precursor retention time
      * @param fragmentMZ the fragment m/z
-     * 
+     *
      * @return the error found
      */
     public Double getFragmentMzError(double precursorRT, double fragmentMZ) {
@@ -237,7 +237,7 @@ public class RunMzDeviation {
      *
      * @param precursorRT the precursor retention time
      * @param originalPeakList the original peak list
-     * 
+     *
      * @return the recalibrated peak list
      */
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
@@ -260,10 +260,11 @@ public class RunMzDeviation {
      * @param identificationParameters the identification parameters
      * @param waitingHandler a waiting handler displaying the progress and
      * allowing the user to cancel the process. Can be null
-     * 
+     *
      * @throws IOException exception thrown whenever an IO exception occurred
      * while reading or writing to a file
-     * @throws InterruptedException exception thrown whenever a threading issue occurred while 
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
      * @throws SQLException exception thrown whenever an SQL exception occurred
      * while interacting with the database
      * @throws ClassNotFoundException exception thrown whenever an exception
@@ -324,7 +325,7 @@ public class RunMzDeviation {
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
                     MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
-                    SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+                    SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(currentSpectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                     ArrayList<IonMatch> ionMatches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                             (MSnSpectrum) currentSpectrum, bestPeptideAssumption.getPeptide());
                     spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();

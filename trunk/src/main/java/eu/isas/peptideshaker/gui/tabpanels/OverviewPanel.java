@@ -56,6 +56,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -3930,7 +3932,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                         Peptide peptide = peptideAssumption.getPeptide();
-                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                         peptides.add(peptide);
                         ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                         allAnnotations.add(annotations);
@@ -4097,7 +4099,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             NonSymmetricalNormalDistribution peptideLengthDistribution = peptideShakerGUI.getMetrics().getPeptideLengthDistribution();
             if (peptideLengthDistribution != null) {
                 double medianLength = peptideLengthDistribution.getMean();
-                maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength);
+                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+                maxHeight = (1 - minHeight) * peptideLengthDistribution.getProbabilityAt(medianLength, mathContext).doubleValue();
             }
 
             double[] coverageLikelihood = identificationFeaturesGenerator.getCoverableAA(proteinKey);
@@ -4953,7 +4956,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
 
         int[] selectedRows = psmTable.getSelectedRows();
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences();
+                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
 
         try {
             for (int row : selectedRows) {
@@ -4970,7 +4974,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // get the spectrum annotations
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestPeptideAssumption();
                     Peptide peptide = peptideAssumption.getPeptide();
-                    SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
+                    SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                     ArrayList<IonMatch> annotations = peptideShakerGUI.getSpectrumAnnotator().getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, currentSpectrum, peptide);
                     allAnnotations.add(annotations);
                     currentSpectrumKey = spectrumKey;

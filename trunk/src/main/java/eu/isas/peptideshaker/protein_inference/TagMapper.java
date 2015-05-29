@@ -314,7 +314,7 @@ public class TagMapper {
                         mapPtmsForTag(tagAssumption.getTag(), advocateId);
                         ArrayList<TagAssumption> extendedTagList = new ArrayList<TagAssumption>();
                         extendedTagList.add(tagAssumption);
-                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences());
+                        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrumKey, tagAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                         ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, spectrum, tagAssumption.getTag());
                         int nB = 0, nY = 0;
                         for (IonMatch ionMatch : annotations) {

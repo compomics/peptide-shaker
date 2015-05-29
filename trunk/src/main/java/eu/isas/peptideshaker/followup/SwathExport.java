@@ -60,7 +60,8 @@ public class SwathExport {
      * the process
      * @param targetedPTMs the targeted PTMs in case of a PTM export
      * @param annotationPreferences the spectrum annotation preferences
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences for peptide to protein mapping
+     * @param ptmSequenceMatchingPreferences the sequence matching preferences for ptm to peptide mapping
      *
      * @throws IOException exception thrown whenever an error occurred while
      * interacting with a file
@@ -74,7 +75,7 @@ public class SwathExport {
      * reading an mzML file
      */
     public static void writeSwathExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler,
-            ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences)
+            ArrayList<String> targetedPTMs, AnnotationPreferences annotationPreferences, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences)
             throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (exportType == ExportType.confident_ptms) {
@@ -163,13 +164,13 @@ public class SwathExport {
                                         }
                                         if (!decoy) {
                                             if (exportType == ExportType.validated_psms) {
-                                                writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
+                                                writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                             } else {
                                                 String peptideKey = peptide.getMatchingKey(sequenceMatchingPreferences);
                                                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                                                 if (psParameter.getMatchValidationLevel().isValidated()) {
                                                     if (exportType == ExportType.validated_psms_peptides) {
-                                                        writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
+                                                        writePsm(writer, spectrumKey, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                                     } else {
                                                         ArrayList<String> accessions = new ArrayList<String>();
                                                         for (String accession : peptide.getParentProteins(sequenceMatchingPreferences)) {
@@ -188,7 +189,7 @@ public class SwathExport {
                                                             }
                                                         }
                                                         if (!accessions.isEmpty()) {
-                                                            writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
+                                                            writePsm(writer, spectrumKey, accessions, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
                                                         }
                                                     }
                                                 }
@@ -245,7 +246,8 @@ public class SwathExport {
      * @param writer the writer
      * @param spectrumKey the key of the PSM to export
      * @param identification the identification
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences for peptide to protein mapping
+     * @param ptmSequenceMatchingPreferences the sequence matching preferences for ptm to peptide mapping
      * @param annotationPreferences the annotation preferences to use for
      * spectrum annotation
      * @param spectrumAnnotator the spectrum annotator to use
@@ -261,9 +263,9 @@ public class SwathExport {
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification, SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
-        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
+        writePsm(writer, spectrumKey, null, identification, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, annotationPreferences, spectrumAnnotator);
     }
 
     /**
@@ -275,7 +277,8 @@ public class SwathExport {
      * @param accessions the accessions corresponding to that peptide according
      * to protein inference. If null all proteins will be reported.
      * @param identification the identification
-     * @param sequenceMatchingPreferences the sequence matching preferences
+     * @param sequenceMatchingPreferences the sequence matching preferences for peptide to protein mapping
+     * @param ptmSequenceMatchingPreferences the sequence matching preferences for ptm to peptide mapping
      * @param annotationPreferences the annotation preferences to use for
      * spectrum annotation
      * @param spectrumAnnotator the spectrum annotator to use
@@ -292,7 +295,7 @@ public class SwathExport {
      * reading an mzML file
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification,
-            SequenceMatchingPreferences sequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
+            SequenceMatchingPreferences sequenceMatchingPreferences, SequenceMatchingPreferences ptmSequenceMatchingPreferences, AnnotationPreferences annotationPreferences, PeptideSpectrumAnnotator spectrumAnnotator)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -315,7 +318,7 @@ public class SwathExport {
 
         for (String accession : accessions) {
 
-            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences);
+            SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestAssumption, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
             ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
                     (MSnSpectrum) spectrum, bestAssumption.getPeptide());
 

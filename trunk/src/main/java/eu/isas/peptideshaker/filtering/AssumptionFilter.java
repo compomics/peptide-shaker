@@ -21,6 +21,9 @@ import eu.isas.peptideshaker.filtering.items.AssumptionFilterItem;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -221,11 +224,12 @@ public class AssumptionFilter extends MatchFilter {
                 precursor = SpectrumFactory.getInstance().getPrecursor(spectrumKey);
                 mzError = Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), identificationParameters.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 NonSymmetricalNormalDistribution precDeviationDistribution = identificationFeaturesGenerator.getMassErrorDistribution(Spectrum.getSpectrumFile(spectrumKey));
-                Double p;
+                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+                BigDecimal p;
                 if (mzError > precDeviationDistribution.getMean()) {
-                    p = precDeviationDistribution.getDescendingCumulativeProbabilityAt(mzError);
+                    p = precDeviationDistribution.getDescendingCumulativeProbabilityAt(mzError, mathContext);
                 } else {
-                    p = precDeviationDistribution.getCumulativeProbabilityAt(mzError);
+                    p = precDeviationDistribution.getCumulativeProbabilityAt(mzError, mathContext);
                 }
                 return filterItemComparator.passes(input, p.toString());
             case sequenceCoverage:
@@ -233,7 +237,7 @@ public class AssumptionFilter extends MatchFilter {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 Peptide peptide = peptideAssumption.getPeptide();
                 AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
-                SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+                SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
                 HashMap<Integer, ArrayList<IonMatch>> matches = peptideSpectrumAnnotator.getCoveredAminoAcids(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
                 double nCovered = 0;
                 int nAA = peptide.getSequence().length();
