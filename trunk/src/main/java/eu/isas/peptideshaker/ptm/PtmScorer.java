@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.ptm;
 
-import com.compomics.util.Util;
 import com.compomics.util.exceptions.ExceptionHandler;
 import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.biology.PTM;
@@ -255,10 +254,11 @@ public class PtmScorer {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever a
-     * math error occurred while computing the PTM scores.
+     * @throws org.apache.commons.math.MathException thrown whenever a math
+     * error occurred while computing the PTM scores
      */
-    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
+    private void attachProbabilisticScore(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters,
+            PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws IOException, InterruptedException, ClassNotFoundException, SQLException, MzMLUnmarshallerException, MathException {
 
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
@@ -397,11 +397,12 @@ public class PtmScorer {
      * while interacting with the database
      * @throws MzMLUnmarshallerException thrown whenever an error occurred while
      * reading an mzML file
-     * @throws org.apache.commons.math.MathException exception thrown whenever a
-     * math error occurred while computing the PTM scores.
+     * @throws org.apache.commons.math.MathException thrown whenever a math
+     * error occurred while computing the PTM scores
      */
     public void scorePTMs(Identification identification, SpectrumMatch spectrumMatch, IdentificationParameters identificationParameters,
-            WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
+            WaitingHandler waitingHandler, PeptideSpectrumAnnotator peptideSpectrumAnnotator)
+            throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
         attachDeltaScore(identification, spectrumMatch, sequenceMatchingPreferences);
@@ -601,11 +602,6 @@ public class PtmScorer {
         HashMap<Double, ArrayList<Integer>> inferredSites = new HashMap<Double, ArrayList<Integer>>();
 
         String originalKey = peptide.getMatchingKey(sequenceMatchingPreferences);
-
-        if (originalKey.equals("TMPKEMSDIIKRI_-30.010565-ATAA-5_-30.010565-ATAA-8_-31.989829-ATAA-2_31.989829-ATAA-2")) {
-
-            System.out.println(originalKey);
-        }
 
         for (ModificationMatch modificationMatch : originalMatches) {
             if (modificationMatch.isVariable()) {
@@ -1647,7 +1643,7 @@ public class PtmScorer {
                                                     if (!siteOccupied) {
                                                         for (String ptmName : searchParameters.getModificationProfile().getAllNotFixedModifications()) {
                                                             PTM ptm = ptmFactory.getPTM(ptmName);
-                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm,sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) {
+                                                            if (ptm.getType() == PTM.MODAA && ptm.getMass() == ptm.getMass() && peptide.getPotentialModificationSites(ptm, sequenceMatchingPreferences, ptmSequenceMatchingPreferences).contains(shiftedLocalization)) {
                                                                 candidatePtm = true;
                                                                 break;
                                                             }
@@ -1780,16 +1776,20 @@ public class PtmScorer {
         ArrayList<ModificationMatch> assignedPtms = new ArrayList<ModificationMatch>(psPeptide.getModificationMatches().size());
         HashMap<Double, HashMap<Double, HashMap<Double, ArrayList<Integer>>>> scoreToSiteMap = new HashMap<Double, HashMap<Double, HashMap<Double, ArrayList<Integer>>>>(); // p-score -> d-score -> PTM mass -> list of posssible sites
         HashMap<Double, HashMap<Integer, String>> confidentSites = new HashMap<Double, HashMap<Integer, String>>();
+
         for (double ptmMass : ptmMasses) {
+
             ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
             int nPTMs = ptmMatches.size();
             HashMap<Integer, String> ptmPotentialSites = possiblePositions.get(ptmMass);
             int nPotentialSites = ptmPotentialSites.size();
             HashMap<Integer, String> ptmConfidentSites = confidentSites.get(ptmMass);
+
             if (ptmConfidentSites == null) {
                 ptmConfidentSites = new HashMap<Integer, String>(1);
                 confidentSites.put(ptmMass, ptmConfidentSites);
             }
+
             if (nPotentialSites < nPTMs) {
                 throw new IllegalArgumentException("The occurence of modification of mass " + ptmMass + " (" + ptmMatches.size()
                         + ") is higher than the number of possible sites (" + ptmPotentialSites.size() + ") on sequence " + psPeptide.getSequence()
@@ -1806,12 +1806,16 @@ public class PtmScorer {
                 }
             } else if (!ptmScoringPreferences.isProbabilitsticScoreCalculation()
                     || ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.AScore && ptmMatches.size() > 1) {
+
                 double pScore = 0; // no probabilistic score in that case
+
                 for (ModificationMatch modificationMatch : ptmMatches) {
+
                     String modName = modificationMatch.getTheoreticPtm();
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     ArrayList<Integer> orderedDSites = new ArrayList<Integer>(ptmScoring.getDSites());
                     Collections.sort(orderedDSites);
+
                     for (int site : orderedDSites) {
                         if (site == modificationMatch.getModificationSite()) {
                             double dScore = ptmScoring.getDeltaScore(site);
@@ -1855,89 +1859,118 @@ public class PtmScorer {
                 }
             } else {
                 for (int site : ptmPotentialSites.keySet()) {
+
                     String modName = ptmPotentialSites.get(site);
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     double pScore = 0;
                     double dScore = 0;
+
                     if (ptmScoring != null) {
                         pScore = ptmScoring.getProbabilisticScore(site);
                         dScore = ptmScoring.getDeltaScore(site);
                     }
+
                     HashMap<Double, HashMap<Double, ArrayList<Integer>>> pScoreMap = scoreToSiteMap.get(pScore);
                     if (pScoreMap == null) {
                         pScoreMap = new HashMap<Double, HashMap<Double, ArrayList<Integer>>>(1);
                         scoreToSiteMap.put(pScore, pScoreMap);
                     }
+
                     HashMap<Double, ArrayList<Integer>> dScoreMap = pScoreMap.get(dScore);
                     if (dScoreMap == null) {
                         dScoreMap = new HashMap<Double, ArrayList<Integer>>(1);
                         pScoreMap.put(dScore, dScoreMap);
                     }
+
                     ArrayList<Integer> dScoreSites = dScoreMap.get(ptmMass);
                     if (dScoreSites == null) {
                         dScoreSites = new ArrayList<Integer>(1);
                         dScoreMap.put(ptmMass, dScoreSites);
                     }
+
                     dScoreSites.add(site);
                 }
             }
         }
+
         if (!scoreToSiteMap.isEmpty()) {
+
             ArrayList<Double> pScores = new ArrayList<Double>(scoreToSiteMap.keySet());
             Collections.sort(pScores, Collections.reverseOrder());
             int flrKey = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+
             for (Double pScore : pScores) {
+
                 HashMap<Double, HashMap<Double, ArrayList<Integer>>> pScoreMap = scoreToSiteMap.get(pScore);
                 ArrayList<Double> dScores = new ArrayList<Double>(pScoreMap.keySet());
                 Collections.sort(dScores, Collections.reverseOrder());
+
                 for (Double dScore : dScores) {
+
                     HashMap<Double, ArrayList<Integer>> dScoreMap = pScoreMap.get(dScore);
                     ArrayList<Double> ptmMassesAtScore = new ArrayList<Double>(dScoreMap.keySet());
                     Collections.sort(ptmMassesAtScore);
+
                     for (Double ptmMass : ptmMassesAtScore) {
+
                         ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
                         HashMap<Integer, String> ptmPotentialSites = possiblePositions.get(ptmMass);
                         HashMap<Integer, String> ptmConfidentSites = confidentSites.get(ptmMass);
                         int nPTMs = ptmMatches.size(), nPotentialSites = ptmPotentialSites.size();
+
                         TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, flrKey);
                         if (currentMap == null) {
                             throw new IllegalArgumentException("No FLR map found for PTM of mass " + ptmMass + " in PSMs of charge " + flrKey + ".");
                         }
+
                         int cpt = 0;
                         double doubtfulThreshold;
+
                         if (ptmScoringPreferences.isEstimateFlr()) {
                             doubtfulThreshold = -currentMap.getTargetDecoyResults().getScoreLimit();
                         } else {
                             doubtfulThreshold = ptmScoringPreferences.getProbabilisticScoreThreshold();
                         }
+
                         double randomThreshold = 0;
+
                         if (ptmScoringPreferences.getSelectedProbabilisticScore() == PtmScore.PhosphoRS) {
                             randomThreshold = (100.0 * nPTMs) / ptmPotentialSites.size();
                         }
+
                         ArrayList<Integer> sites = dScoreMap.get(ptmMass);
                         Collections.sort(sites);
                         boolean enoughPtms = nPTMs - cpt >= sites.size();
+
                         for (int site : sites) {
+
                             String modName = ptmPotentialSites.get(site);
                             PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                             if (ptmScoring == null) {
                                 ptmScoring = new PtmScoring(modName);
                                 ptmScores.addPtmScoring(modName, ptmScoring);
                             }
+
                             ModificationMatch modificationMatch = null;
+
                             if (cpt < nPTMs) {
+
                                 boolean alreadyOccupied = false;
+
                                 for (ModificationMatch assignedMatch : assignedPtms) {
                                     if (assignedMatch.getModificationSite() == site) {
                                         alreadyOccupied = true;
                                         break;
                                     }
                                 }
+
                                 if (!alreadyOccupied) {
+
                                     modificationMatch = ptmMatches.get(cpt);
                                     modificationMatch.setModificationSite(site);
                                     modificationMatch.setTheoreticPtm(modName);
                                     assignedPtms.add(modificationMatch);
+
                                     if (pScore <= randomThreshold || !enoughPtms) {
                                         ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
                                         modificationMatch.setConfident(false);
@@ -1949,30 +1982,37 @@ public class PtmScorer {
                                         modificationMatch.setConfident(true);
                                         ptmConfidentSites.put(site, modName);
                                     }
+
                                     cpt++;
                                 }
                             }
+
                             if (modificationMatch == null || !modificationMatch.isConfident()) {
+
                                 HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>> pScoreAmbiguousMap = ambiguousScoreToSiteMap.get(pScore);
                                 if (pScoreAmbiguousMap == null) {
                                     pScoreAmbiguousMap = new HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>(nPotentialSites);
                                     ambiguousScoreToSiteMap.put(pScore, pScoreAmbiguousMap);
                                 }
+
                                 HashMap<Double, HashMap<Integer, ArrayList<String>>> dScoreAmbiguousMap = pScoreAmbiguousMap.get(dScore);
                                 if (dScoreAmbiguousMap == null) {
                                     dScoreAmbiguousMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>(1);
                                     pScoreAmbiguousMap.put(dScore, dScoreAmbiguousMap);
                                 }
+
                                 HashMap<Integer, ArrayList<String>> massAmbiguousMap = dScoreAmbiguousMap.get(ptmMass);
                                 if (massAmbiguousMap == null) {
                                     massAmbiguousMap = new HashMap<Integer, ArrayList<String>>(nPotentialSites);
                                     dScoreAmbiguousMap.put(ptmMass, massAmbiguousMap);
                                 }
+
                                 ArrayList<String> modifications = massAmbiguousMap.get(site);
                                 if (modifications == null) {
                                     modifications = new ArrayList<String>(1);
                                     massAmbiguousMap.put(site, modifications);
                                 }
+
                                 modifications.add(modName);
                             }
                         }
@@ -1982,14 +2022,18 @@ public class PtmScorer {
         }
 
         for (Double ptmMass : confidentSites.keySet()) {
+
             // Select the best scoring ambiguous sites as representative PTM sites
             HashMap<Integer, String> ptmConfidentSitesMap = confidentSites.get(ptmMass);
             ArrayList<Integer> ptmConfidentSites = new ArrayList<Integer>(ptmConfidentSitesMap.keySet());
+
             for (int site : ptmConfidentSites) {
                 ptmScores.addConfidentModificationSite(ptmConfidentSitesMap.get(site), site);
             }
+
             int nConfident = ptmConfidentSites.size();
             ArrayList<ModificationMatch> ptmMatches = modMatchesMap.get(ptmMass);
+
             int nPTMs = ptmMatches.size();
             if (nConfident < nPTMs) {
                 int nRepresentatives = nPTMs - nConfident;
@@ -1998,6 +2042,7 @@ public class PtmScorer {
                 }
             }
         }
+
         if (!nRepresentativesMap.isEmpty()) {
             HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> representativeToSecondaryMap = getRepresentativeToSecondaryMap(ambiguousScoreToSiteMap, nRepresentativesMap);
             for (Double ptmMass : representativeToSecondaryMap.keySet()) {
