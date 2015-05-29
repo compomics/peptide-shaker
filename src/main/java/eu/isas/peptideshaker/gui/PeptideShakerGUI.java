@@ -5079,7 +5079,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         try {
             AnnotationPreferences annotationPreferences = getIdentificationParameters().getAnnotationPreferences();
 
-            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences());
+            specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(specificAnnotationPreferences.getSpectrumKey(), specificAnnotationPreferences.getSpectrumIdentificationAssumption(), getIdentificationParameters().getSequenceMatchingPreferences(), getIdentificationParameters().getPtmScoringPreferences().getSequenceMatchingPreferences());
 
             if (!defaultAnnotationCheckBoxMenuItem.isSelected()) {
 

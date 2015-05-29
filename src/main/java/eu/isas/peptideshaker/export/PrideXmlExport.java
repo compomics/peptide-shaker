@@ -738,7 +738,7 @@ public class PrideXmlExport {
         Peptide peptide = peptideAssumption.getPeptide();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
         MSnSpectrum spectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey()));
-        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences());
+        SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), peptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
         ArrayList<IonMatch> matches = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, peptide);
         for (IonMatch annotation : matches) {
             writeFragmentIon(annotation);

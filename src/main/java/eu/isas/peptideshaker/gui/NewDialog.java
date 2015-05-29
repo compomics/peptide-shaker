@@ -21,7 +21,7 @@ import com.compomics.util.experiment.io.identifications.IdentificationParameters
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.filehandling.TempFilesManager;
-import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
+import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.compression.ZipUtils;

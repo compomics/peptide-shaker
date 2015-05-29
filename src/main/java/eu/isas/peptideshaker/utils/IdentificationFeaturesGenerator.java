@@ -33,6 +33,8 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import java.io.IOException;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -576,7 +578,8 @@ public class IdentificationFeaturesGenerator {
                             p = 0;
                         }
                     } else {
-                        p = peptideLengthDistribution.getProbabilityAt(length);
+                        MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+                        p = peptideLengthDistribution.getProbabilityAt(length, mathContext).doubleValue();
                     }
                     for (int j = lastCleavage + 1; j <= i; j++) {
                         result[j] = p;
@@ -599,7 +602,8 @@ public class IdentificationFeaturesGenerator {
                     p = 0;
                 }
             } else {
-                p = peptideLengthDistribution.getProbabilityAt(length);
+                MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+                p = peptideLengthDistribution.getProbabilityAt(length, mathContext).doubleValue();
             }
             for (int j = lastCleavage; j < sequence.length(); j++) {
                 result[j] = p;
@@ -1235,7 +1239,8 @@ public class IdentificationFeaturesGenerator {
         Protein currentProtein = sequenceFactory.getProtein(mainMatch);
         double lengthMax = identificationParameters.getIdFilter().getMaxPepLength();
         if (metrics.getPeptideLengthDistribution() != null) {
-            lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99));
+            MathContext mathContext = new MathContext(10, RoundingMode.HALF_DOWN);
+            lengthMax = Math.min(lengthMax, metrics.getPeptideLengthDistribution().getValueAtCumulativeProbability(0.99, mathContext).doubleValue());
         }
         return ((double) currentProtein.getObservableLength(enyzme, lengthMax)) / currentProtein.getLength();
     }

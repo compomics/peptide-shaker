@@ -903,7 +903,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     try {
                         IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
                         SwathExport.writeSwathExport(finalOutputFile, peptideShakerGUI.getIdentification(), SwathExport.ExportType.getTypeFromIndex(userChoice),
-                                progressDialog, ptmSelection, identificationParameters.getAnnotationPreferences(), identificationParameters.getSequenceMatchingPreferences());
+                                progressDialog, ptmSelection, identificationParameters.getAnnotationPreferences(), identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

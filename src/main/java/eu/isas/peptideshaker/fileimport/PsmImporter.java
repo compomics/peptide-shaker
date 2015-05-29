@@ -303,8 +303,8 @@ public class PsmImporter {
      */
     private void importPsmsSingleThread(LinkedList<SpectrumMatch> idFileSpectrumMatches, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
-        
-PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
+
+        PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
         while (!idFileSpectrumMatches.isEmpty()) {
             SpectrumMatch match = idFileSpectrumMatches.pollLast();
             importPsm(match, peptideSpectrumAnnotator, waitingHandler);
@@ -315,7 +315,8 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
      * Imports a PSM.
      *
      * @param spectrumMatch the spectrum match to import
-     * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate spectra
+     * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate
+     * spectra
      * @param waitingHandler waiting handler to display progress and allow
      * canceling the import
      *
@@ -334,7 +335,8 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
         IdFilter idFilter = identificationParameters.getIdFilter();
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences(),
+                ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
         SearchParameters searchParameters = identificationParameters.getSearchParameters();
 
         // free memory if needed
@@ -400,12 +402,9 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
                             // set the matching type to amino acid for the fixed ptms
-                            SequenceMatchingPreferences tempSequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching(searchParameters);
-                            tempSequenceMatchingPreferences.setSequenceMatchingType(SequenceMatchingPreferences.MatchingType.aminoAcid);
-
                             boolean fixedPtmIssue = false;
                             try {
-                                ptmFactory.checkFixedModifications(modificationProfile, peptide, tempSequenceMatchingPreferences);
+                                ptmFactory.checkFixedModifications(modificationProfile, peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                             } catch (IllegalArgumentException e) {
                                 if (idFilter.removeUnknownPTMs()) {
                                     // Exclude peptides with aberrant PTM mapping
@@ -444,7 +443,7 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
                                                     }
                                                     omssaName = PTMFactory.unknownPTM.getName();
                                                 }
-                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ptmMassTolerance, sequenceMatchingPreferences);
+                                                tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                             }
                                         } else if (fileReader instanceof MascotIdfileReader
                                                 || fileReader instanceof XTandemIdfileReader
@@ -461,13 +460,13 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
                                                         + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in spectrum file "
                                                         + spectrumFileName + ".\n" + "Identification file: " + idFile.getName());
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, sequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else if (fileReader instanceof DirecTagIdfileReader) {
                                             PTM ptm = ptmFactory.getPTM(sePTM);
                                             if (ptm == PTMFactory.unknownPTM) {
                                                 throw new IllegalArgumentException("PTM not recognized spectrum " + spectrumTitle + " of file " + spectrumFileName + ".");
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, sequenceMatchingPreferences);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, ptm.getMass(), ptmMassTolerance, sequenceMatchingPreferences, ptmSequenceMatchingPreferences);
                                         } else {
                                             throw new IllegalArgumentException("PTM mapping not implemented for the parsing of " + idFile.getName() + ".");
                                         }
@@ -783,7 +782,7 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
                                     }
                                 }
 
-                                if (idFilter.validateModifications(peptide, sequenceMatchingPreferences, searchParameters.getModificationProfile())) {
+                                if (idFilter.validateModifications(peptide, sequenceMatchingPreferences, ptmSequenceMatchingPreferences, searchParameters.getModificationProfile())) {
                                     // Estimate the theoretic mass with the new modifications
                                     peptide.estimateTheoreticMass();
                                     if (!idFilter.validatePrecursor(peptideAssumption, spectrumKey, spectrumFactory)) {
@@ -1158,9 +1157,10 @@ PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator
          * The waiting handler.
          */
         private WaitingHandler waitingHandler;
-        
+
         /**
-         * The peptide spectrum annotator used to annotate spectra for this thread.
+         * The peptide spectrum annotator used to annotate spectra for this
+         * thread.
          */
         private PeptideSpectrumAnnotator peptideSpectrumAnnotator = new PeptideSpectrumAnnotator();
 
