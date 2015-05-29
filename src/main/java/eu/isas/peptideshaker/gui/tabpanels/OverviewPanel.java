@@ -4956,7 +4956,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
 
         int[] selectedRows = psmTable.getSelectedRows();
-                IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
         AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
 
         try {
