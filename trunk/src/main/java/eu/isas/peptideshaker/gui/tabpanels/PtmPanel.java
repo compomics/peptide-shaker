@@ -3316,7 +3316,6 @@ public class PtmPanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
-
                     // now we have date so we can update the RT cell renderers max and min values
                     selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
                             SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
@@ -3342,9 +3341,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
-                        Color.lightGray,
-                        NO_MODIFICATION});
+                    ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{Color.lightGray, NO_MODIFICATION});
 
                     // update the slider tooltips
                     double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getIdentificationParameters().getSearchParameters().getFragmentIonAccuracy();

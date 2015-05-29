@@ -2259,7 +2259,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
                         numberOfValidatedPsmsMap = new HashMap<String, Integer>();
                         for (String fileName : spectrumFileNames) {
-                            numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName));
+                            numberOfValidatedPsmsMap.put(fileName, inputMap.getAdvocateContribution(Advocate.peptideShaker.getIndex(), fileName)); // @TODO: should be the same as psm count in the validation tab!
                         }
                         updateOverviewPlots(inputMap, pSMaps.getPsmSpecificMap());
                     }
