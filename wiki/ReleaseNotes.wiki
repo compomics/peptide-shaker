@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.39.0 (Coming soon...):*
+
+ * FEATURE IMPROVEMENT: Updated the Ensembl mappings to Ensembl 80.
+
+ * BUG FIX: Corrected bugs in PTM scoring.
+ * BUG FIX: Implemented PTM specific sequence matching preferences.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.49.1.
+
+----
+
 *Changes in PeptideShaker 0.38.5 (May 16. 2015):*
 
  * FEATURE IMPROVEMENT: Added support for parsing UniRef headers.
