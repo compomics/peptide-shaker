@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.filtering;
 
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
+import com.compomics.util.gui.utils.user_choice.ListChooser;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ public class FilterDialog extends javax.swing.JDialog {
     /**
      * The names of the items to display.
      */
-    private ArrayList<String> ItemsNames = null;
+    private ArrayList<String> itemsNames = null;
+    /**
+     * The parent frame.
+     */
+    private java.awt.Frame parentFrame = null;
 
     /**
      * Creates and displays a new dialog.
@@ -42,6 +47,7 @@ public class FilterDialog extends javax.swing.JDialog {
      */
     public FilterDialog(java.awt.Frame parent, MatchFilter filter) {
         super(parent, true);
+        this.parentFrame = parent;
         initComponents();
         this.matchFilter = filter.clone();
         setUpGUI();
@@ -92,7 +98,7 @@ public class FilterDialog extends javax.swing.JDialog {
         tableColumnModel.getColumn(0).setMaxWidth(50);
 
         TableColumn nameColumn = tableColumnModel.getColumn(1);
-        JComboBox comboBox = new JComboBox(matchFilter.getPossibleFilterItems());
+        JComboBox comboBox = new JComboBox(matchFilter.getPossibleFilterItemsNames());
         nameColumn.setCellEditor(new DefaultCellEditor(comboBox));
 
         TableColumn comparatorColumn = tableColumnModel.getColumn(2);
@@ -105,6 +111,7 @@ public class FilterDialog extends javax.swing.JDialog {
      * Updates the table.
      */
     public void updateTable() {
+        setUpTable();
         ((DefaultTableModel) filterItemsTable.getModel()).fireTableDataChanged();
     }
 
@@ -245,7 +252,7 @@ public class FilterDialog extends javax.swing.JDialog {
             manualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(manualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(manualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addComponent(manualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -273,7 +280,7 @@ public class FilterDialog extends javax.swing.JDialog {
             exceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(exceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(exceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addComponent(exceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -319,7 +326,7 @@ public class FilterDialog extends javax.swing.JDialog {
             .addGroup(filterSettingsPanelLayout.createSequentialGroup()
                 .addComponent(filterItemsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(manualSelectionSplitPane))
+                .addComponent(manualSelectionSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
         );
 
         filterSplitPane.setRightComponent(filterSettingsPanel);
@@ -357,7 +364,7 @@ public class FilterDialog extends javax.swing.JDialog {
             filterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, filterPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
+                .addComponent(filterSplitPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(filterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
@@ -403,16 +410,15 @@ public class FilterDialog extends javax.swing.JDialog {
 
     /**
      * Adds a new filter item.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void addItemMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addItemMenuItemActionPerformed
 
         String filterItemName = null;
-        FilterItem[] filterItems = matchFilter.getPossibleFilterItems();
+        String[] filterItems = matchFilter.getPossibleFilterItemsNames();
         HashSet<String> taken = matchFilter.getItemsNames();
-        for (FilterItem filterItem : filterItems) {
-            String name = filterItem.getName();
+        for (String name : filterItems) {
             if (!taken.contains(name)) {
                 filterItemName = name;
                 break;
@@ -428,8 +434,8 @@ public class FilterDialog extends javax.swing.JDialog {
 
     /**
      * Removes a filter item.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void removeItemMenuItemMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_removeItemMenuItemMouseReleased
         int row = filterItemsTable.getSelectedRow();
@@ -442,10 +448,11 @@ public class FilterDialog extends javax.swing.JDialog {
 
     /**
      * Show the filter item pop up menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void filterItemsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filterItemsTableMouseReleased
+
         if (evt != null && filterItemsTable.rowAtPoint(evt.getPoint()) != -1) {
             int row = filterItemsTable.rowAtPoint(evt.getPoint());
             filterItemsTable.setRowSelectionInterval(row, row);
@@ -453,6 +460,25 @@ public class FilterDialog extends javax.swing.JDialog {
         if (evt != null && evt.getButton() == MouseEvent.BUTTON3) {
             itemPopupMenu.show(filterItemsTable, evt.getX(), evt.getY());
         }
+        if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            int row = filterItemsTable.rowAtPoint(evt.getPoint());
+            String itemName = itemsNames.get(row);
+            FilterItem filterItem = matchFilter.getFilterItem(itemName);
+            if (filterItem.isPtm()) {
+                // Choose PTM
+                updateTable();
+            } else {
+                ArrayList<String> possibilities = filterItem.getPossibilities();
+                if (possibilities != null && possibilities.size() > 0) {
+                    ListChooser listChooser = new ListChooser(parentFrame, possibilities, null, null, null, null);
+                    if (!listChooser.isCanceled()) {
+                        matchFilter.setValueForItem(itemName, listChooser.getSelectedItem());
+                    }
+                }
+                updateTable();
+            }
+        }
+
     }//GEN-LAST:event_filterItemsTableMouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -580,17 +606,17 @@ public class FilterDialog extends javax.swing.JDialog {
 
         public FilterItemsTableModel() {
             if (matchFilter != null) {
-                ItemsNames = new ArrayList<String>(matchFilter.getItemsNames());
-                Collections.sort(ItemsNames);
+                itemsNames = new ArrayList<String>(matchFilter.getItemsNames());
+                Collections.sort(itemsNames);
             }
         }
 
         @Override
         public int getRowCount() {
-            if (ItemsNames == null) {
+            if (itemsNames == null) {
                 return 0;
             }
-            return ItemsNames.size();
+            return itemsNames.size();
         }
 
         @Override
@@ -620,14 +646,14 @@ public class FilterDialog extends javax.swing.JDialog {
                 case 0:
                     return row + 1;
                 case 1:
-                    String itemName = ItemsNames.get(row);
+                    String itemName = itemsNames.get(row);
                     return itemName;
                 case 2:
-                    itemName = ItemsNames.get(row);
+                    itemName = itemsNames.get(row);
                     return matchFilter.getComparatorForItem(itemName).name;
                 case 3:
-                    itemName = ItemsNames.get(row);
-                    return matchFilter.getValue(itemName).toString();
+                    itemName = itemsNames.get(row);
+                    return matchFilter.getValue(itemName);
                 default:
                     return "";
             }
@@ -638,22 +664,23 @@ public class FilterDialog extends javax.swing.JDialog {
             switch (column) {
                 case 1:
                     String itemName = value.toString();
-                    String previousItem = ItemsNames.get(row);
+                    String previousItem = itemsNames.get(row);
                     FilterItemComparator comparator = matchFilter.getComparatorForItem(previousItem);
                     Object filterValue = matchFilter.getValue(itemName);
                     matchFilter.removeFilterItem(previousItem);
                     matchFilter.setFilterItem(itemName, comparator, filterValue);
                     break;
                 case 2:
-                    itemName = ItemsNames.get(row);
+                    itemName = itemsNames.get(row);
                     matchFilter.setComparatorForItem(itemName, (FilterItemComparator) value);
                     break;
                 case 3:
-                    itemName = ItemsNames.get(row);
+                    itemName = itemsNames.get(row);
                     if (validateInput(itemName, value)) {
                         matchFilter.setValueForItem(itemName, value);
                     }
             }
+            updateTable();
         }
 
         @Override
@@ -667,8 +694,18 @@ public class FilterDialog extends javax.swing.JDialog {
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex > 0;
+        public boolean isCellEditable(int row, int column) {
+            switch (column) {
+                case 1:
+                case 2:
+                    return true;
+                case 3:
+                    String itemName = itemsNames.get(row);
+                    FilterItem filterItem = matchFilter.getFilterItem(itemName);
+                    return !filterItem.isPtm() && filterItem.getPossibilities() == null;
+                default:
+                    return false;
+            }
         }
     }
 }

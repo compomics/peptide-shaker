@@ -520,6 +520,20 @@ public abstract class MatchFilter implements Serializable, Filter {
     public abstract FilterItem[] getPossibleFilterItems();
     
     /**
+     * Returns the filter items accepted by this filter.
+     * 
+     * @return the filter items accepted by this filter
+     */
+    public String[] getPossibleFilterItemsNames() {
+        FilterItem[] values = getPossibleFilterItems();
+        String[] names = new String[values.length];
+        for (int i = 0 ; i < values.length ; i++) {
+            names[i] = values[i].getName();
+        }
+        return names;
+    }
+    
+    /**
      * Returns the filter item corresponding to the given name.
      * 
      * @param itemName the name of the filter item
