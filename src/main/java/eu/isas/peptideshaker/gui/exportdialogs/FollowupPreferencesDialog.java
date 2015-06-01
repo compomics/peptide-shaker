@@ -6,9 +6,9 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.JOptionEditorPane;
-import com.compomics.util.gui.ptm.PtmChooser;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
 import com.compomics.util.io.export.ExportWriter;
 import com.compomics.util.preferences.IdentificationParameters;
 import com.compomics.util.preferences.LastSelectedFolder;
@@ -548,11 +548,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBox.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
-                ptms = ptmChooser.getSelection();
+                ptms = ptmChooser.getSelectedItems();
             }
             final ArrayList<String> ptmSelection = ptms;
 
@@ -879,11 +879,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             final int userChoice = psmSelectionComboBoxSwath.getSelectedIndex();
             ArrayList<String> ptms = new ArrayList<String>();
             if (userChoice == 3) {
-                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), ptms);
+                PtmChooser ptmChooser = new PtmChooser(peptideShakerGUI, peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile().getAllNotFixedModifications(), true);
                 if (ptmChooser.isCanceled()) {
                     return;
                 }
-                ptms = ptmChooser.getSelection();
+                ptms = ptmChooser.getSelectedItems();
             }
             final ArrayList<String> ptmSelection = ptms;
 
