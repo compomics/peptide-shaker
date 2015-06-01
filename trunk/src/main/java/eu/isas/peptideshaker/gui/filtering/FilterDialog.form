@@ -91,7 +91,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="filterSplitPane" pref="614" max="32767" attributes="0"/>
+                  <Component id="filterSplitPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -223,7 +223,7 @@
                       <Group type="102" attributes="0">
                           <Component id="filterItemsPanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="manualSelectionSplitPane" max="32767" attributes="0"/>
+                          <Component id="manualSelectionSplitPane" pref="171" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -270,7 +270,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="manualValidationScrollPane" pref="134" max="32767" attributes="0"/>
+                                  <Component id="manualValidationScrollPane" pref="126" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -326,7 +326,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="exceptionsScrollPane" pref="134" max="32767" attributes="0"/>
+                                  <Component id="exceptionsScrollPane" pref="126" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>

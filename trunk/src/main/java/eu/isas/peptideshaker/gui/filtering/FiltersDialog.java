@@ -1195,6 +1195,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      * @param evt the mouse event
      */
     private void starredProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredProteinsTableMouseReleased
+        
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
         if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
@@ -1214,6 +1215,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             editStarredProtein.setEnabled(true);
             deleteStarredProtein.setEnabled(true);
         }
+        
     }//GEN-LAST:event_starredProteinsTableMouseReleased
 
     /**

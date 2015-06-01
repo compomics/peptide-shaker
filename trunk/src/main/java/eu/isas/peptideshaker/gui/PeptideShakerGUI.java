@@ -3434,10 +3434,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
-            //starHideJMenuItem.setEnabled(true);
-            //validationQcMenuItem.setEnabled(true);
-            starHideJMenuItem.setVisible(false);
-            validationQcMenuItem.setVisible(false);
+            starHideJMenuItem.setEnabled(true);
+            validationQcMenuItem.setEnabled(true);
+            starHideJMenuItem.setVisible(true);
+            validationQcMenuItem.setVisible(true);
             ionsMenu.setEnabled(true);
             otherMenu.setEnabled(true);
             lossMenu.setEnabled(true);
