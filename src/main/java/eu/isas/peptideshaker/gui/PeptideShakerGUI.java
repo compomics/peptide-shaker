@@ -6879,7 +6879,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     @Override
     public Filter createPsmFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new PsmFilter());
+        FilterDialog filterDialog = new FilterDialog(this, new PsmFilter(), getIdentificationParameters());
         if (!filterDialog.isCanceled()) {
             return filterDialog.getFilter();
         }
@@ -6888,7 +6888,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     @Override
     public Filter createPeptideFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new PeptideFilter());
+        FilterDialog filterDialog = new FilterDialog(this, new PeptideFilter(), getIdentificationParameters());
         if (!filterDialog.isCanceled()) {
             return filterDialog.getFilter();
         }
@@ -6897,7 +6897,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     @Override
     public Filter createProteinFilter() {
-        FilterDialog filterDialog = new FilterDialog(this, new ProteinFilter());
+        FilterDialog filterDialog = new FilterDialog(this, new ProteinFilter(), getIdentificationParameters());
         if (!filterDialog.isCanceled()) {
             return filterDialog.getFilter();
         }
@@ -6906,7 +6906,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     @Override
     public Filter editFilter(Filter filter) {
-        FilterDialog filterDialog = new FilterDialog(this, (MatchFilter) filter);
+        FilterDialog filterDialog = new FilterDialog(this, (MatchFilter) filter, getIdentificationParameters());
         if (!filterDialog.isCanceled()) {
             return filterDialog.getFilter();
         }

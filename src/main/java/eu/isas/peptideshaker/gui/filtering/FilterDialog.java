@@ -3,6 +3,9 @@ package eu.isas.peptideshaker.gui.filtering;
 import com.compomics.util.experiment.filtering.FilterItem;
 import com.compomics.util.experiment.filtering.FilterItemComparator;
 import com.compomics.util.gui.utils.user_choice.ListChooser;
+import com.compomics.util.gui.utils.user_choice.list_choosers.PtmChooser;
+import com.compomics.util.gui.utils.user_choice.list_choosers.StringListChooser;
+import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import java.util.HashSet;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -38,18 +42,25 @@ public class FilterDialog extends javax.swing.JDialog {
      * The parent frame.
      */
     private java.awt.Frame parentFrame = null;
+    /**
+     * The identification parameters used for the project.
+     */
+    private IdentificationParameters identificationParameters;
 
     /**
      * Creates and displays a new dialog.
      *
      * @param parent the parent frame
      * @param filter the filter to edit
+     * @param identificationParameters the identification parameters used for
+     * the project
      */
-    public FilterDialog(java.awt.Frame parent, MatchFilter filter) {
+    public FilterDialog(java.awt.Frame parent, MatchFilter filter, IdentificationParameters identificationParameters) {
         super(parent, true);
         this.parentFrame = parent;
-        initComponents();
+        this.identificationParameters = identificationParameters;
         this.matchFilter = filter.clone();
+        initComponents();
         setUpGUI();
         setLocationRelativeTo(parent);
         setVisible(true);
@@ -463,20 +474,7 @@ public class FilterDialog extends javax.swing.JDialog {
         if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
             int row = filterItemsTable.rowAtPoint(evt.getPoint());
             String itemName = itemsNames.get(row);
-            FilterItem filterItem = matchFilter.getFilterItem(itemName);
-            if (filterItem.isPtm()) {
-                // Choose PTM
-                updateTable();
-            } else {
-                ArrayList<String> possibilities = filterItem.getPossibilities();
-                if (possibilities != null && possibilities.size() > 0) {
-                    ListChooser listChooser = new ListChooser(parentFrame, possibilities, null, null, null, null);
-                    if (!listChooser.isCanceled()) {
-                        matchFilter.setValueForItem(itemName, listChooser.getSelectedItem());
-                    }
-                }
-                updateTable();
-            }
+            editValue(itemName);
         }
 
     }//GEN-LAST:event_filterItemsTableMouseReleased
@@ -507,6 +505,31 @@ public class FilterDialog extends javax.swing.JDialog {
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JMenuItem removeItemMenuItem;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Lets the user edit the value for an item if predefined choices are used.
+     *
+     * @param row the name of the item to which the new value should be attached
+     */
+    private void editValue(String itemName) {
+        FilterItem filterItem = matchFilter.getFilterItem(itemName);
+        ListChooser listChooser = null;
+        if (filterItem.isPtm()) {
+            ArrayList<String> ptms = identificationParameters.getSearchParameters().getModificationProfile().getAllModifications();
+            if (ptms != null && ptms.size() > 0) {
+                listChooser = new PtmChooser(parentFrame, ptms, "PTM selection.", "Searched PTMs", "Please select a PTM from the list of possibilities.");
+            }
+        } else {
+            ArrayList<String> possibilities = filterItem.getPossibilities();
+            if (possibilities != null && possibilities.size() > 0) {
+                listChooser = new StringListChooser(parentFrame, possibilities, null, null, null);
+            }
+        }
+        if (listChooser != null && !listChooser.isCanceled()) {
+            matchFilter.setValueForItem(itemName, listChooser.getSelectedItem());
+            updateTable();
+        }
+    }
 
     /**
      * Indicates whether the editing was canceled by the user.
@@ -663,15 +686,21 @@ public class FilterDialog extends javax.swing.JDialog {
         public void setValueAt(Object value, int row, int column) {
             switch (column) {
                 case 1:
-                    String itemName = value.toString();
+                    final String finalItemName = value.toString();
                     String previousItem = itemsNames.get(row);
                     FilterItemComparator comparator = matchFilter.getComparatorForItem(previousItem);
-                    Object filterValue = matchFilter.getValue(itemName);
+                    Object filterValue = matchFilter.getValue(finalItemName);
                     matchFilter.removeFilterItem(previousItem);
-                    matchFilter.setFilterItem(itemName, comparator, filterValue);
+                    matchFilter.setFilterItem(finalItemName, comparator, filterValue);
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            editValue(finalItemName);
+                        }
+                    });
                     break;
                 case 2:
-                    itemName = itemsNames.get(row);
+                    String itemName = itemsNames.get(row);
                     matchFilter.setComparatorForItem(itemName, (FilterItemComparator) value);
                     break;
                 case 3:
