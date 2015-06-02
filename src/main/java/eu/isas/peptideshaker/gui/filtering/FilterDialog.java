@@ -74,6 +74,8 @@ public class FilterDialog extends javax.swing.JDialog {
         // make sure that the scroll panes are see-through
         filterItemsTableScrollPane.getViewport().setOpaque(false);
 
+        filterItemsTable.getTableHeader().setReorderingAllowed(false);
+
         nameTxt.setText(matchFilter.getName());
         descriptionTxt.setText(matchFilter.getDescription());
 
@@ -179,7 +181,7 @@ public class FilterDialog extends javax.swing.JDialog {
         itemPopupMenu.add(removeItemMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Filter Editor");
+        setTitle("Filter Editor (beta)");
 
         filterPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -197,7 +199,7 @@ public class FilterDialog extends javax.swing.JDialog {
         descriptionLbl.setText("Description");
 
         descriptionTxt.setColumns(20);
-        descriptionTxt.setRows(5);
+        descriptionTxt.setRows(3);
         descriptionScrollPane.setViewportView(descriptionTxt);
 
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
@@ -210,11 +212,11 @@ public class FilterDialog extends javax.swing.JDialog {
                     .addComponent(descriptionScrollPane)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
                         .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(descriptionLbl)
                             .addGroup(propertiesPanelLayout.createSequentialGroup()
                                 .addComponent(nameLbl)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(nameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(descriptionLbl))
+                                .addGap(18, 18, 18)
+                                .addComponent(nameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -228,8 +230,8 @@ public class FilterDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(descriptionLbl)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(descriptionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(descriptionScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         filterSplitPane.setLeftComponent(propertiesPanel);
@@ -263,7 +265,7 @@ public class FilterDialog extends javax.swing.JDialog {
             manualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(manualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(manualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addComponent(manualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -291,7 +293,7 @@ public class FilterDialog extends javax.swing.JDialog {
             exceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(exceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(exceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addComponent(exceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -321,7 +323,7 @@ public class FilterDialog extends javax.swing.JDialog {
             filterItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterItemsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterItemsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(filterItemsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -335,9 +337,10 @@ public class FilterDialog extends javax.swing.JDialog {
         filterSettingsPanelLayout.setVerticalGroup(
             filterSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filterSettingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(filterItemsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(manualSelectionSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                .addComponent(manualSelectionSplitPane))
         );
 
         filterSplitPane.setRightComponent(filterSettingsPanel);
@@ -655,8 +658,8 @@ public class FilterDialog extends javax.swing.JDialog {
                 case 1:
                     return "Name";
                 case 2:
-                    return "  ";
-                case 4:
+                    return "Type";
+                case 3:
                     return "Value";
                 default:
                     return "";

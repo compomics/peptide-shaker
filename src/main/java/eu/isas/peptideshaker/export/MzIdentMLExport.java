@@ -42,7 +42,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.scoring.MatchValidationLevel;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
@@ -437,7 +436,7 @@ public class MzIdentMLExport {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
-     * interracting with the database
+     * interacting with the database
      */
     private void writeSequenceCollection() throws IOException, InterruptedException, ClassNotFoundException, SQLException {
 
@@ -485,7 +484,7 @@ public class MzIdentMLExport {
             Peptide peptide = peptideMatch.getTheoreticPeptide();
             String peptideSequence = peptide.getSequence();
 
-            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\" >" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<Peptide id=\"" + peptideKey + "\">" + System.getProperty("line.separator"));
             tabCounter++;
             br.write(getCurrentTabSpace() + "<PeptideSequence>" + peptideSequence + "</PeptideSequence>" + System.getProperty("line.separator"));
 
@@ -742,34 +741,44 @@ public class MzIdentMLExport {
                     + "\" fixedMod= \"" + searchParameters.getModificationProfile().getFixedModifications().contains(ptm) + "\" >" + System.getProperty("line.separator"));
             tabCounter++;
 
-            CvTerm cvTerm = ptmToPrideMap.getCVTerm(ptm);
-            if (cvTerm != null) {
-                writeCvTerm(cvTerm);
+            // add modification specificity
+            if (ptmType != PTM.MODAA && ptmType != PTM.MODMAX) {
+
+                br.write(getCurrentTabSpace() + "<SpecificityRules>" + System.getProperty("line.separator"));
+                tabCounter++;
+
+                if (ptmType == PTM.MODN || ptmType == PTM.MODNAA) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
+                } else if (ptmType == PTM.MODNP || ptmType == PTM.MODNPAA) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
+                } else if (ptmType == PTM.MODC || ptmType == PTM.MODCAA) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
+                } else if (ptmType == PTM.MODCP || ptmType == PTM.MODCPAA) {
+                    writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
+                }
+
+                tabCounter--;
+                br.write(getCurrentTabSpace() + "</SpecificityRules>" + System.getProperty("line.separator"));
+            }
+
+            // add the modification cv term
+            CvTerm ptmCvTerm = ptmToPrideMap.getCVTerm(ptm);
+            if (ptmCvTerm == null) {
+                ptmCvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+            }
+            if (ptmCvTerm != null) {
+                writeCvTerm(ptmCvTerm);
             } else {
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1001460", "unknown modification", null));
             }
 
-            // add modification specificity
-            if (ptmType == PTM.MODN
-                    || ptmType == PTM.MODNAA) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002057", "modification specificity protein N-term", null));
-            } else if (ptmType == PTM.MODNP
-                    || ptmType == PTM.MODNPAA) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1001189", "modification specificity peptide N-term", null));
-            } else if (ptmType == PTM.MODC
-                    || ptmType == PTM.MODCAA) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1002058", "modification specificity protein C-term", null));
-            } else if (ptmType == PTM.MODCP
-                    || ptmType == PTM.MODCPAA) {
-                writeCvTerm(new CvTerm("PSI-MS", "MS:1001190", "modification specificity peptide C-term", null));
-            }
-
-            // add modification type
+            // add modification type/index
             Integer ptmIndex = ptmIndexMap.get(ptmMass);
             if (ptmIndex == null) {
                 throw new IllegalArgumentException("No index found for PTM " + currentPtm.getName() + " of mass " + ptmMass + ".");
             }
             writeCvTerm(new CvTerm("PSI-MS", "MS:1002504", "modification index", ptmIndex.toString()));
+
             tabCounter--;
             br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
         }
@@ -1056,7 +1065,7 @@ public class MzIdentMLExport {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
-     * interracting with the database
+     * interacting with the database
      */
     private void writeDataCollection() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
@@ -1077,7 +1086,7 @@ public class MzIdentMLExport {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
-     * interracting with the database
+     * interacting with the database
      */
     private void writeDataAnalysis() throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
@@ -1141,7 +1150,7 @@ public class MzIdentMLExport {
      * @throws InterruptedException exception thrown whenever a threading issue
      * occurred while writing the export
      * @throws SQLException exception thrown whenever an error occurred while
-     * interracting with the database
+     * interacting with the database
      */
     private void writeProteinDetectionList() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
@@ -1216,7 +1225,7 @@ public class MzIdentMLExport {
                 if (accession.equalsIgnoreCase(mainAccession)) {
                     writeCvTerm(new CvTerm("PSI-MS", "MS:1002403", "group representative", null));
                 }
-                
+
                 writeCvTerm(new CvTerm("PSI-MS", "MS:1002401", "leading protein", null));
 
                 // add protein coverage cv term - main protein only
@@ -1329,8 +1338,7 @@ public class MzIdentMLExport {
             AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFileName, spectrumTitle);
             SpecificAnnotationPreferences specificAnnotationPreferences = annotationPreferences.getSpecificAnnotationPreferences(spectrum.getSpectrumKey(), bestPeptideAssumption, identificationParameters.getSequenceMatchingPreferences(), identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences());
-            ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences,
-                    (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
+            ArrayList<IonMatch> matches = peptideSpectrumAnnotator.getSpectrumAnnotation(annotationPreferences, specificAnnotationPreferences, (MSnSpectrum) spectrum, bestPeptideAssumption.getPeptide());
 
             // organize the fragment ions by ion type
             HashMap<String, HashMap<Integer, ArrayList<IonMatch>>> allFragmentIons = new HashMap<String, HashMap<Integer, ArrayList<IonMatch>>>();
@@ -1678,12 +1686,11 @@ public class MzIdentMLExport {
 
         // add the search result files
         for (File idFile : projectDetails.getIdentificationFiles()) {
-            
+
             // @TODO: add MS:1000568 - MD5?
 //            FileInputStream fis = new FileInputStream(new File("foo"));
 //            String md5 = DigestUtils.md5Hex(fis);
 //            fis.close();
-
             br.write(getCurrentTabSpace() + "<SourceFile location=\"" + idFile.getAbsolutePath() + "\" id=\"SourceFile_" + sourceFileCounter++ + "\">" + System.getProperty("line.separator"));
             tabCounter++;
             br.write(getCurrentTabSpace() + "<FileFormat>" + System.getProperty("line.separator"));

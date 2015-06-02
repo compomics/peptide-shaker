@@ -31,7 +31,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Filter Editor"/>
+    <Property name="title" type="java.lang.String" value="Filter Editor (beta)"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -140,12 +140,12 @@
                               <Component id="descriptionScrollPane" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="descriptionLbl" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="nameLbl" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="nameTxt" min="-2" pref="348" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="nameTxt" min="-2" pref="762" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="descriptionLbl" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
@@ -165,8 +165,8 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="descriptionLbl" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="descriptionScrollPane" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="descriptionScrollPane" pref="104" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -194,7 +194,7 @@
                     <Component class="javax.swing.JTextArea" name="descriptionTxt">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
+                        <Property name="rows" type="int" value="3"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -221,9 +221,10 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="filterItemsPanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="manualSelectionSplitPane" pref="171" max="32767" attributes="0"/>
+                          <Component id="manualSelectionSplitPane" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -270,7 +271,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="manualValidationScrollPane" pref="126" max="32767" attributes="0"/>
+                                  <Component id="manualValidationScrollPane" pref="138" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -326,7 +327,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="exceptionsScrollPane" pref="126" max="32767" attributes="0"/>
+                                  <Component id="exceptionsScrollPane" pref="138" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -379,7 +380,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="filterItemsTableScrollPane" pref="184" max="32767" attributes="0"/>
+                              <Component id="filterItemsTableScrollPane" pref="173" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
