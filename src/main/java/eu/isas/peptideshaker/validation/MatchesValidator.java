@@ -109,7 +109,7 @@ public class MatchesValidator {
      * @param metrics if provided, metrics on fractions will be saved while
      * iterating the matches
      * @param waitingHandler a waiting handler displaying progress to the user
-     * and allowing cancelling the process
+     * and allowing canceling the process
      * @param exceptionHandler handler for exceptions
      * @param shotgunProtocol information about the protocol
      * @param identificationParameters the identification parameters
@@ -216,7 +216,7 @@ public class MatchesValidator {
      * iterating the matches
      * @param inputMap the target decoy map of all search engine scores
      * @param waitingHandler a waiting handler displaying progress to the user
-     * and allowing cancelling the process
+     * and allowing canceling the process
      * @param exceptionHandler a handler for exceptions
      * @param identificationFeaturesGenerator an identification features
      * generator computing information about the identification matches
@@ -250,6 +250,7 @@ public class MatchesValidator {
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Match Validation and Quality Control. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+            waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
                     + 2 * identification.getSpectrumIdentificationSize());
@@ -269,7 +270,7 @@ public class MatchesValidator {
             AnnotationPreferences annotationPreferences = identificationParameters.getAnnotationPreferences();
             Double intensityLimit = annotationPreferences.getAnnotationIntensityLimit();
             annotationPreferences.setAnnotationLevel(0);
-            
+
             ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
             ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
@@ -333,7 +334,7 @@ public class MatchesValidator {
             if (!pool.awaitTermination(7, TimeUnit.DAYS)) {
                 throw new InterruptedException("PSM validation timed out. Please contact the developers.");
             }
-            
+
             annotationPreferences.setAnnotationLevel(intensityLimit);
         }
 
