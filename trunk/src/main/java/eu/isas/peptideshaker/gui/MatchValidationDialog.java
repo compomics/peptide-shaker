@@ -822,7 +822,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
         });
 
         editLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        editLbl.setText("Validation filters can be edited via Edit > Validation QC Filters.");
+        editLbl.setText("Validation filters can be edited via Edit > Validation Filters.");
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
