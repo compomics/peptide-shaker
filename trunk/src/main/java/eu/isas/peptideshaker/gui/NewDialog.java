@@ -695,6 +695,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
+            // peptideShakerGUI.clearData(true, false); // @TODO: is it ok to remove this one?
 
 //            sequenceMatchingPreferences.setMutationMatrix(MutationMatrix.synonymousMutation);
 //            sequenceMatchingPreferences.setMaxMutationsPerPeptide(1);
@@ -1424,6 +1425,7 @@ public class NewDialog extends javax.swing.JDialog {
                     String name = Util.removeExtension(file.getName());
                     searchTxt.setText(name);
                     setSearchParameters(tempParameters);
+                    peptideShakerGUI.getLastSelectedFolder().setLastSelectedFolder(file.getAbsolutePath());
                 }
 
             } else {

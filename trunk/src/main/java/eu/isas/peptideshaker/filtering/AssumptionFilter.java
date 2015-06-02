@@ -172,7 +172,7 @@ public class AssumptionFilter extends MatchFilter {
      * @param shotgunProtocol information on the protocol used
      * @param identificationParameters the identification parameters used
      * @param peptideSpectrumAnnotator the annotator to use to annotate spectra
-     * when filtering on psm or assumptions
+     * when filtering on PSM or assumptions
      *
      * @return a boolean indicating whether the match designated by the protein
      * key validates the given item using the given comparator and value

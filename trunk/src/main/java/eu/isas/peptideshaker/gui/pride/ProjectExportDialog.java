@@ -168,10 +168,10 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
-    
+
     /**
      * Returns the last selected folder.
-     * 
+     *
      * @return the last selected folder
      */
     private String getLastSelectedFolder() {
@@ -1098,6 +1098,10 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
 
                 boolean conversionCompleted;
 
+                // make sure that all annotations are included
+                double currentIntensityLimit = peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
+                peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(0.0);
+
                 try {
                     PrideXmlExport prideExport = new PrideXmlExport(PeptideShaker.getVersion(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getProjectDetails(),
                             peptideShakerGUI.getShotgunProtocol(), peptideShakerGUI.getIdentificationParameters(), peptideShakerGUI.getSpectrumCountingPreferences(),
@@ -1126,6 +1130,9 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
                     progressDialog.setRunCanceled();
                     progressDialog.dispose();
                     return;
+                } finally {
+                    // reset the annotation level
+                    peptideShakerGUI.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(currentIntensityLimit);
                 }
 
                 // close the progress dialog

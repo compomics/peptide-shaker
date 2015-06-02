@@ -183,11 +183,18 @@ public class MzidCLI extends CpsParent {
         loadGeneMappings(PeptideShaker.getJarFilePath(), waitingHandler);
 
         // export mzid file
+        // make sure that all annotations are included
+        double currentIntensityLimit = this.getIdentificationParameters().getAnnotationPreferences().getAnnotationIntensityLimit();
+        this.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(0.0);
+        
         try {
             CLIMethods.exportMzId(mzidCLIInputBean, this, waitingHandler);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while generating the mzid file.", true, true);
             e.printStackTrace();
+        } finally {
+            // reset the annotation level
+            this.getIdentificationParameters().getAnnotationPreferences().setAnnotationLevel(currentIntensityLimit);
         }
 
         try {
