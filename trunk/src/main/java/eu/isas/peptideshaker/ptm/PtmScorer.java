@@ -1898,6 +1898,7 @@ public class PtmScorer {
             ArrayList<Double> pScores = new ArrayList<Double>(scoreToSiteMap.keySet());
             Collections.sort(pScores, Collections.reverseOrder());
             int flrKey = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
+            HashMap<Double, Integer> ptmAssignedSitesCount = new HashMap<Double, Integer>(ptmMasses.size());
 
             for (Double pScore : pScores) {
 
@@ -1923,7 +1924,6 @@ public class PtmScorer {
                             throw new IllegalArgumentException("No FLR map found for PTM of mass " + ptmMass + " in PSMs of charge " + flrKey + ".");
                         }
 
-                        int cpt = 0;
                         double doubtfulThreshold;
 
                         if (ptmScoringPreferences.isEstimateFlr()) {
@@ -1940,7 +1940,12 @@ public class PtmScorer {
 
                         ArrayList<Integer> sites = dScoreMap.get(ptmMass);
                         Collections.sort(sites);
-                        boolean enoughPtms = nPTMs - cpt >= sites.size();
+
+                        Integer nAssignedSites = ptmAssignedSitesCount.get(ptmMass);
+                        if (nAssignedSites == null) {
+                            nAssignedSites = 0;
+                        }
+                        boolean enoughPtms = nPTMs - nAssignedSites >= sites.size();
 
                         for (int site : sites) {
 
@@ -1953,7 +1958,7 @@ public class PtmScorer {
 
                             ModificationMatch modificationMatch = null;
 
-                            if (cpt < nPTMs) {
+                            if (nAssignedSites < nPTMs) {
 
                                 boolean alreadyOccupied = false;
 
@@ -1966,15 +1971,15 @@ public class PtmScorer {
 
                                 if (!alreadyOccupied) {
 
-                                    modificationMatch = ptmMatches.get(cpt);
+                                    modificationMatch = ptmMatches.get(nAssignedSites);
                                     modificationMatch.setModificationSite(site);
                                     modificationMatch.setTheoreticPtm(modName);
                                     assignedPtms.add(modificationMatch);
 
-                                    if (pScore <= randomThreshold || !enoughPtms) {
+                                    if (pScore <= randomThreshold || !enoughPtms && pScore <= doubtfulThreshold) {
                                         ptmScoring.setSiteConfidence(site, PtmScoring.RANDOM);
                                         modificationMatch.setConfident(false);
-                                    } else if (pScore <= doubtfulThreshold) {
+                                    } else if (pScore <= doubtfulThreshold || enoughPtms) {
                                         ptmScoring.setSiteConfidence(site, PtmScoring.DOUBTFUL);
                                         modificationMatch.setConfident(false);
                                     } else {
@@ -1982,8 +1987,8 @@ public class PtmScorer {
                                         modificationMatch.setConfident(true);
                                         ptmConfidentSites.put(site, modName);
                                     }
-
-                                    cpt++;
+                                    nAssignedSites++;
+                                    ptmAssignedSitesCount.put(ptmMass, nAssignedSites);
                                 }
                             }
 
