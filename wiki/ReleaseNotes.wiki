@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.39.0 (Coming soon...):*
+*Changes in PeptideShaker 0.39.0 (June 2. 2015):*
 
  * FEATURE IMPROVEMENT: Parsing big mzIdentML files is now a lot faster and uses less memory.
  * FEATURE IMPROVEMENT: The validation QC filters are available again (beta).
