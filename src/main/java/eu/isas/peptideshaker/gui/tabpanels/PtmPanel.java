@@ -3234,7 +3234,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void createPeptideMap(ProgressDialogX progressDialogX) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
-        identification.loadPeptideMatches(progressDialog);
         ArrayList<String> notModifiedPeptides = new ArrayList<String>();
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null, progressDialogX);
 
@@ -4887,7 +4886,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     PTM selectedPtm = ptmFactory.getPTM(selectedPtmName);
 
                     // add the psm scores (a score and delta score)
-                    identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
+                    identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), progressDialog, false);
                     for (int i = 0; i < peptideMatch.getSpectrumMatches().size(); i++) {
 
                         String spectrumKey = peptideMatch.getSpectrumMatches().get(i);

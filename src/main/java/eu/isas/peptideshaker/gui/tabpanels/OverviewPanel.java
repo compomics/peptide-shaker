@@ -4300,7 +4300,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note this this only supports one fixed ptm per residue
 
                 Identification identification = peptideShakerGUI.getIdentification();
-                identification.loadPeptideMatches(peptideKeys, null);
+                identification.loadPeptideMatches(peptideKeys, progressDialog, false);
                 DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
                 for (String peptideKey : peptideKeys) {

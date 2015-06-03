@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.IdentificationParameters;
@@ -76,8 +77,6 @@ public class ProteinInference {
         ArrayList<String> toRemove = new ArrayList<String>();
         int max = identification.getProteinIdentification().size();
 
-        identification.loadProteinMatches(waitingHandler);
-
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Symplifying Protein Groups. Please Wait...");
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
@@ -87,8 +86,11 @@ public class ProteinInference {
         HashSet<String> toDelete = new HashSet<String>();
         HashMap<String, String> processedKeys = new HashMap<String, String>();
 
-        for (String proteinSharedKey : identification.getProteinIdentification()) {
-            if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, false, null, false, null, waitingHandler);
+        while (proteinMatchesIterator.hasNext()) {
+            ProteinMatch proteinSharedGroup = proteinMatchesIterator.next();
+            if (proteinSharedGroup.getNProteins() > 1) {
+                String proteinSharedKey = proteinSharedGroup.getKey();
                 if (!processedKeys.containsKey(proteinSharedKey)) {
                     String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, shotgunProtocol, identificationParameters, identificationFeaturesGenerator);
                     if (uniqueKey != null) {
@@ -318,7 +320,8 @@ public class ProteinInference {
      * @param proteinMap the protein matches scoring map
      * @param shotgunProtocol information on the protocol
      * @param identificationParameters the identification parameters
-     * @param identificationFeaturesGenerator the identification feature generator
+     * @param identificationFeaturesGenerator the identification feature
+     * generator
      * @param waitingHandler the handler displaying feedback to the user
      *
      * @throws IOException thrown if an IOException occurs
@@ -328,7 +331,7 @@ public class ProteinInference {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap, ShotgunProtocol shotgunProtocol, 
+    public void retainBestScoringGroups(Identification identification, Metrics metrics, ProteinMap proteinMap, ShotgunProtocol shotgunProtocol,
             IdentificationParameters identificationParameters, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
@@ -436,9 +439,9 @@ public class ProteinInference {
                     }
                 }
 
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+                while (peptideMatchesIterator.hasNext()) {
+                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
                     nSpectra -= peptideMatch.getSpectrumCount();
                 }
                 if (!orderMap.containsKey(score)) {
@@ -504,7 +507,7 @@ public class ProteinInference {
                     nLeft++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null, false);
                     for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
@@ -517,7 +520,7 @@ public class ProteinInference {
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null, false);
                     for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
@@ -531,11 +534,11 @@ public class ProteinInference {
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                     String mainMatch = proteinMatch.getMainMatch();
-                    identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
-                    for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                    PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+                    while (peptideMatchesIterator.hasNext()) {
+                        PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                        String peptideKey = peptideMatch.getKey();
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean unrelated = false;
                         for (String proteinAccession : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
                             if (!proteinKey.contains(proteinAccession)) {
@@ -555,12 +558,11 @@ public class ProteinInference {
                 }
             } else {
                 String mainMatch = proteinMatch.getMainMatch();
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
-
-                for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+                while (peptideMatchesIterator.hasNext()) {
+                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    String peptideKey = peptideMatch.getKey();
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     boolean unrelated = false;
                     boolean otherProtein = false;
                     for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(identificationParameters.getSequenceMatchingPreferences())) {
@@ -681,7 +683,7 @@ public class ProteinInference {
      * @throws IllegalArgumentException
      */
     private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession,
-            ShotgunProtocol shotgunProtocol, IdentificationFeaturesGenerator identificationFeaturesGenerator) 
+            ShotgunProtocol shotgunProtocol, IdentificationFeaturesGenerator identificationFeaturesGenerator)
             throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException, SQLException {
 
         Enzyme enzyme = shotgunProtocol.getEnzyme();

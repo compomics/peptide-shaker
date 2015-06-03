@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.identification.ptm.PtmScore;
@@ -639,9 +640,6 @@ public class PtmScorer {
 
             ArrayList<String> bestKeys = new ArrayList<String>();
 
-            identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
-            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
-
             boolean validated = false;
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -653,15 +651,17 @@ public class PtmScorer {
                 bestKeys.add(spectrumKey);
             }
 
-            identification.loadSpectrumMatches(bestKeys, null);
-            identification.loadSpectrumMatchParameters(bestKeys, psParameter, null);
-
             HashMap<Double, ArrayList<Integer>> confidentSites = new HashMap<Double, ArrayList<Integer>>();
 
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(new PSParameter());
+            PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, true, null);
+
             // Map confident sites
-            for (String spectrumKey : bestKeys) {
+            while (psmIterator.hasNext()) {
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                 for (String ptmName : psmScores.getScoredPTMs()) {
@@ -742,10 +742,13 @@ public class PtmScorer {
 
                 HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>();
 
-                for (String spectrumKey : bestKeys) {
+                psmIterator = identification.getPsmIterator(bestKeys, parameters, true, null);
 
+                // Map confident sites
+                while (psmIterator.hasNext()) {
+                    SpectrumMatch spectrumMatch = psmIterator.next();
+                    String spectrumKey = spectrumMatch.getKey();
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                     for (int representativeSite : psmScores.getRepresentativeSites()) {
@@ -1115,22 +1118,26 @@ public class PtmScorer {
 
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), psParameter, null);
 
         HashMap<Integer, ArrayList<String>> confidentSites = new HashMap<Integer, ArrayList<String>>();
         HashMap<Integer, HashMap<Integer, ArrayList<String>>> ambiguousSites = new HashMap<Integer, HashMap<Integer, ArrayList<String>>>();
 
         ArrayList<String> peptideKeys = new ArrayList<String>(proteinMatch.getPeptideMatchesKeys());
-        for (String peptideKey : peptideKeys) {
+
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(new PSParameter());
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideKeys, parameters, false, null, null);
+
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
-                PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
                 String peptideSequence = Peptide.getSequence(peptideKey);
-                if (peptideMath.getUrParam(new PSPtmScores()) == null || scorePeptides) {
-                    scorePTMs(identification, peptideMath, identificationParameters);
+                if (peptideMatch.getUrParam(new PSPtmScores()) == null || scorePeptides) {
+                    scorePTMs(identification, peptideMatch, identificationParameters);
                 }
-                PSPtmScores peptideScores = (PSPtmScores) peptideMath.getUrParam(new PSPtmScores());
+                PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
                 if (peptideScores != null) {
 
                     if (protein == null) {
@@ -1320,12 +1327,11 @@ public class PtmScorer {
         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressCounter(max);
 
-        identification.loadPeptideMatches(null);
-
-        ArrayList<String> peptideKeys = new ArrayList<String>(identification.getPeptideIdentification());
-
-        for (String peptideKey : peptideKeys) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(new PSParameter());
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             scorePTMs(identification, peptideMatch, identificationParameters);
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {

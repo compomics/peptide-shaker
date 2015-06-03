@@ -1739,7 +1739,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     double value = 0;
 
-                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), spectrumParameter, null);
+                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), spectrumParameter, progressDialog, false);
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                         if (progressDialog.isRunCanceled()) {

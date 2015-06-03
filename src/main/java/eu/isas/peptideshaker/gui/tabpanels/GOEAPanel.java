@@ -7,6 +7,8 @@ import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.XYPlottingDialog;
@@ -383,7 +385,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     PSParameter psParameter = new PSParameter();
 
                                     Identification identification = peptideShakerGUI.getIdentification();
-                                    identification.loadProteinMatchParameters(psParameter, null);
+                                    identification.loadProteinMatchParameters(psParameter, null, false);
 
                                     progressDialog.setTitle("Getting GO Mappings (2/3). Please Wait...");
                                     progressDialog.setPrimaryProgressCounterIndeterminate(false);
@@ -2198,8 +2200,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        identification.loadProteinMatches(proteinKeys, null);
-                        identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), null);
+                        identification.loadProteinMatches(proteinKeys, progressDialog, false);
+                        identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), progressDialog, false);
 
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {

@@ -919,7 +919,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                         if (proteinMatches != null) {
 
-                            identification.loadProteinMatchParameters(proteinMatches, psParameter, null);
+                            identification.loadProteinMatchParameters(proteinMatches, psParameter, null, false);
 
                             for (String proteinMatchKey : proteinMatches) {
 
@@ -967,7 +967,7 @@ public class MatchValidationDialog extends javax.swing.JDialog {
 
                                 if (proteinMatches != null) {
 
-                                    identification.loadProteinMatchParameters(proteinMatches, psParameter, null);
+                                    identification.loadProteinMatchParameters(proteinMatches, psParameter, null, false);
 
                                     for (String proteinMatchKey : proteinMatches) {
 

@@ -189,10 +189,10 @@ public class JumpToPanel extends javax.swing.JPanel {
             }
         }
         if (!proteinKeys.isEmpty()) {
-            identification.loadProteinMatches(proteinKeys, null);
+            identification.loadProteinMatches(proteinKeys, null, false);
         }
         if (!peptideKeys.isEmpty()) {
-            identification.loadPeptideMatches(peptideKeys, null);
+            identification.loadPeptideMatches(peptideKeys, null, false);
         }
 
         ArrayList<String> descriptions = new ArrayList<String>();
@@ -467,7 +467,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                         // pre-caching
                                         PSParameter psParameter = new PSParameter();
-                                        identification.loadPeptideMatchParameters(psParameter, null);
+                                        identification.loadPeptideMatchParameters(psParameter, null, false);
                                         String matchingInput = AminoAcid.getMatchingSequence(input, peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences());
 
                                         for (String peptideKey : identification.getPeptideIdentification()) {

@@ -3,6 +3,8 @@ package eu.isas.peptideshaker.followup;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -111,7 +113,7 @@ public class FastaExport {
                 if (exportType == ExportType.non_validated) {
 
                     PSParameter psParameter = new PSParameter();
-                    identification.loadProteinMatchParameters(psParameter, waitingHandler);
+                    identification.loadProteinMatchParameters(psParameter, waitingHandler, false);
 
                     for (String accession : sequenceFactory.getAccessions()) {
 
@@ -142,19 +144,17 @@ public class FastaExport {
                     }
                 } else {
 
-                    if (exportType == ExportType.validated_main_accession) {
-                        identification.loadProteinMatches(identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences), waitingHandler);
-                    }
-
                     ArrayList<String> exported = new ArrayList<String>();
 
-                    for (String matchKey : identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences)) {
+                    ArrayList<String> proteinMatches = identificationFeaturesGenerator.getValidatedProteins(waitingHandler, filterPreferences);
+                    ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(proteinMatches, null, false, null, false, null, waitingHandler);
+                    while (proteinMatchesIterator.hasNext()) {
+                        ProteinMatch proteinMatch = proteinMatchesIterator.next();
                         ArrayList<String> accessions = new ArrayList<String>();
                         if (exportType == ExportType.validated_main_accession) {
-                            ProteinMatch proteinMatch = identification.getProteinMatch(matchKey);
                             accessions.add(proteinMatch.getMainMatch());
                         } else if (exportType == ExportType.validated_all_accessions) {
-                            accessions.addAll(Arrays.asList(ProteinMatch.getAccessions(matchKey)));
+                            accessions.addAll(proteinMatch.getTheoreticProteinsAccessions());
                         }
                         for (String accession : accessions) {
                             if (!exported.contains(accession)) {
@@ -189,12 +189,13 @@ public class FastaExport {
      * or the entire protein details in FASTA format
      *
      * @throws IOException thrown if an IOException occurs
-     * @throws IllegalArgumentException thrown if an IllegalArgumentException occurs
+     * @throws IllegalArgumentException thrown if an IllegalArgumentException
+     * occurs
      * @throws InterruptedException thrown if an InterruptedException occurs
      * @throws FileNotFoundException thrown if a FileNotFoundException occurs
      * @throws ClassNotFoundException thrown if a ClassNotFoundException occurs
      */
-    private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly) 
+    private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly)
             throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
 
         if (accessionOnly) {

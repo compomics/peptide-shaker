@@ -1157,8 +1157,6 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        identification.loadPeptideMatches(null);
-
         int groupCpt = 0;
 
         PSParameter psParameter = new PSParameter();
@@ -1189,11 +1187,11 @@ public class MzIdentMLExport {
                 tabCounter++;
 
                 ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatchesKeys();
-                identification.loadPeptideMatches(peptideMatches, null);
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, null, false, null, null);
+                while (peptideMatchesIterator.hasNext()) {
 
-                for (String peptideKey : peptideMatches) {
-
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                    String peptideKey = peptideMatch.getKey();
                     String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
 
                     ArrayList<Integer> peptideStarts = sequenceFactory.getProtein(accession).getPeptideStart(
