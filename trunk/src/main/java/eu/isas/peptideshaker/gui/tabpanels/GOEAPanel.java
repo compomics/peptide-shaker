@@ -385,7 +385,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     PSParameter psParameter = new PSParameter();
 
                                     Identification identification = peptideShakerGUI.getIdentification();
-                                    identification.loadProteinMatchParameters(psParameter, null, false);
+                                    identification.loadProteinMatchParameters(psParameter, progressDialog, false);
 
                                     progressDialog.setTitle("Getting GO Mappings (2/3). Please Wait...");
                                     progressDialog.setPrimaryProgressCounterIndeterminate(false);

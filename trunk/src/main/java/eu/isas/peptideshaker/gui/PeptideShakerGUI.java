@@ -4595,7 +4595,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             PtmScorer ptmScorer = new PtmScorer(psmPTMMap);
             Identification identification = getIdentification();
             ProteinMatch proteinMatch = identification.getProteinMatch(selectedProteinKey);
-            ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false);
+            ptmScorer.scorePTMs(identification, proteinMatch, getIdentificationParameters(), false, null);
         } catch (Exception e) {
             catchException(e);
         }

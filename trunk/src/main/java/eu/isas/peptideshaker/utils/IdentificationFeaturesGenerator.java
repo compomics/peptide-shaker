@@ -418,19 +418,18 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the identification coverage of the protein sequence
      *
-     * @throws java.sql.SQLException exception thrown whenever an error occurred
-     * while interacting with a database (from the protein tree or
+     * @throws SQLException exception thrown whenever an error occurred while
+     * interacting with a database (from the protein tree or identification)
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading or writing a file
+     * @throws ClassNotFoundException exception thrown whenever an error
+     * occurred while deserializing an object from a database (from the protein
+     * tree or identification)
+     * @throws InterruptedException exception thrown whenever a threading error
+     * occurred while interacting with a database (from the protein tree or
      * identification)
-     * @throws java.io.IOException exception thrown whenever an error occurred
-     * while reading or writing a file
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object from a database (from the
-     * protein tree or identification)
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while interacting with a database (from the
-     * protein tree or identification)
      */
-    private int[] estimateAACoverage(String proteinMatchKey, boolean allPeptides, boolean enzymatic)
+    private int[] estimateAACoverage(String proteinMatchKey, boolean allPeptides, boolean enzymatic) // @TODO: add waiting handler?
             throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
@@ -445,6 +444,7 @@ public class IdentificationFeaturesGenerator {
 
         // iterate the peptides and store the coverage for each peptide validation level
         PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
             String peptideKey = peptideMatch.getKey();
