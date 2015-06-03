@@ -381,7 +381,7 @@ public class MatchesValidator {
         // validate the proteins
         pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
 
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(parameters, true, parameters, false, null, waitingHandler);
         ArrayList<ProteinValidatorRunnable> proteinRunnables = new ArrayList<ProteinValidatorRunnable>(processingPreferences.getnThreads());
         for (int i = 1; i <= processingPreferences.getnThreads() && waitingHandler != null && !waitingHandler.isRunCanceled(); i++) {
             ProteinValidatorRunnable runnable = new ProteinValidatorRunnable(proteinMatchesIterator, identification, identificationFeaturesGenerator, metrics, shotgunProtocol, identificationParameters, waitingHandler, exceptionHandler, validationQCPreferences);
@@ -896,7 +896,9 @@ public class MatchesValidator {
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
         PSParameter psParameter = new PSParameter();
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, null, waitingHandler);
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(null, false, parameters, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
 
@@ -913,7 +915,6 @@ public class MatchesValidator {
             HashMap<String, Double> fractionScores = new HashMap<String, Double>();
 
             // get the fraction scores
-            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
@@ -1045,7 +1046,7 @@ public class MatchesValidator {
         PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(psParameter);
-        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, parameters, waitingHandler);
+        ProteinMatchesIterator proteinMatchesIterator = identification.getProteinMatchesIterator(null, true, parameters, false, null, waitingHandler);
 
         while (proteinMatchesIterator.hasNext()) {
 
@@ -1748,7 +1749,6 @@ public class MatchesValidator {
                         HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
                         HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
                         ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatchesKeys();
-                        identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
 
                         for (String currentPeptideKey : peptideKeys) {
 

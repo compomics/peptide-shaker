@@ -4,7 +4,9 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -723,10 +725,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             edgeWriter.write("BEGIN\n");
                         }
 
-                        // write the protein nodes
-                        progressDialog.setTitle("Getting Protein Details. Please Wait...");
-                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                        peptideShakerGUI.getIdentification().loadProteinMatches(progressDialog);
+//                        // write the protein nodes
+//                        progressDialog.setTitle("Getting Protein Details. Please Wait...");
+//                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+//                        peptideShakerGUI.getIdentification().loadProteinMatches(progressDialog);
 //
                         // @TODO: the below code couldn't be used as it deals with protein groups and not individual proteins
 //                        progressDialog.setTitle("Writing Protein Details. Please Wait...");
@@ -742,19 +744,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 //                        }
 
                         // write the peptide nodes
-                        progressDialog.setTitle("Getting Peptide Details. Please Wait...");
-                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-                        peptideShakerGUI.getIdentification().loadPeptideMatches(progressDialog);
-
                         progressDialog.setTitle("Writing Peptide Details. Please Wait...");
                         progressDialog.resetPrimaryProgressCounter();
                         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
-                        for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
+        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
 
-                            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                            PSParameter probabilities = new PSParameter();
-                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
+                            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                            String peptideKey = peptideMatch.getKey();
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 
                             // write the peptide node
                             if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
@@ -762,7 +764,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             } else {
                                 nodeWriter.write(peptideKey + "\t"
                                         + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getIdentificationParameters().getSearchParameters().getModificationProfile(), false, false, true, false)
-                                        + "\tpeptide" + "\t" + probabilities.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
+                                        + "\tpeptide" + "\t" + psParameter.getMatchValidationLevel() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy(peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences()) + "\n"); // @TODO: add more information?
                             }
 
                             // write the peptide to protein edge and the protein nodes
@@ -773,12 +775,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     proteinsAdded.add(protein);
                                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(protein);
                                     if (proteinMatch != null) {
-                                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, probabilities);
+                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, psParameter);
 
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
                                             nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
                                         } else {
-                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.getMatchValidationLevel() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + psParameter.getMatchValidationLevel() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
                                         }
                                     } else {
                                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {

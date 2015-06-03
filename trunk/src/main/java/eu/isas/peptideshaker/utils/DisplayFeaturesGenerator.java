@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.tags.Tag;
 import com.compomics.util.experiment.identification.tags.TagComponent;
 import com.compomics.util.experiment.identification.tags.tagcomponents.MassGap;
@@ -22,6 +23,7 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import java.awt.Color;
 import java.io.IOException;
@@ -193,7 +195,7 @@ public class DisplayFeaturesGenerator {
                     accessionNumberWithLink.append(proteinAccession);
                     accessionNumberWithLink.append(", ");
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 accessionNumberWithLink.append(proteinAccession);
                 accessionNumberWithLink.append(", ");
             }
@@ -755,7 +757,7 @@ public class DisplayFeaturesGenerator {
      * @throws IllegalArgumentException thrown if an IllegalArgumentException
      * occurs
      */
-    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences, 
+    public HashMap<Integer, ArrayList<ResidueAnnotation>> getResidueAnnotation(String proteinMatchKey, SequenceMatchingPreferences sequenceMatchingPreferences,
             IdentificationFeaturesGenerator identificationFeaturesGenerator, Metrics metrics, Identification identification,
             boolean allPeptides, SearchParameters searchParameters, boolean enzymatic)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
@@ -800,11 +802,10 @@ public class DisplayFeaturesGenerator {
             residueAnnotation.put(j, new ArrayList<ResidueAnnotation>(annotations));
         }
 
-        // batch load the required data
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
             String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
             boolean enzymaticPeptide = true;
             if (!allPeptides) {

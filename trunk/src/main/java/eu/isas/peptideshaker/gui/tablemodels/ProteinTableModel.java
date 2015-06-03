@@ -530,7 +530,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 11
                     || column == 12) {
-                identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), waitingHandler);
+                identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), waitingHandler, false);
             } else if (column == 3
                     || column == 4
                     || column == 5
@@ -539,7 +539,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 8
                     || column == 9
                     || column == 10) {
-                identification.loadProteinMatches(proteinKeys, waitingHandler);
+                identification.loadProteinMatches(proteinKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);

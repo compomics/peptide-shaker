@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PeptideMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.ProteinMatchesIterator;
 import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -438,14 +439,16 @@ public class IdentificationFeaturesGenerator {
 
         HashMap<Integer, ArrayList<Integer>> aminoAcids = new HashMap<Integer, ArrayList<Integer>>();
         HashMap<Integer, boolean[]> coverage = new HashMap<Integer, boolean[]>();
-        PSParameter pSParameter = new PSParameter();
-
-        // batch load the required data
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
         // iterate the peptides and store the coverage for each peptide validation level
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
+            String peptideKey = peptideMatch.getKey();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             String peptideSequence = Peptide.getSequence(peptideKey);
             boolean enzymaticPeptide = true;
             if (!allPeptides) {
@@ -453,8 +456,7 @@ public class IdentificationFeaturesGenerator {
                         identificationParameters.getSequenceMatchingPreferences());
             }
             if (allPeptides || enzymatic && enzymaticPeptide || !enzymatic && !enzymaticPeptide) {
-                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
-                int validationLevel = pSParameter.getMatchValidationLevel().getIndex();
+                int validationLevel = psParameter.getMatchValidationLevel().getIndex();
                 boolean[] validationLevelCoverage = coverage.get(validationLevel);
                 ArrayList<Integer> levelAminoAcids = aminoAcids.get(validationLevel);
                 if (validationLevelCoverage == null) {
@@ -750,7 +752,7 @@ public class IdentificationFeaturesGenerator {
         ArrayList<String> peptideKeys = proteinMatch.getPeptideMatchesKeys();
         PSParameter peptidePSParameter = new PSParameter();
 
-        identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+        identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, false);
 
         ArrayList<String> result = new ArrayList<String>();
 
@@ -1043,46 +1045,53 @@ public class IdentificationFeaturesGenerator {
             double result = 0;
             int peptideOccurrence = 0;
 
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+            PSParameter psParameter = new PSParameter();
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(psParameter);
 
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                String peptideSequence = Peptide.getSequence(peptideKey);
-                ArrayList<String> possibleProteinMatches = new ArrayList<String>();
+            // iterate the peptides and store the coverage for each peptide validation level
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, parameters, null);
+            while (peptideMatchesIterator.hasNext()) {
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                String peptideKey = peptideMatch.getKey();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                if (!spectrumCountingPreferences.isValidatedHits() || psParameter.getMatchValidationLevel().isValidated()) {
+                    String peptideSequence = Peptide.getSequence(peptideKey);
+                    ArrayList<String> possibleProteinMatches = new ArrayList<String>();
 
-                for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
-                    if (identification.getProteinMap().get(protein) != null) {
-                        for (String proteinKey : identification.getProteinMap().get(protein)) {
-                            if (!possibleProteinMatches.contains(proteinKey)) {
-                                try {
-                                    testMatch = identification.getProteinMatch(proteinKey);
-                                    if (testMatch.getPeptideMatchesKeys().contains(peptideKey)) {
-                                        Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
-                                        peptideOccurrence += currentProtein.getPeptideStart(peptideSequence,
-                                                sequenceMatchingPreferences).size();
-                                        possibleProteinMatches.add(proteinKey);
+                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins(sequenceMatchingPreferences)) {
+                        if (identification.getProteinMap().get(protein) != null) {
+                            for (String proteinKey : identification.getProteinMap().get(protein)) {
+                                if (!possibleProteinMatches.contains(proteinKey)) {
+                                    try {
+                                        testMatch = identification.getProteinMatch(proteinKey);
+                                        if (testMatch.getPeptideMatchesKeys().contains(peptideKey)) {
+                                            Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
+                                            peptideOccurrence += currentProtein.getPeptideStart(peptideSequence,
+                                                    sequenceMatchingPreferences).size();
+                                            possibleProteinMatches.add(proteinKey);
+                                        }
+                                    } catch (Exception e) {
+                                        // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
+                                        System.out.println("Non-existing protein key in protein map: " + proteinKey);
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                    System.out.println("Non-existing protein key in protein map: " + proteinKey);
-                                    e.printStackTrace();
                                 }
                             }
                         }
                     }
-                }
 
-                if (possibleProteinMatches.isEmpty()) {
-                    System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of '" + proteinMatchKey + "'.");
-                }
+                    if (possibleProteinMatches.isEmpty()) {
+                        System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of '" + proteinMatchKey + "'.");
+                    }
 
-                double ratio = 1.0 / peptideOccurrence;
+                    double ratio = 1.0 / peptideOccurrence;
 
-                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), pSParameter, null);
-                for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
-                    if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.getMatchValidationLevel().isValidated()) {
-                        result += ratio;
+                    for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
+                        pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
+                        if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.getMatchValidationLevel().isValidated()) {
+                            result += ratio;
+                        }
                     }
                 }
             }
@@ -1109,7 +1118,7 @@ public class IdentificationFeaturesGenerator {
 
                 result = 0;
 
-                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null);
+                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null, false);
                 for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                     if (pSParameter.getMatchValidationLevel().isValidated()) {
@@ -1290,7 +1299,7 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         // batch load the protein parameters
-        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null);
+        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null, false);
 
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -1349,7 +1358,7 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
 
         // batch load the protein parameters
-        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null);
+        identification.loadProteinMatchParameters(identification.getProteinIdentification(), probabilities, null, false);
 
         for (String proteinKey : identification.getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
@@ -1389,7 +1398,7 @@ public class IdentificationFeaturesGenerator {
         PSParameter pSParameter = new PSParameter();
 
         // batch load the peptide match parameters
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null, false);
 
         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
@@ -1428,7 +1437,7 @@ public class IdentificationFeaturesGenerator {
         PSParameter pSParameter = new PSParameter();
 
         // batch load the peptide match parameters
-        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), pSParameter, null, false);
 
         for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
             pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
@@ -1494,9 +1503,9 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         int cpt = 0;
 
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             if (identification.isUnique(peptideMatch.getTheoreticPeptide())) {
                 cpt++;
             }
@@ -1739,10 +1748,9 @@ public class IdentificationFeaturesGenerator {
         int result = 0;
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        PeptideMatch peptideMatch;
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            peptideMatch = identification.getPeptideMatch(peptideKey);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, null, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             result += peptideMatch.getSpectrumCount();
         }
 
@@ -1870,11 +1878,12 @@ public class IdentificationFeaturesGenerator {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, parameters, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -1911,11 +1920,12 @@ public class IdentificationFeaturesGenerator {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         PSParameter psParameter = new PSParameter();
+        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+        parameters.add(psParameter);
 
-        identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-        for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
-            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), null, false, parameters, null);
+        while (peptideMatchesIterator.hasNext()) {
+            PeptideMatch peptideMatch = peptideMatchesIterator.next();
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
@@ -2047,7 +2057,7 @@ public class IdentificationFeaturesGenerator {
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
         PSParameter psParameter = new PSParameter();
 
-        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null, false);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
             if (psParameter.getMatchValidationLevel() == MatchValidationLevel.confident) {
@@ -2084,7 +2094,7 @@ public class IdentificationFeaturesGenerator {
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
         PSParameter psParameter = new PSParameter();
 
-        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null, false);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
             if (psParameter.getMatchValidationLevel().isValidated()) {
@@ -2825,22 +2835,25 @@ public class IdentificationFeaturesGenerator {
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
             HashMap<Double, HashMap<Integer, ArrayList<String>>> peptideMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
-            PSParameter probabilities = new PSParameter();
             int maxSpectrumCount = 0;
 
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatchesKeys(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatchesKeys(), probabilities, null);
-            for (String peptideKey : proteinMatch.getPeptideMatchesKeys()) {
+            PSParameter psParameter = new PSParameter();
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(psParameter);
 
-                probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities); // @TODO: replace by batch selection?
+            // iterate the peptides and store the coverage for each peptide validation level
+            PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(proteinMatch.getPeptideMatchesKeys(), parameters, false, parameters, null);
+            while (peptideMatchesIterator.hasNext()) {
+                PeptideMatch peptideMatch = peptideMatchesIterator.next();
+                String peptideKey = peptideMatch.getKey();
+                psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
-                if (!probabilities.isHidden()) {
-                    double peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
+                if (!psParameter.isHidden()) {
+                    double peptideProbabilityScore = psParameter.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
                         peptideMap.put(peptideProbabilityScore, new HashMap<Integer, ArrayList<String>>());
                     }
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     int spectrumCount = -peptideMatch.getSpectrumCount();
                     if (peptideMatch.getSpectrumCount() > maxSpectrumCount) {
                         maxSpectrumCount = peptideMatch.getSpectrumCount();
@@ -2905,14 +2918,19 @@ public class IdentificationFeaturesGenerator {
             HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<Integer, HashMap<Double, ArrayList<String>>>();
             boolean hasRT = sortOnRt;
             double rt = -1;
-            PSParameter psParameter = new PSParameter();
             int nValidatedPsms = 0;
 
-            identification.loadSpectrumMatchParameters(currentPeptideMatch.getSpectrumMatches(), psParameter, null);
-            identification.loadSpectrumMatches(currentPeptideMatch.getSpectrumMatches(), null);
+            ArrayList<String> spectrumKeys = currentPeptideMatch.getSpectrumMatches();
+            PSParameter psParameter = new PSParameter();
+            ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+            parameters.add(psParameter);
 
-            for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, null);
 
+            while (psmIterator.hasNext()) {
+
+                SpectrumMatch spectrumMatch = psmIterator.next();
+                String spectrumKey = spectrumMatch.getKey();
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (!psParameter.isHidden()) {
@@ -2920,7 +2938,6 @@ public class IdentificationFeaturesGenerator {
                         nValidatedPsms++;
                     }
 
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     int charge = spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value;
                     if (!orderingMap.containsKey(charge)) {
                         orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());

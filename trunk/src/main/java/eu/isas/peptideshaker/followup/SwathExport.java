@@ -96,13 +96,13 @@ public class SwathExport {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Peptides. Please Wait...");
             }
-            identification.loadPeptideMatchParameters(psParameter, waitingHandler);
+            identification.loadPeptideMatchParameters(psParameter, waitingHandler, true);
         }
         if (exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Proteins. Please Wait...");
             }
-            identification.loadProteinMatchParameters(psParameter, waitingHandler);
+            identification.loadProteinMatchParameters(psParameter, waitingHandler, true);
         }
 
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {

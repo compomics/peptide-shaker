@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches_iterators.PsmIterator;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
@@ -114,9 +115,10 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     }
                 }
             }
-            peptideShakerGUI.getIdentification().loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
-            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                psms.add(peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey));
+
+            PsmIterator psmIterator = peptideShakerGUI.getIdentification().getPsmIterator(peptideMatch.getSpectrumMatches(), null, false, null);
+            while (psmIterator.hasNext()) {
+                psms.add(psmIterator.next());
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

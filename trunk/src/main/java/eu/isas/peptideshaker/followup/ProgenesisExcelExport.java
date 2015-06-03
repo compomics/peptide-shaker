@@ -248,22 +248,20 @@ public class ProgenesisExcelExport {
         }
         ArrayList<String> proteinGroups = identification.getProteinMatches(peptide);
 
-        PSParameter psParameter = new PSParameter();
-
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
+        PSParameter psParameter = new PSParameter();
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(new PSParameter());
+        parameters.add(psParameter);
         
         PsmIterator psmIterator = identification.getPsmIterator(spectrumKeys, parameters, false, waitingHandler);
 
         while (psmIterator.hasNext()) {
 
-            SpectrumMatch spectrumMatch = psmIterator.next();
-
             if (waitingHandler.isRunCanceled()) {
                 break;
             }
-            
+
+            SpectrumMatch spectrumMatch = psmIterator.next();
             String spectrumKey = spectrumMatch.getKey();
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 

@@ -126,7 +126,7 @@ public class TrainingExport {
             }
 
             PSParameter psParameter = new PSParameter();
-            identification.loadSpectrumMatchParameters(fileName, psParameter, waitingHandler);
+            identification.loadSpectrumMatchParameters(fileName, psParameter, waitingHandler, true);
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {
@@ -166,7 +166,7 @@ public class TrainingExport {
                 waitingHandler.setWaitingText("Loading PSMs. Please Wait... (" + progress + "/"
                         + spectrumFactory.getMgfFileNames().size() + ")");
             }
-            identification.loadSpectrumMatches(keys, waitingHandler);
+            identification.loadSpectrumMatches(keys, waitingHandler, true);
 
             if (waitingHandler != null) {
                 if (waitingHandler.isRunCanceled()) {

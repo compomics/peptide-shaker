@@ -309,9 +309,9 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadProteinMatches(progressDialog);
+                        identification.loadProteinMatches(progressDialog, true);
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
@@ -432,8 +432,8 @@ public class OutputGenerator {
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;
 
-                                                identification.loadPeptideMatches(peptideKeys, null);
-                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+                                                identification.loadPeptideMatches(peptideKeys, null, true);
+                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, true);
 
                                                 // see if we have non-tryptic peptides
                                                 for (String peptideKey : peptideKeys) {
@@ -770,9 +770,9 @@ public class OutputGenerator {
 
                         // @TODO: try to batch load the spectra? as this would speed up the export...
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
-                        identification.loadPeptideMatches(progressDialog);
+                        identification.loadPeptideMatches(progressDialog, true);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
-                        identification.loadPeptideMatchParameters(peptidePSParameter, progressDialog);
+                        identification.loadPeptideMatchParameters(peptidePSParameter, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(peptideKeys.size());
@@ -1022,7 +1022,7 @@ public class OutputGenerator {
                                                     int cpt = 0;
 
                                                     // @TODO: replace with: peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);?
-                                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
+                                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null, true);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                                                         if (secondaryPSParameter.getMatchValidationLevel().isValidated()) {
@@ -1286,14 +1286,14 @@ public class OutputGenerator {
 
                             if (psmKeys == null) {
                                 progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatches(spectrumFile, progressDialog);
+                                identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
                                 progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
+                                identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
                             } else {
                                 progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
+                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
                                 progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
+                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
                             }
 
                             progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
@@ -1697,9 +1697,9 @@ public class OutputGenerator {
                         for (String spectrumFile : spectrumKeys.keySet()) {
 
                             progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
+                            identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
                             progressDialog.setTitle("Loading Spectrum Matches Details. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                            identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
+                            identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
                             progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                             progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
                             progressDialog.setValue(0);
@@ -1936,9 +1936,9 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadProteinMatches(progressDialog);
+                        identification.loadProteinMatches(progressDialog, true);
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
@@ -2313,11 +2313,11 @@ public class OutputGenerator {
                         }
                         for (String spectrumFile : spectrumKeys.keySet()) {
                             if (psmKeys == null) {
-                                identification.loadSpectrumMatches(spectrumFile, progressDialog);
-                                identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
+                                identification.loadSpectrumMatches(spectrumFile, progressDialog, true);
+                                identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog, true);
                             } else {
-                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
-                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
+                                identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog, true);
+                                identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog, true);
                             }
                             for (String spectrumKey : spectrumKeys.get(spectrumFile)) {
 
@@ -2662,9 +2662,9 @@ public class OutputGenerator {
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
-                        identification.loadProteinMatches(progressDialog);
+                        identification.loadProteinMatches(progressDialog, true);
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog, true);
 
                         progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
@@ -2856,8 +2856,8 @@ public class OutputGenerator {
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;
 
-                                                identification.loadPeptideMatches(peptideKeys, null);
-                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+                                                identification.loadPeptideMatches(peptideKeys, null, true);
+                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null, true);
 
                                                 // see if we have non-tryptic peptides
                                                 for (String peptideKey : peptideKeys) {
@@ -2937,7 +2937,7 @@ public class OutputGenerator {
 
         // find all unique the charges
         try {
-            identification.loadSpectrumMatches(spectrumKeys, null);
+            identification.loadSpectrumMatches(spectrumKeys, null, true);
         } catch (Exception e) {
             e.printStackTrace();
             //ignore caching error

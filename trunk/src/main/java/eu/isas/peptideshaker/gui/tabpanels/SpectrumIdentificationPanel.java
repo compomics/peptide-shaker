@@ -2476,8 +2476,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 double maxMz = spectrumFactory.getMaxMz(fileSelected);
                 try {
                     progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait..."); // @TODO: problem with progress bar??
-                    identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog);
-                    identification.loadSpectrumMatches(fileSelected, progressDialog);
+                    identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog, true);
+                    identification.loadSpectrumMatches(fileSelected, progressDialog, true);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

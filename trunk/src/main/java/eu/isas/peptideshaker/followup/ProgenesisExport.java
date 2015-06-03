@@ -70,13 +70,13 @@ public class ProgenesisExport {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Peptides. Please Wait...");
             }
-            identification.loadPeptideMatchParameters(psParameter, waitingHandler);
+            identification.loadPeptideMatchParameters(psParameter, waitingHandler, true);
         }
         if (exportType == ExportType.validated_psms_peptides_proteins || exportType == ExportType.confident_ptms) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Progenesis Export - Loading Proteins. Please Wait...");
             }
-            identification.loadProteinMatchParameters(psParameter, waitingHandler);
+            identification.loadProteinMatchParameters(psParameter, waitingHandler, true);
         }
 
         if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -104,11 +104,11 @@ public class ProgenesisExport {
                     if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                     }
-                    identification.loadSpectrumMatches(mgfFile, waitingHandler);
+                    identification.loadSpectrumMatches(mgfFile, waitingHandler, true);
                     if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                     }
-                    identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
+                    identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler, true);
                     if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait...");
                         // reset the progress bar

@@ -350,11 +350,11 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     || column == 2
                     || column == 6
                     || column == 7) {
-                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), waitingHandler);
+                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), waitingHandler, false);
             } else if (column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadPeptideMatches(peptideKeys, waitingHandler);
+                identification.loadPeptideMatches(peptideKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);

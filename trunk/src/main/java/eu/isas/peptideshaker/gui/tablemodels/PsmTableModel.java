@@ -318,12 +318,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             if (column == 1
                     || column == 6
                     || column == 7) {
-                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), waitingHandler);
+                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), waitingHandler, false);
             } else if (column == 2
                     || column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadSpectrumMatches(psmKeys, waitingHandler);
+                identification.loadSpectrumMatches(psmKeys, waitingHandler, false);
             }
         } catch (Exception e) {
             catchException(e);

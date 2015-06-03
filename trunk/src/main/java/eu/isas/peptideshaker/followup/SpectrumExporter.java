@@ -76,14 +76,14 @@ public class SpectrumExporter {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Exporting Spectra - Loading Peptides. Please Wait...");
             }
-            identification.loadPeptideMatchParameters(psParameter, waitingHandler);
+            identification.loadPeptideMatchParameters(psParameter, waitingHandler, true);
         }
         if (exportType == ExportType.non_validated_proteins
                 || exportType == ExportType.validated_psms_peptides_proteins) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Exporting Spectra - Loading Proteins. Please Wait...");
             }
-            identification.loadProteinMatchParameters(psParameter, waitingHandler);
+            identification.loadProteinMatchParameters(psParameter, waitingHandler, true);
         }
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
@@ -251,7 +251,7 @@ public class SpectrumExporter {
                             for (String accession : proteins) {
                                 ArrayList<String> proteinKeys = identification.getProteinMap().get(accession);
                                 if (proteinKeys != null) {
-                                    identification.loadProteinMatchParameters(proteinKeys, psParameter, null);
+                                    identification.loadProteinMatchParameters(proteinKeys, psParameter, null, true);
                                     for (String proteinKey : proteinKeys) {
                                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                                         if (psParameter.getMatchValidationLevel().isValidated()) {
