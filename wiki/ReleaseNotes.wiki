@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.39.1 (June 3. 2015):*
+
+ * BUG FIX: Fixed a bug in the progress display when validating matches.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.49.4.
+
+----
+
 *Changes in PeptideShaker 0.39.0 (June 2. 2015):*
 
  * FEATURE IMPROVEMENT: Parsing big mzIdentML files is now a lot faster and uses less memory.
