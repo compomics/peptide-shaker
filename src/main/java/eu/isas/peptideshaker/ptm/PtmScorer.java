@@ -585,11 +585,12 @@ public class PtmScorer {
      * matches
      * @param peptideMatch the peptide match of interest
      * @param identificationParameters the identification parameters
+     * @param waitingHandler the waiting handler, can be null
      *
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
-    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, IdentificationParameters identificationParameters) throws Exception {
+    public void scorePTMs(Identification identification, PeptideMatch peptideMatch, IdentificationParameters identificationParameters, WaitingHandler waitingHandler) throws Exception {
 
         SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
 
@@ -655,7 +656,7 @@ public class PtmScorer {
 
             ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
             parameters.add(new PSParameter());
-            PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, true, null);
+            PsmIterator psmIterator = identification.getPsmIterator(bestKeys, parameters, true, waitingHandler);
 
             // Map confident sites
             while (psmIterator.hasNext()) {
@@ -742,7 +743,7 @@ public class PtmScorer {
 
                 HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>> ambiguousSites = new HashMap<Double, HashMap<Double, HashMap<Double, HashMap<Integer, ArrayList<String>>>>>();
 
-                psmIterator = identification.getPsmIterator(bestKeys, parameters, true, null);
+                psmIterator = identification.getPsmIterator(bestKeys, parameters, true, waitingHandler);
 
                 // Map confident sites
                 while (psmIterator.hasNext()) {
@@ -1110,11 +1111,12 @@ public class PtmScorer {
      * @param proteinMatch the protein match
      * @param identificationParameters the identification parameters
      * @param scorePeptides boolean indicating whether peptides should be scored
+     * @param waitingHandler the waiting handler, can be null
      *
      * @throws Exception exception thrown whenever an error occurred while
      * deserilalizing a match
      */
-    public void scorePTMs(Identification identification, ProteinMatch proteinMatch, IdentificationParameters identificationParameters, boolean scorePeptides) throws Exception {
+    public void scorePTMs(Identification identification, ProteinMatch proteinMatch, IdentificationParameters identificationParameters, boolean scorePeptides, WaitingHandler waitingHandler) throws Exception {
 
         PSParameter psParameter = new PSParameter();
         Protein protein = null;
@@ -1126,7 +1128,7 @@ public class PtmScorer {
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideKeys, parameters, false, null, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideKeys, parameters, false, null, waitingHandler);
 
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
@@ -1135,7 +1137,7 @@ public class PtmScorer {
             if (psParameter.getMatchValidationLevel().isValidated() && Peptide.isModified(peptideKey)) {
                 String peptideSequence = Peptide.getSequence(peptideKey);
                 if (peptideMatch.getUrParam(new PSPtmScores()) == null || scorePeptides) {
-                    scorePTMs(identification, peptideMatch, identificationParameters);
+                    scorePTMs(identification, peptideMatch, identificationParameters, waitingHandler);
                 }
                 PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
                 if (peptideScores != null) {
@@ -1329,10 +1331,10 @@ public class PtmScorer {
 
         ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
         parameters.add(new PSParameter());
-        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, null);
+        PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(parameters, false, null, waitingHandler);
         while (peptideMatchesIterator.hasNext()) {
             PeptideMatch peptideMatch = peptideMatchesIterator.next();
-            scorePTMs(identification, peptideMatch, identificationParameters);
+            scorePTMs(identification, peptideMatch, identificationParameters, waitingHandler);
             waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -1382,7 +1384,7 @@ public class PtmScorer {
             ProteinMatch proteinMatch = proteinMatchesIterator.next();
             String proteinKey = proteinMatch.getKey();
 
-            scorePTMs(identification, proteinMatch, identificationParameters, false);
+            scorePTMs(identification, proteinMatch, identificationParameters, false, waitingHandler);
 
             if (metrics != null) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);

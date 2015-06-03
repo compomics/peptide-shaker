@@ -78,9 +78,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     /**
      * Constructor.
      *
-     * @param peptideShakerGUI The main GUI
-     * @param peptideKey The peptide key of the investigated peptide
-     * @param ptm The PTM investigated
+     * @param peptideShakerGUI the main GUI
+     * @param peptideKey the peptide key of the investigated peptide
+     * @param ptm the PTM investigated
      */
     public PtmSiteInferenceDialog(PeptideShakerGUI peptideShakerGUI, String peptideKey, PTM ptm) {
         super(peptideShakerGUI, true);
@@ -584,8 +584,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+
         boolean changed = false;
-        int aa;
 
         if (changed) {
             try {
@@ -611,7 +611,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
-                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getIdentificationParameters(), false);
+                                ptmScorer.scorePTMs(identification, proteinMatch, peptideShakerGUI.getIdentificationParameters(), false, null);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                             }

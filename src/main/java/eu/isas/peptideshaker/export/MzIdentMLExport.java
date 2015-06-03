@@ -1187,7 +1187,8 @@ public class MzIdentMLExport {
                 tabCounter++;
 
                 ArrayList<String> peptideMatches = identification.getProteinMatch(proteinGroupKey).getPeptideMatchesKeys();
-                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, null, false, null, null);
+                PeptideMatchesIterator peptideMatchesIterator = identification.getPeptideMatchesIterator(peptideMatches, null, false, null, waitingHandler);
+
                 while (peptideMatchesIterator.hasNext()) {
 
                     PeptideMatch peptideMatch = peptideMatchesIterator.next();

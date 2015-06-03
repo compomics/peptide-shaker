@@ -742,17 +742,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 //                            nodeWriter.write(proteinKey + "\t" + proteinMatch.getMainMatch() + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
 //                            progressDialog.increasePrimaryProgressCounter();
 //                        }
-
                         // write the peptide nodes
                         progressDialog.setTitle("Writing Peptide Details. Please Wait...");
                         progressDialog.resetPrimaryProgressCounter();
                         progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
 
                         PSParameter psParameter = new PSParameter();
-        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
-        parameters.add(psParameter);
-        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, null, null);
-        while (peptideMatchesIterator.hasNext()) {
+                        ArrayList<UrParameter> parameters = new ArrayList<UrParameter>(1);
+                        parameters.add(psParameter);
+                        PeptideMatchesIterator peptideMatchesIterator = peptideShakerGUI.getIdentification().getPeptideMatchesIterator(parameters, false, null, progressDialog);
+
+                        while (peptideMatchesIterator.hasNext()) {
 
                             PeptideMatch peptideMatch = peptideMatchesIterator.next();
                             String peptideKey = peptideMatch.getKey();
