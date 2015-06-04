@@ -299,11 +299,11 @@ public class MatchesValidator {
             for (PsmValidatorRunnable runnable : psmRunnables) {
                 precursorMzDeviations.addAll(runnable.getThreadPrecursorMzDeviations());
             }
-            Collections.sort(precursorMzDeviations);
-            identificationFeaturesGenerator.setMassErrorDistribution(spectrumFileName, precursorMzDeviations);
 
             // Disable probabilistic precursor filter if there are not enough precursors
             if (precursorMzDeviations.size() < 100) {
+                Collections.sort(precursorMzDeviations);
+                identificationFeaturesGenerator.setMassErrorDistribution(spectrumFileName, precursorMzDeviations);
                 for (Filter filter : validationQCPreferences.getPsmFilters()) {
                     PsmFilter psmFilter = (PsmFilter) filter;
                     if (psmFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {

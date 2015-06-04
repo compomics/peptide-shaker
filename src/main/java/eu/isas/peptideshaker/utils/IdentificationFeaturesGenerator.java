@@ -574,7 +574,7 @@ public class IdentificationFeaturesGenerator {
                 nextChar = sequence.charAt(i + 1);
                 if (enzyme.isCleavageSite(previousChar, nextChar)) {
                     int length = i - lastCleavage;
-                    if (peptideLengthDistribution == null) { //backward compatibility check
+                    if (peptideLengthDistribution == null) { //backward compatibility or < 100 validated peptide
                         int pepMax = identificationParameters.getIdFilter().getMaxPepLength();
                         if (length > pepMax) {
                             p = 0;
