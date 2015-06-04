@@ -25,14 +25,14 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="optimizationJPanel" alignment="1" max="32767" attributes="2"/>
+                  <Component id="optimizationJPanel" max="32767" attributes="2"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="groupListJPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="idSummaryJPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="groupListJPanel" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="idSummaryJPanel" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="parametersJPanel" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -64,6 +64,9 @@
             <TitledBorder title="Group Selection"/>
           </Border>
         </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[200, 0]"/>
+        </Property>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
 
@@ -72,7 +75,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="groupSelectionLayeredPane" pref="198" max="32767" attributes="0"/>
+                  <Component id="groupSelectionLayeredPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -701,11 +704,11 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="pepPlotLayeredPane" alignment="0" pref="497" max="32767" attributes="0"/>
+                                      <Component id="pepPlotLayeredPane" alignment="0" pref="585" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel30" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider1" pref="356" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider1" pref="444" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -854,11 +857,11 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="fdrsPlotLayeredPane" alignment="0" pref="497" max="32767" attributes="0"/>
+                                      <Component id="fdrsPlotLayeredPane" alignment="0" pref="579" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel34" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider2" pref="356" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider2" pref="438" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel35" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1050,11 +1053,11 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="confidencePlotLayeredPane" alignment="0" pref="413" max="32767" attributes="0"/>
+                                      <Component id="confidencePlotLayeredPane" alignment="0" pref="498" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="confidenceSlider" pref="301" max="32767" attributes="2"/>
+                                          <Component id="confidenceSlider" pref="386" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1223,11 +1226,11 @@
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="fdrPlotLayeredPane" alignment="0" pref="280" max="32767" attributes="0"/>
+                                          <Component id="fdrPlotLayeredPane" alignment="0" pref="322" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel28" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider1" pref="168" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider1" pref="210" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
                                           </Group>
@@ -1376,11 +1379,11 @@
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="costBenefitPlotLayeredPane" alignment="0" pref="281" max="32767" attributes="0"/>
+                                          <Component id="costBenefitPlotLayeredPane" alignment="0" pref="324" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider2" pref="169" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider2" pref="212" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                               <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
                                           </Group>
