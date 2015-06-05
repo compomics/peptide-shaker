@@ -116,14 +116,17 @@ public class PsmPTMMap implements Serializable {
     /**
      * Returns a map of keys from maps presenting a suspicious input.
      * modification mass &gt; charge.
+     * 
+     * @param minimalFDR the minimal FDR which should be achievable
      *
      * @return a list of keys from maps presenting a suspicious input
      */
-    public HashMap<Double, String> suspiciousInput() {
+    public HashMap<Double, String> suspiciousInput(Double minimalFDR) {
         HashMap<Double, String> result = new HashMap<Double, String>();
         for (double ptmMass : psmMaps.keySet()) {
             for (Integer key : psmMaps.get(ptmMass).keySet()) {
-                if (psmMaps.get(ptmMass).get(key).suspiciousInput() && !grouping.get(ptmMass).containsKey(key)) {
+                TargetDecoyMap targetDecoyMap = psmMaps.get(ptmMass).get(key);
+                if (targetDecoyMap.suspiciousInput(minimalFDR) && !grouping.get(ptmMass).containsKey(key)) {
                     result.put(ptmMass, getGroupKey(ptmMass, key));
                 }
             }
@@ -134,8 +137,10 @@ public class PsmPTMMap implements Serializable {
     /**
      * This method groups the statistically non significant PSMs with the ones
      * having a charge directly smaller.
+     * 
+     * @param minimalFDR the minimal FDR which should be achievable
      */
-    public void clean() {
+    public void clean(Double minimalFDR) {
 
         for (double ptmMass : psmMaps.keySet()) {
 
@@ -144,7 +149,8 @@ public class PsmPTMMap implements Serializable {
             int ref = 0;
 
             for (int charge : charges) {
-                if (psmMaps.get(ptmMass).get(charge).getnMax() >= 100 && psmMaps.get(ptmMass).get(charge).getnTargetOnly() >= 100) {
+                TargetDecoyMap targetDecoyMap = psmMaps.get(ptmMass).get(charge);
+                if (targetDecoyMap.suspiciousInput(minimalFDR)) {
                     ref = charge;
                 } else if (ref == 0) {
                     ref = charge;

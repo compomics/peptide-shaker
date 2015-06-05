@@ -125,12 +125,14 @@ public class PeptideSpecificMap implements Serializable {
     /**
      * Returns a list of keys from maps presenting a suspicious input.
      *
+     * @param initialFDR the minimal FDR requested for a group
+     *
      * @return a list of keys from maps presenting a suspicious input
      */
-    public ArrayList<String> suspiciousInput() {
+    public ArrayList<String> suspiciousInput(Double initialFDR) {
         ArrayList<String> result = new ArrayList<String>();
         for (String key : peptideMaps.keySet()) {
-            if (!groupedMaps.contains(key) && peptideMaps.get(key).suspiciousInput()) {
+            if (!groupedMaps.contains(key) && peptideMaps.get(key).suspiciousInput(initialFDR)) {
                 result.add(key);
             }
         }
@@ -140,14 +142,16 @@ public class PeptideSpecificMap implements Serializable {
     /**
      * This method puts all the small peptide groups in the dustbin to be
      * analyzed together.
+     *
+     * @param initialFDR the minimal FDR requested for a group
      */
-    public void clean() {
+    public void clean(Double initialFDR) {
         if (peptideMaps.size() > 1) {
             peptideMaps.put(DUSTBIN, new TargetDecoyMap());
             for (String key : peptideMaps.keySet()) {
                 if (!key.equals(DUSTBIN)) {
                     TargetDecoyMap peptideMap = peptideMaps.get(key);
-                    if (peptideMap.getnMax() < 100 || peptideMap.getnTargetOnly() < 100) {
+                    if (peptideMap.suspiciousInput(initialFDR)) {
                         groupedMaps.add(key);
                         peptideMaps.get(DUSTBIN).addAll(peptideMap);
                     }

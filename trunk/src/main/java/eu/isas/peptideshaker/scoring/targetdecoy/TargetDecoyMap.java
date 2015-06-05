@@ -40,6 +40,10 @@ public class TargetDecoyMap implements Serializable {
      */
     private Integer nTargetOnly;
     /**
+     * The minimal FDR which can be achieved on the dataset.
+     */
+    private Double minFDR = 1.0;
+    /**
      * The results computed on this map.
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
@@ -139,8 +143,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Estimates the metrics of the map: Nmax and NtargetOnly. Scores of 1 and
-     * above will be skipped.
+     * Estimates the metrics of the map: Nmax, NtargetOnly, minFDR. 
+     * Scores of 1 and above will be skipped for Nmax.
      */
     private void estimateNs() {
         if (scores == null) {
@@ -150,9 +154,10 @@ public class TargetDecoyMap implements Serializable {
         nmax = 0;
         int targetCpt = 0;
         nTargetOnly = 0;
+        int targetCount = 0, decoyCount = 0;
 
-        for (double peptideP : scores) {
-            TargetDecoyPoint point = hitMap.get(peptideP);
+        for (double score : scores) {
+            TargetDecoyPoint point = hitMap.get(score);
             if (onlyTarget) {
                 if (point.nDecoy > 0) {
                     nTargetOnly += point.nTarget / 2 + point.nTarget % 2;
@@ -165,13 +170,21 @@ public class TargetDecoyMap implements Serializable {
                 if (point.nDecoy > 0) {
                     targetCpt += point.nTarget / 2 + point.nTarget % 2;
                     if (targetCpt > nmax
-                            && peptideP < 1.0
+                            && score < 1.0
                             && (point.nDecoy == 1 || targetCpt < nTargetOnly)) {
                         nmax = targetCpt;
                     }
                     targetCpt = point.nTarget / 2;
                 } else {
                     targetCpt += point.nTarget;
+                }
+            }
+            targetCount += point.nTarget;
+            decoyCount += point.nDecoy;
+            if (targetCount > 0) {
+                Double fdr = ((double) decoyCount)/targetCount;
+                if (fdr < minFDR) {
+                    minFDR = fdr;
                 }
             }
         }
@@ -262,6 +275,15 @@ public class TargetDecoyMap implements Serializable {
         }
         return nmax;
     }
+    
+    /**
+     * Returns the minimal FDR which can be achieved in this dataset.
+     * 
+     * @return the minimal FDR which can be achieved in this dataset
+     */
+    public Double getMinFdr() {
+        return minFDR;
+    }
 
     /**
      * Returns the minimal detectable PEP variation in percent.
@@ -328,15 +350,16 @@ public class TargetDecoyMap implements Serializable {
     /**
      * Returns a boolean indicating if a suspicious input was detected.
      *
+     * @param initialFDR the minimal FDR requested for a group
+     * 
      * @return a boolean indicating if a suspicious input was detected
      */
-    public boolean suspiciousInput() {
+    public boolean suspiciousInput(Double initialFDR) {
         if (nmax == null) {
             estimateNs();
         }
         if (nmax < 100
-                || nTargetOnly < 100
-                || nTargetOnly <= nmax) {
+                || minFDR > initialFDR) {
             return true;
         }
         return false;
