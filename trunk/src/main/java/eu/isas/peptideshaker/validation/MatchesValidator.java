@@ -1370,7 +1370,7 @@ public class MatchesValidator {
 
                         updateSpectrumMatchValidationLevel(identification, identificationFeaturesGenerator, shotgunProtocol, identificationParameters, peptideSpectrumAnnotator, psmMap, spectrumKey, applyQCFilters);
 
-                        // Update search engine agreement
+                        // update search engine agreement
                         PSParameter psParameter = new PSParameter();
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
