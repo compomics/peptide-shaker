@@ -176,8 +176,10 @@ public class PsmSpecificMap implements Serializable {
      * This method groups the statistically non significant PSMs between files
      * and with the ones having a charge directly smaller until statistical
      * significance is reached.
+     * 
+     * @param minimalFDR the minimal FDR which should be achievable
      */
-    public void clean() {
+    public void clean(double minimalFDR) {
         ArrayList<Integer> charges = new ArrayList(fileSpecificPsmsMaps.keySet());
         Collections.sort(charges);
         int ref = 0;
@@ -186,7 +188,7 @@ public class PsmSpecificMap implements Serializable {
             TargetDecoyMap tempMap = new TargetDecoyMap();
             for (String file : fileSpecificPsmsMaps.get(charge).keySet()) {
                 TargetDecoyMap targetDecoyMap = fileSpecificPsmsMaps.get(charge).get(file);
-                if (targetDecoyMap.getnMax() < 100 || targetDecoyMap.getnTargetOnly() < 100) {
+                if (targetDecoyMap.suspiciousInput(minimalFDR)) {
                     nonSignificantFiles.add(file);
                     tempMap.addAll(targetDecoyMap);
                 }
@@ -206,7 +208,7 @@ public class PsmSpecificMap implements Serializable {
 //                }
                 psmsMaps.put(charge, tempMap);
                 fileSpecificGrouping.put(charge, nonSignificantFiles);
-                if (tempMap.getnMax() < 100 || tempMap.getnTargetOnly() < 100) {
+                if (tempMap.suspiciousInput(minimalFDR)) {
                     if (ref > 0) {
                         psmsMaps.get(ref).addAll(tempMap);
                         grouping.put(charge, ref);

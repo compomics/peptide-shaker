@@ -88,10 +88,12 @@ public class ProteinMap implements Serializable {
     /**
      * Returns a boolean indicating if a suspicious input was detected.
      *
+     * @param minimalFDR the minimal FDR requested for a group
+     *
      * @return a boolean indicating if a suspicious input was detected
      */
-    public boolean suspicousInput() {
-        return proteinMatchMap.suspiciousInput();
+    public boolean suspicousInput(Double minimalFDR) {
+        return proteinMatchMap.suspiciousInput(minimalFDR);
     }
 
     /**

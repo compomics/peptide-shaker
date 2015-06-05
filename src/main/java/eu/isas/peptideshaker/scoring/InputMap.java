@@ -208,17 +208,19 @@ public class InputMap implements Serializable {
 
     /**
      * Returns a list of search engines indexed by utilities index presenting a
-     * suspicious input
+     * suspicious input.
+     *
+     * @param minimalFDR the minimal FDR requested for a group
      *
      * @return a list of search engines presenting a suspicious input
      */
-    public ArrayList<Integer> suspiciousInput() {
+    public ArrayList<Integer> suspiciousInput(Double minimalFDR) {
         ArrayList<Integer> result = new ArrayList<Integer>();
         if (inputMap.size() == 1) {
             return result;
         }
         for (int key : inputMap.keySet()) {
-            if (inputMap.get(key).suspiciousInput()) {
+            if (inputMap.get(key).suspiciousInput(minimalFDR)) {
                 result.add(key);
             }
         }

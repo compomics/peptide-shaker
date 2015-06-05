@@ -52,7 +52,7 @@ public class TargetDecoySeries {
      */
     private double[] probaFP;
     /**
-     * indicates whether the current point is only made of decoy hits.
+     * Indicates whether the current point is only made of decoy hits.
      */
     private boolean[] decoy;
     /**
@@ -128,24 +128,8 @@ public class TargetDecoySeries {
         Double threshold = targetDecoyResults.getFdrLimit();
 
         if (targetDecoyResults.isClassicalEstimators()) {
-            for (int i = 0; i < scores.length; i++) {
-                if (!decoy[i]) {
-                    if (classicalFDR[i] > threshold) {
-                        targetDecoyResults.setNoValidated(true);
-                        targetDecoyResults.setFdrLimit(0);
-                        targetDecoyResults.setnFP(0);
-                        targetDecoyResults.setConfidenceLimit(0);
-                        targetDecoyResults.setn(0);
-                        targetDecoyResults.setFnrLimit(probaFNR[0]);
-                        targetDecoyResults.setnTPTotal(probaNTotal);
-                        targetDecoyResults.setScoreLimit(scores[0]);
-                        return;
-                    }
-                    break;
-                }
-            }
             targetDecoyResults.setNoValidated(false);
-            for (int i = scores.length - 2; i >= 0; i--) {
+            for (int i = scores.length - 1; i >= 0; i--) {
                 if (classicalFDR[i] <= threshold && !decoy[i]) {
                     targetDecoyResults.setConfidenceLimit(confidence[i]);
                     targetDecoyResults.setFdrLimit(classicalFDR[i]);
@@ -155,28 +139,19 @@ public class TargetDecoySeries {
                     targetDecoyResults.setnTPTotal(probaNTotal);
                     targetDecoyResults.setScoreLimit(scores[i]);
                     return;
+                } else if (i == 0) {
+                    targetDecoyResults.setNoValidated(true);
+                    targetDecoyResults.setFdrLimit(0);
+                    targetDecoyResults.setnFP(0);
+                    targetDecoyResults.setConfidenceLimit(0);
+                    targetDecoyResults.setn(0);
+                    targetDecoyResults.setFnrLimit(probaFNR[0]);
+                    targetDecoyResults.setnTPTotal(probaNTotal);
+                    targetDecoyResults.setScoreLimit(scores[0]);
                 }
             }
         } else {
-            for (int i = 0; i < scores.length; i++) {
-                if (!decoy[i]) {
-                    if (probaFDR[i] > threshold) {
-                        targetDecoyResults.setNoValidated(true);
-                        targetDecoyResults.setFdrLimit(0);
-                        targetDecoyResults.setnFP(0);
-                        targetDecoyResults.setConfidenceLimit(0);
-                        targetDecoyResults.setn(0);
-                        targetDecoyResults.setFnrLimit(probaNTotal);
-                        targetDecoyResults.setnTPTotal(probaNTotal);
-                        targetDecoyResults.setScoreLimit(scores[0]);
-                        return;
-                    } else {
-                        targetDecoyResults.setNoValidated(false);
-                        break;
-                    }
-                }
-            }
-            for (int i = scores.length - 2; i >= 0; i--) {
+            for (int i = scores.length - 1; i >= 0; i--) {
                 if (probaFDR[i] <= threshold && !decoy[i]) {
                     targetDecoyResults.setConfidenceLimit(confidence[i]);
                     targetDecoyResults.setFdrLimit(probaFDR[i]);
@@ -186,6 +161,15 @@ public class TargetDecoySeries {
                     targetDecoyResults.setnTPTotal(probaNTotal);
                     targetDecoyResults.setScoreLimit(scores[i]);
                     return;
+                } else if (i == 0) {
+                    targetDecoyResults.setNoValidated(true);
+                    targetDecoyResults.setFdrLimit(0);
+                    targetDecoyResults.setnFP(0);
+                    targetDecoyResults.setConfidenceLimit(0);
+                    targetDecoyResults.setn(0);
+                    targetDecoyResults.setFnrLimit(probaFNR[0]);
+                    targetDecoyResults.setnTPTotal(probaNTotal);
+                    targetDecoyResults.setScoreLimit(scores[0]);
                 }
             }
         }
@@ -200,28 +184,11 @@ public class TargetDecoySeries {
 
         double threshold = targetDecoyResults.getConfidenceLimit();
 
-        for (int i = 0; i < scores.length; i++) {
-            if (!decoy[i]) {
-                if (confidence[i] < threshold) {
-                    targetDecoyResults.setNoValidated(true);
-                    targetDecoyResults.setFdrLimit(0);
-                    targetDecoyResults.setnFP(0);
-                    targetDecoyResults.setConfidenceLimit(confidence[0]);
-                    targetDecoyResults.setn(0);
-                    targetDecoyResults.setnTPTotal(probaNTotal);
-                    targetDecoyResults.setFnrLimit(probaNTotal);
-                    targetDecoyResults.setScoreLimit(scores[0]);
-                    return;
-                } else {
-                    targetDecoyResults.setNoValidated(false);
-                    break;
-                }
-            }
-        }
         for (int i = 0; i < scores.length - 1; i++) {
             if (confidence[i] < threshold) {
-                for (int k = i - 1; k >= 0; k--) {
+                for (int k = i; k >= 0; k--) {
                     if (!decoy[k]) {
+                        targetDecoyResults.setNoValidated(false);
                         if (targetDecoyResults.isClassicalEstimators()) {
                             targetDecoyResults.setFdrLimit(classicalFDR[k]);
                             targetDecoyResults.setnFP(classicalFP[k]);
@@ -237,6 +204,15 @@ public class TargetDecoySeries {
                         return;
                     }
                 }
+                targetDecoyResults.setNoValidated(true);
+                targetDecoyResults.setFdrLimit(0);
+                targetDecoyResults.setnFP(0);
+                targetDecoyResults.setConfidenceLimit(confidence[0]);
+                targetDecoyResults.setn(0);
+                targetDecoyResults.setnTPTotal(probaNTotal);
+                targetDecoyResults.setFnrLimit(probaNTotal);
+                targetDecoyResults.setScoreLimit(scores[0]);
+                return;
             }
         }
     }
@@ -270,6 +246,14 @@ public class TargetDecoySeries {
                         return;
                     }
                 }
+                targetDecoyResults.setNoValidated(true);
+                targetDecoyResults.setFdrLimit(0);
+                targetDecoyResults.setnFP(0);
+                targetDecoyResults.setConfidenceLimit(confidence[0]);
+                targetDecoyResults.setn(0);
+                targetDecoyResults.setnTPTotal(probaNTotal);
+                targetDecoyResults.setFnrLimit(probaNTotal);
+                targetDecoyResults.setScoreLimit(scores[0]);
             }
         }
     }
