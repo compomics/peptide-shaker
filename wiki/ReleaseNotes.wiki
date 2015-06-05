@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.40.0 (June 5. 2015):*
+*Changes in PeptideShaker 0.40.0 (Coming soon...):*
 
  * FEATURE IMPROVEMENT: Made sure the search settings are only editable when they can actually be edited.
  * FEATURE IMPROVEMENT: Made the Group Selection table in the Validation tab resize with the size of the frame.
@@ -11,7 +11,7 @@
  * BUG FIX: Fixed a bug in the validation of matches with uncommon distributions of decoys.
  * BUG FIX: Avoiding the creation of empty distributions.
 
- * LIBRARY UPDATE: Updated utilities to version 3.49.6.
+ * LIBRARY UPDATE: Updated utilities to version 3.49.7.
 
 ----
 
