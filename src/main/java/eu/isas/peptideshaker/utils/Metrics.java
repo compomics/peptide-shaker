@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.math.statistics.Distribution;
 import com.compomics.util.math.statistics.distributions.NonSymmetricalNormalDistribution;
 import java.io.Serializable;
 import java.util.ArrayList;
