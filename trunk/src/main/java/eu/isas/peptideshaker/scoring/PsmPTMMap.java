@@ -16,6 +16,10 @@ import java.util.HashMap;
 public class PsmPTMMap implements Serializable {
 
     /**
+     * Serial version UID for post-serialization compatibility.
+     */
+    static final long serialVersionUID = -2287016074184132951L;
+    /**
      * Map of PSM maps.
      */
     private HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<Double, HashMap<Integer, TargetDecoyMap>>();
