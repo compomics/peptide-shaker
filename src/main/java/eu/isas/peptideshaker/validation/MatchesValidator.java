@@ -300,10 +300,11 @@ public class MatchesValidator {
                 precursorMzDeviations.addAll(runnable.getThreadPrecursorMzDeviations());
             }
 
-            // Disable probabilistic precursor filter if there are not enough precursors
-            if (precursorMzDeviations.size() < 100) {
+            if (precursorMzDeviations.size() >= 100) {
                 Collections.sort(precursorMzDeviations);
                 identificationFeaturesGenerator.setMassErrorDistribution(spectrumFileName, precursorMzDeviations);
+            } else {
+                // There are not enough precursors, disable probabilistic precursor filter
                 for (Filter filter : validationQCPreferences.getPsmFilters()) {
                     PsmFilter psmFilter = (PsmFilter) filter;
                     if (psmFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
