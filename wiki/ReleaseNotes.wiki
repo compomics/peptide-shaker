@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.40.0 (Coming soon...):*
+*Changes in PeptideShaker 0.40.0 (June 6. 2015):*
 
  * FEATURE IMPROVEMENT: Made sure the search settings are only editable when they can actually be edited.
  * FEATURE IMPROVEMENT: Made the Group Selection table in the Validation tab resize with the size of the frame.
