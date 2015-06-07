@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.40.1 (June 7. 2015):*
+
+ * BUG FIX: Avoided restoring the database connection when active during saving.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.49.9.
+
+----
+
 *Changes in PeptideShaker 0.40.0 (June 6. 2015):*
 
  * FEATURE IMPROVEMENT: Made sure the search settings are only editable when they can actually be edited.
