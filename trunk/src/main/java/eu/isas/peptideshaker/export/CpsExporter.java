@@ -142,8 +142,10 @@ public class CpsExporter {
         } finally {
             // Restaure the project navigability
             objectsCache.setReadOnly(false);
-            identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
             identificationFeaturesCache.setReadOnly(false);
+            if (!identification.isConnectionActive()) {
+                identification.restoreConnection(matchesFolder.getAbsolutePath(), false, objectsCache);
+            }
         }
     }
 }
