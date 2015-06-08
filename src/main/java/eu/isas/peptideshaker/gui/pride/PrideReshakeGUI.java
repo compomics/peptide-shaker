@@ -457,6 +457,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                     (projectsTable.getRowCount() + 1),
                     projectDetail.getAccession(),
                     projectDetail.getTitle(),
+                    setToString(projectDetail.getProjectTags(), ", "),
                     setToString(projectDetail.getSpecies(), ", "),
                     setToString(projectDetail.getTissues(), ", "),
                     setToString(projectDetail.getPtmNames(), "; "),
