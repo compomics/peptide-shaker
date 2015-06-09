@@ -544,7 +544,7 @@ public class TagMapper {
          * @param waitingHandler waiting handler allowing the display of
          * progress and canceling the process
          */
-        public KeyTagMapperRunnable(Identification identification, LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications, 
+        public KeyTagMapperRunnable(Identification identification, LinkedList<SpectrumMatch> spectrumMatches, ArrayList<String> fixedModifications,
                 ArrayList<String> variableModifications, SequenceMatchingPreferences sequenceMatchingPreferences, String key, WaitingHandler waitingHandler) {
             this.spectrumMatches = spectrumMatches;
             this.key = key;

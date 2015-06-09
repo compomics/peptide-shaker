@@ -1544,13 +1544,13 @@ public class NewDialog extends javax.swing.JDialog {
             allValid = false;
         }
 
-        if (fastaFileTxt.getText().length() > 0 && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
+        if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0 && identificationParameters.getProteinInferencePreferences() != null && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase() != null && identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
         } else {
             databaseLabel.setForeground(Color.RED);
-            if (fastaFileTxt.getText().length() > 0 && !identificationParameters.getProteinInferencePreferences().getProteinSequenceDatabase().exists()) {
+            if (fastaFileTxt.getText().length() > 0) {
                 databaseLabel.setToolTipText("FASTA file not found!");
                 fastaFileTxt.setToolTipText("FASTA file not found!");
             } else {
