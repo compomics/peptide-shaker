@@ -300,7 +300,7 @@ public class BestMatchSelection {
 
                 SpectrumMatch spectrumMatch = new SpectrumMatch(spectrumKey);
                 if (!peptideAssumptions.isEmpty()) {
-
+                    
                     PeptideAssumption bestPeptideAssumption = null;
                     ArrayList<Double> ps = new ArrayList<Double>(peptideAssumptions.keySet());
                     Collections.sort(ps);
@@ -475,9 +475,6 @@ public class BestMatchSelection {
                         psParameter.setSpecificMapKey(spectrumMatch.getBestPeptideAssumption().getIdentificationCharge().value + "");
                         identification.addSpectrumMatchParameter(spectrumKey, psParameter);
                         identification.updateSpectrumMatch(spectrumMatch);
-
-                    } else {
-                        throw new IllegalArgumentException("No best assumption found for spectrum " + spectrumKey + ".");
                     }
                 }
                 if (!tagAssumptions.isEmpty()) {
