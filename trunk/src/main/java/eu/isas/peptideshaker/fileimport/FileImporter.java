@@ -206,7 +206,8 @@ public class FileImporter {
                 proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler, exceptionHandler);
             } catch (SQLException e) {
                 waitingHandler.appendReport("Database " + sequenceFactory.getCurrentFastaFile().getName()
-                        + " could not be accessed, make sure that the file is not used by another program.", true, true);
+                        + " could not be accessed, make sure that the file is not used by another "
+                        + "program and that you have not run out of diskspace.", true, true);
                 e.printStackTrace();
                 waitingHandler.setRunCanceled();
             }

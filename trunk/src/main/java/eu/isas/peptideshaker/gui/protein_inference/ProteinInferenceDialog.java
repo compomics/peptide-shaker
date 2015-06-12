@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.ShotgunProtocol;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -14,7 +13,6 @@ import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdentificationParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -259,6 +257,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                                 + "<br><br>" + matchValidationLevel
                                 + "<br>" + proteinEvidenceLevel
                                 + "<html>");
+                        
+                        // add any new peptides for the proteins
+                        //ArrayList<String> secondaryPeptides = identification.getProteinMatch(proteinNodeKey).getPeptideMatchesKeys(); // @TODO: add more levels!
                     }
 
                     ArrayList<String> tempEdges = edges.get(peptideNodeName);
@@ -443,10 +444,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         matchInfoLbl = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         groupClassJComboBox = new javax.swing.JComboBox();
-        helpJButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         graphPanel = new javax.swing.JPanel();
         graphInnerPanel = new javax.swing.JPanel();
+        helpJButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Protein Level");
@@ -605,6 +606,30 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
+        graphPanel.setOpaque(false);
+
+        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
+        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         helpJButton.setToolTipText("Help");
         helpJButton.setBorder(null);
@@ -633,30 +658,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 cancelButtonActionPerformed(evt);
             }
         });
-
-        graphPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Inference Graph"));
-        graphPanel.setOpaque(false);
-
-        graphInnerPanel.setBackground(new java.awt.Color(255, 255, 255));
-        graphInnerPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        graphInnerPanel.setLayout(new javax.swing.BoxLayout(graphInnerPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
-        graphPanel.setLayout(graphPanelLayout);
-        graphPanelLayout.setHorizontalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        graphPanelLayout.setVerticalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(graphPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(graphInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1057,12 +1058,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 3:
                     try {
                         String description = sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
-
                         // if description is not set, return the accession instead - fix for home made fasta headers
                         if (description == null || description.trim().isEmpty()) {
                             description = inspectedMatch.getMainMatch();
                         }
-
                         return description;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -1087,7 +1086,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 6:
                     try {
                         String proteinEvidenceLevel = sequenceFactory.getHeader(accessions.get(row)).getProteinEvidence();
-
                         if (proteinEvidenceLevel != null) {
                             try {
                                 Integer level = new Integer(proteinEvidenceLevel);
@@ -1096,7 +1094,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                                 // ignore
                             }
                         }
-
                         return proteinEvidenceLevel;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -1104,11 +1101,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-                        ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
-                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
-                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row),
-                                shotgunProtocol.getEnzyme(),
-                                identificationParameters.getSequenceMatchingPreferences());
+//                        ShotgunProtocol shotgunProtocol = peptideShakerGUI.getShotgunProtocol();
+//                        IdentificationParameters identificationParameters = peptideShakerGUI.getIdentificationParameters();
+                        
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().hasEnzymaticPeptides(inspectedMatch, accessions.get(row));
+                        
+//                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), shotgunProtocol.getEnzyme(),
+//                                identificationParameters.getSequenceMatchingPreferences()); // @TODO: store in the cache?
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
