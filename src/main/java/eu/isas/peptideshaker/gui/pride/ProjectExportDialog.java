@@ -195,7 +195,8 @@ public class ProjectExportDialog extends javax.swing.JDialog implements PtmDialo
         try {
             ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
         } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+            System.out.println("Could not load the PTM map, using default values.");
+            e.printStackTrace();
         }
         ArrayList<String> missingMods = checkModifications();
 
