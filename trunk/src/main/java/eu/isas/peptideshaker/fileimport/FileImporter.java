@@ -451,7 +451,11 @@ public class FileImporter {
                         importPsms(idFile);
 
                         if (waitingHandler.isRunCanceled()) {
-                            identification.close();
+                            try {
+                                identification.close();
+                            } catch (Exception e) {
+                                e.printStackTrace(); // Let derby crash
+                            }
                             return 1;
                         }
                     }
