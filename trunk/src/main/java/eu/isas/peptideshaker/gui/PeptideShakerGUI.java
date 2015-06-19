@@ -85,6 +85,7 @@ import com.compomics.util.preferences.ValidationQCPreferences;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialog;
 import com.compomics.util.preferences.gui.ValidationQCPreferencesDialogParent;
 import eu.isas.peptideshaker.export.ProjectExport;
+import eu.isas.peptideshaker.filtering.AssumptionFilter;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -3235,6 +3236,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             if (!newPreferences.isSameAs(validationQCPreferences)) {
 
                 idValidationPreferences.setValidationQCPreferences(newPreferences);
+
+                // Update the assumptions QC filters
+                for (Filter filter : newPreferences.getPsmFilters()) {
+                    PsmFilter psmFilter = (PsmFilter) filter;
+                    AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
+                    assumptionFilter.clear();
+                    for (String itemName : psmFilter.getItemsNames()) {
+                        assumptionFilter.setFilterItem(itemName, psmFilter.getComparatorForItem(itemName), psmFilter.getValue(itemName));
+                    }
+                }
 
                 progressDialog = new ProgressDialogX(PeptideShakerGUI.this,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
