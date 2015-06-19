@@ -377,6 +377,14 @@ public abstract class MatchFilter implements Serializable, Filter {
     public Object getValue(String itemName) {
         return valuesMap.get(itemName);
     }
+    
+    /**
+     * Clears the filter items.
+     */
+    public void clear() {
+        valuesMap.clear();
+        comparatorsMap.clear();
+    }
 
     /**
      * Tests whether a match is validated by this filter.

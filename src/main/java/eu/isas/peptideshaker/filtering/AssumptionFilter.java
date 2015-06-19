@@ -94,7 +94,7 @@ public class AssumptionFilter extends MatchFilter {
 
     @Override
     protected MatchFilter getNew() {
-        return new ProteinFilter();
+        return new AssumptionFilter();
     }
 
     @Override
