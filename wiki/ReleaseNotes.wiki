@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.40.2 (Coming soon...):*
+
+ * BUG FIX: Fixed bugs in accessing private data in PRIDE Reshake.
+ * BUG FIX: Fixed a problem with the modification parsing in the mzid parser.
+ * BUG FIX: Fixed a possible multi threading issue when loading PSMs.
+
+ * LIBRARY UPDATE: Updated web-service-model to version 0.2.12.
+ * LIBRARY UPDATE: Updated utilities to version 3.49.17.
+
+----
+
 *Changes in PeptideShaker 0.40.1 (June 7. 2015):*
 
  * BUG FIX: Avoided restoring the database connection when active during saving.
