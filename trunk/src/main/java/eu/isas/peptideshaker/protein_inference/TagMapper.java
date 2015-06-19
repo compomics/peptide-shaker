@@ -372,7 +372,7 @@ public class TagMapper {
             spectrumMatch.removeAssumptions();
         }
         if (!assumptionsToSave.isEmpty()) {
-            identification.addAssumptions(spectrumKey, assumptionsToSave, false, false);
+            identification.addRawAssumptions(spectrumKey, assumptionsToSave);
         }
 
         if (increaseProgress) {
