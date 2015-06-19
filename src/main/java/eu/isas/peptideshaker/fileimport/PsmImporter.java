@@ -281,6 +281,7 @@ public class PsmImporter {
         if (!pool.awaitTermination(12, TimeUnit.HOURS)) {
             throw new InterruptedException("PSM import timed out. Please contact the developers.");
         }
+        int fininshed = 1;
     }
 
     /**
@@ -334,11 +335,6 @@ public class PsmImporter {
     private void importPsm(SpectrumMatch spectrumMatch, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
-        IdFilter idFilter = identificationParameters.getIdFilter();
-        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
-        SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
-        SearchParameters searchParameters = identificationParameters.getSearchParameters();
-
         // free memory if needed
         if (MemoryConsumptionStatus.memoryUsed() > 0.9 && !peptideShakerCache.isEmpty()) {
             peptideShakerCache.reduceMemoryConsumption(0.5, null);
@@ -354,24 +350,83 @@ public class PsmImporter {
         nPSMs++;
 
         String spectrumKey = spectrumMatch.getKey();
+
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> matchAssumptions = spectrumMatch.getAssumptionsMap();
+        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> rawDbAssumptions = identification.getRawAssumptions(spectrumKey);
+
+        if (matchAssumptions == null && rawDbAssumptions == null) {
+            throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
+        } else if (matchAssumptions != null && rawDbAssumptions != null) {
+            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> combinedAssumptions = new HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>>(Math.max(matchAssumptions.size(), rawDbAssumptions.size()));
+            for (Integer algorithm : matchAssumptions.keySet()) {
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = matchAssumptions.get(algorithm);
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
+                if (combinedAlgorithmMap == null) {
+                    combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
+                    combinedAssumptions.put(algorithm, algorithmMap);
+                }
+                for (Double score : algorithmMap.keySet()) {
+                    ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
+                    ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
+                    if (combinedScoreAssumptions == null) {
+                        combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
+                        combinedAlgorithmMap.put(score, scoreAssumptions);
+                    }
+                    combinedScoreAssumptions.addAll(scoreAssumptions);
+                }
+            }
+            for (Integer algorithm : rawDbAssumptions.keySet()) {
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> algorithmMap = rawDbAssumptions.get(algorithm);
+                HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> combinedAlgorithmMap = combinedAssumptions.get(algorithm);
+                if (combinedAlgorithmMap == null) {
+                    combinedAlgorithmMap = new HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>(algorithmMap.size());
+                    combinedAssumptions.put(algorithm, algorithmMap);
+                }
+                for (Double score : algorithmMap.keySet()) {
+                    ArrayList<SpectrumIdentificationAssumption> scoreAssumptions = algorithmMap.get(score);
+                    ArrayList<SpectrumIdentificationAssumption> combinedScoreAssumptions = combinedAlgorithmMap.get(score);
+                    if (combinedScoreAssumptions == null) {
+                        combinedScoreAssumptions = new ArrayList<SpectrumIdentificationAssumption>(scoreAssumptions.size());
+                        combinedAlgorithmMap.put(score, scoreAssumptions);
+                    }
+                    combinedScoreAssumptions.addAll(scoreAssumptions);
+                }
+            }
+            spectrumMatch.removeAssumptions();
+            identification.removeRawAssumptions(spectrumKey);
+            importAssumptions(spectrumMatch, combinedAssumptions, peptideSpectrumAnnotator, waitingHandler);
+        } else if (matchAssumptions != null) {
+            spectrumMatch.removeAssumptions();
+            importAssumptions(spectrumMatch, matchAssumptions, peptideSpectrumAnnotator, waitingHandler);
+        } else if (rawDbAssumptions != null) {
+            identification.removeRawAssumptions(spectrumKey);
+            importAssumptions(spectrumMatch, rawDbAssumptions, peptideSpectrumAnnotator, waitingHandler);
+        }
+
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+        waitingHandler.setSecondaryProgressCounter(++progress);
+
+    }
+
+    private void importAssumptions(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
+            throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
+
+        IdFilter idFilter = identificationParameters.getIdFilter();
+        SequenceMatchingPreferences sequenceMatchingPreferences = identificationParameters.getSequenceMatchingPreferences();
+        SequenceMatchingPreferences ptmSequenceMatchingPreferences = identificationParameters.getPtmScoringPreferences().getSequenceMatchingPreferences();
+        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+
+        String spectrumKey = spectrumMatch.getKey();
         String spectrumFileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
-        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions = spectrumMatch.getAssumptionsMap();
-        boolean assumptionsInDB = true;
-        if (assumptions == null) {
-            assumptions = identification.getAssumptions(spectrumKey);
-            assumptionsInDB = false;
-            if (assumptions == null) {
-                throw new IllegalArgumentException("No identification assumption found for PSM " + spectrumKey + ".");
-            }
-        }
         for (HashMap<Double, ArrayList<SpectrumIdentificationAssumption>> assumptionsForAdvocate : assumptions.values()) {
             for (ArrayList<SpectrumIdentificationAssumption> assumptionsAtScore : assumptionsForAdvocate.values()) {
                 nSecondary += assumptionsAtScore.size();
             }
         }
-        nSecondary -= 1;
 
         for (int advocateId : assumptions.keySet()) {
 
@@ -567,11 +622,10 @@ public class PsmImporter {
                     if (firstPeptideHit != null) {
                         inputMap.addEntry(advocateId, spectrumFileName, firstPeptideHit.getScore(), firstPeptideHit.getPeptide().isDecoy(sequenceMatchingPreferences));
                         checkPeptidesMassErrorsAndCharges(spectrumKey, firstPeptideHit);
+                        HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
+                        identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
                         identification.addSpectrumMatch(spectrumMatch);
                         nRetained++;
-                        if (assumptionsInDB) {
-                            identification.updateAssumptions(spectrumKey, assumptions);
-                        }
                         break;
                     }
                 }
@@ -589,10 +643,9 @@ public class PsmImporter {
                             TagAssumption tagAssumption = (TagAssumption) assumption;
                             firstTagHit = tagAssumption;
                             checkTagMassErrorsAndCharge(spectrumKey, tagAssumption);
+                            HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> previousAssumptions = identification.getAssumptions(spectrumKey);
+                            identification.addAssumptions(spectrumKey, assumptions, previousAssumptions == null);
                             identification.addSpectrumMatch(spectrumMatch);
-                            if (assumptionsInDB) {
-                                identification.updateAssumptions(spectrumKey, assumptions);
-                            }
                             nRetained++;
                             break;
                         }
@@ -602,12 +655,6 @@ public class PsmImporter {
                     }
                 }
             }
-
-            if (waitingHandler.isRunCanceled()) {
-                return;
-            }
-
-            waitingHandler.setSecondaryProgressCounter(++progress);
         }
     }
 
