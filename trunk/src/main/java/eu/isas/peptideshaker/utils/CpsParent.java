@@ -472,13 +472,27 @@ public class CpsParent extends UserPreferencesParent {
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadGeneMappings(String jarFilePath, WaitingHandler waitingHandler) {
+        return loadGeneMappings(jarFilePath, false, waitingHandler);
+    }
+
+    /**
+     * Imports the gene mapping.
+     *
+     * @param waitingHandler the waiting handler
+     * @param updateEqualVersion if true, the version is updated with equal
+     * version numbers, false, only update if the new version is newer
+     * @param jarFilePath the path to the jar file
+     *
+     * @return a boolean indicating whether the loading was successful
+     */
+    public boolean loadGeneMappings(String jarFilePath, boolean updateEqualVersion, WaitingHandler waitingHandler) {
         GenePreferences genePreferences;
         if (identificationParameters == null) {
             genePreferences = new GenePreferences();
         } else {
             genePreferences = identificationParameters.getGenePreferences();
         }
-        return genePreferences.loadGeneMappings(jarFilePath, waitingHandler);
+        return genePreferences.loadGeneMappings(jarFilePath, updateEqualVersion, waitingHandler);
     }
 
     /**

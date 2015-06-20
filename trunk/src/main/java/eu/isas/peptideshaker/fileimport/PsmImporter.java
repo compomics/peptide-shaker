@@ -281,7 +281,6 @@ public class PsmImporter {
         if (!pool.awaitTermination(12, TimeUnit.HOURS)) {
             throw new InterruptedException("PSM import timed out. Please contact the developers.");
         }
-        int fininshed = 1;
     }
 
     /**
@@ -410,6 +409,27 @@ public class PsmImporter {
 
     }
 
+    /**
+     * Import the assumptions.
+     *
+     * @param spectrumMatch the spectrum match to import
+     * @param assumptions the assumptions to import
+     * @param peptideSpectrumAnnotator the spectrum annotator to use to annotate
+     * spectra
+     * @param waitingHandler waiting handler to display progress and allow
+     * canceling the import
+     *
+     * @throws IOException exception thrown whenever an IO exception occurred
+     * while reading or writing to a file
+     * @throws InterruptedException exception thrown whenever a threading issue
+     * occurred while
+     * @throws SQLException exception thrown whenever an SQL exception occurred
+     * while interacting with the database
+     * @throws ClassNotFoundException exception thrown whenever an exception
+     * occurred while deserializing an object
+     * @throws MzMLUnmarshallerException exception thrown whenever an exception
+     * occurred while reading an mzML file
+     */
     private void importAssumptions(SpectrumMatch spectrumMatch, HashMap<Integer, HashMap<Double, ArrayList<SpectrumIdentificationAssumption>>> assumptions, PeptideSpectrumAnnotator peptideSpectrumAnnotator, WaitingHandler waitingHandler)
             throws IOException, SQLException, InterruptedException, ClassNotFoundException, MzMLUnmarshallerException {
 
