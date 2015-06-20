@@ -506,6 +506,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             newVersion = checkForNewVersion();
         }
 
+        boolean firstRun = new File(getJarFilePath() + "/resources/conf/firstRun").exists();
+        
         if (!newVersion) {
 
             // set this version as the default PeptideShaker version
@@ -594,7 +596,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             this.setExtendedState(MAXIMIZED_BOTH);
 
-            loadGeneMappings();
+            loadGeneMappings(firstRun);
             loadEnzymes();
             resetPtmFactory();
 
@@ -2214,7 +2216,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                 if ((!statsPanel.thresholdUpdated() || !statsPanel.pepWindowApplied())) {
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Discard the current validation settings?", "Discard Settings?",
+                            this, "Discard the changed validation settings?", "Discard Settings?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
@@ -3105,7 +3107,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         if (oldSpecies == null || !oldSpecies.equals(newSpecies)) {
             clearGeneMappings(); // clear the old mappings
             if (newSpecies != null) {
-                loadGeneMappings(); // load the new mappings
+                loadGeneMappings(false); // load the new mappings
             }
             updateGeneDisplay(); // display the new mappings
         }
@@ -3394,9 +3396,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
     /**
      * Imports the gene mapping.
+     * 
+     * @param updateEqualVersion if true, the version is updated with equal
+     * version numbers, false, only update if the new version is newer
      */
-    private void loadGeneMappings() {
-        if (!cpsBean.loadGeneMappings(PeptideShaker.getJarFilePath(), progressDialog)) {
+    private void loadGeneMappings(boolean updateEqualVersion) {
+        if (!cpsBean.loadGeneMappings(PeptideShaker.getJarFilePath(), updateEqualVersion, progressDialog)) {
             JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -3974,7 +3979,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         cpsBean.setIdentificationParameters(identificationParameters);
         SearchParameters newSearchParameters = identificationParameters.getSearchParameters();
         PeptideShaker.loadModifications(newSearchParameters);
-        loadGeneMappings();
+        loadGeneMappings(false);
         setSelectedItems();
         backgroundPanel.revalidate();
         backgroundPanel.repaint();
@@ -4352,7 +4357,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
-        loadGeneMappings();
+        loadGeneMappings(false);
     }
 
     /**
@@ -5534,7 +5539,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     resetDisplayFeaturesGenerator();
 
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
-                    loadGeneMappings(); // have to load the new gene mappings
+                    loadGeneMappings(false); // have to load the new gene mappings
 
                     // backwards compatibility fix for gene and go references using only latin names
                     boolean genesRemapped = false;
@@ -5555,7 +5560,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                                 if (tempSpeciesKey.contains(selectedSpecies)) {
                                     genePreferences.setCurrentSpecies(tempSpeciesKey);
                                     keyFound = true;
-                                    loadGeneMappings(); // have to re-load the gene mappings now that we have the correct species name
+                                    loadGeneMappings(false); // have to re-load the gene mappings now that we have the correct species name
                                     genesRemapped = true;
                                 }
                             }
