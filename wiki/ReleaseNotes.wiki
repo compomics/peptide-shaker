@@ -3,14 +3,16 @@
 
 ----
 
-*Changes in PeptideShaker 0.40.2 (Coming soon...):*
+*Changes in PeptideShaker 0.40.2 (June 21. 2015):*
 
  * BUG FIX: Fixed bugs in accessing private data in PRIDE Reshake.
  * BUG FIX: Fixed a problem with the modification parsing in the mzid parser.
  * BUG FIX: Fixed a possible multi threading issue when loading PSMs.
+ * BUG FIX: Fixed a bug in the GO mappings that resulted from a change in the Ensembl BioMart.
+ * BUG FIX: Corrected a bug where the assumptions validation level was not set.
 
  * LIBRARY UPDATE: Updated web-service-model to version 0.2.12.
- * LIBRARY UPDATE: Updated utilities to version 3.49.17.
+ * LIBRARY UPDATE: Updated utilities to version 3.49.19.
 
 ----
 
