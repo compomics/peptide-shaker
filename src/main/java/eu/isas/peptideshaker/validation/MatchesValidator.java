@@ -316,6 +316,16 @@ public class MatchesValidator {
                             psmFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
                         }
                     }
+                    AssumptionFilter assumptionFilter = psmFilter.getAssumptionFilter();
+                    if (assumptionFilter.getItemsNames().contains(AssumptionFilterItem.precrusorMzErrorStat.name)) {
+                        assumptionFilter.removeFilterItem(AssumptionFilterItem.precrusorMzErrorStat.name);
+                        SearchParameters searchParameters = identificationParameters.getSearchParameters();
+                        if (searchParameters.isPrecursorAccuracyTypePpm()) {
+                            assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorPpm.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                        } else {
+                            assumptionFilter.setFilterItem(AssumptionFilterItem.precrusorMzErrorDa.name, FilterItemComparator.lowerOrEqual, searchParameters.getPrecursorAccuracy());
+                        }
+                    }
                 }
             }
 
@@ -740,7 +750,7 @@ public class MatchesValidator {
     public static void updatePeptideAssumptionValidationLevel(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             ShotgunProtocol shotgunProtocol, IdentificationParameters identificationParameters, PeptideSpectrumAnnotator peptideSpectrumAnnotator,
             InputMap inputMap, String spectrumKey, PeptideAssumption peptideAssumption, boolean applyQCFilters) throws SQLException, IOException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException, MathException {
-        
+
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
