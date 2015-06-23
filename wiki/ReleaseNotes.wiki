@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.40.3 (June 23. 2015):*
+
+ * BUG FIX: Corrected a bug in the validation of datasets with few hits.
+
+----
+
 *Changes in PeptideShaker 0.40.2 (June 21. 2015):*
 
  * FEATURE IMPROVEMENT: Updated the Example Dataset.
