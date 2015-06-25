@@ -440,13 +440,13 @@ public class PrideXmlExport {
                     String proteinAccession = proteinMatch.getMainMatch();
                     Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                     String peptideSequence = Peptide.getSequence(peptideKey);
-                    ArrayList<Integer> startIndexes = currentProtein.getPeptideStart(peptideSequence,
-                            identificationParameters.getSequenceMatchingPreferences());
-                    for (Integer peptideStart : startIndexes) {
-                        br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
-                        Integer endIndex = peptideStart + tempPeptide.getSequence().length() - 1;
-                        br.write(getCurrentTabSpace() + "<End>" + endIndex + "</End>" + System.getProperty("line.separator"));
-                    }
+
+                    // get the start and end indexes
+                    ArrayList<Integer> startIndexes = currentProtein.getPeptideStart(peptideSequence, identificationParameters.getSequenceMatchingPreferences());
+                    int peptideStart = startIndexes.get(0); // only one start-end pair is allowed, so we just pick the first in the list
+                    int peptideEnd = peptideStart + tempPeptide.getSequence().length() - 1;
+                    br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<End>" + peptideEnd + "</End>" + System.getProperty("line.separator"));
 
                     // spectrum index reference
                     br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>" + System.getProperty("line.separator"));
