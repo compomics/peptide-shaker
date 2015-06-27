@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.40.4 (June 28. 2015):*
+
+ * FEATURE IMPROVEMENT: Added a "Download All" option to the files table in PRIDE Reshake.
+
+ * BUG FIX: Fixed a bug that results in the PRIDE XML export not working.
+
+----
+
 *Changes in PeptideShaker 0.40.3 (June 23. 2015):*
 
  * BUG FIX: Corrected a bug in the validation of datasets with few hits.
