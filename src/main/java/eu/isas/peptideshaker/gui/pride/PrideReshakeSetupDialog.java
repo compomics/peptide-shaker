@@ -1,13 +1,16 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.software.dialogs.ProteoWizardSetupDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.protein_sequences_manager.gui.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.LastSelectedFolder;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.protein.Header;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
@@ -385,7 +388,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         spectrumPanel.setOpaque(false);
 
         spectrumLabel.setFont(spectrumLabel.getFont().deriveFont((spectrumLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        spectrumLabel.setText("Select the spectrum files to reanalyze. Supported formats: mgf and PRIDE XML.");
+        spectrumLabel.setText("Select the spectrum files to reanalyze: peak lists, raw files or PRIDE XML.");
 
         spectrumTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -493,7 +496,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
         searchSettingsPanel.setOpaque(false);
 
         searchSettingsLabel.setFont(searchSettingsLabel.getFont().deriveFont((searchSettingsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        searchSettingsLabel.setText("Select the file to extract the search parameters from. Supported formats: mzIdentML and PRIDE XML.");
+        searchSettingsLabel.setText("Select the file to extract the search parameters from: mzIdentML or PRIDE XML.");
 
         searchSettingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -774,95 +777,77 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
      */
     private void reshakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(prideReShakeGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-
-        progressDialog.setTitle("Checking Files. Please Wait...");
-        isFileBeingDownloaded = true;
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("FileExistsThread") {
-            @Override
-            public void run() {
-
-                ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
-                String selectedSearchSettingsFile = null;
-                ArrayList<Integer> fileSizes = new ArrayList<Integer>();
-
-                for (int i = 0; i < spectrumTable.getRowCount(); i++) {
-                    if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
-
-                        String link = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("Download").getModelIndex());
-                        link = link.substring(link.indexOf("\"") + 1);
-                        link = link.substring(0, link.indexOf("\""));
-
-                        boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
-
-                        if (!exists) {
-                            if (link.endsWith(".gz")) {
-                                link = link.substring(0, link.length() - 3);
-                                exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
-                            }
-                        }
-
-                        if (exists) {
-                            selectedSpectrumFiles.add(link);
-                            Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
-                            int fileSizeInBytes;
-                            if (fileSizeInMB != null) {
-                                fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
-                            } else {
-                                fileSizeInBytes = -1;
-                            }
-                            fileSizes.add(fileSizeInBytes);
-                        } else {
-                            JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
-                                    "PRIDE web service access error. Cannot open:<br>"
-                                    + link + "<br>"
-                                    + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
-                                    "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
-                            System.out.println("Not found: " + link + "!");
-                        }
+        // check if we have any files that require proteowizard
+        boolean msConvertRequired = false;
+        for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+            if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
+                String fileName = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("File").getModelIndex());
+                for (MsFormat format : MsFormat.values()) {
+                    if (format != MsFormat.mgf && fileName.toLowerCase().endsWith(format.fileNameEnding)) {
+                        msConvertRequired = true;
+                        break;
                     }
                 }
+            }
+        }
 
-                for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
-                    if ((Boolean) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("  ").getModelIndex())) {
+        // check if proteowizard is installed
+        boolean proteoWizardFolderOk = true;
+        if (msConvertRequired && prideReShakeGUI.getPeptideShakerGUI().getUtilitiesUserPreferences().getProteoWizardPath() == null) {
+            proteoWizardFolderOk = editProteoWizardInstallation();
+            if (!proteoWizardFolderOk) {
+                JOptionPane.showMessageDialog(this, "ProteoWizard folder not set. Currently supported spectrum formats are mgf and PRIDE XML.", "ProteoWizard Setup Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
 
-                        String link = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Download").getModelIndex());
-                        link = link.substring(link.indexOf("\"") + 1);
-                        link = link.substring(0, link.indexOf("\""));
+        if (proteoWizardFolderOk) {
 
-                        if (!selectedSpectrumFiles.contains(link)) {
+            progressDialog = new ProgressDialogX(prideReShakeGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+
+            progressDialog.setTitle("Checking Files. Please Wait...");
+            isFileBeingDownloaded = true;
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("FileExistsThread") {
+                @Override
+                public void run() {
+
+                    ArrayList<String> selectedSpectrumFiles = new ArrayList<String>();
+                    String selectedSearchSettingsFile = null;
+                    ArrayList<Integer> fileSizes = new ArrayList<Integer>();
+
+                    for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+                        if ((Boolean) spectrumTable.getValueAt(i, spectrumTable.getColumn("  ").getModelIndex())) {
+
+                            String link = (String) spectrumTable.getValueAt(i, spectrumTable.getColumn("Download").getModelIndex());
+                            link = link.substring(link.indexOf("\"") + 1);
+                            link = link.substring(0, link.indexOf("\""));
 
                             boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
 
                             if (!exists) {
                                 if (link.endsWith(".gz")) {
                                     link = link.substring(0, link.length() - 3);
-                                    if (!selectedSpectrumFiles.contains(link)) {
-                                        exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
-                                    } else {
-                                        exists = true;
-                                    }
+                                    exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
                                 }
                             }
 
                             if (exists) {
-                                selectedSearchSettingsFile = link;
-                                Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
+                                selectedSpectrumFiles.add(link);
+                                Double fileSizeInMB = (Double) spectrumTable.getValueAt(i, spectrumTable.getColumn("Size (MB)").getModelIndex());
                                 int fileSizeInBytes;
                                 if (fileSizeInMB != null) {
                                     fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
@@ -878,28 +863,72 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                                         "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
                                 System.out.println("Not found: " + link + "!");
                             }
-                        } else {
-                            selectedSearchSettingsFile = link;
                         }
                     }
+
+                    for (int i = 0; i < searchSettingsTable.getRowCount(); i++) {
+                        if ((Boolean) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("  ").getModelIndex())) {
+
+                            String link = (String) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Download").getModelIndex());
+                            link = link.substring(link.indexOf("\"") + 1);
+                            link = link.substring(0, link.indexOf("\""));
+
+                            if (!selectedSpectrumFiles.contains(link)) {
+
+                                boolean exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+
+                                if (!exists) {
+                                    if (link.endsWith(".gz")) {
+                                        link = link.substring(0, link.length() - 3);
+                                        if (!selectedSpectrumFiles.contains(link)) {
+                                            exists = Util.checkIfURLExists(link, prideReShakeGUI.getUserName(), prideReShakeGUI.getPassword());
+                                        } else {
+                                            exists = true;
+                                        }
+                                    }
+                                }
+
+                                if (exists) {
+                                    selectedSearchSettingsFile = link;
+                                    Double fileSizeInMB = (Double) searchSettingsTable.getValueAt(i, searchSettingsTable.getColumn("Size (MB)").getModelIndex());
+                                    int fileSizeInBytes;
+                                    if (fileSizeInMB != null) {
+                                        fileSizeInBytes = new Double(fileSizeInMB * 1024 * 1024).intValue();
+                                    } else {
+                                        fileSizeInBytes = -1;
+                                    }
+                                    fileSizes.add(fileSizeInBytes);
+                                } else {
+                                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, JOptionEditorPane.getJOptionEditorPane(
+                                            "PRIDE web service access error. Cannot open:<br>"
+                                            + link + "<br>"
+                                            + "Please contact the <a href=\"http://www.ebi.ac.uk/support/index.php?query=pride\">PRIDE team</a>."),
+                                            "PRIDE Access Error", JOptionPane.WARNING_MESSAGE);
+                                    System.out.println("Not found: " + link + "!");
+                                }
+                            } else {
+                                selectedSearchSettingsFile = link;
+                            }
+                        }
+                    }
+
+                    boolean download = true;
+
+                    if (selectedSpectrumFiles.isEmpty()) {
+                        download = false;
+                    }
+
+                    progressDialog.setRunFinished();
+
+                    if (download) {
+                        prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFiles, selectedSearchSettingsFile,
+                                databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
+                    } else {
+                        JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
-
-                boolean download = true;
-
-                if (selectedSpectrumFiles.isEmpty()) {
-                    download = false;
-                }
-
-                progressDialog.setRunFinished();
-
-                if (download) {
-                    prideReShakeGUI.downloadPrideDatasets(workingFolderTxt.getText(), selectedSpectrumFiles, selectedSearchSettingsFile,
-                            databaseSettingsTxt.getText(), speciesJTextField.getText(), fileSizes);
-                } else {
-                    JOptionPane.showMessageDialog(PrideReshakeSetupDialog.this, "No spectrum files found. Reshake canceled.", "File Error", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        }.start();
+            }.start();
+        }
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
     /**
@@ -1556,5 +1585,36 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 + "features will be limited if using other databases.<br><br>"
                 + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."),
                 "Database Information", JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * Opens a dialog allowing the edition of the ProteoWizard installation
+     * folder.
+     *
+     * @return true of the installation is now set
+     */
+    public boolean editProteoWizardInstallation() {
+
+        boolean canceled = false;
+
+        try {
+            ProteoWizardSetupDialog proteoWizardSetupDialog = new ProteoWizardSetupDialog(this, true);
+            canceled = proteoWizardSetupDialog.isDialogCanceled();
+
+            if (!canceled) {
+
+                // reload the user preferences
+                try {
+                    prideReShakeGUI.getPeptideShakerGUI().setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "An error occurred when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return !canceled;
     }
 }

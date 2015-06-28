@@ -27,6 +27,10 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      */
     private ArrayList<File> mgfFiles;
     /**
+     * The raw files.
+     */
+    private ArrayList<File> rawFiles;
+    /**
      * The species for the PRIDE project.
      */
     private String species;
@@ -42,18 +46,20 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      * @param prideSearchParametersFile the pride search parameters file
      * @param prideSearchParametersReport the pride search parameters report
      * @param mgfFiles the converted mgf files
+     * @param rawFiles the raw files
      * @param species the species for the project, can be null and also a list
      * of species
      * @param speciesType the species type
      * @param modal if the dialog is to be modal or not
      */
-    public PrideSearchParametersDialog(PrideReshakeGUI prideReShakeGUI, File prideSearchParametersFile,
-            String prideSearchParametersReport, ArrayList<File> mgfFiles, String species, String speciesType, boolean modal) {
+    public PrideSearchParametersDialog(PrideReshakeGUI prideReShakeGUI, File prideSearchParametersFile, String prideSearchParametersReport, 
+            ArrayList<File> mgfFiles, ArrayList<File> rawFiles, String species, String speciesType, boolean modal) {
         super(prideReShakeGUI, modal);
         initComponents();
         this.prideReShakeGUI = prideReShakeGUI;
         this.prideSearchParametersFile = prideSearchParametersFile;
         this.mgfFiles = mgfFiles;
+        this.rawFiles = rawFiles;
         this.species = species;
         this.speciesType = speciesType;
         searchParametersReportEditorPane.setText(prideSearchParametersReport);
@@ -206,8 +212,12 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                 public void run() {
                     try {
                         File outputFolder = null;
-                        if (!mgfFiles.isEmpty()) {
-                            outputFolder = new File(mgfFiles.get(0).getParentFile(), "search_results");
+                        if (!mgfFiles.isEmpty() || !rawFiles.isEmpty()) {
+                            if (!mgfFiles.isEmpty()) {
+                                outputFolder = new File(mgfFiles.get(0).getParentFile(), "search_results");
+                            } else {
+                                outputFolder = new File(rawFiles.get(0).getParentFile(), "search_results");
+                            }
                             if (!outputFolder.exists()) {
                                 boolean success = outputFolder.mkdir();
                                 if (!success) {
@@ -215,7 +225,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                                 }
                             }
                         }
-                        ToolFactory.startSearchGUI(prideReShakeGUI, mgfFiles, prideSearchParametersFile, outputFolder, species, speciesType);
+                        ToolFactory.startSearchGUI(prideReShakeGUI, mgfFiles, rawFiles, prideSearchParametersFile, outputFolder, species, speciesType);
                         prideReShakeGUI.getPeptideShakerGUI().close();
                     } catch (Exception e) {
                         prideReShakeGUI.getPeptideShakerGUI().catchException(e);
