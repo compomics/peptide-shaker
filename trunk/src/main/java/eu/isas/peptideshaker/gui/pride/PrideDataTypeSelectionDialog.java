@@ -13,6 +13,10 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
      * Set if public or private data is to be loaded.
      */
     private boolean loadPublicData = true;
+    /**
+     * True of the dialog was canceled by the user.
+     */
+    private boolean isCanceled = false;
 
     /**
      * Creates a new PrideDataTypeSelectionDialog.
@@ -55,6 +59,11 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PRIDE Data Selection");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -155,6 +164,15 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_privateDataJButtonActionPerformed
 
+    /**
+     * Set the dialog as canceled.
+     * 
+     * @param evt 
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        isCanceled = true;
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton privateDataJButton;
@@ -162,4 +180,13 @@ public class PrideDataTypeSelectionDialog extends javax.swing.JDialog {
     private javax.swing.JLabel saveLabel;
     private javax.swing.JLabel saveLabel1;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Returns true if the dialog was canceled by the user.
+     * 
+     * @return the isCanceled
+     */
+    public boolean isCanceled() {
+        return isCanceled;
+    }
 }

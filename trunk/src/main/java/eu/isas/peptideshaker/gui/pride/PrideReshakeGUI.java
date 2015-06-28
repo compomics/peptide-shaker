@@ -8,6 +8,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.identifications.MzIdentMLIdfileSearchParametersConverter;
 import com.compomics.util.experiment.massspectrometry.Charge;
+import com.compomics.util.experiment.massspectrometry.proteowizard.MsFormat;
 import com.compomics.util.gui.JOptionEditorPane;
 import com.compomics.util.gui.TableProperties;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -224,10 +225,12 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         PrideDataTypeSelectionDialog dataTypeSelectionDialog = new PrideDataTypeSelectionDialog(this, true);
 
-        if (dataTypeSelectionDialog.isPublic()) {
-            loadPublicProjects();
-        } else {
-            getPrivateProjectDetails();
+        if (!dataTypeSelectionDialog.isCanceled()) {
+            if (dataTypeSelectionDialog.isPublic()) {
+                loadPublicProjects();
+            } else {
+                getPrivateProjectDetails();
+            }
         }
     }
 
@@ -240,22 +243,33 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
+        // set up the reshakeable files
         reshakeableFiles = new HashMap<String, ArrayList<String>>();
+
+        // add pride xml and mgf
         reshakeableFiles.put("RESULT", new ArrayList<String>());
         reshakeableFiles.get("RESULT").add(".xml");
         reshakeableFiles.get("RESULT").add(".xml.gz");
         reshakeableFiles.put("PEAK", new ArrayList<String>());
-        reshakeableFiles.get("PEAK").add(".mgf");
-        reshakeableFiles.get("PEAK").add(".mgf.gz");
+        reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("PEAK").add(MsFormat.mgf.fileNameEnding + ".gz"); // @TODO: what about .zip?
+
+        // add the raw file formats
+        reshakeableFiles.put("RAW", new ArrayList<String>());
+        reshakeableFiles.get("RAW").add(MsFormat.raw.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.mzML.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.mz5.fileNameEnding);
 
         // then check for incorrect labeling...
         reshakeableFiles.put("OTHER", new ArrayList<String>());
-        reshakeableFiles.get("OTHER").add(".mgf");
-        reshakeableFiles.get("OTHER").add(".mgf.gz");
-        reshakeableFiles.put("RAW", new ArrayList<String>());
-        reshakeableFiles.get("RAW").add(".mgf");
-        reshakeableFiles.get("RAW").add(".mgf.gz");
+        reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("OTHER").add(MsFormat.mgf.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.mgf.fileNameEnding + ".gz");
 
+        // the files from which settings can be extracted
         searchSettingsFiles = new HashMap<String, ArrayList<String>>();
         searchSettingsFiles.put("RESULT", new ArrayList<String>());
         searchSettingsFiles.get("RESULT").add(".xml");
@@ -878,7 +892,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         filesTableScrollPane.setViewportView(filesTable);
 
         filesHelpLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        filesHelpLabel.setText("When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: mgf and PRIDE XML.");
+        filesHelpLabel.setText("When you have found the wanted files click Reshake PRIDE Data to start re-analyzing. Supported formats: peak lists, raw data and PRIDE XML.");
 
         reshakableCheckBox.setSelected(true);
         reshakableCheckBox.setText("Reshakeable Files Only");
@@ -913,7 +927,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             .addGroup(filesPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(filesHelpLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
                 .addComponent(downloadAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(reshakableCheckBox)
@@ -1723,6 +1737,9 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
             }
 
             // update the sparklines with the max values
+            if (maxFileSize < 1) {
+                maxFileSize = 1;
+            }
             filesTable.getColumn("Size (MB)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxFileSize, peptideShakerGUI.getSparklineColor()));
             ((JSparklinesBarChartTableCellRenderer) filesTable.getColumn("Size (MB)").getCellRenderer()).showNumberAndChart(true, TableProperties.getLabelWidth());
             ((JSparklinesBarChartTableCellRenderer) filesTable.getColumn("Size (MB)").getCellRenderer()).setLogScale(true);
@@ -2325,6 +2342,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<File>();
+                    ArrayList<File> rawFiles = new ArrayList<File>();
                     boolean mgfConversionOk = true;
                     Boolean useLocalFiles = null;
 
@@ -2349,27 +2367,41 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                         try {
                             currentPrideDataFileUrl = new URL(currentFile);
                             currentZippedPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                            if (unzipped) {
-                                currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                if (i < selectedSpectrumFiles.size()) {
-                                    if (currentFile.toLowerCase().endsWith(".mgf")) {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
-                                    } else {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
-                                    }
-                                }
-                            } else {
-                                currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
-                                if (i < selectedSpectrumFiles.size()) {
-                                    if (currentFile.toLowerCase().endsWith(".mgf.gz")) {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
-                                    } else {
-                                        currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
-                                    }
+
+                            // check if we have non-mgf spectrum file
+                            boolean nonMgfSpectrumFile = false;
+                            for (MsFormat tempFormat : MsFormat.values()) {
+                                if (tempFormat != MsFormat.mgf && currentFile.toLowerCase().endsWith(tempFormat.fileNameEnding)) {
+                                    nonMgfSpectrumFile = true;
                                 }
                             }
-                            if (i < selectedSpectrumFiles.size()) {
-                                mgfFiles.add(currentMgfFile);
+
+                            if (nonMgfSpectrumFile) {
+                                currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                rawFiles.add(currentPrideDataFile);
+                            } else {
+                                if (unzipped) {
+                                    currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                    if (i < selectedSpectrumFiles.size()) {
+                                        if (currentFile.toLowerCase().endsWith(".mgf")) {
+                                            currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/")));
+                                        } else {
+                                            currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml")) + ".mgf");
+                                        }
+                                    }
+                                } else {
+                                    currentPrideDataFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".gz")));
+                                    if (i < selectedSpectrumFiles.size()) {
+                                        if (currentFile.toLowerCase().endsWith(".mgf.gz")) {
+                                            currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".mgf.gz")) + ".mgf");
+                                        } else {
+                                            currentMgfFile = new File(outputFolder, currentFile.substring(currentFile.lastIndexOf("/"), currentFile.lastIndexOf(".xml.gz")) + ".mgf");
+                                        }
+                                    }
+                                }
+                                if (i < selectedSpectrumFiles.size()) {
+                                    mgfFiles.add(currentMgfFile);
+                                }
                             }
                         } catch (MalformedURLException ex) {
                             JOptionPane.showMessageDialog(PrideReshakeGUI.this, JOptionEditorPane.getJOptionEditorPane("The file could not be downloaded:<br>"
@@ -2448,8 +2480,18 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                             // file unzipped, time to start the conversion to mgf
                             if (i < selectedSpectrumFiles.size()) {
-                                if (currentFile.toLowerCase().endsWith(".mgf")
-                                        || currentFile.toLowerCase().endsWith(".mgf.gz")) {
+
+                                // check if we have non-mgf spectrum file
+                                boolean nonMgfSpectrumFile = false;
+                                for (MsFormat tempFormat : MsFormat.values()) {
+                                    if (tempFormat != MsFormat.mgf && currentFile.toLowerCase().endsWith(tempFormat.fileNameEnding)) {
+                                        nonMgfSpectrumFile = true;
+                                    }
+                                }
+
+                                if (nonMgfSpectrumFile) {
+                                    // raw file, conversion is done later
+                                } else if (currentFile.toLowerCase().endsWith(".mgf") || currentFile.toLowerCase().endsWith(".mgf.gz")) {
                                     // already mgf, no conversion needed
                                 } else {
                                     progressDialog.setTitle("Converting Spectrum Data (" + (i + 1) + "/" + allFiles.size() + "). Please Wait...");
@@ -2465,8 +2507,8 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                             // get the search params from the pride xml or mzid file
                             if (mgfConversionOk) {
-                                if (searchSettingsProjectFile != null
-                                        && currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+                                if (searchSettingsProjectFile != null && currentFile.equalsIgnoreCase(searchSettingsProjectFile)) {
+
                                     progressDialog.setTitle("Extracting Search Settings. Please Wait...");
 
                                     if (currentFile.toLowerCase().endsWith(".xml")
@@ -2490,27 +2532,31 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
                                         // add details about the ptms
                                         prideSearchParametersReport += convertPtms(allPtms, prideSearchParameters.getModificationProfile());
                                     }
-
-                                    // add details about the files reprocessed
-                                    prideSearchParametersReport += "<br><b>Files used:</b><br>";
-                                    for (String tempFile : allFiles) {
-                                        prideSearchParametersReport += tempFile + "<br>";
-                                    }
-
-                                    // save the report to disk
-                                    File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
-                                    String tempReport = "<html>" + prideSearchParametersReport;
-                                    tempReport += "<br></html>";
-                                    FileWriter fw = new FileWriter(searchSettingsReportFile);
-                                    BufferedWriter bw = new BufferedWriter(fw);
-                                    bw.write(tempReport);
-                                    bw.close();
-                                    fw.close();
-
-                                    prideSearchParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
-                                    prideSearchParametersReport += "<br></html>";
-                                    prideSearchParametersReport = "<html>" + prideSearchParametersReport;
+                                } else {
+                                    prideSearchParametersReport
+                                            = "<html><br><b><u>Extracted Search Parameters</u></b><br><br>"
+                                            + "(No search parameters extracted)<br>";
                                 }
+
+                                // add details about the files reprocessed
+                                prideSearchParametersReport += "<br><b>Files used:</b><br>";
+                                for (String tempFile : allFiles) {
+                                    prideSearchParametersReport += tempFile + "<br>";
+                                }
+
+                                // save the report to disk
+                                File searchSettingsReportFile = new File(outputFolder, "search_settings_report.html");
+                                String tempReport = "<html>" + prideSearchParametersReport;
+                                tempReport += "<br></html>";
+                                FileWriter fw = new FileWriter(searchSettingsReportFile);
+                                BufferedWriter bw = new BufferedWriter(fw);
+                                bw.write(tempReport);
+                                bw.close();
+                                fw.close();
+
+                                prideSearchParametersReport += "<br><br>Report saved to <a href=\"" + searchSettingsReportFile.getAbsolutePath() + "\">" + searchSettingsReportFile.getAbsolutePath() + "</a><br>";
+                                prideSearchParametersReport += "<br></html>";
+                                prideSearchParametersReport = "<html>" + prideSearchParametersReport;
                             }
                         } else {
                             mgfConversionOk = false;
@@ -2551,7 +2597,7 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
 
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(PrideReshakeGUI.this,
-                                new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, selectedSpecies, selectedSpeciesType, true);
+                                new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, rawFiles, selectedSpecies, selectedSpeciesType, true);
                     }
 
                 } catch (Exception e) {
