@@ -268,7 +268,21 @@ public class PrideReshakeGUI extends javax.swing.JFrame {
         reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding);
         reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding + ".gz");
         reshakeableFiles.get("RAW").add(MsFormat.mzXML.fileNameEnding + ".zip");
-        //reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding); // @TODO: also requries the corresponding .scan file...
+        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(MsFormat.baf.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(MsFormat.fid.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(MsFormat.yep.fileNameEnding + ".zip");
+        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding);
+        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding + ".gz");
+        reshakeableFiles.get("RAW").add(MsFormat.d.fileNameEnding + ".zip");
+//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding); // @TODO: also requries the corresponding .scan file...
+//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding + ".gz");
+//        reshakeableFiles.get("RAW").add(MsFormat.wiff.fileNameEnding + ".zip");
         reshakeableFiles.get("RAW").add(MsFormat.mz5.fileNameEnding);
 
         // then check for incorrect labeling...
