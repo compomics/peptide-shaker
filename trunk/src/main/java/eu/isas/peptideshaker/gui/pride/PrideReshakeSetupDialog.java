@@ -644,7 +644,7 @@ public class PrideReshakeSetupDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        workingFolderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Working Folder"));
+        workingFolderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING +  "Output Folder"));
         workingFolderPanel.setOpaque(false);
 
         workingFolderLbl.setText("Folder");
