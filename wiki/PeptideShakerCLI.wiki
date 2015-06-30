@@ -39,8 +39,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -replicate                 The replicate number.
 
--identification_files      Identification files (X!Tandem .t.xml, mzIdentML .mzid, 
-                           MS Amanda .cvs, OMSSA .omx, Mascot .dat files, or .zip) 
+-identification_files      Identification files (X!Tandem .t.xml, mzIdentML .mzid, MS Amanda .cvs, 
+                           OMSSA .omx, Mascot .dat files, Tide .txt, Comet .pep.xml or .zip) 
                            in a comma separated list or an entire folder.
                            Example: "file1.omx, file1.dat, file1.t.xml".
 
