@@ -3,6 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.41.0 (June 30. 2015):*
+
+ * NEW FEATURE: Added support for raw files as spectrum input in PRIDE Reshake.
+
+ * FEATURE IMPROVEMENT: Added support for zip files in the PRIDE Reshake.
+
+ * BUG FIX: Fixed a bug in the PRIDE Reshake were canceling the public/private dialog still downloaded the public data.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.49.21.
+
+----
+
 *Changes in PeptideShaker 0.40.4 (June 28. 2015):*
 
  * FEATURE IMPROVEMENT: Added a "Download All" option to the files table in PRIDE Reshake.
