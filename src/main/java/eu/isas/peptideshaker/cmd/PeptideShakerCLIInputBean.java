@@ -663,6 +663,8 @@ public class PeptideShakerCLIInputBean {
         extentions.add(".t.xml");
         extentions.add(".mzid");
         extentions.add(".csv");
+        extentions.add(".txt");
+        extentions.add(".pep.xml");
         extentions.add(".zip");
         return CommandLineUtils.getFiles(optionInput, extentions);
     }
