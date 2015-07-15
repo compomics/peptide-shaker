@@ -642,7 +642,7 @@ public class PtmScorer {
             ArrayList<String> bestKeys = new ArrayList<String>();
 
             boolean validated = false;
-            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 MatchValidationLevel matchValidationLevel = psParameter.getMatchValidationLevel();
                 if (matchValidationLevel.isValidated() && !validated) {
@@ -1286,13 +1286,13 @@ public class PtmScorer {
         waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
 
         ExecutorService pool = Executors.newFixedThreadPool(processingPreferences.getnThreads());
-        HashMap<String, ArrayList<String>> spectrumKeysMap = identification.getSpectrumIdentificationMap();
-        if (metrics != null && metrics.getGroupedSpectrumKeys() != null) {
-            spectrumKeysMap = metrics.getGroupedSpectrumKeys();
-        }
 
+        HashMap<String, ArrayList<String>> spectrumKeysMap = metrics.getOrderedSpectrumKeys();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
-            ArrayList<String> spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            ArrayList<String> spectrumKeys = null;
+            if (spectrumKeysMap != null) {
+                spectrumKeys = spectrumKeysMap.get(spectrumFileName);
+            }
             PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, spectrumKeys, null, true, null);
             for (int i = 1; i <= processingPreferences.getnThreads() && !waitingHandler.isRunCanceled(); i++) {
                 PsmPtmScorerRunnable runnable = new PsmPtmScorerRunnable(psmIterator, identification, identificationParameters, waitingHandler, exceptionHandler);

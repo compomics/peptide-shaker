@@ -2188,9 +2188,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                         ArrayList<String> goProteins = goFactory.getAccessions(selectedGoAccession);
                         ArrayList<String> proteinKeys = new ArrayList<String>();
                         Identification identification = peptideShakerGUI.getIdentification();
-                        HashMap<String, ArrayList<String>> proteinMap = identification.getProteinMap();
+                        HashMap<String, HashSet<String>> proteinMap = identification.getProteinMap();
                         for (String goProtein : goProteins) {
-                            ArrayList<String> tempKeys = proteinMap.get(goProtein);
+                            HashSet<String> tempKeys = proteinMap.get(goProtein);
                             if (tempKeys != null) {
                                 for (String proteinKey : tempKeys) {
                                     if (!proteinKeys.contains(proteinKey)) {

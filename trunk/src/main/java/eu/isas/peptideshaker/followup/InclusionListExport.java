@@ -130,7 +130,7 @@ public class InclusionListExport {
                             for (String peptideKey : peptideMatches) {
                                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                                 ArrayList<String> validatedPsms = new ArrayList<String>();
-                                for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
                                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                                     if (psParameter.getMatchValidationLevel().isValidated()) {
                                         validatedPsms.add(spectrumKey);

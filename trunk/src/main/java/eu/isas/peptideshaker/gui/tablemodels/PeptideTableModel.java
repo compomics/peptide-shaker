@@ -230,7 +230,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 
                     double nConfidentSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNConfidentSpectraForPeptide(peptideKey);
                     double nDoubtfulSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey) - nConfidentSpectra;
-                    int nSpectra = peptideMatch.getSpectrumMatches().size();
+                    int nSpectra = peptideMatch.getSpectrumMatchesKeys().size();
 
                     ArrayList<Double> doubleValues = new ArrayList<Double>();
                     doubleValues.add(nConfidentSpectra);

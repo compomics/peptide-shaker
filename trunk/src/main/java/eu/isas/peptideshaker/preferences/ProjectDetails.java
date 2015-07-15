@@ -27,14 +27,6 @@ public class ProjectDetails implements Serializable {
      */
     private ArrayList<File> identificationFiles = new ArrayList<File>();
     /**
-     * Map of the search engine versions used to generate the identification
-     * files. Key: identification file name, element: the search engine name and
-     * version.
-     *
-     * @deprecated use identificationAlgorithmVersion instead
-     */
-    private HashMap<String, String> identificationFileSearchEngineVersion = new HashMap<String, String>();
-    /**
      * Map of the identification algorithms names and versions used to generate
      * the identification files. identification file name &gt; Advocate Ids &gt;
      * identification algorithm versions used.
@@ -468,9 +460,6 @@ public class ProjectDetails implements Serializable {
      * of the Advocate class
      */
     public ArrayList<Integer> getIdentificationAlgorithms() {
-        if (identificationAlgorithms == null) {
-            backwardCompatibilityFix();
-        }
         ArrayList<Integer> result = new ArrayList<Integer>();
         for (HashMap<String, ArrayList<String>> advocateVersions : identificationAlgorithms.values()) {
             for (String advocateName : advocateVersions.keySet()) {
@@ -488,52 +477,12 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Loads the identification files advocate and version from the id files.
-     */
-    public void backwardCompatibilityFix() {
-        identificationAlgorithms = new HashMap<String, HashMap<String, ArrayList<String>>>();
-        IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
-        ArrayList<File> idFiles = identificationFiles;
-        for (File idFile : idFiles) {
-            String idFileName = Util.getFileName(idFile);
-            boolean fileFound = idFile.exists();
-            if (fileFound) {
-                try {
-                    IdfileReader idFileReader = idFileReaderFactory.getFileReader(idFile);
-                    identificationAlgorithms.put(idFileName, idFileReader.getSoftwareVersions());
-                } catch (Exception e) {
-                    fileFound = false;
-                }
-            } else {
-                // File was moved, use the extension to map it manually
-                Advocate advocate = Advocate.getAdvocateFromFile(idFileName);
-                if (advocate != null) {
-                    HashMap<String, ArrayList<String>> algorithms = new HashMap<String, ArrayList<String>>();
-                    if (advocate == Advocate.omssa) {
-                        ArrayList<String> versions = new ArrayList<String>();
-                        versions.add("2.1.9");
-                        algorithms.put(advocate.getName(), versions);
-                    } else {
-                        algorithms.put(advocate.getName(), new ArrayList<String>());
-                    }
-                    identificationAlgorithms.put(idFileName, algorithms);
-                } else {
-                    throw new IllegalArgumentException("The algorithm used to generate " + idFileName + " could not be recognized.");
-                }
-            }
-        }
-    }
-
-    /**
      * Returns the different identification algorithm versions used in a map:
      * algorithm name &gt; versions.
      *
      * @return the different identification algorithm versions used
      */
     public HashMap<String, ArrayList<String>> getAlgorithmNameToVersionsMap() {
-        if (identificationAlgorithms == null) {
-            backwardCompatibilityFix();
-        }
         HashMap<String, ArrayList<String>> algorithmNameToVersionMap = new HashMap<String, ArrayList<String>>();
         for (HashMap<String, ArrayList<String>> fileMapping : identificationAlgorithms.values()) {
             for (String softwareName : fileMapping.keySet()) {
@@ -565,9 +514,6 @@ public class ProjectDetails implements Serializable {
      * @return the identification algorithms used
      */
     public HashMap<String, ArrayList<String>> getIdentificationAlgorithmsForFile(String idFileName) {
-        if (identificationAlgorithms == null) {
-            backwardCompatibilityFix();
-        }
         if (identificationAlgorithms == null) {
             return null;
         }

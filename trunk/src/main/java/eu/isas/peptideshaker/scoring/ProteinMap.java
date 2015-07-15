@@ -23,12 +23,6 @@ public class ProteinMap implements Serializable {
      * The protein target/decoy map.
      */
     private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
-    /**
-     * The filters to use to flag doubtful matches.
-     * 
-     * @deprecated use ValidationQCPreferences instead
-     */
-    private ArrayList<ProteinFilter> doubtfulMatchesFilters = null;
 
     /**
      * Constructor.

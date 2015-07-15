@@ -437,7 +437,6 @@ public class FileImporter {
                 waitingHandler.appendReport("Establishing local database connection.", true, true);
 
                 identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-                identification.setIsDB(true);
 
                 connectToIdDb(identification);
 
@@ -694,8 +693,6 @@ public class FileImporter {
                     for (SpectrumMatch spectrumMatch : idFileSpectrumMatches) {
                         if (!importSpectrum(idFile, spectrumMatch, numberOfMatches)) {
                             allLoaded = false;
-                            String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
-                            waitingHandler.appendReport(fileName + " missing.", true, true);
                         }
                         waitingHandler.increaseSecondaryProgressCounter();
                     }
@@ -879,8 +876,10 @@ public class FileImporter {
                     projectDetails.addSpectrumFile(spectrumFile);
                     nSpectra += spectrumFactory.getNSpectra(fileName);
                 } else {
-                    missingMgfFiles.put(idFile, fileName);
-                    waitingHandler.appendReport(fileName + " not found.", true, true);
+                    if (!missingMgfFiles.containsKey(idFile)) {
+                        missingMgfFiles.put(idFile, fileName);
+                        waitingHandler.appendReport(fileName + " not found.", true, true);
+                    }
                     return false;
                 }
             }

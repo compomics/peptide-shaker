@@ -89,10 +89,6 @@ public class Metrics implements Serializable {
      */
     private HashMap<String, Integer> totalPeptidesPerFractions;
     /**
-     * The observed average molecular masses in kDa for each fraction.
-     */
-    private HashMap<String, Double> observedFractionalMasses; // @TODO: this one can be removed, but doing so results in backwards compatability issues...
-    /**
      * The observed molecular masses in kDa for each fraction.
      */
     private HashMap<String, ArrayList<Double>> observedFractionalMassesAll;
@@ -120,7 +116,7 @@ public class Metrics implements Serializable {
      * Map of the spectrum keys grouped per peptide. Spectrum file name &gt;
      * list of keys.
      */
-    private HashMap<String, ArrayList<String>> groupedSpectrumKeys;
+    private HashMap<String, ArrayList<String>> orderedSpectrumKeys;
     /**
      * The sum of all spectrum counting masses.
      */
@@ -138,12 +134,6 @@ public class Metrics implements Serializable {
      * @return the found charges.
      */
     public ArrayList<Integer> getFoundCharges() {
-        if (foundCharges.isEmpty()) {
-            // code for backward compatibility
-            foundCharges.add(2);
-            foundCharges.add(3);
-            foundCharges.add(4);
-        }
         return foundCharges;
     }
 
@@ -381,9 +371,6 @@ public class Metrics implements Serializable {
      * @return the number of confident proteins
      */
     public Integer getnConfidentProteins() {
-        if (nConfidentProteins == null) { // Backward compatibility check
-            return -1;
-        }
         return nConfidentProteins;
     }
 
@@ -458,30 +445,6 @@ public class Metrics implements Serializable {
      */
     public HashMap<String, Integer> getTotalPeptidesPerFraction() {
         return totalPeptidesPerFractions;
-    }
-
-    /**
-     * Returns the observed average molecular masses in kDa for each fraction.
-     * The key is the file path of the fraction.
-     *
-     * @return the observed average molecular masses for each fraction
-     */
-    public HashMap<String, Double> getObservedFractionalMasses() {
-        if (observedFractionalMasses != null) {
-            return observedFractionalMasses;
-        } else {
-            return new HashMap<String, Double>();
-        }
-    }
-
-    /**
-     * Set the observed average molecular masses for each fraction in kDa. The
-     * key is the file path of the fraction.
-     *
-     * @param observedFractionalMasses the observedFractionalMasses to set
-     */
-    public void setObservedFractionalMasses(HashMap<String, Double> observedFractionalMasses) {
-        this.observedFractionalMasses = observedFractionalMasses;
     }
 
     /**
@@ -608,27 +571,27 @@ public class Metrics implements Serializable {
      *
      * @return the grouped spectrum keys
      */
-    public HashMap<String, ArrayList<String>> getGroupedSpectrumKeys() {
-        return groupedSpectrumKeys;
+    public HashMap<String, ArrayList<String>> getOrderedSpectrumKeys() {
+        return orderedSpectrumKeys;
     }
 
     /**
      * Sets the grouped spectrum keys.
      *
-     * @param groupedSpectrumKeys the grouped spectrum keys
+     * @param orderedSpectrumKeys the grouped spectrum keys
      */
-    public void setGroupedSpectrumKeys(HashMap<String, ArrayList<String>> groupedSpectrumKeys) {
-        this.groupedSpectrumKeys = groupedSpectrumKeys;
+    public void setOrderedSpectrumKeys(HashMap<String, ArrayList<String>> orderedSpectrumKeys) {
+        this.orderedSpectrumKeys = orderedSpectrumKeys;
     }
 
     /**
      * Removes the grouped spectrum keys from the Metrics.
      */
     public void clearSpectrumKeys() {
-        if (groupedSpectrumKeys != null) {
-            groupedSpectrumKeys.clear();
+        if (orderedSpectrumKeys != null) {
+            orderedSpectrumKeys.clear();
         }
-        groupedSpectrumKeys = null;
+        orderedSpectrumKeys = null;
     }
 
     /**

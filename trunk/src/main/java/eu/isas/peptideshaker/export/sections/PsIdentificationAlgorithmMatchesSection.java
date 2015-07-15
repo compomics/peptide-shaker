@@ -37,6 +37,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -137,7 +138,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             writeHeader();
         }
 
-        HashMap<String, ArrayList<String>> psmMap = new HashMap<String, ArrayList<String>>();
+        HashMap<String, HashSet<String>> psmMap = new HashMap<String, HashSet<String>>();
 
         if (keys == null) {
             psmMap = identification.getSpectrumIdentificationMap();
@@ -145,7 +146,7 @@ public class PsIdentificationAlgorithmMatchesSection {
             for (String key : keys) {
                 String fileName = Spectrum.getSpectrumFile(key);
                 if (!psmMap.containsKey(fileName)) {
-                    psmMap.put(fileName, new ArrayList<String>());
+                    psmMap.put(fileName, new HashSet<String>());
                 }
                 psmMap.get(fileName).add(key);
             }
@@ -179,7 +180,7 @@ public class PsIdentificationAlgorithmMatchesSection {
 
         for (String spectrumFile : psmMap.keySet()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, psmMap.get(spectrumFile), null, true, waitingHandler); //@TODO: make an assumptions iterator?
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFile, new ArrayList<String>(psmMap.get(spectrumFile)), null, true, waitingHandler); //@TODO: make an assumptions iterator?
 
             while (psmIterator.hasNext()) {
 
@@ -802,7 +803,7 @@ public class PsIdentificationAlgorithmMatchesSection {
                         tag.append(sequence.charAt(aaIndex));
                         gap = 0;
                     } else {
-                        gap += AminoAcid.getAminoAcid(sequence.charAt(aaIndex)).monoisotopicMass;
+                        gap += AminoAcid.getAminoAcid(sequence.charAt(aaIndex)).getMonoisotopicMass();
                     }
                 }
                 if (gap > 0) {

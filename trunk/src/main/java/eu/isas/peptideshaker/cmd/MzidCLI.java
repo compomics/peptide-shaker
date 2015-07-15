@@ -311,24 +311,12 @@ public class MzidCLI extends CpsParent {
     }
 
     /**
-     * Loads the modifications from the modification file.
+     * Loads the modifications.
      */
     public void loadPtms() {
 
         // reset ptm factory
         ptmFactory = PTMFactory.getInstance();
-
-        try {
-            ptmFactory.importModifications(new File(PeptideShaker.getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE), false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            ptmFactory.importModifications(new File(PeptideShaker.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE), true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

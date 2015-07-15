@@ -4033,24 +4033,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         // reset ptm factory
         ptmFactory.reloadFactory();
         ptmFactory = PTMFactory.getInstance();
-
-        try {
-            ptmFactory.importModifications(new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE), false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
-                    + "occurred when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE) + ".",
-                    "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        try {
-            ptmFactory.importModifications(new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE), true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
-                    + "occurred when trying to load the modifications from " + new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE) + ".",
-                    "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     /**
@@ -5261,7 +5243,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     if (open) {
                         if (!new File(filePath).exists()) {
                             JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
-                            temp.getUserPreferences().removerRecentProject(filePath);
+                            temp.getUserPreferences().removeRecentProject(filePath);
                         } else {
                             clearData(true, true);
                             clearPreferences();
@@ -5308,7 +5290,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     if (!new File(filePath).exists()) {
                         JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
-                        temp.getUserPreferences().removerRecentProject(filePath);
+                        temp.getUserPreferences().removeRecentProject(filePath);
                     } else {
                         tempWelcomeDialog.setVisible(false);
                         tempWelcomeDialog.dispose();
@@ -5541,32 +5523,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(false); // have to load the new gene mappings
 
-                    // backwards compatibility fix for gene and go references using only latin names
-                    boolean genesRemapped = false;
-                    GenePreferences genePreferences = getIdentificationParameters().getGenePreferences();
-                    String selectedSpecies = genePreferences.getCurrentSpecies();
-                    if (selectedSpecies != null) {
-
-                        HashMap<String, HashMap<String, String>> allSpecies = genePreferences.getAllSpeciesMap();
-                        HashMap<String, String> tempSpecies = allSpecies.get(genePreferences.getCurrentSpeciesType());
-
-                        if (!tempSpecies.containsKey(selectedSpecies)) {
-
-                            Iterator<String> iterator = tempSpecies.keySet().iterator();
-                            boolean keyFound = false;
-
-                            while (iterator.hasNext() && !keyFound) {
-                                String tempSpeciesKey = iterator.next();
-                                if (tempSpeciesKey.contains(selectedSpecies)) {
-                                    genePreferences.setCurrentSpecies(tempSpeciesKey);
-                                    keyFound = true;
-                                    loadGeneMappings(false); // have to re-load the gene mappings now that we have the correct species name
-                                    genesRemapped = true;
-                                }
-                            }
-                        }
-                    }
-
                     // @TODO: check if the used gene mapping files are available and download if not?
                     if (progressDialog.isRunCanceled()) {
                         clearData(true, true);
@@ -5698,7 +5654,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.updateFrameTitle();
-                    dataSaved = !genesRemapped;
 
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
@@ -5893,27 +5848,27 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
         HashMap<Double, String> knownMassDeltas = new HashMap<Double, String>();
 
         // add the monoisotopic amino acids masses
-        knownMassDeltas.put(AminoAcid.A.monoisotopicMass, "A");
-        knownMassDeltas.put(AminoAcid.R.monoisotopicMass, "R");
-        knownMassDeltas.put(AminoAcid.N.monoisotopicMass, "N");
-        knownMassDeltas.put(AminoAcid.D.monoisotopicMass, "D");
-        knownMassDeltas.put(AminoAcid.C.monoisotopicMass, "C");
-        knownMassDeltas.put(AminoAcid.Q.monoisotopicMass, "Q");
-        knownMassDeltas.put(AminoAcid.E.monoisotopicMass, "E");
-        knownMassDeltas.put(AminoAcid.G.monoisotopicMass, "G");
-        knownMassDeltas.put(AminoAcid.H.monoisotopicMass, "H");
-        knownMassDeltas.put(AminoAcid.I.monoisotopicMass, "I/L");
-        knownMassDeltas.put(AminoAcid.K.monoisotopicMass, "K");
-        knownMassDeltas.put(AminoAcid.M.monoisotopicMass, "M");
-        knownMassDeltas.put(AminoAcid.F.monoisotopicMass, "F");
-        knownMassDeltas.put(AminoAcid.P.monoisotopicMass, "P");
-        knownMassDeltas.put(AminoAcid.S.monoisotopicMass, "S");
-        knownMassDeltas.put(AminoAcid.T.monoisotopicMass, "T");
-        knownMassDeltas.put(AminoAcid.W.monoisotopicMass, "W");
-        knownMassDeltas.put(AminoAcid.Y.monoisotopicMass, "Y");
-        knownMassDeltas.put(AminoAcid.V.monoisotopicMass, "V");
-        knownMassDeltas.put(AminoAcid.U.monoisotopicMass, "U");
-        knownMassDeltas.put(AminoAcid.O.monoisotopicMass, "O");
+        knownMassDeltas.put(AminoAcid.A.getMonoisotopicMass(), "A");
+        knownMassDeltas.put(AminoAcid.R.getMonoisotopicMass(), "R");
+        knownMassDeltas.put(AminoAcid.N.getMonoisotopicMass(), "N");
+        knownMassDeltas.put(AminoAcid.D.getMonoisotopicMass(), "D");
+        knownMassDeltas.put(AminoAcid.C.getMonoisotopicMass(), "C");
+        knownMassDeltas.put(AminoAcid.Q.getMonoisotopicMass(), "Q");
+        knownMassDeltas.put(AminoAcid.E.getMonoisotopicMass(), "E");
+        knownMassDeltas.put(AminoAcid.G.getMonoisotopicMass(), "G");
+        knownMassDeltas.put(AminoAcid.H.getMonoisotopicMass(), "H");
+        knownMassDeltas.put(AminoAcid.I.getMonoisotopicMass(), "I/L");
+        knownMassDeltas.put(AminoAcid.K.getMonoisotopicMass(), "K");
+        knownMassDeltas.put(AminoAcid.M.getMonoisotopicMass(), "M");
+        knownMassDeltas.put(AminoAcid.F.getMonoisotopicMass(), "F");
+        knownMassDeltas.put(AminoAcid.P.getMonoisotopicMass(), "P");
+        knownMassDeltas.put(AminoAcid.S.getMonoisotopicMass(), "S");
+        knownMassDeltas.put(AminoAcid.T.getMonoisotopicMass(), "T");
+        knownMassDeltas.put(AminoAcid.W.getMonoisotopicMass(), "W");
+        knownMassDeltas.put(AminoAcid.Y.getMonoisotopicMass(), "Y");
+        knownMassDeltas.put(AminoAcid.V.getMonoisotopicMass(), "V");
+        knownMassDeltas.put(AminoAcid.U.getMonoisotopicMass(), "U");
+        knownMassDeltas.put(AminoAcid.O.getMonoisotopicMass(), "O");
 
         // add default neutral losses
 //        knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
@@ -5935,7 +5890,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
             if (ptm != null) {
 
-                String shortName = ptmFactory.getShortName(modification);
+                String shortName = ptm.getShortName();
                 AminoAcidPattern ptmPattern = ptm.getPattern();
                 double mass = ptm.getMass();
 
@@ -5943,7 +5898,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     for (Character aa : ptmPattern.getAminoAcidsAtTarget()) {
                         if (!knownMassDeltas.containsValue(aa + "<" + shortName + ">")) {
                             AminoAcid aminoAcid = AminoAcid.getAminoAcid(aa);
-                            knownMassDeltas.put(mass + aminoAcid.monoisotopicMass,
+                            knownMassDeltas.put(mass + aminoAcid.getMonoisotopicMass(),
                                     aa + "<" + shortName + ">");
                         }
                     }
@@ -6601,7 +6556,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
             } catch (Exception e) {
                 try {
                     // try without order
-                    psmKeys = peptideMatch.getSpectrumMatches();
+                    psmKeys = peptideMatch.getSpectrumMatchesKeys();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     psmKeys = new ArrayList<String>();

@@ -4643,7 +4643,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         // ok let's try without order
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        psmKeys = peptideMatch.getSpectrumMatches();
+                        psmKeys = peptideMatch.getSpectrumMatchesKeys();
                     } catch (Exception e1) {
                         // just hope the GUI holds...
                         peptideShakerGUI.catchException(e1);

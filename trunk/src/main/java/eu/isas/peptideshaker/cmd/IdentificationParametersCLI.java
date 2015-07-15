@@ -40,16 +40,6 @@ public class IdentificationParametersCLI extends AbstractIdentificationParameter
     }
 
     @Override
-    protected File getModificationsFile() {
-        return new File(getJarFilePath(), PeptideShaker.MODIFICATIONS_FILE);
-    }
-
-    @Override
-    protected File getUserModificationsFile() {
-        return new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
-    }
-
-    @Override
     protected File getEnzymeFile() {
         return new File(getJarFilePath(), PeptideShaker.ENZYME_FILE);
     }

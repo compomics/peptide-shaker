@@ -61,13 +61,6 @@ public class PSParameter implements UrParameter {
      */
     private double proteinProbability;
     /**
-     * Boolean indicating whether a match is validated or not at the selected
-     * threshold.
-     *
-     * @deprecated use matchValidationLevel instead
-     */
-    private boolean validated = false;
-    /**
      * The validation level of a given match.
      */
     private MatchValidationLevel matchValidationLevel;
@@ -76,12 +69,6 @@ public class PSParameter implements UrParameter {
      * updated.
      */
     private Boolean manualValidation = false;
-    /**
-     * The reason why a match is flagged as doubtful.
-     * 
-     * @deprecated use the filter report instead.
-     */
-    private String reasonDoubtful = null;
     /**
      * Boolean indicating whether this is a hidden match.
      */
@@ -93,7 +80,7 @@ public class PSParameter implements UrParameter {
     /**
      * the key in the corresponding specific map.
      */
-    private String secificMapKey; // yes, we know about the typo, but cannot change it for backwards compatability reasons...
+    private String specificMapKey;
     /**
      * Protein groups can belong to the following groups according to the static
      * field indexing.
@@ -120,21 +107,6 @@ public class PSParameter implements UrParameter {
      * peptide shared by unrelated proteins.
      */
     public static final int UNRELATED = 3;
-    /**
-     * Static index for a protein group: 1 - isoforms or peptide of isoform
-     * groups (not necessarily unique to the group).
-     *
-     * @deprecated use RELATED instead
-     */
-    public static final int ISOFORMS = 1;
-    /**
-     * Static index for a protein group: 2 - isoforms and a few unrelated
-     * proteins (less than 50%) or peptide shared by isoforms and non isoforms
-     * (not necessarily unique to the group).
-     *
-     * @deprecated use RELATED_AND_UNRELATED instead
-     */
-    public static final int ISOFORMS_UNRELATED = 2;
     /**
      * The fraction confidence map.
      */
@@ -474,38 +446,11 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Un/Validates a match.
-     *
-     * @deprecated use setMatchValidationLevel instead
-     * @param validated boolean indicating whether the match should be validated
-     */
-    public void setValidated(boolean validated) {
-        this.validated = validated;
-    }
-
-    /**
-     * Returns whether a match is validated or not.
-     *
-     * @deprecated use getMatchValidationLevel instead
-     * @return boolean indicating whether a match is validated or not
-     */
-    public boolean isValidated() {
-        return validated;
-    }
-
-    /**
      * Returns the validation level of the match.
      *
      * @return the validation level of the match
      */
     public MatchValidationLevel getMatchValidationLevel() {
-        if (matchValidationLevel == null) { // Backward compatibility check
-            if (validated) {
-                matchValidationLevel = MatchValidationLevel.confident;
-            } else {
-                matchValidationLevel = MatchValidationLevel.not_validated;
-            }
-        }
         return matchValidationLevel;
     }
 
@@ -608,30 +553,10 @@ public class PSParameter implements UrParameter {
     /**
      * Returns the match key in the corresponding specific map.
      *
-     * @deprecated use method without typo
-     * @return the match key in the corresponding specific map
-     */
-    public String getSecificMapKey() {
-        return getSpecificMapKey();
-    }
-
-    /**
-     * Sets the match key in the corresponding specific map.
-     *
-     * @deprecated use method without typo
-     * @param specificMapKey the match key in the corresponding specific map
-     */
-    public void setSecificMapKey(String specificMapKey) {
-        setSpecificMapKey(specificMapKey);
-    }
-
-    /**
-     * Returns the match key in the corresponding specific map.
-     *
      * @return the match key in the corresponding specific map
      */
     public String getSpecificMapKey() {
-        return secificMapKey;
+        return specificMapKey;
     }
 
     /**
@@ -640,7 +565,7 @@ public class PSParameter implements UrParameter {
      * @param specificMapKey the match key in the corresponding specific map
      */
     public void setSpecificMapKey(String specificMapKey) {
-        this.secificMapKey = specificMapKey;
+        this.specificMapKey = specificMapKey;
     }
 
     /**
@@ -841,29 +766,7 @@ public class PSParameter implements UrParameter {
             return null;
         }
     }
-
-    /**
-     * Returns the reason why a match is set as doubtful. An empty string if
-     * none set.
-     *
-     * @return the reason why a match is set as doubtful
-     */
-    public String getReasonDoubtful() {
-        if (reasonDoubtful == null) {
-            return "";
-        }
-        return reasonDoubtful;
-    }
-
-    /**
-     * Sets the reason why a match is set as doubtful.
-     *
-     * @param reasonDoubtful the reason why a match is set as doubtful
-     */
-    public void setReasonDoubtful(String reasonDoubtful) {
-        this.reasonDoubtful = reasonDoubtful;
-    }
-
+    
     /**
      * Indicates whether the match validation was manually inspected.
      *

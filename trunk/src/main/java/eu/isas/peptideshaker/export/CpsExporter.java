@@ -29,44 +29,6 @@ import org.apache.commons.compress.archivers.ArchiveException;
  */
 public class CpsExporter {
 
-    /**
-     * Saves the given data in a cps file. Here the GUI preferences will be null
-     * objects.
-     *
-     * @param destinationFile the destination cps file
-     * @param waitingHandler a waiting handler used to cancel the saving
-     * @param experiment the experiment to save
-     * @param identification the identification to save
-     * @param shotgunProtocol information about the protocol used
-     * @param identificationParameters the identification parameters
-     * @param spectrumCountingPreferences the spectrum counting preferences
-     * @param projectDetails the project details
-     * @param metrics the dataset metrics
-     * @param processingPreferences the processing preferences
-     * @param identificationFeaturesCache the identification features cache
-     * @param objectsCache the object cache
-     * @param emptyCache a boolean indicating whether the object cache should be
-     * emptied
-     * @param jarFilePath the path to the jar file
-     *
-     * @throws IOException thrown of IOException occurs exception thrown
-     * whenever an error occurred while reading or writing a file
-     * @throws SQLException thrown of SQLException occurs exception thrown
-     * whenever an error occurred while interacting with the database
-     * @throws ArchiveException thrown of ArchiveException occurs exception
-     * thrown whenever an error occurred while taring the project
-     * @throws java.lang.ClassNotFoundException exception thrown whenever an
-     * error occurred while deserializing an object
-     * @throws java.lang.InterruptedException exception thrown whenever a
-     * threading error occurred while saving the project
-     */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, ShotgunProtocol shotgunProtocol,
-            IdentificationParameters identificationParameters, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, Metrics metrics,
-            ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, ObjectsCache objectsCache, boolean emptyCache, String jarFilePath)
-            throws IOException, SQLException, ArchiveException, ClassNotFoundException, InterruptedException {
-        saveAs(destinationFile, waitingHandler, experiment, identification, shotgunProtocol, identificationParameters, spectrumCountingPreferences,
-                projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, objectsCache, emptyCache, null, jarFilePath);
-    }
 
     /**
      * Saves the given data in a cps file.

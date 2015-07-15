@@ -961,7 +961,7 @@ public class StarHider {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             boolean psmpassed = false;
 
-                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                            for (String spectrumKey : peptideMatch.getSpectrumMatchesKeys()) {
 
                                 if (progressDialog.isRunCanceled()) {
                                     break;

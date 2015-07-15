@@ -575,7 +575,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         if (psmSelectionComboBox.getSelectedIndex() == 4) {
                             ProgenesisExcelExport progenesisExcelExport = new ProgenesisExcelExport(
                                     progressDialog,
-                                    peptideShakerGUI.getIdentification().getProteinIdentification(),
+                                    new ArrayList<String>(peptideShakerGUI.getIdentification().getProteinIdentification()),
                                     peptideShakerGUI.getShotgunProtocol().getEnzyme(),
                                     peptideShakerGUI.getIdentificationParameters().getSequenceMatchingPreferences(),
                                     peptideShakerGUI.getIdentification(),

@@ -2017,8 +2017,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         String textFileFilterDescription = "Tab separated text file (.txt)";
         String excelFileFilterDescription = "Excel Workbook (.xls)";
         String lastSelectedFolderPath = peptideShakerGUI.getLastSelectedFolder().getLastSelectedFolder();
-        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".txt", ".xls"},
-                new String[]{textFileFilterDescription, excelFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
+        FileAndFileFilter selectedFileAndFilter = Util.getUserSelectedFile(this, new String[]{".xls", ".txt"},
+                new String[]{excelFileFilterDescription, textFileFilterDescription}, "Export Report", lastSelectedFolderPath, false, true, false, 0);
 
         if (selectedFileAndFilter != null) {
 

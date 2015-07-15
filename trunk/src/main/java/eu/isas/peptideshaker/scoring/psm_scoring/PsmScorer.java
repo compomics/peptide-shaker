@@ -78,7 +78,7 @@ public class PsmScorer {
         //HashMap<Integer, BufferedWriter> brs = new HashMap<Integer, BufferedWriter>();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 
@@ -176,7 +176,7 @@ public class PsmScorer {
         int totalProgress = 0;
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             for (int advocateIndex : inputMap.getIntermediateScoreInputAlgorithms(spectrumFileName)) {
-                ArrayList<Integer> scores = processingPreferences.getScores(advocateIndex);
+                ArrayList<Integer> scores = new ArrayList<Integer>(); //@TODO: implement scores
                 if (scores.size() > 1) {
                     for (int scoreIndex : scores) {
                         TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
@@ -192,7 +192,7 @@ public class PsmScorer {
 
         for (String spectrumFileName : identification.getSpectrumFiles()) {
             for (int advocateIndex : inputMap.getIntermediateScoreInputAlgorithms(spectrumFileName)) {
-                ArrayList<Integer> scores = processingPreferences.getScores(advocateIndex);
+                ArrayList<Integer> scores = new ArrayList<Integer>(); //@TODO: implement scores
                 if (scores.size() > 1) {
                     for (int scoreIndex : scores) {
                         TargetDecoyMap targetDecoyMap = inputMap.getIntermediateScoreMap(spectrumFileName, advocateIndex, scoreIndex);
@@ -240,7 +240,7 @@ public class PsmScorer {
 //        br.newLine();
         for (String spectrumFileName : identification.getSpectrumFiles()) {
 
-            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, identification.getSpectrumIdentification(spectrumFileName), null, false, waitingHandler);
+            PsmIterator psmIterator = identification.getPsmIterator(spectrumFileName, null, false, waitingHandler);
 
             while (psmIterator.hasNext()) {
 

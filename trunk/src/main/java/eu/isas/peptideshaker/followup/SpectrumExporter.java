@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -249,9 +250,9 @@ public class SpectrumExporter {
                                 && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).getMatchValidationLevel().isValidated()) {
                             ArrayList<String> proteins = peptide.getParentProteins(sequenceMatchingPreferences);
                             for (String accession : proteins) {
-                                ArrayList<String> proteinKeys = identification.getProteinMap().get(accession);
+                                HashSet<String> proteinKeys = identification.getProteinMap().get(accession);
                                 if (proteinKeys != null) {
-                                    identification.loadProteinMatchParameters(proteinKeys, psParameter, null, true);
+                                    identification.loadProteinMatchParameters(new ArrayList<String>(proteinKeys), psParameter, null, true);
                                     for (String proteinKey : proteinKeys) {
                                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                                         if (psParameter.getMatchValidationLevel().isValidated()) {

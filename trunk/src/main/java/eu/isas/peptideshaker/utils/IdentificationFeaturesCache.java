@@ -23,12 +23,6 @@ public class IdentificationFeaturesCache implements Serializable {
     public enum ObjectType {
 
         /**
-         * The coverable amino acids stored as big object.
-         *
-         * @deprecated replaced by coverable_AA_p
-         */
-        coverable_AA,
-        /**
          * The likelihood to cover amino acids stored as big object.
          */
         coverable_AA_p,
@@ -184,7 +178,6 @@ public class IdentificationFeaturesCache implements Serializable {
             ArrayList<String> toRemove = new ArrayList<String>();
 
             switch (type) {
-                case coverable_AA:
                 case coverable_AA_p:
                 case AA_coverage:
                 case tryptic_protein:
@@ -234,7 +227,6 @@ public class IdentificationFeaturesCache implements Serializable {
     public synchronized void addObject(ObjectType type, String objectKey, Object object) {
         if (!readOnly) {
             switch (type) {
-                case coverable_AA:
                 case coverable_AA_p:
                 case AA_coverage:
                 case tryptic_protein:
@@ -311,7 +303,6 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     public Object getObject(ObjectType type, String objectKey) {
         switch (type) {
-            case coverable_AA:
             case coverable_AA_p:
             case AA_coverage:
             case tryptic_protein:
@@ -547,8 +538,6 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private String getTypeAsString(ObjectType type) {
         switch (type) {
-            case coverable_AA:
-                return "coverable_AA";
             case coverable_AA_p:
                 return "coverable_AA_p";
             case AA_coverage:
@@ -593,9 +582,7 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private ObjectType getType(String cacheKey) {
         String objectTypeAsString = cacheKey.split(cacheSeparator)[0];
-        if (objectTypeAsString.equals("coverable_AA")) {
-            return ObjectType.coverable_AA;
-        } else if (objectTypeAsString.equals("coverable_AA_p")) {
+        if (objectTypeAsString.equals("coverable_AA_p")) {
             return ObjectType.coverable_AA_p;
         } else if (objectTypeAsString.equals("AA_coverage")) {
             return ObjectType.AA_coverage;
