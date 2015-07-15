@@ -91,8 +91,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     }
 
     /**
-     * Constructor. Warning: when changing this method please update reporter as
-     * well!
+     * Constructor.
      *
      * @param identification the identification containing the protein
      * information
@@ -114,8 +113,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     /**
      * Update the data in the table model without having to reset the whole
-     * table model. This keeps the sorting order of the table. Warning: when
-     * changing this method please update reporter as well!
+     * table model. This keeps the sorting order of the table.
      *
      * @param identification the identification containing the protein
      * information
@@ -547,8 +545,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     }
 
     /**
-     * Set up the properties of the protein table. Warning: when changing this
-     * method please update reporter as well!
+     * Set up the properties of the protein table.
      *
      * @param proteinTable the protein table
      * @param sparklineColor the sparkline color to use

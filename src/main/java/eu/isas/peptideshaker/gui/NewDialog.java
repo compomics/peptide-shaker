@@ -952,22 +952,22 @@ public class NewDialog extends javax.swing.JDialog {
                     return false;
                 }
 
-                return myFile.getName().toLowerCase().endsWith("omx")
-                        || myFile.getName().toLowerCase().endsWith("t.xml")
-                        || myFile.getName().toLowerCase().endsWith("pep.xml")
-                        || myFile.getName().toLowerCase().endsWith("dat")
-                        || myFile.getName().toLowerCase().endsWith("mzid")
-                        || myFile.getName().toLowerCase().endsWith("csv")
-                        || myFile.getName().toLowerCase().endsWith("res")
-                        || myFile.getName().toLowerCase().endsWith("tags")
-                        || myFile.getName().toLowerCase().endsWith("zip")
-                        || myFile.getName().toLowerCase().endsWith("tide-search.target.txt")
+                return myFile.getName().toLowerCase().endsWith(".omx")
+                        || myFile.getName().toLowerCase().endsWith(".t.xml")
+                        || myFile.getName().toLowerCase().endsWith(".pep.xml")
+                        || myFile.getName().toLowerCase().endsWith(".dat")
+                        || myFile.getName().toLowerCase().endsWith(".mzid")
+                        || myFile.getName().toLowerCase().endsWith(".csv")
+                        || myFile.getName().toLowerCase().endsWith(".res")
+                        || myFile.getName().toLowerCase().endsWith(".tags")
+                        || myFile.getName().toLowerCase().endsWith(".zip")
+                        || myFile.getName().toLowerCase().endsWith(".tide-search.target.txt")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add directag
+                return "mzIdentML (.mzid), PepXML (.pep.xml), OMSSA (.omx), X!Tandem (.xml), MS Amanda (.csv), Tide (.txt), Andromeda (.res) and Mascot (.dat)"; // @TODO: add de novo formats
             }
         };
 
@@ -976,7 +976,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("zip")
+                return myFile.getName().toLowerCase().endsWith(".zip")
                         || myFile.isDirectory();
             }
 
@@ -991,7 +991,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("omx")
+                return myFile.getName().toLowerCase().endsWith(".omx")
                         || myFile.isDirectory();
             }
 
@@ -1006,7 +1006,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("res")
+                return myFile.getName().toLowerCase().endsWith(".res")
                         || myFile.isDirectory();
             }
 
@@ -1021,7 +1021,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("t.xml")
+                return myFile.getName().toLowerCase().endsWith(".t.xml")
                         || myFile.isDirectory();
             }
 
@@ -1036,7 +1036,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("pep.xml")
+                return myFile.getName().toLowerCase().endsWith(".pep.xml")
                         || myFile.isDirectory();
             }
 
@@ -1051,7 +1051,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("mzid")
+                return myFile.getName().toLowerCase().endsWith(".mzid")
                         || myFile.isDirectory();
             }
 
@@ -1066,7 +1066,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("csv")
+                return myFile.getName().toLowerCase().endsWith(".csv")
                         || myFile.isDirectory();
             }
 
@@ -1081,7 +1081,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("tide-search.target.txt")
+                return myFile.getName().toLowerCase().endsWith(".tide-search.target.txt")
                         || myFile.isDirectory();
             }
 
@@ -1096,7 +1096,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("tags")
+                return myFile.getName().toLowerCase().endsWith(".tags")
                         || myFile.isDirectory();
             }
 
@@ -1111,7 +1111,7 @@ public class NewDialog extends javax.swing.JDialog {
             @Override
             public boolean accept(File myFile) {
 
-                return myFile.getName().toLowerCase().endsWith("dat")
+                return myFile.getName().toLowerCase().endsWith(".dat")
                         || myFile.isDirectory();
             }
 
@@ -2185,14 +2185,14 @@ public class NewDialog extends javax.swing.JDialog {
 
         String lowerCaseName = file.getName().toLowerCase();
 
-        if (lowerCaseName.endsWith("dat")
-                || lowerCaseName.endsWith("omx")
-                || lowerCaseName.endsWith("res")
-                || lowerCaseName.endsWith("xml")
-                || lowerCaseName.endsWith("mzid")
-                || lowerCaseName.endsWith("csv")
-                || lowerCaseName.endsWith("tags")
-                || lowerCaseName.endsWith("tide-search.target.txt")) {
+        if (lowerCaseName.endsWith(".dat")
+                || lowerCaseName.endsWith(".omx")
+                || lowerCaseName.endsWith(".res")
+                || lowerCaseName.endsWith(".xml")
+                || lowerCaseName.endsWith(".mzid")
+                || lowerCaseName.endsWith(".csv")
+                || lowerCaseName.endsWith(".tags")
+                || lowerCaseName.endsWith(".tide-search.target.txt")) {
             if (!lowerCaseName.endsWith("mods.xml")
                     && !lowerCaseName.endsWith("usermods.xml")
                     && !lowerCaseName.endsWith("settings.xml")) {
